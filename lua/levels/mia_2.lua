@@ -10,12 +10,8 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    -- 5 = Base Delay
-    -- 5 = Delay when executed
-    -- 22 = Heli door anim delay
-    -- Total: 32 s
-    [100224] = { time = 5 + 5 + 22, id = "EscapeHeli", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { data_from_element = 100926 } },
-    [101858] = { time = 5 + 5 + 22, id = "EscapeHeli", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { data_from_element = 101854 } },
+    [100224] = { time = 22, id = "EscapeHeli", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { data_from_element = 100926 } },
+    [101858] = { time = 22, id = "EscapeHeli", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { data_from_element = 101854 } },
 
     -- Bugged because of retarded use of ENABLED in ElementTimer and ElementTimerTrigger
     [101240] = { time = 540, id = "CokeTimer", icons = { { icon = Icon.Loot, color = Color.red } }, class = TT.Warning, hint = Hints.mia_2_Loot },
@@ -129,7 +125,7 @@ if EHI:IsLootCounterVisible() then
     other[101281] = CokeDestroyedTrigger
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local ChanceSuccess = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
+    local ChanceSuccess = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         local chance = element._values.chance
         if self._trackers:CallFunction2(id, "OnChanceSuccess", chance) then -- 10%/15%

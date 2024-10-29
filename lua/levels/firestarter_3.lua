@@ -39,8 +39,8 @@ else
 end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
-triggers[104736] = { time = 616/30, id = "SWATTurretArrival2", icons = { Icon.Turret, Icon.Goto }, class = EHI.Trackers.Warning, waypoint = { icon = Icon.Turret, position = Vector3(-420.226, -1011.89, 225.056) }, trigger_once = true }
-triggers[104737] = { time = 752/30, id = "SWATTurretArrival1", icons = { Icon.Turret, Icon.Goto }, class = EHI.Trackers.Warning, waypoint = { icon = Icon.Turret, position = Vector3(805.013, 2253.48, 224.916) }, trigger_once = true }
+triggers[104736] = EHI:AddIncomingTurret(616/30, Vector3(-420.226, -1011.89, 225.056), "SWATTurretArrival2", true)
+triggers[104737] = EHI:AddIncomingTurret(752/30, Vector3(805.013, 2253.48, 224.916), "SWATTurretArrival1", true)
 
 achievements.voff_1 =
 {

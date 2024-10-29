@@ -247,6 +247,7 @@ EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
 -- 5 * self._scale
 EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
 EHITracker._default_bg_size = 64 * EHITracker._scale
+EHITracker._default_bg_size_half = EHITracker._default_bg_size / 2
 EHITracker._text_color = Color.white
 if EHI:GetOption("show_tracker_hint") then
     EHITracker._hint_t = EHI:GetOption("show_tracker_hint_t") --[[@as number]]

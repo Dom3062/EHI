@@ -14,7 +14,6 @@ end
 local texture_good = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame"
 local texture_bad = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame_debuff"
 local Color = Color
-local lerp = math.lerp
 ---@param o Panel
 ---@param target_x number
 local function set_x(o, target_x)
@@ -23,7 +22,7 @@ local function set_x(o, target_x)
     local from_x = o:x()
     while t < total do
         t = t + coroutine.yield()
-        o:set_x(lerp(from_x, target_x, t / total))
+        o:set_x(math.lerp(from_x, target_x, t / total))
     end
     o:set_x(target_x)
 end
@@ -36,7 +35,7 @@ local function set_right(o, x)
     local target_right = o:parent():w() - x
     while t < total do
         t = t + coroutine.yield()
-        o:set_right(lerp(from_right, target_right, t / total))
+        o:set_right(math.lerp(from_right, target_right, t / total))
     end
     o:set_right(target_right)
 end

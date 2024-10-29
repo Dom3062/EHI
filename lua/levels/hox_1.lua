@@ -29,11 +29,11 @@ if EHI:GetOption("show_waypoints") then
     --units/payday2/vehicles/anim_vehicle_pickup_sportcab_armored/anim_vehicle_pickup_sportcab_armored/the_car
     tbl[102482] = { f = function(id, unit_data, unit)
         local t = { unit = unit }
-        EHI:AddWaypointToTrigger(102626, t)
-        EHI:AddWaypointToTrigger(102627, t)
-        EHI:AddWaypointToTrigger(102628, t)
-        EHI:AddWaypointToTrigger(101383, t)
-        EHI:AddWaypointToTrigger(101397, t)
+        managers.ehi_manager:AddWaypointToTrigger(102626, t)
+        managers.ehi_manager:AddWaypointToTrigger(102627, t)
+        managers.ehi_manager:AddWaypointToTrigger(102628, t)
+        managers.ehi_manager:AddWaypointToTrigger(101383, t)
+        managers.ehi_manager:AddWaypointToTrigger(101397, t)
         unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
             managers.ehi_waypoint:RemoveWaypoint("CarMoveForward")
             managers.ehi_waypoint:RemoveWaypoint("CarMoveLeft")

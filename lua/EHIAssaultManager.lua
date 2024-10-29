@@ -6,6 +6,7 @@ local EHI = EHI
 EHIAssaultManager = {}
 EHIAssaultManager._sync_anticipation_start = "EHI_AM_SyncAnticipationStart"
 EHIAssaultManager._sync_sustain_start = "EHI_AM_SyncSustainStart"
+EHIAssaultManager._sync_endless_stop = "EHI_AM_SyncEndlessStop"
 ---@param ehi_tracker EHITrackerManager
 function EHIAssaultManager:new(ehi_tracker)
     self._trackers = ehi_tracker
@@ -38,14 +39,14 @@ function EHIAssaultManager:init_finalize(manager)
         show_endless_assault = true,
         hint = combine and "assault" or "assault_time"
     }
+    EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
+        if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
+            return
+        end
+        self._endless_assault = mode == "endless"
+        self:EndlessAssaultStart()
+    end)
     if not self._assault_time.blocked then
-        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
-            if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
-                return
-            end
-            self._endless_assault = mode == "endless"
-            self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault)
-        end)
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
                 self._trackers:CallFunction(self._assault_time.name, "CaptainArrived")
@@ -99,6 +100,9 @@ function EHIAssaultManager:init_finalize(manager)
                 self:OnEnterSustain(tbl.t)
             end)
         end
+        manager:AddReceiveHook(self._sync_endless_stop, function(data, sender)
+            self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", false, json.decode(data))
+        end)
     end
     EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, callback(self, self, "SetDiff"))
 end
@@ -216,6 +220,32 @@ function EHIAssaultManager:AssaultStart()
     self._internal.is_assault = true
 end
 
+function EHIAssaultManager:EndlessAssaultStart()
+    local data
+    if EHI:IsHost() and not self._endless_assault then
+        local ai_state = managers.groupai:state()
+        local assault_data = ai_state._task_data.assault or {}
+        local current_state = assault_data.phase
+        local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
+        if current_state then
+            data = {
+                state = current_state
+            }
+            if current_state == "build" then
+                data.t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
+            elseif current_state == "sustain" then
+                local t = ai_state._t
+                data.sustain_original_t = assault_data.phase_end_t - t
+                data.sustain_t = ai_state:assault_phase_end_time() - t
+            end
+            self._trackers:SyncTable(self._sync_endless_stop, data)
+        end
+    elseif self._synced_from_host and not self._endless_assault then
+        return
+    end
+    self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault, data)
+end
+
 function EHIAssaultManager:AssaultEnd()
     self._internal.is_assault = false
     if self._is_skirmish then
@@ -290,5 +320,6 @@ function EHIAssaultManager:load(data)
     if state then
         self._diff = state.diff
         self._anticipation.sync_f = "SyncAnticipationColor"
+        self._synced_from_host = true
     end
 end

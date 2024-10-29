@@ -42,7 +42,7 @@ local triggers = {
         end)
     end), trigger_once = true },
 
-    [103629] = { time = 540/30, id = "SWATTurretArrival", icons = { Icon.Turret, Icon.Goto }, class = EHI.Trackers.Warning, waypoint = { icon = Icon.Turret, position = Vector3(0.425327, -3362.29, 254.634) } }
+    [103629] = EHI:AddIncomingTurret(540/30, Vector3(0.425327, -3362.29, 254.634))
 }
 EHI.Manager:AddLoadSyncFunction(function(self)
     local objective = managers.loot:get_real_total_small_loot_value()

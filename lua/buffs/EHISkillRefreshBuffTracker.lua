@@ -17,7 +17,6 @@ function EHISkillRefreshBuffTracker:PreUpdate()
     end
 end
 
----@param state boolean
 function EHISkillRefreshBuffTracker:SetCustodyState(state)
     if state then
         self:RemoveBuffFromUpdate()
@@ -127,7 +126,6 @@ function EHIDodgeChanceBuffTracker:PreUpdate2()
     self._update_disabled = false
 end
 
----@param state boolean
 function EHIDodgeChanceBuffTracker:SetCustodyState(state)
     EHIDodgeChanceBuffTracker.super.SetCustodyState(self, state)
     self._update_disabled = state
@@ -185,7 +183,6 @@ function EHICritChanceBuffTracker:UpdateDetectionRisk(new_detection_risk)
     self._detection_risk = new_detection_risk or self._detection_risk
 end
 
----@param state boolean
 function EHICritChanceBuffTracker:SetCustodyState(state)
     EHICritChanceBuffTracker.super.SetCustodyState(self, state)
     self._update_disabled = state
@@ -227,6 +224,9 @@ end
 EHIDamageReductionBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIDamageReductionBuffTracker._refresh_option = "damage_reduction_refresh"
 function EHIDamageReductionBuffTracker:UpdateValue()
+    if not self._player_manager:player_unit() then
+        return
+    end
     local reduction = 1 - self._player_manager:damage_reduction_skill_multiplier("bullet")
     if self._skill_value == reduction then
         return
@@ -270,7 +270,6 @@ function EHIBerserkerBuffTracker:PreUpdate()
     end
 end
 
----@param state boolean
 function EHIBerserkerBuffTracker:SetCustodyState(state)
     if state then
         self:RemoveBuffFromUpdate()
@@ -405,7 +404,6 @@ function EHIUppersRangeBuffTracker:Activate()
     self:AddBuffToUpdate()
 end
 
----@param state boolean?
 function EHIUppersRangeBuffTracker:SetCustodyState(state)
     if state then
         self:Deactivate()

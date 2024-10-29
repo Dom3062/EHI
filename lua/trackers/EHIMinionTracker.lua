@@ -11,7 +11,6 @@ function EHIMinionTracker:post_init(...)
     self._n_of_peers = 0
     self._peers = {} ---@type table<number, EHIMinionTracker.PeerData>
     self._default_panel_w = self._panel:w()
-    self._panel_half = self._bg_box:w() / 2
     self._panel_w = self._default_panel_w
 end
 
@@ -45,8 +44,8 @@ end
 function EHIMinionTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconsX(addition and self._panel_half or -self._panel_half)
-    self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
+    self:AnimIconsX(addition and self._default_bg_size_half or -self._default_bg_size_half)
+    self:AnimateAdjustHintX(addition and self._default_bg_size_half or -self._default_bg_size_half)
 end
 
 function EHIMinionTracker:AlignTextOnHalfPos()
@@ -54,8 +53,8 @@ function EHIMinionTracker:AlignTextOnHalfPos()
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
         local peer_data = self._peers[i]
         if peer_data then
-            peer_data.label:set_w(self._panel_half)
-            peer_data.label:set_x(self._panel_half * pos)
+            peer_data.label:set_w(self._default_bg_size_half)
+            peer_data.label:set_x(self._default_bg_size_half * pos)
             pos = pos + 1
         end
     end
@@ -80,14 +79,14 @@ function EHIMinionTracker:Reorganize(addition)
             self._bg_box:set_w(self._default_bg_size)
         end
     elseif addition then
-        self._panel_w = self._panel_w + self._panel_half
+        self._panel_w = self._panel_w + self._default_bg_size_half
         self:AnimateMovement(true)
-        self:SetBGSize(self._panel_half, "add", true)
+        self:SetBGSize(self._default_bg_size_half, "add", true)
         self:AlignTextOnHalfPos()
     else
-        self._panel_w = self._panel_w - self._panel_half
+        self._panel_w = self._panel_w - self._default_bg_size_half
         self:AnimateMovement()
-        self:SetBGSize(self._panel_half, "short", true)
+        self:SetBGSize(self._default_bg_size_half, "short", true)
         self:AlignTextOnHalfPos()
     end
 end

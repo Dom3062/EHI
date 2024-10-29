@@ -280,4 +280,16 @@ if EHI:GetBuffOption("armor") then
         local ratio = current_armor / max_armor
         managers.ehi_buff:AddGauge("Armor", ratio, current_armor)
     end
+    if not FullSpeedSwarm then
+        -- https://steamcommunity.com/app/218620/discussions/14/2579854400739478371/
+        -- Code shamelessly stolen from FullSpeedSwarm, by TdlQ
+        function PlayerDamage:_update_armor_grinding(t, dt)
+            self._armor_grinding.elapsed = self._armor_grinding.elapsed + dt
+            if self._armor_grinding.target_tick <= self._armor_grinding.elapsed then
+                self._armor_grinding.elapsed = 0
+                self:change_armor(self._armor_grinding.armor_value)
+                self:_send_set_armor()
+            end
+        end
+    end
 end

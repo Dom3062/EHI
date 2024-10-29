@@ -28,7 +28,6 @@ end
 
 function EHIAggregatedEquipmentTracker:post_init(params)
     self._default_panel_w = self._panel:w()
-    self._panel_half = self._default_bg_size / 2
     self._panel_w = self._default_panel_w
 end
 
@@ -199,8 +198,8 @@ end
 function EHIAggregatedEquipmentTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconsX(addition and self._panel_half or -self._panel_half)
-    self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
+    self:AnimIconsX(addition and self._default_bg_size_half or -self._default_bg_size_half)
+    self:AnimateAdjustHintX(addition and self._default_bg_size_half or -self._default_bg_size_half)
 end
 
 function EHIAggregatedEquipmentTracker:AlignTextOnHalfPos()
@@ -208,8 +207,8 @@ function EHIAggregatedEquipmentTracker:AlignTextOnHalfPos()
     for _, id in ipairs(self._ids) do
         local text = self._bg_box:child(id) --[[@as PanelText?]]
         if text then
-            text:set_w(self._panel_half)
-            text:set_x(self._panel_half * pos)
+            text:set_w(self._default_bg_size_half)
+            text:set_x(self._default_bg_size_half * pos)
             self:FitTheText(text)
             pos = pos + 1
         end
@@ -229,13 +228,13 @@ function EHIAggregatedEquipmentTracker:Reorganize(addition)
         end
     elseif addition then
         self:AlignTextOnHalfPos()
-        self._panel_w = self._panel_w + self._panel_half
-        self._bg_box:set_w(self._bg_box:w() + self._panel_half)
+        self._panel_w = self._panel_w + self._default_bg_size_half
+        self._bg_box:set_w(self._bg_box:w() + self._default_bg_size_half)
         self:AnimateMovement(true)
     else
         self:AlignTextOnHalfPos()
-        self._panel_w = self._panel_w - self._panel_half
-        self._bg_box:set_w(self._bg_box:w() - self._panel_half)
+        self._panel_w = self._panel_w - self._default_bg_size_half
+        self._bg_box:set_w(self._bg_box:w() - self._default_bg_size_half)
         self:AnimateMovement()
     end
 end

@@ -19,7 +19,7 @@ function EHILootTracker:post_init(params)
     EHILootTracker.super.post_init(self, params)
     self._show_finish_after_reaching_target = self._stay_on_screen
     self._loot_id = {}
-    self._loot_check_delay = {} ---@type table<number, number>
+    self._loot_check_delay = {} ---@type table<number, { t: number, callback: function? }>
     self._loot_check_n = 0
     if self._max_xp_bags > 0 then
         self:SetTextColor(Color.yellow)
@@ -45,16 +45,16 @@ function EHILootTracker:IncreaseTrackerSize(animate)
         local new_w = self._bg_box:w()
         local new_panel_w = self:GetTrackerSize()
         self._text:set_w(new_w)
-        self:AnimIconsX(self._default_bg_size / 2)
+        self:AnimIconsX(self._default_bg_size_half)
         self:AnimatePanelWAndRefresh(new_panel_w)
         self:ChangeTrackerWidth(new_panel_w)
-        self:AnimateAdjustHintX(self._default_bg_size / 2)
+        self:AnimateAdjustHintX(self._default_bg_size_half)
     else
         self:SetBGSize(self._bg_box:w() / 2, "add")
         self._text:set_w(self._bg_box:w())
         self:SetIconsX()
         self:SetAndFitTheText()
-        self:AdjustHintX(self._default_bg_size / 2)
+        self:AdjustHintX(self._default_bg_size_half)
     end
 end
 
@@ -69,16 +69,16 @@ function EHILootTracker:DecreaseTrackerSize(animate)
         local new_w = self._bg_box:w()
         local new_panel_w = self:GetTrackerSize()
         self._text:set_w(new_w)
-        self:AnimIconsX(-(self._default_bg_size / 2))
+        self:AnimIconsX(-self._default_bg_size_half)
         self:AnimatePanelWAndRefresh(new_panel_w)
         self:ChangeTrackerWidth(new_panel_w)
-        self:AnimateAdjustHintX(-(self._default_bg_size / 2))
+        self:AnimateAdjustHintX(-self._default_bg_size_half)
     else
         self:SetBGSize(self._default_bg_size, "set", animate)
         self._text:set_w(self._bg_box:w())
         self:SetIconsX()
         self:SetAndFitTheText()
-        self:AdjustHintX(-(self._default_bg_size / 2))
+        self:AdjustHintX(-self._default_bg_size_half)
     end
 end
 
@@ -135,17 +135,18 @@ else
 end
 
 function EHILootTracker:update(dt)
-    for id, t in pairs(self._loot_check_delay) do
-        t = t - dt
-        if t <= 0 then
+    for id, data in pairs(self._loot_check_delay) do
+        data.t = data.t - dt
+        if data.t <= 0 then
             self._loot_check_delay[id] = nil
             self._loot_check_n = self._loot_check_n - 1
             if self:CanDisableUpdate() then
                 self:RemoveTrackerFromUpdate()
             end
             self:RandomLootDeclinedCheck(id)
-        else
-            self._loot_check_delay[id] = t
+            if data.callback then
+                data.callback(id)
+            end
         end
     end
 end
@@ -155,9 +156,9 @@ function EHILootTracker:CanDisableUpdate()
 end
 
 ---@param id number
----@param t number? Defaults to `2` if not provided
-function EHILootTracker:AddDelayedLootDeclinedCheck(id, t)
-    self._loot_check_delay[id] = t or 2
+---@param callback function?
+function EHILootTracker:AddDelayedLootDeclinedCheck(id, callback)
+    self._loot_check_delay[id] = { t = 2, callback = callback }
     if self._loot_check_n == 0 then
         self:AddTrackerToUpdate()
     end
@@ -277,10 +278,10 @@ function EHILootTracker:CheckUnknownRandomAndMaxRandom()
 end
 
 ---@param id number
----@param force boolean?
+---@param force boolean? This is here to combat desync, use it if element does not have `fail` state
 function EHILootTracker:RandomLootSpawnedCheck(id, force)
     if self._loot_id[id] then
-        if force then -- This is here to combat desync, use it if element does not have "fail" state
+        if force then
             self:IncreaseProgressMax()
         end
         return
@@ -294,12 +295,8 @@ function EHILootTracker:RandomLootDeclinedCheck(id)
     if self._loot_id[id] then
         return
     end
-    self:RandomLootDeclined()
-end
-
----@param id number
-function EHILootTracker:BlockRandomLoot(id)
     self._loot_id[id] = true
+    self:RandomLootDeclined()
 end
 
 ---@param state boolean

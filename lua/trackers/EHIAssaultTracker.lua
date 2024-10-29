@@ -444,6 +444,7 @@ function EHIAssaultTracker:OnEnterSustain(t, sustain_t, already_extended)
     self._sustain_original_t = t
     self._time = sustain_t + assault_values.fade_duration
     self:SetState(State.sustain)
+    self._next_state = State.fade
     if self._cs_assault_extender and not already_extended then
         self:UpdateSustainTime(self:CalculateCSSustainTime(self._assault_t))
     end
@@ -543,65 +544,53 @@ function EHIAssaultTracker:CaptainDefeated()
 end
 
 ---@param state boolean?
-function EHIAssaultTracker:SetEndlessAssault(state)
+---@param new_state_data table?
+function EHIAssaultTracker:SetEndlessAssault(state, new_state_data)
     if self._endless_assault == state or self._captain_arrived then
         return
     end
     self._endless_assault = state
     if state then
         self:SetState(State.endless)
-    elseif not self._is_client then
-        local ai_state = managers.groupai:state()
-        local assault_data = ai_state._task_data.assault or {}
-        local current_state = assault_data.phase
-        if current_state then
-            if current_state == "build" then
-                local t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
-                self._time = self:CalculateAssaultTime() - t_correction
-                self._assault_t = self._assault_t - t_correction
-                self._to_next_state_t = self._to_next_state_t - t_correction
-                self:SetAndFitTheText()
-                self:SetTextColor()
-                self:SetState(State.build)
-                self:AddTrackerToUpdate()
-                self:AnimateBG()
-            elseif current_state == "sustain" then
-                local end_t = ai_state.assault_phase_end_time and ai_state:assault_phase_end_time()
-                if end_t then -- Already takes Crime Spree into account
-                    local t = ai_state._t
-                    self:OnEnterSustain(assault_data.phase_end_t - t, end_t - t, true)
-                    self:SetAndFitTheText()
-                    if self._time <= 10 then
-                        self._check_anim_progress = true
-                        if self._time > 0 then
-                            if self._time > assault_values.fade_duration then
-                                self._to_next_state_t = self._time - assault_values.fade_duration
-                            else
-                                self._to_next_state_t = nil
-                                self:SetState(State.fade)
-                            end
-                        else
-                            self:StartNegativeUpdate()
-                            self:SetState(State.fade)
-                        end
-                        self:AnimateColor()
+    elseif new_state_data then
+        if new_state_data.state == "build" then
+            local t_correction = new_state_data.t_correction
+            self._time = self:CalculateAssaultTime() - t_correction
+            self._assault_t = self._assault_t - t_correction
+            self._to_next_state_t = self._to_next_state_t - t_correction
+            self:SetAndFitTheText()
+            self:SetTextColor()
+            self:SetState(State.build)
+            self:AddTrackerToUpdate()
+            self:AnimateBG()
+        elseif new_state_data.state == "sustain" then
+            self:OnEnterSustain(new_state_data.sustain_original_t, new_state_data.sustain_t, true)
+            self:SetAndFitTheText()
+            if self._time <= 10 then
+                self._check_anim_progress = true
+                if self._time > 0 then
+                    if self._time > assault_values.fade_duration then
+                        self._to_next_state_t = self._time - assault_values.fade_duration
                     else
-                        self:SetTextColor()
+                        self._to_next_state_t = nil
+                        self:SetState(State.fade)
                     end
-                    self:AddTrackerToUpdate()
-                    self:AnimateBG()
                 else
-                    self:PoliceActivityBlocked() -- Current phase does not have end time, refresh at the next Control state
+                    self:StartNegativeUpdate()
+                    self:SetState(State.fade)
                 end
-            elseif current_state == "fade" then
-                self:CaptainDefeated() -- Faster than retyping it here
-                self:SetAndFitTheText()
-                self:AnimateBG()
+                self:AnimateColor()
             else
-                self:PoliceActivityBlocked() -- Current phase is not an assault phase, refresh at the next Control state
+                self:SetTextColor()
             end
+            self:AddTrackerToUpdate()
+            self:AnimateBG()
+        elseif new_state_data.state == "fade" then
+            self:CaptainDefeated() -- Faster than retyping it here
+            self:SetAndFitTheText()
+            self:AnimateBG()
         else
-            self:PoliceActivityBlocked() -- Current phase does not exist for some reason, refresh at the next Control state
+            self:PoliceActivityBlocked() -- Current phase is not an assault phase, refresh at the next Control state
         end
     else
         self:PoliceActivityBlocked() -- Refresh at the next Control state

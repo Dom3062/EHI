@@ -71,6 +71,30 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
     end
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[102941] = { chance = 20, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }
+    other[102956] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[102957] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[102960] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
+        if EHI:IsHost() and not element:_values_ok() then
+            return
+        end
+        self._trackers:CallFunction("Snipers", "SnipersKilled")
+    end)}
+    other[102963] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
+    other[102964] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+        if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", element._values.chance) then -- 20%
+            self._trackers:AddTracker({
+                id = "Snipers",
+                chance = element._values.chance,
+                flash_times = 1,
+                chance_success = true,
+                single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal),
+                class = TT.Sniper.Chance
+            })
+        end
+    end) }
+end
 EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
@@ -82,10 +106,9 @@ EHI.Manager:ParseTriggers({
 })
 local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value
 local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
-local max = math.ceil(value_max / loot_value)
 EHI:ShowAchievementLootCounter({
     achievement = "pal_2",
-    max = max
+    max = math.ceil(value_max / loot_value)
 })
 EHI:ShowLootCounter({
     max_bags_for_level = {

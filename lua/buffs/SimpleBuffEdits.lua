@@ -156,7 +156,6 @@ function EHIStaminaBuffTracker:SetMaxStamina(value)
     self._max_stamina = value
 end
 
----@param ratio number
 function EHIStaminaBuffTracker:SetRatio(ratio)
     local value = ratio / self._max_stamina
     local rounded = self._parent_class.RoundNumber(value, 0.01)
@@ -186,13 +185,10 @@ end
 ---@class EHIStoicBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIStoicBuffTracker = class(EHIBuffTracker)
----@param t number
----@param pos number
 function EHIStoicBuffTracker:Activate(t, pos)
     EHIStoicBuffTracker.super.Activate(self, self._auto_shrug or t, pos)
 end
 
----@param t number
 function EHIStoicBuffTracker:Extend(t)
     EHIStoicBuffTracker.super.Extend(self, self._auto_shrug or t)
 end

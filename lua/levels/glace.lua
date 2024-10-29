@@ -65,6 +65,47 @@ local other =
     [101132] = EHI:AddAssaultDelay({ control = 59 }),
     [100487] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }) -- 30s
 }
+if EHI:IsLootCounterVisible() then
+    other[101732] = { special_function = SF.CustomCode, f = function()
+        EHI:ShowLootCounterNoChecks({
+            max_random = 9,
+            carry_data =
+            {
+                at_loot = true,
+                no_at_loot = true
+            },
+            client_from_start = true
+        })
+        managers.ehi_loot:SetCountOfArmoredTransports(1)
+    end }
+end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[104045] = { id = "SniperHeliSaw", refresh_t = 23 + 2, class = TT.Sniper.Heli }
+    local sniper_respawn_saw = { id = "SniperHeliSaw", special_function = SF.CallCustomFunction, f = "SniperRespawn" }
+    local sniper_killed_saw = { id = "SniperHeliSaw", special_function = SF.CallCustomFunction, f = "SniperKilledUpdateCount" }
+    for i = 2150, 3050, 150 do
+        other[EHI:GetInstanceElementID(100020, i)] = sniper_respawn_saw
+        other[EHI:GetInstanceElementID(100007, i)] = sniper_killed_saw
+    end
+    other[104046] = { id = "SniperHeliSaw", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
+    other[102379] = { id = "SniperHeliConstruction", refresh_t = 23 + 2, class = TT.Sniper.Heli }
+    local sniper_respawn_construction = { id = "SniperHeliConstruction", special_function = SF.CallCustomFunction, f = "SniperRespawn" }
+    local sniper_killed_construction = { id = "SniperHeliConstruction", special_function = SF.CallCustomFunction, f = "SniperKilledUpdateCount" }
+    for i = 3200, 3650, 150 do
+        other[EHI:GetInstanceElementID(100020, i)] = sniper_respawn_construction
+        other[EHI:GetInstanceElementID(100007, i)] = sniper_killed_construction
+    end
+    other[100508] = { id = "SniperHeliConstruction", special_function = SF.CallCustomFunction, f = "NormalSniperSpawned" }
+    other[100512] = sniper_killed_construction
+    other[104048] = { id = "SniperHeliConstruction", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
+    other[104049] = { id = "SniperHeliEscape", time = 23 + 2, refresh_t = 23 + 2, class = TT.Sniper.Heli }
+    local sniper_respawn_escape = { id = "SniperHeliEscape", special_function = SF.CallCustomFunction, f = "SniperRespawn" }
+    local sniper_killed_escape = { id = "SniperHeliEscape", special_function = SF.CallCustomFunction, f = "SniperKilledUpdateCount" }
+    for i = 3800, 4400, 150 do
+        other[EHI:GetInstanceElementID(100020, i)] = sniper_respawn_escape
+        other[EHI:GetInstanceElementID(100007, i)] = sniper_killed_escape
+    end
+end
 
 EHI.Manager:ParseTriggers({
     mission = triggers,

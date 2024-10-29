@@ -61,14 +61,13 @@ local other =
     [101937] = EHI:AddAssaultDelay({ control = 10 + 1 + 40, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } })
 }
 if EHI:IsLootCounterVisible() then
-    local money = 5
-    if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-        money = 4
-    elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
-        money = 3
-    elseif EHI:IsMayhemOrAbove() then
-        money = 2
-    end
+    local money = EHI:GetValueBasedOnDifficulty({
+        normal = 5,
+        hard = 4,
+        veryhard = 4,
+        overkill = 3,
+        mayhem_or_above = 2
+    })
     local function GetNumberOfMethBags()
         for _, index in ipairs(MethlabIndex) do
             local unit_id = EHI:GetInstanceUnitID(100068, index) -- Acid 3
@@ -96,47 +95,56 @@ if EHI:IsLootCounterVisible() then
             max = money + Methbags,
              -- 19 + 2 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 2 cars with possible loot
             max_random = 19 + 2,
-            unknown_random = true
+            unknown_random = true,
+            client_from_start = true
         })
     end)}
     -- Basement
-    local IncreaseMaximumTrigger = EHI:AddCustomCode(function(self)
+    local UnknownRandomLootSpawned = EHI:AddCustomCode(function(self)
         self._loot:IncreaseLootCounterProgressMax()
     end)
     -- Coke
     for i = 102832, 102841, 1 do
-        other[i] = IncreaseMaximumTrigger
+        other[i] = UnknownRandomLootSpawned
     end
     -- Weapons
     for i = 104498, 104506, 1 do
-        other[i] = IncreaseMaximumTrigger
+        other[i] = UnknownRandomLootSpawned
     end
     other[101204] = EHI:AddCustomCode(function(self)
         self._loot:SetUnknownRandomLoot()
     end)
     -- Meth
-    local IncreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = function()
+    ---@param id number
+    local function PossibleMethbagSpawned(id)
         if MethlabExploded then
             return
         end
         Methbags = Methbags + 1
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi_loot:RandomLootSpawned()
-    end }
-    local DecreaseMaximumTrigger = { special_function = SF.CustomCode, f = function()
+        managers.ehi_loot:RandomLootSpawnedCheck(id, true)
+    end
+    ---@param id number
+    local function NoMethBagSpawned(id)
         if MethlabExploded then
+            managers.ehi_loot:RandomLootDeclined()
             return
         end
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi_loot:RandomLootDeclined()
-    end }
+        managers.ehi_loot:RandomLootDeclinedCheck(id)
+    end
+    ---@param id number
+    local function DelayedRejection(id)
+        if MethlabExploded then
+            return
+        end
+        managers.ehi_loot:AddDelayedLootDeclinedCheck(id, NoMethBagSpawned)
+    end
     for i = 9000, 16200, 400 do
-        other[EHI:GetInstanceElementID(100007, i)] = DecreaseMaximumTrigger -- Empty
-        other[EHI:GetInstanceElementID(100011, i)] = DecreaseMaximumTrigger -- Missiles
-        other[EHI:GetInstanceElementID(100012, i)] = DecreaseMaximumTrigger -- Vodka
-        other[EHI:GetInstanceElementID(100013, i)] = DecreaseMaximumTrigger -- Coats
-        other[EHI:GetInstanceElementID(100014, i)] = DecreaseMaximumTrigger -- Cigars
-        other[EHI:GetInstanceElementID(100015, i)] = IncreaseMaximumTrigger2 -- Chemicals for meth
+        managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceUnitID(100008, i), "interact", function()
+            DelayedRejection(i)
+        end)
+        other[EHI:GetInstanceElementID(100015, i)] = { special_function = SF.CustomCode, f = PossibleMethbagSpawned, arg = i } -- Chemicals for meth
     end
     -- Methlab exploded
     local function BlockMeth()
@@ -161,7 +169,7 @@ if EHI:IsLootCounterVisible() then
         CarLootBlocked = true
         managers.ehi_loot:DecreaseLootCounterMaxRandom(CarLootNumber)
     end }
-    local DecreaseMaximumTrigger2 = { special_function = SF.CustomCode, f = function()
+    local CarLootBlockedTrigger = { special_function = SF.CustomCode, f = function()
         if CarLootBlocked then
             return
         end
@@ -173,15 +181,15 @@ if EHI:IsLootCounterVisible() then
         self._loot:RandomLootSpawned()
     end)
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/001
-    other[100523] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
-    other[100550] = DecreaseMaximumTrigger2 -- Car set on fire -- 103846
-    other[106837] = DecreaseMaximumTrigger2 -- Nothing spawned
+    other[100523] = CarLootBlockedTrigger -- Empty money bundle, taken weapons or body spawned
+    other[100550] = CarLootBlockedTrigger -- Car set on fire -- 103846
+    other[106837] = CarLootBlockedTrigger -- Nothing spawned
     -- units/payday2/vehicles/str_vehicle_car_crossover_burned/str_vehicle_car_crossover_burned/001
-    other[100849] = DecreaseMaximumTrigger2 -- Money should spawn, but ElementEnableUnit does not have any unit to spawn and bag counter goes up by 1
+    other[100849] = CarLootBlockedTrigger -- Money should spawn, but ElementEnableUnit does not have any unit to spawn and bag counter goes up by 1
     -- units/payday2/vehicles/str_vehicle_car_sedan_2_burned/str_vehicle_car_sedan_2_burned/006
-    other[100918] = DecreaseMaximumTrigger2 -- Nothing spawned
-    other[100912] = DecreaseMaximumTrigger2 -- Empty money bundle, taken weapons or body spawned
-    other[100553] = DecreaseMaximumTrigger2 -- Car set on fire
+    other[100918] = CarLootBlockedTrigger -- Nothing spawned
+    other[100912] = CarLootBlockedTrigger -- Empty money bundle, taken weapons or body spawned
+    other[100553] = CarLootBlockedTrigger -- Car set on fire
     -- Loot removal (Fire)
     -- coke, meth, money, weapon
     EHI:HookLootRemovalElement({ 104475, 106825, 106826, 106827 })

@@ -1158,9 +1158,9 @@ end
 ---@param elements_to_hook table<number, _>
 function EHIManager:HookElements(elements_to_hook)
     local client = EHI:IsClient()
-    local f = client and function(element, ...)
+    local f = client and function(element, ...) ---@param element MissionScriptElement
         self:Trigger(element._id, element, true)
-    end or function(element, ...)
+    end or function(element, ...) ---@param element MissionScriptElement
         self:Trigger(element._id, element, element._values.enabled)
     end
     local scripts = managers.mission._scripts or {}

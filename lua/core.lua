@@ -308,6 +308,7 @@ _G.EHI =
         Chance = "chance",
         Defend = "defend",
         Restarting = "restarting",
+        TurretEnRoute = "turret_en_route",
 
         -- Heist specific hints
         big_Piggy = "big_piggy",
@@ -471,7 +472,7 @@ _G.EHI =
             -- Optional `count` and `remaining_snipers`
             Count = "EHISniperCountTracker",
             -- Requires `chance`  
-            -- Optional `chance_success` and `sniper_count`
+            -- Optional `chance_success` and `single_sniper`
             Chance = "EHISniperChanceTracker",
             -- Requires `time` and `refresh_t`
             Timed = "EHISniperTimedTracker",
@@ -1633,12 +1634,6 @@ function EHI:GetAchievementIconString(id)
     return achievement and achievement.icon_id
 end
 
----@param id number
----@param waypoint ElementWaypointTrigger
-function EHI:AddWaypointToTrigger(id, waypoint)
-    managers.ehi_manager:AddWaypointToTrigger(id, waypoint)
-end
-
 ---@param id string
 ---@param events string|string[]
 ---@param f function
@@ -2490,6 +2485,27 @@ function EHI:AddEndlessAssault(time, trigger_name, loud_check)
         tbl.condition_function = self.ConditionFunctions.IsLoud
     end
     return tbl
+end
+
+---@param t number
+---@param wp_vector Vector3
+---@param id string?
+---@param trigger_once boolean?
+---@return ElementTrigger
+function EHI:AddIncomingTurret(t, wp_vector, id, trigger_once)
+    return {
+        id = id or "SWATTurretArrival",
+        time = t,
+        icons = { self.Icons.Turret, self.Icons.Goto },
+        class = self.Trackers.Warning,
+        waypoint =
+        {
+            icon = self.Icons.Turret,
+            position = wp_vector
+        },
+        hint = self.Hints.TurretEnRoute,
+        trigger_once = trigger_once
+    }
 end
 
 ---@param single_sniper boolean?

@@ -67,7 +67,7 @@ local triggers = {
     [103750] = { time = 30, id = "ExtraCivilianElevatorRight", icons = { Icon.Door, "hostage" }, class = TT.Warning, hint = Hints.nmh_IncomingCivilian, remove_on_alarm = true },
 
     [102992] = { chance = 1, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, hint = Hints.nmh_PatientFileChance, remove_on_alarm = true },
-    [103013] = { amount = 1, id = "CorrectPaperChance", special_function = SF.IncreaseChance },
+    [103013] = { id = "CorrectPaperChance", special_function = SF.IncreaseChanceFromElement }, -- +1%
     [103006] = { chance = 100, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.nmh_PatientFileChance, remove_on_alarm = true },
     [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker }
 }
@@ -93,7 +93,7 @@ local achievements =
 local other =
 {
     [102344] = EHI:AddAssaultDelay({ special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-        if EHI:IsPlayingFromStart() and not managers.ehi_assault:TrackerExists() then
+        if EHI:IsPlayingFromStart() and not self._assault:TrackerExists() then
             self:CreateTracker(trigger)
         end
     end), trigger_once = true }),

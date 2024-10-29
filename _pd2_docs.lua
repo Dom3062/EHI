@@ -1172,6 +1172,9 @@ end
 ---@field add_load_done_callback fun(self: self, callback_func: function)
 ---@field add_load_sequence_done_callback_handler fun(self: self, callback_func: function)
 
+---@class SkirmishManager
+---@field current_wave_number fun(self: self): number
+
 ---@class SlotManager
 ---@field get_mask fun(self: self, ...: string): number
 
@@ -1240,6 +1243,7 @@ end
 ---@field player PlayerManager
 ---@field preplanning PrePlanningManager
 ---@field savefile SavefileManager
+---@field skirmish SkirmishManager
 ---@field slot SlotManager
 ---@field statistics StatisticsManager
 ---@field trade TradeManager

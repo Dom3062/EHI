@@ -1,3 +1,8 @@
+r269 (29. 10. 2024):
+Assault Tracker: Host will sync current assault data to clients after endless assault has ended
+Armor Buff: Fixed an issue where the buff does not update properly after passive armor regen
+Hotline Miami Day 1: Fixed an issue in Loot Counter where random maximum count could get stuck
+
 r268 (25. 10. 2024):
 Fixed misaligned trackers
 

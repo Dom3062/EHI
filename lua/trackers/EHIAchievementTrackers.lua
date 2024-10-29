@@ -29,8 +29,8 @@ EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_f
 EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
 function EHIAchievementTracker:post_init(params)
     self._beardlib = params.beardlib
-    self:ShowStartedPopup()
-    self:ShowAchievementDescription()
+    self:ShowStartedPopup(params.delay_popup)
+    self:ShowAchievementDescription(params.delay_popup)
     self:PrepareHint(params)
 end
 
@@ -70,8 +70,7 @@ end
 function EHIAchievementTracker:ShowStartedPopup(delay_popup)
     if delay_popup or self._started_popup_showed or self._failed_on_sync or not self._show_started then ---@diagnostic disable-line
         return
-    end
-    if self._popup_type == "sidejob" then
+    elseif self._popup_type == "sidejob" then
         managers.hud:ShowSideJobStartedPopup(self._id, self._daily_job, self._desc) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyStartedPopup(self._id)
@@ -84,23 +83,21 @@ end
 function EHIAchievementTracker:ShowFailedPopup()
     if self._failed_popup_showed or self._achieved_popup_showed or self._no_failure or not self._show_failed then ---@diagnostic disable-line
         return
-    end
-    self._failed_popup_showed = true
-    if self._popup_type == "sidejob" then
+    elseif self._popup_type == "sidejob" then
         managers.hud:ShowSideJobFailedPopup(self._id, self._daily_job, self._desc) ---@diagnostic disable-line
     elseif self._popup_type == "trophy" then
         managers.hud:ShowTrophyFailedPopup(self._id)
     else
         managers.hud:ShowAchievementFailedPopup(self._id, self._beardlib)
     end
+    self._failed_popup_showed = true
 end
 
 ---@param delay_popup boolean?
 function EHIAchievementTracker:ShowAchievementDescription(delay_popup)
     if delay_popup or self._desc_showed or self._failed_on_sync or not self._show_desc then ---@diagnostic disable-line
         return
-    end
-    if self._popup_type == "achievement" then
+    elseif self._popup_type == "achievement" then
         managers.hud:ShowAchievementDescription(self._id, self._beardlib)
     elseif self._popup_type == "sidejob" then
         managers.hud:ShowSideJobDescription(self._id, self._daily_job) ---@diagnostic disable-line

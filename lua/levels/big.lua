@@ -153,9 +153,9 @@ if EHI:GetOption("show_waypoints") then
     --units/payday2/props/gen_prop_construction_crane/gen_prop_construction_crane_arm
     tbl[105111] = { f = function(id, unit_data, unit)
         local t = { unit = unit }
-        EHI:AddWaypointToTrigger(104091, t)
-        EHI:AddWaypointToTrigger(104261, t)
-        EHI:AddWaypointToTrigger(104069, t)
+        managers.ehi_manager:AddWaypointToTrigger(104091, t)
+        managers.ehi_manager:AddWaypointToTrigger(104261, t)
+        managers.ehi_manager:AddWaypointToTrigger(104069, t)
         unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
             managers.ehi_waypoint:RemoveWaypoint("CraneLiftUp")
             managers.ehi_waypoint:RemoveWaypoint("CraneMoveLeft")

@@ -164,9 +164,9 @@ function EHILootManager:SyncSecuredLoot(tracker_id)
 end
 
 ---@param id number
----@param t number? Defaults to `2` if not provided
-function EHILootManager:AddDelayedLootDeclinedCheck(id, t)
-    self._trackers:CallFunction("LootCounter", "AddDelayedLootDeclinedCheck", id, t)
+---@param callback function?
+function EHILootManager:AddDelayedLootDeclinedCheck(id, callback)
+    self._trackers:CallFunction("LootCounter", "AddDelayedLootDeclinedCheck", id, callback)
 end
 
 ---@param max number?
@@ -195,7 +195,7 @@ function EHILootManager:SetLootCounterMaxRandom(max_random)
 end
 
 ---@param id string|number Element ID
----@param force boolean? Force loot spawn event if the element does not have "fail" state (desync workaround)
+---@param force boolean? Force loot spawn event if the element does not have `fail` state (desync workaround)
 function EHILootManager:RandomLootSpawnedCheck(id, force)
     self._trackers:CallFunction("LootCounter", "RandomLootSpawnedCheck", id, force)
 end

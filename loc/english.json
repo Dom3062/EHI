@@ -153,6 +153,7 @@
     "ehi_hint_hostage" : "Hostage Counter",
     "ehi_hint_looped_camera" : "Looped Camera",
     "ehi_hint_piggy" : "Piggy Bank",
+    "ehi_hint_turret_en_route" : "Enemy Turret En Route",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",

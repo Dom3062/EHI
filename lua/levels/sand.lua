@@ -151,7 +151,7 @@ local tbl = {}
 if EHI:GetOption("show_waypoints") then
     local function f(id, unit_data, unit)
         local trigger_id = unit_data.trigger_id
-        EHI:AddWaypointToTrigger(trigger_id, { unit = unit })
+        managers.ehi_manager:AddWaypointToTrigger(trigger_id, { unit = unit })
         unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
             managers.ehi_waypoint:RemoveWaypoint(triggers[trigger_id].id)
         end)
