@@ -1,5 +1,6 @@
 ---@class EHIWaypoint
 ---@field new fun(self: self, waypoint: WaypointDataTable, params: table, parent_class: EHIWaypointManager): self
+---@field _forced_time number? Forces specific time in the waypoint
 EHIWaypoint = class()
 EHIWaypoint._update = true
 EHIWaypoint._fade_time = 5
@@ -10,13 +11,13 @@ EHIWaypoint._default_color = Color.white
 function EHIWaypoint:init(waypoint, params, parent_class)
     self:pre_init(params)
     self._id = params.id --[[@as string]]
-    self._time = params.time or 0
+    self._time = self._forced_time or params.time or 0
     self._timer = waypoint.timer_gui
     self._bitmap = waypoint.bitmap
     self._arrow = waypoint.arrow
     self._bitmap_world = waypoint.bitmap_world -- VR
     self._parent_class = parent_class
-    self._remove_on_alarm = params.remove_on_alarm --Removes waypoint when alarm sounds
+    self._remove_on_alarm = params.remove_on_alarm -- Removes waypoint when alarm sounds
     if params.force_format then
         self._timer:set_text(self:Format())
     end

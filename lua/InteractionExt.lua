@@ -20,6 +20,7 @@ if EHI:GetOption("show_pager_callback") then
     ---@class EHIPagerWaypoint : EHIWarningWaypoint
     ---@field super EHIWarningWaypoint
     EHIPagerWaypoint = class(EHIWarningWaypoint)
+    EHIPagerWaypoint._forced_time = 12
     function EHIPagerWaypoint:SetAnswered()
         self:RemoveWaypointFromUpdate()
         self._timer:stop()
@@ -48,7 +49,6 @@ if EHI:GetOption("show_pager_callback") then
             end
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                    time = 12,
                     texture = "guis/textures/pd2/specialization/icons_atlas",
                     text_rect = {64, 256, 64, 64},
                     position = self._unit:position(),
