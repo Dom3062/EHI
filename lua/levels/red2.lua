@@ -109,7 +109,10 @@ local achievements =
             [101544] = { special_function = SF.CallTrackerManagerFunction, f = "StartTrackerCountdown", arg = { "cac_10" }, trigger_once = true },
             [107066] = { special_function = SF.IncreaseProgressMax },
             [107067] = { special_function = SF.IncreaseProgress },
-        }
+        },
+        cleanup_callback = function()
+            _G.EHIcac10Tracker = nil
+        end
     }
 }
 

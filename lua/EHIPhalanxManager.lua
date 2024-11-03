@@ -1,6 +1,7 @@
 local EHI = EHI
 ---@class EHIPhalanxManager
 EHIPhalanxManager = {}
+EHIPhalanxManager._no_endless_assault_check = { pbr2 = true }
 EHIPhalanxManager._requires_manual_on_exec = { dinner = true, slaughter_house_new = true }
 EHIPhalanxManager._disabled_in_levels = { born = true }
 EHIPhalanxManager._counter_trigger = 2
@@ -95,9 +96,11 @@ function EHIPhalanxManager:AddTracker()
     Hooks:PostHook(HUDManager, "sync_end_assault", "EHI_PhalanxManager_sync_end_assault", function(...)
         self._trackers:CallFunction("CaptainChance", "AssaultEnd")
     end)
-    EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
-        self._trackers:CallFunction("CaptainChance", "SetEndlessAssault", mode == "endless")
-    end)
+    if not self._no_endless_assault_check[Global.game_settings.level_id] then
+        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+            self._trackers:CallFunction("CaptainChance", "SetEndlessAssault", mode == "endless")
+        end)
+    end
 end
 
 if EHI:IsModInstalled("Allow Winters Spawn Offline", "Offyerrocker") then

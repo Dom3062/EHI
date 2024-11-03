@@ -46,7 +46,6 @@ tweak_data.ehi =
         ammo_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/ammo_bag" },
         first_aid_kit = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/first_aid_kit" },
         bodybags_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/bodybags_bag" },
-        frag_grenade = tweak_data.hud_icons.frag_grenade,
 
         minion = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 512, 64, 64} },
         heavy = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {192, 64, 64, 64} },
@@ -675,18 +674,6 @@ tweak_data.ehi =
                 option = "duration"
             }
         },
-        damage_control_cooldown =
-        {
-            bad = true,
-            deck = true,
-            folder = "myh",
-            y = 1,
-            deck_option =
-            {
-                deck = "stoic",
-                option = "cooldown"
-            }
-        },
         TagTeamEffect =
         {
             deck = true,
@@ -1064,6 +1051,11 @@ tweak_data.ehi.buff.tag_team_cooldown = deep_clone(tweak_data.ehi.buff.chico_inj
 tweak_data.ehi.buff.tag_team_cooldown.folder = "ecp"
 tweak_data.ehi.buff.tag_team_cooldown.deck_option.deck = "tag_team"
 tweak_data.ehi.buff.tag_team_cooldown.deck_option.option = "cooldown"
+tweak_data.ehi.buff.damage_control_cooldown = deep_clone(tweak_data.ehi.buff.damage_control)
+tweak_data.ehi.buff.damage_control_cooldown.bad = true
+tweak_data.ehi.buff.damage_control_cooldown.y = 1
+tweak_data.ehi.buff.damage_control_cooldown.deck_option.option = "cooldown"
+tweak_data.ehi.buff.damage_control_cooldown.class = "EHIReplenishThrowableBuffTracker"
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.folder = "joy"
 tweak_data.ehi.buff.pocket_ecm_jammer_cooldown.deck_option.deck = "hacker"

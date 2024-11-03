@@ -164,7 +164,6 @@ EHI:AddOnSpawnedCallback(function()
     end
     if AbilityKey then
         AbilityKey = AbilityKey .. "_cooldown"
-        managers.ehi_buff._cache.Ability = AbilityKey
         Hooks:PreHook(self, "add_grenade_amount", "EHI_Replenish_Throwable", function(pm, amount, ...)
             if amount > 0 then
                 managers.ehi_buff:CallFunction(AbilityKey, "Replenished")
@@ -214,7 +213,6 @@ if meele_boost_tweak then
     local bloodthirst_ratio = EHI:GetBuffOption("bloodthirst_ratio") / 100
     local max_multiplier = meele_boost_tweak.max_multiplier or 16
     local bloodthirst_max = false
-    tweak_data.ehi.buff.melee_damage_stacking.max = max_multiplier
     if bloodthirst_ratio == 0 then
         EHI:AddOnSpawnedCallback(function()
             if managers.player:has_category_upgrade("player", "melee_damage_stacking") then
@@ -243,9 +241,9 @@ if meele_boost_tweak then
             managers.ehi_buff:AddGauge("melee_damage_stacking", self._melee_dmg_mul / max_multiplier, self._melee_dmg_mul)
         end
         bloodthirst_max = false -- Reset the lock
-        if self:has_category_upgrade("player", "melee_kill_increase_reload_speed") then
+        if bloodthirst_reload and self:has_category_upgrade("player", "melee_kill_increase_reload_speed") then
             local data = self:upgrade_value("player", "melee_kill_increase_reload_speed", 0)
-            if data ~= 0 and bloodthirst_reload then
+            if data ~= 0 then
                 managers.ehi_buff:AddBuff("melee_kill_increase_reload_speed", data[2])
             end
         end

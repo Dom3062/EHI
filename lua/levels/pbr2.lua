@@ -78,7 +78,6 @@ local achievements =
         elements =
         {
             [102504] = { status = "land", class = "EHIcac33Tracker" },
-            [103486] = { status = "ok", special_function = SF.SetAchievementStatus },
             [103479] = { special_function = SF.SetAchievementComplete },
             [103475] = { special_function = SF.SetAchievementFailed },
             [103487] = { special_function = SF.CallCustomFunction, f = "Activate" },
@@ -101,6 +100,11 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100156] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100148] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100146] = { id = "Snipers", special_function = SF.DecreaseCounter }
+end
+if EHI:IsHost() and EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
+    other[103489] = EHI:AddCustomCode(function(self)
+        self._trackers:RemoveTracker("CaptainChance")
+    end)
 end
 
 EHI.Manager:ParseTriggers({

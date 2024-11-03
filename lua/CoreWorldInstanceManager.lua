@@ -667,7 +667,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     triggers[final_index] = new_trigger
                 end
             end
-            managers.ehi_manager:ParseMissionInstanceTriggers(triggers, defer_loading_waypoints)
+            managers.ehi_manager:ParseMissionTriggers(triggers, nil, nil, defer_loading_waypoints)
             if next(waypoints) then
                 EHI:DisableWaypoints(waypoints)
             end

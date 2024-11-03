@@ -44,7 +44,7 @@ end
 function EHIMinionTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconsX(addition and self._default_bg_size_half or -self._default_bg_size_half)
+    self:AnimIconsX()
     self:AnimateAdjustHintX(addition and self._default_bg_size_half or -self._default_bg_size_half)
 end
 
@@ -75,18 +75,18 @@ function EHIMinionTracker:Reorganize(addition)
         self:AlignTextOnHalfPos()
         if not addition then
             self._panel_w = self._default_panel_w
-            self:AnimateMovement()
             self._bg_box:set_w(self._default_bg_size)
+            self:AnimateMovement()
         end
     elseif addition then
         self._panel_w = self._panel_w + self._default_bg_size_half
-        self:AnimateMovement(true)
         self:SetBGSize(self._default_bg_size_half, "add", true)
+        self:AnimateMovement(true)
         self:AlignTextOnHalfPos()
     else
         self._panel_w = self._panel_w - self._default_bg_size_half
-        self:AnimateMovement()
         self:SetBGSize(self._default_bg_size_half, "short", true)
+        self:AnimateMovement()
         self:AlignTextOnHalfPos()
     end
 end

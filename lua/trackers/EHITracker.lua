@@ -56,6 +56,44 @@ local function left(o, target_x)
 end
 local panel_w
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or EHI:IsVerticalAlignmentAndOption("tracker_vertical_w_anim") == 2 then -- Horizontal; Right to Left or Panel W anim is Right to Left and Vertical alignment
+    if EHI:GetOption("show_tracker_bg") then
+        ---@param o PanelBaseObject
+        ---@param target_w number
+        ---@param from_w number?
+        ---@param self EHITracker?
+        panel_w = function(o, target_w, from_w, self)
+            local TOTAL_T = 0.18
+            from_w = from_w or o:w()
+            local from_x = o:x()
+            local abs = -(from_w - target_w)
+            local target_x = from_x + -(target_w - from_w)
+            local t = (1 - abs / abs) * TOTAL_T
+            while TOTAL_T > t do
+                local dt = coroutine.yield()
+                t = math.min(t + dt, TOTAL_T)
+                local lerp = t / TOTAL_T
+                o:set_x(math.lerp(from_x, target_x, lerp))
+                o:set_w(math.lerp(from_w, target_w, lerp))
+            end
+            if self then
+                self:RedrawPanel()
+            end
+        end
+    else -- No need to animate as the background is not visible
+        ---@param o PanelBaseObject
+        ---@param target_w number
+        ---@param from_w number?
+        ---@param self EHITracker?
+        panel_w = function(o, target_w, from_w, self)
+            from_w = from_w or o:w()
+            o:set_x(o:x() + -(target_w - from_w))
+            o:set_w(target_w)
+            if self then
+                self:RedrawPanel()
+            end
+        end
+    end
+elseif EHI:GetOption("show_tracker_bg") then
     ---@param o PanelBaseObject
     ---@param target_w number
     ---@param from_w number?
@@ -63,37 +101,25 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or 
     panel_w = function(o, target_w, from_w, self)
         local TOTAL_T = 0.18
         from_w = from_w or o:w()
-        local from_x = o:x()
         local abs = -(from_w - target_w)
-        local target_x = from_x + -(target_w - from_w)
         local t = (1 - abs / abs) * TOTAL_T
         while TOTAL_T > t do
             local dt = coroutine.yield()
             t = math.min(t + dt, TOTAL_T)
             local lerp = t / TOTAL_T
-            o:set_x(math.lerp(from_x, target_x, lerp))
             o:set_w(math.lerp(from_w, target_w, lerp))
         end
         if self then
             self:RedrawPanel()
         end
     end
-else
+else -- No need to animate as the background is not visible
     ---@param o PanelBaseObject
     ---@param target_w number
     ---@param from_w number?
     ---@param self EHITracker?
     panel_w = function(o, target_w, from_w, self)
-        local TOTAL_T = 0.18
-        from_w = from_w or o:w()
-        local abs = -(from_w - target_w)
-        local t = (1 - abs / abs) * TOTAL_T
-        while TOTAL_T > t do
-            local dt = coroutine.yield()
-            t = math.min(t + dt, TOTAL_T)
-            local lerp = t / TOTAL_T
-            o:set_w(math.lerp(from_w, target_w, lerp))
-        end
+        o:set_w(target_w)
         if self then
             self:RedrawPanel()
         end
@@ -227,7 +253,6 @@ end
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
 ---@field _forced_icon_color Color[]? Forces specific icon color in the tracker
 ---@field _icons PanelBitmap[]
----@field _icons_x number[]
 ---@field _panel_from_w number? Used in Panel Width animation
 ---@field _panel_override_w number?
 ---@field _hint_no_localization boolean?
@@ -309,7 +334,6 @@ function EHITracker:init(panel, params, parent_class)
         self:FitTheText()
     end
     if self._n_of_icons > 0 then
-        self._icons_x = {}
         self:CreateIcons(tracker_icons) ---@diagnostic disable-line
     end
     self:OverridePanel()
@@ -432,19 +456,19 @@ function EHITracker:SetIconsX()
     end
 end
 
----@param x number
+---@param x number?
 function EHITracker:AnimIconsX(x)
     if self._ICON_LEFT_SIDE_START then
         return
     end
+    x = x or self._bg_box:w() + self._gap_scaled
     self._icon_anims = self._icon_anims or {}
     for i, icon in ipairs(self._icons) do
         if self._icon_anims[i] then
             icon:stop(self._icon_anims[i])
         end
-        local new_x = self._icons_x[i] + x
-        self._icon_anims[i] = icon:animate(icon_x, new_x)
-        self._icons_x[i] = new_x
+        local pos = i - 1
+        self._icon_anims[i] = icon:animate(icon_x, x + (self._icon_gap_size_scaled * pos))
     end
 end
 
@@ -511,7 +535,15 @@ function EHITracker:CreateIcon(i, texture, texture_rect, x, visible, color, alph
         w = self._icon_size_scaled,
         h = self._icon_size_scaled
     })
-    self._icons_x[i] = x
+end
+
+---@param i number
+function EHITracker:RemoveIcon(i)
+    local icon = table.remove(self._icons, i) ---@cast icon PanelBitmap?
+    if icon then
+        self._panel:remove(icon)
+        table.remove(self._icon_anims or {}, i)
+    end
 end
 
 ---@param params EHITracker.CreateText?

@@ -49,11 +49,11 @@ function EHIBikerBuffTracker:Trigger(kills)
     local cd
     if kills < self._max_kills then
         cd = self._player_manager._wild_kill_triggers[kills] - t
-        self:SetIconColor(Color.white)
+        self._icon:set_color(Color.white)
         self._hint:set_text(tostring(kills))
     else
         cd = self._player_manager._wild_kill_triggers[1] - t
-        self:SetIconColor(Color.red)
+        self._icon:set_color(Color.red)
         self._hint:set_text(tostring(self._max_kills))
         self._retrigger = true
     end
@@ -62,11 +62,6 @@ function EHIBikerBuffTracker:Trigger(kills)
     else
         self:Activate(cd)
     end
-end
-
----@param color Color
-function EHIBikerBuffTracker:SetIconColor(color)
-    self._panel:child("icon"):set_color(color)
 end
 
 ---@param t number

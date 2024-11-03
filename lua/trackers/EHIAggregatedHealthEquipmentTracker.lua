@@ -56,7 +56,11 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     if self._active_icons ~= icons then
         local icon_size = (self._icon_gap_size_scaled * icons)
         if self._hint_positioned then
-            self:AnimateAdjustHintX(self._active_icons < icons and self._icon_gap_size_scaled or -self._icon_gap_size_scaled, true)
+            if self._ICON_LEFT_SIDE_START and not self._VERTICAL_ANIM_W_LEFT and not self._HORIZONTAL_ALINGMENT then
+                self:AnimateAdjustHintX(self._active_icons < icons and self._icon_gap_size_scaled or -self._icon_gap_size_scaled) -- TODO: Fix this inconsistency
+            else
+                self:AnimateAdjustHintX(self._active_icons < icons and self._icon_gap_size_scaled or -self._icon_gap_size_scaled, true)
+            end
         end
         self:ChangeTrackerWidth(self._bg_box:w() + icon_size, true)
         self._active_icons = icons

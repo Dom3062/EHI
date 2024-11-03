@@ -215,7 +215,7 @@ _G.EHI =
         -- See: `ElementPreplanning` in Mission Script
         AddTimeByPreplanning = 50,
         -- Autosets Vanilla settings for Waypoints  
-        ---@see EHIManager.ParseMissionTriggers
+        ---@see EHIManager.ParseOtherTriggers
         ShowWaypoint = 51,
         -- Requires `id` and `max`
         DecreaseProgressMax = 52,

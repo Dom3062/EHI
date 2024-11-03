@@ -2,9 +2,8 @@
 ---@field super EHIBuffTracker
 EHIHealthRegenBuffTracker = class(EHIBuffTracker)
 function EHIHealthRegenBuffTracker:post_init(...)
-    local icon = self._panel:child("icon") --[[@as PanelBitmap]] -- Hostage Taker regen
-    self._panel:bitmap({ -- Muscle regen
-        name = "icon2",
+    local icon = self._icon -- Hostage Taker regen
+    self._icon2 = self._panel:bitmap({ -- Muscle regen
         texture = "guis/textures/pd2/specialization/icons_atlas",
         texture_rect = { 4 * 64, 64, 64, 64 },
         color = Color.white,
@@ -13,8 +12,7 @@ function EHIHealthRegenBuffTracker:post_init(...)
         w = icon:w(),
         h = icon:h()
     })
-    self._panel:bitmap({
-        name = "icon3",
+    self._icon3 = self._panel:bitmap({
         texture = tweak_data.hud_icons.skill_5.texture,
         texture_rect = tweak_data.hud_icons.skill_5.texture_rect,
         color = Color.white,
@@ -85,17 +83,17 @@ function EHIHealthRegenBuffTracker:SetIcon(buff)
     if self._buff == buff then
         return
     elseif buff == "hostage_taker" then
-        self._panel:child("icon"):set_visible(true)
-        self._panel:child("icon2"):set_visible(false)
-        self._panel:child("icon3"):set_visible(false)
+        self._icon:set_visible(true)
+        self._icon2:set_visible(false)
+        self._icon3:set_visible(false)
     elseif buff == "muscle" then
-        self._panel:child("icon2"):set_visible(true)
-        self._panel:child("icon"):set_visible(false)
-        self._panel:child("icon3"):set_visible(false)
+        self._icon2:set_visible(true)
+        self._icon:set_visible(false)
+        self._icon3:set_visible(false)
     else -- AIRegen
-        self._panel:child("icon3"):set_visible(true)
-        self._panel:child("icon2"):set_visible(false)
-        self._panel:child("icon"):set_visible(false)
+        self._icon3:set_visible(true)
+        self._icon2:set_visible(false)
+        self._icon:set_visible(false)
     end
     self._buff = buff
 end
@@ -316,4 +314,10 @@ function EHIReplenishThrowableBuffTracker:Replenished()
     self._replenish_count_running = math.max(0, self._replenish_count_running - 1)
     self:SetHintText(self._replenish_count_running)
     self._hint:set_visible(self._replenish_count_running >= 2)
+end
+
+function EHIReplenishThrowableBuffTracker:SetCustodyState(state)
+    if state and self._active then
+        self:Deactivate()
+    end
 end

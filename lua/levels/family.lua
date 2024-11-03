@@ -18,16 +18,12 @@ local triggers = {
 
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_4/str_vehicle_van_family_jewels_4/escape1_van
     [100752] = { time = 336/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
-    [101350] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101119 } },
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_3/str_vehicle_van_family_jewels_3/escape2_van
     [100753] = { time = VanDelay, id = "Van", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape },
-    [101351] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101284 } },
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_2/str_vehicle_van_family_jewels_2/escape3_van
     [100754] = { time = 375/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
-    [101352] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101285 } },
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_5/str_vehicle_van_family_jewels_5/escape4_van
-    [100755] = { time = 437/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
-    [101353] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101286 } }
+    [100755] = { time = 437/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
 }
 
 ---@type ParseAchievementTable
@@ -77,6 +73,16 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_4/str_vehicle_van_family_jewels_4/escape1_van
+    other[101350] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101119 } }
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_3/str_vehicle_van_family_jewels_3/escape2_van
+    other[101351] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101284 } }
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_2/str_vehicle_van_family_jewels_2/escape3_van
+    other[101352] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101285 } }
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_5/str_vehicle_van_family_jewels_5/escape4_van
+    other[101353] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101286 } }
+end
 if EHI:IsLootCounterVisible() then
     other[100107] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({

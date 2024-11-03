@@ -18,7 +18,6 @@ function FakeEHIBuffTracker:init(panel, params)
     self._shape = params.shape
     self._scale = params.scale
     self._id = params.id
-    self._parent_panel = panel
     self._panel = panel:panel({
         name = self._id,
         w = buff_w,
@@ -26,8 +25,7 @@ function FakeEHIBuffTracker:init(panel, params)
         y = panel:bottom() - buff_h - params.y + (params.saferect_y / 2),
         visible = params.visible
     })
-    local icon = self._panel:bitmap({
-        name = "icon",
+    self._icon = self._panel:bitmap({
         texture = params.texture,
         texture_rect = params.texture_rect,
         color = params.good and Color.white or Color.red,
@@ -65,9 +63,9 @@ function FakeEHIBuffTracker:init(panel, params)
         name = "progress_circle",
         render_template = "VertexColorTexturedRadial",
         layer = 5,
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h(),
+        y = self._icon:y(),
+        w = self._icon:w(),
+        h = self._icon:h(),
         texture = params.good and "guis/textures/pd2_mod_ehi/buff_cframe" or "guis/textures/pd2_mod_ehi/buff_cframe_debuff",
         texture_rect = self._rect_circle,
         visible = self._shape == 2 and self._show_progress
@@ -76,9 +74,9 @@ function FakeEHIBuffTracker:init(panel, params)
         name = "progress_square",
         render_template = "VertexColorTexturedRadial",
         layer = 5,
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h(),
+        y = self._icon:y(),
+        w = self._icon:w(),
+        h = self._icon:h(),
         texture = params.good and "guis/textures/pd2_mod_ehi/buff_sframe" or "guis/textures/pd2_mod_ehi/buff_sframe_debuff",
         texture_rect = self._rect_square,
         visible = self._shape == 1 and self._show_progress
@@ -122,9 +120,9 @@ function FakeEHIBuffTracker:init(panel, params)
     if self._show_progress then
         local size = 24 * self._scale
         local move = 4 * self._scale
-        icon:set_size(size, size)
-        icon:set_x(icon:x() + move)
-        icon:set_y(icon:y() + move)
+        self._icon:set_size(size, size)
+        self._icon:set_x(self._icon:x() + move)
+        self._icon:set_y(self._icon:y() + move)
     end
     local panel_w = self._panel:w()
     self._panel_w_gap = panel_w + self._gap
@@ -215,7 +213,7 @@ function FakeEHIBuffTracker:UpdateProgressVisibility(visibility, dont_force)
     if dont_force then
         return
     end
-    local icon = self._panel:child("icon") --[[@as PanelBitmap]]
+    local icon = self._icon
     if self._show_progress then
         local size = 24 * self._scale
         local move = 4 * self._scale
@@ -249,8 +247,8 @@ function FakeEHIBuffTracker:Format()
 end
 
 function FakeEHIBuffTracker:destroy()
-    if alive(self._panel) and alive(self._parent_panel) then
-        self._parent_panel:remove(self._panel)
+    if alive(self._panel) then
+        self._panel:parent():remove(self._panel)
     end
 end
 

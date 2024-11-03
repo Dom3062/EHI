@@ -117,9 +117,9 @@ function EHIGroupTracker:AnimateMovement(n, delete)
     end
     self:AnimatePanelWAndRefresh(self._panel_override_w)
     self:ChangeTrackerWidth(self._panel_override_w)
-    self:AnimIconsX(delete and -self._default_bg_size or self._default_bg_size)
-    self:AnimateAdjustHintX(delete and -self._default_bg_size or self._default_bg_size)
     self:SetBGSize(self._default_bg_size * n, "set", true)
+    self:AnimateAdjustHintX(delete and -self._default_bg_size or self._default_bg_size)
+    self:AnimIconsX()
 end
 
 function EHIGroupTracker:AddUnit()

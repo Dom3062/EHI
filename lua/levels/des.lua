@@ -6,7 +6,7 @@ EHIChemSetTracker = class(EHITracker)
 EHIChemSetTracker._forced_icons = { Icon.Methlab }
 EHIChemSetTracker._update = false
 EHIChemSetTracker._init_create_text = false
-function EHIChemSetTracker:OverridePanel()
+function EHIChemSetTracker:post_init(params)
     self:SetBGSize(self._bg_box:w() / 2)
     self:SetIconsX()
     local third = self._bg_box:w() / 3

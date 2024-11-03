@@ -31,7 +31,6 @@ function EHIBuffManager:init_finalize(hud, panel)
     self._update_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
     self._visible_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
     self._n_visible = 0
-    self._cache = {}
     self._gap = 6
     self._x = EHI:GetOption(_G.IS_VR and "buffs_vr_x_offset" or "buffs_x_offset") --[[@as number]]
     local path = EHI.LuaPath .. "buffs/"
@@ -214,7 +213,6 @@ function EHIBuffManager:SetCustodyState(state)
     for _, buff in pairs(self._buffs or {}) do
         buff:SetCustodyState(state)
     end
-    self:RemoveAbilityCooldown(state)
 end
 
 function EHIBuffManager:SwitchToLoudMode()
@@ -336,16 +334,6 @@ end
 ---@param id string
 function EHIBuffManager:_remove_buff_from_update(id)
     self._update_buffs[id] = nil
-end
-
----@param in_custody boolean
-function EHIBuffManager:RemoveAbilityCooldown(in_custody)
-    if in_custody then
-        local ability = self._cache and self._cache.Ability
-        if ability then
-            self:RemoveBuff(ability)
-        end
-    end
 end
 
 ---@param dt number

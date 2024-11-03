@@ -70,7 +70,6 @@ function EHIBuffTracker:init(panel, params, parent_class)
     self._parent_class = parent_class
     self._enable_in_loud = params.enable_in_loud
     self._panel = panel:panel({
-        name = self._id,
         w = params.w,
         h = params.h,
         x = params.x,
@@ -78,8 +77,7 @@ function EHIBuffTracker:init(panel, params, parent_class)
         alpha = 0,
         visible = true
     })
-    local icon = self._panel:bitmap({
-        name = "icon",
+    self._icon = self._panel:bitmap({
         texture = params.texture,
         texture_rect = params.texture_rect,
         color = params.icon_color or params.good and Color.white or Color.red,
@@ -88,34 +86,34 @@ function EHIBuffTracker:init(panel, params, parent_class)
         w = params.w,
         h = params.w
     })
-    local bg_box = self._panel:panel({
-		x = 0,
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h()
-	})
     if circle_shape then
-        bg_box:bitmap({
+        self._panel:bitmap({
             layer = -1,
-            w = bg_box:w(),
-            h = bg_box:h(),
+            x = 0,
+            y = w_half,
+            w = params.w,
+            h = params.w,
             texture = "guis/textures/pd2_mod_ehi/buff_cframe_bg",
             color = Color.black:with_alpha(0.2)
         })
     else
-        bg_box:rect({
+        self._panel:rect({
             blend_mode = "normal",
             halign = "grow",
             alpha = 0.25,
             layer = -1,
             valign = "grow",
+            x = 0,
+            y = w_half,
+            w = params.w,
+            h = params.w,
             color = Color(1, 0, 0, 0),
             visible = true
         })
     end
     self._hint = self._panel:text({
         text = params.text or "",
-        w = self._panel:w(),
+        w = params.w,
         h = w_half,
         font = tweak_data.menu.pd2_large_font,
 		font_size = w_half,
@@ -127,8 +125,8 @@ function EHIBuffTracker:init(panel, params, parent_class)
     self:FitTheText(self._hint)
     self._text = self._panel:text({
         text = "100s",
-        w = self._panel:w(),
-        h = self._panel:h() - bg_box:h() - w_half,
+        w = params.w,
+        h = params.h - params.w - w_half,
         font = tweak_data.menu.pd2_large_font,
 		font_size = w_half,
         color = Color.white,
@@ -141,9 +139,9 @@ function EHIBuffTracker:init(panel, params, parent_class)
     self._progress = self._panel:bitmap({
         render_template = "VertexColorTexturedRadial",
         layer = 5,
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h(),
+        y = w_half,
+        w = params.w,
+        h = params.w,
         texture = params.good and texture_good or texture_bad,
         texture_rect = rect,
         color = self._progress_bar,
@@ -152,9 +150,9 @@ function EHIBuffTracker:init(panel, params, parent_class)
     if progress_visible then
         local size = 24 * params.scale
         local move = 4 * params.scale
-        icon:set_size(size, size)
-        icon:set_x(icon:x() + move)
-        icon:set_y(icon:y() + move)
+        self._icon:set_size(size, size)
+        self._icon:set_x(self._icon:x() + move)
+        self._icon:set_y(self._icon:y() + move)
     end
     self._panel:set_center_x(panel:center_x())
     self._active = false
@@ -191,9 +189,9 @@ end
 ---@param texture_rect table?
 function EHIBuffTracker:UpdateIcon(texture, texture_rect)
     if texture_rect then
-        self._panel:child("icon"):set_image(texture, unpack(texture_rect)) ---@diagnostic disable-line
+        self._icon:set_image(texture, unpack(texture_rect))
     else
-        self._panel:child("icon"):set_image(texture) ---@diagnostic disable-line
+        self._icon:set_image(texture)
     end
 end
 

@@ -89,7 +89,7 @@ end
 function EHITradeDelayTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconsX(addition and self._panel_half or -self._panel_half)
+    self:AnimIconsX()
     self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
 end
 

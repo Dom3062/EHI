@@ -127,9 +127,9 @@ local other =
     [101134] = { time = 150 + anim_delay, special_function = AddToCache },
     [101144] = { time = 130 + anim_delay, special_function = AddToCache },
 
-    [101148] = { special_function = GetFromCache },
-    [101149] = { special_function = GetFromCache },
-    [101150] = { special_function = GetFromCache }
+    [101148] = { special_function = GetFromCache, hint = Hints.Loot },
+    [101149] = { special_function = GetFromCache, hint = Hints.Loot },
+    [101150] = { special_function = GetFromCache, hint = Hints.Loot }
 }
 if EHI:GetOption("show_mission_trackers") then
     other[101148].icons = Icon.BoatLootDrop

@@ -78,6 +78,7 @@ function EHIAchievementManager:AddTFCallback(achievement_id, id)
     managers.mission:add_global_event_listener(id, { "TheFixes_AchievementFailed" }, function(a_id)
         if a_id == achievement_id then
             self:SetAchievementFailed(achievement_id)
+            managers.mission:remove_global_event_listener(id)
         end
     end)
     return cleanup_callback

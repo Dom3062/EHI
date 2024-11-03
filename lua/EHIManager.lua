@@ -876,32 +876,33 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     self:ParseMissionTriggers(new_triggers.mission, trigger_id_all, trigger_icons_all)
 end
 
----@param new_triggers table<number, ElementTrigger>
+---@param other_triggers table<number, ElementTrigger>
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
-function EHIManager:ParseOtherTriggers(new_triggers, trigger_id_all, trigger_icons_all)
-    for id, data in pairs(new_triggers) do
+function EHIManager:ParseOtherTriggers(other_triggers, trigger_id_all, trigger_icons_all)
+    for id, data in pairs(other_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
         -- Unregister custom special function if it is there
         if data.condition == false then
             if data.special_function and data.special_function > SF.CustomSF then
                 self:UnregisterCustomSF(data.special_function)
             end
-            new_triggers[id] = nil
+            other_triggers[id] = nil
+        -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
         elseif data.special_function == SF.ShowWaypoint and data.data then
-            self:_parse_vanilla_waypoint_trigger(data) -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
+            self:_parse_vanilla_waypoint_trigger(data)
         end
     end
-    self:AddTriggers(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
+    self:AddTriggers(other_triggers, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
----@param new_triggers table<number, ElementTrigger>
+---@param mission_triggers table<number, ElementTrigger>
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 ---@param no_host_override boolean?
-function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_icons_all, no_host_override)
+function EHIManager:ParseMissionTriggers(mission_triggers, trigger_id_all, trigger_icons_all, no_host_override)
     if not EHI:GetOption("show_mission_trackers") then
-        for id, data in pairs(new_triggers) do
+        for id, data in pairs(mission_triggers) do
             if data.special_function then
                 if self.SyncFunctions[data.special_function] then
                     self:AddTriggers2({ [id] = data }, trigger_id_all or "Trigger", trigger_icons_all)
@@ -917,14 +918,14 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
         host = false
     end
     local configure_waypoints = EHI:GetWaypointOption("show_waypoints_mission")
-    for id, data in pairs(new_triggers) do
+    for id, data in pairs(mission_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
         -- Unregister custom special function if it is there
         if data.condition == false then
             if data.special_function and data.special_function > SF.CustomSF then
                 self:UnregisterCustomSF(data.special_function)
             end
-            new_triggers[id] = nil
+            mission_triggers[id] = nil
         else
             data.condition = nil
             -- Mark every tracker, that has random time, as inaccurate
@@ -935,11 +936,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
                     data.class = self.Trackers.Inaccurate
                 end
             end
-            -- Fill the rest table properties for Waypoints (Vanilla settings in ElementWaypoint)
-            if data.special_function == SF.ShowWaypoint and data.data then
-                self:_parse_vanilla_waypoint_trigger(data)
-            -- Fill the rest table properties if SF.SetRandomTime is provided
-            elseif data.special_function == SF.SetRandomTime then
+            if data.special_function == SF.SetRandomTime then
                 data.class = self.Trackers.Inaccurate
             end
             -- Fill the rest table properties for EHI Waypoints
@@ -1016,13 +1013,7 @@ function EHIManager:ParseMissionTriggers(new_triggers, trigger_id_all, trigger_i
             end
         end
     end
-    self:AddTriggers2(new_triggers, trigger_id_all or "Trigger", trigger_icons_all)
-end
-
----@param new_triggers ParseTriggersTable
----@param defer_loading_waypoints boolean?
-function EHIManager:ParseMissionInstanceTriggers(new_triggers, defer_loading_waypoints)
-    self:ParseMissionTriggers(new_triggers, nil, nil, defer_loading_waypoints)
+    self:AddTriggers2(mission_triggers, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
 ---@param preload ElementTrigger[]
@@ -1445,12 +1436,12 @@ function EHIManager:Trigger(id, element, enabled)
                 end
             elseif f == SF.FinalizeAchievement then
                 self._trackers:CallFunction(trigger.id, "Finalize")
-            elseif f == SF.IncreaseChanceFromElement then
-                self._trackers:IncreaseChance(trigger.id, element._values.chance) ---@diagnostic disable-line
-            elseif f == SF.DecreaseChanceFromElement then
-                self._trackers:DecreaseChance(trigger.id, element._values.chance) ---@diagnostic disable-line
-            elseif f == SF.SetChanceFromElement then
-                self._trackers:SetChance(trigger.id, element._values.chance) ---@diagnostic disable-line
+            elseif f == SF.IncreaseChanceFromElement then ---@cast element ElementLogicChanceOperator
+                self._trackers:IncreaseChance(trigger.id, element._values.chance)
+            elseif f == SF.DecreaseChanceFromElement then ---@cast element ElementLogicChanceOperator
+                self._trackers:DecreaseChance(trigger.id, element._values.chance)
+            elseif f == SF.SetChanceFromElement then ---@cast element ElementLogicChanceOperator
+                self._trackers:SetChance(trigger.id, element._values.chance)
             elseif f == SF.PauseTrackerWithTime then
                 local t_id = trigger.id
                 self:Pause(t_id)

@@ -39,8 +39,8 @@ function EHITimedChanceTracker:StartTimer(t, no_update)
     end
     self:AnimatePanelW(self._panel_double)
     self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconsX(self._default_bg_size)
     self._bg_box:set_w(self._bg_box_double)
+    self:AnimIconsX()
     self:AnimateAdjustHintX(self._default_bg_size)
     if not no_update then
         self:AddTrackerToUpdate()
@@ -54,8 +54,8 @@ function EHITimedChanceTracker:StopTimer()
     self._started = nil
     self:AnimatePanelW(self._panel_w)
     self:ChangeTrackerWidth(self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons))
-    self:AnimIconsX(-self._default_bg_size)
     self._bg_box:set_w(self._default_bg_size)
+    self:AnimIconsX()
     self:AnimateAdjustHintX(-self._default_bg_size)
     self:RemoveTrackerFromUpdate()
 end

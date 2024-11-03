@@ -198,7 +198,7 @@ end
 function EHIAggregatedEquipmentTracker:AnimateMovement(addition)
     self:AnimatePanelWAndRefresh(self._panel_w)
     self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconsX(addition and self._default_bg_size_half or -self._default_bg_size_half)
+    self:AnimIconsX()
     self:AnimateAdjustHintX(addition and self._default_bg_size_half or -self._default_bg_size_half)
 end
 

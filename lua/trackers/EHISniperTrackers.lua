@@ -277,9 +277,10 @@ end
 
 function EHISniperTimedCountTracker:Refresh()
     self:RemoveTrackerFromUpdate()
-    self:SetTextColor()
     self._count_text:set_visible(true)
     self._text:set_visible(false)
+    self._text:stop()
+    self:SetTextColor()
     if self._count_on_refresh then
         self:SetCount(self._count_on_refresh)
     end
@@ -520,7 +521,7 @@ function EHISniperLoopTracker:RequestRemoval()
     self:FitTheText(self._count_text)
     local panel_w = self._original_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
     self:AnimatePanelW(panel_w)
-    self:AnimIconsX(self._bg_box:w() - self._original_bg_size)
+    self:AnimIconsX()
     self:ChangeTrackerWidth(panel_w)
     self:AnimateAdjustHintX(-self._default_bg_size_half)
 end

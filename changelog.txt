@@ -1,3 +1,8 @@
+r271 (03. 11. 2024):
+Buffs: Reduced memory consumption by removing unused panel
+Trackers: Animation optimization when background is disabled
+Cook Off / Rats Day 1: Fixed sniper tracker blinking continuously red
+
 r270 (01. 11. 2024):
 Reorganized code in waypoints to allow changing time
 

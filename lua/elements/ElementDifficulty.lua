@@ -4,7 +4,7 @@ if EHI:CheckLoadHook("ElementDifficulty") then
 end
 
 if tweak_data.levels:IsLevelSkirmish() then
-    if EHI:GetOption("show_difficulty_tracker") then
+    if EHI:GetOption("show_difficulty_tracker") and not (EHI:IsAssaultTrackerEnabled() and EHI:GetOption("show_assault_diff_in_assault_trackers")) then
         ---@class EHIWaveDifficultyTracker : EHIProgressTracker
         ---@field super EHIProgressTracker
         EHIWaveDifficultyTracker = class(EHIProgressTracker)
@@ -76,7 +76,7 @@ local original =
     on_executed = ElementDifficulty.on_executed
 }
 
-if EHI:GetOption("show_difficulty_tracker") then
+if EHI:GetOption("show_difficulty_tracker") and not (EHI:IsAssaultTrackerEnabled() and EHI:GetOption("show_assault_diff_in_assault_trackers")) then
     EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, function(diff) ---@param diff number
         local chance = managers.ehi_tracker:RoundChanceNumber(diff)
         if managers.ehi_tracker:CallFunction2("AssaultDiff", "SetChance", chance) then

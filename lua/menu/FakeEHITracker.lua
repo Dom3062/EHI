@@ -171,7 +171,6 @@ function FakeEHITracker:init(panel, params, parent_class)
     })
     self:FitTheText()
     if self._n_of_icons > 0 then
-        self._icons_x = {}
         local start = self.__icon_pos_left and 0 or self._bg_box:w()
         local icon_gap = self.__icon_pos_left and 0 or self._gap_scaled
         for i, v in ipairs(params.icons) do
