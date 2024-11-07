@@ -1,4 +1,5 @@
 ---@class EHIuno7Tracker : EHIAchievementTracker
+---@field super EHIAchievementTracker
 EHIuno7Tracker = class(EHIAchievementTracker)
 function EHIuno7Tracker:post_init(...)
     self._blocked_warning = true
@@ -7,7 +8,7 @@ function EHIuno7Tracker:post_init(...)
 end
 
 function EHIuno7Tracker:OnAlarm()
-    self._blocked_warning = false
+    self._blocked_warning = nil
     self._text:set_color(Color.white)
     if self._time <= 10 then
         self:AnimateColor(true)
@@ -90,9 +91,7 @@ local achievements =
         {
             [100107] = { time = 901, class = "EHIuno7Tracker", update_on_alarm = true }
         },
-        cleanup_callback = function()
-            _G.EHIuno7Tracker = nil
-        end,
+        cleanup_class = "EHIuno7Tracker",
         sync_params = { from_start = true }
     }
 }

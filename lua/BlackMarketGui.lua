@@ -481,7 +481,6 @@ local GrenadeFormattingFunction =
 
 function BlackMarketGui:populate_grenades(data, ...)
     original.populate_grenades(self, data, ...)
-    --EHI:PrintTable(data, "data")
     AbilityDuration.copr_ability = managers.player:upgrade_value("temporary", "copr_ability", temp_upgrades.copr_ability[1] or {})[2] or 0
     local projectile_tweak = tweak_data.blackmarket.projectiles
     local grenade_tweak = tweak_data.projectiles

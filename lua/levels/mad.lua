@@ -84,9 +84,7 @@ local sidejob =
             [101898] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100038, 3150)] = { special_function = SF.IncreaseProgress }
         },
-        cleanup_callback = function()
-            _G.EHIdailycakeTracker = nil
-        end
+        cleanup_class = "EHIdailycakeTracker"
     }
 }
 

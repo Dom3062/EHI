@@ -63,6 +63,10 @@
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
 
+        <post hook_id="lib/modifiers/modifiercivilianalarm" :script_path="ModifierCivilianAlarm.lua" />
+        <post hook_id="lib/modifiers/boosts/gagemodifierlifesteal" :script_path="GageModifierLifeSteal.lua" />
+        <post hook_id="lib/modifiers/boosts/gagemodifiermeleeinvincibility" :script_path="GageModifierMeleeInvincibility.lua" />
+
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
         <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
 

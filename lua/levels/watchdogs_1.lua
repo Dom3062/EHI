@@ -57,6 +57,9 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101231 } }
     other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102862 } }
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[101176] = { time = 24 + 9 + 2, id = "Snipers", class = TT.Sniper.Warning }
+end
 EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,

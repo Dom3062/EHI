@@ -413,7 +413,7 @@ else
 end
 
 function EHIBuffTracker:delete()
-    if self._panel and alive(self._panel) then
+    if alive(self._panel) then
         self._panel:parent():remove(self._panel)
     end
     self:RemoveBuffFromUpdate()

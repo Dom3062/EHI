@@ -19,6 +19,8 @@ _G.Global = {}
 ---@field make_slot_mask fun(self: self, ...: number): number
 _G.World = {}
 ---@class tweak_data
+_G.TweakData = {}
+---@class tweak_data
 ---@field chat_colors Color[]
 ---@field get_raw_value fun(self: self, ...): any
 ---@field get_value fun(self: self, ...): any
@@ -1052,6 +1054,9 @@ end
 ---@class CarryData
 ---@field carry_id fun(self: self): string
 
+---@class CrimeSpreeManager
+---@field server_spree_level fun(self: self): number
+
 ---@class ControllerWrapper
 ---@field add_trigger fun(self: self, connection_name: string, func: function)
 ---@field enable fun(self: self)
@@ -1200,6 +1205,7 @@ end
 ---@field assets MissionAssetsManager
 ---@field blackmarket BlackMarketManager
 ---@field controller ControllerManager
+---@field crime_spree CrimeSpreeManager
 ---@field criminals CriminalsManager
 ---@field custom_safehouse CustomSafehouseManager
 ---@field ehi_manager EHIManager

@@ -97,9 +97,7 @@ local achievements =
             [103045] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100021, 11090)] = { special_function = SF.SetAchievementFailed } -- Lab destroyed with C4
         },
-        cleanup_callback = function()
-            _G.EHIcorp9Tracker = nil
-        end,
+        cleanup_class = "EHIcorp9Tracker",
         parsed_callback = function()
             EHI:HookColorCodes({
                 red =
@@ -180,9 +178,7 @@ local achievements =
             [102736] = { special_function = SF.SetAchievementFailed }, -- Civilian killed
             [102740] = { special_function = SF.SetAchievementComplete }
         },
-        cleanup_callback = function()
-            _G.EHIcorp12Tracker = nil
-        end,
+        cleanup_class = "EHIcorp12Tracker",
         sync_params = { from_start = true }
     }
 }

@@ -550,7 +550,6 @@ end
 function EHITracker:CreateText(params)
     params = params or {}
     local text = self._bg_box:text({
-        name = params.name,
         text = params.text or "",
         align = "center",
         vertical = "center",

@@ -76,17 +76,17 @@ function EHIAssaultManager:init_finalize(manager)
         end)
     end
     if EHI:IsHost() then
-        ---@class ListenerModifier : BaseModifier
-        local ListenerModifier = class(BaseModifier)
+        ---@class EHISustainListenerModifier : BaseModifier
+        local EHISustainListenerModifier = class(BaseModifier)
         ---@param duration number
-        function ListenerModifier:OnEnterSustainPhase(duration)
+        function EHISustainListenerModifier:OnEnterSustainPhase(duration)
             manager:NotifyInternalListeners("AssaultOnSustain", "assault", "sustain_t", duration)
             manager._assault._internal.sustain_app_t = managers.game_play_central:get_heist_timer()
             if not manager._assault._is_skirmish then
                 manager:SyncTable(manager._assault._sync_sustain_start, { t = duration })
             end
         end
-        managers.modifiers:add_modifier(ListenerModifier, "EHI")
+        managers.modifiers:add_modifier(EHISustainListenerModifier, "EHI")
     else
         if not self._assault_delay.blocked then
             manager:AddReceiveHook(self._sync_anticipation_start, function(data, sender)
@@ -222,26 +222,28 @@ end
 
 function EHIAssaultManager:EndlessAssaultStart()
     local data
-    if EHI:IsHost() and not self._endless_assault then
-        local ai_state = managers.groupai:state()
-        local assault_data = ai_state._task_data.assault or {}
-        local current_state = assault_data.phase
-        local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
-        if current_state then
-            data = {
-                state = current_state
-            }
-            if current_state == "build" then
-                data.t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
-            elseif current_state == "sustain" then
-                local t = ai_state._t
-                data.sustain_original_t = assault_data.phase_end_t - t
-                data.sustain_t = ai_state:assault_phase_end_time() - t
+    if not self._endless_assault then
+        if EHI:IsHost() then
+            local ai_state = managers.groupai:state()
+            local assault_data = ai_state._task_data.assault or {}
+            local current_state = assault_data.phase
+            local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
+            if current_state then
+                data = {
+                    state = current_state
+                }
+                if current_state == "build" then
+                    data.t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
+                elseif current_state == "sustain" then
+                    local t = ai_state._t
+                    data.sustain_original_t = assault_data.phase_end_t - t
+                    data.sustain_t = ai_state:assault_phase_end_time() - t
+                end
+                self._trackers:SyncTable(self._sync_endless_stop, data)
             end
-            self._trackers:SyncTable(self._sync_endless_stop, data)
+        elseif self._synced_from_host then
+            return
         end
-    elseif self._synced_from_host and not self._endless_assault then
-        return
     end
     self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault, data)
 end

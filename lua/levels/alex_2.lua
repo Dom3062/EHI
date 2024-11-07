@@ -29,7 +29,7 @@ if EHI:IsLootCounterVisible() then
         other[i] = loot_trigger
     end
 end
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     other[100342] = EHI:AddEscapeChance(25, true)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

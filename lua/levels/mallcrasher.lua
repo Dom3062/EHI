@@ -154,9 +154,7 @@ local achievements =
                 })
             end
         end,
-        cleanup_callback = function()
-            _G.EHIameno3Tracker = nil
-        end
+        cleanup_class = "EHIameno3Tracker"
     },
     uno_3 =
     {

@@ -19,7 +19,7 @@
 ---@field register_message fun(self: self, message: number|string, uid: string|number, func: function)
 ---@field unregister_message fun(self: self, message: number|string, uid: string|number)
 ---@field player_unit fun(self: self): UnitPlayer
----@field add_listener fun(self: self, key: string, events: string[], clbk: function)
+---@field add_listener fun(self: self, key: string, events: string|string[], clbk: function)
 ---@field remove_listener fun(self: self, key: string)
 ---@field player_timer fun(self: self): TimerManager
 ---@field add_coroutine fun(self: self, name: number|string, func: {Priority: number, Function: function}, ...: any)
@@ -188,8 +188,7 @@ function PlayerManager:start_timer(key, duration, ...)
     if key == "replenish_grenades" and AbilityKey then
         managers.ehi_buff:AddBuff(AbilityKey, duration)
     elseif key == "team_crew_inspire" then
-        managers.ehi_buff:SyncBuff(key, duration)
-        managers.ehi_buff:AddBuff(key, duration)
+        managers.ehi_buff:SyncAndAddBuff(key, duration)
     end
     original.start_timer(self, key, duration, ...)
 end
@@ -428,7 +427,7 @@ if EHI:GetBuffOption("bullseye") or EHI:GetBuffDeckOption("copycat", "head_games
 
         original.on_headshot_dealt(self, ...)
 
-        if self:has_category_upgrade("player", "headshot_regen_armor_bonus") then-- and TrackBullseye then
+        if self:has_category_upgrade("player", "headshot_regen_armor_bonus") then
             local t = Application:time()
             if t >= previouscooldown then
                 managers.ehi_buff:AddBuff2("headshot_regen_armor_bonus", t, self._on_headshot_dealt_t)

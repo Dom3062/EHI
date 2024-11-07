@@ -16,7 +16,7 @@ local triggers = {
     [100215] = { run = { time = van_delay }, special_function = SF.AddTrackerIfDoesNotExist },
     [100216] = { run = { time = van_delay }, special_function = SF.AddTrackerIfDoesNotExist }
 }
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(false, 15)
     end)

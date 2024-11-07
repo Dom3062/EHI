@@ -71,7 +71,7 @@ local other =
 if CopArrivalDelay > 0 then
     other[103278] = EHI:AddAssaultDelay({ control = FirstAssaultBreak + CopArrivalDelay, trigger_once = true }) -- Full assault break; 15s (55s delay)
 end
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     other[103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 30)

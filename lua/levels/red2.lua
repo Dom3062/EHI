@@ -110,9 +110,7 @@ local achievements =
             [107066] = { special_function = SF.IncreaseProgressMax },
             [107067] = { special_function = SF.IncreaseProgress },
         },
-        cleanup_callback = function()
-            _G.EHIcac10Tracker = nil
-        end
+        cleanup_class = "EHIcac10Tracker"
     }
 }
 

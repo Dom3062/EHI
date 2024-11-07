@@ -25,7 +25,7 @@ if Global.game_settings.level_id == "firestarter_3" then
 else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     tweak_data.ehi.functions.uno_1()
-    if EHI:GetOption("show_escape_chance") then
+    if EHI:IsEscapeChanceEnabled() then
         other[103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
         EHI:AddOnAlarmCallback(function(dropin)
             local start_chance = 5

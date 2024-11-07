@@ -14,7 +14,7 @@ local triggers = {
 
     [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = EHI:GetInstanceElementID(100029, 16950) }, hint = Hints.Thermite }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
 
-    [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" }, hint = Hints.Teargas },
+    [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" }, hint = Hints.Teargas, waypoint = { position_by_element = 101263 } },
     [101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), class = TT.Chance, hint = Hints.vit_Teargas },
     -- Disabled in the mission script
     --[101394] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists }, -- It will not run on Hard and below

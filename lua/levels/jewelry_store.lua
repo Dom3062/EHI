@@ -15,7 +15,7 @@ local triggers = {
     [101770] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
 }
 local other = {}
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     other[101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     local start_chance = EHI:GetValueBasedOnDifficulty({
         normal = 25,

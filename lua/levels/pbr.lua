@@ -54,7 +54,12 @@ local other =
 {
     [102292] = EHI:AddAssaultDelay({ control = 75 }),
     [101492] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = true },
-    [101491] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = false }
+    [101491] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = false },
+
+    [100237] = EHI:AddSniperSpawnedPopup(true),
+    [101502] = EHI:AddSniperSpawnedPopup(true),
+    [101610] = EHI:AddSniperSpawnedPopup(true, true),
+    [EHI:GetInstanceElementID(100239, 10950)] = EHI:AddSniperSpawnedPopup()
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(101410, 10950)] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }

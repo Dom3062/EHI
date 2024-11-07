@@ -784,6 +784,9 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         if type(data.cleanup_callback) == "function" then
             data.cleanup_callback()
         end
+        if type(data.cleanup_class) == "string" then
+            _G[data.cleanup_class] = nil
+        end
     end
     self:ParseOtherTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
     local trophy = new_triggers.trophy or {}

@@ -41,7 +41,6 @@ end)
 
 local Icon = EHI.Icons
 local Hints = EHI.Hints
-local used_start_indexes_unit = {}
 ---@type table<string, table<number, UnitUpdateDefinition>>
 local instances =
 {
@@ -239,22 +238,17 @@ instances["levels/instances/unique/cane/cane_santa_event/world"] = instances["le
 function WorldDefinition:OverrideUnitsInTheInstance(instance)
     --EHI:PrintTable(instance, "Overriding instance")
     local start_index = instance.start_index
-    -- Don't compute the indexes again if the instance on this start_index has been computed already  
-    -- `start_index` is unique for each instance in a heist, so this shouldn't break anything
-    if not used_start_indexes_unit[start_index] then
-        local tbl = {}
-        local continent_data = self._continents[instance.continent] or {}
-        for id, unit in pairs(instances[instance.folder]) do
-            local final_index = EHI:GetInstanceUnitID(id, start_index, continent_data.base_id)
-            local unit_data = deep_clone(unit)
-            if unit.remove_vanilla_waypoint then
-                unit_data.remove_vanilla_waypoint = EHI:GetInstanceElementID(unit.remove_vanilla_waypoint, start_index, continent_data.base_id)
-            end
-            tbl[final_index] = unit_data
+    local tbl = {}
+    local continent_data = self._continents[instance.continent] or {}
+    for id, unit in pairs(instances[instance.folder]) do
+        local final_index = EHI:GetInstanceUnitID(id, start_index, continent_data.base_id)
+        local unit_data = deep_clone(unit)
+        if unit.remove_vanilla_waypoint then
+            unit_data.remove_vanilla_waypoint = EHI:GetInstanceElementID(unit.remove_vanilla_waypoint, start_index, continent_data.base_id)
         end
-        EHI:UpdateInstanceMissionUnits(tbl, self._all_units == nil)
-        used_start_indexes_unit[start_index] = true
+        tbl[final_index] = unit_data
     end
+    EHI:UpdateInstanceMissionUnits(tbl, self._all_units == nil)
 end
 
 ---@param instance CoreWorldInstanceManager.Instance

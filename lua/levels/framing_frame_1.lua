@@ -83,7 +83,7 @@ else -- Framing Frame Day 1
         loot_counter_on_fail = true
     })
 
-    if EHI:GetOption("show_escape_chance") then
+    if EHI:IsEscapeChanceEnabled() then
         other[102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
         other[103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
         other[100905] = EHI:AddEscapeChance(25, true)

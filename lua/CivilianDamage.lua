@@ -13,7 +13,7 @@ end
 
 local original = {}
 
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     original._unregister_from_enemy_manager = CivilianDamage._unregister_from_enemy_manager
     function CivilianDamage:_unregister_from_enemy_manager(...)
         original._unregister_from_enemy_manager(self, ...)
@@ -34,8 +34,7 @@ local suppress_in_stealth = EHI:GetOption("show_trade_delay_suppress_in_stealth"
 local function AddTracker(peer_id)
     if not peer_id then
         return
-    end
-    if other_players_only and peer_id == managers.network:session():local_peer():id() then
+    elseif other_players_only and peer_id == managers.network:session():local_peer():id() then
         return
     end
     local tweak_data = tweak_data.player.damage

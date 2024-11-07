@@ -38,9 +38,7 @@ local achievements =
             [EHI:GetInstanceElementID(100474, 21700)] = { special_function = SF.IncreaseProgress },
             [EHI:GetInstanceElementID(100005, 12200)] = { special_function = SF.FinalizeAchievement }
         },
-        cleanup_callback = function()
-            _G.EHIorange5Tracker = nil
-        end,
+        cleanup_class = "EHIorange5Tracker",
         sync_params = { from_start = true }
     }
 }

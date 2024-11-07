@@ -1,18 +1,13 @@
-local EHI = EHI
 ---@class EHIcac33Tracker : EHIAchievementStatusTracker, EHIProgressTracker
 ---@field super EHIAchievementStatusTracker
 EHIcac33Tracker = class(EHIAchievementStatusTracker)
 EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac33Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac33Tracker.SetProgress = EHIProgressTracker.SetProgress
-function EHIcac33Tracker:init(...)
+function EHIcac33Tracker:post_init(params)
+    EHIcac33Tracker.super.post_init(self, params)
     self._progress = 0
     self._max = 200
-    EHIcac33Tracker.super.init(self, ...)
-    self._flash_times = 1
-end
-
-function EHIcac33Tracker:OverridePanel()
     self._progress_text = self:CreateText({
         text = self:FormatProgress(),
         visible = false,
@@ -29,8 +24,6 @@ function EHIcac33Tracker:SetCompleted()
     EHIcac33Tracker.super.SetCompleted(self)
     self._disable_counting = true
     self._progress_text:set_color(Color.green)
-    self._progress = 200
-    self._progress_text:set_text(self:FormatProgress())
 end
 
 function EHIcac33Tracker:SetFailed()
@@ -39,17 +32,44 @@ function EHIcac33Tracker:SetFailed()
     self._progress_text:set_color(Color.red)
 end
 
+local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = EHI.Hints.Thermite }
-local triggers = {
-    [101985] = thermite, -- First grate
-    [101984] = thermite -- Second grate
-}
--- Flare is handled in CoreWorldInstanceManager.lua
+if EHI:GetOption("show_mission_trackers") then
+    local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = EHI.Hints.Thermite }
+    local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
+    for _, id in ipairs({ 101405, 101432, 100896, 101031 }) do
+        managers.mission:add_runned_unit_sequence_trigger(id, "interact", function(unit)
+            if not show_waypoint_only then
+                managers.ehi_tracker:AddTracker(thermite)
+            end
+            if show_waypoint then
+                managers.ehi_waypoint:AddWaypoint(tostring(id), {
+                    time = thermite.time,
+                    icon = Icon.Fire,
+                    position = managers.ehi_manager:GetUnitPositionOrDefault(id)
+                })
+            end
+        end)
+    end
+    for _, id in ipairs({ 101032, 101406 }) do
+        managers.mission:add_runned_unit_sequence_trigger(id, "interact", function(unit)
+            if not show_waypoint_only then
+                managers.ehi_tracker:AddTracker(thermite)
+            end
+            if show_waypoint then
+                managers.ehi_waypoint:AddWaypoint(tostring(id), {
+                    time = thermite.time,
+                    icon = Icon.Fire,
+                    position = managers.ehi_manager:GetUnitPositionOrDefault(id)
+                })
+            end
+        end)
+    end
+end
 
+local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -77,13 +97,14 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
         elements =
         {
-            [102504] = { status = "land", class = "EHIcac33Tracker" },
+            [102504] = { status = "land", class = "EHIcac33Tracker", flash_times = 1 },
             [103479] = { special_function = SF.SetAchievementComplete },
             [103475] = { special_function = SF.SetAchievementFailed },
             [103487] = { special_function = SF.CallCustomFunction, f = "Activate" },
             [103477] = { special_function = SF.IncreaseProgress },
         },
-        sync_params = { from_start = true }
+        sync_params = { from_start = true },
+        cleanup_class = "EHIcac33Tracker"
     }
 }
 
@@ -103,12 +124,11 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 if EHI:IsHost() and EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
     other[103489] = EHI:AddCustomCode(function(self)
-        self._trackers:RemoveTracker("CaptainChance")
+        self._trackers:ForceRemoveTracker("CaptainChance")
     end)
 end
 
 EHI.Manager:ParseTriggers({
-    mission = triggers,
     achievement = achievements,
     other = other
 })

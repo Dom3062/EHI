@@ -93,6 +93,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field parsed_callback fun() Function runs after the achievement is parsed
 ---@field preparse_callback fun(data: self) Function runs before the achievement is parsed and achievement is enabled
 ---@field cleanup_callback fun() Function runs during achievement traversal when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
+---@field cleanup_class string EHI class name to delete when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field mission_end_callback boolean Achieves or fails achievement on mission end
 ---@field sync_params ParseAchievementDefinitionTable.sync_params Params to adjust syncing between host and clients
 ---@field data_sync table<string, any> Params to sync to other players
@@ -319,7 +320,6 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field [any] any
 
 ---@class EHITracker.CreateText
----@field name string? Text name
 ---@field status_text string? Sets status text, like in achievements
 ---@field text string? Text to display
 ---@field x number?

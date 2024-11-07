@@ -182,8 +182,9 @@ end
 
 ---@param id string
 ---@param t number
-function EHIBuffManager:SyncBuff(id, t)
+function EHIBuffManager:SyncAndAddBuff(id, t)
     self:SyncTable(self._sync_add_buff, { id = id, t = t })
+    self:AddBuff(id, t)
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()

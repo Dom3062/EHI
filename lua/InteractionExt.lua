@@ -49,8 +49,8 @@ if EHI:GetOption("show_pager_callback") then
             end
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
-                    texture = "guis/textures/pd2/specialization/icons_atlas",
-                    text_rect = {64, 256, 64, 64},
+                    texture = "guis/dlcs/cee/textures/pd2/crime_spree/modifiers_atlas",
+                    text_rect = {0, 384, 128, 128},
                     position = self._unit:position(),
                     warning = true,
                     remove_on_alarm = true,

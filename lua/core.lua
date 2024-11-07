@@ -966,6 +966,11 @@ local function LoadDefaultValues(self)
                 grace_period = true,
                 grace_period_cooldown = true
             },
+            gage_boosts =
+            {
+                life_steal = true,
+                melee_invulnerability = true
+            },
 
             -- Other
             interact = true,
@@ -1405,6 +1410,10 @@ end
 ---@return boolean
 function EHI:CombineAssaultDelayAndAssaultTime()
     return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker")
+end
+
+function EHI:IsEscapeChanceEnabled()
+    return self:GetOption("show_escape_chance") and not self:IsPlayingCrimeSpree()
 end
 
 function EHI:IsTradeTrackerDisabled()
@@ -2006,7 +2015,7 @@ end
 
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounterNoCheck(params)
-    if params.show_loot_counter and self:GetOption("show_loot_counter") then
+    if params.show_loot_counter and self:GetOption("show_loot_counter") and not self:IsPlayingCrimeSpree() then
         managers.ehi_achievement:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
     else
         managers.ehi_achievement:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target)
@@ -2513,7 +2522,7 @@ end
 ---@return ElementTrigger?
 function EHI:AddSniperSpawnedPopup(single_sniper, trigger_once)
     if not (self:GetOption("show_sniper_tracker") and self:GetOption("show_sniper_spawned_popup")) then
-        return
+        return nil
     end
     return {
         special_function = self.SpecialFunctions.CustomCode,

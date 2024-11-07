@@ -21,7 +21,7 @@ EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other
 })
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     other[102557] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 24)

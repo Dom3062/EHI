@@ -115,9 +115,7 @@ local achievements =
             [100120] = { time = 1800, class = "EHIrun9Tracker" },
             [100144] = { special_function = SF.SetAchievementFailed }
         },
-        cleanup_callback = function()
-            _G.EHIrun9Tracker = nil
-        end
+        cleanup_class = "EHIrun9Tracker"
     },
     run_10 =
     {

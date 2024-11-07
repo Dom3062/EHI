@@ -11,7 +11,7 @@ local original =
 }
 function MutatorPiggyRevenge:on_game_started(...)
     original.on_game_started(self, ...)
-    dofile(EHI.LuaPath .. "trackers/EHIPiggyBankMutatorTracker.lua")
+    EHI:LoadTracker("EHIPiggyBankMutatorTracker")
     managers.ehi_tracker:AddTracker({
         id = "pda10_event",
         revenge = true,

@@ -114,6 +114,18 @@
             "description" : "ehi_buffs_perks_copycat_desc",
             "next_menu": "ehi_buffs_perks_copycat_menu",
             "ehi_ver" : 204
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "button",
+            "id": "ehi_buffs_perks_gage_boosts_choice",
+            "title": "ehi_buffs_perks_gage_boosts",
+            "description" : "ehi_buffs_perks_gage_boosts_desc",
+            "next_menu": "ehi_buffs_perks_gage_boosts_menu",
+            "ehi_ver" : 272
         }
     ]
 }

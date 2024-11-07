@@ -47,9 +47,7 @@ local achievements = {
         {
             [100244] = { class = "EHIfish6Tracker", show_finish_after_reaching_target = true } -- Maximum is set in the tracker; difficulty dependant
         },
-        cleanup_callback = function()
-            _G.EHIfish6Tracker = nil
-        end,
+        cleanup_class = "EHIfish6Tracker",
         sync_params = { from_start = true }
     }
 }

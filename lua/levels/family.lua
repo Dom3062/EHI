@@ -97,7 +97,7 @@ if EHI:IsLootCounterVisible() then
         })
     end)
 end
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     other[102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)

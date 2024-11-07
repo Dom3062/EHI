@@ -1,0 +1,29 @@
+{
+    "menu_id": "ehi_buffs_perks_gage_boosts_menu",
+    "parent_menu" : "ehi_buffs_perks_menu",
+    "title": "ehi_buffs_perks_gage_boosts",
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_gage_boosts_life_steal_choice",
+            "title": "ehi_buffs_perks_gage_boosts_life_steal",
+            "description": "ehi_buffs_skills_cooldown",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "gage_boosts", "life_steal" ],
+            "value": "life_steal",
+            "default_value": true,
+            "ehi_ver" : 272
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_gage_boosts_melee_invulnerability_choice",
+            "title": "ehi_buffs_perks_gage_boosts_melee_invulnerability",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "gage_boosts", "melee_invulnerability" ],
+            "value": "melee_invulnerability",
+            "default_value": true,
+            "ehi_ver" : 272
+        }
+    ]
+}

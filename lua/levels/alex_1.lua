@@ -122,7 +122,7 @@ EHI:ShowAchievementLootCounter({
     loot_counter_on_fail = true,
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 })
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
     end)

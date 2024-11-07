@@ -80,7 +80,7 @@ if EHI:IsLootCounterVisible() then
     other[102098] = { special_function = DecreaseProgressMax }
     other[102126] = { special_function = DecreaseProgressMax }
 end
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     local start_chance = 30 -- Normal
     if EHI:IsDifficulty(EHI.Difficulties.Hard) then
         start_chance = 33

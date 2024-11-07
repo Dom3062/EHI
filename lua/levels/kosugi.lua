@@ -118,9 +118,7 @@ local achievements =
                 })
             end
         end,
-        cleanup_callback = function()
-            _G.EHIkosugi5Tracker = nil
-        end
+        cleanup_class = "EHIkosugi5Tracker"
     }
 }
 

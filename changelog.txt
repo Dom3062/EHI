@@ -1,3 +1,10 @@
+r272 (07. 11. 2024):
+Updated pager icon
+Fixed bag icon in achievements in Crime Spree
+Crime Spree: Added tracker for civilian kills that will raise an alarm
+Crime Spree: Added buffs for Gage Boosts
+Escape Chance Tracker: Disabled in Crime Spree
+
 r271 (03. 11. 2024):
 Buffs: Reduced memory consumption by removing unused panel
 Trackers: Animation optimization when background is disabled

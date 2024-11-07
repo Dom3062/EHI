@@ -19,7 +19,7 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     self._count = {} ---@type table<string, { amount: number, placed: number, format: string }>
     self._deployables = {}
     self._ignore = params.ignore or {}
-    self._equipment = {} ---@type table<string, PanelText>
+    self._equipment = {} ---@type table<string, PanelText?>
     for _, id in ipairs(self._ids) do
         self._count[id] = { amount = 0, placed = 0, format = params.format[id] or "charges" }
         self._deployables[id] = {}
@@ -147,7 +147,7 @@ function EHIAggregatedEquipmentTracker:UpdateText(id)
         if self._count[id].amount <= 0 then
             self:RemoveText(id)
         else
-            local text = self._equipment[id]
+            local text = self._equipment[id] ---@cast text -?
             text:set_text(self:FormatDeployable(id))
             self:FitTheText(text)
         end
@@ -164,7 +164,6 @@ end
 function EHIAggregatedEquipmentTracker:AddText(id)
     self._n_of_deployables = self._n_of_deployables + 1
     local text = self:CreateText({
-        name = id,
         color = color[id]
     })
     self._equipment[id] = text
@@ -174,7 +173,7 @@ end
 
 ---@param id string
 function EHIAggregatedEquipmentTracker:RemoveText(id)
-    local _text = table.remove_key(self._equipment, id)
+    local _text = table.remove_key(self._equipment, id) ---@cast _text -?
     self._bg_box:remove(_text)
     self._n_of_deployables = self._n_of_deployables - 1
     if self._n_of_deployables == 1 then
@@ -205,7 +204,7 @@ end
 function EHIAggregatedEquipmentTracker:AlignTextOnHalfPos()
     local pos = 0
     for _, id in ipairs(self._ids) do
-        local text = self._bg_box:child(id) --[[@as PanelText?]]
+        local text = self._equipment[id]
         if text then
             text:set_w(self._default_bg_size_half)
             text:set_x(self._default_bg_size_half * pos)

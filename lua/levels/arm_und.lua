@@ -20,7 +20,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
-if EHI:GetOption("show_escape_chance") then
+if EHI:IsEscapeChanceEnabled() then
     other[100677] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)

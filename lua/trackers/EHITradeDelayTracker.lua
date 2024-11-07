@@ -5,12 +5,11 @@ EHITradeDelayTracker._forced_hint_text = "trade_delay"
 EHITradeDelayTracker._update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 EHITradeDelayTracker._init_create_text = false
-function EHITradeDelayTracker:init(...)
+function EHITradeDelayTracker:post_init(params)
     self._pause_t = 0
     self._n_of_peers = 0
     self._peers = {} ---@type table<number, { t: number, in_custody: boolean, civilians_killed: number, label: PanelText }>
     self._tick = 0
-    EHITradeDelayTracker.super.init(self, ...)
     if self._SIZE_INCREASE_NEEDED then
         self:SetBGSize(self._bg_box:w() / 2)
         self:SetIconsX()
