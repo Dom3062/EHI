@@ -64,6 +64,7 @@
         </group>
 
         <post hook_id="lib/modifiers/modifiercivilianalarm" :script_path="ModifierCivilianAlarm.lua" />
+        <post hook_id="lib/modifiers/modifierlesspagers" :script_path="ModifierLessPagers.lua" />
         <post hook_id="lib/modifiers/boosts/gagemodifierlifesteal" :script_path="GageModifierLifeSteal.lua" />
         <post hook_id="lib/modifiers/boosts/gagemodifiermeleeinvincibility" :script_path="GageModifierMeleeInvincibility.lua" />
 
@@ -74,6 +75,7 @@
         <post hook_id="lib/network/base/networkpeer" :script_path="NetworkPeer.lua" />
 
         <group hook_id="lib/setups/">
+            <post :hook_id="setup" :script_path="CallbackEventHandler.lua" />
             <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />
             <post :hook_id="setup" :script_path="Setup.lua" />
             <post :hook_id="gamesetup" :script_path="GameSetup.lua" />

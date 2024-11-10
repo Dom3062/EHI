@@ -9,8 +9,7 @@ _G.EHI =
         achievements = false,
         mission_door = false,
         all_instances = false,
-        gained_experience = { enabled = false, log = true },
-        instance = false
+        gained_experience = { enabled = false, log = true }
     },
     settings = {},
 
@@ -789,7 +788,7 @@ local function LoadDefaultValues(self)
         show_equipment_aggregate_all = false,
         show_minion_tracker = true,
         show_minion_option = 3, -- 1 = You only; 2 = Total number of minions in one number; 3 = Number of minions per player
-        show_minion_per_player = true,
+        show_minion_health = true,
         show_minion_killed_message = true,
         show_minion_killed_message_type = 1, -- 1 = Popup; 2 = Hint
         show_difficulty_tracker = true,
@@ -1922,7 +1921,6 @@ function EHI:ShowLootCounterNoChecks(params)
             return
         end
     end
-    local show_loot_max_xp_bags = self:GetOption("show_loot_max_xp_bags") --[[@as boolean]]
     if params.sequence_triggers or params.is_synced then
         managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, offset)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
@@ -1942,7 +1940,7 @@ function EHI:ShowLootCounterNoChecks(params)
         end
         managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level)
     else
-        if not show_loot_max_xp_bags then
+        if not self:GetOption("show_loot_max_xp_bags") then
             params.max_xp_bags = 0
         end
         managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max)

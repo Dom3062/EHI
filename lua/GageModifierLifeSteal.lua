@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("GageModifierLifeSteal") or not EHI:GetBuffDeckOption("gage_boosts", "life_steal") or not EHI:IsPlayingCrimeSpree() then
+if EHI:CheckLoadHook("GageModifierLifeSteal") or not EHI:GetBuffDeckOption("gage_boosts", "life_steal") then
     return
 end
 

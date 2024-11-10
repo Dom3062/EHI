@@ -286,6 +286,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field icon_on_pause string
 ---@field f string|fun(id: number, unit_data: self, unit: UnitTimer|UnitDigitalTimer)
 ---@field hint string
+---@field instance CoreWorldInstanceManager.Instance?
 ---@field [any] any
 
 ---@class EHI.ColorTable.Color

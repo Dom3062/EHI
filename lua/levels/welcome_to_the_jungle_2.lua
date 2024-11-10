@@ -33,15 +33,12 @@ local other =
 }
 
 EHI.Manager:ParseTriggers({ mission = triggers, other = other })
-
-local tbl =
-{
+EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     [103320] = { remove_vanilla_waypoint = 100309 },
     [101365] = { remove_vanilla_waypoint = 102499 },
     [101863] = { remove_vanilla_waypoint = 102498 }
-}
-EHI:UpdateUnits(tbl)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

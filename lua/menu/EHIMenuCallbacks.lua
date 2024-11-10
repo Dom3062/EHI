@@ -127,6 +127,10 @@ function EHIMenu:UpdateMinionTracker(value)
     self._preview_panel:UpdateTrackerFormat("show_minion_tracker", value)
 end
 
+function EHIMenu:UpdateMinionHealthTracker(value)
+    self._preview_panel:CallFunction("show_minion_tracker", "SetMinionHealth", value)
+end
+
 function EHIMenu:fcc_show_minion_option(focus, ...)
     self:SetFocus(focus, focus and "show_minion_tracker" or "")
 end

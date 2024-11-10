@@ -424,7 +424,7 @@
     "ehi_show_captain_damage_reduction" : "Zobrazovat snížení poškození nepřátel",
     "ehi_show_captain_damage_reduction_desc" : "Zobrazuje sledovač, který ukazuje snížené poškození nepřátel, když je Kapitán Winters aktivní",
 
-    "ehi_show_captain_spawn_chance" : "Zobrazovat procentuální šanci na Kapitána (Pouze host)",
+    "ehi_show_captain_spawn_chance" : "Zobrazovat procentuální šanci na Kapitána",
     "ehi_show_captain_spawn_chance_desc" : "Zobrazuje aktuální procentuální šanci na příchod Kapitána Winterse",
 
     "ehi_show_equipment_tracker" : "Zobrazovat sledovač pro vybavení",
@@ -488,10 +488,12 @@
     "ehi_show_minion_tracker_desc" : "Zobrazuje sledovač s počtem převedenců na mapě",
 
     "ehi_show_minion_option" : "Jak formátovat převedence",
-    "ehi_show_minion_option_desc" : "",
     "ehi_show_minion_option_1" : "Zobrazovat pouze počet tvých převedenců",
     "ehi_show_minion_option_2" : "Zobrazovat celkový počet převedenců na mapě",
     "ehi_show_minion_option_3" : "Zobrazovat počet převedenců na hráče",
+
+    "ehi_show_minion_health" : "Zobrazovat zdraví převedence ve sledovači",
+    "ehi_show_minion_health_desc" : "Zobrazuje zdraví vašich převedenců ve sledovači",
 
     "ehi_show_minion_killed_message" : "Zobrazovat oznámení 'PŘEVEDENEC ZABIT'",
     "ehi_show_minion_killed_message_desc" : "Zobrazuje oznámení, když tvůj převedenec je zabit",

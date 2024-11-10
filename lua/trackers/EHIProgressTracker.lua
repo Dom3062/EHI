@@ -41,6 +41,14 @@ function EHIProgressTracker:DecreaseProgressMax(max)
     self:SetProgressMax(self._max - (max or 1))
 end
 
+---@param max_check number
+---@param max number?
+function EHIProgressTracker:DecreaseProgressMaxIfProgress(max_check, max)
+    if self._max == max_check then
+        self:DecreaseProgressMax(max)
+    end
+end
+
 ---@param progress number
 function EHIProgressTracker:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then

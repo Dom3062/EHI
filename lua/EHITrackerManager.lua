@@ -883,7 +883,7 @@ do
     if EHI:IsXPTrackerEnabledAndVisible() then
         dofile(path .. "EHIXPTracker.lua")
     end
-    if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2) then
+    if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2 and not EHI:GetOption("show_minion_health")) then
         dofile(path .. "EHIEquipmentTracker.lua")
     end
     if EHI:GetOption("show_equipment_tracker") then

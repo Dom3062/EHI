@@ -130,7 +130,6 @@
             "type": "multiple_choice",
             "id": "ehi_show_minion_option_choice",
             "title": "ehi_show_minion_option",
-            "description": "ehi_show_minion_option_desc",
             "callback": ["SetOption", "UpdateMinionTracker"],
             "callback_arguments": "show_minion_option",
             "items": [
@@ -143,6 +142,18 @@
             "value": "show_minion_option",
             "default_value": 3,
             "ehi_ver" : 159
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_minion_health_choice",
+            "title": "ehi_show_minion_health",
+            "description": "ehi_show_minion_health_desc",
+            "callback": ["SetOption", "UpdateMinionHealthTracker"],
+            "callback_arguments": "show_minion_health",
+            "value": "show_minion_health",
+            "parent": "ehi_show_minion_tracker_choice",
+            "default_value": true,
+            "ehi_ver" : 273
         },
         {
             "type": "toggle",
@@ -188,7 +199,7 @@
         },
         {
             "type": "divider",
-            "size": 20
+            "size": 10
         },
         {
             "type": "toggle",

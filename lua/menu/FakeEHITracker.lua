@@ -197,11 +197,16 @@ function FakeEHITracker:init(panel, params, parent_class)
     self:post_init(params)
 end
 
-function FakeEHITracker:SetBGSize(w, ...)
+---`self._bg_box:right() - self._bg_box:x()`
+function FakeEHITracker:GetBGBoxRight()
+    return self._bg_box:right() - self._bg_box:x()
+end
+
+function FakeEHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
     if self._tracker_vertical_anim_left or self.__icon_pos_left then
         self._panel:set_x(self._panel:x() - (w or self._bg_box:w()))
     end
-    self:_SetBGSize(w, ...)
+    self:_SetBGSize(w, type, dont_recalculate_panel_w)
 end
 
 ---@param previous_icon PanelBitmap?
@@ -478,10 +483,10 @@ function FakeEHIEquipmentTracker:UpdateEquipmentFormat(format)
     self:FitTheText()
 end
 
----@class FakeEHIMinionCounterTracker : FakeEHIEquipmentTracker
+---@class FakeEHIMinionTracker : FakeEHIEquipmentTracker
 ---@field super FakeEHIEquipmentTracker
-FakeEHIMinionCounterTracker = class(FakeEHIEquipmentTracker)
-function FakeEHIMinionCounterTracker:post_init(params)
+FakeEHIMinionTracker = class(FakeEHIEquipmentTracker)
+function FakeEHIMinionTracker:post_init(params)
     self._charges_second_player = math.random(params.min, params.charges)
     self._color_second_player = self._parent_class:GetOtherPeerColor()
     self._text_second_player = self:CreateText({
@@ -490,28 +495,122 @@ function FakeEHIMinionCounterTracker:post_init(params)
         color = self._color_second_player,
         FitTheText = true
     })
-    self._text_second_player:set_right(self._bg_box:right() - self._bg_box:x())
-    self:UpdateFormat(EHI:GetOption("show_minion_option"))
+    self._text_second_player:set_right(self:GetBGBoxRight())
+    self._first_minion_health = self:CreateText({
+        text = string.format("%d%%", math.random(0, 100)),
+        w = self._bg_box:w(),
+        visible = false
+    })
+    self._second_minion_health = self:CreateText({
+        text = string.format("%d%%", math.random(0, 100)),
+        w = self._bg_box:w(),
+        visible = false
+    })
+    self:UpdateFormat(EHI:GetOption("show_minion_option"), true)
+    self:SetMinionHealth(EHI:GetOption("show_minion_health"), true)
 end
 
 ---@param value number
-function FakeEHIMinionCounterTracker:UpdateFormat(value)
+---@param from_init boolean
+function FakeEHIMinionTracker:UpdateFormat(value, from_init)
     self._icons[1]:set_color(value == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
     self._text_second_player:set_visible(value == 3)
     self._text:set_text(tostring(value == 2 and (self._charges + self._charges_second_player) or self._charges))
     self._text:set_color(value == 3 and self._parent_class:GetLocalPeerColor() or Color.white)
     self._format = value
     if value == 3 then
-        self._text:set_w(self._bg_box:w() / 2)
+        self._text:set_w(self._bg_box_w / 2)
     else
         self._text:set_w(self._bg_box:w())
     end
     self:FitTheText()
+    if from_init then
+        return
+    end
+    if value == 1 and self._show_minion_health then
+        if self._size_increased then
+            self._size_increased = nil
+            self:SetBGSize(self._bg_box_w, "set")
+            self:SetIconsX()
+            self:Reposition()
+        end
+        local w = self._bg_box_w / 2
+        local right = self:GetBGBoxRight()
+        self._first_minion_health:set_w(w)
+        self._first_minion_health:set_right(right)
+        self:FitTheText(self._first_minion_health)
+        self._first_minion_health:set_color(self._selected_color)
+        self._first_minion_health:set_visible(true)
+        self._second_minion_health:set_w(w)
+        self._second_minion_health:set_right(right - w)
+        self:FitTheText(self._second_minion_health)
+        self._second_minion_health:set_color(self._selected_color)
+        self._second_minion_health:set_visible(true)
+        self._text:set_visible(false)
+        self._minion_health_repositioned = true
+    elseif value == 2 and self._show_minion_health and self._minion_health_repositioned then
+        self._minion_health_repositioned = nil
+        self._text:set_visible(true)
+        self._first_minion_health:set_color(Color.white)
+        self._second_minion_health:set_color(Color.white)
+        if not self._size_increased then
+            self:SetMinionHealth(self._show_minion_health)
+        end
+    else
+        self._text:set_visible(true)
+    end
 end
 
-function FakeEHIMinionCounterTracker:SetTextColor()
+function FakeEHIMinionTracker:SetTextColor()
     self._text:set_color(self._selected and self._selected_color or (self._format == 3 and self._parent_class:GetLocalPeerColor() or Color.white))
     self._text_second_player:set_color(self._selected and self._selected_color or self._color_second_player)
+    if self._minion_health_repositioned then
+        self._first_minion_health:set_color(self._selected and self._selected_color or Color.white)
+        self._second_minion_health:set_color(self._selected and self._selected_color or Color.white)
+    end
+end
+
+---@param health boolean
+---@param from_init boolean?
+function FakeEHIMinionTracker:SetMinionHealth(health, from_init)
+    self._show_minion_health = health
+    if health then
+        if self._format >= 2 then
+            self._size_increased = true
+            self:SetBGSize()
+            self:SetIconsX()
+        else
+            self._text:set_visible(false)
+            self._minion_health_repositioned = true
+        end
+        local w = self._bg_box_w / 2
+        local right = self:GetBGBoxRight()
+        self._first_minion_health:set_w(w)
+        self._first_minion_health:set_right(right)
+        self:FitTheText(self._first_minion_health)
+        self._first_minion_health:set_visible(true)
+        self._second_minion_health:set_w(w)
+        self._second_minion_health:set_right(right - w)
+        self:FitTheText(self._second_minion_health)
+        self._second_minion_health:set_visible(true)
+    elseif not from_init and self._size_increased then
+        self._size_increased = nil
+        self._minion_health_repositioned = nil
+        self:SetBGSize(self._bg_box_w, "set")
+        self._first_minion_health:set_visible(false)
+        self._second_minion_health:set_visible(false)
+        self:SetIconsX()
+    elseif self._minion_health_repositioned then
+        self._minion_health_repositioned = nil
+        self._first_minion_health:set_visible(false)
+        self._second_minion_health:set_visible(false)
+        self._text:set_w(self._bg_box:w())
+        self._text:set_right(self:GetBGBoxRight())
+        self._text:set_visible(true)
+    end
+    if not from_init then
+        self:Reposition()
+    end
 end
 
 ---@class FakeEHICountTracker : FakeEHITracker
@@ -766,7 +865,7 @@ function FakeEHISniperTracker:post_init(params)
         w = self._bg_box:w() / 2,
         FitTheText = true
     })
-    self._text:set_right(self._bg_box:right() - self._bg_box:x())
+    self._text:set_right(self:GetBGBoxRight())
     self._text:set_color(EHI:GetColorFromOption("tracker_waypoint", "sniper_count"))
 end
 

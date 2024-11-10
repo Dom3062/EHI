@@ -1,3 +1,9 @@
+r273 (10. 11. 2024):
+Added option "Show Convert's Health in Tracker"
+Fixed Turret icon
+Fixed a case where Pager Counter Tracker could be inaccurate in Crime Spree (client only)
+Captain Spawn Chance Tracker: Enabled for clients; requires EHI Host to function
+
 r272 (07. 11. 2024):
 Updated pager icon
 Fixed bag icon in achievements in Crime Spree

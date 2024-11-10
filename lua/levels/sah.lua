@@ -57,12 +57,10 @@ EHI.Manager:ParseTriggers({
     other = other
 })
 
-local tbl =
-{
+EHI:UpdateUnits({
     -- Unused Grenade case
     [400178] = { f = "IgnoreDeployable" }
-}
-EHI:UpdateUnits(tbl)
+})
 local xp_override =
 {
     params =

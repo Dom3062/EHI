@@ -271,6 +271,7 @@ Hooks:PostHook(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data
     managers.ehi_manager:load(data)
     --managers.ehi_tracker:load(data)
     managers.ehi_loot:load(data)
+    managers.ehi_phalanx:load(data)
 end)
 
 Hooks:PostHook(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data, ...) ---@param data SyncData
@@ -278,5 +279,6 @@ Hooks:PostHook(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data
     --managers.ehi_tracker:save(data)
     managers.ehi_assault:save(data)
     managers.ehi_loot:save(data)
+    managers.ehi_phalanx:save(data)
     managers.ehi_sync:save(data)
 end)

@@ -900,6 +900,7 @@ _G.Idstring = {}
 ---@field EHILootManager LootCounterTable
 ---@field EHIManager EHIManagerSyncData
 ---@field EHISyncManager EHISyncManagerSyncData
+---@field EHIPhalanxManager EHIPhalanxManagerSyncData
 
 ---@generic T
 ---@param TC T
@@ -1054,9 +1055,6 @@ end
 ---@class CarryData
 ---@field carry_id fun(self: self): string
 
----@class CrimeSpreeManager
----@field server_spree_level fun(self: self): number
-
 ---@class ControllerWrapper
 ---@field add_trigger fun(self: self, connection_name: string, func: function)
 ---@field enable fun(self: self)
@@ -1205,7 +1203,6 @@ end
 ---@field assets MissionAssetsManager
 ---@field blackmarket BlackMarketManager
 ---@field controller ControllerManager
----@field crime_spree CrimeSpreeManager
 ---@field criminals CriminalsManager
 ---@field custom_safehouse CustomSafehouseManager
 ---@field ehi_manager EHIManager
@@ -1347,6 +1344,7 @@ end
 ---@field get_vector_index fun(v: table, e: any): number?
 ---@field empty fun(v: table): boolean
 ---@field has fun(v: table, k: any): boolean Returns `true` or `false` if `k` key exists in the table
+---@field delete fun(v: table, e: any) `v` is expected as list
 
 ---Maps values as keys with value `true`
 ---@generic K
@@ -1436,6 +1434,7 @@ end
 ---@field sync_converted fun(self: self): boolean
 
 ---@class CopDamage
+---@field _all_event_types string[]
 ---@field _health number
 ---@field _HEALTH_INIT number
 ---@field _health_max number
@@ -1444,6 +1443,7 @@ end
 ---@field _unit UnitEnemy
 ---@field add_listener fun(self: self, key: string, events: string[]?, clbk: function)
 ---@field dead fun(self: self): boolean
+---@field health_ratio fun(self: self): number
 ---@field immortal boolean
 ---@field is_civilian fun(type: string): boolean
 ---@field register_listener fun(key: string, event_types: string[], clbk: function)

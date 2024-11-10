@@ -61,14 +61,11 @@ EHI:ShowAchievementLootCounter({
 
 local mission_loot = ovk_and_up and 8 or 6
 EHI:ShowLootCounter({ max = mission_loot + 8 }) -- 14 or 16
-
-local tbl =
-{
+EHI:UpdateUnits({
     --levels/instances/unique/shout_container_vault
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     [EHI:GetInstanceUnitID(100014, 2850)] = { ignore = true }
-}
-EHI:UpdateUnits(tbl)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

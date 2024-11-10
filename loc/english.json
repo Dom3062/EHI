@@ -424,7 +424,7 @@
     "ehi_show_captain_damage_reduction" : "Show Enemy Damage Reduction",
     "ehi_show_captain_damage_reduction_desc" : "Shows tracker for damage reduction when Captain is present",
 
-    "ehi_show_captain_spawn_chance" : "Show Captain Spawn Chance (Host only)",
+    "ehi_show_captain_spawn_chance" : "Show Captain Spawn Chance",
     "ehi_show_captain_spawn_chance_desc" : "Shows current spawn chance for Captain Winters",
 
     "ehi_show_equipment_tracker" : "Show Equipment Tracker",
@@ -488,10 +488,12 @@
     "ehi_show_minion_tracker_desc" : "Shows tracker for how many converted enemies are on the map",
 
     "ehi_show_minion_option" : "Converts Format",
-    "ehi_show_minion_option_desc" : "",
     "ehi_show_minion_option_1" : "Show Number of your Converts only",
     "ehi_show_minion_option_2" : "Show Total Number of Converts on the map",
     "ehi_show_minion_option_3" : "Show Number of Converts Per Player",
+
+    "ehi_show_minion_health" : "Show Convert's Health in Tracker",
+    "ehi_show_minion_health_desc" : "Shows current of yours convert's health in the tracker",
 
     "ehi_show_minion_killed_message" : "Show 'CONVERT KILLED' Message",
     "ehi_show_minion_killed_message_desc" : "Shows a message when your convert has been killed",

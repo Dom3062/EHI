@@ -43,6 +43,11 @@ function GroupAIStateBase:init(...)
         EHI:RunOnAlarmCallbacks(dropin)
         self:remove_listener("EHI_EnemyWeaponsHot")
     end)
+    if EHI:GetOption("show_minion_health") then
+        self.__ehi_minion_health = true
+        self.__ehi_minion_health_events = deep_clone(CopDamage._all_event_types)
+        table.delete(self.__ehi_minion_health_events, "death") -- "death" event is already handled in a different callback
+    end
 end
 
 function GroupAIStateBase:on_successful_alarm_pager_bluff(...) -- Called by host
@@ -114,43 +119,66 @@ end
 if EHI:GetOption("show_minion_tracker") then
     local UpdateTracker
     if EHI:GetOption("show_minion_option") ~= 2 then
-        dofile(EHI.LuaPath .. "trackers/EHIMinionTracker.lua")
-        UpdateTracker = function(key, amount, peer_id)
+        EHI:LoadTracker("EHIMinionTracker")
+        local minion_class = (EHI:GetOption("show_minion_option") == 1 and EHI:GetOption("show_minion_health")) and "EHIMinionHealthOnlyTracker" or "EHIMinionTracker"
+        ---@param key string
+        ---@param amount number
+        ---@param peer_id number
+        ---@param local_peer boolean?
+        UpdateTracker = function(key, amount, peer_id, local_peer)
             if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
                 managers.ehi_tracker:AddTracker({
                     id = "Converts",
-                    class = "EHIMinionTracker"
+                    class = minion_class
                 })
             end
             if amount == 0 then -- Removal
                 managers.ehi_tracker:CallFunction("Converts", "RemoveMinion", key)
             else
-                managers.ehi_tracker:CallFunction("Converts", "AddMinion", key, amount, peer_id)
+                managers.ehi_tracker:CallFunction("Converts", "AddMinion", key, peer_id, local_peer)
             end
         end
     else
-        UpdateTracker = function(key, amount, peer_id)
+        local minion_class, requires_new_minion_func = "EHIEquipmentTracker", false
+        if EHI:GetOption("show_minion_health") then
+            minion_class = "EHITotalMinionTracker"
+            requires_new_minion_func = true
+            EHI:LoadTracker("EHIMinionTracker")
+        end
+        ---@param key string
+        ---@param amount number
+        ---@param peer_id number
+        ---@param local_peer boolean?
+        UpdateTracker = function(key, amount, peer_id, local_peer)
             if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
                 managers.ehi_tracker:AddTracker({
                     id = "Converts",
                     dont_show_placed = true,
                     icons = { "minion" },
                     hint = "converts",
-                    class = "EHIEquipmentTracker"
+                    class = minion_class
                 })
             end
-            managers.ehi_tracker:CallFunction("Converts", "UpdateAmount", nil, key, amount)
+            if requires_new_minion_func then
+                if amount == 0 then -- Removal
+                    managers.ehi_tracker:CallFunction("Converts", "RemoveMinion", key)
+                else
+                    managers.ehi_tracker:CallFunction("Converts", "AddMinion", key, peer_id, local_peer)
+                end
+            else
+                managers.ehi_tracker:CallFunction("Converts", "UpdateAmount", nil, key, amount)
+            end
         end
     end
     if EHI:GetOption("show_minion_option") == 1 then -- Only you
         EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
             if local_peer then
-                UpdateTracker(key, 1, peer_id)
+                UpdateTracker(key, 1, peer_id, true)
             end
         end)
     else -- Everyone
         EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
-            UpdateTracker(key, 1, peer_id)
+            UpdateTracker(key, 1, peer_id, local_peer)
         end)
     end
     EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
@@ -197,12 +225,19 @@ end
 ---@param unit UnitEnemy
 function GroupAIStateBase:EHIRemoveConvert(params, unit)
     EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled, params.unit_key, params.local_peer, params.peer_id)
+    unit:character_damage():remove_listener("EHIConvertDamage")
     if params.killed_callback then
         unit:character_damage():remove_listener("EHIConvert")
     end
     if params.destroyed_callback then
         unit:base():remove_destroy_listener("EHIConvert")
     end
+end
+
+---@param key string
+---@param unit UnitEnemy
+function GroupAIStateBase:EHIConvertDamaged(key, unit, damage_info)
+    managers.ehi_tracker:CallFunction("Converts", "MinionDamaged", key, unit)
 end
 
 ---@param unit UnitEnemy
@@ -218,6 +253,9 @@ function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
     local data = { unit_key = key, local_peer = local_peer, peer_id = peer_id, killed_callback = true, destroyed_callback = true }
     unit:base():add_destroy_listener("EHIConvert", callback(self, self, "EHIConvertDestroyed", data))
     unit:character_damage():add_listener("EHIConvert", { "death" }, callback(self, self, "EHIConvertDied", data))
+    if local_peer and self.__ehi_minion_health then
+        unit:character_damage():add_listener("EHIConvertDamage", self.__ehi_minion_health_events, callback(self, self, "EHIConvertDamaged", key))
+    end
 end
 
 function GroupAIStateBase:convert_hostage_to_criminal(unit, peer_unit, ...)

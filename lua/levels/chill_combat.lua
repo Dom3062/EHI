@@ -22,13 +22,11 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) then
     })
 end
 
-local tbl =
-{
+EHI:UpdateUnits({
     --units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo
     [100751] = { f = "IgnoreDeployable" },
     [101242] = { f = "IgnoreDeployable" }
-}
-EHI:UpdateUnits(tbl)
+})
 EHIAssaultManager:SetDiff(1)
 EHI:AddXPBreakdown({
     wave_all = { amount = 14000, times = 3 }

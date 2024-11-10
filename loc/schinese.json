@@ -415,7 +415,7 @@
     "ehi_show_captain_damage_reduction" : "显示敌人伤害减免",
     "ehi_show_captain_damage_reduction_desc" : "显示冬日队长列阵后为敌人提供的伤害减免效果",
 
-    "ehi_show_captain_spawn_chance" : "显示队长入场几率(仅主机)",
+    "ehi_show_captain_spawn_chance" : "显示队长入场几率",
     "ehi_show_captain_spawn_chance_desc" : "显示当前冬日队长入场几率",
 
     "ehi_show_equipment_tracker" : "显示随身装备追踪器",
@@ -479,7 +479,6 @@
     "ehi_show_minion_tracker_desc" : "显示地图上已变节警察的数量追踪器",
 
     "ehi_show_minion_option" : "变节警察显示方式",
-    "ehi_show_minion_option_desc" : "",
     "ehi_show_minion_option_1" : "仅显示自己的变节警察",
     "ehi_show_minion_option_2" : "显示地图上变节警察总数",
     "ehi_show_minion_option_3" : "分别显示每个玩家的变节警察",

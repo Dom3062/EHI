@@ -61,12 +61,10 @@ EHI:ShowLootCounter({
     no_max = true
 })
 
-local tbl =
-{
+EHI:UpdateUnits({
     --units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large
     [400003] = { ignore = true }
-}
-EHI:UpdateUnits(tbl)
+})
 EHI:AddXPBreakdown({
     objectives =
     {

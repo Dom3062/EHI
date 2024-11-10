@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckHook("WalletGuiObject") or not EHI:GetOption("show_remaining_xp") then
+if EHI:CheckHook("WalletGuiObject") or not EHI:GetOption("show_remaining_xp") or (EHI:IsPlayingCrimeSpree() and Global.load_level) then
     return
 end
 

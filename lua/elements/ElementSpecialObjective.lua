@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("ElementSpecialObjective") or not EHI:GetOption("show_captain_spawn_chance") or EHI:IsClient() then
+if EHI:CheckLoadHook("ElementSpecialObjective") or not EHI:GetOption("show_captain_spawn_chance") then
     return
 end
 

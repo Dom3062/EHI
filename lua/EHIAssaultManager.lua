@@ -94,10 +94,10 @@ function EHIAssaultManager:init_finalize(manager)
                 self:AnticipationStartHost(tbl.t)
             end)
         end
-        if not (self._assault_time.blocked or self._is_skirmish) then
+        if not self._is_skirmish and (not self._assault_time.blocked or EHI:GetOption("show_captain_spawn_chance")) then
             manager:AddReceiveHook(self._sync_sustain_start, function(data, sender)
                 local tbl = json.decode(data)
-                self:OnEnterSustain(tbl.t)
+                manager:NotifyInternalListeners("AssaultOnSustain", "assault", "sustain_t", tbl.t)
             end)
         end
         manager:AddReceiveHook(self._sync_endless_stop, function(data, sender)

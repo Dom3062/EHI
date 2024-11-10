@@ -126,14 +126,11 @@ if ovk_and_up then
 end
 
 EHI:ShowLootCounter({ max = 10 + pig })
-
-local tbl =
-{
+EHI:UpdateUnits({
     -- Drills
     [100035] = { remove_vanilla_waypoint = 103175 },
     [100949] = { remove_vanilla_waypoint = 103174 }
-}
-EHI:UpdateUnits(tbl)
+})
 local required_bags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 4,

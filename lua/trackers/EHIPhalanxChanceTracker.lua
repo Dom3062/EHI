@@ -51,7 +51,7 @@ function EHIPhalanxChanceTracker:ComputeAssaultTime(from_create)
             self._assault_t = 45 -- Will get accurate in `EHIPhalanxChanceTracker:OnEnterSustain()`
         end
     else
-        self._assault_t = 35 + 180
+        self._assault_t = 35 + 180 -- Will get accurate in `EHIPhalanxChanceTracker:OnEnterSustain()` (synced from EHI Host)
     end
 end
 

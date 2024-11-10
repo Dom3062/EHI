@@ -36,14 +36,12 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-local tbl =
-{
+EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     [103064] = { remove_vanilla_waypoint = 103082 },
     [103065] = { remove_vanilla_waypoint = 103083 },
     [103066] = { remove_vanilla_waypoint = 103084 }
-}
-EHI:UpdateUnits(tbl)
+})
 EHI:ShowAchievementLootCounter({
     achievement = "bob_4",
     max = 6,

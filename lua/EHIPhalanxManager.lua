@@ -1,19 +1,25 @@
+---@class EHIPhalanxManagerSyncData
+---@field time_check number
+---@field chance_start number
+---@field chance_increase number
+---@field chance_max number
+
 local EHI = EHI
 ---@class EHIPhalanxManager
 EHIPhalanxManager = {}
 EHIPhalanxManager._no_endless_assault_check = { pbr2 = true }
 EHIPhalanxManager._requires_manual_on_exec = { dinner = true, slaughter_house_new = true }
 EHIPhalanxManager._disabled_in_levels = { born = true }
-EHIPhalanxManager._counter_trigger = 2
+EHIPhalanxManager._counter_trigger = EHI:IsClient() and 3 or 2
 EHIPhalanxManager._first_assault = true
 ---@param manager EHIManager
 function EHIPhalanxManager:init_finalize(manager)
     self._manager = manager
     self._trackers = manager._trackers
-    if EHI:IsHost() and EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
+    self._phalanx_spawn_chance = tweak_data.group_ai.phalanx.spawn_chance or {}
+    self._phalanx_spawn_time_check = tweak_data.group_ai.phalanx.check_spawn_intervall or 120
+    if EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
         self._tracker_enabled = true
-        self._phalanx_spawn_chance = tweak_data.group_ai.phalanx.spawn_chance or {}
-        self._phalanx_spawn_time_check = tweak_data.group_ai.phalanx.check_spawn_intervall or 120
     end
 end
 
@@ -85,11 +91,9 @@ function EHIPhalanxManager:AddTracker()
             self._trackers:ForceRemoveTracker("CaptainChance")
         end
     end)
-    if EHI:IsHost() then
-        self._manager:AddEventListener("EHIPhalanxManager", "AssaultOnSustain", function(duration)
-            self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
-        end)
-    end
+    self._manager:AddEventListener("EHIPhalanxManager", "AssaultOnSustain", function(duration)
+        self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
+    end)
     Hooks:PostHook(HUDManager, "sync_start_assault", "EHI_PhalanxManager_sync_start_assault", function(...)
         self._trackers:CallFunction("CaptainChance", "AssaultStart")
     end)
@@ -103,12 +107,37 @@ function EHIPhalanxManager:AddTracker()
     end
 end
 
-if EHI:IsModInstalled("Allow Winters Spawn Offline", "Offyerrocker") then
+if EHI:IsClient() or EHI:IsModInstalled("Allow Winters Spawn Offline", "Offyerrocker") then
     function EHIPhalanxManager:IsPhalanxDisabled()
         return self._phalanx_spawn_chance.max == 0
     end
 else
     function EHIPhalanxManager:IsPhalanxDisabled()
         return Global.game_settings.single_player or self._phalanx_spawn_chance.max == 0
+    end
+end
+
+---@param data SyncData
+function EHIPhalanxManager:save(data)
+    if EHI:IsPlayingCrimeSpree() or tweak_data.levels:IsLevelSkirmish() then
+        return
+    end
+    local state = {}
+    state.time_check = self._phalanx_spawn_time_check
+    state.chance_start = self._phalanx_spawn_chance.start
+    state.chance_increase = self._phalanx_spawn_chance.increase
+    state.chance_max = self._phalanx_spawn_chance.max
+    data.EHIPhalanxManager = state
+end
+
+---@param data SyncData
+function EHIPhalanxManager:load(data)
+    local state = data.EHIPhalanxManager
+    if state then
+        self._phalanx_spawn_time_check = state.time_check
+        self._phalanx_spawn_chance.start = state.chance_start
+        self._phalanx_spawn_chance.increase = state.chance_increase
+        self._phalanx_spawn_chance.max = state.chance_max
+        self:ReduceCounter()
     end
 end

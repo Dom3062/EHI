@@ -77,6 +77,7 @@ end
 function math.round_with_precision(num, idp)
 end
 
+---`Function in SuperBLT`  
 ---Loads a file containing JSON data and converts it into a Lua table
 ---@param path string @The path (relative to payday2_win32_release.exe) and file name to load the data from
 ---@return table? @The table containing the data, or `nil` if loading wasn't successful

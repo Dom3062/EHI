@@ -1,6 +1,5 @@
 local EHI = EHI
 managers.ehi_experience = EHIExperienceManager
-dofile(EHI.LuaPath .. "CallbackEventHandler.lua")
 if EHI:CheckLoadHook("Setup") then
     EHI:Hook(Setup, "init_managers", function(self, managers, ...) ---@param managers managers
         local achievements = tweak_data.achievement
