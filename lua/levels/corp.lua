@@ -2,7 +2,6 @@
 ---@field super EHIColoredCodesTracker
 EHIcorp9Tracker = ehi_achievement_class(EHIColoredCodesTracker)
 EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
-EHIcorp9Tracker._update = false
 EHIcorp9Tracker._forced_hint_text = "achievement_corp_9"
 EHIcorp9Tracker._hint_vanilla_localization = true
 function EHIcorp9Tracker:init(...)
@@ -13,44 +12,51 @@ end
 
 function EHIcorp9Tracker:OverridePanel()
     EHIcorp9Tracker.super.OverridePanel(self)
-    self._text4 = self:CreateText({
+    self._find = self:CreateText({
         status_text = "find",
         h = self._icon_size_scaled,
         color = Color.yellow
     })
-    self._text:set_visible(false)
-    self._text2:set_visible(false)
-    self._text3:set_visible(false)
+    self._colors.red:set_visible(false)
+    self._colors.green:set_visible(false)
+    self._colors.blue:set_visible(false)
 end
 
 function EHIcorp9Tracker:LaptopInteracted()
-    self:SetStatusText("push", self._text4)
+    self:SetStatusText("push", self._find)
     self:AnimateBG()
 end
 
 function EHIcorp9Tracker:FindCodesStarted()
-    self._text:set_visible(true)
-    self._text2:set_visible(true)
-    self._text3:set_visible(true)
-    self._text4:set_visible(false)
+    self._colors.red:set_visible(true)
+    self._colors.green:set_visible(true)
+    self._colors.blue:set_visible(true)
+    self._find:set_visible(false)
     self:AnimateBG()
 end
 
 function EHIcorp9Tracker:SetCompleted()
-    EHIAchievementTracker.SetCompleted(self)
-    self._text2:set_color(Color.green)
-    self._text3:set_color(Color.green)
-    self:AddTrackerToUpdate()
-    self._achieved = true
+    self.update = self.update_fade
+    self._achieved_popup_showed = true
+    self:AnimateBG()
+    self._colors.red:set_color(Color.green)
+    self._colors.green:set_color(Color.green)
+    self._colors.blue:set_color(Color.green)
+    self:DelayForcedDelete()
 end
 
 function EHIcorp9Tracker:SetFailed()
-    if self._achieved then
+    if self._achieved_popup_showed then
         return
     end
-    EHIAchievementTracker.SetFailed(self)
-    self._text2:set_color(Color.red)
-    self._text3:set_color(Color.red)
+    self.update = self.update_fade
+    self:AnimateBG()
+    self:ShowFailedPopup()
+    self._colors.red:set_color(Color.red)
+    self._colors.green:set_color(Color.red)
+    self._colors.blue:set_color(Color.red)
+    self:SetStatusText("fail", self._find)
+    self._find:set_color(Color.red)
     self:DelayForcedDelete()
 end
 
@@ -130,7 +136,7 @@ local achievements =
         elements =
         {
             [102728] = { class = TT.Achievement.Base, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-                if self._cache.StartDisabled then
+                if self._cache.corp_11_StartDisabled then
                     return
                 end
                 self._trackers:AddTracker({
@@ -143,7 +149,7 @@ local achievements =
             [102683] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self._achievements:SetAchievementFailed("corp_11")
-                    self._cache.StartDisabled = true
+                    self._cache.corp_11_StartDisabled = true
                 end
             end) },
             [102741] = { special_function = SF.SetAchievementComplete }

@@ -1,3 +1,6 @@
+r274 (16. 11. 2024):
+Hostile Takeover: Fixed a crash in achievement tracker "Texas Treasures, Part 3"
+
 r273 (10. 11. 2024):
 Added option "Show Convert's Health in Tracker"
 Fixed Turret icon
