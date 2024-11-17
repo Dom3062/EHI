@@ -13,11 +13,11 @@ local triggers = {
     [100656] = { id = "Winch", special_function = SF.UnpauseTracker },
     -- Cutter and C4 handled in CoreWorldInstanceManager
 
-    [100126] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_unit = 100916 } },
+    [100126] = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_unit = 100916 } },
 
     [100275] = { time = 20, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape, waypoint = { data_from_element = 100667 } },
 
-    [100142] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_by_unit = 101009 } }
+    [100142] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 101009 } }
 }
 
 ---@type ParseAchievementTable

@@ -46,9 +46,9 @@ if EHI:IsLootCounterVisible() then
     other[102037] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
-    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101268 } }
-    other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
+    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100233 } }
+    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101268 } }
+    other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100008 } }
 end
 EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({

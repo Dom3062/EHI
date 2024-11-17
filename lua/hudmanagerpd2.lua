@@ -15,38 +15,38 @@ local original =
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     local server = EHI:IsHost()
-    local hud = self:script(PlayerBase.PLAYER_INFO_HUD_PD2)
-    self.ehi = managers.ehi_tracker
+    local hud_panel = self:script(PlayerBase.PLAYER_INFO_HUD_PD2).panel
+    self._ehi = managers.ehi_tracker
     managers.ehi_waypoint:SetPlayerHUD(self)
     managers.ehi_assault:init_hud(self)
-    self.ehi_manager = managers.ehi_manager
+    self._ehi_manager = managers.ehi_manager
     local EHIWaypoints = EHI:GetOption("show_waypoints")
     local level_id = Global.game_settings.level_id
     if server or EHI.HeistTimerIsInverted then
         if EHIWaypoints then
-            self:AddEHIUpdator("EHIManager_Update", self.ehi_manager)
+            self:AddEHIUpdator("EHIManager_Update", self._ehi_manager)
         else
-            self:AddEHIUpdator("EHI_Update", self.ehi)
+            self:AddEHIUpdator("EHI_Update", self._ehi)
         end
     else
         original.feed_heist_time = self.feed_heist_time
         if EHIWaypoints then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
-                self.ehi_manager:update_client(time)
+                self._ehi_manager:update_client(time)
             end
         else
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
-                self.ehi:update_client(time)
+                self._ehi:update_client(time)
             end
         end
     end
     if _G.IS_VR then
-        self.ehi:SetPanel(hud.panel)
+        self._ehi:SetPanel(hud_panel)
     end
     if EHI:GetOption("show_buffs") then
-        managers.ehi_buff:init_finalize(self, hud.panel)
+        managers.ehi_buff:init_finalize(self, hud_panel)
     end
     if EHI:GetOption("show_floating_health_bar") then
         dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
@@ -61,9 +61,9 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 for _, value in ipairs(base) do
                     if value > 0 and value < 1 then
                         -- Random Chance
-                        self.ehi:AddTracker({
+                        self._ehi:AddTracker({
                             id = "PagersChance",
-                            chance = self.ehi:RoundChanceNumber(base[1] or 0),
+                            chance = self._ehi:RoundChanceNumber(base[1] or 0),
                             icons = { EHI.Icons.Pager },
                             hint = "pager_chance",
                             remove_on_alarm = true,
@@ -80,7 +80,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 end
             end
             if max > 0 then
-                self.ehi:AddTracker({
+                self._ehi:AddTracker({
                     id = "Pagers",
                     max = EHI.ModUtils:SELH_GetModifiedPagerCount(max),
                     icons = { EHI.Icons.Pager },
@@ -92,7 +92,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end
         end
         if EHI:GetOption("show_bodybags_counter") then
-            self.ehi:AddTracker({
+            self._ehi:AddTracker({
                 id = "BodybagsCounter",
                 icons = { "equipment_body_bag" },
                 hint = "bodybags_counter",
@@ -154,7 +154,7 @@ function HUDManager:set_enabled(...)
 end
 
 function HUDManager:destroy(...)
-    self.ehi_manager:destroy()
+    self._ehi_manager:destroy()
     original.destroy(self, ...)
 end
 

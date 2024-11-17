@@ -95,10 +95,10 @@ if EHI:IsEscapeChanceEnabled() then
     other[101614] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103194 } }
-    other[103182] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103193 } }
-    other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103192 } }
-    other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101776 } }
+    other[103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103194 } }
+    other[103182] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103193 } }
+    other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103192 } }
+    other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101776 } }
 end
 EHI.Manager:ParseTriggers({
     mission = triggers,

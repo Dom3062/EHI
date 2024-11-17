@@ -347,13 +347,13 @@ end
 ---@param id number|string
 ---@param check boolean?
 function EHIManager:_add_position_from_element(data, id, check)
-    local vector = self:GetElementPosition(data.position_by_element)
+    local vector = self:GetElementPosition(data.position_from_element)
     if vector then
         data.position = vector
-        data.position_by_element = nil
+        data.position_from_element = nil
     elseif check and not data.skip_if_not_found then
         data.position = Vector3()
-        EHI:Log(string.format("Element with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_element, tostring(id)))
+        EHI:Log(string.format("Element with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_from_element, tostring(id)))
     end
 end
 
@@ -361,13 +361,13 @@ end
 ---@param id number|string
 ---@param check boolean?
 function EHIManager:_add_position_from_unit(data, id, check)
-    local vector = self:GetUnitPosition(data.position_by_unit)
+    local vector = self:GetUnitPosition(data.position_from_unit)
     if vector then
         data.position = vector
-        data.position_by_unit = nil
+        data.position_from_unit = nil
     elseif check and not data.skip_if_not_found then
         data.position = Vector3()
-        EHI:Log(string.format("Unit with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_by_unit, tostring(id)))
+        EHI:Log(string.format("Unit with ID '%d' has not been found. Element ID to hook '%s'. Position vector set to default value to avoid crashing.", data.position_from_unit, tostring(id)))
     end
 end
 
@@ -970,15 +970,15 @@ function EHIManager:ParseMissionTriggers(mission_triggers, trigger_id_all, trigg
                                 data.waypoint.icon = self._WaypointIconRedirect[icon] or icon
                             end
                         end
-                        if data.waypoint.position_by_element_and_remove_vanilla_waypoint then
-                            local wp_id = data.waypoint.position_by_element_and_remove_vanilla_waypoint
-                            data.waypoint.position_by_element = wp_id
+                        if data.waypoint.position_from_element_and_remove_vanilla_waypoint then
+                            local wp_id = data.waypoint.position_from_element_and_remove_vanilla_waypoint
+                            data.waypoint.position_from_element = wp_id
                             data.waypoint.remove_vanilla_waypoint = wp_id
-                            data.waypoint.position_by_element_and_remove_vanilla_waypoint = nil
+                            data.waypoint.position_from_element_and_remove_vanilla_waypoint = nil
                         end
-                        if data.waypoint.position_by_element then
+                        if data.waypoint.position_from_element then
                             self:_add_position_from_element(data.waypoint, data.id, host)
-                        elseif data.waypoint.position_by_unit then
+                        elseif data.waypoint.position_from_unit then
                             self:_add_position_from_unit(data.waypoint, data.id, host)
                         end
                     end
@@ -1036,10 +1036,10 @@ function EHIManager:_parse_vanilla_waypoint_trigger(data)
     data.data.state = "sneak_present"
     data.data.present_timer = 0
     data.data.no_sync = true -- Don't sync them to others. They may get confused and report it as a bug :p
-    if data.data.position_by_element then
-        data.id = data.id or data.data.position_by_element
+    if data.data.position_from_element then
+        data.id = data.id or data.data.position_from_element
         self:_add_position_from_element(data.data, data.id, host)
-    elseif data.data.position_by_unit then
+    elseif data.data.position_from_unit then
         self:_add_position_from_unit(data.data, data.id, host)
     end
     if data.data.icon then
@@ -1183,17 +1183,17 @@ end
 function EHIManager:_add_position_to_waypoint_from_load()
     for _, trigger in pairs(triggers) do
         if trigger.special_function == SF.ShowWaypoint and trigger.data and not trigger.data.position then
-            if trigger.data.position_by_element then
+            if trigger.data.position_from_element then
                 self:_add_position_from_element(trigger.data, trigger.id, true)
-            elseif trigger.data.position_by_unit then
+            elseif trigger.data.position_from_unit then
                 self:_add_position_from_unit(trigger.data, trigger.id, true)
             end
         elseif trigger.waypoint and not trigger.waypoint.position then
             if trigger.waypoint.data_from_element then
                 self:_add_data_from_element(trigger.waypoint, trigger.id, true)
-            elseif trigger.waypoint.position_by_element then
+            elseif trigger.waypoint.position_from_element then
                 self:_add_position_from_element(trigger.waypoint, trigger.id, true)
-            elseif trigger.waypoint.position_by_unit then
+            elseif trigger.waypoint.position_from_unit then
                 self:_add_position_from_unit(trigger.waypoint, trigger.id, true)
             end
             trigger.waypoint.skip_if_not_found = nil
@@ -1203,9 +1203,9 @@ function EHIManager:_add_position_to_waypoint_from_load()
         if sync_trigger.waypoint and not sync_trigger.waypoint.position then
             if sync_trigger.waypoint.data_from_element then
                 self:_add_data_from_element(sync_trigger.waypoint, sync_trigger.id, true)
-            elseif sync_trigger.waypoint.position_by_element then
+            elseif sync_trigger.waypoint.position_from_element then
                 self:_add_position_from_element(sync_trigger.waypoint, sync_trigger.id, true)
-            elseif sync_trigger.waypoint.position_by_unit then
+            elseif sync_trigger.waypoint.position_from_unit then
                 self:_add_position_from_unit(sync_trigger.waypoint, sync_trigger.id, true)
             end
         end
@@ -1218,16 +1218,16 @@ function EHIManager:SyncLoad()
         local trigger = triggers[id]
         if trigger then
             if trigger.special_function == SF.ShowWaypoint and trigger.data then
-                if trigger.data.position_by_element then
-                    trigger.id = trigger.id or trigger.data.position_by_element
+                if trigger.data.position_from_element then
+                    trigger.id = trigger.id or trigger.data.position_from_element
                     self:_add_position_from_element(trigger.data, trigger.id, true)
-                elseif trigger.data.position_by_unit then
+                elseif trigger.data.position_from_unit then
                     self:_add_position_from_unit(trigger.data, trigger.id, true)
                 end
             elseif trigger.waypoint then
-                if trigger.waypoint.position_by_element then
+                if trigger.waypoint.position_from_element then
                     self:_add_position_from_element(trigger.waypoint, trigger.id, true)
-                elseif trigger.waypoint.position_by_unit then
+                elseif trigger.waypoint.position_from_unit then
                     self:_add_position_from_unit(trigger.waypoint, trigger.id, true)
                 end
             end
@@ -1474,12 +1474,7 @@ function EHIManager:Trigger(id, element, enabled)
                 end
                 self:CreateTracker(trigger)
             elseif f == SF.AddTimeByPreplanning then
-                local t = 0
-                if managers.preplanning:IsAssetBought(trigger.data.id) then
-                    t = trigger.data.yes
-                else
-                    t = trigger.data.no
-                end
+                local t = managers.preplanning:IsAssetBought(trigger.data.id) and trigger.data.yes or trigger.data.no
                 trigger.time = trigger.time + t
                 if trigger.waypoint then
                     trigger.waypoint.time = trigger.time
@@ -1504,7 +1499,7 @@ function EHIManager:Trigger(id, element, enabled)
                     self:Call(trigger.id, trigger.f --[[@as string]])
                 end
             elseif f == SF.CallTrackerManagerFunction then
-                local _tf = self._trackers[trigger.f --[[@as string]]]
+                local _tf = self._trackers[trigger.f --[[@as string]]] ---@type fun(self: EHITrackerManager)?
                 if _tf then
                     if trigger.arg then
                         _tf(self._trackers, unpack(trigger.arg))
@@ -1513,7 +1508,7 @@ function EHIManager:Trigger(id, element, enabled)
                     end
                 end
             elseif f == SF.CallWaypointManagerFunction then
-                local _tf = self._waypoints[trigger.f --[[@as string]]]
+                local _tf = self._waypoints[trigger.f --[[@as string]]] ---@type fun(self: EHIWaypointManager)?
                 if _tf then
                     if trigger.arg then
                         _tf(self._waypoints, unpack(trigger.arg))
@@ -1609,9 +1604,14 @@ end
 ---@param id number
 ---@param waypoint ElementWaypointTrigger
 function EHIManager:AddWaypointToTrigger(id, waypoint)
-    if not EHI:GetOption("show_waypoints_mission") then
-        return
+    if EHI:GetOption("show_waypoints_mission") then
+        self:_AddWaypointToTrigger(id, waypoint)
     end
+end
+
+---@param id number
+---@param waypoint ElementWaypointTrigger
+function EHIManager:_AddWaypointToTrigger(id, waypoint)
     local t = triggers[id]
     if t then
         local w = deep_clone(waypoint)
@@ -1634,11 +1634,10 @@ end
 ---@param icon string
 function EHIManager:UpdateWaypointTriggerIcon(id, icon)
     local t = triggers[id]
-    if not (t and t.waypoint) then
-        return
+    if t and t.waypoint then
+        t.waypoint.icon = icon
+        self._waypoints:SetWaypointIcon(t.id, icon)
     end
-    t.waypoint.icon = icon
-    self._waypoints:SetWaypointIcon(t.id, icon)
 end
 
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean)

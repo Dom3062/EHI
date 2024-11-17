@@ -14,6 +14,7 @@ local triggers = {
     [100363] = { time = 90, id = "HeliArrival", icons = Icon.HeliLootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot },
     [100355] = { time = 60, id = "HeliArrival", icons = Icon.HeliLootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot },
 
+    [103355] = { time = inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Wait },
     [100266] = { time = 30 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Wait },
     [100271] = { time = 45 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Wait },
     [100273] = { time = 60 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Wait },
@@ -21,11 +22,68 @@ local triggers = {
     [100265] = { time = 45 + 75 + inspect, id = "Inspect", icons = { Icon.Wait }, hint = Hints.Wait },
 
     -- Heli escape
-    [100898] = { time = 15 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
-    [100902] = { time = 30 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
-    [100904] = { time = 45 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
-    [100905] = { time = 60 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape }
+    [100898] = { time = 15 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 100896 } },
+    [100902] = { time = 30 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 100896 } },
+    [100904] = { time = 45 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 100896 } },
+    [100905] = { time = 60 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 100896 } }
 }
+if EHI:GetOption("show_waypoints_mission") then
+    if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then -- ´disable_2nd_helicopter´ ElementFilter 104393
+        local SetWaypoints = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+            if self._cache.wttj_flare_set then
+                return
+            end
+            local element_vector = self:GetElementPositionOrDefault(trigger.element)
+            local EngineLootDropWP = { icon = Icon.LootDrop, position = element_vector }
+            self:_AddWaypointToTrigger(103132, EngineLootDropWP)
+            self:_AddWaypointToTrigger(103130, EngineLootDropWP)
+            self:_AddWaypointToTrigger(103133, EngineLootDropWP)
+            self:_AddWaypointToTrigger(103630, EngineLootDropWP)
+            self:_AddWaypointToTrigger(100372, EngineLootDropWP)
+            self:_AddWaypointToTrigger(100371, EngineLootDropWP)
+            self:_AddWaypointToTrigger(100363, EngineLootDropWP)
+            self:_AddWaypointToTrigger(100355, EngineLootDropWP)
+            local InspectWP = { position = element_vector }
+            self:_AddWaypointToTrigger(103355, InspectWP)
+            self:_AddWaypointToTrigger(100266, InspectWP)
+            self:_AddWaypointToTrigger(100271, InspectWP)
+            self:_AddWaypointToTrigger(100273, InspectWP)
+            self:_AddWaypointToTrigger(103319, InspectWP)
+            self:_AddWaypointToTrigger(100265, InspectWP)
+            self._cache.wttj_flare_set = true
+        end)
+        triggers[100005] = { special_function = SetWaypoints, element = 100001 }
+        triggers[104416] = { special_function = SetWaypoints, element = 104408 }
+        if EHI:IsClient() then
+            triggers[104423] = { special_function = SetWaypoints, element = 100001 }
+            triggers[100014] = { special_function = SetWaypoints, element = 104408 }
+        end
+        EHI.Manager:AddLoadSyncFunction(function(self)
+            if managers.environment_effects._mission_effects[100014] then
+                self:Trigger(100005)
+            elseif managers.environment_effects._mission_effects[104423] then
+                self:Trigger(104416)
+            end
+        end)
+    else
+        local EngineLootDropWP = { icon = Icon.LootDrop, position_from_element = 100001 }
+        triggers[103132].waypoint = deep_clone(EngineLootDropWP)
+        triggers[103130].waypoint = deep_clone(EngineLootDropWP)
+        triggers[103133].waypoint = deep_clone(EngineLootDropWP)
+        triggers[103630].waypoint = deep_clone(EngineLootDropWP)
+        triggers[100372].waypoint = deep_clone(EngineLootDropWP)
+        triggers[100371].waypoint = deep_clone(EngineLootDropWP)
+        triggers[100363].waypoint = deep_clone(EngineLootDropWP)
+        triggers[100355].waypoint = deep_clone(EngineLootDropWP)
+        local InspectWP = { position_from_element = 100001 }
+        triggers[103355].waypoint = deep_clone(InspectWP)
+        triggers[100266].waypoint = deep_clone(InspectWP)
+        triggers[100271].waypoint = deep_clone(InspectWP)
+        triggers[100273].waypoint = deep_clone(InspectWP)
+        triggers[103319].waypoint = deep_clone(InspectWP)
+        triggers[100265].waypoint = deep_clone(InspectWP)
+    end
+end
 
 local other =
 {

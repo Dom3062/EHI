@@ -88,8 +88,8 @@ if EHI:IsLootCounterVisible() then
     end)
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101006 } }
-    other[103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 103234 } }
+    other[102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101006 } }
+    other[103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103234 } }
 end
 EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({

@@ -64,6 +64,12 @@ end
 function NetworkHelper:AddReceiveHook(message_id, hook_id, func)
 end
 
+---Removes a receive hook
+---@param hook_id string @The unique name of the hook to remove
+---@param message_id? string @The message id to remove the hook from, if not specified removes all matching hooks
+function NetworkHelper:RemoveReceiveHook(hook_id, message_id)
+end
+
 ---Converts a string representation of a color to a color
 ---@param str string
 ---@return Color?

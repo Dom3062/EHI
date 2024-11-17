@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local Hints = EHI.Hints
 local car = { { icon = Icon.Car, color = tweak_data.ehi.colors.CarBlue } }
 local triggers = {
-    [100562] = { time = 1 + 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_by_unit = 100564 } },
+    [100562] = { time = 1 + 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100564 } },
 
     [101595] = { time = 6, id = "Wait", icons = { Icon.Wait }, hint = Hints.Wait },
 

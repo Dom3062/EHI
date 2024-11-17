@@ -8,7 +8,7 @@ local anim_delay = 2 + 727/30 + 2 -- 2s is function delay; 727/30 is a animation
 local assault_delay = 4 + 3 + 3 + 3 + 5 + 1
 local assault_delay_methlab = 20 + assault_delay
 local triggers = {
-    [101970] = { time = (240 + 12) - 3, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
+    [101970] = { time = (240 + 12) - 3, waypoint = { position_from_element = 101454 }, hint = Hints.LootEscape },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { data_from_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self:CreateTracker(trigger)
         self._cache.BagsCooked = (self._cache.BagsCooked or 0) + 1
@@ -22,9 +22,9 @@ local triggers = {
     [1] = { special_function = SF.RemoveTrigger, data = { 101974, 101975, 101970 } },
     [101974] = { special_function = SF.Trigger, data = { 1019741, 1 } },
     -- There is an issue in the script. Even if the van driver says 2 minutes, he arrives in a minute
-    [1019741] = { time = (60 + 30 + anim_delay) - 58, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
+    [1019741] = { time = (60 + 30 + anim_delay) - 58, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_from_element = 101454 }, hint = Hints.LootEscape },
     [101975] = { special_function = SF.Trigger, data = { 1019751, 1 } },
-    [1019751] = { time = 30 + anim_delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_by_element = 101454 }, hint = Hints.LootEscape },
+    [1019751] = { time = 30 + anim_delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { position_from_element = 101454 }, hint = Hints.LootEscape },
 
     [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning, hint = Hints.ScriptedBulldozer }
 }
@@ -98,7 +98,7 @@ local tracker_merge =
         {
             [101001] = { special_function = SF.RemoveTracker },
             [100721] = { time = 1, chance = 5, icons = { Icon.Methlab }, class = TT.Timed.Chance, special_function = SF.SetChanceWhenTrackerExists, start_opened = EHI:ShowTimedTrackerOpened(), hint = Hints.CookingChance, tracker_merge = {} },
-            [100724] = { time = 25, icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_by_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
+            [100724] = { time = 25, icons = { Icon.Methlab, Icon.Loop }, waypoint = { position_from_element = 100212 }, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
             [100723] = { amount = 10, special_function = SF.IncreaseChance }
         }
     }

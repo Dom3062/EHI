@@ -20,8 +20,8 @@ local triggers =
     [100207] = DestructionTrigger, -- +1000
     [100226] = DestructionTrigger, -- +10000
 
-    [100460] = { time = 24, id = "Reinforcements1", icons = { Icon.Kill }, hint = Hints.Kills, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100507 } },
-    [100501] = { time = 20 + 24, id = "Reinforcements2", icons = { Icon.Kill }, hint = Hints.Kills, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100508 } },
+    [100460] = { time = 24, id = "Reinforcements1", icons = { Icon.Kill }, hint = Hints.Kills, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100507 } },
+    [100501] = { time = 20 + 24, id = "Reinforcements2", icons = { Icon.Kill }, hint = Hints.Kills, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100508 } },
 
     [100518] = { time = 70 + 26, id = "Escape", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 100515 }, hint = Hints.Escape }
 }

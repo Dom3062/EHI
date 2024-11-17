@@ -75,13 +75,13 @@ local other =
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_4/str_vehicle_van_family_jewels_4/escape1_van
-    other[101350] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101119 } }
+    other[101350] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101119 } }
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_3/str_vehicle_van_family_jewels_3/escape2_van
-    other[101351] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101284 } }
+    other[101351] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101284 } }
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_2/str_vehicle_van_family_jewels_2/escape3_van
-    other[101352] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101285 } }
+    other[101352] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101285 } }
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_5/str_vehicle_van_family_jewels_5/escape4_van
-    other[101353] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 101286 } }
+    other[101353] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101286 } }
 end
 if EHI:IsLootCounterVisible() then
     other[100107] = EHI:AddLootCounter2(function()

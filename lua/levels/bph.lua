@@ -8,12 +8,12 @@ local triggers = {
     [100109] = { max = (ovk_and_up and 40 or 30), id = "EnemyDeathShowers", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills },
     [101339] = { id = "EnemyDeathShowers", special_function = SF.IncreaseProgress },
 
-    [101285] = { time = 11, id = "Thermite1", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100069, 2850) } },
-    [101277] = { time = 11, id = "Thermite2", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100069, 4200) } },
-    [101286] = { time = 11, id = "Thermite3", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100069, 4350) } },
-    [101284] = { time = 11, id = "Thermite4", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100069, 4500) } },
+    [101285] = { time = 11, id = "Thermite1", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100069, 2850) } },
+    [101277] = { time = 11, id = "Thermite2", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100069, 4200) } },
+    [101286] = { time = 11, id = "Thermite3", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100069, 4350) } },
+    [101284] = { time = 11, id = "Thermite4", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100069, 4500) } },
 
-    [102606] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait }, hint = Hints.Wait, waypoint = { position_by_unit = 101353 } },
+    [102606] = { time = 10, id = "MoveWalkway", icons = { Icon.Wait }, hint = Hints.Wait, waypoint = { position_from_unit = 101353 } },
 
     [101137] = { max = 10, id = "EnemyDeathOutside", icons = { Icon.Kill }, flash_times = 1, class = TT.Progress, hint = Hints.Kills, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101793 } },
     [101412] = { id = "EnemyDeathOutside", special_function = SF.IncreaseProgress }

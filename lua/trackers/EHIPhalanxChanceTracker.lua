@@ -4,6 +4,7 @@ EHIPhalanxChanceTracker = class(EHITimedChanceTracker)
 EHIPhalanxChanceTracker._forced_icons = { "buff_shield" }
 EHIPhalanxChanceTracker._paused_color = EHIPausableTracker._paused_color
 EHIPhalanxChanceTracker._forced_hint_text = "phalanx_chance"
+EHIPhalanxChanceTracker._sync_fade_state = "EHI_EHIPhalanxChanceTracker_sync_fade_state"
 EHIPhalanxChanceTracker.IsHost = EHI:IsHost()
 function EHIPhalanxChanceTracker:pre_init(params)
     if params.first_assault then
@@ -16,14 +17,43 @@ function EHIPhalanxChanceTracker:pre_init(params)
 end
 
 function EHIPhalanxChanceTracker:post_init(params)
+    EHIPhalanxChanceTracker.super.post_init(self, params)
     self._t_refresh = params.time
     self._chance_increase = params.chance_increase
-    if self._parent_class:GetInternalData("assault", "is_assault") then
+    if params.assault_extender then
+        self.update = EHIPhalanxChanceTracker.super.update
+        self._assault_time_blocked = true
+        if self.IsHost then
+            self._assault_state = ""
+            Hooks:PostHook(GroupAIStateBesiege, "_upd_assault_task", "EHI_EHIPhalanxChanceTracker_upd_assault_task", function(state, ...)
+                local phase = state._task_data.assault.phase
+                if phase and phase ~= "anticipation" and self._assault_state ~= phase then
+                    if phase == "fade" then
+                        self._color_lock = true
+                        self._chance_increase_enabled = false
+                        self:SetTextColor(self._paused_color, self._chance_text)
+                        self._parent_class:SyncData(self._sync_fade_state, "true")
+                    end
+                    self._assault_state = phase
+                end
+            end)
+            local state = managers.groupai:state()
+            local phase = state and state._task_data.phase
+            if not phase or phase == "fade" then
+                self:SetTextColor(self._paused_color, self._chance_text)
+            end
+        else
+            self._parent_class:AddReceiveHook(self._sync_fade_state, function(data, sender)
+                self._color_lock = true
+                self._chance_increase_enabled = false
+                self:SetTextColor(self._paused_color, self._chance_text)
+            end)
+        end
+    elseif self._parent_class:GetInternalData("assault", "is_assault") then
         self:ComputeAssaultTime(true)
     else
         self._assault_t = 0
     end
-    EHIPhalanxChanceTracker.super.post_init(self, params)
 end
 
 function EHIPhalanxChanceTracker:update(dt)
@@ -40,7 +70,9 @@ end
 
 ---@param from_create boolean?
 function EHIPhalanxChanceTracker:ComputeAssaultTime(from_create)
-    if self.IsHost then
+    if self._assault_time_blocked then
+        return
+    elseif self.IsHost then
         local sustain_t = self._parent_class:GetInternalData("assault", "sustain_t")
         if from_create and sustain_t then
             local sustain_app_t = self._parent_class:GetInternalData("assault", "sustain_app_t")
@@ -107,4 +139,9 @@ function EHIPhalanxChanceTracker:Refresh()
     else
         self._increase_chance_at_next_assault = true
     end
+end
+
+function EHIPhalanxChanceTracker:pre_delete()
+    Hooks:RemovePostHook("EHI_EHIPhalanxChanceTracker_upd_assault_task")
+    self._parent_class:RemoveReceiveHook(self._sync_fade_state)
 end

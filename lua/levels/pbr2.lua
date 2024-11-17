@@ -122,7 +122,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100148] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100146] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-if EHI:IsHost() and EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
+if EHI:GetOption("show_captain_spawn_chance") then
     other[103489] = EHI:AddCustomCode(function(self)
         self._trackers:ForceRemoveTracker("CaptainChance")
     end)

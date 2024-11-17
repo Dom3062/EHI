@@ -1,5 +1,4 @@
 ---@alias EHIMinionTracker.PeerData { label: PanelText, minions: table<string, boolean> }
----@alias EHIMinionTracker.LocalMinion { key: string, text: PanelText }
 
 ---@class EHIMinionTracker : EHITracker
 ---@field super EHITracker
@@ -62,25 +61,24 @@ function EHIMinionTracker:AlignTextOnHalfPos()
             pos = pos + 1
         end
     end
-    self:AlignMinionTextOnHalfPos()
+    if self._minion_health then
+        self:AlignMinionTextOnHalfPos(self._minion_health[self._minion_health_first], self._minion_health_second and self._minion_health[self._minion_health_second])
+    end
 end
 
-function EHIMinionTracker:AlignMinionTextOnHalfPos()
-    if self._minion_health then
-        if self._n_minion_health > 1 then
-            local m_pos = 0
-            for _, value in ipairs(self._minion_health) do
-                value.text:set_w(self._default_bg_size_half)
-                value.text:set_right(self._bg_box:right() - (self._default_bg_size_half * m_pos))
-                self:FitTheText(value.text)
-                m_pos = m_pos + 1
-            end
-        else
-            local _, value = next(self._minion_health)
-            value.text:set_right(self._bg_box:right())
-            self:FitTheText(value.text)
-        end
+---@param first_minion PanelText
+---@param second_minion PanelText?
+function EHIMinionTracker:AlignMinionTextOnHalfPos(first_minion, second_minion)
+    if second_minion then
+        second_minion:set_w(self._default_bg_size_half)
+        second_minion:set_right(self._bg_box:right() - self._default_bg_size_half)
+        self:FitTheText(second_minion)
+        first_minion:set_w(self._default_bg_size_half)
+    else
+        first_minion:set_w(self._default_bg_size)
     end
+    first_minion:set_right(self._bg_box:right())
+    self:FitTheText(first_minion)
 end
 
 ---@param addition boolean?
@@ -100,7 +98,9 @@ function EHIMinionTracker:Reorganize(addition)
             self._panel_w = self._default_panel_w
             self._bg_box:set_w(self._default_bg_size * (self._minion_health and 2 or 1))
             self:AnimateMovement()
-            self:AlignMinionTextOnHalfPos()
+            if self._minion_health then
+                self:AlignMinionTextOnHalfPos(self._minion_health[self._minion_health_first], self._minion_health_second and self._minion_health[self._minion_health_second])
+            end
         end
     elseif addition then
         self._panel_w = self._panel_w + self._default_bg_size_half
@@ -152,14 +152,11 @@ function EHIMinionTracker:AddMinion(key, peer_id, local_peer)
         self:FormatUnique(peer_data)
         self:AnimateBG()
         if local_peer and self._SHOW_MINION_HEALTH then
-            self._n_minion_health = self._n_minion_health + 1
+            self._n_minion_health = 2
+            self._minion_health_second = key
             local minion_text = self:CreateText({ text = "100%" })
-            table.insert(self._minion_health, {
-                key = key,
-                text = minion_text
-            })
-            self._minion_text_cache[key] = minion_text
-            self:AlignMinionTextOnHalfPos()
+            self:AlignMinionTextOnHalfPos(self._minion_health[self._minion_health_first], minion_text)
+            self._minion_health[key] = minion_text
         end
         return
     end
@@ -169,24 +166,24 @@ function EHIMinionTracker:AddMinion(key, peer_id, local_peer)
         minions = { [key] = true }
     }
     if local_peer and self._SHOW_MINION_HEALTH then
-        self._minion_health = {} ---@type EHIMinionTracker.LocalMinion[]
-        self._minion_text_cache = {}
+        self._minion_health = {} ---@type table<string, PanelText>
+        self._minion_health_first = key
         self._n_minion_health = 1
         self._default_panel_w = self._default_panel_w + self._default_bg_size
         self._panel_w = self._panel_w + self._default_bg_size
         self:SetBGSize()
         self:ChangeTrackerWidth(self._panel_w)
-        self:SetIconsX()
-        self:AdjustHintX(self._default_bg_size)
+        if self._n_of_peers == 0 then -- First minion is for the local_peer; no need to animate
+            self:SetIconsX()
+            self:AdjustHintX(self._default_bg_size)
+        else
+            self:AnimateMovement(true, self._default_bg_size)
+        end
         local minion_text = self:CreateText({ text = "100%" })
         minion_text:set_w(self._default_bg_size)
         minion_text:set_right(self._bg_box:right() + (self._n_of_peers >= 2 and self._default_bg_size_half or 0))
         self:FitTheText(minion_text)
-        table.insert(self._minion_health, {
-            key = key,
-            text = minion_text
-        })
-        self._minion_text_cache[key] = minion_text
+        self._minion_health[key] = minion_text
     end
     self._n_of_peers = self._n_of_peers + 1
     if self._n_of_peers >= 2 then
@@ -202,7 +199,7 @@ end
 ---@param key string
 ---@param unit UnitEnemy
 function EHIMinionTracker:MinionDamaged(key, unit)
-    local minion_text = self._minion_text_cache[key]
+    local minion_text = self._minion_health[key]
     if minion_text then
         local percent = unit:character_damage():health_ratio()
         minion_text:set_text(string.format("%d%%", self._parent_class:RoundChanceNumber(percent)))
@@ -218,19 +215,18 @@ function EHIMinionTracker:RemoveMinion(key)
     for id, data in pairs(self._peers) do
         if data.minions[key] then
             data.minions[key] = nil
-            local local_peer, local_minion
-            if self._minion_health then
-                for i, value in ipairs(self._minion_health) do
-                    if value.key == key then
-                        local_minion = value
-                        local_peer = true
-                        table.remove(self._minion_health, i)
-                        self._n_minion_health = self._n_minion_health - 1
-                        break
-                    end
+            local local_minion = self._minion_health and self._minion_health[key]
+            if local_minion then
+                local_minion:parent():remove(local_minion)
+                self._n_minion_health = self._n_minion_health - 1
+                if self._minion_health_first == key then
+                    self._minion_health_first = self._minion_health_second
                 end
-                if table.size(self._minion_health) == 0 and self._n_of_peers > 1 then -- Skip shortening the tracker if the last peer is local
+                self._minion_health_second = nil
+                self._minion_health[key] = nil
+                if self._n_minion_health == 0 and self._n_of_peers > 1 then -- Skip shortening the tracker if the last peer is local
                     self._minion_health = nil
+                    self._minion_health_first = nil
                     self:SetBGSize(self._default_bg_size, "short")
                     self:SetIconsX()
                     self._panel_w = self._panel_w - self._default_bg_size
@@ -239,21 +235,16 @@ function EHIMinionTracker:RemoveMinion(key)
                     self:AdjustHintX(-self._default_bg_size)
                 end
             end
-            if local_minion then
-                local text = local_minion.text
-                text:parent():remove(text)
-                self._minion_text_cache[key] = nil
-            end
             if table.size(data.minions) == 0 then
                 self:RemovePeer(id)
             else
                 self:FormatUnique(data)
                 self:AnimateBG()
-                if local_peer then
-                    local _, other_minion = next(self._minion_health)
-                    other_minion.text:set_w(self._default_bg_size)
-                    other_minion.text:set_right(self._bg_box:right())
-                    self:FitTheText(other_minion.text)
+                if local_minion then
+                    local other_minion = self._minion_health and self._minion_health_first and self._minion_health[self._minion_health_first]
+                    if other_minion then
+                        self:AlignMinionTextOnHalfPos(other_minion)
+                    end
                 end
             end
             break
@@ -285,31 +276,22 @@ function EHIMinionHealthOnlyTracker:AddMinion(key, peer_id, local_peer)
         peer_data.minions[key] = amount
         self:AnimateBG()
         self._n_minion_health = self._n_minion_health + 1
+        self._minion_health_second = key
         local minion_text = self:CreateText({ text = "100%" })
-        table.insert(self._minion_health, {
-            key = key,
-            text = minion_text
-        })
-        self._minion_text_cache[key] = minion_text
-        self:AlignMinionTextOnHalfPos()
+        self._minion_health[key] = minion_text
+        self:AlignMinionTextOnHalfPos(self._minion_health[self._minion_health_first], minion_text)
         return
     end
     peer_data =
     {
         minions = { [key] = amount }
     }
-    self._minion_health = {} ---@type EHIMinionTracker.LocalMinion[]
-    self._minion_text_cache = {}
+    self._minion_health = {} ---@type table<string, PanelText>
+    self._minion_health_first = key
     self._n_minion_health = 1
     local minion_text = self:CreateText({ text = "100%" })
-    minion_text:set_w(self._default_bg_size)
-    minion_text:set_right(self._bg_box:right())
-    self:FitTheText(minion_text)
-    table.insert(self._minion_health, {
-        key = key,
-        text = minion_text
-    })
-    self._minion_text_cache[key] = minion_text
+    self:AlignMinionTextOnHalfPos(minion_text)
+    self._minion_health[key] = minion_text
     self._peers[peer_id] = peer_data
     self:SetIconColor()
 end
@@ -336,14 +318,11 @@ function EHITotalMinionTracker:AddMinion(key, peer_id, local_peer)
         peer_data.minions[key] = true
         self:AnimateBG()
         if local_peer and self._SHOW_MINION_HEALTH then
-            self._n_minion_health = self._n_minion_health + 1
+            self._n_minion_health = 2
+            self._minion_health_second = key
             local minion_text = self:CreateText({ text = "100%" })
-            table.insert(self._minion_health, {
-                key = key,
-                text = minion_text
-            })
-            self._minion_text_cache[key] = minion_text
-            self:AlignMinionTextOnHalfPos()
+            self:AlignMinionTextOnHalfPos(self._minion_health[self._minion_health_first], minion_text)
+            self._minion_health[key] = minion_text
         end
         return
     end
@@ -352,8 +331,8 @@ function EHITotalMinionTracker:AddMinion(key, peer_id, local_peer)
         minions = { [key] = true }
     }
     if local_peer and self._SHOW_MINION_HEALTH then
-        self._minion_health = {} ---@type EHIMinionTracker.LocalMinion[]
-        self._minion_text_cache = {}
+        self._minion_health = {} ---@type table<string, PanelText>
+        self._minion_health_first = key
         self._n_minion_health = 1
         self._default_panel_w = self._default_panel_w + self._default_bg_size
         self._panel_w = self._panel_w + self._default_bg_size
@@ -366,14 +345,8 @@ function EHITotalMinionTracker:AddMinion(key, peer_id, local_peer)
             self:AnimateMovement(true, self._default_bg_size)
         end
         local minion_text = self:CreateText({ text = "100%" })
-        minion_text:set_w(self._default_bg_size)
-        minion_text:set_right(self._bg_box:right())
-        self:FitTheText(minion_text)
-        table.insert(self._minion_health, {
-            key = key,
-            text = minion_text
-        })
-        self._minion_text_cache[key] = minion_text
+        self:AlignMinionTextOnHalfPos(minion_text)
+        self._minion_health[key] = minion_text
     end
     self._n_of_peers = self._n_of_peers + 1
     if self._n_of_peers >= 2 then

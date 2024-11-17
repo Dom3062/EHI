@@ -20,7 +20,7 @@ local triggers = {
     [102301] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning, hint = Hints.Explosion },
     [101566] = { id = "Trap", special_function = SF.RemoveTracker },
 
-    [101230] = { time = 120, id = "Water", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water, waypoint = { icon = Icon.Water, position_by_element = 101117 } },
+    [101230] = { time = 120, id = "Water", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water, waypoint = { icon = Icon.Water, position_from_element = 101117 } },
     [101231] = { id = "Water", special_function = SF.PauseTracker }
 }
 
@@ -68,7 +68,7 @@ local other =
 if EHI:GetWaypointOption("show_waypoints_escape") then
     for i = 4700, 4850, 50 do
         local waypoint_id = EHI:GetInstanceElementID(100019, i)
-        other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_by_element = waypoint_id } }
+        other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_from_element = waypoint_id } }
     end
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

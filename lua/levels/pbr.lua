@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [101770] = { time = 90, id = "EscapeHeli", icons = { Icon.Escape }, hint = Hints.Escape, waypoint = { position_by_element = EHI:GetInstanceElementID(100031, 20050) } }
+    [101770] = { time = 90, id = "EscapeHeli", icons = { Icon.Escape }, hint = Hints.Escape, waypoint = { position_from_element = EHI:GetInstanceElementID(100031, 20050) } }
 }
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)

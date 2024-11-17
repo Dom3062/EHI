@@ -1070,6 +1070,9 @@ end
 ---@class CoroutineManager
 ---@field _buffer table
 
+---@class CrimeSpreeManager
+---@field is_active fun(self: self): boolean
+
 ---@class CustomSafehouseManager
 ---@field get_daily_challenge fun(self: self): CustomSafehouseManager._global.daily
 ---@field is_trophy_unlocked fun(self: self, id: string): boolean
@@ -1204,6 +1207,7 @@ end
 ---@field blackmarket BlackMarketManager
 ---@field controller ControllerManager
 ---@field criminals CriminalsManager
+---@field crime_spree CrimeSpreeManager
 ---@field custom_safehouse CustomSafehouseManager
 ---@field ehi_manager EHIManager
 ---@field ehi_tracker EHITrackerManager

@@ -9,11 +9,11 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100903] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, waypoint = { position_by_element = 100941 }, hint = Hints.rvd2_LiquidNitrogen },
+    [100903] = { time = 120, id = "LiquidNitrogen", icons = { Icon.LiquidNitrogen }, waypoint = { position_from_element = 100941 }, hint = Hints.rvd2_LiquidNitrogen },
 
     [100699] = { time = 8 + 25 + 13, id = "ObjectiveWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, waypoint = { position_by_element = 100941 }, hint = Hints.Explosion }
+    [100939] = { time = 5, id = "C4Vault", icons = { Icon.C4 }, waypoint = { position_from_element = 100941 }, hint = Hints.Explosion }
 }
 local other =
 {

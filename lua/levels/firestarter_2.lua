@@ -12,6 +12,7 @@ if EHI:GetOption("show_mission_trackers") then
                     id = tostring(pc_id),
                     time = 13,
                     icons = { Icon.PCHack },
+                    remove_on_alarm = true,
                     hint = Hints.Hack
                 })
             end
@@ -19,7 +20,8 @@ if EHI:GetOption("show_mission_trackers") then
                 managers.ehi_waypoint:AddWaypoint(tostring(pc_id), {
                     time = 13,
                     icon = Icon.PCHack,
-                    position = managers.ehi_manager:GetUnitPositionOrDefault(pc_id)
+                    position = managers.ehi_manager:GetUnitPositionOrDefault(pc_id),
+                    remove_on_alarm = true
                 })
             end
         end)

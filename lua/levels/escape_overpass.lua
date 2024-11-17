@@ -10,12 +10,17 @@ local GetFromCache = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
     local data = table.remove_key(self._cache, trigger.id) --[[@as { icon: string }? ]]
     if data and data.icon then
         trigger.icons[1] = data.icon
+        if data.icon == Icon.Heli then
+            trigger.waypoint = nil
+        end
+    else
+        trigger.waypoint = nil
     end
     self:CreateTracker(trigger)
 end)
 local triggers = {
-    [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
-    [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape },
+    [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape, waypoint = { icon = Icon.Car, position_from_element = 102141 } },
+    [101158] = { time = 240, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape, waypoint = { icon = Icon.Car, position_from_element = 102141 } },
     [101977] = { special_function = AddToCache, data = { icon = Icon.Heli } },
     [101978] = { special_function = AddToCache, data = { icon = Icon.Heli } },
     [101979] = { special_function = AddToCache, data = { icon = Icon.Car } }
@@ -26,10 +31,10 @@ if EHI:IsClient() then
     triggers[101532] = { time = 115, icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[102089] = { time = 60, icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
     triggers[101521] = { time = 30, icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101513] = { time = 175, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101534] = { time = 115, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[102090] = { time = 60, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101571] = { time = 30, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101513] = { time = 175, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Car, position_from_element = 102141 } }
+    triggers[101534] = { time = 115, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Car, position_from_element = 102141 } }
+    triggers[102090] = { time = 60, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Car, position_from_element = 102141 } }
+    triggers[101571] = { time = 30, icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = { icon = Icon.Car, position_from_element = 102141 } }
 end
 
 ---@type ParseAchievementTable
@@ -60,9 +65,9 @@ if EHI:IsLootCounterVisible() then
     end)
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[102110] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102120 } } -- Heli
-    other[102130] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102138 } } -- Heli
-    other[100953] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102141 } } -- Van
+    other[102110] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102120 } } -- Heli
+    other[102130] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102138 } } -- Heli
+    other[100953] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102141 } } -- Van
 end
 EHI.Manager:ParseTriggers({
     mission = triggers,

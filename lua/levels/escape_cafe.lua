@@ -28,9 +28,9 @@ local other =
     [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100318 } }
-    other[100157] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100314 } }
-    other[100156] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100367 } }
+    other[100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100318 } }
+    other[100157] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100314 } }
+    other[100156] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100367 } }
 end
 
 -- Bugged because one loot bag is not counted

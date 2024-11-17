@@ -71,9 +71,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[103060] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103444 } }
-    other[103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103438 } }
-    other[104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_by_element = 103443 } }
+    other[103060] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103444 } }
+    other[103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103438 } }
+    other[104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103443 } }
 end
 EHI.Manager:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
 

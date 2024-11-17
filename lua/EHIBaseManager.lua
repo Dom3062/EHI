@@ -56,14 +56,20 @@ function EHIBaseManager:AddReceiveHook(message_id, hook_id, f)
     end
 end
 
+---@param message_id string A message to sync data to
+---@param hook_id string?
+function EHIBaseManager:RemoveReceiveHook(message_id, hook_id)
+    NetworkHelper:RemoveReceiveHook(hook_id or message_id, message_id)
+end
+
 ---@param message string
----@param data any
-function EHIBaseManager:Sync(message, data)
+---@param data string
+function EHIBaseManager:SyncData(message, data)
     NetworkHelper:SendToPeersExcept(1, message, data)
 end
 
 ---@param message string
----@param tbl table
+---@param tbl table A table of data that will get encoded to json
 function EHIBaseManager:SyncTable(message, tbl)
     NetworkHelper:SendToPeersExcept(1, message, json.encode(tbl))
 end

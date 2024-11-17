@@ -9,6 +9,17 @@ end
 
 ---@param modifier string
 ---@param category string
+function ModifiersManager:IsModifierActive(modifier, category)
+    local modifiers = self._modifiers[category]
+    for _, mod in ipairs(modifiers or {}) do
+        if mod._type == modifier then
+            return true
+        end
+    end
+end
+
+---@param modifier string
+---@param category string
 ---@return BaseModifier?
 function ModifiersManager:GetModifier(modifier, category)
     local modifiers = self._modifiers[category]

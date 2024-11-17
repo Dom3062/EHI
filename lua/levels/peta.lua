@@ -49,7 +49,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    local EscapeWaypoint = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = EHI:GetInstanceElementID(100043, 2900) } }
+    local EscapeWaypoint = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = EHI:GetInstanceElementID(100043, 2900) } }
     other[101892] = EscapeWaypoint
     other[101933] = EscapeWaypoint
     other[101394] = EscapeWaypoint

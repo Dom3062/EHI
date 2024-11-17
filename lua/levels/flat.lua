@@ -25,7 +25,7 @@ end
 local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 }, hint = Hints.C4Delivery },
 
-    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper" }, class = TT.Progress, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100294, restore_on_done = true }, hint = Hints.Kills },
+    [100068] = { max = kills, id = "SniperDeath", icons = { "sniper" }, class = TT.Progress, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100294, restore_on_done = true }, hint = Hints.Kills },
     [104555] = { id = "SniperDeath", special_function = SF.IncreaseProgress },
 
     [103446] = { time = 20 + 6 + 4, id = "HeliDropsC4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },

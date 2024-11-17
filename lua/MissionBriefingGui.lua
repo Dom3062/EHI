@@ -168,6 +168,7 @@ function XPBreakdownButton:destroy()
 end
 
 local XPBreakdownButtonSwitch = {}
+XPBreakdownButtonSwitch.make_fine_text = BlackMarketGui.make_fine_text
 ---@param ws_panel Panel
 ---@param max_plans number
 ---@param loc LocalizationManager
@@ -183,7 +184,7 @@ function XPBreakdownButtonSwitch:new(ws_panel, max_plans, loc, button)
         color = Color.white,
         alpha = 1
     })
-    EHIMenu:make_fine_text(self._text)
+    self:make_fine_text(self._text)
     self._text:set_bottom(button:bottom())
     self._text:set_left(button:right() + 10)
     self._text:set_visible(true)
@@ -207,6 +208,7 @@ end
 ---@class XPBreakdownPanel
 ---@field new fun(self: self, gui: MissionBriefingGui, panel: Panel, panel_params: table, xp_params: table, loc: LocalizationManager, params: XPBreakdown|_XPBreakdown, index: number?): self
 local XPBreakdownPanel = class()
+XPBreakdownPanel.make_fine_text = BlackMarketGui.make_fine_text
 XPBreakdownPanel._format_time = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 ---@param gui MissionBriefingGui
 ---@param ws_panel Panel
@@ -234,7 +236,6 @@ end
 
 function XPBreakdownPanel:_recreate_bg()
     self._panel:rect({
-        name = "bg",
         halign = "grow",
         valign = "grow",
         layer = 1,
@@ -1405,12 +1406,11 @@ function XPBreakdownPanel:_add_xp_overview_text()
     if self._no_overview_multipliers then
         return
     end
-    managers.hud:make_fine_text(text_panel)
+    self:make_fine_text(text_panel)
     local xp = self._xp._ehi_xp
     local last_modifier = text_panel
     if self._diff_multiplier and diff_multiplier > 1 then
         local diff = self._panel:text({
-            name = "0_diff",
             blend_mode = "add",
             x = text_panel:right() + 2,
             y = 10,
@@ -1420,7 +1420,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             text = string.format("%s +%dx", self._loc:get_default_macro("BTN_SKULL"), diff_multiplier),
             layer = 10
         })
-        managers.hud:make_fine_text(diff)
+        self:make_fine_text(diff)
         if self._disable_updates then
             return
         end
@@ -1428,7 +1428,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
     end
     if xp.projob_multiplier and xp.projob_multiplier > 1 then
         local pro = self._panel:text({
-            name = "0_pro_job",
             blend_mode = "add",
             x = last_modifier:right() + 2,
             y = 10,
@@ -1438,13 +1437,12 @@ function XPBreakdownPanel:_add_xp_overview_text()
             text = string.format("%s +%d%s", self._loc:text("ehi_experience_modifier_projob"), EHI:RoundChanceNumber(xp.projob_multiplier - 1), percent_format),
             layer = 10
         })
-        managers.hud:make_fine_text(pro)
+        self:make_fine_text(pro)
         last_modifier = pro
     end
     if xp.stealth_bonus and xp.stealth_bonus > 0 then
         local percent = xp.stealth_bonus * 100
         local stealth = self._panel:text({
-            name = "0_stealth",
             blend_mode = "add",
             x = last_modifier:right() + 2,
             y = 10,
@@ -1454,7 +1452,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             text = string.format("%s +%d%s", self._loc:get_default_macro("BTN_GHOST"), percent, percent_format),
             layer = 10
         })
-        managers.hud:make_fine_text(stealth)
+        self:make_fine_text(stealth)
         last_modifier = stealth
     end
     if xp.heat and xp.heat ~= 1 then
@@ -1470,7 +1468,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
             text = string.format("+%d%s", percent, percent_format)
         end
         local heat_icon = self._panel:bitmap({
-            name = "0_heat_icon",
             blend_mode = "add",
             x = last_modifier:right() + 2,
             y = 10,
@@ -1482,7 +1479,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
             layer = 10
         })
         local heat = self._panel:text({
-            name = "0_heat",
             blend_mode = "add",
             x = heat_icon:right() + 2,
             y = 10,
@@ -1492,14 +1488,13 @@ function XPBreakdownPanel:_add_xp_overview_text()
             text = text,
             layer = 10
         })
-        managers.hud:make_fine_text(heat)
+        self:make_fine_text(heat)
         last_modifier = heat
     end
     if tweak_data.levels:IsLevelChristmas() then
         local bonus = (tweak_data:get_value("experience_manager", "limited_xmas_bonus_multiplier") or 1) - 1
         if bonus > 0 then
             local xmas = self._panel:text({
-                name = "0_xmas",
                 blend_mode = "add",
                 x = last_modifier:right() + 2,
                 y = 10,
@@ -1509,7 +1504,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 text = string.format("%s +%s%s", self._loc:get_default_macro("BTN_XMAS"), tostring(bonus * 100), percent_format),
                 layer = 10
             })
-            managers.hud:make_fine_text(xmas)
+            self:make_fine_text(xmas)
             last_modifier = xmas
         end
     end
@@ -1518,7 +1513,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
         local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
         if tweak_multiplier > 0 then
             local level_limit_icon = self._panel:bitmap({
-                name = "0_level_limit_icon",
                 blend_mode = "add",
                 x = last_modifier:right() + 2,
                 y = 10,
@@ -1527,7 +1521,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 layer = 10
             })
             local level_limit = self._panel:text({
-                name = "0_level_limit",
                 blend_mode = "add",
                 x = level_limit_icon:right() + 2,
                 y = 10,
@@ -1537,7 +1530,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 text = string.format("-%s%s", tostring((1 - tweak_multiplier) * 100), percent_format),
                 layer = 10
             })
-            managers.hud:make_fine_text(level_limit)
+            self:make_fine_text(level_limit)
             last_modifier = level_limit
         end
     end
@@ -1547,7 +1540,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
         if real_bonus > 0 then
             local percent = real_bonus * 100
             local skill_icon = self._panel:bitmap({
-                name = "0_skill_icon",
                 blend_mode = "add",
                 x = last_modifier:right() + 2,
                 y = 10,
@@ -1556,7 +1548,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 layer = 10
             })
             local skill = self._panel:text({
-                name = "0_skill_bonus",
                 blend_mode = "add",
                 x = skill_icon:right() + 2,
                 y = 10,
@@ -1566,7 +1557,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 text = string.format("+%d%s", percent, percent_format),
                 layer = 10
             })
-            managers.hud:make_fine_text(skill)
+            self:make_fine_text(skill)
             last_modifier = skill
         end
     end
@@ -1575,7 +1566,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
         if bonus > 0 then
             local percent = EHI:RoundChanceNumber(bonus)
             local player_icon = self._panel:bitmap({
-                name = "0_player_icon",
                 blend_mode = "add",
                 x = last_modifier:right() + 2,
                 y = 10,
@@ -1587,7 +1577,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 layer = 10
             })
             local player = self._panel:text({
-                name = "0_player_bonus",
                 blend_mode = "add",
                 x = player_icon:right() + 2,
                 y = 10,
@@ -1597,14 +1586,13 @@ function XPBreakdownPanel:_add_xp_overview_text()
                 text = string.format("+%d%s", percent, percent_format),
                 layer = 10
             })
-            managers.hud:make_fine_text(player)
+            self:make_fine_text(player)
             last_modifier = player
         end
     end
     if xp.mutator_xp_reduction < 0 then
         local reduction = xp.mutator_xp_reduction * 100
         local mutator_icon = self._panel:bitmap({
-            name = "0_mutator_icon",
             blend_mode = "add",
             x = last_modifier:right() + 2,
             y = 10,
@@ -1616,7 +1604,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
             layer = 10
         })
         local mutator = self._panel:text({
-            name = "0_mutator",
             blend_mode = "add",
             x = mutator_icon:right() + 2,
             y = 10,
@@ -1626,12 +1613,11 @@ function XPBreakdownPanel:_add_xp_overview_text()
             text = string.format("%s%s", tostring(reduction), percent_format),
             layer = 10
         })
-        managers.hud:make_fine_text(mutator)
+        self:make_fine_text(mutator)
         last_modifier = mutator
     end
     if xp.MutatorCG22 then
         local CG22_icon = self._panel:bitmap({
-            name = "0_MutatorCG22_icon",
             blend_mode = "add",
             x = last_modifier:right() + 2,
             y = 10,
@@ -1642,7 +1628,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
             layer = 10
         })
         local CG22 = self._panel:text({
-            name = "0_MutatorCG22",
             blend_mode = "add",
             x = CG22_icon:right() + 2,
             y = 10,
@@ -1652,7 +1637,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             text = string.format("+100%s", percent_format),
             layer = 10
         })
-        managers.hud:make_fine_text(CG22)
+        self:make_fine_text(CG22)
         last_modifier = CG22
     end
 end
@@ -1674,8 +1659,7 @@ function XPBreakdownPanel:_get_translated_key(key, additional_name)
             return string.format("%s (%s)", self._loc:text(string_id), additional_name)
         end
         return self._loc:text(string_id)
-    end
-    if add_string_id then
+    elseif add_string_id then
         if self._loc:exists(add_string_id) then
             return string.format("%s (%s)", key, self._loc:text(add_string_id))
         end
@@ -1703,7 +1687,7 @@ end
 
 function XPBreakdownPanel:destroy()
     self._destroyed = true
-    if self._panel and alive(self._panel) then
+    if alive(self._panel) then
         self._panel:parent():remove(self._panel)
     end
 end

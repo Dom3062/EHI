@@ -205,10 +205,6 @@ local instances =
     {
         [100037] = { remove_vanilla_waypoint = 100017 } -- PC
     },
-    ["levels/instances/unique/sand/sand_chinese_computer_hackable/world"] =
-    {
-        [100037] = { remove_vanilla_waypoint = 100017 } -- PC
-    },
     ["levels/instances/unique/sand/sand_computer_code_display/world"] =
     {
         [100150] = { remove_on_pause = true, remove_on_alarm = true }
@@ -221,10 +217,6 @@ local instances =
     {
         [100009] = { icons = { Icon.Power }, hint = Hints.Charging }
     },
-    ["levels/instances/unique/sand/sand_server_hack/world"] =
-    {
-        [100037] = { remove_vanilla_waypoint = 100017 } -- PC
-    },
     ["levels/instances/unique/sand/sand_swat_van_drillable/world"] =
     {
         [100022] = { remove_vanilla_waypoint = 100023 } -- Drill
@@ -235,6 +227,8 @@ local instances =
     }
 }
 instances["levels/instances/unique/cane/cane_santa_event/world"] = instances["levels/instances/unique/nail_cloaker_safe/world"]
+instances["levels/instances/unique/sand/sand_chinese_computer_hackable/world"] = instances["levels/instances/unique/chas/chas_store_computer/world"]
+instances["levels/instances/unique/sand/sand_server_hack/world"] = instances["levels/instances/unique/chas/chas_store_computer/world"]
 ---@param instance CoreWorldInstanceManager.Instance
 function WorldDefinition:OverrideUnitsInTheInstance(instance)
     --EHI:PrintTable(instance, "Overriding instance")

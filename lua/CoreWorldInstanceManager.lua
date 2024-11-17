@@ -35,13 +35,13 @@ local instances =
     },
     ["levels/instances/unique/holly_2/heli_c4_drop/world"] =
     {
-        [100000] = { time = 120 + 25 + 0.25 + 2 + 2, id = "jolly_C4Drop", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_by_element = 100021 } }
+        [100000] = { time = 120 + 25 + 0.25 + 2 + 2, id = "jolly_C4Drop", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_from_element = 100021 } }
     },
     ["levels/instances/unique/hlm_reader/world"] =
     {
-        [100038] = { time = 90 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
-        [100039] = { time = 120 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
-        [100040] = { time = 180 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
+        [100038] = { time = 90 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
+        [100039] = { time = 120 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
+        [100040] = { time = 180 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
         [100045] = { id = "mia_1_Reader", special_function = SF.PauseTracker },
         [100051] = { id = "mia_1_Reader", special_function = SF.UnpauseTracker }
     },
@@ -65,7 +65,7 @@ local instances =
     ["levels/instances/unique/kenaz/hackable_keycard_panel/world"] =
     {
         [100022] = { remove_vanilla_waypoint = true, mission = true },
-        [100018] = { time = 30, id = "kenaz_SkylightHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Hack, waypoint = { position_by_element = 100003 } },
+        [100018] = { time = 30, id = "kenaz_SkylightHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Hack, waypoint = { position_from_element = 100003 } },
         [100037] = { id = "kenaz_SkylightHack", special_function = SF.PauseTracker }
     },
     ["levels/instances/unique/kenaz/chopper_incoming/world"] =
@@ -83,8 +83,8 @@ local instances =
     },
     ["levels/instances/unique/cane/cane_trap_flame/world"] =
     {
-        [100022] = { time = 60, id = "cane_FireTrap", icons = { Icon.Fire }, class = TT.Warning, hint = Hints.Fire, waypoint = { position_by_unit = 100002 } },
-        [100024] = { time = 180, id = "cane_FireTrapRecharge", icons = { Icon.Fire, Icon.Loop }, hint = Hints.FireRecharge, waypoint = { icon = Icon.Loop, position_by_unit = 100002 } }
+        [100022] = { time = 60, id = "cane_FireTrap", icons = { Icon.Fire }, class = TT.Warning, hint = Hints.Fire, waypoint = { position_from_unit = 100002 } },
+        [100024] = { time = 180, id = "cane_FireTrapRecharge", icons = { Icon.Fire, Icon.Loop }, hint = Hints.FireRecharge, waypoint = { icon = Icon.Loop, position_from_unit = 100002 } }
     },
     ["levels/instances/unique/cane/cane_santa_event/world"] =
     {
@@ -92,11 +92,11 @@ local instances =
     },
     ["levels/instances/unique/pbr/pbr_mountain_comm_dish/world"] =
     {
-        [100008] = { time = 5, id = "pbr_SatelliteC4Explosion", icons = { Icon.C4 }, waypoint = { position_by_unit = 100022 }, hint = Hints.Explosion }
+        [100008] = { time = 5, id = "pbr_SatelliteC4Explosion", icons = { Icon.C4 }, waypoint = { position_from_unit = 100022 }, hint = Hints.Explosion }
     },
     ["levels/instances/unique/pbr/pbr_mountain_comm_dish_huge/world"] =
     {
-        [100013] = { time = 5, id = "pbr_HugeSatelliteC4Explosion", icons = { Icon.C4 }, waypoint = { position_by_unit = 100000 }, hint = Hints.Explosion }
+        [100013] = { time = 5, id = "pbr_HugeSatelliteC4Explosion", icons = { Icon.C4 }, waypoint = { position_from_unit = 100000 }, hint = Hints.Explosion }
     },
     ["levels/instances/unique/pbr/pbr_mountain_lock/world"] =
     {
@@ -105,7 +105,7 @@ local instances =
     },
     ["levels/instances/unique/pbr/pbr_flare/world"] =
     {
-        [100024] = { time = 60, id = "pbr2_Flare", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Winch, position_by_element = 100017 }, hint = Hints.Winch }
+        [100024] = { time = 60, id = "pbr2_Flare", icons = { Icon.Heli, Icon.Winch }, waypoint = { icon = Icon.Winch, position_from_element = 100017 }, hint = Hints.Winch }
     },
     ["levels/instances/unique/red/red_hacking_computer/world"] =
     {
@@ -138,7 +138,7 @@ local instances =
     },
     ["levels/instances/unique/mad/mad_emp/world"] =
     {
-        [100013] = { time = 120, id = "mad_EMP", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.mad_EMP, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100112 } },
+        [100013] = { time = 120, id = "mad_EMP", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.mad_EMP, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100112 } },
         [100023] = { id = "mad_EMP", special_function = SF.PauseTracker }
     },
     ["levels/instances/unique/mad/mad_scan_bed/world"] =
@@ -149,7 +149,7 @@ local instances =
     },
     ["levels/instances/unique/help/heli_c4_drop_short/world"] =
     {
-        [100005] = { time = 25 + 0.25 + 2 + 2.35, id = "help_HeliC4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_by_element = 100021 } }
+        [100005] = { time = 25 + 0.25 + 2 + 2.35, id = "help_HeliC4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_from_element = 100021 } }
     },
     ["levels/instances/unique/help/lottery_wheel/world"] =
     {
@@ -158,8 +158,8 @@ local instances =
     },
     ["levels/instances/unique/dah/dah_keypad/world"] =
     {
-        [100176] = { time = 30, id = "dah_KeypadRebootECM", icons = { Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_by_unit = 100000 }, hint = Hints.KeypadReset },
-        [100210] = { time = 5 + 25, id = "dah_KeypadReset", icons = { Icon.Wait }, waypoint = { position_by_unit = 100000 }, hint = Hints.KeypadReset }
+        [100176] = { time = 30, id = "dah_KeypadRebootECM", icons = { Icon.Loop }, special_function = SF.SetTimeOrCreateTracker, waypoint = { position_from_unit = 100000 }, hint = Hints.KeypadReset },
+        [100210] = { time = 5 + 25, id = "dah_KeypadReset", icons = { Icon.Wait }, waypoint = { position_from_unit = 100000 }, hint = Hints.KeypadReset }
     },
     ["levels/instances/unique/dah/dah_security_box/world"] =
     {
@@ -173,7 +173,7 @@ local instances =
     },
     ["levels/instances/unique/rvd/rvd_escape_door/world"] =
     {
-        [100020] = { time = 5, id = "rvd_C4Escape", icons = { Icon.C4 }, waypoint = { position_by_unit = 100008 }, hint = Hints.Explosion }
+        [100020] = { time = 5, id = "rvd_C4Escape", icons = { Icon.C4 }, waypoint = { position_from_unit = 100008 }, hint = Hints.Explosion }
     },
     ["levels/instances/unique/brb/single_door/world"] =
     {
@@ -188,9 +188,9 @@ local instances =
     {
         [100021] = { remove_vanilla_waypoint = true, mission = true }, -- Defend
         [100022] = { remove_vanilla_waypoint = true, mission = true }, -- Fix
-        [100077] = { time = 90, id = "brb_Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element = 100021 }, hint = Hints.Cutter },
+        [100077] = { time = 90, id = "brb_Cutter", icons = { Icon.Glasscutter }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_from_element = 100021 }, hint = Hints.Cutter },
         [100078] = { id = "brb_Cutter", special_function = SF.PauseTracker },
-        [100103] = { time = 5, id = "brb_C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100021 }, hint = Hints.Explosion }
+        [100103] = { time = 5, id = "brb_C4", icons = { Icon.C4 }, waypoint = { position_from_element = 100021 }, hint = Hints.Explosion }
     },
     ["levels/instances/unique/bph/bph_drill_door/world"] =
     {
@@ -217,8 +217,8 @@ local instances =
     },
     ["levels/instances/unique/sah/sah_helicopter/world"] =
     {
-        [100003] = { time = 120 + 24 + 5 + 3, id = "sah_HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = 100013 }, hint = Hints.LootEscape }, -- West
-        [100018] = { time = 120 + 24 + 5 + 3, id = "sah_HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_by_element = 100013 }, hint = Hints.LootEscape } -- East
+        [100003] = { time = 120 + 24 + 5 + 3, id = "sah_HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_from_element = 100013 }, hint = Hints.LootEscape }, -- West
+        [100018] = { time = 120 + 24 + 5 + 3, id = "sah_HeliEscape", icons = Icon.HeliEscape, waypoint = { icon = Icon.LootDrop, position_from_element = 100013 }, hint = Hints.LootEscape } -- East
     },
     ["levels/instances/unique/sah/sah_office/world"] =
     {
@@ -227,9 +227,9 @@ local instances =
     },
     ["levels/instances/unique/nmh/nmh_fuge/world"] =
     {
-        [100013] = { additional_time = 15 + 15 + 10 + 40/30, random_time = 5, id = "nmh_VialFail", icons = { "equipment_bloodvial", Icon.Loop }, hint = Hints.nmh_VialFail, waypoint = { position_by_unit = 100008 } },
-        [100017] = { time = 30, id = "nmh_VialSuccess", icons = { "equipment_bloodvialok" }, hint = Hints.nmh_VialSuccess, waypoint = { position_by_unit = 100008 } },
-        [100014] = { time = 15 + 10 + 40/30, id = "nmh_VialFail", icons = { "equipment_bloodvial", Icon.Loop }, special_function = SF.SetTrackerAccurate, hint = Hints.nmh_VialFail, waypoint = { position_by_unit = 100008 } }
+        [100013] = { additional_time = 15 + 15 + 10 + 40/30, random_time = 5, id = "nmh_VialFail", icons = { "equipment_bloodvial", Icon.Loop }, hint = Hints.nmh_VialFail, waypoint = { position_from_unit = 100008 } },
+        [100017] = { time = 30, id = "nmh_VialSuccess", icons = { "equipment_bloodvialok" }, hint = Hints.nmh_VialSuccess, waypoint = { position_from_unit = 100008 } },
+        [100014] = { time = 15 + 10 + 40/30, id = "nmh_VialFail", icons = { "equipment_bloodvial", Icon.Loop }, special_function = SF.SetTrackerAccurate, hint = Hints.nmh_VialFail, waypoint = { position_from_unit = 100008 } }
     },
     ["levels/instances/unique/vit/vit_targeting_computer/world"] =
     {
@@ -247,7 +247,7 @@ local instances =
     },
     ["levels/instances/unique/bex/bex_computer/world"] =
     {
-        [100006] = { time = 30, id = "bex_PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 100000 }, hint = Hints.Hack },
+        [100006] = { time = 30, id = "bex_PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 100000 }, hint = Hints.Hack },
         [100138] = { id = "bex_PCHack", special_function = SF.RemoveTracker } -- Alarm
     },
     ["levels/instances/unique/bex/bex_server/world"] =
@@ -261,7 +261,7 @@ local instances =
     },
     ["levels/instances/unique/pex/pex_armory_small/world"] =
     {
-        [100025] = { time = 120, id = "pex_ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100055, skip_if_not_found = Global.game_settings.level_id == "pex" }, hint = Hints.Hack },
+        [100025] = { time = 120, id = "pex_ArmoryHack", icons = { Icon.Tablet }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100055, skip_if_not_found = Global.game_settings.level_id == "pex" }, hint = Hints.Hack },
         [100026] = { id = "pex_ArmoryHack", special_function = SF.PauseTracker },
         [100056] = { remove_vanilla_waypoint = true } -- Fix
     },
@@ -281,7 +281,7 @@ local instances =
     },
     ["levels/instances/unique/fex/fex_explosives/world"] =
     {
-        [100008] = { time = 60, id = "fex_ExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Explosion, waypoint = { position_by_element_and_remove_vanilla_waypoint = 100022 } },
+        [100008] = { time = 60, id = "fex_ExplosivesTimer", icons = { "equipment_timer" }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Explosion, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100022 } },
         [100007] = { id = "fex_ExplosivesTimer", special_function = SF.PauseTracker },
         [100023] = { remove_vanilla_waypoint = true } -- Defend
     },
@@ -291,7 +291,7 @@ local instances =
     },
     ["levels/instances/unique/fex/fex_helicopter_escape/world"] =
     {
-        [100016] = { time = 180 + 2, id = "fex_HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { icon = Icon.Escape, position_by_element_and_remove_vanilla_waypoint = 100023 } }
+        [100016] = { time = 180 + 2, id = "fex_HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape, waypoint = { icon = Icon.Escape, position_from_element_and_remove_vanilla_waypoint = 100023 } }
     },
     ["levels/instances/unique/fex/fex_mayan_door/world"] =
     {
@@ -346,14 +346,6 @@ local instances =
     ["levels/instances/unique/sand/sand_helicopter_turret/world"] =
     {
         [100027] = { id = "sand_TurretTimer", icons = { Icon.Heli, Icon.Turret, Icon.Wait }, special_function = SF.GetElementTimerAccurate, element = 100012, hint = Hints.sand_HeliTurretTimer }
-    },
-    ["levels/instances/unique/sand/sand_chinese_computer_hackable/world"] =
-    {
-        [100018] = { remove_vanilla_waypoint = true } -- Defend; Interact is in WorldDefinition
-    },
-    ["levels/instances/unique/sand/sand_server_hack/world"] =
-    {
-        [100018] = { remove_vanilla_waypoint = true } -- Fix; Interact is in WorldDefinition
     },
     ["levels/instances/unique/chca/chca_casino_hack/world"] =
     {
@@ -494,12 +486,7 @@ local instances =
     },
     ["levels/instances/unique/corp/corp_display_case/world"] =
     {
-        [100018] = { time = 10, id = "corp_DisplayCaseThermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_unit = 100095 } }
-    },
-    ["levels/instances/unique/corp/corp_wall_hack/world"] =
-    {
-        [100031] = { remove_vanilla_waypoint = true }, -- Defend
-        [100056] = { remove_vanilla_waypoint = true } -- Fix
+        [100018] = { time = 10, id = "corp_DisplayCaseThermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_unit = 100095 } }
     }
 }
 instances["levels/instances/unique/are_c4_vault_01/world"][100093] = instances["levels/instances/unique/are_c4_vault_01/world"][100067]
@@ -509,18 +496,23 @@ instances["levels/instances/unique/brb/brb_vault/world"][100010] = instances["le
 instances["levels/instances/unique/brb/brb_vault/world"][100034] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
 instances["levels/instances/unique/brb/brb_vault/world"][100039] = instances["levels/instances/unique/brb/brb_vault/world"][100004]
 instances["levels/instances/unique/tag/tag_keypad/world"] = deep_clone(instances["levels/instances/unique/dah/dah_keypad/world"])
-instances["levels/instances/unique/tag/tag_keypad/world"][100176].waypoint.position_by_unit = 100279
+instances["levels/instances/unique/tag/tag_keypad/world"][100176].waypoint.position_from_unit = 100279
 instances["levels/instances/unique/tag/tag_keypad/world"][100210].time = 5 + EHI:GetKeypadResetTimer({ normal = 10 })
-instances["levels/instances/unique/tag/tag_keypad/world"][100210].waypoint.position_by_unit = 100279
-instances["levels/instances/unique/sah/sah_keypad_vault/world"] = instances["levels/instances/unique/tag/tag_keypad/world"]
+instances["levels/instances/unique/tag/tag_keypad/world"][100210].waypoint.position_from_unit = 100279
+instances["levels/instances/unique/sah/sah_keypad_vault/world"] = deep_clone(instances["levels/instances/unique/tag/tag_keypad/world"])
+instances["levels/instances/unique/sah/sah_keypad_vault/world"][100176].waypoint.skip_if_not_found = Global.game_settings.level_id == "sah"
+instances["levels/instances/unique/sah/sah_keypad_vault/world"][100210].waypoint.skip_if_not_found = Global.game_settings.level_id == "sah"
 instances["levels/instances/unique/sah/sah_keypad_vault_new/world"] = deep_clone(instances["levels/instances/unique/sah/sah_keypad_vault/world"])
-instances["levels/instances/unique/sah/sah_keypad_vault_new/world"][100210].time = 3 + EHI:GetKeypadResetTimer()
+instances["levels/instances/unique/sah/sah_keypad_vault_new/world"][100176].time = 3 + EHI:GetKeypadResetTimer()
 instances["levels/instances/unique/des/des_computer_001/world"] = instances["levels/instances/unique/des/des_computer/world"]
 instances["levels/instances/unique/des/des_computer_002/world"] = instances["levels/instances/unique/des/des_computer/world"]
 instances["levels/instances/unique/pex/pex_armory_medium/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
 instances["levels/instances/unique/pex/pex_armory_large/world"] = instances["levels/instances/unique/pex/pex_armory_small/world"]
+instances["levels/instances/unique/sand/sand_chinese_computer_hackable/world"] = instances["levels/instances/unique/chas/chas_store_computer/world"] -- Defend; Interact is in WorldDefinition
+instances["levels/instances/unique/sand/sand_server_hack/world"] = instances["levels/instances/unique/chas/chas_store_computer/world"] -- Fix
 instances["levels/instances/unique/sand/sand_rotating_keypad/world"] = instances["levels/instances/unique/sah/sah_keypad_vault_new/world"]
 instances["levels/instances/unique/chca/chca_keypad/world"] = instances["levels/instances/unique/sah/sah_keypad_vault_new/world"]
+instances["levels/instances/unique/corp/corp_wall_hack/world"] = instances["levels/instances/unique/chas/chas_auction_room_door_hack/world"]
 instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances["levels/instances/unique/hox_breakout_road001/world"]
 EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
     --[[
@@ -641,19 +633,19 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                         new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
                     end
                     if trigger.waypoint then
-                        if trigger.waypoint.position_by_element_and_remove_vanilla_waypoint then
-                            local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_by_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
-                            new_trigger.waypoint.position_by_element = wp_id
+                        if trigger.waypoint.position_from_element_and_remove_vanilla_waypoint then
+                            local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_from_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
+                            new_trigger.waypoint.position_from_element = wp_id
                             new_trigger.waypoint.remove_vanilla_waypoint = wp_id
-                            new_trigger.waypoint.position_by_element_and_remove_vanilla_waypoint = nil
+                            new_trigger.waypoint.position_from_element_and_remove_vanilla_waypoint = nil
                             defer_loading_waypoints = true
                         end
-                        if trigger.waypoint.position_by_element then
-                            new_trigger.waypoint.position_by_element = EHI:GetInstanceElementID(trigger.waypoint.position_by_element, start_index, continent_data.base_id)
+                        if trigger.waypoint.position_from_element then
+                            new_trigger.waypoint.position_from_element = EHI:GetInstanceElementID(trigger.waypoint.position_from_element, start_index, continent_data.base_id)
                             defer_loading_waypoints = true
                         end
-                        if trigger.waypoint.position_by_unit then
-                            new_trigger.waypoint.position_by_unit = EHI:GetInstanceUnitID(trigger.waypoint.position_by_unit, start_index, continent_data.base_id)
+                        if trigger.waypoint.position_from_unit then
+                            new_trigger.waypoint.position_from_unit = EHI:GetInstanceUnitID(trigger.waypoint.position_from_unit, start_index, continent_data.base_id)
                             defer_loading_waypoints = true
                         end
                         if trigger.waypoint.remove_vanilla_waypoint then

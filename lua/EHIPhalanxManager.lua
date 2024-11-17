@@ -51,6 +51,24 @@ function EHIPhalanxManager:OnPhalanxAdded(manual)
         self:ReduceCounter() -- Reduce the counter because Captain Winters is activated now; due to Mission Script
     end
     self:ReduceCounter()
+    if EHI:IsHost() and managers.modifiers:IsModifierActive("ModifierAssaultExtender", "crime_spree") then
+        local assault_state = ""
+        Hooks:PostHook(GroupAIStateBesiege, "_upd_assault_task", "EHI_EHIPhalanxManager_upd_assault_task", function(state, ...)
+            local phase = state._task_data.assault.phase
+            if phase and phase ~= "anticipation" and assault_state ~= phase then
+                if phase == "fade" then
+                    self._manager:SyncData("EHI_EHIPhalanxChanceTracker_sync_fade_state", "true")
+                end
+                assault_state = phase
+            end
+        end)
+        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+            if mode == "phalanx" then
+                Hooks:RemovePostHook("EHI_EHIPhalanxManager_upd_assault_task")
+                assault_state = nil ---@diagnostic disable-line
+            end
+        end)
+    end
 end
 
 ---@param dropin boolean
@@ -77,6 +95,7 @@ function EHIPhalanxManager:AddTracker()
     if self:IsPhalanxDisabled() or self._tracker_created then
         return
     end
+    local assault_extender = managers.modifiers:IsModifierActive("ModifierAssaultExtender", "crime_spree")
     self._tracker_created = true
     self._trackers:AddTracker({
         id = "CaptainChance",
@@ -84,6 +103,7 @@ function EHIPhalanxManager:AddTracker()
         chance = self._phalanx_spawn_chance.start * 100,
         chance_increase = self._phalanx_spawn_chance.increase * 100,
         first_assault = self._first_assault,
+        assault_extender = assault_extender,
         class = "EHIPhalanxChanceTracker"
     })
     EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
@@ -91,9 +111,11 @@ function EHIPhalanxManager:AddTracker()
             self._trackers:ForceRemoveTracker("CaptainChance")
         end
     end)
-    self._manager:AddEventListener("EHIPhalanxManager", "AssaultOnSustain", function(duration)
-        self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
-    end)
+    if not assault_extender then
+        self._manager:AddEventListener("EHIPhalanxManager", "AssaultOnSustain", function(duration)
+            self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
+        end)
+    end
     Hooks:PostHook(HUDManager, "sync_start_assault", "EHI_PhalanxManager_sync_start_assault", function(...)
         self._trackers:CallFunction("CaptainChance", "AssaultStart")
     end)
@@ -119,7 +141,7 @@ end
 
 ---@param data SyncData
 function EHIPhalanxManager:save(data)
-    if EHI:IsPlayingCrimeSpree() or tweak_data.levels:IsLevelSkirmish() then
+    if tweak_data.levels:IsLevelSkirmish() or not self._so_phalanx then
         return
     end
     local state = {}

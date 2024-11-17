@@ -44,7 +44,6 @@ function GroupAIStateBase:init(...)
         self:remove_listener("EHI_EnemyWeaponsHot")
     end)
     if EHI:GetOption("show_minion_health") then
-        self.__ehi_minion_health = true
         self.__ehi_minion_health_events = deep_clone(CopDamage._all_event_types)
         table.delete(self.__ehi_minion_health_events, "death") -- "death" event is already handled in a different callback
     end
@@ -78,112 +77,113 @@ function GroupAIStateBase:load(...)
 	end
 end
 
-if EHI:ShowDramaTracker() and not tweak_data.levels:IsStealthRequired() then
-    local assault_mode = "normal"
-    local function Create()
-        if managers.ehi_tracker:TrackerExists("Drama") then
-            return
-        end
-        local pos = managers.ehi_assault:TrackerExists() and 1 or 0
-        managers.ehi_tracker:AddTracker({
-            id = "Drama",
-            icons = { "C_Escape_H_Street_Bullet" },
-            disable_anim = true,
-            flash_bg = false,
-            hint = "drama",
-            class = EHI.Trackers.Chance
-        }, pos)
-    end
-    original._add_drama = GroupAIStateBase._add_drama
-    function GroupAIStateBase:_add_drama(...)
-        original._add_drama(self, ...)
-        managers.ehi_tracker:SetChance("Drama", self._drama_data.amount, 2)
-    end
-    EHI:AddOnAlarmCallback(Create)
-    EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
-        if mode == "endless" then
-            managers.ehi_tracker:RemoveTracker("Drama")
-        elseif managers.ehi_tracker:TrackerDoesNotExist("Drama") then
-            Create()
-        end
-        assault_mode = mode
-    end)
-    EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
-        if mode == "normal" and assault_mode == "endless" then
-            assault_mode = "normal"
-            Create()
-        end
-    end)
-end
-
-if EHI:GetOption("show_minion_tracker") then
-    local UpdateTracker
-    if EHI:GetOption("show_minion_option") ~= 2 then
-        EHI:LoadTracker("EHIMinionTracker")
-        local minion_class = (EHI:GetOption("show_minion_option") == 1 and EHI:GetOption("show_minion_health")) and "EHIMinionHealthOnlyTracker" or "EHIMinionTracker"
-        ---@param key string
-        ---@param amount number
-        ---@param peer_id number
-        ---@param local_peer boolean?
-        UpdateTracker = function(key, amount, peer_id, local_peer)
-            if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
-                managers.ehi_tracker:AddTracker({
-                    id = "Converts",
-                    class = minion_class
-                })
+if not tweak_data.levels:IsStealthRequired() then
+    if EHI:ShowDramaTracker() then
+        local assault_mode = "normal"
+        local function Create()
+            if managers.ehi_tracker:TrackerExists("Drama") then
+                return
             end
-            if amount == 0 then -- Removal
-                managers.ehi_tracker:CallFunction("Converts", "RemoveMinion", key)
-            else
-                managers.ehi_tracker:CallFunction("Converts", "AddMinion", key, peer_id, local_peer)
-            end
+            local pos = managers.ehi_assault:TrackerExists() and 1 or 0
+            managers.ehi_tracker:AddTracker({
+                id = "Drama",
+                icons = { "C_Escape_H_Street_Bullet" },
+                disable_anim = true,
+                flash_bg = false,
+                hint = "drama",
+                class = EHI.Trackers.Chance
+            }, pos)
         end
-    else
-        local minion_class, requires_new_minion_func = "EHIEquipmentTracker", false
-        if EHI:GetOption("show_minion_health") then
-            minion_class = "EHITotalMinionTracker"
-            requires_new_minion_func = true
+        original._add_drama = GroupAIStateBase._add_drama
+        function GroupAIStateBase:_add_drama(...)
+            original._add_drama(self, ...)
+            managers.ehi_tracker:SetChance("Drama", self._drama_data.amount, 2)
+        end
+        EHI:AddOnAlarmCallback(Create)
+        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+            if mode == "endless" then
+                managers.ehi_tracker:RemoveTracker("Drama")
+            elseif managers.ehi_tracker:TrackerDoesNotExist("Drama") then
+                Create()
+            end
+            assault_mode = mode
+        end)
+        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+            if mode == "normal" and assault_mode == "endless" then
+                assault_mode = "normal"
+                Create()
+            end
+        end)
+    end
+    if EHI:GetOption("show_minion_tracker") then
+        local UpdateTracker
+        if EHI:GetOption("show_minion_option") ~= 2 then
             EHI:LoadTracker("EHIMinionTracker")
-        end
-        ---@param key string
-        ---@param amount number
-        ---@param peer_id number
-        ---@param local_peer boolean?
-        UpdateTracker = function(key, amount, peer_id, local_peer)
-            if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
-                managers.ehi_tracker:AddTracker({
-                    id = "Converts",
-                    dont_show_placed = true,
-                    icons = { "minion" },
-                    hint = "converts",
-                    class = minion_class
-                })
-            end
-            if requires_new_minion_func then
+            local minion_class = (EHI:GetOption("show_minion_option") == 1 and EHI:GetOption("show_minion_health")) and "EHIMinionHealthOnlyTracker" or "EHIMinionTracker"
+            ---@param key string
+            ---@param amount number
+            ---@param peer_id number
+            ---@param local_peer boolean?
+            UpdateTracker = function(key, amount, peer_id, local_peer)
+                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
+                    managers.ehi_tracker:AddTracker({
+                        id = "Converts",
+                        class = minion_class
+                    })
+                end
                 if amount == 0 then -- Removal
                     managers.ehi_tracker:CallFunction("Converts", "RemoveMinion", key)
                 else
                     managers.ehi_tracker:CallFunction("Converts", "AddMinion", key, peer_id, local_peer)
                 end
-            else
-                managers.ehi_tracker:CallFunction("Converts", "UpdateAmount", nil, key, amount)
+            end
+        else
+            local minion_class, requires_new_minion_func = "EHIEquipmentTracker", false
+            if EHI:GetOption("show_minion_health") then
+                minion_class = "EHITotalMinionTracker"
+                requires_new_minion_func = true
+                EHI:LoadTracker("EHIMinionTracker")
+            end
+            ---@param key string
+            ---@param amount number
+            ---@param peer_id number
+            ---@param local_peer boolean?
+            UpdateTracker = function(key, amount, peer_id, local_peer)
+                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
+                    managers.ehi_tracker:AddTracker({
+                        id = "Converts",
+                        dont_show_placed = true,
+                        icons = { "minion" },
+                        hint = "converts",
+                        class = minion_class
+                    })
+                end
+                if requires_new_minion_func then
+                    if amount == 0 then -- Removal
+                        managers.ehi_tracker:CallFunction("Converts", "RemoveMinion", key)
+                    else
+                        managers.ehi_tracker:CallFunction("Converts", "AddMinion", key, peer_id, local_peer)
+                    end
+                else
+                    managers.ehi_tracker:CallFunction("Converts", "UpdateAmount", nil, key, amount)
+                end
             end
         end
-    end
-    if EHI:GetOption("show_minion_option") == 1 then -- Only you
-        EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
-            if local_peer then
-                UpdateTracker(key, 1, peer_id, true)
-            end
+        if EHI:GetOption("show_minion_option") == 1 then -- Only you
+            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
+                if local_peer then
+                    UpdateTracker(key, 1, peer_id, true)
+                end
+            end)
+        else -- Everyone
+            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
+                UpdateTracker(key, 1, peer_id, local_peer)
+            end)
+        end
+        EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
+            UpdateTracker(key, 0, peer_id)
         end)
-    else -- Everyone
-        EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
-            UpdateTracker(key, 1, peer_id, local_peer)
-        end)
     end
-    EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
-        UpdateTracker(key, 0, peer_id)
-    end)
 end
 
 if EHI:GetOption("show_minion_killed_message") then
@@ -253,7 +253,7 @@ function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
     local data = { unit_key = key, local_peer = local_peer, peer_id = peer_id, killed_callback = true, destroyed_callback = true }
     unit:base():add_destroy_listener("EHIConvert", callback(self, self, "EHIConvertDestroyed", data))
     unit:character_damage():add_listener("EHIConvert", { "death" }, callback(self, self, "EHIConvertDied", data))
-    if local_peer and self.__ehi_minion_health then
+    if local_peer and self.__ehi_minion_health_events then
         unit:character_damage():add_listener("EHIConvertDamage", self.__ehi_minion_health_events, callback(self, self, "EHIConvertDamaged", key))
     end
 end

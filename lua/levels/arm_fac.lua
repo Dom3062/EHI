@@ -54,9 +54,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 100233 } }
-    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
-    other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100020 } }
+    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 100233 } }
+    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100008 } }
+    other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100020 } }
 end
 EHI.Manager:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
 local MinBags = EHI:GetValueBasedOnDifficulty({

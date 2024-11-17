@@ -10,7 +10,7 @@ local triggers = {
     [100936] = { time = 524/30, id = "CarPickupLoot", icons = Icon.CarLootDrop, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Loot },
     [102686] = { time = 552/30, id = "CarPickupLoot", icons = Icon.CarLootDrop, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Loot },
 
-    [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_by_element = 101130, remove_vanilla_waypoint = 101472 } },
+    [101256] = { time = 3 + 28 + 10 + 135/30 + 0.5 + 210/30, id = "CarEscape", icons = Icon.CarEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 101130, remove_vanilla_waypoint = 101472 } },
     [101088] = { id = "CarEscape", special_function = SF.RemoveTracker },
 
     [101218] = { time = 60 + 60 + 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape },
@@ -54,8 +54,8 @@ local other =
     [101249] = EHI:AddAssaultDelay({ control = 50 })
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 101231 } }
-    other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_by_element = 102862 } }
+    other[101223] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 101231 } }
+    other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102862 } }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101176] = { time = 24 + 9 + 2, id = "Snipers", class = TT.Sniper.Warning }

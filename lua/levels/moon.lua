@@ -4,8 +4,8 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local triggers = {
-    [101176] = { time = 67 + 400/30, id = "WinchInteract", icons = { Icon.Heli, Icon.Winch }, hint = Hints.Winch },
-    [106390] = { time = 6 + 30 + 25 + 15 + 2.5, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
+    [101176] = { time = 67 + 400/30, id = "WinchInteract", icons = { Icon.Heli, Icon.Winch }, hint = Hints.Winch, waypoint = { icon = Icon.Winch, position_from_element = 106868 } },
+    [106390] = { time = 6 + 30 + 25 + 15 + 2.5, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_from_element = 100715 } },
     -- 6s delay before Bile speaks
     -- 30s delay before random logic
     -- 25s delay to execute random logic
@@ -15,10 +15,10 @@ local triggers = {
     -- Second animation is counted in this trigger, the first is in trigger 100578.
     -- If the first fly-in is selected, the tracker is updated to reflect that
 
-    [100647] = { time = 10, id = "SantaTalk", icons = { "pd2_talk" }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.Wait },
-    [100159] = { time = 5 + 7 + 7.3, id = "Escape", icons = { Icon.Escape }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.Escape },
+    [101310] = { time = 10, id = "SantaTalk", icons = { "pd2_talk" }, hint = Hints.Wait, waypoint = { position_from_element = EHI:GetInstanceElementID(100034, 7200) } },
+    [100159] = { time = 5 + 7 + 7.3, id = "Escape", icons = { Icon.Escape }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.Escape, waypoint = { data_from_element = 106868 } },
 
-    [100578] = { time = 9, id = "C4", icons = { Icon.Heli, Icon.C4, Icon.Goto }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.C4Delivery }
+    [100578] = { time = 9, id = "C4", icons = { Icon.Heli, Icon.C4, Icon.Goto }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_from_element = 100715 } }
 }
 
 ---@type ParseAchievementTable

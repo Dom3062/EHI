@@ -76,7 +76,7 @@ local triggers = {
     [101325] = { special_function = SF.TriggerIfEnabled, data = { 1013251, 1013252 } },
     [1013251] = { time = 180, id = "Thermite", icons = { Icon.Fire }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Thermite },
     [1013252] = { id = "ThermiteShorterTime", special_function = SF.RemoveTracker },
-    [101684] = { time = 5.1, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion },
+    [101684] = { time = 5.1, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101667 } },
     [100211] = { chance = 10, id = "PCChance", icons = { Icon.PCHack }, class = TT.Chance, hint = Hints.man_Code, remove_on_alarm = true },
     [101226] = { id = "PCChance", special_function = SF.IncreaseChanceFromElement }, -- +17%
     [106680] = { id = "PCChance", special_function = SF.RemoveTracker }
@@ -118,6 +118,28 @@ local other =
 {
     [100850] = EHI:AddAssaultDelay({ control = 20, trigger_once = true }),
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[102506] = { chance = 90, time = 1 + 10, recheck_t = 20 + 10, id = "Snipers", class = TT.Sniper.TimedChance, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }
+    other[102224] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%
+    other[102423] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
+    other[103088] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
+    other[101840] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[101841] = { id = "Snipers", special_function = SF.IncreaseCounter }
+    other[102082] = { id = "Snipers", time = 30 + 10, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
+        if EHI:IsHost() and not element:_values_ok() then
+            return
+        elseif self._trackers:CallFunction2(trigger.id, "SnipersKilled", trigger.time) then
+            self._trackers:AddTracker({
+                id = trigger.id,
+                chance = 25,
+                time = trigger.time,
+                recheck_t = 20 + 10,
+                single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal),
+                class = TT.Sniper.TimedChance
+            })
+        end
+    end) }
+end
 
 EHI.Manager:ParseTriggers({
     mission = triggers,

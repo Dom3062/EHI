@@ -12,9 +12,9 @@ local element_sync_triggers =
 local triggers = {
     [102949] = { time = 17, id = "HeliDropWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = EHI:GetInstanceElementID(100029, 16950) }, hint = Hints.Thermite }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
+    [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = EHI:GetInstanceElementID(100029, 16950) }, hint = Hints.Thermite }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
 
-    [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" }, hint = Hints.Teargas, waypoint = { position_by_element = 101263 } },
+    [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" }, hint = Hints.Teargas, waypoint = { position_from_element = 101263 } },
     [101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), class = TT.Chance, hint = Hints.vit_Teargas },
     -- Disabled in the mission script
     --[101394] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists }, -- It will not run on Hard and below

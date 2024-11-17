@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local ThermiteWP = { position_by_element = 104326 }
+local ThermiteWP = { position_from_element = 104326 }
 ---@type ParseTriggerTable
 local triggers = {
     [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire }, waypoint = deep_clone(ThermiteWP), hint = Hints.Thermite },
@@ -17,23 +17,23 @@ local triggers = {
     [101377] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
     [104532] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, hint = Hints.Hack },
-    [103179] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103198 }, hint = Hints.Hack },
-    [103259] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103177 }, hint = Hints.Hack },
-    [103590] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103196 }, hint = Hints.Hack },
-    [103620] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103293 }, hint = Hints.Hack },
-    [103671] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103311 }, hint = Hints.Hack },
-    [103734] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103313 }, hint = Hints.Hack },
-    [103776] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103323 }, hint = Hints.Hack },
-    [103815] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103328 }, hint = Hints.Hack },
-    [103903] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103335 }, hint = Hints.Hack },
-    [103920] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103356 }, hint = Hints.Hack },
-    [103936] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103361 }, hint = Hints.Hack },
-    [103956] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103376 }, hint = Hints.Hack },
-    [103974] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103397 }, hint = Hints.Hack },
-    [103988] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103418 }, hint = Hints.Hack },
-    [104014] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103445 }, hint = Hints.Hack },
-    [104029] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103463 }, hint = Hints.Hack },
-    [104051] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_by_unit = 103504 }, hint = Hints.Hack },
+    [103179] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103198 }, hint = Hints.Hack },
+    [103259] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103177 }, hint = Hints.Hack },
+    [103590] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103196 }, hint = Hints.Hack },
+    [103620] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103293 }, hint = Hints.Hack },
+    [103671] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103311 }, hint = Hints.Hack },
+    [103734] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103313 }, hint = Hints.Hack },
+    [103776] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103323 }, hint = Hints.Hack },
+    [103815] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103328 }, hint = Hints.Hack },
+    [103903] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103335 }, hint = Hints.Hack },
+    [103920] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103356 }, hint = Hints.Hack },
+    [103936] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103361 }, hint = Hints.Hack },
+    [103956] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103376 }, hint = Hints.Hack },
+    [103974] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103397 }, hint = Hints.Hack },
+    [103988] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103418 }, hint = Hints.Hack },
+    [104014] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103445 }, hint = Hints.Hack },
+    [104029] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103463 }, hint = Hints.Hack },
+    [104051] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103504 }, hint = Hints.Hack },
 
     -- Heli escape
     [104126] = { time = 23 + 1, id = "HeliEscape", icons = Icon.HeliEscape, hint = Hints.LootEscape },

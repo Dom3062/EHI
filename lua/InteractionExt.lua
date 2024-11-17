@@ -4,7 +4,7 @@ if EHI:CheckLoadHook("InteractionExt") then
 end
 
 if EHI:GetOption("show_pager_callback") then
-    local answered_behavior = EHI:GetOption("show_pager_callback_answered_behavior") --[[@as number]]
+    local answered_behavior = EHI:GetOption("show_pager_callback_answered_behavior") --[[@as 1|2]]
     ---@class EHIPagerTracker : EHIWarningTracker
     ---@field super EHIWarningTracker
     EHIPagerTracker = class(EHIWarningTracker)
@@ -77,7 +77,7 @@ if EHI:GetOption("show_pager_callback") then
         end
     end)
 
-    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_pager_sync_interacted", function(self, peer, player, status, ...)
+    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_pager_sync_interacted", function(self, peer, player, status, ...) ---@param status string|number
         if self.tweak_data == "corpse_alarm_pager" then
             if status == "started" or status == 1 then
                 if answered_behavior == 1 then
@@ -189,11 +189,11 @@ do
             equipment = nil
             if lang_name == "czech" then
                 format_function = function(charges)
-                    return string.format("%s %d použití", math.within(charges, 2, 4) and "Zbývají" or "Zbývá", charges)
+                    return string.format("%s %g použití", math.within(charges, 2, 4) and "Zbývají" or "Zbývá", charges)
                 end
             else
                 format_function = function(charges)
-                    return string.format("%d %s left", charges, charges > 1 and "uses" or "use")
+                    return string.format("%g %s left", charges, charges > 1 and "uses" or "use")
                 end
             end
         end)

@@ -308,10 +308,9 @@ end
 function EHILootManager:load(data)
     local load_data = data.EHILootManager
     if load_data and EHI:IsLootCounterVisible() then
-        local params = deep_clone(load_data) --[[@as LootCounterTable]]
-        params.client_from_start = true
-        params.no_sync_load = true
-        EHI:ShowLootCounterNoChecks(params)
+        load_data.client_from_start = true
+        load_data.no_sync_load = true
+        EHI:ShowLootCounterNoChecks(load_data)
         self:SyncSecuredLoot()
     end
 end

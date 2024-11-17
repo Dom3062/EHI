@@ -1,5 +1,6 @@
 local EHI = EHI
 ---@class EHITrackerManager : EHIBaseManager
+---@field super EHIBaseManager
 ---@field new fun(self: self): self
 ---@field IsLoading fun(self: self): boolean `VR only (EHITrackerManagerVR)`
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) `VR only (EHITrackerManagerVR)`

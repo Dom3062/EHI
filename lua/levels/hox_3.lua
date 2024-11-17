@@ -16,7 +16,7 @@ local triggers = {
     [101849] = { time = 30 + drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },
     [101844] = { special_function = SF.Trigger, data = { 1018441, 1018442 } },
     [1018441] = { time = drill_delay, id = "LanceDrop", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(DrillWP), hint = Hints.DrillDelivery },
-    [1018442] = { time = 25, id = "ForcedAlarm", icons = { Icon.Alarm }, class = TT.Warning, condition_function = CF.IsStealth, hint = Hints.Alarm },
+    [1018442] = { time = 25, id = "ForcedAlarm", icons = { Icon.Alarm }, class = TT.Warning, condition_function = CF.IsStealth, hint = Hints.Alarm, remove_on_alarm = true },
     [101629] = { id = "ForcedAlarm", special_function = SF.RemoveTracker },
 
     [102223] = { time = 90 + escape_delay, id = "Escape", icons = Icon.HeliEscape, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.LootEscape },
@@ -46,12 +46,11 @@ end
 EHI.Manager:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowLootCounter({ max = 8 })
 
-local required_bags = 4
-if EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-    required_bags = 5
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    required_bags = 6
-end
+local required_bags = EHI:GetValueBasedOnDifficulty({
+    hard_or_below = 4,
+    veryhard = 5,
+    overkill_or_above = 6
+})
 local total_xp_override =
 {
     params =

@@ -1,16 +1,6 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
-local bilbo_baggin_bags = 8
-local function bilbo_baggin()
-    bilbo_baggin_bags = bilbo_baggin_bags - 1
-    if bilbo_baggin_bags == 0 then
-        managers.ehi_achievement:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
-        managers.ehi_loot:AddAchievementListener({
-            achievement = "bilbo_baggin",
-            max = 8
-        })
-    end
-end
+EHI.Manager._cache.bilbo_baggin_bags = 8
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -18,7 +8,16 @@ local achievements =
     {
         elements =
         {
-            [104263] = { special_function = SF.CustomCode, f = bilbo_baggin }
+            [104263] = { special_function = SF.CustomCode2, f = function(self)
+                self._cache.bilbo_baggin_bags = self._cache.bilbo_baggin_bags - 1
+                if self._cache.bilbo_baggin_bags == 0 then
+                    self._achievements:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
+                    self._loot:AddAchievementListener({
+                        achievement = "bilbo_baggin",
+                        max = 8
+                    })
+                end
+            end }
         }
     }
 }

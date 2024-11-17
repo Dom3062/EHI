@@ -144,16 +144,14 @@ local function CheckWeaponsBlueprint(blueprint)
     local function CheckWeaponBlueprint(weapon_data)
         return table.contains(weapon_data.blueprint or {}, blueprint)
     end
-    local pass, primary_pass, secondary_pass = false, false, false
+    local primary_pass, secondary_pass = false, false
     if CheckWeaponBlueprint(primary) then
-        pass = true
         primary_pass = true
     end
     if CheckWeaponBlueprint(secondary) then
-        pass = true
         secondary_pass = true
     end
-    return pass, primary_pass, secondary_pass
+    return primary_pass, secondary_pass
 end
 
 local function ArbiterHasStandardAmmo()
@@ -330,11 +328,11 @@ local function pxp1_1()
         local grenade_data = tweak_data.achievement.grenade_achievements.pxp1_1
         local grenade_pass = table.index_of(grenade_data.grenade_types, grenade) ~= -1
         local enemy_kills_data = tweak_data.achievement.enemy_kill_achievements.pxp1_1
-        local parts_pass, _, _ = CheckWeaponsBlueprint(enemy_kills_data.parts)
+        local primary_parts_pass, secondary_parts_pass = CheckWeaponsBlueprint(enemy_kills_data.parts)
         local melee_pass = table.index_of(tweak_data.achievement.enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= -1
         local player_style_pass = HasPlayerStyleEquipped(grenade_data.player_style.style)
         local variation_pass = HasSuitVariationEquipped(grenade_data.player_style.variation)
-        if (grenade_pass or parts_pass or melee_pass or HasViperGrenadesOnLauncherEquipped()) and player_style_pass and variation_pass then
+        if (grenade_pass or (primary_parts_pass or secondary_parts_pass) or melee_pass or HasViperGrenadesOnLauncherEquipped()) and player_style_pass and variation_pass then
             AddAchievementTracker2("pxp1_1_stats")
         end
     end
@@ -609,8 +607,8 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end
             end
             if EHI:IsAchievementLocked2("cac_2") then -- "Human Sentry Gun" achievement
-                local pass, _, _ = CheckWeaponsBlueprint("wpn_fps_upg_bp_lmg_lionbipod")
-                if pass then
+                local primary_pass, secondary_pass = CheckWeaponsBlueprint("wpn_fps_upg_bp_lmg_lionbipod")
+                if primary_pass or secondary_pass then
                     local function f()
                         local enemy_killed_key = "EHI_cac_2_enemy_killed"
                         AddAchievementTracker("cac_2", 0, 20)
@@ -637,67 +635,65 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
             if VeryHardOrAbove then
                 if EHI:IsAchievementLocked2("tango_achieve_3") and not self:check_is_dropin() then -- "The Reckoning" achievement
-                    local pass, primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
-                    if pass then
-                        if primary_index and secondary_index then
-                            ---@class EHItango_achieve_3Tracker : EHIAchievementProgressTracker
-                            ---@field super EHIAchievementProgressTracker
-                            EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
-                            EHItango_achieve_3Tracker._forced_icons = EHI:GetAchievementIcon("tango_achieve_3")
-                            function EHItango_achieve_3Tracker:init(...)
-                                self._kills =
-                                {
-                                    primary = 0,
-                                    secondary = 0
-                                }
-                                self._weapon_id = 0
-                                EHItango_achieve_3Tracker.super.init(self, ...)
-                            end
-                            ---@param id number
-                            function EHItango_achieve_3Tracker:WeaponSwitched(id)
-                                if self._weapon_id == id or self._finished then
-                                    return
-                                end
-                                local previous_weapon_id = self._weapon_id
-                                self._weapon_id = id
-                                local current_selection = id == 0 and "secondary" or "primary"
-                                local previous_selection = previous_weapon_id == 0 and "secondary" or "primary"
-                                self._kills[previous_selection] = self._progress
-                                self._progress = self._kills[current_selection]
-                                self:SetAndFitTheText()
-                                self:AnimateBG(1)
-                            end
-                            function EHItango_achieve_3Tracker:SetCompleted(...)
-                                EHItango_achieve_3Tracker.super.SetCompleted(self, ...)
-                                if self._status == "completed" then
-                                    self._finished = true
-                                end
-                            end
-                            managers.ehi_tracker:AddTracker({
-                                id = "tango_achieve_3",
-                                progress = 0,
-                                max = 200,
-                                flash_times = 1,
-                                show_finish_after_reaching_target = true,
-                                class = "EHItango_achieve_3Tracker"
-                            })
-                            managers.ehi_hook:HookKillFunction("tango_achieve_3", primary.weapon_id, true)
-                            managers.ehi_hook:HookKillFunction("tango_achieve_3", secondary.weapon_id, true)
-                            managers.player:register_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3", function()
-                                local player = managers.player:local_player()
-                                if not player then
-                                    return
-                                end
-                                local weapon = player:inventory():equipped_unit():base():selection_index()
-                                if weapon and (weapon == 1 or weapon == 2) then
-                                    managers.ehi_tracker:CallFunction("tango_achieve_3", "WeaponSwitched", weapon - 1)
-                                end
-                            end)
-                        else
-                            AddAchievementTracker("tango_achieve_3", 0, 200)
-                            local weapon_required = primary_index and primary.weapon_id or secondary.weapon_id
-                            managers.ehi_hook:HookKillFunction("tango_achieve_3", weapon_required, true)
+                    local primary_index, secondary_index = CheckWeaponsBlueprint(tweak_data.achievement.complete_heist_achievements.tango_3.killed_by_blueprint.blueprint)
+                    if primary_index and secondary_index then
+                        ---@class EHItango_achieve_3Tracker : EHIAchievementProgressTracker
+                        ---@field super EHIAchievementProgressTracker
+                        EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
+                        EHItango_achieve_3Tracker._forced_icons = EHI:GetAchievementIcon("tango_achieve_3")
+                        function EHItango_achieve_3Tracker:init(...)
+                            self._kills =
+                            {
+                                primary = 0,
+                                secondary = 0
+                            }
+                            self._weapon_id = 0
+                            EHItango_achieve_3Tracker.super.init(self, ...)
                         end
+                        ---@param id number
+                        function EHItango_achieve_3Tracker:WeaponSwitched(id)
+                            if self._weapon_id == id or self._finished then
+                                return
+                            end
+                            local previous_weapon_id = self._weapon_id
+                            self._weapon_id = id
+                            local current_selection = id == 0 and "secondary" or "primary"
+                            local previous_selection = previous_weapon_id == 0 and "secondary" or "primary"
+                            self._kills[previous_selection] = self._progress
+                            self._progress = self._kills[current_selection]
+                            self:SetAndFitTheText()
+                            self:AnimateBG(1)
+                        end
+                        function EHItango_achieve_3Tracker:SetCompleted(...)
+                            EHItango_achieve_3Tracker.super.SetCompleted(self, ...)
+                            if self._status == "completed" then
+                                self._finished = true
+                            end
+                        end
+                        managers.ehi_tracker:AddTracker({
+                            id = "tango_achieve_3",
+                            progress = 0,
+                            max = 200,
+                            flash_times = 1,
+                            show_finish_after_reaching_target = true,
+                            class = "EHItango_achieve_3Tracker"
+                        })
+                        managers.ehi_hook:HookKillFunction("tango_achieve_3", primary.weapon_id, true)
+                        managers.ehi_hook:HookKillFunction("tango_achieve_3", secondary.weapon_id, true)
+                        managers.player:register_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3", function()
+                            local player = managers.player:local_player()
+                            if not player then
+                                return
+                            end
+                            local weapon = player:inventory():equipped_unit():base():selection_index()
+                            if weapon and (weapon == 1 or weapon == 2) then
+                                managers.ehi_tracker:CallFunction("tango_achieve_3", "WeaponSwitched", weapon - 1)
+                            end
+                        end)
+                    elseif primary_index or secondary_index then
+                        AddAchievementTracker("tango_achieve_3", 0, 200)
+                        local weapon_required = primary_index and primary.weapon_id or secondary.weapon_id
+                        managers.ehi_hook:HookKillFunction("tango_achieve_3", weapon_required, true)
                     end
                 end
             end

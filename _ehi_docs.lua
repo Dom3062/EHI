@@ -24,10 +24,10 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field time number? Time to run down. If not provided, `time` is then copied from the trigger
 ---@field class string? Class of the waypoint. If not provided, `class` is then copied from the trigger and converted to Waypoint class
 ---@field position Vector3
----@field position_by_element number?
----@field position_by_unit number?
+---@field position_from_element number?
+---@field position_from_unit number?
 ---@field remove_vanilla_waypoint number? Removes waypoint in the game
----@field position_by_element_and_remove_vanilla_waypoint number?
+---@field position_from_element_and_remove_vanilla_waypoint number?
 ---@field data_from_element number?
 ---@field data_from_element_and_remove_vanilla_waypoint number?
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`

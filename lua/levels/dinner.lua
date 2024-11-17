@@ -3,10 +3,9 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local c4 = { time = 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion }
 ---@type ParseTriggerTable
 local triggers = {
-    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_by_element = 100836 }, hint = Hints.des_Crane },
+    [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_from_element = 100836 }, hint = Hints.des_Crane },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape }, waypoint_f = function(self, trigger)
         if self.SyncedSFF.dinner_EscapePos then
             self._waypoints:AddWaypoint(trigger.id, {
@@ -19,10 +18,10 @@ local triggers = {
         self._trackers:AddTrackerIfDoesNotExist(trigger, trigger.pos)
     end, hint = Hints.Escape },
     -- C4 (Doors)
-    [100985] = c4,
+    [100985] = { time = 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100831 } },
     -- C4 (GenSec Truck)
-    [100830] = c4,
-    [100961] = c4
+    [100830] = { time = 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100825 } },
+    [100961] = { time = 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100844 } }
 }
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)

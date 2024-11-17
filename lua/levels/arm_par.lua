@@ -45,9 +45,9 @@ if EHI:IsLootCounterVisible() then
     other[101220] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
-    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
-    other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100020 } }
+    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100233 } }
+    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100008 } }
+    other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100020 } }
 end
 if EHI:IsClient() then
     triggers[102379] = { run = { time = 30 + van_delay }, special_function = SF.AddTrackerIfDoesNotExist }

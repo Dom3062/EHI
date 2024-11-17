@@ -1,3 +1,10 @@
+r275 (17. 11. 2024):
+Optimization in option "Show Convert's Health in Tracker"
+Fixed missing decimals in uses for ammo bags
+Captain Chance Tracker: Made the tracker accurate in Crime Spree with Assault Extender modifier active
+Heat Street: Fixed stuck failed achievement tracker "Patience is Key"
+The Bomb: Dockyard: Fixed an issue where delay to the first assault is not visible after alarm
+
 r274 (16. 11. 2024):
 Hostile Takeover: Fixed a crash in achievement tracker "Texas Treasures, Part 3"
 

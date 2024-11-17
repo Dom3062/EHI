@@ -1,3 +1,11 @@
+---@class EHIThugsProgress : EHIProgressTracker
+---@field super EHIProgressTracker
+EHIThugsProgress = class(EHIProgressTracker)
+function EHIThugsProgress:pre_init(params)
+    params.max = managers.enemy:GetNumberOfEnemies()
+    EHIThugsProgress.super.pre_init(self, params)
+end
+
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -35,16 +43,20 @@ local triggers = {
     [106013] = { time = Truck, id = "Truck", icons = { Icon.Car }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.Defend },
     [106017] = { id = "Truck", special_function = SF.PauseTracker },
 
-    [104299] = { time = 5, id = "C4GasStation", icons = { Icon.C4 }, hint = Hints.Explosion },
+    [104299] = { time = 5, id = "C4GasStation", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_element = 104603 } },
 
     -- Calls with Commissar
     [101388] = { time = 8.5 + 6, id = "FirstCall", icons = { Icon.Phone }, hint = Hints.Wait },
     [101389] = { time = 10.5 + 8, id = "SecondCall", icons = { Icon.Phone }, hint = Hints.Wait },
-    [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone }, hint = Hints.Wait }
+    [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone }, hint = Hints.Wait },
+
+    [101218] = { id = "ThugsKill", icons = { Icon.Kill }, class = "EHIThugsProgress", hint = Hints.Kills },
+    [105158] = { id = "ThugsKill", special_function = SF.IncreaseProgressMax },
+    [105206] = { id = "ThugsKill", special_function = SF.IncreaseProgress }
 }
 local random_time = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
 for _, index in ipairs(MethlabIndex) do
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone }
+    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone, waypoint = { data_from_element = EHI:GetInstanceElementID(100161, index) } }
     if client then
         triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 5, 25, 40 }, hint = Hints.Restarting }
         triggers[EHI:GetInstanceElementID(100149, index)] = random_time

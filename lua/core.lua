@@ -479,7 +479,7 @@ _G.EHI =
             -- Optional `count_on_refresh`
             TimedCount = "EHISniperTimedCountTracker",
             -- Requires `chance`, `time` and `recheck_t`   
-            -- Optional `no_logic_annoucement`
+            -- Optional `no_logic_annoucement`, `single_sniper`
             TimedChance = "EHISniperTimedChanceTracker",
             -- Requires `chance`, `time` and `recheck_t`  
             -- Optional `single_sniper` and `heli_sniper`

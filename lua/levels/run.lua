@@ -1,7 +1,16 @@
 ---@class EHIrun9Tracker : EHIAchievementUnlockTracker
 ---@field super EHIAchievementUnlockTracker
 EHIrun9Tracker = class(EHIAchievementUnlockTracker)
-EHIrun9Tracker._refresh_on_delete = true
+function EHIrun9Tracker:pre_init(params)
+    self._refresh_on_delete = true
+    EHIrun9Tracker.super.pre_init(self, params)
+end
+
+function EHIrun9Tracker:SetFailed()
+    self._refresh_on_delete = nil
+    EHIrun9Tracker.super.SetFailed(self)
+end
+
 function EHIrun9Tracker:Refresh()
     self._text:stop()
     self._achieved_popup_showed = true
@@ -87,13 +96,13 @@ if EHI:MissionTrackersAndWaypointEnabled() then
         managers.hud:SoftRemoveWaypoint(101290)
     end } -- Hide "exclamation" waypoint
     triggers[102876].data[3] = 3
-    triggers[1028761].waypoint = { position_by_element = 101290 }
+    triggers[1028761].waypoint = { position_from_element = 101290 }
     triggers[102875].data[3] = 3
-    triggers[1028751].waypoint = { position_by_element = 101290 }
+    triggers[1028751].waypoint = { position_from_element = 101290 }
     triggers[102874].data[3] = 3
-    triggers[1028741].waypoint = { position_by_element = 101290 }
+    triggers[1028741].waypoint = { position_from_element = 101290 }
     triggers[102873].data[3] = 3
-    triggers[1028731].waypoint = { icon = Icon.Escape, position_by_element = 101290 }
+    triggers[1028731].waypoint = { icon = Icon.Escape, position_from_element = 101290 }
 end
 
 ---@type ParseAchievementTable

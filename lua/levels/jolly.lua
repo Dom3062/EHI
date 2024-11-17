@@ -35,7 +35,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100075, 21250)] = { time = 60 + 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 1, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
     [EHI:GetInstanceElementID(100076, 21250)] = { time = 60 + 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = HeliTimer, dialog = 2, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
     [EHI:GetInstanceElementID(100078, 21250)] = { time = 60 + 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeOrCreateTracker, waypoint = deep_clone(EscapeWP), hint = Hints.Escape },
-    [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_by_element = 100804 }, hint = Hints.Explosion }
+    [100795] = { time = 5, id = "C4", icons = { Icon.C4 }, waypoint = { position_from_element = 100804 }, hint = Hints.Explosion }
 
     -- C4 Drop handled in CoreWorldInstanceManager
 }

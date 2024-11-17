@@ -14,19 +14,22 @@ for _, index in ipairs(MethlabIndex) do
     end
 end
 local chopper_delay = 25 + 1 + 2.5
+---@type ParseTriggerTable
 local triggers = {
-    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, trigger_once = true, hint = Hints.Wait },
+    [102120] = { time = 5400/30, id = "ShipMove", icons = { Icon.Boat, Icon.Wait }, trigger_once = true, hint = Hints.Wait, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100139 } },
 
-    [101545] = { time = 100 + chopper_delay, id = "C4FasterPilot", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
-    [101749] = { time = 160 + chopper_delay, id = "C4", icons = Icon.HeliDropC4, hint = Hints.C4Delivery },
+    [105639] = { time = 6 + 10 + 2 + chopper_delay, id = "C4Delivery", icons = Icon.HeliDropC4, special_function = SF.AddTimeByPreplanning, data = { id = 100880, yes = 100, no = 160 }, hint = Hints.C4Delivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 104386 } },
+    [105640] = { time = 6 + 10 + 2 + chopper_delay, id = "C4Delivery", icons = Icon.HeliDropC4, special_function = SF.AddTimeByPreplanning, data = { id = 100880, yes = 100, no = 160 }, hint = Hints.C4Delivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 104385 } },
+    [105641] = { time = 6 + 10 + 2 + chopper_delay, id = "C4Delivery", icons = Icon.HeliDropC4, special_function = SF.AddTimeByPreplanning, data = { id = 100880, yes = 100, no = 160 }, hint = Hints.C4Delivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 104387 } },
+    [105642] = { time = 6 + 10 + 2 + chopper_delay, id = "C4Delivery", icons = Icon.HeliDropC4, special_function = SF.AddTimeByPreplanning, data = { id = 100880, yes = 100, no = 160 }, hint = Hints.C4Delivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 104384 } },
 
-    [106295] = { time = 705/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape },
-    [106294] = { time = 1200/30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape },
-    [100339] = { time = 0.2 + 450/30, id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape }
+    [106295] = { time = 705/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape, waypoint = { data_from_element_and_remove_vanilla_waypoint = 103774 } },
+    [106294] = { time = 1200/30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape, waypoint = { data_from_element_and_remove_vanilla_waypoint = 103045 } },
+    [100339] = { time = 0.2 + 450/30, id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape, waypoint = { data_from_element_and_remove_vanilla_waypoint = 102450 } }
 }
 for _, index in ipairs(MethlabIndex) do
     triggers[EHI:GetInstanceElementID(100118, index)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.mia_1_NextMethIngredient }
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone }
+    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone, waypoint = { data_from_element = EHI:GetInstanceElementID(100161, index) } }
 end
 if EHI:IsClient() then
     local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
@@ -147,7 +150,7 @@ if EHI:IsLootCounterVisible() then
     end
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[101742] = { chance = 100, time = 150, on_fail_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
+    other[101721] = { chance = 100, time = 150, on_fail_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
     other[101773] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:TrackerDoesNotExist(id) then

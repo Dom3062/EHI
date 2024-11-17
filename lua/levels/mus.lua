@@ -6,7 +6,7 @@ local Hints = EHI.Hints
 local delay = 5
 local gas_delay = 0.5
 local heli_wp = { data_from_element = EHI:GetInstanceElementID(100028, 7200) }
-local gas_wp = { icon = Icon.Teargas, position_by_element = 100841 }
+local gas_wp = { icon = Icon.Teargas, position_from_element = 100841 }
 local triggers = {
     [102442] = { time = 130 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp), hint = Hints.LootEscape },
     [102441] = { time = 120 + delay, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(heli_wp), hint = Hints.LootEscape },

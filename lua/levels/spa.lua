@@ -6,7 +6,7 @@ local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseTriggerTable
 local triggers = {
-    [100681] = { time = 60, id = "CharonPickLock", icons = { Icon.Door }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_by_unit = 102837 }, hint = Hints.Wait },
+    [100681] = { time = 60, id = "CharonPickLock", icons = { Icon.Door }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, waypoint = { position_from_unit = 102837 }, hint = Hints.Wait },
     [101430] = { id = "CharonPickLock", special_function = SF.PauseTracker },
 
     [102266] = { max = 6, id = "SniperDeath", icons = { "sniper" }, class = TT.Progress, hint = Hints.Kills },

@@ -46,8 +46,8 @@ local triggers = {
         end
     end) }, -- Code entered (loud)
 
-    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
-    [EHI:GetInstanceElementID(100193, 66615)] = { time = 30, id = "ArmoryKeypadRebootECM", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled, waypoint = { position_by_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
+    [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
+    [EHI:GetInstanceElementID(100193, 66615)] = { time = 30, id = "ArmoryKeypadRebootECM", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
 
     -- Heli Winch Drop handled in CoreWorldInstanceManager
 

@@ -98,15 +98,15 @@ local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local triggers = {
     [108538] = { time = 60, id = "Gas", icons = { Icon.Teargas }, hint = Hints.Teargas },
 
-    [102520] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_by_element = 100881 } },
+    [102520] = { time = 30, id = "ChemLabThermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_element = 100881 } },
 
     [100423] = { time = 60 + 25 + 3, id = "EscapeHeli", icons = Icon.HeliEscape, waypoint = { data_from_element = 100451 }, hint = Hints.LootEscape },
     -- 60s delay after flare has been placed
     -- 25s to land
     -- 3s to open the heli doors
 
-    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.des_ChemSetRestart, waypoint = { icon = Icon.Loop, position_by_element = EHI:GetInstanceElementID(100156, 26050) } },
-    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" }, hint = Hints.des_ChemSetInterrupt, waypoint = { icon = Icon.Loop, position_by_element = EHI:GetInstanceElementID(100156, 26050) } },
+    [102593] = { time = 30, id = "ChemSetReset", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.des_ChemSetRestart, waypoint = { icon = Icon.Loop, position_from_element = EHI:GetInstanceElementID(100156, 26050) } },
+    [101217] = { time = 30, id = "ChemSetInterrupted", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "ChemSetCooking" }, hint = Hints.des_ChemSetInterrupt, waypoint = { icon = Icon.Loop, position_from_element = EHI:GetInstanceElementID(100156, 26050) } },
     [102595] = { time = 30, id = "ChemSetCooking", icons = { Icon.Methlab }, hint = Hints.des_ChemSetCooking, waypoint = { data_from_element = EHI:GetInstanceElementID(100156, 26050) } },
 
     [102009] = { time = 60, id = "Crane", icons = { Icon.Winch }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.des_Crane, waypoint = { data_from_element_and_remove_vanilla_waypoint = 102470 } },

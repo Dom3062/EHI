@@ -39,8 +39,8 @@ if EHI:IsLootCounterVisible() then
     other[102182] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100233 } }
-    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_by_element = 100008 } }
+    other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100233 } }
+    other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100008 } }
 end
 if EHI:IsEscapeChanceEnabled() then
     other[100916] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }

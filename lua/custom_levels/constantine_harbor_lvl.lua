@@ -15,7 +15,7 @@ local triggers = {
     [100247] = { time = escape_delay, id = "HeliEscapeFast", icons = Icon.HeliEscapeNoLoot, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.Escape }
 }
 triggers[EHI:GetInstanceElementID(100118, 7750)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Wait }, hint = Hints.Restarting }
-triggers[EHI:GetInstanceElementID(100152, 7750)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone }
+triggers[EHI:GetInstanceElementID(100152, 7750)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone, waypoint = { data_from_element = EHI:GetInstanceElementID(100161, 7750) } }
 if EHI:IsClient() then
     local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
     triggers[EHI:GetInstanceElementID(100149, 7750)] = random_time

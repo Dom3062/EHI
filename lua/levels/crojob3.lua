@@ -25,7 +25,7 @@ local triggers = {
 
     [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [102825] = { id = "WaterFill", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 }, hint = Hints.crojob3_Water, waypoint = { icon = Icon.Defend, position_by_element_and_remove_vanilla_waypoint = 102789 } },
+    [102825] = { id = "WaterFill", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 }, hint = Hints.crojob3_Water, waypoint = { icon = Icon.Defend, position_from_element_and_remove_vanilla_waypoint = 102789 } },
     [102905] = { id = "WaterFill", special_function = SF.PauseTracker },
     [102920] = { id = "WaterFill", special_function = SF.UnpauseTracker },
 
@@ -46,20 +46,20 @@ local triggers = {
     end },
 
     -- Right
-    [100283] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100647 }, hint = Hints.Thermite },
-    [100284] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100648 }, hint = Hints.Thermite },
-    [100288] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100654 }, hint = Hints.Thermite },
+    [100283] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100647 }, hint = Hints.Thermite },
+    [100284] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100648 }, hint = Hints.Thermite },
+    [100288] = { time = 86, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100654 }, hint = Hints.Thermite },
 
     -- Left
-    [100285] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100651 }, hint = Hints.Thermite },
-    [100286] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100652 }, hint = Hints.Thermite },
-    [100560] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100220 }, hint = Hints.Thermite },
+    [100285] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100651 }, hint = Hints.Thermite },
+    [100286] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100652 }, hint = Hints.Thermite },
+    [100560] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100220 }, hint = Hints.Thermite },
 
     -- Top
-    [100282] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100646 }, hint = Hints.Thermite },
-    [100287] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100653 }, hint = Hints.Thermite },
-    [100558] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100655 }, hint = Hints.Thermite },
-    [100559] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_by_element = 100656 }, hint = Hints.Thermite }
+    [100282] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100646 }, hint = Hints.Thermite },
+    [100287] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100653 }, hint = Hints.Thermite },
+    [100558] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100655 }, hint = Hints.Thermite },
+    [100559] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100656 }, hint = Hints.Thermite }
 }
 local IndexToWP =
 {

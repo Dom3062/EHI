@@ -19,8 +19,8 @@ local triggers = {
     [100832] = { run = { time = 270 } },
 
     -- Fire
-    [101412] = { time = 300, id = "Fire", timer_id = "Fire1", icons = { Icon.Fire }, class = TT.Group.Warning, waypoint = { position_by_unit = 101758 }, hint = Hints.Fire },
-    [101453] = { time = 300, id = "Fire", timer_id = "Fire2", icons = { Icon.Fire }, class = TT.Group.Warning, waypoint = { position_by_unit = 101759 }, hint = Hints.Fire },
+    [101412] = { time = 300, id = "Fire", timer_id = "Fire1", icons = { Icon.Fire }, class = TT.Group.Warning, waypoint = { position_from_unit = 101758 }, hint = Hints.Fire },
+    [101453] = { time = 300, id = "Fire", timer_id = "Fire2", icons = { Icon.Fire }, class = TT.Group.Warning, waypoint = { position_from_unit = 101759 }, hint = Hints.Fire },
 
     -- Asset
     [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff, waypoint = { data_from_element = 103152 }, hint = Hints.Loot }
