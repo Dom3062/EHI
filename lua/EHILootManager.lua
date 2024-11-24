@@ -318,6 +318,6 @@ end
 ---@param data SyncData
 function EHILootManager:save(data)
     if self._loot_counter_sync_data then
-        data.EHILootManager = deep_clone(self._loot_counter_sync_data)
+        data.EHILootManager = self._loot_counter_sync_data
     end
 end

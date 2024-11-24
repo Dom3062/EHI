@@ -80,21 +80,25 @@ EHITimedWarningChanceTracker._anim_chance = EHIChanceTracker._anim_chance
 ---@field super EHIProgressTracker
 EHITimedProgressTracker = class(EHIProgressTracker)
 EHITimedProgressTracker.update = EHITracker.update
-EHITimedProgressTracker.post_init = EHITracker.post_init
 EHITimedProgressTracker.Format = EHITracker.Format
 EHITimedProgressTracker.StartTimer = EHITimedChanceTracker.StartTimer
 EHITimedProgressTracker.StopTimer = EHITimedChanceTracker.StopTimer
-function EHITimedProgressTracker:OverridePanel()
+function EHITimedProgressTracker:post_init(params)
     self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
         text = self:FormatProgress()
     })
     self._text:set_left(self._progress_text:right())
     self._refresh_on_delete = true
+    self._remove_on_max_progress = params.remove_on_max_progress
 end
 
 function EHITimedProgressTracker:Refresh()
-    self:StopTimer()
+    if self._remove_on_max_progress and self._progress == self._max then
+        self:ForceDelete()
+    else
+        self:StopTimer()
+    end
 end
 
 function EHITimedProgressTracker:SetTimeNoAnim(time)

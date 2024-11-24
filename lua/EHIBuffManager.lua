@@ -28,8 +28,8 @@ EHIBuffManager._sync_add_buff = "EHISyncAddBuff"
 ---@param panel Panel
 function EHIBuffManager:init_finalize(hud, panel)
     self._buffs = {} ---@type table<string, EHIBuffTracker?>
-    self._update_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
-    self._visible_buffs = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIBuffTracker?>
+    self._update_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
+    self._visible_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
     self._n_visible = 0
     self._gap = 6
     self._x = EHI:GetOption(_G.IS_VR and "buffs_vr_x_offset" or "buffs_x_offset") --[[@as number]]

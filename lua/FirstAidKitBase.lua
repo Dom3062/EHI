@@ -6,21 +6,21 @@ end
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") then
+        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
             managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
         managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "first_aid_kit", key, amount)
     end
 elseif EHI:GetOption("show_equipment_aggregate_health") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Health") then
+        if managers.ehi_tracker:TrackerDoesNotExist("Health") and amount > 0 then
             managers.ehi_deployable:AddAggregatedHealthTracker()
         end
         managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "first_aid_kit", key, amount)
     end
 else
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("FirstAidKits") then
+        if managers.ehi_tracker:TrackerDoesNotExist("FirstAidKits") and amount > 0 then
             managers.ehi_deployable:CreateDeployableTracker("FirstAidKits")
         end
         managers.ehi_deployable:CallFunction("FirstAidKits", "UpdateAmount", key, amount)

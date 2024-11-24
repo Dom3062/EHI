@@ -14,14 +14,14 @@ end
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount ~= 0 then
+        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
             managers.ehi_deployable:AddAggregatedDeployablesTracker("bodybags_bag")
         end
         managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "bodybags_bag", key, amount)
     end
 else
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("BodyBags") and amount ~= 0 then
+        if managers.ehi_tracker:TrackerDoesNotExist("BodyBags") and amount > 0 then
             managers.ehi_deployable:CreateDeployableTracker("BodyBags")
         end
         managers.ehi_deployable:CallFunction("BodyBags", "UpdateAmount", key, amount)

@@ -18,7 +18,7 @@ local State =
 local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
 local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
----@class EHIAssaultTracker : EHIWarningTracker, EHIChanceTracker, EHIProgressTracker
+---@class EHIAssaultTracker : EHIWarningTracker, EHIChanceTracker, EHIProgressTracker, EHICountTracker
 ---@field super EHIWarningTracker
 ---@field _cs_assault_extender boolean
 ---@field _cs_max_hostages number
@@ -40,6 +40,15 @@ if EHI:GetOption("show_assault_diff_in_assault_trackers") then
         EHIAssaultTracker.SetChance = EHIChanceTracker.SetChance
         EHIAssaultTracker._anim_chance = EHIChanceTracker._anim_chance
     end
+end
+if EHI:GetOption("show_assault_enemy_count") then
+    EHIAssaultTracker._SHOW_AMOUNT_OF_ENEMIES = true
+    EHIAssaultTracker.SetCount = EHICountTracker.SetCount
+    EHIAssaultTracker.AlarmEnemyRegistered = EHICountTracker.IncreaseCount
+    EHIAssaultTracker.NormalEnemyRegistered = EHICountTracker.IncreaseCount
+    EHIAssaultTracker.AlarmEnemyUnregistered = EHICountTracker.DecreaseCount
+    EHIAssaultTracker.NormalEnemyUnregistered = EHICountTracker.DecreaseCount
+    EHIAssaultTracker.FormatCount = EHICountTracker.FormatCount
 end
 if type(tweak_values) == "table" then
     local first_value = tweak_values[1] or 0
@@ -120,7 +129,6 @@ function EHIAssaultTracker:post_init(params)
             w = self._bg_box:w() / 2,
             color = Color.white
         })
-        self:SetIconsX()
     elseif self._SHOW_ASSAULT_DIFF_SKIRMISH then
         self._progress = params.current_assault_number or managers.skirmish:current_wave_number()
         self:SetBGSize()
@@ -131,8 +139,21 @@ function EHIAssaultTracker:post_init(params)
             color = Color.white,
             FitTheText = true
         })
-        self:SetIconsX()
     end
+    if self._SHOW_AMOUNT_OF_ENEMIES then
+        self._anim_flash_set_count = 0
+        self._count = managers.enemy:GetNumberOfEnemies()
+        self:SetBGSize(self._default_bg_size)
+        self._count_text = self:CreateText({
+            text = self:FormatCount(),
+            left = (self._chance_text and self._chance_text:right()) or (self._progress_text and self._progress_text:right()) or self._text:right(),
+            w = self._default_bg_size,
+            color = Color.white,
+            FitTheText = true
+        })
+        EHI:CallCallbackOnce("AssaultTracker_Enemies")
+    end
+    self:SetIconsX()
 end
 
 if EHIAssaultTracker._SHOW_ASSAULT_DIFF_SKIRMISH then
@@ -239,8 +260,7 @@ function EHIAssaultTracker:SyncAnticipation(t)
 end
 
 function EHIAssaultTracker:CheckIfHostageIsPresent()
-    local group_ai = managers.groupai:state()
-    if not group_ai._hostage_headcount or group_ai._hostage_headcount == 0 then
+    if managers.groupai:state()._hostage_headcount == 0 then
         return
     end
     self:UpdateTime(self._hostage_delay)
@@ -259,8 +279,7 @@ end
 function EHIAssaultTracker:SetHostages(has_hostages)
     if self._hostage_delay_disabled then
         return
-    end
-    if has_hostages and not self._hostages_found then
+    elseif has_hostages and not self._hostages_found then
         self._hostages_found = true
         self:UpdateTime(self._hostage_delay)
     elseif self._hostages_found and not has_hostages then
@@ -334,13 +353,6 @@ function EHIAssaultTracker:UpdateDiff(diff)
         self:ComputeHostageDelay()
         self:CheckIfHostageIsPresent()
     end
-    --[[if diff > 0 then
-        self._time = self:CalculateBreakTime(diff)
-        self:AddTrackerToUpdate()
-    else
-        self:RemoveTrackerFromUpdate()
-        self:StopTextAnim()
-    end]]
 end
 
 ---@param diff number

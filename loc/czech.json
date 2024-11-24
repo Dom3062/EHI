@@ -186,6 +186,7 @@
     "ehi_hint_mad_emp" : "EMP",
     "ehi_hint_mallcrasher_destruction" : "Ničení",
     "ehi_hint_man_code" : "Šance na kód",
+    "ehi_hint_mia_1_location" : "Umístění",
     "ehi_hint_mia_1_meth_done" : "Perník dokončen",
     "ehi_hint_mia_1_next_meth_ingredient" : "Další ingredience perníku",
     "ehi_hint_mia_2_loot" : "Čas než bude zničen kokain",
@@ -555,6 +556,9 @@
 
     "ehi_show_assault_diff_in_assault_trackers" : "Zobrazovat obtížnost vlny ve sledovačích s útokem",
     "ehi_show_assault_diff_in_assault_trackers_desc" : "V herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí\n\nV ostatních herních režimech tato možnost zobrazí obtížnost vlny v procentech",
+
+    "ehi_show_assault_enemy_count" : "Zobrazovat počet nepřátel ve sledovačích s útokem",
+    "ehi_show_assault_enemy_count_desc" : "Zobrazuje aktuální počet nepřátel na mapě\n\nJakmile je sledovač útoku viditelný, samostatný sledovač s počtem nepřátel bude smazán",
     
     "ehi_show_loot_counter" : "Zobrazovat počet lupu",
     "ehi_show_loot_counter_desc" : "Zobrazuje sledovač s počtem lupu v loupeži",
@@ -921,8 +925,14 @@
     "ehi_other_show_floating_health_bar" : "Zobrazovat zdraví NPC",
     "ehi_other_show_floating_health_bar_desc" : "Zobrazuje zdraví NPC když na něho zamíříš",
 
+    "ehi_other_show_floating_health_bar_style" : "Styl zobrazování zdraví NPC",
+    "ehi_other_show_floating_health_bar_style_1" : "PocoHud",
+    "ehi_other_show_floating_health_bar_style_2" : "Kruh",
+    "ehi_other_show_floating_health_bar_style_3" : "Obdélník",
+
     "ehi_other_show_floating_health_bar_converts" : "Zobrazovat zdraví převedenců",
     "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat zdraví civilistů",
+    "ehi_other_show_floating_health_bar_team_ai" : "Zobrazovat zdraví botů",
 
     "ehi_other_show_use_left_ammo_bag" : "Zobrazovat počet použití u Ammo Bagů",
     "ehi_other_show_use_left_doctor_bag" : "Zobrazovat počet použití u Doctor Bagů",

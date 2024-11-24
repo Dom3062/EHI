@@ -209,7 +209,7 @@ function EHIManager:load(data)
             self.SyncedSFF[key] = value
         end
     end
-    self:SyncLoad() -- Add missing positions from elements and remove waypoints
+    self:SyncLoad() -- Add missing positions from elements and remove vanilla waypoints
     if self._is_dropin then
         self._load_sync:dispatch(self)
     else

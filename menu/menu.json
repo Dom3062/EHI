@@ -217,7 +217,7 @@
             "title": "ehi_trackers_menu",
             "description": "ehi_trackers_menu_desc",
             "next_menu": "ehi_trackers_menu",
-            "ehi_ver" : 206
+            "ehi_ver" : 276
         },
         {
             "type": "button",
@@ -249,7 +249,7 @@
             "title": "ehi_other_menu",
             "description": "ehi_other_menu_desc",
             "next_menu": "ehi_other_menu",
-            "ehi_ver" : 267
+            "ehi_ver" : 276
         },
         {
             "type": "button",

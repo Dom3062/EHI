@@ -170,6 +170,19 @@
             "ehi_ver" : 243
         },
         {
+            "type": "toggle",
+            "id": "ehi_show_assault_enemy_count_choice",
+            "title": "ehi_show_assault_enemy_count",
+            "description": "ehi_show_assault_enemy_count_desc",
+            "callback": ["SetOption", "UpdateAssaultTracker2"],
+            "callback_arguments": "show_assault_enemy_count",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_assault_enemy_count",
+            "default_value": false,
+            "parent_func" : "IsAssaultTrackerEnabled",
+            "ehi_ver" : 276
+        },
+        {
             "type": "divider",
             "size": 20
         },

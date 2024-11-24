@@ -71,12 +71,6 @@ function EHITimerManager:_add_timer_isubgroup(id, group, subgroup, i_subgroup, u
     self._units_in_active_group[id] = tracker_id
 end
 
----@param unit_id string Unit Key
----@param tracker_id string
-function EHITimerManager:_add_active_unit(unit_id, tracker_id)
-    self._units_in_active_group[unit_id] = tracker_id
-end
-
 ---@param group string
 ---@param subgroup number
 ---@param i_subgroup number
@@ -126,7 +120,7 @@ function EHITimerManager:StartTimer(params)
                     if i_sub.timer_count < self._max_timers then
                         i_sub.timer_count = i_sub.timer_count + 1
                         self._trackers:CallFunction(i_sub.name, "AddTimer", params.time, params.id)
-                        self:_add_active_unit(params.id, i_sub.name)
+                        self._units_in_active_group[params.id] = i_sub.name
                         return
                     end
                 end
@@ -137,7 +131,7 @@ function EHITimerManager:StartTimer(params)
             end
         end
         local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
-        self:_add_active_unit(params.id, tracker_id)
+        self._units_in_active_group[params.id] = tracker_id
         params.id = tracker_id
         params.class = "EHITimerGroupTracker"
         params.subgroup = subgroup

@@ -186,6 +186,7 @@
     "ehi_hint_mad_emp" : "EMP",
     "ehi_hint_mallcrasher_destruction" : "Destruction",
     "ehi_hint_man_code" : "Code Chance",
+    "ehi_hint_mia_1_location" : "Location",
     "ehi_hint_mia_1_meth_done" : "Meth Done",
     "ehi_hint_mia_1_next_meth_ingredient" : "Next Meth Ingredient",
     "ehi_hint_mia_2_loot" : "Coke Destroyed Timer",
@@ -555,6 +556,9 @@
 
     "ehi_show_assault_diff_in_assault_trackers" : "Show Assault Difficulty in Assault Trackers",
     "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\n\nIn other game modes, this option will show assault difficulty, in percent",
+
+    "ehi_show_assault_enemy_count" : "Show Number of Enemies in Assault Trackers",
+    "ehi_show_assault_enemy_count_desc" : "This option will show current number of enemies on the map\n\nThis will also remove Enemy Counter tracker once Assault tracker is visible",
     
     "ehi_show_loot_counter" : "Show Loot Counter",
     "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
@@ -921,8 +925,14 @@
     "ehi_other_show_floating_health_bar" : "Show Floating Health Bar",
     "ehi_other_show_floating_health_bar_desc" : "Shows floating health bar when you aim at someone",
 
+    "ehi_other_show_floating_health_bar_style" : "Floating Health Bar Style",
+    "ehi_other_show_floating_health_bar_style_1" : "PocoHud",
+    "ehi_other_show_floating_health_bar_style_2" : "Circle",
+    "ehi_other_show_floating_health_bar_style_3" : "Rectangle",
+
     "ehi_other_show_floating_health_bar_converts" : "Show Floating Health Bars for Converts",
     "ehi_other_show_floating_health_bar_civilians" : "Show Floating Health Bars for Civilians",
+    "ehi_other_show_floating_health_bar_team_ai" : "Show Floating Health Bars for Team AI",
 
     "ehi_other_show_use_left_ammo_bag" : "Show uses left for Ammo Bags",
     "ehi_other_show_use_left_doctor_bag" : "Show uses left for Doctor Bags",

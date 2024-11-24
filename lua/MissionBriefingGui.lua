@@ -2033,7 +2033,7 @@ end
 ---@param base_xp number
 ---@return string
 function MissionBriefingGui:FormatXPWithAllGagePackages(base_xp)
-    return self._xp:cash_string(self:FormatXPWithAllGagePackagesNoString(base_xp), "")
+    return self._xp:experience_string(self:FormatXPWithAllGagePackagesNoString(base_xp))
 end
 
 function MissionBriefingGui:RefreshXPOverview()

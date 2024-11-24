@@ -22,14 +22,14 @@ end
 
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount ~= 0 then
+        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
             managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
         managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "ammo_bag", key, amount)
     end
 else
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("AmmoBags") and amount ~= 0 then
+        if managers.ehi_tracker:TrackerDoesNotExist("AmmoBags") and amount > 0 then
             managers.ehi_deployable:CreateDeployableTracker("AmmoBags")
         end
         managers.ehi_deployable:CallFunction("AmmoBags", "UpdateAmount", key, amount)

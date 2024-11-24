@@ -14,14 +14,14 @@ end
 local UpdateTracker
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount ~= 0 then
+        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
             managers.ehi_deployable:AddAggregatedDeployablesTracker("grenade_crate")
         end
         managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "grenade_crate", key, amount)
     end
 else
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("GrenadeCases") and amount ~= 0 then
+        if managers.ehi_tracker:TrackerDoesNotExist("GrenadeCases") and amount > 0 then
             managers.ehi_deployable:CreateDeployableTracker("GrenadeCases")
         end
         managers.ehi_deployable:CallFunction("GrenadeCases", "UpdateAmount", key, amount)

@@ -865,6 +865,19 @@ end
 _G.Rotation = function()
 end
 
+---Has to be called in an animation
+---@param seconds number
+---@param f fun(lerp: number, t: number)
+---@param fixed_dt number?
+_G.over = function(seconds, f, fixed_dt)
+end
+
+---Has to be called in an animation
+---@param seconds number
+---@param fixed_dt number?
+_G.wait = function(seconds, fixed_dt)
+end
+
 ---@class _G.Color
 ---@overload fun(): Color
 ---@overload fun(r: number, g: number, b: number): Color
@@ -1055,6 +1068,9 @@ end
 ---@class CarryData
 ---@field carry_id fun(self: self): string
 
+---@class CoreEnvironmentControllerManager
+---@field _current_flashbang number
+
 ---@class ControllerWrapper
 ---@field add_trigger fun(self: self, connection_name: string, func: function)
 ---@field enable fun(self: self)
@@ -1225,6 +1241,7 @@ end
 ---@field ehi_sync EHISyncManager
 ---@field ehi_hook EHIHookManager
 ---@field enemy EnemyManager
+---@field environment_controller CoreEnvironmentControllerManager
 ---@field environment_effects EnvironmentEffectsManager
 ---@field experience ExperienceManager
 ---@field gage_assignment GageAssignmentManager
@@ -1262,6 +1279,19 @@ end
 ---@class BlackMarketTweakData
 ---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
 
+---@class CharacterTweakData
+---@field [string] { has_alarm_pager: boolean }
+
+---@class tweak_data.criminals
+---@field characters tweak_data.criminals.characters[]
+---@field character_names string[]
+
+---@class tweak_data.criminals.characters
+---@field name string
+---@field order number
+---@field static_data { voice: string, ai_mask_id: string, ai_character_id: string, ssuffix: string }
+---@field body_g_object Idstring
+
 ---@class tweak_data.projectiles
 ---@field [string] table?
 
@@ -1269,6 +1299,8 @@ end
 ---@field achievement AchievementsTweakData
 ---@field blackmarket BlackMarketTweakData
 ---@field carry CarryTweakData
+---@field character CharacterTweakData
+---@field criminals tweak_data.criminals
 ---@field dot DOTTweakData
 ---@field ehi EHITweakData
 ---@field experience_manager table
@@ -1428,7 +1460,6 @@ end
 
 ---@class CopBrain
 ---@field _logic_data table
----@field convert_to_criminal fun(self: self, mastermind_criminal: UnitPlayer?)
 ---@field converted fun(self: self): boolean
 ---@field is_hostage fun(self: self): boolean
 
@@ -1495,6 +1526,7 @@ end
 ---@class Unit
 ---@field alive fun(): boolean
 ---@field editor_id fun(): number
+---@field get_object fun(self: self, name: Idstring): ObjectInUnit
 ---@field key fun(): string
 ---@field material_config fun(): Idstring
 ---@field name fun(): Idstring
@@ -1505,7 +1537,7 @@ end
 ---@field set_extension_update_enabled fun(self: self, class_name: Idstring, state: boolean)
 
 ---@class UnitBase : Unit
----@field add_destroy_listener fun(self: self, key: string, clbk: function)
+---@field add_destroy_listener fun(self: self, key: string, clbk: fun(unit: Unit))
 ---@field damage fun(): UnitDamage
 ---@field in_slot fun(self: self, slotmask: number): boolean
 ---@field remove_destroy_listener fun(self: self, key: string)
@@ -1576,6 +1608,8 @@ end
 
 ---@class UnitFAKDeployable : UnitDeployable
 ---@field base fun(): FirstAidKitBase
+
+---@class ObjectInUnit : UnitBase
 
 ---@class LocalizationManager
 ---@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string

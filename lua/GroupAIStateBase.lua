@@ -21,6 +21,7 @@ end
 ---@field get_amount_enemies_converted_to_criminals fun(self: self): number
 ---@field _get_balancing_multiplier fun(self: self, balance_multipliers: number[]): number
 ---@field hostage_count fun(self: self): number
+---@field is_unit_team_AI fun(self: self, unit: UnitObject): boolean
 ---@field police_hostage_count fun(self: self): number
 ---@field remove_listener fun(self: self, key: string)
 ---@field whisper_mode fun(self: self): boolean

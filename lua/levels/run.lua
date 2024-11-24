@@ -23,18 +23,17 @@ end
 local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
----@class EHIGasTracker : EHIProgressTracker
----@field super EHIProgressTracker
-EHIGasTracker = class(EHIProgressTracker)
+---@class EHIGasTracker : EHITimedProgressTracker
+---@field super EHITimedProgressTracker
+EHIGasTracker = class(EHITimedProgressTracker)
 EHIGasTracker._forced_icons = { Icon.Fire }
 EHIGasTracker._forced_hint_text = Hints.run_Gas
-function EHIGasTracker:Format()
+function EHIGasTracker:FormatProgress()
     if self._max == 0 then
         return self._progress .. "/?"
     end
-    return EHIGasTracker.super.Format(self)
+    return EHIGasTracker.super.FormatProgress(self)
 end
-EHIGasTracker.FormatProgress = EHIGasTracker.Format
 
 ---@class EHIZoneTracker : EHIWarningTracker
 EHIZoneTracker = class(EHIWarningTracker)
@@ -51,6 +50,8 @@ local SetProgressMax = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
             id = trigger.id,
             progress = 1,
             max = trigger.max,
+            show_progress_on_finish = true,
+            remove_on_max_progress = true,
             class = "EHIGasTracker"
         })
     end
@@ -66,20 +67,20 @@ local triggers = {
 
     [101967] = { time = 55 + 5 + 10 + 3, id = "HeliArrival", icons = { Icon.Heli, Icon.Escape }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100372, restore_on_done = true }, hint = Hints.friend_Heli },
 
-    [100144] = { id = "GasAmount", class = "EHIGasTracker", trigger_once = true },
+    [100144] = { id = "GasAmount", class = "EHIGasTracker", show_progress_on_finish = true, remove_on_max_progress = true, trigger_once = true },
     [100051] = { id = "GasAmount", special_function = SF.RemoveTracker }, -- In case the tracker gets stuck for drop-ins
 
     [1] = { id = "GasAmount", special_function = SF.IncreaseProgress },
-    [2] = { special_function = SF.RemoveTrigger, data = { 102775, 102776, 102868 } }, -- Don't blink twice, just set the max once and remove the triggers
+    [2] = { special_function = SF.RemoveTrigger, data = { 102775, 102776, 102868, 2 } }, -- Don't blink twice, just set the max once and remove the triggers
 
     [102876] = { special_function = SF.Trigger, data = { 1028761, 1 } },
-    [1028761] = { time = 60, id = "Gas1", icons = { Icon.Fire }, hint = Hints.Fire },
+    [1028761] = { time = 60, id = "Gas1", icons = { Icon.Fire }, hint = Hints.Fire, tracker_merge = { id = "GasAmount", start_timer = true } },
     [102875] = { special_function = SF.Trigger, data = { 1028751, 1 } },
-    [1028751] = { time = 60, id = "Gas2", icons = { Icon.Fire }, hint = Hints.Fire },
+    [1028751] = { time = 60, id = "Gas2", icons = { Icon.Fire }, hint = Hints.Fire, tracker_merge = { id = "GasAmount", start_timer = true } },
     [102874] = { special_function = SF.Trigger, data = { 1028741, 1 } },
-    [1028741] = { time = 60, id = "Gas3", icons = { Icon.Fire }, hint = Hints.Fire },
+    [1028741] = { time = 60, id = "Gas3", icons = { Icon.Fire }, hint = Hints.Fire, tracker_merge = { id = "GasAmount", start_timer = true } },
     [102873] = { special_function = SF.Trigger, data = { 1028731, 1 } },
-    [1028731] = { time = 80, id = "Gas4", icons = { Icon.Fire, Icon.Escape }, hint = Hints.run_GasFinal },
+    [1028731] = { time = 80, id = "Gas4", icons = { Icon.Fire, Icon.Escape }, hint = Hints.run_GasFinal, tracker_merge = { id = "GasAmount", start_timer = true } },
 
     [102775] = { special_function = SF.Trigger, data = { 1027751, 2 } },
     [1027751] = { max = 4, id = "GasAmount", special_function = SetProgressMax },
@@ -89,19 +90,22 @@ local triggers = {
     [1028681] = { max = 2, id = "GasAmount", special_function = SetProgressMax }
 }
 if EHI:MissionTrackersAndWaypointEnabled() then
-    triggers[2] = { special_function = SF.CustomCode, f = function()
-        managers.hud:RestoreWaypoint(101290)
-    end } -- Show "exclamation" waypoint; overwrites default behavior -> Remove Triggers
     triggers[3] = { special_function = SF.CustomCode, f = function()
+        managers.hud:RestoreWaypoint(101290)
+    end } -- Show "exclamation" waypoint
+    triggers[4] = { special_function = SF.CustomCode, f = function()
         managers.hud:SoftRemoveWaypoint(101290)
     end } -- Hide "exclamation" waypoint
-    triggers[102876].data[3] = 3
+    triggers[102775].data[3] = 3
+    triggers[102776].data[3] = 3
+    triggers[102868].data[3] = 3
+    triggers[102876].data[3] = 4
     triggers[1028761].waypoint = { position_from_element = 101290 }
-    triggers[102875].data[3] = 3
+    triggers[102875].data[3] = 4
     triggers[1028751].waypoint = { position_from_element = 101290 }
-    triggers[102874].data[3] = 3
+    triggers[102874].data[3] = 4
     triggers[1028741].waypoint = { position_from_element = 101290 }
-    triggers[102873].data[3] = 3
+    triggers[102873].data[3] = 4
     triggers[1028731].waypoint = { icon = Icon.Escape, position_from_element = 101290 }
 end
 

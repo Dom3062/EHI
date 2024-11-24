@@ -453,7 +453,7 @@ _G.EHI =
         {
             -- Optional `chance`
             Chance = "EHITimedChanceTracker",
-            -- Optional `max` and `progress`
+            -- Optional `max`, `progress` and `remove_on_max_progress`
             Progress = "EHITimedProgressTracker",
             -- Optional `chance`
             WarningChance = "EHITimedWarningChanceTracker"
@@ -806,6 +806,7 @@ local function LoadDefaultValues(self)
         show_assault_delay_tracker = true,
         show_assault_time_tracker = true,
         show_assault_diff_in_assault_trackers = true,
+        show_assault_enemy_count = false,
         show_loot_counter = true,
         show_all_loot_secured_popup = true,
         variable_random_loot_format = 3, -- 1 = Progress/Max-(Max+Random)?; 2 = Progress/MaxRandom?; 3 = Progress/Max+Random?
@@ -1004,8 +1005,10 @@ local function LoadDefaultValues(self)
         show_remaining_xp_to_100 = false,
         show_mission_xp_overview = true,
         show_floating_health_bar = true,
+        show_floating_health_bar_style = 1, -- 1 = Poco; 2 = Circle; 3 = Rectangle
         show_floating_health_bar_converts = true,
         show_floating_health_bar_civilians = true,
+        show_floating_health_bar_team_ai = true,
         show_use_left_ammo_bag = true,
         show_use_left_doctor_bag = true,
         show_use_left_bodybags_bag = true,
@@ -1404,6 +1407,12 @@ end
 ---@return boolean
 function EHI:IsAssaultTrackerEnabled()
     return self:GetOption("show_assault_delay_tracker") or self:GetOption("show_assault_time_tracker")
+end
+
+---@param option string
+---@return boolean
+function EHI:IsAssaultTrackerEnabledAndOption(option)
+    return self:IsAssaultTrackerEnabled() and self:GetOption(option)
 end
 
 ---@return boolean
@@ -2172,6 +2181,9 @@ function EHI:FinalizeUnits(tbl)
                         end
                         if unit_data.hint then
                             digital_gui:SetHint(unit_data.hint)
+                        end
+                        if unit_data.ignore_waypoint then
+                            digital_gui:SetIgnoreWaypoint()
                         end
                     end
                     digital_gui:Finalize()

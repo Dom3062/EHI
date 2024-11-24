@@ -181,3 +181,7 @@ end
 function EHIDeployableManager:CallFunction(id, f, ...)
     self._trackers:CallFunction(id, f, ...)
 end
+
+if _G.IS_VR then
+    dofile(EHI.LuaPath .. "EHIDeployableManagerVR.lua")
+end

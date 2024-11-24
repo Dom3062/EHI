@@ -810,10 +810,11 @@ function FakeEHIHostageCountTracker:UpdateIconPos(...)
     self._format_civilian = original_format
 end
 
----@class FakeEHIAssaultTimeTracker : FakeEHITracker, FakeEHIChanceTracker
+---@class FakeEHIAssaultTimeTracker : FakeEHITracker, FakeEHIChanceTracker, FakeEHICountTracker
 ---@field super FakeEHITracker
 FakeEHIAssaultTimeTracker = class(FakeEHITracker)
 FakeEHIAssaultTimeTracker.FormatChance = FakeEHIChanceTracker.Format
+FakeEHIAssaultTimeTracker.FormatCount = FakeEHICountTracker.Format
 function FakeEHIAssaultTimeTracker:post_init(params)
     if params.control then
         self._icons[1]:set_color(Color.white)
@@ -830,19 +831,33 @@ function FakeEHIAssaultTimeTracker:post_init(params)
         text = self:FormatChance(),
         left = self._text:right()
     })
-    self:UpdateFormat(EHI:GetOption("show_assault_diff_in_assault_trackers"))
+    self._count = params.count
+    self._enemy_count_text = self:CreateText({
+        text = self:FormatCount()
+    })
+    self:UpdateFormat(EHI:GetOption("show_assault_diff_in_assault_trackers"), false, true)
+    self:UpdateFormat2(EHI:GetOption("show_assault_enemy_count"), false, true)
 end
 
 ---@param format boolean
 ---@param reposition boolean?
-function FakeEHIAssaultTimeTracker:UpdateFormat(format, reposition)
+---@param from_init boolean?
+function FakeEHIAssaultTimeTracker:UpdateFormat(format, reposition, from_init)
     if self._show_diff == format then
         return
     end
     self._show_diff = format
     self._diff_chance_text:set_visible(format)
-    if format then
-        self:SetBGSize()
+    if from_init and not format then
+        return
+    elseif format then
+        self:SetBGSize(self._bg_box_w)
+        if self._show_enemy_count then
+            self._enemy_count_text:set_left(self._diff_chance_text:right())
+        end
+    elseif self._show_enemy_count then
+        self:SetBGSize(self._bg_size, "short")
+        self._enemy_count_text:set_left(self._text:right())
     else
         self:SetBGSize(self._bg_size, "set")
     end
@@ -850,6 +865,36 @@ function FakeEHIAssaultTimeTracker:UpdateFormat(format, reposition)
     if reposition then
         self:Reposition()
     end
+end
+
+---@param format boolean
+---@param reposition boolean?
+function FakeEHIAssaultTimeTracker:UpdateFormat2(format, reposition, from_init)
+    if self._show_enemy_count == format then
+        return
+    end
+    self._show_enemy_count = format
+    self._enemy_count_text:set_visible(format)
+    if from_init and not format then
+        return
+    elseif format then
+        self:SetBGSize(self._bg_box_w)
+        self._enemy_count_text:set_left(self._show_diff and self._diff_chance_text:right() or self._text:right())
+    elseif self._show_diff then
+        self:SetBGSize(self._bg_size, "short")
+    else
+        self:SetBGSize(self._bg_size, "set")
+    end
+    self:SetIconX()
+    if reposition then
+        self:Reposition()
+    end
+end
+
+function FakeEHIAssaultTimeTracker:SetTextColor()
+    FakeEHIAssaultTimeTracker.super.SetTextColor(self)
+    self._diff_chance_text:set_color(self._selected and self._selected_color or Color.white)
+    self._enemy_count_text:set_color(self._selected and self._selected_color or Color.white)
 end
 
 ---@class FakeEHISniperTracker : FakeEHITracker

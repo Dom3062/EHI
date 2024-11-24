@@ -15,7 +15,8 @@ function EHIEnemyCountTracker:init(panel, params, ...)
     self._alarm_count = 0
     self._alarm_count_answered = 0
     EHIEnemyCountTracker.super.init(self, panel, params, ...)
-    if params.alarm_sounded then
+    if params.no_loud_update then -- Do nothing, will get removed once assault tracker is visible
+    elseif params.alarm_sounded then
         self:OnAlarm(true)
     else
         self._update_on_alarm = true

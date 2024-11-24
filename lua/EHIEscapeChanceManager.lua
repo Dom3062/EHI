@@ -7,7 +7,6 @@ function EHIEscapeChanceManager:new(ehi_tracker)
     self._trackers = ehi_tracker
     self._civilians_killed = 0
     self._disabled = false
-    self._synced = false
     return self
 end
 

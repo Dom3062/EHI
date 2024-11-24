@@ -79,7 +79,7 @@ local instances =
     },
     ["levels/instances/unique/hox_estate_alarmbox/world"] =
     {
-        [100021] = { icons = { Icon.Alarm }, warning = true, remove_on_pause = true, hint = Hints.Alarm }
+        [100021] = { icons = { Icon.Alarm }, warning = true, remove_on_pause = true, ignore_waypoint = true, hint = Hints.Alarm }
     },
     ["levels/instances/unique/hox_estate_panic_room/world"] =
     {

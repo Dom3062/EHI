@@ -48,10 +48,6 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     if EHI:GetOption("show_buffs") then
         managers.ehi_buff:init_finalize(self, hud_panel)
     end
-    if EHI:GetOption("show_floating_health_bar") then
-        dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
-        EHIHealthFloatManager:new(self)
-    end
     if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
     elseif tweak_data.levels:IsStealthAvailable(level_id) then
@@ -100,6 +96,10 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 class = EHI.Trackers.Counter
             })
         end
+    end
+    if EHI:GetOption("show_floating_health_bar") then
+        dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
+        EHIHealthFloatManager:new(self, hud_panel)
     end
 end
 

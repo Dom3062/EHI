@@ -44,6 +44,11 @@ function EHIMenu:UpdateAssaultTracker(value)
     self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateFormat", value, true)
 end
 
+function EHIMenu:UpdateAssaultTracker2(value)
+    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateFormat2", value, true)
+    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateFormat2", value, true)
+end
+
 function EHIMenu:UpdateTracker(option, value)
     self._preview_panel:UpdateTracker(option, value)
 end

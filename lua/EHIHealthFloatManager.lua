@@ -2,419 +2,218 @@ local EHI = EHI
 if EHI:CheckLoadHook("EHIHealthFloatManager") then
     return
 end
-local mvector3 = mvector3
-local function round(num, dec)
-    local res = string.format('%.' .. (dec or 0) .. 'g', num)
-    return res:find('e') and tostring(math.floor(num)) or res
-end
 
 ---@class EHIHealthFloatManager
+---@field _ws Workspace Poco style
+---@field _pnl Panel Poco style
+---@field _float EHIHealthFloatCircle|EHIHealthFloatRect
+---@field _floats table<string, EHIHealthFloatPoco?>
+---@field _smokes table<string, Vector3>
 EHIHealthFloatManager = {}
 ---@param hud HUDManager
-function EHIHealthFloatManager:new(hud)
-    self._ws = managers.gui_data:create_fullscreen_workspace()
-    self._pnl = self._ws:panel():panel({ name = 'dmg_sheet', layer = 4 })
-    self._ww = self._pnl:w()
-    self._hh = self._pnl:h()
-    managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
-    self._floats = {} ---@type table<string, EHIHealthFloatBar?>
-    self._smokes = {} ---@type table<string, Vector3>
+---@param hud_panel Panel
+function EHIHealthFloatManager:new(hud, hud_panel)
     self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 18, 22, 24, 25, 26, 33, 34, 35)
     if EHI:GetOption("show_floating_health_bar_civilians") then -- +Slot mask 21
         self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
     end
-    Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
-        local unit = base._unit
-        self._smokes[unit:key()] = unit:position()
-    end)
-    Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
-        self._smokes[base._unit:key()] = nil
-    end)
     hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+    EHI:CallCallbackOnce("EHIHealthFloatManagerInit", self, hud_panel)
 end
 
-function EHIHealthFloatManager:onResolutionChanged()
-    if alive(self._ws) then
-        managers.gui_data:layout_fullscreen_workspace(self._ws)
+if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
+    local mvector3 = mvector3
+    dofile(EHI.LuaPath .. "EHIHealthFloatPoco.lua")
+    EHI:AddCallback("EHIHealthFloatManagerInit",
+    ---@param self EHIHealthFloatManager
+    ---@param hud_panel Panel
+    function(self, hud_panel)
+        self._ws = managers.gui_data:create_fullscreen_workspace()
+        self._pnl = self._ws:panel():panel({ layer = 4 })
         self._ww = self._pnl:w()
         self._hh = self._pnl:h()
-    end
-end
+        managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
+        self._floats = {}
+        self._smokes = {}
+        Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
+            local unit = base._unit
+            self._smokes[unit:key()] = unit:position()
+        end)
+        Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
+            self._smokes[base._unit:key()] = nil
+        end)
+    end)
 
----@param unit UnitObject
----@param t number
-function EHIHealthFloatManager:Float(unit, t)
-    local key = unit.key and unit:key()
-    if not key then return end
-    local float = self._floats[key]
-    if float then
-        float:renew(t)
-    else
-        self._floats[key] = EHIHealthFloatBar:new(self, key, unit, t)
-    end
-end
-
----@param t number
-function EHIHealthFloatManager:update(t, dt)
-    self._cam = managers.viewport:get_current_camera()
-    if not self._cam then return end
-    self._camPos = self._cam:position()
-    local rot = self._cam:rotation()
-    self._nl_cam_forward = rot:y()
-    self:_updateItems(t)
-end
-
-function EHIHealthFloatManager:update_last()
-    for _, float in pairs(self._floats) do
-        float:force_delete()
-    end
-end
-
-function EHIHealthFloatManager:_tryGetState()
-    local unit = managers.player:player_unit()
-    if unit and unit:movement() then
-        return unit:movement():current_state()
-    end
-    return nil
-end
-
----@param t number
-function EHIHealthFloatManager:_updateItems(t)
-    self.state = self.state or self:_tryGetState()
-    self.ADS = self.state and self.state._state_data.in_steelsight
-
-    local r = nil
-    local from = alive(managers.player:player_unit()) and managers.player:player_unit():movement():m_head_pos()
-    if from then
-        local to = from + managers.player:player_unit():movement():m_head_rot():y() * 30000
-        r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
-    end
-    local unit = r and r.unit
-    if unit then
-        if unit:in_slot(8) and alive(unit:parent()) then
-            unit = unit:parent()
-        end
-        if unit and unit:movement() then
-            local cHealth = unit:character_damage() and unit:character_damage()._health
-            if cHealth and cHealth > 0 and not Global.hud_disabled then
-                self:Float(unit, t)
-            end
+    function EHIHealthFloatManager:onResolutionChanged()
+        if alive(self._ws) then
+            managers.gui_data:layout_fullscreen_workspace(self._ws)
+            self._ww = self._pnl:w()
+            self._hh = self._pnl:h()
         end
     end
 
-    for _, float in pairs(self._floats) do
-        float:draw(t)
-    end
-end
-
-local UnitVector = Vector3()
----@param something number|UnitObject
-function EHIHealthFloatManager:_pos(something)
-    local t, unit = type(something)
-    if t == 'number' then
-        unit = managers.network:session():peer(something):unit()
-    else
-        unit = something
-    end
-    if not (unit and alive(unit)) then
-        return Vector3()
-    end
-    local pos = UnitVector
-    mvector3.set(pos, unit:position())
-    local head_pos = unit:movement() and unit:movement():m_head_pos()
-    if head_pos then
-        mvector3.set_z(pos, head_pos.z)
-    end
-    return pos
-end
-
----@param uPos Vector3?
-function EHIHealthFloatManager:_visibility(uPos)
-    local result = 1 - math.min(0.9, managers.environment_controller._current_flashbang or 1)
-    if uPos then
-        local minDis = 9999
-        local sRad = 300
-        for _, sPos in pairs(self._smokes) do
-            local cPos = self._camPos
-            local disR, dotR = 1, 1
-            local sDir = sPos - cPos
-            local uDir = uPos - cPos
-            local xDir = sPos - uPos
-            minDis = math.min(sDir:length(), xDir:length())
-            if minDis <= sRad then
-                disR = math.pow(minDis / sRad, 3)
-            elseif sDir:length() < uDir:length() then
-                mvector3.normalize(sDir)
-                mvector3.normalize(uDir)
-                dotR = 1 - math.pow(mvector3.dot(sDir, uDir), 3)
-            end
-            result = math.min(result, math.min(disR, dotR))
-        end
-    end
-    return result
-end
-
----@param pos Vector3
-function EHIHealthFloatManager:_v2p(pos)
-    return alive(self._ws) and pos and self._ws:world_to_screen(self._cam, pos)
-end
-
----@class EHIHealthFloatBar
----@field new fun(self: self, owner: EHIHealthFloatManager, key: string, unit: UnitObject, t: number): self
-EHIHealthFloatBar = class()
-EHIHealthFloatBar._size = 16
-EHIHealthFloatBar._margin = 2
-EHIHealthFloatBar._opacity = 0.9
-EHIHealthFloatBar._color_start = Color("FFA500"):with_alpha(1)
-EHIHealthFloatBar._color_end = Color("FF0000"):with_alpha(1)
-EHIHealthFloatBar._color_friendly = Color("00FF00"):with_alpha(1)
-EHIHealthFloatBar._converts_disabled = not EHI:GetOption("show_floating_health_bar_converts") -- Team AI shares the same slot mask (16) with converts, workaround
-EHIHealthFloatBar._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
----@param owner EHIHealthFloatManager
----@param key string
----@param unit UnitObject
----@param t number
-function EHIHealthFloatBar:init(owner, key, unit, t)
-    self._parent = owner
-    self._unit = unit
-    self._key = key
-    self._lastT = t
-    local size = self._size
-    local m = self._margin
-    local pnl = owner._pnl:panel({
-        x = 0,
-        y = -size,
-        w = 300,
-        h = 100
-    })
-    self._pnl = pnl
-    self.bg = pnl:bitmap({
-        name = 'blur',
-        texture = 'guis/textures/test_blur_df',
-        render_template = 'VertexColorTexturedBlur3D',
-        layer = -1,
-        x = 0,
-        y = 0
-    })
-    self.pie = CircleBitmapGuiObject:new(pnl, {
-        use_bg = false,
-        x = m,
-        y = m,
-        image = "guis/textures/pd2/hud_health",
-        radius = size / 2,
-        sides = 64,
-        current = 20,
-        total = 64,
-        blend_mode = "normal",
-        layer = 4
-    })
-    self.pie._circle:set_texture_rect(128, 0, -128, 128)
-    self.pieBg = pnl:bitmap({
-        name = "pieBg",
-        texture = "guis/textures/pd2/hud_progress_active",
-        w = size,
-        h = size,
-        layer = 3,
-        x = m,
-        y = m,
-        color = Color.black:with_alpha(0.5)
-    })
-    self.lbl = pnl:text{
-        text = "text",
-        font = "fonts/font_medium_mf",
-        font_size = size,
-        color = Color.white,
-        x = size + m * 2,
-        y = m,
-        layer = 3,
-        blend_mode = 'normal'
-    }
-    self.lblShadow1 = pnl:text{
-        text = "shadow",
-        font = "fonts/font_medium_mf",
-        font_size = size,
-        color = Color.black:with_alpha(0.3),
-        x = 1 + size + m * 2,
-        y = 1 + m,
-        layer = 2,
-        blend_mode = 'normal'
-    }
-    self.lblShadow2 = pnl:text{
-        text = "shadow",
-        font = "fonts/font_medium_mf",
-        font_size = size,
-        color = Color.black:with_alpha(0.3),
-        x = size + m * 2 - 1,
-        y = 1 + m,
-        layer = 2,
-        blend_mode = "normal"
-    }
-end
-
----@param x number?
-function EHIHealthFloatBar:__shadow(x)
-    if x then
-        self.lblShadow1:set_x(x + 1)
-        self.lblShadow2:set_x(x - 1)
-    else
-        self.lblShadow1:set_text(self._txts)
-        self.lblShadow2:set_text(self._txts)
-    end
-end
-
-function EHIHealthFloatBar:_lbl(lbl, txts)
-    local result = ''
-    if alive(lbl) then
-        if type(txts) == 'table' then
-            local pos = 0
-            local posEnd = 0
-            local ranges = {}
-            for i, txtObj in ipairs(txts) do
-                txtObj[1] = tostring(txtObj[1])
-                result = result .. txtObj[1]
-                local _, count = txtObj[1]:gsub('[^\128-\193]', '')
-                posEnd = pos + count
-                ranges[i] = { pos, posEnd, txtObj[2] or Color.white }
-                pos = posEnd
-            end
-            lbl:set_text(result)
-            for _, range in ipairs(ranges) do
-                lbl:set_range_color(range[1], range[2], range[3] or Color.green)
-            end
-        elseif type(txts) == 'string' then
-            result = txts
-            lbl:set_text(txts)
-        end
-    elseif type(txts) == 'table' then
-        for _, t in ipairs(txts) do
-            result = result .. tostring(t[1])
-        end
-    else
-        result = txts
-    end
-    return result
-end
-
----@param t number
-function EHIHealthFloatBar:draw(t)
-    if not alive(self._unit) or (t - self._lastT > 0.5) and not self._dead then
-        self._dead = true
-    end
-    if self._dead and not self._dying then
-        self:delete()
-        return
-    end
-    if not alive(self._pnl) then
-        return
-    end
-    local unit = self._unit
-    if not alive(unit) then
-        return
-    end
-    local dx, dy, d, pDist, ww, hh = 0, 0, 1, 0, self._parent._ww, self._parent._hh
-    local pos = self._parent:_pos(unit)
-    local nl_dir = pos - self._parent._camPos
-    mvector3.normalize(nl_dir)
-    local dot_visible = mvector3.dot(self._parent._nl_cam_forward, nl_dir) > 0
-    local pPos = self._parent:_v2p(pos) ---@cast pPos -false
-    dx = pPos.x - ww / 2
-    dy = pPos.y - hh / 2
-    pDist = dx * dx + dy * dy
-    self._pnl:set_visible(dot_visible)
-    if dot_visible then
-        local isADS = self._parent.ADS
-        local cHealth = unit:character_damage() and unit:character_damage()._health and unit:character_damage()._health * 10 or 0
-        local fHealth = cHealth > 0 and (unit:character_damage()._HEALTH_INIT and unit:character_damage()._HEALTH_INIT * 10 or unit:character_damage()._health_max and unit:character_damage()._health_max * 10) or 1
-        local prog = cHealth / fHealth
-        local isConverted = unit:brain() and unit:brain().converted and unit:brain():converted()
-        local isEnemy = managers.enemy:is_enemy(unit)
-        if (isConverted and self._converts_disabled) or (managers.enemy:is_civilian(unit) and self._civilians_disabled) then
-            prog = 0
-        end
-        if prog > 0 then
-            local size = self._size
-            local txts = {}
-            local m = self._margin
-            local isTurret = unit:base() and unit:base().get_type and unit:base():get_type() == "swat_turret" ---@diagnostic disable-line
-            local color = ((isEnemy and not isConverted) or isTurret) and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
-            if pDist <= 100000 and cHealth > 0 then
-                txts[1] = { round(cHealth, 2) .. '/' .. round(fHealth, 2), color }
-            end
-            pPos = pPos:with_y(pPos.y - size * 2)
-            self.pie:set_current(prog)
-            self.pieBg:set_visible(true)
-            local x = 2 * m + size
-            self.lbl:set_x(x)
-            self:__shadow(x)
-            if self._txts ~= self:_lbl(nil, txts) then
-                self._txts = self:_lbl(self.lbl, txts)
-                self:__shadow()
-            end
-            local _, _, w, h = self.lbl:text_rect()
-            h = math.max(h, size)
-            self._pnl:set_size(m * 2 + (w > 0 and w + m + 1 or 0) + (prog > 0 and size or 0), h + 2 * m)
-            self.bg:set_size(self._pnl:size())
-            self._pnl:set_center(pPos.x, pPos.y)
+    ---@param unit UnitObject
+    ---@param t number
+    function EHIHealthFloatManager:Float(unit, t)
+        local key = unit.key and unit:key()
+        if not key then return end
+        local float = self._floats[key]
+        if float then
+            float:renew(t)
         else
-            self.pie:set_visible(false)
-            self.pieBg:set_visible(false)
-            self.lbl:set_visible(false)
-            self.lblShadow1:set_visible(false)
-            self.lblShadow2:set_visible(false)
-        end
-        d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
-        d = math.min(d, self._opacity)
-        if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then
-            d = math.min(d, self._parent:_visibility(pos))
-        end
-        if not self._dying then
-            self._pnl:set_alpha(d)
-            self.lastD = d -- d is for starting alpha
+            self._floats[key] = EHIHealthFloatPoco:new(self, key, unit, t)
         end
     end
-end
 
----@param t number
-function EHIHealthFloatBar:renew(t)
-    self._lastT = math.max(self._lastT, t)
-    self._dead = false
-    self._dying = false
-    self._pnl:stop()
-end
+    function EHIHealthFloatManager:update_last()
+        for _, float in pairs(self._floats) do
+            float:force_delete()
+        end
+    end
 
-function EHIHealthFloatBar:delete()
-    local pnl = self._pnl
-    if alive(pnl) and not self._dying then
-        self._dying = true
-        pnl:stop()
-        pnl:animate(self._fade, self.lastD or 1, self._destroy_callback, 0.2)
+    local UnitVector = Vector3()
+    ---@param something number|UnitObject
+    function EHIHealthFloatManager:_pos(something)
+        local t, unit = type(something)
+        if t == 'number' then
+            unit = managers.network:session():peer(something):unit()
+        else
+            unit = something
+        end
+        if not (unit and alive(unit)) then
+            return Vector3()
+        end
+        local pos = UnitVector
+        mvector3.set(pos, unit:position())
+        local head_pos = unit:movement() and unit:movement():m_head_pos()
+        if head_pos then
+            mvector3.set_z(pos, head_pos.z)
+        end
+        return pos
+    end
+
+    ---@param uPos Vector3?
+    function EHIHealthFloatManager:_visibility(uPos)
+        local result = 1 - math.min(0.9, managers.environment_controller._current_flashbang)
+        if uPos then
+            local minDis = 9999
+            local sRad = 300
+            for _, sPos in pairs(self._smokes) do
+                local cPos = self._camPos
+                local disR, dotR = 1, 1
+                local sDir = sPos - cPos
+                local uDir = uPos - cPos
+                local xDir = sPos - uPos
+                minDis = math.min(sDir:length(), xDir:length())
+                if minDis <= sRad then
+                    disR = math.pow(minDis / sRad, 3)
+                elseif sDir:length() < uDir:length() then
+                    mvector3.normalize(sDir)
+                    mvector3.normalize(uDir)
+                    dotR = 1 - math.pow(mvector3.dot(sDir, uDir), 3)
+                end
+                result = math.min(result, math.min(disR, dotR))
+            end
+        end
+        return result
+    end
+
+    ---@param pos Vector3
+    function EHIHealthFloatManager:_v2p(pos)
+        return alive(self._ws) and pos and self._ws:world_to_screen(self._cam, pos)
+    end
+
+    ---@param t number
+    function EHIHealthFloatManager:update(t, dt)
+        self._cam = managers.viewport:get_current_camera()
+        if not self._cam then return end
+        self._camPos = self._cam:position()
+        local rot = self._cam:rotation()
+        self._nl_cam_forward = rot:y()
+
+        self.state = self.state or self:_tryGetState()
+        self.ADS = self.state and self.state._state_data.in_steelsight
+
+        local r = nil
+        local from = alive(managers.player:player_unit()) and managers.player:player_unit():movement():m_head_pos()
+        if from then
+            local to = from + managers.player:player_unit():movement():m_head_rot():y() * 30000
+            r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
+        end
+        local unit = r and r.unit
+        if unit then
+            if unit:in_slot(8) and alive(unit:parent()) then
+                unit = unit:parent()
+            end
+            if unit and unit:movement() then
+                local cHealth = unit:character_damage() and unit:character_damage()._health
+                if cHealth and cHealth > 0 and not Global.hud_disabled then
+                    self:Float(unit, t)
+                end
+            end
+        end
+
+        for _, float in pairs(self._floats) do
+            float:draw(t)
+        end
+    end
+
+    function EHIHealthFloatManager:_tryGetState()
+        local unit = managers.player:player_unit()
+        if unit and unit:movement() then
+            return unit:movement():current_state()
+        end
+        return nil
+    end
+else
+    if EHI:GetOption("show_floating_health_bar_style") == 2 then
+        dofile(EHI.LuaPath .. "EHIHealthFloatCircle.lua")
+        EHI:AddCallback("EHIHealthFloatManagerInit",
+        ---@param self EHIHealthFloatManager
+        ---@param hud_panel Panel
+        function(self, hud_panel)
+            self._float = EHIHealthFloatCircle:new(hud_panel)
+            EHI:AddOnCustodyCallback(function(custody_state)
+                self._float:SetInCustody(custody_state)
+            end)
+        end)
+    else
+        dofile(EHI.LuaPath .. "EHIHealthFloatRect.lua")
+        EHI:AddCallback("EHIHealthFloatManagerInit",
+        ---@param self EHIHealthFloatManager
+        ---@param hud_panel Panel
+        function(self, hud_panel)
+            self._float = EHIHealthFloatRect:new(hud_panel)
+            EHI:AddOnCustodyCallback(function(custody_state)
+                self._float:SetInCustody(custody_state)
+            end)
+        end)
+    end
+
+    function EHIHealthFloatManager:update_last()
+        self._float:UpdateLast()
+    end
+
+    ---@param t number
+    function EHIHealthFloatManager:update(t, dt)
+        local r = nil
+        local from = alive(managers.player:player_unit()) and managers.player:player_unit():movement():m_head_pos()
+        if from then
+            local to = from + managers.player:player_unit():movement():m_head_rot():y() * 30000
+            r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitEnemy? }]]
+        end
+        local unit = r and r.unit
+        if unit then
+            if unit:in_slot(8) and alive(unit:parent()) then
+                unit = unit:parent() --[[@as UnitEnemy?]]
+            end
+            if unit and unit:movement() then
+                local cHealth = unit:character_damage() and unit:character_damage()._health
+                if cHealth and not Global.hud_disabled then
+                    self._float:SetUnit(unit, t)
+                end
+            end
+        end
+        self._float:Update(t)
     end
 end
-
-function EHIHealthFloatBar:force_delete()
-    self._dead = true
-    self:delete()
-end
-
-function EHIHealthFloatBar:destroy()
-    local pnl = self._pnl
-    if alive(pnl) then
-        pnl:stop()
-        pnl:parent():remove(pnl)
-    end
-    self._parent._floats[self._key] = nil
-end
-
-function EHIHealthFloatBar._fade(o, lastD, done_cb, seconds)
-    o:set_visible(true)
-    o:set_alpha(1)
-    local t = seconds
-    while alive(o) and t > 0 do
-        local dt = coroutine.yield()
-        t = t - dt
-        o:set_alpha(lastD * t / seconds)
-    end
-    o:set_visible(false)
-    done_cb()
-end
-EHIHealthFloatBar._destroy_callback = callback(EHIHealthFloatBar, EHIHealthFloatBar, "destroy")

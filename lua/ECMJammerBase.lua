@@ -73,7 +73,7 @@ if EHI:GetOption("show_equipment_ecmjammer") then
         original.set_active(self, active, ...)
         if active then
             local battery_life = self:battery_life()
-            if battery_life == 0 then
+            if battery_life <= 0 then
                 return
             end
             if BlockECMsWithoutPagerBlocking then

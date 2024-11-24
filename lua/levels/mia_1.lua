@@ -6,6 +6,15 @@ function EHIThugsProgress:pre_init(params)
     EHIThugsProgress.super.pre_init(self, params)
 end
 
+---@class EHIDistrictTracker : EHICodeTracker
+---@field super EHICodeTracker
+EHIDistrictTracker = class(EHICodeTracker)
+EHIDistrictTracker._forced_hint_text = "mia_1_location"
+EHIDistrictTracker._forced_icons = { "sidebar_question" } -- Map with question mark icon (unused in-game)
+function EHIDistrictTracker:post_init(params)
+    self:SetCode(params.area)
+end
+
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -52,7 +61,15 @@ local triggers = {
 
     [101218] = { id = "ThugsKill", icons = { Icon.Kill }, class = "EHIThugsProgress", hint = Hints.Kills },
     [105158] = { id = "ThugsKill", special_function = SF.IncreaseProgressMax },
-    [105206] = { id = "ThugsKill", special_function = SF.IncreaseProgress }
+    [105206] = { id = "ThugsKill", special_function = SF.IncreaseProgress },
+
+    -- After third call
+    [100396] = { id = "District", area = "Downtown", class = "EHIDistrictTracker" },
+    [100551] = { id = "District", area = "Georgetown", class = "EHIDistrictTracker" },
+    [100558] = { id = "District", area = "West End", class = "EHIDistrictTracker" },
+    [100559] = { id = "District", area = "Foggy Bottom", class = "EHIDistrictTracker" },
+    [100642] = { id = "District", area = "Shaw", class = "EHIDistrictTracker" },
+    [105065] = { id = "District", special_function = SF.RemoveTracker }
 }
 local random_time = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
 for _, index in ipairs(MethlabIndex) do
@@ -66,6 +83,12 @@ for _, index in ipairs(MethlabIndex) do
 end
 if client then
     triggers[104955] = EHI:ClientCopyTrigger(triggers[106013], { time = 30 })
+    -- Reminder
+    triggers[101779] = { id = "District", area = "Downtown", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101780] = { id = "District", area = "Georgetown", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101781] = { id = "District", area = "West End", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101782] = { id = "District", area = "Foggy Bottom", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
+    triggers[101783] = { id = "District", area = "Shaw", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
 end
 
 local other =

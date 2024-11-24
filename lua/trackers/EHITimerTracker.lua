@@ -1,3 +1,5 @@
+---@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, not_powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
+
 local EHI = EHI
 local Color = Color
 

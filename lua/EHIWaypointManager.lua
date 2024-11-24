@@ -11,8 +11,8 @@ function EHIWaypointManager:new()
     self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
     self._present_timer = EHI:GetOption("show_waypoints_present_timer") --[[@as number]]
     self._stored_waypoints = {}
-    self._waypoints = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
-    self._waypoints_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHIWaypoint?>
+    self._waypoints = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
+    self._waypoints_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
     self._base_waypoint_class = EHI.Waypoints.Base
     return self
 end

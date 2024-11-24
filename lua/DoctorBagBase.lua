@@ -22,21 +22,21 @@ end
 
 if EHI:GetOption("show_equipment_aggregate_all") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") then
+        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
             managers.ehi_deployable:AddAggregatedDeployablesTracker()
         end
         managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "doctor_bag", key, amount)
     end
 elseif EHI:GetOption("show_equipment_aggregate_health") then
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Health") then
+        if managers.ehi_tracker:TrackerDoesNotExist("Health") and amount > 0 then
             managers.ehi_deployable:AddAggregatedHealthTracker()
         end
         managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "doctor_bag", key, amount)
     end
 else
     UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("DoctorBags") then
+        if managers.ehi_tracker:TrackerDoesNotExist("DoctorBags") and amount > 0 then
             managers.ehi_deployable:CreateDeployableTracker("DoctorBags")
         end
         managers.ehi_deployable:CallFunction("DoctorBags", "UpdateAmount", key, amount)

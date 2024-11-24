@@ -1,3 +1,5 @@
+---@alias EHITrackerManager.Tracker { tracker: EHITracker, pos: number, x: number, w: number }
+
 local EHI = EHI
 ---@class EHITrackerManager : EHIBaseManager
 ---@field super EHIBaseManager
@@ -17,9 +19,9 @@ EHITrackerManager.Rounding =
 function EHITrackerManager:init()
     self:CreateWorkspace()
     self._t = 0
-    self._trackers = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITrackerManager.Tracker?>
+    self._trackers = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITrackerManager.Tracker?>
     self._stealth_trackers = { lasers = {} }
-    self._trackers_to_update = setmetatable({}, {__mode = "k"}) ---@type table<string, EHITracker?>
+    self._trackers_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITracker?>
     self._n_of_trackers = 0
     self._delay_popups = true
     self._panel_size = 32 * self._scale
@@ -890,7 +892,9 @@ do
     if EHI:GetOption("show_equipment_tracker") then
         dofile(path .. "EHIAggregatedEquipmentTracker.lua")
         dofile(path .. "EHIAggregatedHealthEquipmentTracker.lua")
-        dofile(path .. "EHIECMTracker.lua")
+        if EHI:GetOption("show_equipment_ecmjammer") or EHI:GetOption("show_equipment_ecmfeedback") then
+            dofile(path .. "EHIECMTracker.lua")
+        end
     end
     if EHI:GetOption("show_loot_counter") then
         dofile(path .. "EHILootTracker.lua")
@@ -902,4 +906,8 @@ end
 
 if VoidUI then
     dofile(EHI.LuaPath .. "hud/tracker/void_ui.lua")
+end
+
+if _G.IS_VR then
+    dofile(EHI.LuaPath .. "EHITrackerManagerVR.lua")
 end

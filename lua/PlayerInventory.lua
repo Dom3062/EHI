@@ -9,7 +9,7 @@ if EHI:GetOption("show_buffs") then
         function PlayerInventory:_start_jammer_effect(end_time, ...)
             local result = original_start_jammer_effect(self, end_time, ...)
             end_time = end_time or self:get_jammer_time()
-            if result and end_time > 0 and managers.player:player_unit() == self._unit then
+            if result and end_time > 0 and self._unit:base().is_local_player then
                 managers.ehi_buff:AddBuff("HackerJammerEffect", end_time)
             end
             return result
@@ -20,7 +20,7 @@ if EHI:GetOption("show_buffs") then
         function PlayerInventory:_start_feedback_effect(end_time, ...)
             local result = original_start_feedback_effect(self, end_time, ...)
             end_time = end_time or self:get_jammer_time()
-            if result and end_time > 0 and managers.player:player_unit() == self._unit then
+            if result and end_time > 0 and self._unit:base().is_local_player then
                 managers.ehi_buff:AddBuff("HackerFeedbackEffect", end_time)
             end
             return result

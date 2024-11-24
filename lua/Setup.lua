@@ -15,10 +15,6 @@ dofile(EHI.LuaPath .. "EHITrackerManager.lua")
 dofile(EHI.LuaPath .. "EHIWaypointManager.lua")
 dofile(EHI.LuaPath .. "EHIBuffManager.lua")
 dofile(EHI.LuaPath .. "EHIDeployableManager.lua")
-if _G.IS_VR then
-    dofile(EHI.LuaPath .. "EHITrackerManagerVR.lua")
-    dofile(EHI.LuaPath .. "EHIDeployableManagerVR.lua")
-end
 dofile(EHI.LuaPath .. "EHITradeManager.lua")
 dofile(EHI.LuaPath .. "EHIEscapeChanceManager.lua")
 dofile(EHI.LuaPath .. "EHIAssaultManager.lua")

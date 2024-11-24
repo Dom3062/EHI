@@ -58,7 +58,7 @@ function DigitalGui:TimerStartCountDown()
             class = EHI.Trackers.Timer.Base
         })
     end
-    if show_waypoint then
+    if show_waypoint and not self._ignore_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
             time = self._timer,
             icon = self._icons or Icon.PCHack,
@@ -105,8 +105,7 @@ if level_id == "shoutout_raid" then
                     time = 500,
                     icon = Icon.Vault,
                     position = self._unit:position(),
-                    class = "EHIVaultTemperatureWaypoint",
-                    hint = "timer"
+                    class = "EHIVaultTemperatureWaypoint"
                 })
             end
             created = true
@@ -277,6 +276,11 @@ end
 function DigitalGui:SetHint(hint)
     self._ehi_hint = hint
     managers.ehi_tracker:UpdateHint(self._ehi_key, hint)
+end
+
+function DigitalGui:SetIgnoreWaypoint()
+    self._ignore_waypoint = true
+    managers.ehi_waypoint:RemoveWaypoint(self._ehi_key)
 end
 
 function DigitalGui:Finalize()

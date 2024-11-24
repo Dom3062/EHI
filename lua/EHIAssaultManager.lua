@@ -14,6 +14,13 @@ function EHIAssaultManager:new(ehi_tracker)
     return self
 end
 
+function EHIAssaultManager.GetTrackerName()
+    if EHI:CombineAssaultDelayAndAssaultTime() then
+        return "Assault"
+    end
+    return EHI:GetOption("show_assault_delay_tracker") and "AssaultDelay" or "AssaultTime"
+end
+
 ---@param manager EHIManager
 function EHIAssaultManager:init_finalize(manager)
     self._internal = manager:CreateAndCopyInternal("assault")
@@ -44,7 +51,7 @@ function EHIAssaultManager:init_finalize(manager)
             return
         end
         self._endless_assault = mode == "endless"
-        self:EndlessAssaultStart()
+        self:EndlessAssaultChanged()
     end)
     if not self._assault_time.blocked then
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
@@ -220,7 +227,7 @@ function EHIAssaultManager:AssaultStart()
     self._internal.is_assault = true
 end
 
-function EHIAssaultManager:EndlessAssaultStart()
+function EHIAssaultManager:EndlessAssaultChanged()
     local data
     if not self._endless_assault then
         if EHI:IsHost() then
@@ -276,7 +283,9 @@ end
 ---@param n number
 ---@param in_assault boolean
 function EHIAssaultManager:SetCurrentAssaultNumber(n, in_assault)
-    if n == 0 or not in_assault then
+    if not self._is_skirmish then
+        return
+    elseif n == 0 or not in_assault then
         n = n + 1
     end
     self._current_assault_number = n

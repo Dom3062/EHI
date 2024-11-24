@@ -1,3 +1,6 @@
+r276 (24. 11. 2024):
+Added options "Show Number of Enemies in Assault Trackers", "Floating Health Bar Style" and "Show Floating Health Bars for Team AI"
+
 r275 (17. 11. 2024):
 Optimization in option "Show Convert's Health in Tracker"
 Fixed missing decimals in uses for ammo bags
