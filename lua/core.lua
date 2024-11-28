@@ -2805,3 +2805,35 @@ function EHI:PrintClass(tbl, ...)
     end
     Utils.PrintTable(tbl)
 end
+
+Hooks:Add("BeardLibPreInit", "EHI_BeardLib_Crash_Fix", function()
+    if not Idstring("unit").key then
+        return
+    elseif not Global.fm then
+        Global.fm = { added_files = {} }
+    end
+    local unit_key = Idstring("unit"):key()
+    Global.fm.added_files[unit_key] = Global.fm.added_files[unit_key] or {}
+    for _, path in ipairs({
+        "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_gold",
+        "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_money",
+        "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_jewelry",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_special_money",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_a",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_b",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_c",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_d",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_e",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_a",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_b",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_c",
+        "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_d",
+        "units/pd2_dlc_jfr/pickups/spawn_german_folder/spawn_german_folder",
+        "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box",
+        "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box_intel",
+        "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_gensec_doors/spawn_gensec_doors",
+        "units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam"
+    }) do
+        Global.fm.added_files[unit_key][Idstring(path):key()] = { path = path }
+    end
+end)

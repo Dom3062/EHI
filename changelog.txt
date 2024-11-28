@@ -1,3 +1,6 @@
+r277 (28. 11. 2024):
+Fixed a silent load crash in custom heists added by Beardlib
+
 r276 (24. 11. 2024):
 Added options "Show Number of Enemies in Assault Trackers", "Floating Health Bar Style" and "Show Floating Health Bars for Team AI"
 
