@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("JobManager") then
+if EHI:CheckHook("JobManager") then
     return
 end
 
@@ -25,4 +25,14 @@ function JobManager:IsPlayingMultidayHeist()
         return self._global.current_job.current_stage == self._global.current_job.stages
     end
     return self._global.current_job.stages >= 2
+end
+
+local original = JobManager.activate_job
+function JobManager:activate_job(job_id, ...)
+    local result = original(self, job_id, ...)
+    if result then
+        local job = tweak_data.narrative.jobs[job_id]
+        Global.game_settings.ehi_vanilla_heist = not job.custom
+    end
+    return result
 end
