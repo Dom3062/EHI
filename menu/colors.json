@@ -212,6 +212,53 @@
             "color_type" : "unlockables",
             "setting_value": "colors",
             "ehi_ver" : 245
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type" : "label",
+            "title" : "ehi_colors_bag_contour"
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_bag_contour_light_choice",
+            "title": "ehi_colors_bag_contour_light",
+            "description": "ehi_colors_bag_contour_light_desc",
+            "value": "light",
+            "default_value": [111, 255, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["light", "bag_contour"],
+            "color_type" : "bag_contour",
+            "setting_value": "colors",
+            "ehi_ver" : 279
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_bag_contour_heavy_choice",
+            "title": "ehi_colors_bag_contour_heavy",
+            "description": "ehi_colors_bag_contour_heavy_desc",
+            "value": "heavy",
+            "default_value": [255, 0, 40],
+            "callback": "SetColor",
+            "callback_arguments": ["heavy", "bag_contour"],
+            "color_type" : "bag_contour",
+            "setting_value": "colors",
+            "ehi_ver" : 279
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_trophy_choice",
+            "title": "ehi_colors_trophy",
+            "description": "ehi_colors_trophy_desc",
+            "value": "body",
+            "default_value": [20, 80, 100],
+            "callback": "SetColor",
+            "callback_arguments": ["body", "bag_contour"],
+            "color_type" : "bag_contour",
+            "setting_value": "colors",
+            "ehi_ver" : 279
         }
     ]
 }

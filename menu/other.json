@@ -151,6 +151,20 @@
             "value": "show_use_left_grenades",
             "default_value": true,
             "ehi_ver" : 267
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_colored_bag_contour_choice",
+            "title": "ehi_other_show_colored_bag_contour",
+            "callback": "SetOption",
+            "callback_arguments": "show_colored_bag_contour",
+            "value": "show_colored_bag_contour",
+            "default_value": true,
+            "ehi_ver" : 279
         }
     ]
 }

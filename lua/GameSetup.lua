@@ -237,6 +237,7 @@ function GameSetup:init_finalize(...)
     init_finalize(self, ...)
     EHI.Manager = managers.ehi_manager
     if EHI.Manager.__init_done then
+        EHI.Manager = nil
         return
     end
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)

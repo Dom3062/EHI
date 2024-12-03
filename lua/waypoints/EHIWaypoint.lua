@@ -1,5 +1,6 @@
 ---@class EHIWaypoint
 ---@field new fun(self: self, waypoint: WaypointDataTable, params: table, parent_class: EHIWaypointManager): self
+---@field _force_format boolean Forces formatting (some waypoints need it and will force it)
 ---@field _forced_time number? Forces specific time in the waypoint
 EHIWaypoint = class()
 EHIWaypoint._update = true
@@ -12,14 +13,14 @@ function EHIWaypoint:init(waypoint, params, parent_class)
     self:pre_init(params)
     self._id = params.id --[[@as string]]
     self._time = self._forced_time or params.time or 0
-    self._timer = waypoint.timer_gui
+    self._gui = waypoint.timer_gui
     self._bitmap = waypoint.bitmap
     self._arrow = waypoint.arrow
     self._bitmap_world = waypoint.bitmap_world -- VR
     self._parent_class = parent_class
     self._remove_on_alarm = params.remove_on_alarm -- Removes waypoint when alarm sounds
-    if params.force_format then
-        self._timer:set_text(self:Format())
+    if self._force_format then
+        self._gui:set_text(self:Format())
     end
     if params.remove_vanilla_waypoint and params.restore_on_done then
         self._vanilla_waypoint = params.remove_vanilla_waypoint
@@ -42,7 +43,7 @@ end
 ---@param dt number
 function EHIWaypoint:update(dt)
     self._time = self._time - dt
-    self._timer:set_text(self:Format())
+    self._gui:set_text(self:Format())
     if self._time <= 0 then
         self:delete()
     end
@@ -59,18 +60,13 @@ end
 ---@param t number
 function EHIWaypoint:SetTime(t)
     self._time = t
-    self._timer:set_text(self:Format())
-end
-
----@param delay number
-function EHIWaypoint:AddDelay(delay)
-    self:SetTime(self._time + delay)
+    self._gui:set_text(self:Format())
 end
 
 ---@param color Color?
 function EHIWaypoint:SetColor(color)
     local c = color or self._default_color
-    self._timer:set_color(c)
+    self._gui:set_color(c)
     self._bitmap:set_color(c)
     self._arrow:set_color(c)
 end

@@ -6,20 +6,18 @@ local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
 local heli_anim = 35
 local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
-local heli_20 = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute }
-local heli_65 = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute }
 local HeliWaterFill = EHI:GetOption("show_one_icon") and { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } } or { Icon.Heli, Icon.Water }
 ---@type ParseTriggerTable
 local triggers = {
     [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { data_from_element = 101525 }, hint = Hints.LootEscape },
-    [101253] = heli_65,
-    [101254] = heli_20,
-    [101255] = heli_65,
-    [101256] = heli_20,
-    [101259] = heli_65,
-    [101278] = heli_20,
-    [101279] = heli_65,
-    [101280] = heli_20,
+    [101253] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 101341 } },
+    [101254] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 101341 } },
+    [101255] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 100589 } },
+    [101256] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 100589 } },
+    [101259] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 101343 } },
+    [101278] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 101343 } },
+    [101279] = { time = 65 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 101345 } },
+    [101280] = { time = 20 + heli_anim, id = "HeliWithWater", icons = { Icon.Heli, Icon.Water, Icon.Goto }, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.crojob3_WaterEnRoute, waypoint = { data_from_element = 101345 } },
 
     [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape, waypoint = { data_from_element = 100058 }, hint = Hints.LootEscape },
 
@@ -94,7 +92,6 @@ local function HeliWaterRefillWPRestore(self, id)
             position = self._cache.HeliWaterFillPos,
             class = self.Waypoints.Pausable,
             remove_vanilla_waypoint = self._cache.HeliWaterRestoreWP,
-            force_format = true,
             paused = true
         })
         self._cache.HeliWaterFillPos = nil

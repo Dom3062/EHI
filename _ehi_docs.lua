@@ -8,6 +8,10 @@ _G.EHI.HeistTimerIsInverted = math.random() == math.random()
 _G.EHI.GagePackagesSpawned = math.random() == math.random()
 _G.EHI.Manager = managers.ehi_manager
 
+---@class Global.game_settings
+---@field ehi_vanilla_heist boolean
+---@field ehi_applied_beardlib_fix boolean
+
 ---@class AnyExceptNil : table, string, boolean, number, userdata
 
 ---@class ElementWaypointTrigger

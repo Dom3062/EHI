@@ -17,6 +17,7 @@ end
 ---@field get_current_prestige_xp fun(self: self): number
 ---@field next_level_data_points fun(self: self): number
 ---@field next_level_data_current_points fun(self: self): number
+---@field rank_icon fun(self: self, rank: number): string
 
 local original =
 {

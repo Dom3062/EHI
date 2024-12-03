@@ -939,6 +939,9 @@
     "ehi_other_show_use_left_bodybags_bag" : "Show uses left for Bodybag Bags",
     "ehi_other_show_use_left_grenades" : "Show uses left for Grenade cases",
 
+    "ehi_other_show_colored_bag_contour" : "Show Bag Outline color based on their weight",
+    "ehi_other_show_colored_bag_contour_desc" : "Sets custom bag outline color based on their weight\n\nTo set the color range, go to EHI Settings -> Colors",
+
     "ehi_colors_menu" : "Colors",
     "ehi_colors_menu_desc" : "Changes used colors",
 
@@ -987,6 +990,17 @@
 
     "ehi_colors_trophy" : "Trophy",
     "ehi_colors_trophy_desc" : "Changes color of a tracker icon if it is tracking a trophy",
+
+    "ehi_colors_bag_contour" : "Bag Outline",
+
+    "ehi_colors_bag_contour_light" : "Light bag",
+    "ehi_colors_bag_contour_light_desc" : "Sets bag outline color of the lightest bag\n\nColor for other bags will linearly scale from light to heavy",
+
+    "ehi_colors_bag_contour_heavy" : "Heavy bag",
+    "ehi_colors_bag_contour_heavy_desc" : "Sets bag outline color of the heaviest bag\n\nColor for other bags will linearly scale from light to heavy",
+
+    "ehi_colors_bag_contour_body" : "Bodybag",
+    "ehi_colors_bag_contour_body_desc" : "Sets bag outline color for the body bags",
 
     "ehi_experience_infamy_pool" : "Infamy Pool in:",
     "ehi_experience_next_level" : "Next in:",

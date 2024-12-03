@@ -38,6 +38,9 @@ local _panels, _buttons, PlanSelected, PlanMax = nil, nil, 1, 1
 ---@class XPBreakdownButton
 ---@field new fun(self: self, gui: MissionBriefingGui, ws_panel: Panel, string: string, add_string: string?, loc: LocalizationManager, index: number?): self
 local XPBreakdownButton = class()
+XPBreakdownButton.show = function(...) end
+XPBreakdownButton.hide = function(...) end
+XPBreakdownButton.Unselect = MissionBriefingTabItem.deselect
 ---@param gui MissionBriefingGui
 ---@param ws_panel Panel
 ---@param string string
@@ -51,7 +54,7 @@ function XPBreakdownButton:init(gui, ws_panel, string, add_string, loc, index)
     if add_string then
         text = string.format("%s (%s)", text, loc:text("ehi_experience_" .. add_string))
     end
-    self._button = ws_panel:text({
+    self._tab_text = ws_panel:text({
         align = "center",
         blend_mode = "add",
         layer = 2,
@@ -61,16 +64,16 @@ function XPBreakdownButton:init(gui, ws_panel, string, add_string, loc, index)
         color = tweak_data.screen_colors.button_stage_3,
         visible = false
     })
-    local _, _, w, h = self._button:text_rect()
-    self._button:set_size(w + 15, h)
-    self._button:set_position(math.round(self._button:x()), math.round(self._button:y()))
+    local _, _, w, h = self._tab_text:text_rect()
+    self._tab_text:set_size(w + 15, h)
+    self._tab_text:set_position(math.round(self._tab_text:x()), math.round(self._tab_text:y()))
     self._tab_select_rect = ws_panel:bitmap({
         texture = "guis/textures/pd2/shared_tab_box",
         visible = false,
         layer = 1,
         color = tweak_data.screen_colors.text
     })
-    self._tab_select_rect:set_shape(self._button:shape())
+    self._tab_select_rect:set_shape(self._tab_text:shape())
     if self._index == 1 then
         self:Select(true)
     end
@@ -78,26 +81,26 @@ end
 
 ---@param panel Panel
 function XPBreakdownButton:SetPosByPanel(panel)
-    self._button:set_bottom(panel:top())
-    self._button:set_left(panel:left())
-    self._tab_select_rect:set_bottom(self._button:bottom())
-    self._tab_select_rect:set_left(self._button:left())
+    self._tab_text:set_bottom(panel:top())
+    self._tab_text:set_left(panel:left())
+    self._tab_select_rect:set_bottom(self._tab_text:bottom())
+    self._tab_select_rect:set_left(self._tab_text:left())
 end
 
 ---@param item XPBreakdownButton
 function XPBreakdownButton:SetPosByPreviousItem(item)
-    local button = item._button
-    self._button:set_bottom(button:bottom())
-    self._button:set_left(button:right() + 10)
-    self._tab_select_rect:set_bottom(self._button:bottom())
-    self._tab_select_rect:set_left(self._button:left())
+    local button = item._tab_text
+    self._tab_text:set_bottom(button:bottom())
+    self._tab_text:set_left(button:right() + 10)
+    self._tab_select_rect:set_bottom(self._tab_text:bottom())
+    self._tab_select_rect:set_left(self._tab_text:left())
 end
 
 ---@param offset number
 function XPBreakdownButton:SetVisibleWithOffset(offset)
-    self._button:set_y(self._button:y() + offset)
-    self._button:set_visible(true)
-    self._tab_select_rect:set_y(self._button:y())
+    self._tab_text:set_y(self._tab_text:y() + offset)
+    self._tab_text:set_visible(true)
+    self._tab_select_rect:set_y(self._tab_text:y())
 end
 
 ---@param no_change boolean?
@@ -106,8 +109,8 @@ function XPBreakdownButton:Select(no_change, previous_plan)
     if self._selected then
         return
     end
-    self._button:set_color(tweak_data.screen_colors.button_stage_1)
-    self._button:set_blend_mode("normal")
+    self._tab_text:set_color(tweak_data.screen_colors.button_stage_1)
+    self._tab_text:set_blend_mode("normal")
     self._tab_select_rect:show()
     self._selected = true
     if no_change then
@@ -117,29 +120,19 @@ function XPBreakdownButton:Select(no_change, previous_plan)
     self._gui:OnPlanChanged(self._index, previous_plan)
 end
 
-function XPBreakdownButton:Unselect()
-    if not self._selected then
-        return
-    end
-    self._button:set_color(tweak_data.screen_colors.button_stage_3)
-    self._button:set_blend_mode("add")
-    self._tab_select_rect:hide()
-    self._selected = false
-end
-
 ---@param x number
 ---@param y number
 function XPBreakdownButton:mouse_moved(x, y)
     if not self._selected then
-        if self._button:inside(x, y) then
+        if self._tab_text:inside(x, y) then
             if not self._highlighted then
                 self._highlighted = true
-                self._button:set_color(tweak_data.screen_colors.button_stage_2)
+                self._tab_text:set_color(tweak_data.screen_colors.button_stage_2)
                 managers.menu_component:post_event("highlight")
             end
             return true
         elseif self._highlighted then
-            self._button:set_color(tweak_data.screen_colors.button_stage_3)
+            self._tab_text:set_color(tweak_data.screen_colors.button_stage_3)
             self._highlighted = false
         end
     end
@@ -153,16 +146,16 @@ function XPBreakdownButton:mouse_pressed(button, x, y)
     if button ~= Idstring("0") then
         return
     end
-    if not self._selected and self._button and alive(self._button) and self._button:inside(x, y) then
+    if not self._selected and alive(self._tab_text) and self._tab_text:inside(x, y) then
         self:Select()
     end
 end
 
 function XPBreakdownButton:destroy()
-    if self._button and alive(self._button) then
-        self._button:parent():remove(self._button)
+    if alive(self._tab_text) then
+        self._tab_text:parent():remove(self._tab_text)
     end
-    if self._tab_select_rect and alive(self._tab_select_rect) then
+    if alive(self._tab_select_rect) then
         self._tab_select_rect:parent():remove(self._tab_select_rect)
     end
 end
@@ -222,7 +215,7 @@ function XPBreakdownPanel:init(gui, ws_panel, panel_params, xp_params, loc, para
     self._panel:set_rightbottom(40 + panel_params.w, 144)
     self._panel:set_top(75)
     self:_recreate_bg()
-    self._panel:set_visible((index or 1) == 1)
+    self._panel:set_visible(not index or index == 1)
     self._xp = gui._xp
     self._loc = loc
     self._params = params
@@ -1440,6 +1433,32 @@ function XPBreakdownPanel:_add_xp_overview_text()
         self:make_fine_text(pro)
         last_modifier = pro
     end
+    if xp.infamy_bonus and xp.infamy_bonus > 1 then
+        local texture, texture_rect = tweak_data.hud_icons:get_icon_data(self._xp._xp_class:rank_icon(self._xp._xp_class:current_rank()))
+        local infamy_icon = self._panel:bitmap({
+            blend_mode = "add",
+            x = last_modifier:right() + 2,
+            y = 10,
+            w = 16,
+            h = 16,
+            texture = texture,
+            texture_rect = texture_rect,
+            color = tweak_data.lootdrop.global_values.infamy.color,
+            layer = 10
+        })
+        local infamy_text = self._panel:text({
+            blend_mode = "add",
+            x = infamy_icon:right() + 2,
+            y = 10,
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.lootdrop.global_values.infamy.color,
+            text = string.format("+%s%s", tostring((xp.infamy_bonus - 1) * 100), percent_format),
+            layer = 10
+        })
+        self:make_fine_text(infamy_text)
+        last_modifier = infamy_text
+    end
     if xp.stealth_bonus and xp.stealth_bonus > 0 then
         local percent = xp.stealth_bonus * 100
         local stealth = self._panel:text({
@@ -1638,7 +1657,6 @@ function XPBreakdownPanel:_add_xp_overview_text()
             layer = 10
         })
         self:make_fine_text(CG22)
-        last_modifier = CG22
     end
 end
 
@@ -1907,7 +1925,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
             _buttons[i]:SetVisibleWithOffset(offset)
         end
         if not managers.menu:is_pc_controller() then
-            XPBreakdownButtonSwitch:new(ws_panel, PlanMax, loc, _buttons[PlanMax]._button)
+            XPBreakdownButtonSwitch:new(ws_panel, PlanMax, loc, _buttons[PlanMax]._tab_text)
         end
         self:HookMouseFunctions()
     else
@@ -2022,7 +2040,6 @@ function MissionBriefingGui:FakeExperienceMultipliers()
 end
 
 ---@param base_xp number
----@return number
 function MissionBriefingGui:FormatXPWithAllGagePackagesNoString(base_xp)
     self._gage_bonus = 1.05
     local value = self._xp:FakeMultiplyXPWithAllBonuses(base_xp)
@@ -2031,13 +2048,12 @@ function MissionBriefingGui:FormatXPWithAllGagePackagesNoString(base_xp)
 end
 
 ---@param base_xp number
----@return string
 function MissionBriefingGui:FormatXPWithAllGagePackages(base_xp)
     return self._xp:experience_string(self:FormatXPWithAllGagePackagesNoString(base_xp))
 end
 
 function MissionBriefingGui:RefreshXPOverview()
-    self._num_winners = managers.network:session() and managers.network:session():amount_of_players()
+    self._num_winners = managers.network:session() and managers.network:session():amount_of_players() or 1
     self:ProcessXPBreakdown()
 end
 

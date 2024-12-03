@@ -3,7 +3,6 @@ if EHI:CheckLoadHook("AmmoBagBase") then
     return
 end
 
-local UpdateTracker
 function AmmoBagBase:GetRealAmount()
     return (self._ammo_amount or self._max_ammo_amount) - (self._offset or 0)
 end
@@ -12,42 +11,12 @@ end
 function AmmoBagBase:SetOffset(offset)
     self._offset = offset
     if self._ehi_key and self._unit:interaction():active() and not self._ignore then
-        UpdateTracker(self._ehi_key, self:GetRealAmount())
+        self:UpdateAmount()
     end
 end
 
 if not EHI:GetEquipmentOption("show_equipment_ammobag") then
     return
-end
-
-if EHI:GetOption("show_equipment_aggregate_all") then
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
-            managers.ehi_deployable:AddAggregatedDeployablesTracker()
-        end
-        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "ammo_bag", key, amount)
-    end
-else
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("AmmoBags") and amount > 0 then
-            managers.ehi_deployable:CreateDeployableTracker("AmmoBags")
-        end
-        managers.ehi_deployable:CallFunction("AmmoBags", "UpdateAmount", key, amount)
-    end
-end
-
-if _G.IS_VR then
-    local old_UpdateTracker = UpdateTracker
-    local function Reload(key, data)
-        old_UpdateTracker(key, data.amount)
-    end
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:IsLoading() then
-            managers.ehi_tracker:AddToLoadQueue(key, { amount = amount }, Reload)
-            return
-        end
-        old_UpdateTracker(key, amount)
-    end
 end
 
 local original =
@@ -81,12 +50,17 @@ function AmmoBagBase:init(unit, ...)
     end
 end
 
+---@param amount number?
+function AmmoBagBase:UpdateAmount(amount)
+    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, amount or self:GetRealAmount(), "ammo_bag", "AmmoBags")
+end
+
 function AmmoBagBase:SetIgnore()
     if self._ignore_set_by_parent then
         return
     end
     self._ignore = true
-    UpdateTracker(self._ehi_key, 0)
+    self:UpdateAmount(0)
 end
 
 function AmmoBagBase:SetIgnoreChild()
@@ -107,16 +81,16 @@ end
 function AmmoBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
     if not self._ignore then
-        UpdateTracker(self._ehi_key, self:GetRealAmount())
+        self:UpdateAmount()
     end
 end
 
 function AmmoBagBase:destroy(...)
-    UpdateTracker(self._ehi_key, 0)
+    self:UpdateAmount(0)
     original.destroy(self, ...)
 end
 
 function CustomAmmoBagBase:_set_empty(...)
     original.custom_set_empty(self, ...)
-    UpdateTracker(self._ehi_key, 0)
+    self:UpdateAmount(0)
 end

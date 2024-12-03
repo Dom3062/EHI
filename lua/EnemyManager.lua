@@ -3,7 +3,7 @@ if EHI:CheckLoadHook("EnemyManager") then
     return
 end
 
----@alias EnemyManager._civilian_data.Civilian { unit: UnitCivilian }
+---@alias EnemyManager._civilian_data.Civilian { unit: UnitCivilian, char_tweak: CharacterTweakData._string_.Civilian }
 ---@alias EnemyManager._civilian_data table<string, EnemyManager._civilian_data.Civilian?>
 
 ---@class EnemyManager

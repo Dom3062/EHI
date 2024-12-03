@@ -6,7 +6,6 @@ end
 --- If this function is in `CivilianDamage`, then it is not visible from `HuskCivilianDamage`, because that
 --- class inherits `HuskCopDamage` and not `CivilianDamage`
 ---@param unit UnitCivilian
----@return boolean
 local function PenaltyWhenKilled(unit)
     return not tweak_data.character[unit:base()._tweak_table].no_civ_penalty
 end

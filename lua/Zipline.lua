@@ -38,7 +38,6 @@ function ZipLine:init(unit, ...)
             managers.ehi_tracker:PreloadTracker({
                 id = "ZipLineBag",
                 icons = { "zipline_bag" },
-                hide_on_delete = true,
                 unit = true,
                 hint = "zipline_bag",
                 class = EHI.Trackers.Group.Base
@@ -48,7 +47,6 @@ function ZipLine:init(unit, ...)
             managers.ehi_tracker:PreloadTracker({
                 id = "ZipLineUser",
                 icons = { "Other_H_Any_DidntSee" }, -- gage3_13 achievement icon
-                hide_on_delete = true,
                 unit = true,
                 hint = "zipline_person",
                 class = EHI.Trackers.Group.Base
@@ -58,7 +56,6 @@ function ZipLine:init(unit, ...)
             managers.ehi_tracker:PreloadTracker({
                 id = "ZipLineReset",
                 icons = { "zipline", EHI.Icons.Loop },
-                hide_on_delete = true,
                 unit = true,
                 hint = "zipline_reset",
                 class = EHI.Trackers.Group.Base

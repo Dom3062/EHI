@@ -886,11 +886,6 @@ function EHITracker:Run(params)
     self:SetTextColor()
 end
 
----@param delay number
-function EHITracker:AddDelay(delay)
-    self:SetTime(self._time + delay)
-end
-
 ---@param t number?
 function EHITracker:AnimateBG(t)
     t = t or self._flash_times

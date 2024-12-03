@@ -50,7 +50,8 @@ end]]
 EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    assault = { diff = 0.5 }
 }, "Escape", Icon.CarEscape)
 
 tweak_data.ehi.functions.uno_1(true)

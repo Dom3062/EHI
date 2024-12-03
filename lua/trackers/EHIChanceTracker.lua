@@ -13,7 +13,7 @@ EHIChanceTracker._anim_chance = function(o, self)
         local t = 0
         while t < 1 do
             t = t + coroutine.yield()
-            local n = math.floor(math.lerp(chance_to_anim, self._chance, t) --[[@as number]])
+            local n = math.floor(math.lerp(chance_to_anim, self._chance, t))
             o:set_text(self:FormatChance(n))
         end
         o:set_text(self:FormatChance())

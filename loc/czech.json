@@ -939,6 +939,9 @@
     "ehi_other_show_use_left_bodybags_bag" : "Zobrazovat počet použití u Bodybagů",
     "ehi_other_show_use_left_grenades" : "Zobrazovat počet použití u kufříků s granáty",
 
+    "ehi_other_show_colored_bag_contour" : "Zobrazovat barevné ohraničení pytlů podle jejich váhy",
+    "ehi_other_show_colored_bag_contour_desc" : "Nastavuje barvu ohračení pytle podle jeho váhy\n\nPro nastavení barevného rozsahu, jděte do Nastavení EHI -> Barvy",
+
     "ehi_colors_menu" : "Barvy",
     "ehi_colors_menu_desc" : "Mění použité barvy",
 
@@ -987,6 +990,17 @@
 
     "ehi_colors_trophy" : "Trofej",
     "ehi_colors_trophy_desc" : "Mění barvu ikony sledovače pokud sleduje trofej",
+
+    "ehi_colors_bag_contour" : "Ohraničení pytlů",
+
+    "ehi_colors_bag_contour_light" : "Lehký pytel",
+    "ehi_colors_bag_contour_light_desc" : "Nastavuje barevné ohraničení pro nejlehčí pytle\n\nBarva pro ostatní pytle se lineárně škáluje od lehkých po těžké",
+
+    "ehi_colors_bag_contour_heavy" : "Těžký pytel",
+    "ehi_colors_bag_contour_heavy_desc" : "Nastavuje barevné ohraničení pro nejtěžší pytle\n\nBarva pro ostatní pytle se lineárně škáluje od lehkých po těžké",
+
+    "ehi_colors_bag_contour_body" : "Bodybag (pytel na mrtvolu)",
+    "ehi_colors_bag_contour_body_desc" : "Nastavuje barevné ohraničení pro pytle na mrtvolu",
 
     "ehi_experience_infamy_pool" : "Infamy Pool za:",
     "ehi_experience_next_level" : "Další za:",

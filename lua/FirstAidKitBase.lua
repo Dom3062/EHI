@@ -3,44 +3,6 @@ if EHI:CheckLoadHook("FirstAidKitBase") or not EHI:GetEquipmentOption("show_equi
     return
 end
 
-local UpdateTracker
-if EHI:GetOption("show_equipment_aggregate_all") then
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
-            managers.ehi_deployable:AddAggregatedDeployablesTracker()
-        end
-        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "first_aid_kit", key, amount)
-    end
-elseif EHI:GetOption("show_equipment_aggregate_health") then
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Health") and amount > 0 then
-            managers.ehi_deployable:AddAggregatedHealthTracker()
-        end
-        managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "first_aid_kit", key, amount)
-    end
-else
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("FirstAidKits") and amount > 0 then
-            managers.ehi_deployable:CreateDeployableTracker("FirstAidKits")
-        end
-        managers.ehi_deployable:CallFunction("FirstAidKits", "UpdateAmount", key, amount)
-    end
-end
-
-if _G.IS_VR then
-    local old_UpdateTracker = UpdateTracker
-    local function Reload(key, data)
-        old_UpdateTracker(key, data.amount)
-    end
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:IsLoading() then
-            managers.ehi_tracker:AddToLoadQueue(key, { amount = amount }, Reload)
-            return
-        end
-        old_UpdateTracker(key, amount)
-    end
-end
-
 local original =
 {
     init = FirstAidKitBase.init,
@@ -52,10 +14,11 @@ local original =
 ---@field _unit UnitFAKDeployable
 ---@field List { obj: UnitFAKDeployable, pos: Vector3, min_distance: number }[]
 
+FirstAidKitBase._ehi_tracker = EHI:GetOption("show_equipment_aggregate_health") and not EHI:GetOption("show_equipment_aggregate_all") and "Health" or "FirstAidKits"
 function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    UpdateTracker(self._ehi_key, 1)
+    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, 1, "first_aid_kit", self._ehi_tracker)
 end
 
 function FirstAidKitBase:GetRealAmount()
@@ -63,6 +26,6 @@ function FirstAidKitBase:GetRealAmount()
 end
 
 function FirstAidKitBase:destroy(...)
-    UpdateTracker(self._ehi_key, 0)
+    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, 0, "first_aid_kit", self._ehi_tracker)
     original.destroy(self, ...)
 end

@@ -806,6 +806,8 @@
     "ehi_colors_optional" : "เป้าหมายรอง",
     "ehi_colors_optional_desc" : "เปลี่ยนสีเป้าหมายสำรองที่ไม่จำเป็นต้องทำในด่าน\nแต่หากทำสำเร็จ จะช่วยเพิ่มค่าประสบการณ์ให้กับผู้เล่น",
 
+    "ehi_colors_bag_contour" : "สีเส้นรอบกระเป๋า",
+
     "ehi_experience_infamy_pool" : "จุติใหม่:",
     "ehi_experience_next_level" : "ถัดไปใน:",
     "ehi_experience_100_in" : "100 ใน:",

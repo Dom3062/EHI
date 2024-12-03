@@ -98,6 +98,9 @@ end
 --- Beardlib ---
 ----------------
 
+---@class Global
+---@field fm table A table of loaded files in Beardlib `Beardlib specific only`
+
 ---@class CustomAchievementPackage
 ---@field new fun(self: self, package_id: string): self
 ---@field Achievement fun(self: self, achievement_id: string): CustomAchievement?

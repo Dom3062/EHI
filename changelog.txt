@@ -1,3 +1,7 @@
+r279 (03. 12. 2024):
+Added option "Show Bag Outline color based on their weight"
+Escape: Cafe: Fixed an issue where Assault tracker is not working correctly
+
 r278 (29. 11. 2024):
 Disabled Beardlib fix on vanilla levels to prevent crashes
 

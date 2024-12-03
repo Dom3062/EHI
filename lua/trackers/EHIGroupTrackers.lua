@@ -10,6 +10,7 @@ function EHIGroupTracker:post_init(params)
     self._timers_n = 0
     self._panel_override_w = self._panel:w()
     if params.unit then
+        self._hide_on_delete = true
         self:AddUnit()
     end
     if not self._hide_on_delete then

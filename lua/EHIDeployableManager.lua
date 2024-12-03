@@ -1,6 +1,7 @@
 ---@class EHIDeployableManager
 EHIDeployableManager = {}
-EHIDeployableManager._block_abilities_or_no_throwable = EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable")
+EHIDeployableManager._all_deployables_tracker = EHI:GetOption("show_equipment_aggregate_all") and "Deployables"
+EHIDeployableManager._block_abilities_or_no_throwable = EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") --[[@as boolean]]
 EHIDeployableManager._equipment_map =
 {
     doctor = "doctor_bag",
@@ -12,7 +13,7 @@ EHIDeployableManager._equipment_map =
 ---@param ehi_tracker EHITrackerManager
 function EHIDeployableManager:new(ehi_tracker)
     self._trackers = ehi_tracker
-    self._deployables = {}
+    self._deployables = {} ---@type table<string, { unit: UnitDeployable, tracker_type: string? }>
     return self
 end
 
@@ -29,7 +30,7 @@ end
 
 ---@param type string
 function EHIDeployableManager:AddEquipmentToIgnore(type)
-    self:CallFunction("Deployables", "AddToIgnore", type)
+    self._trackers:CallFunction("Deployables", "AddToIgnore", type)
     self._deployables_ignore = self._deployables_ignore or {}
     self._deployables_ignore[type] = true
 end
@@ -43,30 +44,16 @@ function EHIDeployableManager:IsDeployableAllowed(tracker_type)
     return not self._deployables_ignore[tracker_type]
 end
 
----@param id string
----@return EHIAggregatedEquipmentTracker|EHIAggregatedHealthEquipmentTracker|EHIEquipmentTracker?
-function EHIDeployableManager:GetTracker(id)
-    return self._trackers:GetTracker(id) --[[@as EHIAggregatedEquipmentTracker|EHIAggregatedHealthEquipmentTracker|EHIEquipmentTracker]]
-end
-
 ---@param type string
 ---@param key string
----@param unit Unit
+---@param unit UnitDeployable
 ---@param tracker_type string?
 function EHIDeployableManager:AddToDeployableCache(type, key, unit, tracker_type)
     if not key then
         return
     end
-    self._deployables[type] = self._deployables[type] or {}
-    self._deployables[type][key] = { unit = unit, tracker_type = tracker_type }
-    local tracker = self:GetTracker(type)
-    if tracker then
-        if tracker_type then
-            tracker:UpdateAmount(tracker_type, key, 0)
-        else
-            tracker:UpdateAmount(key, 0)
-        end
-    end
+    self._deployables[key] = { unit = unit, tracker_type = tracker_type }
+    self._trackers:CallFunction(type, "UpdateAmount", key, 0, tracker_type)
 end
 
 ---@param type string
@@ -75,42 +62,39 @@ function EHIDeployableManager:LoadFromDeployableCache(type, key)
     if not key then
         return
     end
-    self._deployables[type] = self._deployables[type] or {}
-    local deployable = table.remove_key(self._deployables[type], key)
-    if deployable then
-        if self:IsDeployableAllowed(deployable.tracker_type) then
-            if self._trackers:TrackerDoesNotExist(type) then
-                self:CreateDeployableTracker(type)
-            end
-            local tracker = self:GetTracker(type)
-            if tracker then
-                local unit = deployable.unit
-                if deployable.tracker_type then
-                    tracker:UpdateAmount(deployable.tracker_type, key, unit:base():GetRealAmount())
-                else
-                    tracker:UpdateAmount(key, unit:base():GetRealAmount())
-                end
-            end
-        end
+    local deployable = table.remove_key(self._deployables, key)
+    if deployable and self:IsDeployableAllowed(deployable.tracker_type) then
+        self:UpdateDeployableAmount(key, deployable.unit:base():GetRealAmount(), type, deployable.tracker_type)
     end
 end
 
----@param type string
 ---@param key string
-function EHIDeployableManager:RemoveFromDeployableCache(type, key)
+function EHIDeployableManager:RemoveFromDeployableCache(key)
     if not key then
         return
     end
-    self._deployables[type] = self._deployables[type] or {}
-    self._deployables[type][key] = nil
+    self._deployables[key] = nil
 end
 
 ---@param type string
-function EHIDeployableManager:CreateDeployableTracker(type)
-    if type == "Deployables" then
-        self:AddAggregatedDeployablesTracker()
+---@param tracker_type string?
+function EHIDeployableManager:CreateDeployableTracker(type, tracker_type)
+    if type == "Deployables" and self:IsDeployableAllowed(tracker_type) then
+        self._trackers:AddTracker({
+            id = "Deployables",
+            icons = { "deployables" },
+            ignore = self._deployables_ignore,
+            format = { ammo_bag = "percent" },
+            hint = "deployables",
+            class = "EHIAggregatedEquipmentTracker"
+        })
     elseif type == "Health" then
-        self:AddAggregatedHealthTracker()
+        self._trackers:AddTracker({
+            id = "Health",
+            format = {},
+            hint = "doctor_fak",
+            class = "EHIAggregatedHealthEquipmentTracker"
+        })
     elseif type == "DoctorBags" then
         self._trackers:AddTracker({
             id = "DoctorBags",
@@ -152,34 +136,16 @@ function EHIDeployableManager:CreateDeployableTracker(type)
     end
 end
 
----@param tracker_type string?
-function EHIDeployableManager:AddAggregatedDeployablesTracker(tracker_type)
-    if self:IsDeployableAllowed(tracker_type) then
-        self._trackers:AddTracker({
-            id = "Deployables",
-            icons = { "deployables" },
-            ignore = self._deployables_ignore,
-            format = { ammo_bag = "percent" },
-            hint = "deployables",
-            class = "EHIAggregatedEquipmentTracker"
-        })
-    end
-end
-
-function EHIDeployableManager:AddAggregatedHealthTracker()
-    self._trackers:AddTracker({
-        id = "Health",
-        format = {},
-        hint = "doctor_fak",
-        class = "EHIAggregatedHealthEquipmentTracker"
-    })
-end
-
+---@param key string
+---@param amount number
 ---@param id string
----@param f string
----@param ... any
-function EHIDeployableManager:CallFunction(id, f, ...)
-    self._trackers:CallFunction(id, f, ...)
+---@param t_id string
+function EHIDeployableManager:UpdateDeployableAmount(key, amount, id, t_id)
+    local tracker = self._all_deployables_tracker or t_id
+    if self._trackers:TrackerDoesNotExist(tracker) and amount > 0 then
+        self:CreateDeployableTracker(tracker, id)
+    end
+    self._trackers:CallFunction(tracker, "UpdateAmount", key, amount, id)
 end
 
 if _G.IS_VR then

@@ -11,6 +11,7 @@
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 
         <group hook_id="lib/managers/">
+            <post :hook_id="crimespreemanager" :script_path="CrimeSpreeManager.lua" />
             <post :hook_id="criminalsmanager" :script_path="CriminalsManager.lua" />
             <post :hook_id="group_ai_states/groupaistatebase" :script_path="GroupAIStateBase.lua" />
             <post :hook_id="group_ai_states/groupaistatebesiege" :script_path="GroupAIStateBesiege.lua" />
@@ -111,6 +112,7 @@
             </group>
             <post :hook_id="player_team/teamaibase" :script_path="TeamAIBase.lua" />
             <group :hook_id="props/">
+                <post :hook_id="carrydata" :script_path="CarryData.lua" />
                 <post :hook_id="drill" :script_path="Drill.lua" />
                 <post :hook_id="digitalgui" :script_path="DigitalGui.lua" />
                 <post :hook_id="missiondoor" :script_path="MissionDoor.lua" />

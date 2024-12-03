@@ -2,6 +2,7 @@
 ---@field super EHIWarningWaypoint
 EHITimerWaypoint = class(EHIWarningWaypoint)
 EHITimerWaypoint._update = false
+EHITimerWaypoint._force_format = true
 EHITimerWaypoint._autorepair_color = EHI:GetColorFromOption("tracker_waypoint", "drill_autorepair")
 EHITimerWaypoint._completion_color = EHI:GetColorFromOption("tracker_waypoint", "completion")
 EHITimerWaypoint._not_powered_color = EHI:GetColorFromOption("tracker_waypoint", "drill_not_powered")
@@ -39,7 +40,7 @@ function EHITimerWaypoint:SetTimeNoFormat(t, time)
         return
     end
     self._time = t
-    self._timer:set_text(time)
+    self._gui:set_text(time)
     if t <= 10 and self._warning and not self._anim_started then
         self._anim_started = true
         self:AnimateColor()
@@ -49,7 +50,7 @@ end
 ---@param jammed boolean
 function EHITimerWaypoint:SetJammed(jammed)
     if self._anim_started and jammed then
-        self._timer:stop()
+        self._gui:stop()
         self._anim_started = false
     end
     self._jammed = jammed
@@ -73,7 +74,7 @@ function EHITimerWaypoint:SetColorBasedOnStatus()
     elseif self._jammed then
         self:SetColor(self._paused_color)
     else
-        self._timer:stop()
+        self._gui:stop()
         self:SetColor()
         if self._time <= 10 and self._warning and not self._anim_started then
             self._anim_started = true
@@ -90,7 +91,7 @@ function EHITimerWaypoint:SetAutorepair(state)
         end
         return
     elseif not self._anim_started then
-        self._timer:stop()
+        self._gui:stop()
         self:SetColor()
     end
 end

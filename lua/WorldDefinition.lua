@@ -229,6 +229,7 @@ local instances =
 instances["levels/instances/unique/cane/cane_santa_event/world"] = instances["levels/instances/unique/nail_cloaker_safe/world"]
 instances["levels/instances/unique/sand/sand_chinese_computer_hackable/world"] = instances["levels/instances/unique/chas/chas_store_computer/world"]
 instances["levels/instances/unique/sand/sand_server_hack/world"] = instances["levels/instances/unique/chas/chas_store_computer/world"]
+instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances["levels/instances/unique/hox_breakout_road001/world"]
 ---@param instance CoreWorldInstanceManager.Instance
 function WorldDefinition:OverrideUnitsInTheInstance(instance)
     --EHI:PrintTable(instance, "Overriding instance")

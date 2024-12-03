@@ -1,5 +1,3 @@
-local lerp = math.lerp
-local sin = math.sin
 local Color = Color
 ---@class EHIWarningWaypoint : EHIWaypoint
 ---@field super EHIWaypoint
@@ -17,10 +15,10 @@ EHIWarningWaypoint._anim_warning = function(o, old_color, color, icon, arrow, bi
         local t = 1
         while t > 0 do
             t = t - coroutine.yield()
-            local n = sin(t * 180)
-            c.r = lerp(old_color.r, color.r, n)
-            c.g = lerp(old_color.g, color.g, n)
-            c.b = lerp(old_color.b, color.b, n)
+            local n = math.sin(t * 180)
+            c.r = math.lerp(old_color.r, color.r, n)
+            c.g = math.lerp(old_color.g, color.g, n)
+            c.b = math.lerp(old_color.b, color.b, n)
             o:set_color(c)
             icon:set_color(c)
             arrow:set_color(c)
@@ -42,7 +40,7 @@ end
 ---@param color Color?
 ---@param default_color Color?
 function EHIWarningWaypoint:AnimateColor(color, default_color)
-    if self._timer and alive(self._timer) then
-        self._timer:animate(self._anim_warning, default_color or self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)
+    if self._gui and alive(self._gui) then
+        self._gui:animate(self._anim_warning, default_color or self._default_color, color or self._warning_color, self._bitmap, self._arrow, self._bitmap_world)
     end
 end

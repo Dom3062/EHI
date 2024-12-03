@@ -1,6 +1,4 @@
 local EHI = EHI
-local lerp = math.lerp
-local sin = math.sin
 local Color = Color
 ---@class EHIameno3Tracker : EHIAchievementTracker, EHINeededValueTracker, EHIAchievementProgressTracker
 ---@field super EHIAchievementTracker
@@ -17,10 +15,10 @@ EHIameno3Tracker._anim_warning = function(o, old_color, color, start_t, class)
         local t = 1
         while t > 0 do
             t = t - coroutine.yield()
-            local n = sin(t * 180)
-            c.r = lerp(old_color.r, color.r, n)
-            c.g = lerp(old_color.g, color.g, n)
-            c.b = lerp(old_color.b, color.b, n)
+            local n = math.sin(t * 180)
+            c.r = math.lerp(old_color.r, color.r, n)
+            c.g = math.lerp(old_color.g, color.g, n)
+            c.b = math.lerp(old_color.b, color.b, n)
             o:set_color(c)
             money:set_color(c)
         end

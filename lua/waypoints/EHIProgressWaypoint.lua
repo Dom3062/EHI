@@ -2,6 +2,7 @@
 ---@field super EHIWaypoint
 EHIProgressWaypoint = class(EHIWaypoint)
 EHIProgressWaypoint._update = false
+EHIProgressWaypoint._force_format = true
 EHIProgressWaypoint.Format = EHIProgressTracker.Format
 EHIProgressWaypoint.update = EHIProgressWaypoint.update_fade
 EHIProgressWaypoint.FormatProgress = EHIProgressTracker.FormatProgress
@@ -11,7 +12,6 @@ EHIProgressWaypoint.DecreaseProgressMax = EHIProgressTracker.DecreaseProgressMax
 function EHIProgressWaypoint:pre_init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
-    params.force_format = true
 end
 
 ---@param progress number?
@@ -24,7 +24,7 @@ end
 function EHIProgressWaypoint:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then
         self._progress = progress
-        self._timer:set_text(self:Format())
+        self._gui:set_text(self:Format())
         if self._progress == self._max then
             self:SetCompleted()
         end

@@ -711,6 +711,27 @@ local function LoadDefaultValues(self)
                     g = 204,
                     b = 255
                 }
+            },
+            bag_contour =
+            {
+                light =
+                {
+                    r = 111,
+                    g = 255,
+                    b = 0
+                },
+                heavy =
+                {
+                    r = 255,
+                    g = 0,
+                    b = 40
+                },
+                body =
+                {
+                    r = 20,
+                    g = 80,
+                    b = 100
+                }
             }
         },
 
@@ -1012,7 +1033,8 @@ local function LoadDefaultValues(self)
         show_use_left_ammo_bag = true,
         show_use_left_doctor_bag = true,
         show_use_left_bodybags_bag = true,
-        show_use_left_grenades = true
+        show_use_left_grenades = true,
+        show_colored_bag_contour = true
     }
 end
 
@@ -1268,10 +1290,13 @@ end
 ---@param option string
 ---@param color string
 function EHI:GetColorFromOption(option, color)
-    if option and self.settings.colors[option] then
-        return self:GetColor(self.settings.colors[option][color])
-    end
-    return Color.white
+    return self:GetColor(option and self.settings.colors[option] and self.settings.colors[option][color])
+end
+
+---@param option string
+---@param color string
+function EHI:GetVectorColorFromOption(option, color)
+    return self:GetColorAsVector3(option and self.settings.colors[option] and self.settings.colors[option][color])
 end
 
 ---@return boolean
@@ -1284,7 +1309,6 @@ function EHI:ShowTimedTrackerOpened()
 end
 
 ---@param id string Achievement ID
----@return boolean
 function EHI:CanShowAchievement(id)
     if self:ShowMissionAchievements() then
         return self:IsAchievementLocked(id)
@@ -1322,13 +1346,20 @@ function EHI:GetWaypointOptionWithOnly(waypoint)
     return show, show and self:GetOption("show_waypoints_only")
 end
 
----@param color Color?
----@return Color
+---@param color { r: number, g: number, b: number }?
 function EHI:GetColor(color)
     if color and color.r and color.g and color.b then
         return Color(255, color.r, color.g, color.b) / 255
     end
     return Color.white
+end
+
+---@param color { r: number, g: number, b: number }?
+function EHI:GetColorAsVector3(color)
+    if color and color.r and color.g and color.b then
+        return Vector3(color.r / 255, color.g / 255, color.b / 255)
+    end
+    return Vector3(1, 1, 1)
 end
 
 ---@param option string?
@@ -2306,7 +2337,6 @@ end
 ---`deathwish = 30s`  
 ---`deathsentence = 40s`  
 ---@param time_override KeypadResetTimerTable? Overrides default keypad time reset for each difficulty
----@return number
 function EHI:GetKeypadResetTimer(time_override)
     time_override = time_override or {}
     if self:IsDifficulty(self.Difficulties.Normal) then
@@ -2666,6 +2696,7 @@ function EHI._get_objective_progress(objectives, progress_id)
             return objective.progress, objective.max_progress
         end
     end
+    return 0, 0
 end
 
 ---@param daily_id string
@@ -2829,20 +2860,26 @@ local paths = {
 Hooks:Add("BeardLibPostInit", "EHI_BeardLib_Crash_Fix", function()
     if not Global.game_settings then
         return
-    elseif Global.game_settings and Global.game_settings.ehi_vanilla_heist then
-        local unit_key = Idstring("unit"):key()
-        for _, path in ipairs(paths) do
-            Global.fm.added_files[unit_key][Idstring(path):key()] = nil
-        end
-        return
     elseif not Idstring("unit").key then
         return
     elseif not Global.fm then
         Global.fm = { added_files = {} }
     end
-    local unit_key = Idstring("unit"):key()
-    Global.fm.added_files[unit_key] = Global.fm.added_files[unit_key] or {}
-    for _, path in ipairs(paths) do
-        Global.fm.added_files[unit_key][Idstring(path):key()] = { path = path }
+    if Global.game_settings then
+        local unit_key = Idstring("unit"):key()
+        if Global.game_settings.ehi_vanilla_heist and Global.game_settings.ehi_applied_beardlib_fix ~= false then
+            if Global.fm.added_files[unit_key] then -- Check if the unit table exists, otherwise it may crash
+                for _, path in ipairs(paths) do
+                    Global.fm.added_files[unit_key][Idstring(path):key()] = nil
+                end
+            end
+            Global.game_settings.ehi_applied_beardlib_fix = false
+        elseif not Global.game_settings.ehi_vanilla_heist and not Global.game_settings.ehi_applied_beardlib_fix then
+            Global.fm.added_files[unit_key] = Global.fm.added_files[unit_key] or {}
+            for _, path in ipairs(paths) do
+                Global.fm.added_files[unit_key][Idstring(path):key()] = { path = path }
+            end
+            Global.game_settings.ehi_applied_beardlib_fix = true
+        end
     end
 end)

@@ -532,8 +532,9 @@ _G.tweak_data.achievement.collection_achievements = {
 _G.tweak_data.hud = {}
 _G.tweak_data.screen_colors = {}
 ---@class CarryTweakData
+---@field types table<string, { move_speed_modifier: number, jump_modifier: number, can_run: boolean, throw_distance_multiplier: number }>
 ---@field small_loot table<string, number>
----@field [string] { name_id: string, is_unique_loot: boolean, skip_exit_secure: boolean }
+---@field [string] { name_id: string, is_unique_loot: boolean, type: string, skip_exit_secure: boolean }
 _G.tweak_data.carry = {}
 ---@class DOTTweakData
 ---@field get_dot_data fun(self: self, tweak_name: string): table?
@@ -745,10 +746,23 @@ _G.managers = {}
 _G.IS_VR = ...
 ---@class AmmoBagBase
 _G.AmmoBagBase = {}
+---@class AmmoBagInteractionExt : UseInteractionExt
+---@field _unit UnitAmmoDeployable
+_G.AmmoBagInteractionExt = {}
+---@class BaseInteractionExt
+---@field _active boolean
+---@field _materials U_Material[]
+---@field _add_string_macros fun(self: self, macros: table<string, string>)
+---@field active fun(self: self): boolean
+_G.BaseInteractionExt = {}
 ---@class BlackMarketGui
 _G.BlackMarketGui = {}
 ---@class BaseNetworkSession
 _G.BaseNetworkSession = {}
+---@class CarryData
+_G.CarryData = {}
+---@class CustomAmmoBagBase : AmmoBagBase
+_G.CustomAmmoBagBase = {}
 ---@class GrenadeCrateBase
 _G.GrenadeCrateBase = {}
 ---@class GrenadeCrateInteractionExt
@@ -841,6 +855,10 @@ _G.NetworkPeer = {}
 _G.SkirmishTweakData = {}
 ---@class TradeManager
 _G.TradeManager = {}
+---@class UseInteractionExt : BaseInteractionExt
+---@field _unit UnitCarry
+---@field super BaseInteractionExt
+_G.UseInteractionExt = {}
 ---@class VehicleDrivingExt
 _G.VehicleDrivingExt = {}
 ---@class WorldDefinition
@@ -1050,8 +1068,10 @@ end
 ---@class MissionScript
 ---@field element fun(self: self, id: number): MissionScriptElement?
 
----@class BaseInteractionExt
----@field _add_string_macros fun(self: self, macros: table<string, string>)
+---@param color string
+---@param opacity number?
+function BaseInteractionExt:set_contour(color, opacity)
+end
 
 ---@class BlackMarketManager
 ---@field equipped_grenade fun(self: self): string
@@ -1064,9 +1084,6 @@ end
 ---@field equipped_suit_variation fun(self: self): string
 ---@field get_suspicion_offset_of_local fun(self: self, lerp: number, ignore_armor_kit: boolean?): number
 ---@field outfit_string fun(self: self): table
-
----@class CarryData
----@field carry_id fun(self: self): string
 
 ---@class CoreEnvironmentControllerManager
 ---@field _current_flashbang number
@@ -1209,8 +1226,6 @@ end
 ---@class UnoAchievementChallenge
 ---@field challenge fun(self: self): string[]?
 
----@class UseInteractionExt : BaseInteractionExt
-
 ---@class ViewportManager
 ---@field add_resolution_changed_func fun(self: self, func: function): function
 ---@field get_current_camera fun(self: self): Camera
@@ -1279,8 +1294,16 @@ end
 ---@class BlackMarketTweakData
 ---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
 
+---@class CharacterTweakData._string_.Enemy : table
+---@field has_alarm_pager boolean
+
+---@class CharacterTweakData._string_.Civilian : table
+---@field intimidateable boolean
+---@field is_escort boolean
+---@field no_civ_penalty boolean
+
 ---@class CharacterTweakData
----@field [string] { has_alarm_pager: boolean }
+---@field [string] CharacterTweakData._string_.Enemy|CharacterTweakData._string_.Civilian
 
 ---@class tweak_data.criminals
 ---@field characters tweak_data.criminals.characters[]
@@ -1364,11 +1387,11 @@ end
 ---@field within fun(x: number, min: number, max: number): boolean Returns `true` or `false` if `x` is within (inclusive) `min` and `max`
 
 ---Linearly interpolates between `a` and `b` by `lerp`
----@param a number
----@param b number
+---@generic T
+---@param a T
+---@param b T
 ---@param lerp number
----@return number
----@overload fun(a: Color, b: Color, lerp: number): Color
+---@return T
 function math.lerp(a, b, lerp)
 end
 
@@ -1526,10 +1549,10 @@ end
 ---@class Unit
 ---@field alive fun(): boolean
 ---@field editor_id fun(): number
----@field get_object fun(self: self, name: Idstring): ObjectInUnit
+---@field get_object fun(self: self, name: Idstring): U_Object
 ---@field key fun(): string
 ---@field material_config fun(): Idstring
----@field name fun(): Idstring
+---@field name fun(): Idstring Returns name as a path to the unit; Example: `units/payday2/equipment/gen_equipment_grenade_crate/gen_equipment_explosives_case`
 ---@field parent fun(): UnitBase?
 ---@field position fun(self: self): Vector3
 ---@field rotation fun(self: self): Rotation
@@ -1548,7 +1571,7 @@ end
 
 ---@class UnitCarry : UnitBase
 ---@field carry_data fun(): CarryData
----@field interaction fun(): InteractionExt
+---@field interaction fun(): UseInteractionExt
 
 ---@class UnitTimer : UnitBase
 ---@field base fun(): Drill
@@ -1592,12 +1615,12 @@ end
 ---@field zipline fun(): ZipLine
 
 ---@class UnitDeployable : UnitBase
----@field interaction fun(): InteractionExt
 ---@field SetCountThisUnit fun(self: self) EHI added function
 ---@field SetIgnoreChild fun(self: self) EHI added function
 
 ---@class UnitAmmoDeployable : UnitDeployable
 ---@field base fun(): AmmoBagBase
+---@field interaction fun(): AmmoBagInteractionExt
 
 ---@class UnitGrenadeDeployable : UnitDeployable
 ---@field base fun(): GrenadeCrateBase
@@ -1609,7 +1632,10 @@ end
 ---@class UnitFAKDeployable : UnitDeployable
 ---@field base fun(): FirstAidKitBase
 
----@class ObjectInUnit : UnitBase
+---@class U_Object : UnitBase
+
+---@class U_Material
+---@field set_variable fun(self: self, material_name: Idstring, value: any)
 
 ---@class LocalizationManager
 ---@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string
@@ -1698,6 +1724,7 @@ end
 ---@field color Color
 ---@field rotation number In degrees
 ---@field alpha number
+---@field blend_mode "add"|"normal"
 
 ---@class PanelRectangle_Params : PanelBaseObject_Params
 ---@field alpha number

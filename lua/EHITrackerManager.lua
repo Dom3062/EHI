@@ -36,9 +36,7 @@ function EHITrackerManager:CreateWorkspace()
     self._ws = managers.gui_data:create_fullscreen_workspace()
     self._ws:hide()
     self._scale = EHI:GetOption("scale") --[[@as number]]
-    self._hud_panel = self._ws:panel():panel({
-        layer = -10
-    })
+    self._panel = self._ws:panel():panel({ layer = -10 })
     EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility)
         if visibility then
             self._ws:show()
@@ -132,7 +130,7 @@ function EHITrackerManager:AddTracker(params, pos)
         self._trackers[params.id].tracker:ForceDelete()
     end
     params.delay_popup = self._delay_popups
-    local tracker = _G[params.class or self._base_tracker_class]:new(self._hud_panel, params, self) --[[@as EHITracker]]
+    local tracker = _G[params.class or self._base_tracker_class]:new(self._panel, params, self) --[[@as EHITracker]]
     local w = tracker:GetPanelW()
     pos = self:_move_tracker(pos, w)
     local x = self:_get_x(pos, w)
@@ -152,7 +150,7 @@ function EHITrackerManager:AddHiddenTracker(params)
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
-    local tracker = _G[params.class or self._base_tracker_class]:new(self._hud_panel, params, self) --[[@as EHITracker]]
+    local tracker = _G[params.class or self._base_tracker_class]:new(self._panel, params, self) --[[@as EHITracker]]
     if tracker._update then
         self._trackers_to_update[params.id] = tracker
     end
@@ -166,7 +164,7 @@ function EHITrackerManager:PreloadTracker(params)
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
-    local tracker = _G[params.class or self._base_tracker_class]:new(self._hud_panel, params, self) --[[@as EHITracker]]
+    local tracker = _G[params.class or self._base_tracker_class]:new(self._panel, params, self) --[[@as EHITracker]]
     self._trackers[params.id] = { tracker = tracker }
 end
 
@@ -404,7 +402,7 @@ else -- Horizontal
         ---@param w number
         function EHITrackerManager:_move_tracker(pos, w)
             if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
-                local list = {} ---@type table<number, EHITrackerManager.Tracker>
+                local list = {} ---@type EHITrackerManager.Tracker[]
                 for _, tbl in pairs(self._trackers) do
                     if tbl.pos then
                         list[tbl.pos] = tbl

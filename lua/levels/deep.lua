@@ -1,3 +1,14 @@
+---@class EHIFuelCheckingTracker : EHIPausableTracker
+EHIFuelCheckingTracker = class(EHIPausableTracker)
+---@param delay number
+function EHIFuelCheckingTracker:AddDelay(delay)
+    self:SetTime(self._time + delay)
+end
+
+---@class EHIFuelCheckingWaypoint : EHIPausableWaypoint
+EHIFuelCheckingWaypoint = class(EHIPausableWaypoint)
+EHIFuelCheckingWaypoint.AddDelay = EHIFuelCheckingTracker.AddDelay
+
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -24,7 +35,7 @@ end
 ---@type ParseTriggerTable
 local triggers =
 {
-    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = TT.Pausable, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = "EHIFuelCheckingTracker", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
         if not enabled then
             return
         end
@@ -42,7 +53,7 @@ local triggers =
             trigger.waypoint.time = trigger.time
         end
         self:CreateTracker(trigger)
-    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
+    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { class = "EHIFuelCheckingWaypoint", data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
     [103055] = { id = "FuelChecking", special_function = SF.PauseTracker },
     [103070] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; loud
     [103071] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; stealth

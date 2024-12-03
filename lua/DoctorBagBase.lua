@@ -3,7 +3,6 @@ if EHI:CheckLoadHook("DoctorBagBase")then
     return
 end
 
-local UpdateTracker
 function DoctorBagBase:GetRealAmount()
     return (self._amount or self._max_amount) - (self._offset or 0)
 end
@@ -12,49 +11,12 @@ end
 function DoctorBagBase:SetOffset(offset)
     self._offset = offset
     if self._ehi_key and self._unit:interaction():active() and not self._ignore then
-        UpdateTracker(self._ehi_key, self:GetRealAmount())
+        self:UpdateAmount()
     end
 end
 
 if not EHI:GetEquipmentOption("show_equipment_doctorbag") then
     return
-end
-
-if EHI:GetOption("show_equipment_aggregate_all") then
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Deployables") and amount > 0 then
-            managers.ehi_deployable:AddAggregatedDeployablesTracker()
-        end
-        managers.ehi_deployable:CallFunction("Deployables", "UpdateAmount", "doctor_bag", key, amount)
-    end
-elseif EHI:GetOption("show_equipment_aggregate_health") then
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("Health") and amount > 0 then
-            managers.ehi_deployable:AddAggregatedHealthTracker()
-        end
-        managers.ehi_deployable:CallFunction("Health", "UpdateAmount", "doctor_bag", key, amount)
-    end
-else
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:TrackerDoesNotExist("DoctorBags") and amount > 0 then
-            managers.ehi_deployable:CreateDeployableTracker("DoctorBags")
-        end
-        managers.ehi_deployable:CallFunction("DoctorBags", "UpdateAmount", key, amount)
-    end
-end
-
-if _G.IS_VR then
-    local old_UpdateTracker = UpdateTracker
-    local function Reload(key, data)
-        old_UpdateTracker(key, data.amount)
-    end
-    UpdateTracker = function(key, amount)
-        if managers.ehi_tracker:IsLoading() then
-            managers.ehi_tracker:AddToLoadQueue(key, { amount = amount }, Reload)
-            return
-        end
-        old_UpdateTracker(key, amount)
-    end
 end
 
 local original =
@@ -66,23 +28,29 @@ local original =
     custom_set_empty = CustomDoctorBagBase._set_empty
 }
 
+DoctorBagBase._ehi_tracker = EHI:GetOption("show_equipment_aggregate_health") and not EHI:GetOption("show_equipment_aggregate_all") and "Health" or "DoctorBags"
 function DoctorBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = 0
 end
 
+---@param amount number?
+function DoctorBagBase:UpdateAmount(amount)
+    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, amount or self:GetRealAmount(), "doctor_bag", self._ehi_tracker)
+end
+
 function DoctorBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
-    UpdateTracker(self._ehi_key, self:GetRealAmount())
+    self:UpdateAmount()
 end
 
 function DoctorBagBase:destroy(...)
-    UpdateTracker(self._ehi_key, 0)
+    self:UpdateAmount(0)
     original.destroy(self, ...)
 end
 
 function CustomDoctorBagBase:_set_empty(...)
     original.custom_set_empty(self, ...)
-    UpdateTracker(self._ehi_key, 0)
+    self:UpdateAmount(0)
 end

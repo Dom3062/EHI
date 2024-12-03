@@ -35,7 +35,6 @@ function SentryGunMovement:Preload()
             managers.ehi_tracker:PreloadTracker({
                 id = "EnemySentryGunReload",
                 icons = { Icon.Turret, "reload" },
-                hide_on_delete = true,
                 unit = true,
                 hint = "sentry_reload",
                 class = EHI.Trackers.Group.Warning
@@ -45,7 +44,6 @@ function SentryGunMovement:Preload()
             managers.ehi_tracker:PreloadTracker({
                 id = "EnemySentryGunRepair",
                 icons = { Icon.Turret, Icon.Fix },
-                hide_on_delete = true,
                 unit = true,
                 hint = "sentry_repair",
                 class = EHI.Trackers.Group.Warning
