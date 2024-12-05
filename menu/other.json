@@ -160,6 +160,7 @@
             "type": "toggle",
             "id": "ehi_other_show_colored_bag_contour_choice",
             "title": "ehi_other_show_colored_bag_contour",
+            "description": "ehi_other_show_colored_bag_contour_desc",
             "callback": "SetOption",
             "callback_arguments": "show_colored_bag_contour",
             "value": "show_colored_bag_contour",

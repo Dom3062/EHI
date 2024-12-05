@@ -44,27 +44,27 @@ function EHIDeployableManager:IsDeployableAllowed(tracker_type)
     return not self._deployables_ignore[tracker_type]
 end
 
----@param type string
+---@param ehi_tracker string
 ---@param key string
 ---@param unit UnitDeployable
 ---@param tracker_type string?
-function EHIDeployableManager:AddToDeployableCache(type, key, unit, tracker_type)
+function EHIDeployableManager:AddToDeployableCache(ehi_tracker, key, unit, tracker_type)
     if not key then
         return
     end
     self._deployables[key] = { unit = unit, tracker_type = tracker_type }
-    self._trackers:CallFunction(type, "UpdateAmount", key, 0, tracker_type)
+    self._trackers:CallFunction(ehi_tracker, "UpdateAmount", key, 0, tracker_type)
 end
 
----@param type string
+---@param ehi_tracker string
 ---@param key string
-function EHIDeployableManager:LoadFromDeployableCache(type, key)
+function EHIDeployableManager:LoadFromDeployableCache(ehi_tracker, key)
     if not key then
         return
     end
     local deployable = table.remove_key(self._deployables, key)
     if deployable and self:IsDeployableAllowed(deployable.tracker_type) then
-        self:UpdateDeployableAmount(key, deployable.unit:base():GetRealAmount(), type, deployable.tracker_type)
+        self:UpdateDeployableAmount(key, deployable.unit:base():GetRealAmount(), deployable.tracker_type, ehi_tracker)
     end
 end
 

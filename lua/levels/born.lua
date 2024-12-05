@@ -63,9 +63,7 @@ end
 
 EHI.Manager:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
 EHI:ShowLootCounter({ max = 9 })
-
-local tbl =
-{
+EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small/001 (Bunker)
     [101086] = { remove_vanilla_waypoint = 101562, child_units = { 100776, 101226, 101469, 101472, 101473 } },
 
@@ -77,8 +75,7 @@ local tbl =
     -- Ammo
     [101472] = { f = "IgnoreChildDeployable" },
     [101473] = { f = "IgnoreChildDeployable" }
-}
-EHI:UpdateUnits(tbl)
+})
 EHI:SetMissionDoorData({
     -- Workshop
     [Vector3(-3798.92, -1094.9, -6.52779)] = 101580,

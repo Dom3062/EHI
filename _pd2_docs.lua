@@ -591,6 +591,7 @@ _G.tweak_data.group_ai = {
 ---@class HudIconsTweakData
 ---@field [string] { texture: string, texture_rect: { number: x, number: y, number: w, number: h } }
 ---@field get_icon_or fun(self: self, icon_id: string, ...): string, { number: x, number: y, number: w, number: h } If the provided icon is not found, `...` is returned
+---@field get_icon_data fun(self: self, icon_id: string, default_rect: { number: x, number: y, number: w, number: h }? ): string, { number: x, number: y, number: w, number: h }
 _G.tweak_data.hud_icons = {}
 ---@class MenuTweakData
 ---@field medium_font string

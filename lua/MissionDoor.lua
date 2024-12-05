@@ -40,7 +40,7 @@ else
 end
 
 if EHI.debug.mission_door and EHI:IsHost() then
-    EHI._cache.MissionDoor = {}
+    local door = {}
     Hooks:PostHook(MissionDoor, "init", "EHI_MissionDoorDebug_Init", function(self, ...)
         if self.tweak_data then
             local devices_data = tweak_data.mission_door[self.tweak_data].devices or {}
@@ -49,14 +49,14 @@ if EHI.debug.mission_door and EHI:IsHost() then
                 return
             end
             local unit_key = tostring(self._unit:key())
-            EHI._cache.MissionDoor[self.tweak_data] = EHI._cache.MissionDoor[self.tweak_data] or {}
-            EHI._cache.MissionDoor[self.tweak_data][unit_key] = { unit = self._unit, positions = {} }
-            local tbl = EHI._cache.MissionDoor[self.tweak_data][unit_key]
+            local tbl = { unit = self._unit, positions = {} }
             for i, data in ipairs(drill_data) do
                 local a_obj = self._unit:get_object(Idstring(data.align))
-			    local position = a_obj:position()
+                local position = a_obj:position()
                 tbl.positions[i] = position
             end
+            door[self.tweak_data] = door[self.tweak_data] or {}
+            door[self.tweak_data][unit_key] = tbl
         end
     end)
 
@@ -64,12 +64,11 @@ if EHI.debug.mission_door and EHI:IsHost() then
     local continent_definitions = {}
     local continents = {}
     Hooks:PostHook(IngameWaitingForPlayersState, "at_enter", "EHI_MissionDoorDebug", function(...)
-        local MissionDoor = EHI._cache.MissionDoor
         local world_instance = managers.world_instance
         local instance_data = world_instance:instance_data()
-        if MissionDoor then
+        if door and next(door) then
             local name_found = false
-            for tweak_name, tbl in pairs(MissionDoor) do
+            for tweak_name, tbl in pairs(door) do
                 EHI:Log("tweak_name: " .. tostring(tweak_name))
                 for _, value in pairs(tbl) do
                     local unit_id = value.unit:editor_id()
@@ -135,6 +134,7 @@ if EHI.debug.mission_door and EHI:IsHost() then
         definition = nil
         continent_definitions = nil
         continents = nil
+        door = nil
     end)
 
     Hooks:PreHook(WorldDefinition, "init_done", "EHI_MissionDoorDebug_WorldDefinition", function(self, ...)

@@ -1,3 +1,6 @@
+r280 (05. 12. 2024):
+Fixed a crash when a deployable is enabled
+
 r279 (03. 12. 2024):
 Added option "Show Bag Outline color based on their weight"
 Escape: Cafe: Fixed an issue where Assault tracker is not working correctly

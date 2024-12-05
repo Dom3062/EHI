@@ -41,7 +41,6 @@ end)
 
 local Icon = EHI.Icons
 local Hints = EHI.Hints
-local used_start_indexes_unit = {}
 ---@type table<string, table<number, UnitUpdateDefinition>>
 local instances =
 {
@@ -181,7 +180,7 @@ local instances =
     },
     ["levels/instances/unique/mex/mex_explosives/world"] =
     {
-        [100032] = { icons = { Icon.C4 } }
+        [100032] = { icons = { Icon.C4 }, hint = Hints.Explosion }
     },
     ["levels/instances/unique/mex/mex_vault/world"] =
     {
@@ -233,12 +232,11 @@ instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances[
 ---@param instance CoreWorldInstanceManager.Instance
 function WorldDefinition:OverrideUnitsInTheInstance(instance)
     --EHI:PrintTable(instance, "Overriding instance")
-    local start_index = instance.start_index
-    -- Don't compute the indexes again if the instance on this start_index has been computed already  
-    -- `start_index` is unique for each instance in a heist, so this shouldn't break anything
-    if not used_start_indexes_unit[start_index] then
+    -- Don't update already checked instances
+    if not instance.ehi_wd then
         local tbl = {}
         local continent_data = self._continents[instance.continent] or {}
+        local start_index = instance.start_index
         for id, unit in pairs(instances[instance.folder]) do
             local final_index = EHI:GetInstanceUnitID(id, start_index, continent_data.base_id)
             local unit_data = deep_clone(unit)
@@ -248,7 +246,7 @@ function WorldDefinition:OverrideUnitsInTheInstance(instance)
             tbl[final_index] = unit_data
         end
         EHI:UpdateInstanceMissionUnits(tbl, self._all_units == nil)
-        used_start_indexes_unit[start_index] = true
+        instance.ehi_wd = true
     end
 end
 

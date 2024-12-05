@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("GageModifierMeleeInvincibility") or not EHI:GetBuffDeckOption("gage_boosts", "melee_invulnerability") then
     return
 end

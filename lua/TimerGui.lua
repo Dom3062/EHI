@@ -20,14 +20,7 @@ local Icon = EHI.Icons
 
 local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
 ---@type { [string]: number|MissionDoorTable? }
-local MissionDoor = {}
-
----@param tbl table<Vector3, number|MissionDoorTable>
-function TimerGui.SetMissionDoorData(tbl)
-    for vector, value in pairs(tbl) do
-        MissionDoor[tostring(vector)] = value
-    end
-end
+TimerGui._ehi_MissionDoor = {}
 
 local original =
 {
@@ -140,7 +133,7 @@ end
 
 function TimerGui:PostStartTimer()
     if self._unit:mission_door_device() then
-        local data = MissionDoor[tostring(self._unit:position())]
+        local data = self._ehi_MissionDoor[tostring(self._unit:position())]
         if data then
             if type(data) == "table" then
                 self._restore_vanilla_waypoint_on_done = data.restore

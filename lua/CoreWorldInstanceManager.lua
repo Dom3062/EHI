@@ -1,4 +1,4 @@
----@alias CoreWorldInstanceManager.Instance { name: string, folder: string, start_index: number, index_size: number, continent: string, rotation: Rotation, mission_placed: boolean }
+---@alias CoreWorldInstanceManager.Instance { name: string, folder: string, start_index: number, index_size: number, continent: string, rotation: Rotation, mission_placed: boolean, ehi_wd: boolean, ehi_cwim: boolean }
 
 ---@class CoreWorldInstanceManager
 ---@field _get_instance_continent_data fun(self: self, path: string): WorldDefinition._continent_definition
@@ -14,7 +14,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local used_start_indexes = {}
 ---@type ParseInstanceTable
 local instances =
 {
@@ -583,87 +582,83 @@ local EHIConfig =
 function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     local instance_data = original.prepare_mission_data(self, instance, ...)
     local folder = instance.folder
-    if instances[folder] then
+    if instances[folder] and not instance.ehi_cwim then -- Don't update already checked instances
         local start_index = instance.start_index
-        -- Don't compute the indexes again if the instance on this start_index has been computed already  
-        -- `start_index` is unique for each instance in a heist, so this shouldn't break anything
-        if not used_start_indexes[start_index] then
-            local continent_data = managers.worlddefinition._continents[instance.continent] or {}
-            local triggers, waypoints, mission_waypoints = {}, {}, {}
-            local defer_loading_waypoints = false
-            for id, trigger in pairs(instances[folder]) do
-                local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
-                if trigger.create_tracker_class then
-                    if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
-                        trigger.create_tracker_class()
-                    end
-                elseif trigger.add_runned_unit_sequence_trigger then
-                    if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
-                        managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
-                            local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
-                            if not EHIConfig.show_waypoints_only then
-                                managers.ehi_tracker:AddTracker({
-                                    id = tostring(final_index),
-                                    time = trigger.time + time_random,
-                                    icons = trigger.icons,
-                                    hint = trigger.hint,
-                                    class = trigger.class
-                                })
-                            end
-                            if EHIConfig.show_waypoints then
-                                managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
-                                    time = trigger.time + time_random,
-                                    icon = trigger.icons[1],
-                                    position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
-                                    class = trigger.class and managers.ehi_manager._TrackerToWaypoint[trigger.class]
-                                })
-                            end
-                        end)
-                    end
-                elseif trigger.remove_vanilla_waypoint then
-                    if trigger.mission then
-                        mission_waypoints[final_index] = true
-                    else
-                        waypoints[final_index] = true
-                    end
-                else
-                    local new_trigger = deep_clone(trigger)
-                    new_trigger.id = new_trigger.id .. start_index
-                    if trigger.element then
-                        new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
-                    end
-                    if trigger.waypoint then
-                        if trigger.waypoint.position_from_element_and_remove_vanilla_waypoint then
-                            local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_from_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
-                            new_trigger.waypoint.position_from_element = wp_id
-                            new_trigger.waypoint.remove_vanilla_waypoint = wp_id
-                            new_trigger.waypoint.position_from_element_and_remove_vanilla_waypoint = nil
-                            defer_loading_waypoints = true
-                        end
-                        if trigger.waypoint.position_from_element then
-                            new_trigger.waypoint.position_from_element = EHI:GetInstanceElementID(trigger.waypoint.position_from_element, start_index, continent_data.base_id)
-                            defer_loading_waypoints = true
-                        end
-                        if trigger.waypoint.position_from_unit then
-                            new_trigger.waypoint.position_from_unit = EHI:GetInstanceUnitID(trigger.waypoint.position_from_unit, start_index, continent_data.base_id)
-                            defer_loading_waypoints = true
-                        end
-                        if trigger.waypoint.remove_vanilla_waypoint then
-                            new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
-                        end
-                    end
-                    triggers[final_index] = new_trigger
+        local continent_data = managers.worlddefinition._continents[instance.continent] or {}
+        local triggers, waypoints, mission_waypoints = {}, {}, {}
+        local defer_loading_waypoints = false
+        for id, trigger in pairs(instances[folder]) do
+            local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
+            if trigger.create_tracker_class then
+                if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
+                    trigger.create_tracker_class()
                 end
+            elseif trigger.add_runned_unit_sequence_trigger then
+                if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
+                    managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
+                        local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
+                        if not EHIConfig.show_waypoints_only then
+                            managers.ehi_tracker:AddTracker({
+                                id = tostring(final_index),
+                                time = trigger.time + time_random,
+                                icons = trigger.icons,
+                                hint = trigger.hint,
+                                class = trigger.class
+                            })
+                        end
+                        if EHIConfig.show_waypoints then
+                            managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
+                                time = trigger.time + time_random,
+                                icon = trigger.icons[1],
+                                position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
+                                class = trigger.class and managers.ehi_manager._TrackerToWaypoint[trigger.class]
+                            })
+                        end
+                    end)
+                end
+            elseif trigger.remove_vanilla_waypoint then
+                if trigger.mission then
+                    mission_waypoints[final_index] = true
+                else
+                    waypoints[final_index] = true
+                end
+            else
+                local new_trigger = deep_clone(trigger)
+                new_trigger.id = new_trigger.id .. start_index
+                if trigger.element then
+                    new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
+                end
+                if trigger.waypoint then
+                    if trigger.waypoint.position_from_element_and_remove_vanilla_waypoint then
+                        local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_from_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
+                        new_trigger.waypoint.position_from_element = wp_id
+                        new_trigger.waypoint.remove_vanilla_waypoint = wp_id
+                        new_trigger.waypoint.position_from_element_and_remove_vanilla_waypoint = nil
+                        defer_loading_waypoints = true
+                    end
+                    if trigger.waypoint.position_from_element then
+                        new_trigger.waypoint.position_from_element = EHI:GetInstanceElementID(trigger.waypoint.position_from_element, start_index, continent_data.base_id)
+                        defer_loading_waypoints = true
+                    end
+                    if trigger.waypoint.position_from_unit then
+                        new_trigger.waypoint.position_from_unit = EHI:GetInstanceUnitID(trigger.waypoint.position_from_unit, start_index, continent_data.base_id)
+                        defer_loading_waypoints = true
+                    end
+                    if trigger.waypoint.remove_vanilla_waypoint then
+                        new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
+                    end
+                end
+                triggers[final_index] = new_trigger
             end
-            managers.ehi_manager:ParseMissionTriggers(triggers, nil, nil, defer_loading_waypoints)
-            if next(waypoints) then
-                EHI:DisableWaypoints(waypoints)
-            end
-            if next(mission_waypoints) then
-                EHI:DisableMissionWaypoints(mission_waypoints)
-            end
-            used_start_indexes[start_index] = true
         end
+        managers.ehi_manager:ParseMissionTriggers(triggers, nil, nil, defer_loading_waypoints)
+        if next(waypoints) then
+            EHI:DisableWaypoints(waypoints)
+        end
+        if next(mission_waypoints) then
+            EHI:DisableMissionWaypoints(mission_waypoints)
+        end
+        instance.ehi_cwim = true
     end
     return instance_data
 end

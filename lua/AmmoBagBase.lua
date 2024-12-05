@@ -33,19 +33,12 @@ local original =
 ---@field _max_ammo_amount number
 ---@field _unit UnitAmmoDeployable
 
-local ignored_pos = {}
----@param pos Vector3[]
-function AmmoBagBase.SetIgnoredPos(pos)
-    for _, _pos in ipairs(pos) do
-        ignored_pos[tostring(_pos)] = true
-    end
-end
-
+AmmoBagBase._ehi_ignored_pos = {}
 function AmmoBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = 0
-    if next(ignored_pos) and ignored_pos[tostring(unit:position())] then
+    if next(self._ehi_ignored_pos) and self._ehi_ignored_pos[tostring(unit:position())] then
         self._ignore = true
     end
 end

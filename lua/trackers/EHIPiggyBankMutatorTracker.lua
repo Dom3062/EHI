@@ -1,10 +1,8 @@
-local lerp = math.lerp
-local sin = math.sin
 local Color = Color
 ---@class EHIPiggyBankMutatorTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
-EHIPiggyBankMutatorTracker._forced_icons = { "piggy" }
+EHIPiggyBankMutatorTracker._forced_icons = { { icon = "piggy", color = Color.yellow } }
 EHIPiggyBankMutatorTracker._forced_hint_text = "piggy"
 function EHIPiggyBankMutatorTracker:init(panel, params, ...)
     self._current_level = 1
@@ -94,9 +92,9 @@ function EHIPiggyBankMutatorTracker:AnimateNewLevel()
                 local t = 0
                 while t < 1 do
                     t = t + coroutine.yield()
-                    local n = 1 - sin(t * 180)
+                    local n = 1 - math.sin(t * 180)
                     --local r = lerp(1, 0, n)
-                    local g = lerp(1, 0, n)
+                    local g = math.lerp(1, 0, n)
                     local c = Color(g, 1, g)
                     self:SetTextColor(c)
                 end

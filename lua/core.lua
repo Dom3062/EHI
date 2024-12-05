@@ -2115,7 +2115,6 @@ function EHI:ShowAchievementKillCounter(params)
     local id_stat = params.achievement_stat
     local tweak_data = tweak_data.achievement.persistent_stat_unlocks[id_stat]
     if not tweak_data then
-        self:Log("No statistics found for achievement " .. tostring(id) .. "; Stat: " .. tostring(id_stat))
         return
     end
     local progress = self:GetAchievementProgress(id_stat)
@@ -2286,8 +2285,10 @@ end
 
 ---@param tbl table<Vector3, number|MissionDoorTable>
 function EHI:SetMissionDoorData(tbl)
-    if TimerGui.SetMissionDoorData then
-        TimerGui.SetMissionDoorData(tbl)
+    if TimerGui._ehi_MissionDoor then
+        for vector, value in pairs(tbl) do
+            TimerGui._ehi_MissionDoor[tostring(vector)] = value
+        end
     end
 end
 
@@ -2439,17 +2440,19 @@ function EHI:SetDeployableIgnorePos(type, pos)
     if not type then
         return
     end
-    if type == "ammo_bag" and AmmoBagBase.SetIgnoredPos then
-        AmmoBagBase.SetIgnoredPos(pos)
+    if type == "ammo_bag" and AmmoBagBase._ehi_ignored_pos then
+        for _, _pos in ipairs(pos) do
+            AmmoBagBase._ehi_ignored_pos[tostring(_pos)] = true
+        end
     end
 end
 
 function EHI:CanShowCivilianCountTracker()
     return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.has({
-        alex_1 = true,
-        haunted = true,
-        man = true,
-        bph = true
+        alex_1 = true, -- Rats Day 1
+        haunted = true, -- Safehouse Nightmare
+        man = true, -- Undercover
+        bph = true -- Hell's Island
     }, Global.game_settings.level_id)
 end
 
