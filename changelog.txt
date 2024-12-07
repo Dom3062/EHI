@@ -1,3 +1,6 @@
+r281 (07. 12. 2024):
+Fixed an issue where synced loot bags from host are not properly colored based on their weight
+
 r280 (05. 12. 2024):
 Fixed a crash when a deployable is enabled
 
