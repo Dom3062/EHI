@@ -1080,7 +1080,9 @@ local function Load()
     self._cache.__loaded = true
     self._cache.AchievementsDisabled = not self:ShowMissionAchievements()
     if not Global.load_level then
-        if Application.version then
+        if SystemInfo and SystemInfo.is_vr and SystemInfo:is_vr() then -- Don't do any version check in VR -> different game version
+            return
+        elseif Application.version then
             local min_version, index = { 1, 143, 240 }, 1
             for ver in string.gmatch(Application:version(), "([^.]+)") do
                 if tonumber(ver) >= min_version[index] then
@@ -1827,27 +1829,6 @@ function EHI:AddLootCounter4(f, t, load_sync, trigger_once)
     return tbl
 end
 
----@param f fun(self: EHIManager, trigger: table, element: table, enabled: boolean) Loot Counter function
----@param sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> If the Loot Counter is not enabled, hook the sequence triggers so the syncing will still work
----@param loot_counter_data_function fun(self: EHIManager, trigger: table, element: table, enabled: boolean) If the Loot Counter is not enabled, sync the data to clients so the syncing will still work. The provided function `HAS TO SYNC` tracker creation so it will work on clients
----@return ElementTrigger?
-function EHI:AddLootCounterSynced(f, sequence_triggers, loot_counter_data_function)
-    if self:IsPlayingCrimeSpree() then
-        return nil
-    end
-    local special_function
-    if self:GetOption("show_loot_counter") then
-        special_function = managers.ehi_manager:RegisterCustomSF(f)
-    else
-        managers.ehi_loot:AddSequenceTriggers(sequence_triggers)
-        special_function = managers.ehi_manager:RegisterCustomSF(loot_counter_data_function)
-    end
-    return {
-        special_function = special_function,
-        trigger_once = true
-    }
-end
-
 ---@param f fun(self: EHIManager)
 ---@param trigger_once boolean?
 ---@return ElementTrigger
@@ -1966,11 +1947,11 @@ function EHI:ShowLootCounterNoChecks(params)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
     elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
         if params.max_bags_for_level.objective_triggers then
-            local xp_trigger = { special_function = managers.ehi_manager:RegisterCustomSF(function(manager, trigger, element, enabled) ---@cast element ElementExperience
+            local xp_trigger = self:AddLootCounter3(function(manager, trigger, element, enabled) ---@cast element ElementExperience
                 if enabled then
                     manager._trackers:CallFunction(trigger.id, "ObjectiveXPAwarded", element._values.amount or 0)
                 end
-            end) }
+            end)
             local triggers = {}
             for _, id in ipairs(params.max_bags_for_level.objective_triggers) do
                 triggers[id] = xp_trigger

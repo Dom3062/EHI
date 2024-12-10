@@ -97,12 +97,14 @@ if EHI:IsLootCounterVisible() then
         104147, 101255, 101250, 104216, 104196, 104234, 104232, 104204, 104202, 104150,
         104148, 101254, 101251, 104211, 104201, 104233, 104203, 104149, 101253, 104206
     }
-    local has_bags = Global.game_settings.level_id ~= "firestarter_3" and Global.game_settings.level_id ~= "branchbank_deposit"
+    -- Standalone branchbank level uses the same level id `branchbank`. There is no way to distinguish between them if played from custom heists, only the mission filter differs
+    -- In Vanilla, the job id will be different
+    local has_random_bags = Global.game_settings.level_id ~= "firestarter_3" and not managers.mission:check_mission_filter(1)
     other[105762] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot2(deposit_boxes),
             client_from_start = true,
-            unknown_random = has_bags
+            unknown_random = has_random_bags
         })
     end)
     other[103372] = EHI:AddCustomCode(function(self)
@@ -112,7 +114,7 @@ if EHI:IsLootCounterVisible() then
         self._loot:SetUnknownRandomLoot()
     end)
     other[104647] = other[103372] -- Second vault position
-    if has_bags then
+    if has_random_bags then
         local LootVisible = EHI:AddCustomCode(function(self)
             self._loot:IncreaseLootCounterProgressMax()
         end)

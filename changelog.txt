@@ -1,3 +1,7 @@
+r282 (10. 12. 2024):
+Branchbank: Deposit: Fixed an issue in Loot Counter when variable unknown loot is visible when they do not spawn
+Fixed a spam message in VR that the game version is not compatible
+
 r281 (07. 12. 2024):
 Fixed an issue where synced loot bags from host are not properly colored based on their weight
 
