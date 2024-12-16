@@ -4,7 +4,7 @@ end
 EHI.ModUtils = {}
 
 function EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn()
-    if EHI:IsHost() and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
+    if EHI.IsHost and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
         return false
     end
     return true

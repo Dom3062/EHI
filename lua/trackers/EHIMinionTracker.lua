@@ -69,15 +69,16 @@ end
 ---@param first_minion PanelText
 ---@param second_minion PanelText?
 function EHIMinionTracker:AlignMinionTextOnHalfPos(first_minion, second_minion)
+    local right = self._bg_box:right() - self._bg_box:x()
     if second_minion then
         second_minion:set_w(self._default_bg_size_half)
-        second_minion:set_right(self._bg_box:right() - self._default_bg_size_half)
+        second_minion:set_right(right - self._default_bg_size_half)
         self:FitTheText(second_minion)
         first_minion:set_w(self._default_bg_size_half)
     else
         first_minion:set_w(self._default_bg_size)
     end
-    first_minion:set_right(self._bg_box:right())
+    first_minion:set_right(right)
     self:FitTheText(first_minion)
 end
 
@@ -175,13 +176,26 @@ function EHIMinionTracker:AddMinion(key, peer_id, local_peer)
         self:ChangeTrackerWidth(self._panel_w)
         if self._n_of_peers == 0 then -- First minion is for the local_peer; no need to animate
             self:SetIconsX()
-            self:AdjustHintX(self._default_bg_size)
+            if self._VERTICAL_ANIM_W_LEFT or self._HORIZONTAL_RIGHT_TO_LEFT then
+                self._panel:set_x(self._panel:x() - self._default_bg_size)
+            end
+            if self._HORIZONTAL_LEFT_TO_RIGHT then
+                if self._hint then
+                    self._hint:set_w(self._bg_box:w())
+                    self:FitTheText(self._hint, 18)
+                end
+            else
+                self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and -self._default_bg_size or self._default_bg_size)
+                if self._HORIZONTAL_RIGHT_TO_LEFT then
+                    self:AnimateAdjustHintX(0, false)
+                end
+            end
         else
             self:AnimateMovement(true, self._default_bg_size)
         end
         local minion_text = self:CreateText({ text = "100%" })
         minion_text:set_w(self._default_bg_size)
-        minion_text:set_right(self._bg_box:right() + (self._n_of_peers >= 2 and self._default_bg_size_half or 0))
+        minion_text:set_right(self._bg_box:right() + (self._n_of_peers >= 2 and self._default_bg_size_half or 0) - self._bg_box:x())
         self:FitTheText(minion_text)
         self._minion_health[key] = minion_text
     end
@@ -232,7 +246,7 @@ function EHIMinionTracker:RemoveMinion(key)
                     self._panel_w = self._panel_w - self._default_bg_size
                     self._default_panel_w = self._default_panel_w - self._default_bg_size
                     self:ChangeTrackerWidth()
-                    self:AdjustHintX(-self._default_bg_size)
+                    self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and self._default_bg_size or -self._default_bg_size)
                 end
             end
             if table.size(data.minions) == 0 then
@@ -273,7 +287,7 @@ function EHIMinionHealthOnlyTracker:AddMinion(key, peer_id, local_peer)
     end
     local peer_data = self._peers[peer_id]
     if peer_data then
-        peer_data.minions[key] = amount
+        peer_data.minions[key] = true
         self:AnimateBG()
         self._n_minion_health = self._n_minion_health + 1
         self._minion_health_second = key
@@ -284,7 +298,7 @@ function EHIMinionHealthOnlyTracker:AddMinion(key, peer_id, local_peer)
     end
     peer_data =
     {
-        minions = { [key] = amount }
+        minions = { [key] = true }
     }
     self._minion_health = {} ---@type table<string, PanelText>
     self._minion_health_first = key
@@ -340,7 +354,13 @@ function EHITotalMinionTracker:AddMinion(key, peer_id, local_peer)
         self:ChangeTrackerWidth(self._panel_w)
         if self._n_of_minions == 1 then -- First minion is for the local_peer; no need to animate
             self:SetIconsX()
-            self:AdjustHintX(self._default_bg_size)
+            if self._VERTICAL_ANIM_W_LEFT or self._HORIZONTAL_RIGHT_TO_LEFT then
+                self._panel:set_x(self._panel:x() - self._default_bg_size)
+            end
+            self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and -self._default_bg_size or self._default_bg_size)
+            if self._HORIZONTAL_RIGHT_TO_LEFT then
+                self:AnimateAdjustHintX(0, false)
+            end
         else
             self:AnimateMovement(true, self._default_bg_size)
         end

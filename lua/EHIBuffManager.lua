@@ -51,7 +51,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     end
     EHI:AddCallback(EHI.CallbackMessage.GameEnd, destroy)
     EHI:AddCallback(EHI.CallbackMessage.GameRestart, destroy)
-    if EHI:IsClient() then
+    if EHI.IsClient then
         self:AddReceiveHook(self._sync_add_buff, function(data, sender)
             local tbl = json.decode(data)
             self:AddBuff(tbl.id, tbl.t)
@@ -97,7 +97,7 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     if not EHI:GetBuffDeckOption("tag_team", "tagged") then
         return
     end
-    local local_peer_id = EHI:IsHost() and 1 or EHI._cache.LocalPeerID
+    local local_peer_id = EHI.IsHost and 1 or EHI._cache.LocalPeerID
     if not local_peer_id then
         return
     end

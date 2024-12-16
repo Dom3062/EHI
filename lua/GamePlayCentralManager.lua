@@ -12,7 +12,7 @@ local original =
     load = GamePlayCentralManager.load
 }
 
-if EHI:IsHost() then
+if EHI.IsHost then
     original.restart_the_game = GamePlayCentralManager.restart_the_game
     function GamePlayCentralManager:restart_the_game(...)
         EHI:CallCallbackOnce(EHI.CallbackMessage.GameRestart)

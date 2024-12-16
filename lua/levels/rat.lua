@@ -115,7 +115,7 @@ else
     triggers[102168] = { id = "HeliMeth", run = { time = 90 + heli_delay }, waypoint_f = ShowFlareWP }
     triggers[102167] = { id = "HeliMeth", run = { time = 60 + heli_delay }, waypoint_f = ShowFlareWP }
 end
-if EHI:IsClient() then
+if EHI.IsClient then
     ---@class EHICookingChanceTracker : EHITimedChanceTracker
     ---@field super EHITimedChanceTracker
     EHICookingChanceTracker = class(EHITimedChanceTracker)
@@ -164,13 +164,7 @@ local sidejob =
         {
             [101780] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
                 local progress, max = EHI:GetSHSideJobProgressAndMax("daily_tasty")
-                self._trackers:AddTracker({
-                    id = "daily_tasty",
-                    progress = progress,
-                    max = max,
-                    icons = { EHI.Icons.Trophy },
-                    class = TT.SideJob.Progress
-                })
+                self._unlockable:AddSHDailyProgressTracker("daily_tasty", max, progress)
             end) },
             [101382] = { special_function = SF.IncreaseProgress }
         }

@@ -16,7 +16,7 @@ function EHILootManager:init(ehi_tracker)
 end
 
 function EHILootManager:init_finalize()
-    if EHI:IsClient() and EHI:GetOption("show_loot_counter") then
+    if EHI.IsClient and EHI:GetOption("show_loot_counter") then
         self:AddReceiveHook(self._sync_lm_add_loot_counter, function(data, sender)
             local params = json.decode(data)
             self:ShowLootCounter(params.max, params.max_random, 0, params.offset)
@@ -97,7 +97,7 @@ function EHILootManager:AddListener(no_sync_load)
         end)
         -- If sync load is disabled, the counter needs to be updated via `EHIManager:AddLoadSyncFunction()` to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
-        if not no_sync_load then
+        if EHI.IsClient and not no_sync_load then
             ---@param loot LootManager
             EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
                 self._trackers:SetTrackerSyncData("LootCounter", loot:EHIReportProgress(BagsOnly))

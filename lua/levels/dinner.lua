@@ -65,7 +65,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101227] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101228] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[101233] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
-        if EHI:IsHost() and not element:_values_ok() then
+        if EHI.IsHost and not element:_values_ok() then
             return
         end
         self._trackers:CallFunction("Snipers", "SnipersKilled")
@@ -111,14 +111,14 @@ if ovk_and_up then
     if EHI:CanShowAchievement("farm_1") then
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
             if mode == "phalanx" then
-                managers.ehi_achievement:AddAchievementStatusTracker("farm_1", "finish")
+                managers.ehi_unlockable:AddAchievementStatusTracker("farm_1", "finish")
             else
-                managers.ehi_achievement:SetAchievementFailed("farm_1")
+                managers.ehi_unlockable:SetAchievementFailed("farm_1")
             end
         end)
         EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
             if success then
-                managers.ehi_achievement:SetAchievementComplete("farm_1")
+                managers.ehi_unlockable:SetAchievementComplete("farm_1")
             end
         end)
     end

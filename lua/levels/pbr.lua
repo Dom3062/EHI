@@ -31,9 +31,9 @@ local achievements =
                     managers.player:remove_listener("EHI_berry_4_fail")
                     EHI:Unhook("berry_4_HuskPlayerMovement_sync_bleed_out")
                     EHI:Unhook("berry_4_HuskPlayerMovement_sync_incapacitated")
-                    self._achievements:SetAchievementFailed("berry_4")
+                    self._unlockable:SetAchievementFailed("berry_4")
                 end
-                self._achievements:AddAchievementStatusTracker(trigger.id, "no_down")
+                self._unlockable:AddAchievementStatusTracker(trigger.id, "no_down")
                 -- Player (Local)
                 managers.player:add_listener("EHI_berry_4_fail", { "bleed_out", "incapacitated" }, berry_4_fail)
                 -- Clients

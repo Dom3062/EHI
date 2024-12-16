@@ -382,11 +382,9 @@ function EHILootMaxTracker:post_init(params)
     end
     EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
-    if EHI:IsClient() then
-        ---@param loot LootManager
-        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
+    if EHI.IsClient then
+        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot) ---@param loot LootManager
             self._offset = loot:GetSecuredBagsAmount()
-            self:SetProgress(self._progress)
         end)
     end
 end

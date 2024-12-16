@@ -26,7 +26,7 @@ local hostage_values = assault_values.hostage_hesitation_delay
 ---@field _cs_deduction number
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
-EHIAssaultTracker._is_client = EHI:IsClient()
+EHIAssaultTracker._is_client = EHI.IsClient
 EHIAssaultTracker._inaccurate_text_color = EHI:GetColorFromOption("tracker_waypoint", "inaccurate")
 EHIAssaultTracker._paused_color = EHIPausableTracker._paused_color
 if EHI:GetOption("show_assault_diff_in_assault_trackers") then

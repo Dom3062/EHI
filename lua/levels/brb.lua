@@ -42,7 +42,7 @@ local achievements =
 local other =
 {
     [100955] = EHI:AddAssaultDelay({ control_additional_time = 45, random_time = 15, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
-        if (EHI:IsHost() and element:counter_value() ~= 0) or self._trackers:TrackerExists(trigger.id) then
+        if (EHI.IsHost and element:counter_value() ~= 0) or self._trackers:TrackerExists(trigger.id) then
             return
         end
         self:CreateTracker(trigger)

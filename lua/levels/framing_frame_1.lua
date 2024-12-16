@@ -37,7 +37,7 @@ if Global.game_settings.level_id == "gallery" then
     if TheFixes then
         local Preventer = TheFixesPreventer or {}
         if not Preventer.achi_masterpiece then -- Fixed
-            achievements.cac_19.cleanup_callback = EHIAchievementManager:AddTFCallback("cac_19", "EHI_ArtGallery_TheFixes")
+            achievements.cac_19.cleanup_callback = EHIUnlockableManager:AddTFCallback("cac_19", "EHI_ArtGallery_TheFixes")
         end
     end
 
@@ -87,7 +87,7 @@ else -- Framing Frame Day 1
         other[102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
         other[103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
         other[100905] = EHI:AddEscapeChance(25, true)
-        if EHI:IsClient() then
+        if EHI.IsClient then
             EHI:AddOnAlarmCallback(function(dropin)
                 managers.ehi_escape:AddChanceWhenDoesNotExists(dropin, 25)
             end)

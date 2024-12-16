@@ -22,24 +22,24 @@ function WalletGuiObject.refresh(...)
         local level_text = Global.wallet_panel:child("wallet_level_text") --[[@as PanelText]]
         local skillpoint_icon = Global.wallet_panel:child("wallet_skillpoint_icon") --[[@as PanelBitmap]]
         local skillpoint_text = Global.wallet_panel:child("wallet_skillpoint_text") --[[@as PanelText]]
-        local xp = managers.ehi_experience
+        local ehi_xp, xp = managers.ehi_experience, managers.experience
         local s = ""
-        if xp:IsInfamyPoolEnabled() then -- Level is maxed, show Infamy Pool instead if possible
-            if xp:IsInfamyPoolOverflowed() then
-                local max_prestige_xp = xp._xp_class:get_max_prestige_xp()
-                local lvl_up_times = math.floor(xp._xp.prestige_xp / max_prestige_xp)
-                s = ", " .. infamy_pool .. " " .. xp:experience_string((lvl_up_times + 1) * max_prestige_xp - xp._xp.prestige_xp) .. " " .. _xp .. " +" .. tostring(lvl_up_times)
+        if ehi_xp:IsInfamyPoolEnabled() then -- Level is maxed, show Infamy Pool instead if possible
+            if ehi_xp:IsInfamyPoolOverflowed() then
+                local max_prestige_xp = xp:get_max_prestige_xp()
+                local lvl_up_times = math.floor(ehi_xp._xp.prestige_xp / max_prestige_xp)
+                s = string.format(", %s %s %s +%d", infamy_pool, xp:experience_string((lvl_up_times + 1) * max_prestige_xp - ehi_xp._xp.prestige_xp), _xp, lvl_up_times)
             else
-                s = ", " .. infamy_pool .. " " .. xp:experience_string(xp._xp.prestige_xp_remaining) .. " " .. _xp
+                s = string.format(", %s %s %s", infamy_pool, xp:experience_string(ehi_xp._xp.prestige_xp_remaining), _xp)
             end
         elseif to_100_left then -- calculate total XP to 100
-            local xpToNextText = xp:experience_string(xp._xp.level_xp_to_next_level)
-            local xpTo100Text = xp:experience_string(xp._xp.level_xp_to_100)
-            s = ", " .. next_level .. " " .. xpToNextText .. " " .. _xp .. ", " .. _100_in .. " " .. xpTo100Text .. " " .. _xp
+            local xpToNextText = xp:experience_string(ehi_xp._xp.level_xp_to_next_level)
+            local xpTo100Text = xp:experience_string(ehi_xp._xp.level_xp_to_100)
+            s = string.format(", %s %s %s, %s %s %s", next_level, xpToNextText, _xp, _100_in, xpTo100Text, _xp)
         else
-            s = ", " .. next_level .. " " .. xp:experience_string(xp._xp.level_xp_to_next_level) .. " " .. _xp
+            s = string.format(", %s %s %s", next_level, xp:experience_string(ehi_xp._xp.level_xp_to_next_level), _xp)
         end
-        level_text:set_text(tostring(xp._xp.level) .. s)
+        level_text:set_text(tostring(xp:current_level()) .. s)
         local _, _, w, h = level_text:text_rect()
         level_text:set_size(w, h)
         level_text:set_position(math.round(level_text:x()), math.round(level_text:y()))

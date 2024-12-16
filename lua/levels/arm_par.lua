@@ -49,7 +49,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100008 } }
     other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100020 } }
 end
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[102379] = { run = { time = 30 + van_delay }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 EHI.Manager:ParseTriggers({ mission = triggers, preload = preload, other = other }, "Escape", Icon.CarEscape)

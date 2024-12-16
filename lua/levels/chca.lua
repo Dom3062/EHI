@@ -65,7 +65,7 @@ local triggers = {
     end)
 }
 triggers[100688] = triggers[101073] -- Handprint first; Spa second
-if EHI:IsClient() then
+if EHI.IsClient then
     local escape_wait_time = 90 -- Very Hard and below
     local vault_pickup_wait_time = 25 -- Normal and Hard
     if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.Mayhem) then -- Very Hard to Mayhem
@@ -101,7 +101,7 @@ function(self, waypoint_id)
 end)
 
 local function chca_9_fail()
-    managers.ehi_achievement:SetAchievementFailed("chca_9")
+    managers.ehi_unlockable:SetAchievementFailed("chca_9")
     EHI:Unhook("chca_9_killed")
     EHI:Unhook("chca_9_killed_by_anyone")
 end
@@ -166,7 +166,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     local function check(...)
         active_saws = active_saws + 1
         if active_saws > 1 then
-            managers.ehi_achievement:SetAchievementFailed("chca_12")
+            managers.ehi_unlockable:SetAchievementFailed("chca_12")
         end
     end
     local function saw_done()

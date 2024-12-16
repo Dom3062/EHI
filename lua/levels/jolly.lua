@@ -39,7 +39,7 @@ local triggers = {
 
     -- C4 Drop handled in CoreWorldInstanceManager
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[EHI:GetInstanceElementID(100051, 21250)] = { time = 20, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(EscapeWP), hint = Hints.Escape }
 end
 

@@ -133,13 +133,13 @@
             "id": "ehi_show_assault_delay_tracker_choice",
             "title": "ehi_show_assault_delay_tracker",
             "description": "ehi_show_assault_delay_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback": ["SetOption", "UpdateTrackerVisibility_Assault"],
             "callback_arguments": "show_assault_delay_tracker",
-            "focus_changed_callback": "SetFocus",
+            "focus_changed_callback": "SetFocus_Assault",
             "value": "show_assault_delay_tracker",
             "default_value": true,
             "is_parent" : true,
-            "parent_func_update" : "UpdateAssaultDiff",
+            "parent_func_update" : "UpdateAssaultOptions",
             "ehi_ver" : 78
         },
         {
@@ -147,13 +147,13 @@
             "id": "ehi_show_assault_time_tracker_choice",
             "title": "ehi_show_assault_time_tracker",
             "description": "ehi_show_assault_time_tracker_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback": ["SetOption", "UpdateTrackerVisibility_Assault"],
             "callback_arguments": "show_assault_time_tracker",
-            "focus_changed_callback": "SetFocus",
+            "focus_changed_callback": "SetFocus_Assault",
             "value": "show_assault_time_tracker",
             "default_value": true,
             "is_parent" : true,
-            "parent_func_update" : "UpdateAssaultDiff",
+            "parent_func_update" : "UpdateAssaultOptions",
             "ehi_ver" : 146
         },
         {

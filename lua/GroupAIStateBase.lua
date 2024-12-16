@@ -126,7 +126,7 @@ if not tweak_data.levels:IsStealthRequired() then
             ---@param peer_id number
             ---@param local_peer boolean?
             UpdateTracker = function(key, amount, peer_id, local_peer)
-                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
+                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount > 0 then
                     managers.ehi_tracker:AddTracker({
                         id = "Converts",
                         class = minion_class
@@ -150,7 +150,7 @@ if not tweak_data.levels:IsStealthRequired() then
             ---@param peer_id number
             ---@param local_peer boolean?
             UpdateTracker = function(key, amount, peer_id, local_peer)
-                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount ~= 0 then
+                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount > 0 then
                     managers.ehi_tracker:AddTracker({
                         id = "Converts",
                         dont_show_placed = true,
@@ -166,7 +166,7 @@ if not tweak_data.levels:IsStealthRequired() then
                         managers.ehi_tracker:CallFunction("Converts", "AddMinion", key, peer_id, local_peer)
                     end
                 else
-                    managers.ehi_tracker:CallFunction("Converts", "UpdateAmount", nil, key, amount)
+                    managers.ehi_tracker:CallFunction("Converts", "UpdateAmount", key, amount)
                 end
             end
         end
@@ -283,7 +283,7 @@ function GroupAIStateBase:remove_minion(minion_key, ...)
     original.remove_minion(self, minion_key, ...)
 end
 
-if EHI:IsHost() and EHI:GetOption("civilian_count_tracker_format") >= 2 then
+if EHI.IsHost and EHI:CanShowCivilianCountTracker() and EHI:GetOption("civilian_count_tracker_format") >= 2 then
     original.on_civilian_tied = GroupAIStateBase.on_civilian_tied
     function GroupAIStateBase:on_civilian_tied(u_key, ...)
         original.on_civilian_tied(self, u_key, ...)
@@ -292,15 +292,14 @@ if EHI:IsHost() and EHI:GetOption("civilian_count_tracker_format") >= 2 then
 end
 
 if EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
-    if EHI:IsHost() then
+    if EHI.IsHost then
         original.on_hostage_state = GroupAIStateBase.on_hostage_state
         function GroupAIStateBase:on_hostage_state(state, key, police, ...)
             local original_count = self._hostage_headcount
             original.on_hostage_state(self, state, key, police, ...)
-            if original_count == self._hostage_headcount then
-                return
+            if original_count ~= self._hostage_headcount then
+                managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount, self._police_hostage_headcount)
             end
-            managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount, self._police_hostage_headcount)
         end
     else
         original.sync_hostage_headcount = GroupAIStateBase.sync_hostage_headcount
@@ -314,7 +313,7 @@ if EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
             id = "HostageCount",
             class = "EHIHostageCountTracker"
         })
-        local police = EHI:IsHost() and managers.groupai:state():police_hostage_count()
+        local police = EHI.IsHost and managers.groupai:state():police_hostage_count()
         managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", managers.groupai:state():hostage_count(), police)
     end)
 end

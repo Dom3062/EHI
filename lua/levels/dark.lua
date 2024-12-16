@@ -57,7 +57,7 @@ local achievements =
             [100290] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            self._achievements:AddTimedAchievementTracker("dark_2", 420)
+            self._unlockable:AddTimedAchievementTracker("dark_2", 420)
         end
     },
     dark_3 =

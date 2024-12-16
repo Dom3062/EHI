@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("NetworkPeer") or EHI:IsHost() then
+if EHI:CheckLoadHook("NetworkPeer") or EHI.IsHost then
     return
 end
 

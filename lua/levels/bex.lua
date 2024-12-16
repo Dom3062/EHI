@@ -64,7 +64,7 @@ local triggers = {
     -- levels/instances/unique/bex/bex_server
     -- Handled in CoreWorldInstanceManager
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
 end
 
@@ -78,7 +78,7 @@ local achievements =
         {
             [103701] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
-                    self._achievements:SetAchievementStatus(trigger.id, Status.Defend)
+                    self._unlockable:SetAchievementStatus(trigger.id, Status.Defend)
                     self:UnhookTrigger(103704)
                 end
             end) },

@@ -31,6 +31,7 @@ function MenuNodeMainGui:_setup_item_rows(...)
         EHI._cache.GameVersionNotCompatible = nil
         if EHI.ModInstance then
             EHI.ModInstance:SetEnabled(false, true)
+            MenuCallbackHandler:perform_blt_save()
         end
     end
 end

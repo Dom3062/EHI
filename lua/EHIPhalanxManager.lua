@@ -10,7 +10,7 @@ EHIPhalanxManager = {}
 EHIPhalanxManager._no_endless_assault_check = { pbr2 = true }
 EHIPhalanxManager._requires_manual_on_exec = { dinner = true, slaughter_house_new = true }
 EHIPhalanxManager._disabled_in_levels = { born = true }
-EHIPhalanxManager._counter_trigger = EHI:IsClient() and 3 or 2
+EHIPhalanxManager._counter_trigger = EHI.IsClient and 3 or 2
 EHIPhalanxManager._first_assault = true
 ---@param manager EHIManager
 function EHIPhalanxManager:init_finalize(manager)
@@ -30,7 +30,7 @@ function EHIPhalanxManager:OnSOPhalanxCreated(element)
         return
     elseif self._requires_manual_on_exec[level_id] then
         self._manager._hook:HookElement(element, function(e, ...)
-            if EHI:IsHost() and not e._values.enabled then
+            if EHI.IsHost and not e._values.enabled then
                 return
             end
             self:OnPhalanxAdded(true)
@@ -51,7 +51,7 @@ function EHIPhalanxManager:OnPhalanxAdded(manual)
         self:ReduceCounter() -- Reduce the counter because Captain Winters is activated now; due to Mission Script
     end
     self:ReduceCounter()
-    if EHI:IsHost() and managers.modifiers:IsModifierActive("ModifierAssaultExtender", "crime_spree") then
+    if EHI.IsHost and managers.modifiers:IsModifierActive("ModifierAssaultExtender", "crime_spree") then
         local assault_state = ""
         Hooks:PostHook(GroupAIStateBesiege, "_upd_assault_task", "EHI_EHIPhalanxManager_upd_assault_task", function(state, ...)
             local phase = state._task_data.assault.phase
@@ -129,7 +129,7 @@ function EHIPhalanxManager:AddTracker()
     end
 end
 
-if EHI:IsClient() or EHI:IsModInstalled("Allow Winters Spawn Offline", "Offyerrocker") then
+if EHI.IsClient or EHI:IsModInstalled("Allow Winters Spawn Offline", "Offyerrocker") then
     function EHIPhalanxManager:IsPhalanxDisabled()
         return self._phalanx_spawn_chance.max == 0
     end

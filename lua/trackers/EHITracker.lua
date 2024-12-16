@@ -28,9 +28,14 @@ local function visibility(o, end_a) -- This is actually faster than manually re-
 end
 ---@param o PanelBaseObject
 ---@param t number
-local function hint_wait(o, t)
+---@param self EHITracker
+local function hint_wait(o, t, self)
     wait(t)
     visibility(o, 0)
+    if not self._hide_on_delete then
+        o:parent():remove(o)
+        self._hint = nil
+    end
 end
 ---@param o PanelBaseObject
 ---@param target_y number
@@ -181,7 +186,7 @@ local bg_visibility = EHI:GetOption("show_tracker_bg") --[[@as boolean]]
 local corner_visibility = EHI:GetOption("show_tracker_corners") --[[@as boolean]]
 
 ---@param panel Panel
----@param params table
+---@param params Panel_Params
 local function CreateHUDBGBox(panel, params)
     local box_panel = panel:panel(params)
 	box_panel:rect({
@@ -603,7 +608,7 @@ end
 function EHITracker:ForceShowHint()
     self._delay_hint = nil
     if self._hint and self._hint_t > 0 then
-        self._hint:animate(hint_wait, self._hint_t)
+        self._hint:animate(hint_wait, self._hint_t, self)
     end
 end
 
@@ -646,7 +651,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
             self._hint_pos.x = self._hint:x()
             self._hint_pos.y_diff = y - self._hint:y()
             if self._hint_t > 0 and not self._delay_hint then
-                self._hint:animate(hint_wait, self._hint_t)
+                self._hint:animate(hint_wait, self._hint_t, self)
             end
             self._hint_positioned = true
             self:HintPositioned()
@@ -679,13 +684,14 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
             self._hint_pos.x = self._hint:x()
             self._hint_pos.y_diff = y - self._hint:y()
             if self._hint_t > 0 and not self._delay_hint then
-                self._hint:animate(hint_wait, self._hint_t)
+                self._hint:animate(hint_wait, self._hint_t, self)
             end
             self:HintPositioned()
         end
     end
 else
     EHITracker._HORIZONTAL_ALINGMENT = true
+    EHITracker._HORIZONTAL_LEFT_TO_RIGHT = true
     ---@param x number World X
     ---@param y number World Y
     function EHITracker:PositionHint(x, y)
@@ -699,7 +705,7 @@ else
         self._hint:set_w(self._panel_override_w or (self._bg_box:w() + (self._icon_gap_size_scaled * self._n_of_icons)))
         self:FitTheText(self._hint, 18)
         if self._hint_t > 0 and not self._delay_hint then
-            self._hint:animate(hint_wait, self._hint_t)
+            self._hint:animate(hint_wait, self._hint_t, self)
         end
         self:HintPositioned()
     end

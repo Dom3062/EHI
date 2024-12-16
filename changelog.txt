@@ -1,3 +1,10 @@
+r283 (16. 12. 2024):
+Converts Tracker: Fixed misaligned convert health text
+Converts Tracker: Fixed misaligned tracker that overlap with other trackers if tracker alignment is set to "Horizontal; Right to Left"
+Converts Tracker: Fixed misaligned tracker description is some cases
+Loot Counter: Fixed an issue where the tracker is not visible in endless heists (client only)
+Menu: Fixed visual issues in the tracker preview
+
 r282 (10. 12. 2024):
 Branchbank: Deposit: Fixed an issue in Loot Counter when variable unknown loot is visible when they do not spawn
 Fixed a spam message in VR that the game version is not compatible

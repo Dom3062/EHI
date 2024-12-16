@@ -13,7 +13,7 @@ local triggers = {
     [105840] = { time = 20, id = "FireApartment4", icons = { Icon.Fire, Icon.Wait }, hint = Hints.Wait }
 }
 
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[101748] = { time = 1330/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
 end
 
@@ -89,6 +89,6 @@ EHI:AddXPBreakdown({
         }
     }
 })
-if EHI:IsHost() then
+if EHI.IsHost then
     managers.ehi_experience:MissionXPAwarded(3000)
 end

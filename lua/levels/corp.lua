@@ -85,7 +85,7 @@ local triggers =
 {
     [102406] = { additional_time = 22 + 6, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.GetElementTimerAccurate, element = 102401, hint = Hints.LootEscape }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[102406].client = { time = OVKorAbove and 30 or 15, random_time = 15 }
 end
 
@@ -148,7 +148,7 @@ local achievements =
             end) },
             [102683] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
-                    self._achievements:SetAchievementFailed("corp_11")
+                    self._unlockable:SetAchievementFailed("corp_11")
                     self._cache.corp_11_StartDisabled = true
                 end
             end) },

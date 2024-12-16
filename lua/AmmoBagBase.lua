@@ -45,7 +45,7 @@ end
 
 ---@param amount number?
 function AmmoBagBase:UpdateAmount(amount)
-    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, amount or self:GetRealAmount(), "ammo_bag", "AmmoBags")
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), "ammo_bag", "AmmoBags")
 end
 
 function AmmoBagBase:SetIgnore()

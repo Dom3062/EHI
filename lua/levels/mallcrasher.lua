@@ -114,7 +114,7 @@ local triggers =
     [300851] = MoneyTrigger -- +8000, appears to be unused
 }
 
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[302287] = EHI:ClientCopyTrigger(triggers[300248], { time = (OverkillOrBelow and 115 or 120) + 25 })
     triggers[300223] = EHI:ClientCopyTrigger(triggers[300248], { time = 60 + 25 })
     triggers[302289] = EHI:ClientCopyTrigger(triggers[300248], { time = 30 + 25 })

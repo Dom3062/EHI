@@ -27,7 +27,7 @@ local achievements = {
             [100244] = { time = 360, class = TT.Achievement.Base },
         },
         load_sync = function(self)
-            self._achievements:AddTimedAchievementTracker("fish_4", 360)
+            self._unlockable:AddTimedAchievementTracker("fish_4", 360)
         end,
         mission_end_callback = true
     },

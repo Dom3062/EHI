@@ -27,34 +27,34 @@ local triggers = {
     [100904] = { time = 45 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 100896 } },
     [100905] = { time = 60 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 100896 } }
 }
-if EHI:GetOption("show_waypoints_mission") then
+if EHI:GetWaypointOption("show_waypoints_mission") then
     if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then -- ´disable_2nd_helicopter´ ElementFilter 104393
         local SetWaypoints = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-            if self._cache.wttj_flare_set then
+            if self._cache.wttj2_flare_set then
                 return
             end
             local element_vector = self:GetElementPositionOrDefault(trigger.element)
             local EngineLootDropWP = { icon = Icon.LootDrop, position = element_vector }
-            self:_AddWaypointToTrigger(103132, EngineLootDropWP)
-            self:_AddWaypointToTrigger(103130, EngineLootDropWP)
-            self:_AddWaypointToTrigger(103133, EngineLootDropWP)
-            self:_AddWaypointToTrigger(103630, EngineLootDropWP)
-            self:_AddWaypointToTrigger(100372, EngineLootDropWP)
-            self:_AddWaypointToTrigger(100371, EngineLootDropWP)
-            self:_AddWaypointToTrigger(100363, EngineLootDropWP)
-            self:_AddWaypointToTrigger(100355, EngineLootDropWP)
+            self:AddWaypointToTrigger(103132, EngineLootDropWP)
+            self:AddWaypointToTrigger(103130, EngineLootDropWP)
+            self:AddWaypointToTrigger(103133, EngineLootDropWP)
+            self:AddWaypointToTrigger(103630, EngineLootDropWP)
+            self:AddWaypointToTrigger(100372, EngineLootDropWP)
+            self:AddWaypointToTrigger(100371, EngineLootDropWP)
+            self:AddWaypointToTrigger(100363, EngineLootDropWP)
+            self:AddWaypointToTrigger(100355, EngineLootDropWP)
             local InspectWP = { position = element_vector }
-            self:_AddWaypointToTrigger(103355, InspectWP)
-            self:_AddWaypointToTrigger(100266, InspectWP)
-            self:_AddWaypointToTrigger(100271, InspectWP)
-            self:_AddWaypointToTrigger(100273, InspectWP)
-            self:_AddWaypointToTrigger(103319, InspectWP)
-            self:_AddWaypointToTrigger(100265, InspectWP)
-            self._cache.wttj_flare_set = true
+            self:AddWaypointToTrigger(103355, InspectWP)
+            self:AddWaypointToTrigger(100266, InspectWP)
+            self:AddWaypointToTrigger(100271, InspectWP)
+            self:AddWaypointToTrigger(100273, InspectWP)
+            self:AddWaypointToTrigger(103319, InspectWP)
+            self:AddWaypointToTrigger(100265, InspectWP)
+            self._cache.wttj2_flare_set = true
         end)
         triggers[100005] = { special_function = SetWaypoints, element = 100001 }
         triggers[104416] = { special_function = SetWaypoints, element = 104408 }
-        if EHI:IsClient() then
+        if EHI.IsClient then
             triggers[104423] = { special_function = SetWaypoints, element = 100001 }
             triggers[100014] = { special_function = SetWaypoints, element = 104408 }
         end

@@ -9,7 +9,7 @@ local triggers = {
     [102451] = { time = 300, hint = Hints.LootEscape }
 }
 
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100606] = { time = 240, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
     triggers[100593] = { time = 180, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
     triggers[100607] = { time = 120, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }

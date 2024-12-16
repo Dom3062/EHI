@@ -5,7 +5,7 @@ EHIPhalanxChanceTracker._forced_icons = { "buff_shield" }
 EHIPhalanxChanceTracker._paused_color = EHIPausableTracker._paused_color
 EHIPhalanxChanceTracker._forced_hint_text = "phalanx_chance"
 EHIPhalanxChanceTracker._sync_fade_state = "EHI_EHIPhalanxChanceTracker_sync_fade_state"
-EHIPhalanxChanceTracker.IsHost = EHI:IsHost()
+EHIPhalanxChanceTracker.IsHost = EHI.IsHost
 function EHIPhalanxChanceTracker:pre_init(params)
     if params.first_assault then
         self._first_assault = true

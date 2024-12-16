@@ -36,7 +36,7 @@ local triggers = {
 EHI:AddEventListener("pent_PCHack", function()
     managers.hud:SoftRemoveWaypoint2(102955)
 end)
-if EHI:IsClient() then
+if EHI.IsClient then
     -- FOR THE LOVE OF GOD
     -- OVERKILL
     -- STOP. USING. F... RANDOM DELAY, it's not funny

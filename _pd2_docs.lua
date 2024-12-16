@@ -769,6 +769,10 @@ _G.GrenadeCrateBase = {}
 ---@class GrenadeCrateInteractionExt
 _G.GrenadeCrateInteractionExt = {}
 ---@class CallbackEventHandler
+---@field new fun(self: self): self
+---@field add fun(self: self, func: function)
+---@field dispatch fun(self: self, ...)
+---@field clear fun(self: self)
 _G.CallbackEventHandler = {}
 ---@class CarryTweakData
 _G.CarryTweakData = {}
@@ -1250,7 +1254,7 @@ end
 ---@field ehi_deployable EHIDeployableManager
 ---@field ehi_assault EHIAssaultManager
 ---@field ehi_experience EHIExperienceManager
----@field ehi_achievement EHIAchievementManager
+---@field ehi_unlockable EHIUnlockableManager
 ---@field ehi_phalanx EHIPhalanxManager
 ---@field ehi_timer EHITimerManager
 ---@field ehi_loot EHILootManager

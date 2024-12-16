@@ -76,7 +76,6 @@
         <post hook_id="lib/network/base/networkpeer" :script_path="NetworkPeer.lua" />
 
         <group hook_id="lib/setups/">
-            <post :hook_id="setup" :script_path="CallbackEventHandler.lua" />
             <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />
             <post :hook_id="setup" :script_path="Setup.lua" />
             <post :hook_id="gamesetup" :script_path="GameSetup.lua" />

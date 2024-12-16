@@ -1,9 +1,9 @@
 local EHI = EHI
----@class EHIAchievementManager
-EHIAchievementManager = {}
-EHIAchievementManager.GetAchievementIcon = EHI.GetAchievementIcon
-EHIAchievementManager.IsHost = EHI:IsHost()
-EHIAchievementManager._achievement_data_sync =
+---@class EHIUnlockableManager
+EHIUnlockableManager = {}
+EHIUnlockableManager.GetAchievementIcon = EHI.GetAchievementIcon
+EHIUnlockableManager.IsHost = EHI.IsHost
+EHIUnlockableManager._achievement_data_sync =
 {
     [EHI.Trackers.Achievement.Base] =
     {
@@ -19,13 +19,13 @@ EHIAchievementManager._achievement_data_sync =
     }
 }
 ---@param ehi_tracker EHITrackerManager
-function EHIAchievementManager:new(ehi_tracker)
+function EHIUnlockableManager:new(ehi_tracker)
     self._trackers = ehi_tracker
     self._mission_achievements = {} --[[@as table<string, {class: string, started: boolean, sync_params: ParseAchievementDefinitionTable.sync_params, data: table, app_t: number }> ]]
     return self
 end
 
-function EHIAchievementManager:load(data)
+function EHIUnlockableManager:load(data)
     local load_data = data.EHIAchievementManager
     if load_data and EHI:ShowMissionAchievements() then
         for key, save_data in pairs(load_data) do
@@ -44,7 +44,7 @@ function EHIAchievementManager:load(data)
     end
 end
 
-function EHIAchievementManager:save(data)
+function EHIUnlockableManager:save(data)
     local save_data = {}
     local all_trackers = self._trackers._trackers --[[@as table<string, { tracker: EHIAchievementTracker }>]]
     for key, def in pairs(all_trackers) do
@@ -71,7 +71,7 @@ end
 
 ---@param achievement_id string
 ---@param id string
-function EHIAchievementManager:AddTFCallback(achievement_id, id)
+function EHIUnlockableManager:AddTFCallback(achievement_id, id)
     local cleanup_callback = function()
         managers.mission:remove_global_event_listener(id)
     end
@@ -85,7 +85,7 @@ function EHIAchievementManager:AddTFCallback(achievement_id, id)
 end
 
 ---@param def table<string, ParseAchievementDefinitionTable>
-function EHIAchievementManager:ParseAchievementDefinition(def)
+function EHIUnlockableManager:ParseAchievementDefinition(def)
     for key, value in pairs(def) do
         if value.difficulty_pass ~= false and not ((value.sync_params and value.sync_params.from_start) or value.load_sync) then -- Don't sync achievements that requires playing from start or clients have defined syncing function
             local achievement = { data = {} }
@@ -114,7 +114,7 @@ function EHIAchievementManager:ParseAchievementDefinition(def)
 end
 
 ---@param id string
-function EHIAchievementManager:SetAchievementStarted(id)
+function EHIUnlockableManager:SetAchievementStarted(id)
     local achievement = self._mission_achievements[id]
     if achievement then
         achievement.started = true
@@ -125,7 +125,7 @@ end
 ---@param id string
 ---@param key string
 ---@param value any
-function EHIAchievementManager:SetAchievementData(id, key, value)
+function EHIUnlockableManager:SetAchievementData(id, key, value)
     local achievement = self._mission_achievements[id]
     if achievement and achievement.data then
         achievement.data[key] = value
@@ -133,7 +133,7 @@ function EHIAchievementManager:SetAchievementData(id, key, value)
 end
 
 ---@param id string
-function EHIAchievementManager:SetAchievementDone(id)
+function EHIUnlockableManager:SetAchievementDone(id)
     local achievement = self._mission_achievements[id]
     if achievement then
         achievement.started = nil
@@ -141,14 +141,14 @@ function EHIAchievementManager:SetAchievementDone(id)
 end
 
 ---@param trigger ElementTrigger
-function EHIAchievementManager:StartAchievement(trigger)
+function EHIUnlockableManager:StartAchievement(trigger)
     self:SetAchievementStarted(trigger.id)
     self._trackers:AddTracker(trigger)
 end
 
 ---@param id string
 ---@param time_max number
-function EHIAchievementManager:AddTimedAchievementTracker(id, time_max)
+function EHIUnlockableManager:AddTimedAchievementTracker(id, time_max)
     local t = time_max - math.max(managers.ehi_manager._t, self._trackers._t)
     if t <= 0 then
         return
@@ -168,7 +168,7 @@ end
 ---@param progress number?
 ---@param show_finish_after_reaching_target boolean?
 ---@param class string?
-function EHIAchievementManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class)
+function EHIUnlockableManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class)
     self:SetAchievementStarted(id)
     self:SetAchievementData(id, "progress", progress or 0)
     self._trackers:AddTracker({
@@ -184,7 +184,7 @@ end
 
 ---@param id string
 ---@param status string?
-function EHIAchievementManager:AddAchievementStatusTracker(id, status)
+function EHIUnlockableManager:AddAchievementStatusTracker(id, status)
     self:SetAchievementStarted(id)
     self:SetAchievementData(id, "status", status or "ok")
     self._trackers:AddTracker({
@@ -199,7 +199,7 @@ end
 ---@param max number
 ---@param loot_counter_on_fail boolean?
 ---@param start_silent boolean?
-function EHIAchievementManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, start_silent)
+function EHIUnlockableManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, start_silent)
     self._trackers:AddTracker({
         id = id,
         max = max,
@@ -214,7 +214,7 @@ end
 ---@param id string
 ---@param max number
 ---@param show_finish_after_reaching_target boolean?
-function EHIAchievementManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target)
+function EHIUnlockableManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target)
     self._trackers:AddTracker({ -- `uno_1` achievement gets synced via `LootLoadSync` callback
         id = id,
         max = max,
@@ -227,7 +227,7 @@ end
 ---@param id string
 ---@param progress number
 ---@param max number
-function EHIAchievementManager:AddAchievementKillCounter(id, progress, max)
+function EHIUnlockableManager:AddAchievementKillCounter(id, progress, max)
     self._trackers:AddTracker({ -- Both `ranc_9` and `ranc_11` achievements are local only, no need to sync
         id = id,
         progress = progress,
@@ -239,26 +239,39 @@ end
 
 ---@param id string
 ---@param force boolean?
-function EHIAchievementManager:SetAchievementComplete(id, force)
+function EHIUnlockableManager:SetAchievementComplete(id, force)
     self:SetAchievementDone(id)
     self._trackers:CallFunction(id, "SetCompleted", force)
 end
 
 ---@param id string
-function EHIAchievementManager:SetAchievementFailed(id)
+function EHIUnlockableManager:SetAchievementFailed(id)
     self:SetAchievementDone(id)
     self._trackers:CallFunction(id, "SetFailed")
 end
 
 ---@param id string
-function EHIAchievementManager:SetAchievementFailedSilent(id)
+function EHIUnlockableManager:SetAchievementFailedSilent(id)
     self:SetAchievementDone(id)
     self._trackers:CallFunction(id, "SetFailedSilent")
 end
 
 ---@param id string
 ---@param status string
-function EHIAchievementManager:SetAchievementStatus(id, status)
+function EHIUnlockableManager:SetAchievementStatus(id, status)
     self:SetAchievementData(id, "status", status or "ok")
     self._trackers:CallFunction(id, "SetStatus", status)
+end
+
+---@param id string
+---@param max number
+---@param progress number?
+function EHIUnlockableManager:AddSHDailyProgressTracker(id, max, progress)
+    self._trackers:AddTracker({
+        id = id,
+        progress = progress,
+        max = max,
+        icons = { EHI.Icons.Trophy },
+        class = EHI.Trackers.SideJob.Progress
+    })
 end

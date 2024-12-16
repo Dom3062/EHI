@@ -4,11 +4,6 @@ if EHI:CheckLoadHook("EHIHealthFloatManager") then
 end
 
 ---@class EHIHealthFloatManager
----@field _ws Workspace Poco style
----@field _pnl Panel Poco style
----@field _float EHIHealthFloatCircle|EHIHealthFloatRect
----@field _floats table<string, EHIHealthFloatPoco?>
----@field _smokes table<string, Vector3>
 EHIHealthFloatManager = {}
 ---@param hud HUDManager
 ---@param hud_panel Panel
@@ -18,16 +13,14 @@ function EHIHealthFloatManager:new(hud, hud_panel)
         self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
     end
     hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
-    EHI:CallCallbackOnce("EHIHealthFloatManagerInit", self, hud_panel)
+    self:post_init(hud_panel)
 end
 
 if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
     local mvector3 = mvector3
     dofile(EHI.LuaPath .. "EHIHealthFloatPoco.lua")
-    EHI:AddCallback("EHIHealthFloatManagerInit",
-    ---@param self EHIHealthFloatManager
     ---@param hud_panel Panel
-    function(self, hud_panel)
+    function EHIHealthFloatManager:post_init(hud_panel)
         self._ws = managers.gui_data:create_fullscreen_workspace()
         self._pnl = self._ws:panel():panel({ layer = 4 })
         self._ww = self._pnl:w()
@@ -42,7 +35,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
             self._smokes[base._unit:key()] = nil
         end)
-    end)
+    end
 
     function EHIHealthFloatManager:onResolutionChanged()
         if alive(self._ws) then
@@ -168,26 +161,22 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
 else
     if EHI:GetOption("show_floating_health_bar_style") == 2 then
         dofile(EHI.LuaPath .. "EHIHealthFloatCircle.lua")
-        EHI:AddCallback("EHIHealthFloatManagerInit",
-        ---@param self EHIHealthFloatManager
         ---@param hud_panel Panel
-        function(self, hud_panel)
+        function EHIHealthFloatManager:post_init(hud_panel)
             self._float = EHIHealthFloatCircle:new(hud_panel)
             EHI:AddOnCustodyCallback(function(custody_state)
                 self._float:SetInCustody(custody_state)
             end)
-        end)
+        end
     else
         dofile(EHI.LuaPath .. "EHIHealthFloatRect.lua")
-        EHI:AddCallback("EHIHealthFloatManagerInit",
-        ---@param self EHIHealthFloatManager
         ---@param hud_panel Panel
-        function(self, hud_panel)
+        function EHIHealthFloatManager:post_init(hud_panel)
             self._float = EHIHealthFloatRect:new(hud_panel)
             EHI:AddOnCustodyCallback(function(custody_state)
                 self._float:SetInCustody(custody_state)
             end)
-        end)
+        end
     end
 
     function EHIHealthFloatManager:update_last()

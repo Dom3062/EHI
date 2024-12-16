@@ -2,7 +2,7 @@ local EHI = EHI
 
 ---@class EHIHookManager
 EHIHookManager = {}
-EHIHookManager._element_hook_function = EHI:IsClient() and "client_on_executed" or "on_executed"
+EHIHookManager._element_hook_function = EHI.IsClient and "client_on_executed" or "on_executed"
 ---@param ehi_tracker EHITrackerManager
 ---@param ehi_loot EHILootManager
 function EHIHookManager:new(ehi_tracker, ehi_loot)

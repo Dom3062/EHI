@@ -16,7 +16,7 @@ local triggers = {
 
     [101048] = { time = 12, id = "ObjectiveDelay", icons = { Icon.Wait }, hint = Hints.Wait }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[101034].client = { time = 80, random_time = 10, special_function = SF.UnpauseTrackerIfExists }
     triggers[101535].client = { time = 90, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
 end

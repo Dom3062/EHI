@@ -12,8 +12,7 @@ function EHIGroupTracker:post_init(params)
     if params.unit then
         self._hide_on_delete = true
         self:AddUnit()
-    end
-    if not self._hide_on_delete then
+    else
         self:Add(params.time or 0, params.timer_id)
     end
 end

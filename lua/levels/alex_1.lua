@@ -74,7 +74,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101134] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-if EHI:IsClient() then
+if EHI.IsClient then
     local EM = managers.ehi_manager
     ---@param self LootManager
     local function SyncBagsCooked(self)

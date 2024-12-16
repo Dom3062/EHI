@@ -191,7 +191,7 @@ EHI.Manager:AddLoadSyncFunction(function(self)
         return
     end
     local function fail(...)
-        managers.ehi_achievement:SetAchievementFailed("voff_1")
+        managers.ehi_unlockable:SetAchievementFailed("voff_1")
     end
     for _, dog_hater in ipairs(dog_haters_unit) do
         local name_key = dog_hater:name():key()
@@ -203,13 +203,13 @@ EHI.Manager:AddLoadSyncFunction(function(self)
     if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or
         (secure_area_2:_is_inside(pos_1) and secure_area_2:_is_inside(pos_2)) or
         (secure_area_3:_is_inside(pos_1) and secure_area_3:_is_inside(pos_2)) then
-        self._achievements:SetAchievementStatus("voff_1", "finish")
+        self._unlockable:SetAchievementStatus("voff_1", "finish")
     end
 end)
 EHI:AddOnSpawnedCallback(function()
     if EHI:IsPlayingFromStart() then
         local function fail(...)
-            managers.ehi_achievement:SetAchievementFailed("voff_1")
+            managers.ehi_unlockable:SetAchievementFailed("voff_1")
         end
         local count = 0
         for _, data in pairs(managers.enemy:all_civilians()) do
@@ -223,7 +223,7 @@ EHI:AddOnSpawnedCallback(function()
             end
         end
         dog_haters = nil
-        if count ~= 2 or EHI:IsHost() or managers.ehi_tracker:TrackerExists("voff_1") then
+        if count ~= 2 or EHI.IsHost or managers.ehi_tracker:TrackerExists("voff_1") then
             return
         end
         managers.ehi_manager:Trigger(105665)

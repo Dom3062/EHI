@@ -58,7 +58,7 @@ local triggers = {
     [102814] = { time = 180, id = "Safe", icons = { Icon.Winch }, special_function = SF.UnpauseTrackerIfExists, class = TT.Pausable, hint = Hints.Winch },
     [102815] = { id = "Safe", special_function = SF.PauseTracker }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100216] = { additional_time = 662/30, random_time = 10, id = "EscapeBoat", icons = Icon.BoatEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
 end
 

@@ -92,7 +92,8 @@ function EHIMenu:init()
         word_wrap = true,
     })
     local options_bg = self._panel:bitmap({
-        texture = "guis/textures/pd2_mod_ehi/menu_background",
+        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
+        texture_rect = { 0, 0, 416, 150 },
         w = self._panel:w() / 2.5,
         h = self._panel:h(),
     })
@@ -1211,7 +1212,8 @@ function EHIMenu:CreateToggle(menu, params)
     end
     local check_bg = toggle_panel:bitmap({
         name = "check_bg",
-        texture = "guis/textures/pd2_mod_ehi/check_bg",
+        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
+        texture_rect = { 0, 150, 40, 41 },
         x = 2,
         y = 2,
         w = 22,
@@ -1221,7 +1223,8 @@ function EHIMenu:CreateToggle(menu, params)
     })
     local check = toggle_panel:bitmap({
         name = "check",
-        texture = "guis/textures/pd2_mod_ehi/check",
+        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
+        texture_rect = { 40, 150, 40, 41 },
         x = 2,
         y = 2,
         w = params.value and 22 or 44,
@@ -1973,12 +1976,16 @@ function EHIMenu:IsAssaultTrackerEnabled()
     return EHI:IsAssaultTrackerEnabled()
 end
 
-function EHIMenu:UpdateAssaultDiff(menu, item)
+function EHIMenu:UpdateAssaultOptions(menu, item)
     local enabled = self:IsAssaultTrackerEnabled()
+    local items =
+    {
+        ehi_show_assault_diff_in_assault_trackers_choice = true,
+        ehi_show_assault_enemy_count_choice = true
+    }
     for _, m_item in ipairs(menu.items) do
-        if m_item.id == "ehi_show_assault_diff_in_assault_trackers_choice" then
+        if items[m_item.id or ""] then
             self:AnimateItemEnabled(m_item, enabled)
-            break
         end
     end
 end

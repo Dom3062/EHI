@@ -69,7 +69,7 @@ local triggers =
         self:UpdateWaypointTriggerIcon(103053, Icon.Defend) -- Cops can turn off the checking device, change the waypoint icon to reflect this
     end), trigger_once = true } -- Alarm
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[102454].client = { time = 60, random_time = 20, special_function = SF.UnpauseTrackerIfExists }
     triggers[102656].client = { time = 100, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
     triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate, hint = Hints.FuelTransfer }

@@ -91,7 +91,7 @@
             "id": "ehi_time_format_choice",
             "title": "ehi_time_format",
             "description": "ehi_time_format_desc",
-            "callback": ["SetOption", "UpdateFormat"],
+            "callback": ["SetOption", "UpdateTimeFormat"],
             "callback_arguments": "time_format",
             "items": [
                 "ehi_time_format_1",

@@ -31,7 +31,7 @@ local achievements =
         },
         load_sync = function(self)
             if self.ConditionFunctions.IsStealth() then
-                self._achievements:AddAchievementStatusTracker("armored_6")
+                self._unlockable:AddAchievementStatusTracker("armored_6")
             end
         end
     }

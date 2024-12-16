@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("HuskCivilianDamage") or EHI:IsHost() or not EHI:CanShowCivilianCountTracker() or EHI:GetOption("civilian_count_tracker_format") == 1 then
+if EHI:CheckLoadHook("HuskCivilianDamage") or EHI.IsHost or not EHI:CanShowCivilianCountTracker() or EHI:GetOption("civilian_count_tracker_format") == 1 then
     return
 end
 

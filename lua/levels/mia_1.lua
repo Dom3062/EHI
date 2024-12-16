@@ -29,7 +29,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     Heli = 3 + 60 + 23 + 5
     Truck = 60
 end
-local client = EHI:IsClient()
+local client = EHI.IsClient
 for _, index in ipairs(MethlabIndex) do
     -- Cooking restart
     for i = 100120, 100122, 1 do

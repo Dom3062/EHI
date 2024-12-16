@@ -11,93 +11,91 @@ local function GetIcon(icon)
 end
 
 ---@param panel Panel
----@param params table
+---@param params Panel_Params
 ---@param config table
----@return Panel
 local function HUDBGBox_create(panel, params, config) -- Not available when called from menu
-	local box_panel = panel:panel(params)
-	local color = config and config.color or Color.white
-	local bg_color = config and config.bg_color or Color(1, 0, 0, 0)
+    local box_panel = panel:panel(params)
     local corner_visible = config.bg_visible and config.corner_visible
 
-	box_panel:rect({
-		blend_mode = "normal",
-		name = "bg",
-		halign = "grow",
-		alpha = 0.25,
-		layer = -1,
-		valign = "grow",
-		color = bg_color,
+    box_panel:rect({
+        blend_mode = "normal",
+        name = "bg",
+        halign = "grow",
+        alpha = 0.25,
+        layer = -1,
+        valign = "grow",
+        color = Color(1, 0, 0, 0),
         visible = config.bg_visible
-	})
+    })
 
-	box_panel:bitmap({
-		texture = "guis/textures/pd2_mod_ehi/hud_corner",
-		name = "left_top",
-		visible = corner_visible or (config.alignment == 1 and params.first),
-		layer = 0,
-		y = 0,
-		halign = "left",
-		x = 0,
-		valign = "top",
-		color = color,
-		blend_mode = "add"
-	})
-	local left_bottom = box_panel:bitmap({
-		texture = "guis/textures/pd2_mod_ehi/hud_corner",
-		name = "left_bottom",
-		visible = corner_visible or (config.alignment == 2 and params.first),
-		layer = 0,
-		x = 0,
-		y = 0,
-		halign = "left",
-		rotation = -90,
-		valign = "bottom",
-		color = color,
-		blend_mode = "add"
-	})
+    local corner_texture_rect = { 80, 150, 8, 8 }
+    box_panel:bitmap({
+        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
+        texture_rect = corner_texture_rect,
+        name = "left_top",
+        visible = corner_visible,
+        layer = 0,
+        y = 0,
+        halign = "left",
+        x = 0,
+        valign = "top",
+        color = Color.white,
+        blend_mode = "add"
+    })
+    local left_bottom = box_panel:bitmap({
+        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
+        texture_rect = corner_texture_rect,
+        name = "left_bottom",
+        visible = corner_visible,
+        layer = 0,
+        x = 0,
+        y = 0,
+        halign = "left",
+        rotation = -90,
+        valign = "bottom",
+        color = Color.white,
+        blend_mode = "add"
+    })
+    left_bottom:set_bottom(box_panel:h())
+    local right_top = box_panel:bitmap({
+        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
+        texture_rect = corner_texture_rect,
+        name = "right_top",
+        visible = corner_visible,
+        layer = 0,
+        x = 0,
+        y = 0,
+        halign = "right",
+        rotation = 90,
+        valign = "top",
+        color = Color.white,
+        blend_mode = "add"
+    })
+    right_top:set_right(box_panel:w())
+    local right_bottom = box_panel:bitmap({
+        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
+        texture_rect = corner_texture_rect,
+        name = "right_bottom",
+        visible = corner_visible,
+        layer = 0,
+        x = 0,
+        y = 0,
+        halign = "right",
+        rotation = 180,
+        valign = "bottom",
+        color = Color.white,
+        blend_mode = "add"
+    })
+    right_bottom:set_right(box_panel:w())
+    right_bottom:set_bottom(box_panel:h())
 
-	left_bottom:set_bottom(box_panel:h())
-
-	local right_top = box_panel:bitmap({
-		texture = "guis/textures/pd2_mod_ehi/hud_corner",
-		name = "right_top",
-		visible = corner_visible or (config.alignment <= 2 and config.vertical_anim_left and params.first),
-		layer = 0,
-		x = 0,
-		y = 0,
-		halign = "right",
-		rotation = 90,
-		valign = "top",
-		color = color,
-		blend_mode = "add"
-	})
-
-	right_top:set_right(box_panel:w())
-
-	local right_bottom = box_panel:bitmap({
-		texture = "guis/textures/pd2_mod_ehi/hud_corner",
-		name = "right_bottom",
-		visible = corner_visible,
-		layer = 0,
-		x = 0,
-		y = 0,
-		halign = "right",
-		rotation = 180,
-		valign = "bottom",
-		color = color,
-		blend_mode = "add"
-	})
-
-	right_bottom:set_right(box_panel:w())
-	right_bottom:set_bottom(box_panel:h())
-
-	return box_panel
+    return box_panel
 end
 
 ---@class FakeEHITracker : EHITracker
 ---@field _icons PanelBitmap[]
 ---@field _text_color Color?
+---@field _UPDATE_TIME_FORMAT_DISABLED boolean
 FakeEHITracker = class()
 FakeEHITracker.pre_init = EHITracker.pre_init
 FakeEHITracker.post_init = EHITracker.post_init
@@ -115,11 +113,13 @@ FakeEHITracker._selected_color = Color(255, 255, 165, 0) / 255
 ---@param parent_class FakeEHITrackerManager
 function FakeEHITracker:init(panel, params, parent_class)
     self:pre_init(params)
+    self._format = params.format
     self._scale = params.scale --[[@as number]]
     self._text_scale = params.text_scale --[[@as number]]
     self._first = params.first
     self._tracker_alignment = params.tracker_alignment
     self._tracker_vertical_anim_left = params.tracker_vertical_anim == 2
+    self._corners_visible = params.corners
     self._icons = {}
     self._n_of_icons = 0
     self._bg_box_w = 64 * self._scale
@@ -149,11 +149,9 @@ function FakeEHITracker:init(panel, params, parent_class)
         h = self._icon_size_scaled
     }, {
         bg_visible = params.bg,
-        corner_visible = params.corners,
-        first = self._first,
-        alignment = self._tracker_alignment,
-        vertical_anim_left = self._tracker_vertical_anim_left
+        corner_visible = self._corners_visible
     })
+    self:UpdateCornerVisibility(params.bg and self._corners_visible)
     if params.extend then
         self:SetBGSize()
     elseif params.extend_half then
@@ -166,7 +164,7 @@ function FakeEHITracker:init(panel, params, parent_class)
         w = params.extend_half and self._bg_box:w() or (64 * self._scale),
         h = self._bg_box:h(),
         font = tweak_data.menu.pd2_large_font,
-		font_size = self._panel:h() * self._text_scale,
+        font_size = self._panel:h() * self._text_scale,
         color = params.text_color or self._text_color or Color.white
     })
     self:FitTheText()
@@ -197,6 +195,12 @@ function FakeEHITracker:init(panel, params, parent_class)
     self:post_init(params)
 end
 
+function FakeEHITracker:UpdateBorderConfig()
+    if self._first then
+        self._parent_class:_update_border_color(self._bg_box)
+    end
+end
+
 ---`self._bg_box:right() - self._bg_box:x()`
 function FakeEHITracker:GetBGBoxRight()
     return self._bg_box:right() - self._bg_box:x()
@@ -220,16 +224,23 @@ function FakeEHITracker:SetIconX(previous_icon, icon)
     end
 end
 
----@param format number?
-function FakeEHITracker:UpdateFormat(format)
-    self._text:set_text(self:Format(format))
+function FakeEHITracker:UpdateTimeFormat()
+    if self._UPDATE_TIME_FORMAT_DISABLED then
+        return
+    end
+    self._text:set_text(self:Format())
     self:FitTheText()
 end
 
----@param format number?
-function FakeEHITracker:Format(format)
-    format = format or EHI:GetOption("time_format") --[[@as number]]
-    if format == 1 then
+---@param format_key string
+---@param format any
+---@param reposition boolean?
+---@param from_init boolean?
+function FakeEHITracker:UpdateInternalFormat(format_key, format, reposition, from_init)
+end
+
+function FakeEHITracker:Format()
+    if self._format.time == 1 then
         return tweak_data.ehi.functions.FormatSecondsOnly(self)
     else
         return tweak_data.ehi.functions.FormatMinutesAndSeconds(self)
@@ -287,10 +298,29 @@ end
 
 ---@param visibility boolean
 function FakeEHITracker:UpdateCornerVisibility(visibility)
-    self._bg_box:child("left_top"):set_visible(visibility or (self._tracker_alignment == 1 and self._first))
-    self._bg_box:child("left_bottom"):set_visible(visibility or (self._tracker_alignment == 2 and self._first))
-    self._bg_box:child("right_top"):set_visible(visibility or (self._tracker_alignment <= 2 and self._tracker_vertical_anim_left and self._first))
-    self._bg_box:child("right_bottom"):set_visible(visibility)
+    self._corners_visible = visibility
+    self._bg_box:child("left_top"):set_visible(false)
+    self._bg_box:child("left_bottom"):set_visible(false)
+    self._bg_box:child("right_top"):set_visible(false)
+    self._bg_box:child("right_bottom"):set_visible(false)
+    if visibility then
+        self._bg_box:child("left_top"):set_visible(true)
+        self._bg_box:child("left_bottom"):set_visible(true)
+        self._bg_box:child("right_top"):set_visible(true)
+        self._bg_box:child("right_bottom"):set_visible(true)
+    elseif not self._first then
+        return
+    elseif self._tracker_alignment == 2 then
+        if self._tracker_vertical_anim_left then
+            self._bg_box:child("right_bottom"):set_visible(true)
+        else
+            self._bg_box:child("left_bottom"):set_visible(true)
+        end
+    elseif self._tracker_alignment <= 2 and self._tracker_vertical_anim_left then
+        self._bg_box:child("right_top"):set_visible(true)
+    else
+        self._bg_box:child("left_top"):set_visible(true)
+    end
 end
 
 ---@param visibility boolean
@@ -309,10 +339,8 @@ function FakeEHITracker:UpdateIcons()
 end
 
 ---@param pos number
-function FakeEHITracker:UpdateIconsPos(pos)
+function FakeEHITracker:UpdateIconsPosition(pos)
     self.__icon_pos_left = pos == 1
-    self._bg_box:set_x(pos == 1 and (self._icon_gap_size_scaled * self._n) or 0)
-    self:SetIconsX()
 end
 
 ---@param color Color?
@@ -335,6 +363,8 @@ function FakeEHITracker:UpdateTrackerVerticalAnim(anim)
         return
     end
     self._tracker_vertical_anim_left = vertical
+    self:UpdateBorderConfig()
+    self:UpdateCornerVisibility(self._bg_box:child("bg"):visible() and self._corners_visible)
 end
 
 function FakeEHITracker:GetSize()
@@ -366,31 +396,28 @@ end
 ---@field super FakeEHITracker
 FakeEHITradeDelayTracker = class(FakeEHITracker)
 function FakeEHITradeDelayTracker:pre_init(params)
-    self._civilians_format = EHI:GetOption("show_trade_delay_amount_of_killed_civilians") --[[@as boolean]]
     self._civilians_killed = math.random(1, 8)
     params.time = 5 + (self._civilians_killed * 30)
 end
 
 ---@param format boolean
-function FakeEHITradeDelayTracker:UpdateFormat(format)
-    if self._civilians_format == format then
+function FakeEHITradeDelayTracker:UpdateInternalFormat(format_key, format)
+    if format_key ~= "killed_civilians" then
         return
-    end
-    self._civilians_format = format
-    if format then
+    elseif format then
         self:SetBGSize(self._bg_box:w() / 2)
     else
         self:SetBGSize(64 * self._scale, "set")
     end
     self._text:set_w(self._bg_box:w())
+    self:UpdateTimeFormat()
+    self:SetIconsX()
     self:Reposition()
-    FakeEHITradeDelayTracker.super.UpdateFormat(self)
 end
 
----@param format number?
-function FakeEHITradeDelayTracker:Format(format)
-    local s = FakeEHITradeDelayTracker.super.Format(self, format)
-    return self._civilians_format and string.format("%s (%d)", s, self._civilians_killed) or s
+function FakeEHITradeDelayTracker:Format()
+    local s = FakeEHITradeDelayTracker.super.Format(self)
+    return self._format.killed_civilians and string.format("%s (%d)", s, self._civilians_killed) or s
 end
 
 ---@class FakeEHIXPTracker : FakeEHITracker
@@ -400,7 +427,7 @@ function FakeEHIXPTracker:pre_init(...)
     self._xp = math.random(1000, 1000000)
 end
 
-function FakeEHIXPTracker:Format(format)
+function FakeEHIXPTracker:Format()
     return managers.experience:cash_string(self._xp, "+")
 end
 
@@ -412,7 +439,7 @@ function FakeEHIProgressTracker:pre_init(params)
     self._max = params.max or 10
 end
 
-function FakeEHIProgressTracker:Format(format)
+function FakeEHIProgressTracker:Format()
     return self._progress .. "/" .. self._max
 end
 
@@ -423,63 +450,57 @@ function FakeEHIChanceTracker:pre_init(params)
     self._chance = params.chance or (math.random(1, 10) * 5)
 end
 
-function FakeEHIChanceTracker:Format(format)
+function FakeEHIChanceTracker:Format()
     return self._chance .. "%"
 end
 
 ---@class FakeEHIEquipmentTracker : FakeEHITracker
 ---@field super FakeEHITracker
 FakeEHIEquipmentTracker = class(FakeEHITracker)
+FakeEHIEquipmentTracker._UPDATE_TIME_FORMAT_DISABLED = true
 function FakeEHIEquipmentTracker:pre_init(params)
     self._show_placed = params.show_placed
     self._charges = math.random(params.min or 2, params.charges or 16)
     self._placed = self._charges > 4 and math.ceil(self._charges / 4) or 1
 end
 
-function FakeEHIEquipmentTracker:Format(format)
-    return self:EquipmentFormat()
-end
-
-function FakeEHIEquipmentTracker:EquipmentFormat(format)
-    format = format or EHI:GetOption("equipment_format")
-    if format == 1 then -- Uses (Bags placed)
+function FakeEHIEquipmentTracker:Format()
+    if self._format.equipment == 1 then -- Uses (Bags placed)
         if self._show_placed then
             return self._charges .. " (" .. self._placed .. ")"
         else
             return tostring(self._charges)
         end
-    elseif format == 2 then -- (Bags placed) Uses
+    elseif self._format.equipment == 2 then -- (Bags placed) Uses
         if self._show_placed then
             return "(" .. self._placed .. ") " .. self._charges
         else
             return tostring(self._charges)
         end
-    elseif format == 3 then -- (Uses) Bags placed
+    elseif self._format.equipment == 3 then -- (Uses) Bags placed
         if self._show_placed then
             return "(" .. self._charges .. ") " .. self._placed
         else
             return tostring(self._charges)
         end
-    elseif format == 4 then -- Bags placed (Uses)
+    elseif self._format.equipment == 4 then -- Bags placed (Uses)
         if self._show_placed then
             return self._placed .. " (" .. self._charges .. ")"
         else
             return tostring(self._charges)
         end
-    elseif format == 5 then -- Uses
+    elseif self._format.equipment == 5 then -- Uses
         return tostring(self._charges)
-    else -- Bags placed
-        if self._show_placed then
-            return tostring(self._placed)
-        else
-            return tostring(self._charges)
-        end
+    elseif self._show_placed then -- Bags placed
+        return tostring(self._placed)
+    else
+        return tostring(self._charges)
     end
 end
 
-function FakeEHIEquipmentTracker:UpdateEquipmentFormat(format)
+function FakeEHIEquipmentTracker:UpdateEquipmentFormat()
     self._text:set_font_size(self._panel:h() * self._text_scale)
-    self._text:set_text(self:EquipmentFormat(format))
+    self._text:set_text(self:Format())
     self:FitTheText()
 end
 
@@ -506,19 +527,20 @@ function FakeEHIMinionTracker:post_init(params)
         w = self._bg_box:w(),
         visible = false
     })
-    self:UpdateFormat(EHI:GetOption("show_minion_option"), true)
+    self:UpdateInternalFormat("minion", self._format.minion, false, true)
     self:SetMinionHealth(EHI:GetOption("show_minion_health"), true)
 end
 
----@param value number
----@param from_init boolean
-function FakeEHIMinionTracker:UpdateFormat(value, from_init)
-    self._icons[1]:set_color(value == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
-    self._text_second_player:set_visible(value == 3)
-    self._text:set_text(tostring(value == 2 and (self._charges + self._charges_second_player) or self._charges))
-    self._text:set_color(value == 3 and self._parent_class:GetLocalPeerColor() or Color.white)
-    self._format = value
-    if value == 3 then
+---@param format number
+function FakeEHIMinionTracker:UpdateInternalFormat(format_key, format, reposition, from_init)
+    if format_key ~= "minion" then
+        return
+    end
+    self._icons[1]:set_color(format == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
+    self._text_second_player:set_visible(format == 3)
+    self._text:set_text(tostring(format == 2 and (self._charges + self._charges_second_player) or self._charges))
+    self._text:set_color(format == 3 and self._parent_class:GetLocalPeerColor() or Color.white)
+    if format == 3 then
         self._text:set_w(self._bg_box_w / 2)
     else
         self._text:set_w(self._bg_box:w())
@@ -527,7 +549,7 @@ function FakeEHIMinionTracker:UpdateFormat(value, from_init)
     if from_init then
         return
     end
-    if value == 1 and self._show_minion_health then
+    if format == 1 and self._show_minion_health then
         if self._size_increased then
             self._size_increased = nil
             self:SetBGSize(self._bg_box_w, "set")
@@ -548,7 +570,7 @@ function FakeEHIMinionTracker:UpdateFormat(value, from_init)
         self._second_minion_health:set_visible(true)
         self._text:set_visible(false)
         self._minion_health_repositioned = true
-    elseif value == 2 and self._show_minion_health and self._minion_health_repositioned then
+    elseif format == 2 and self._show_minion_health and self._minion_health_repositioned then
         self._minion_health_repositioned = nil
         self._text:set_visible(true)
         self._first_minion_health:set_color(Color.white)
@@ -562,7 +584,7 @@ function FakeEHIMinionTracker:UpdateFormat(value, from_init)
 end
 
 function FakeEHIMinionTracker:SetTextColor()
-    self._text:set_color(self._selected and self._selected_color or (self._format == 3 and self._parent_class:GetLocalPeerColor() or Color.white))
+    self._text:set_color(self._selected and self._selected_color or (self._format.minion == 3 and self._parent_class:GetLocalPeerColor() or Color.white))
     self._text_second_player:set_color(self._selected and self._selected_color or self._color_second_player)
     if self._minion_health_repositioned then
         self._first_minion_health:set_color(self._selected and self._selected_color or Color.white)
@@ -575,7 +597,7 @@ end
 function FakeEHIMinionTracker:SetMinionHealth(health, from_init)
     self._show_minion_health = health
     if health then
-        if self._format >= 2 then
+        if self._format.minion >= 2 then
             self._size_increased = true
             self:SetBGSize()
             self:SetIconsX()
@@ -620,7 +642,7 @@ function FakeEHICountTracker:pre_init(params)
     self._count = params.count
 end
 
-function FakeEHICountTracker:Format(format)
+function FakeEHICountTracker:Format()
     return tostring(self._count)
 end
 
@@ -629,40 +651,42 @@ end
 FakeEHIEnemyCountTracker = class(FakeEHICountTracker)
 function FakeEHIEnemyCountTracker:init(...)
     self._alarm_count = math.random(0, 10)
-    self._format_alarm = EHI:GetOption("show_enemy_count_show_pagers") --[[@as boolean]]
     FakeEHIEnemyCountTracker.super.init(self, ...)
 end
 
 function FakeEHIEnemyCountTracker:GetSize()
-    if self._n >= 2 and not self._format_alarm then
+    if self._n >= 2 and not self._format.show_alarm_enemies then
         return self._bg_box:w() + self._icon_gap_size_scaled
     end
     return FakeEHIEnemyCountTracker.super.GetSize(self)
 end
 
-function FakeEHIEnemyCountTracker:Format(format)
-    if self._format_alarm then
+function FakeEHIEnemyCountTracker:Format()
+    if self._format.show_alarm_enemies then
         return self._alarm_count .. "|" .. self._count
     end
-    return FakeEHIEnemyCountTracker.super.Format(self, format)
+    return FakeEHIEnemyCountTracker.super.Format(self)
 end
 
-function FakeEHIEnemyCountTracker:UpdateFormat(format)
-    self._format_alarm = format --[[@as boolean]]
-    FakeEHIEnemyCountTracker.super.UpdateFormat(self, format)
+function FakeEHIEnemyCountTracker:UpdateInternalFormat(format_key, format)
+    if format_key ~= "show_alarm_enemies" then
+        return
+    end
+    self._text:set_text(self:Format())
+    self:FitTheText()
     self:UpdateIconPos(true)
 end
 
 ---@param reposition boolean?
 function FakeEHIEnemyCountTracker:UpdateIconPos(reposition)
     if self._n == 1 then -- 1 icon
-        self._icons[1]:set_visible(self._format_alarm)
-        self._icons[2]:set_visible(not self._format_alarm)
+        self._icons[1]:set_visible(self._format.show_alarm_enemies)
+        self._icons[2]:set_visible(not self._format.show_alarm_enemies)
         self._icons[2]:set_x(self._icons[1]:x())
     else
-        self._icons[1]:set_visible(self._format_alarm)
+        self._icons[1]:set_visible(self._format.show_alarm_enemies)
         self._icons[2]:set_visible(true)
-        if self._format_alarm then
+        if self._format.show_alarm_enemies then
             self._icons[2]:set_x(self._icons[1]:x() + self._icon_gap_size_scaled)
         else
             self._icons[2]:set_x(self._icons[1]:x())
@@ -710,33 +734,34 @@ end
 ---@class FakeEHICivilianCountTracker : FakeEHICountTracker
 ---@field super FakeEHICountTracker
 FakeEHICivilianCountTracker = class(FakeEHICountTracker)
-FakeEHICivilianCountTracker._ehi_option = "civilian_count_tracker_format"
+FakeEHICivilianCountTracker._UPDATE_TIME_FORMAT_DISABLED = true
 function FakeEHICivilianCountTracker:pre_init(...)
     FakeEHICivilianCountTracker.super.pre_init(self, ...)
     self._tied_count = math.random(0, self._count)
-    self._format_civilian = EHI:GetOption(self._ehi_option)
 end
 
 function FakeEHICivilianCountTracker:GetSize()
-    if self._n >= 2 and self._format_civilian == 1 then
+    if self._n >= 2 and self._format.civilian_count == 1 then
         return self._bg_box:w() + self._icon_gap_size_scaled
     end
     return FakeEHICivilianCountTracker.super.GetSize(self)
 end
 
-function FakeEHICivilianCountTracker:UpdateFormat(format)
-    self._format_civilian = format
-    FakeEHICivilianCountTracker.super.UpdateFormat(self, format)
+function FakeEHICivilianCountTracker:UpdateInternalFormat(format_key, format)
+    if format_key ~= "civilian_count" then
+        return
+    end
+    self._text:set_text(self:Format())
+    self:FitTheText()
     self:UpdateIconPos(true)
 end
 
-function FakeEHICivilianCountTracker:Format(format)
-    format = format or self._format_civilian
-    if format == 1 then
+function FakeEHICivilianCountTracker:Format()
+    if self._format.civilian_count == 1 then
         return tostring(self._count)
     else
         local untied = self._count - self._tied_count
-        if format == 2 then
+        if self._format.civilian_count == 2 then
             return self._tied_count .. "|" .. untied
         else
             return untied .. "|" .. self._tied_count
@@ -750,8 +775,8 @@ function FakeEHICivilianCountTracker:UpdateIconPos(reposition)
         self:SetIconX()
         self._icons[2]:set_visible(false)
     else
-        self._icons[2]:set_visible(self._format_civilian >= 2)
-        if self._format_civilian == 2 then
+        self._icons[2]:set_visible(self._format.civilian_count >= 2)
+        if self._format.civilian_count == 2 then
             self:SetIconX(nil, self._icons[2])
             self:SetIconX(self._icons[2])
         else
@@ -764,7 +789,7 @@ function FakeEHICivilianCountTracker:UpdateIconPos(reposition)
 end
 
 function FakeEHICivilianCountTracker:UpdateIcons()
-    self._icons[2]:set_visible(self._format_civilian >= 2)
+    self._icons[2]:set_visible(self._format.civilian_count >= 2)
 end
 
 function FakeEHICivilianCountTracker:UpdateIconsVisibility(...)
@@ -775,23 +800,21 @@ end
 ---@class FakeEHIHostageCountTracker : FakeEHICivilianCountTracker
 ---@field super FakeEHICivilianCountTracker
 FakeEHIHostageCountTracker = class(FakeEHICivilianCountTracker)
-FakeEHIHostageCountTracker._ehi_option = "hostage_count_tracker_format"
 function FakeEHIHostageCountTracker:pre_init(...)
     FakeEHIHostageCountTracker.super.pre_init(self, ...)
     self._tied_count = math.random(0, math.floor(self._count / 2))
 end
 
-function FakeEHIHostageCountTracker:Format(format)
-    format = format or self._format_civilian
-    if format == 1 then
+function FakeEHIHostageCountTracker:Format()
+    if self._format.hostage_count == 1 then
         return tostring(self._count)
     else
         local civilian_hostages = self._count - self._tied_count
-        if format == 2 then
+        if self._format.hostage_count == 2 then
             return self._count .. "|" .. self._tied_count
-        elseif format == 3 then
+        elseif self._format.hostage_count == 3 then
             return self._tied_count .. "|" .. self._count
-        elseif format == 4 then
+        elseif self._format.hostage_count == 4 then
             return civilian_hostages .. "|" .. self._tied_count
         else
             return self._tied_count .. "|" .. civilian_hostages
@@ -800,14 +823,14 @@ function FakeEHIHostageCountTracker:Format(format)
 end
 
 function FakeEHIHostageCountTracker:UpdateIconPos(...)
-    local original_format = self._format_civilian
-    if self._format_civilian == 2 then
-        self._format_civilian = 3
-    elseif self._format_civilian == 3 or self._format_civilian == 5 then
-        self._format_civilian = 2
+    local original_format = self._format.hostage_count
+    if self._format.hostage_count == 2 then
+        self._format.hostage_count = 3
+    elseif self._format.hostage_count == 3 or self._format.hostage_count == 5 then
+        self._format.hostage_count = 2
     end
     FakeEHIHostageCountTracker.super.UpdateIconPos(self, ...)
-    self._format_civilian = original_format
+    self._format.hostage_count = original_format
 end
 
 ---@class FakeEHIAssaultTimeTracker : FakeEHITracker, FakeEHIChanceTracker, FakeEHICountTracker
@@ -835,14 +858,12 @@ function FakeEHIAssaultTimeTracker:post_init(params)
     self._enemy_count_text = self:CreateText({
         text = self:FormatCount()
     })
-    self:UpdateFormat(EHI:GetOption("show_assault_diff_in_assault_trackers"), false, true)
-    self:UpdateFormat2(EHI:GetOption("show_assault_enemy_count"), false, true)
+    self:UpdateInternalFormat(EHI:GetOption("show_assault_diff_in_assault_trackers"), false, true)
+    self:UpdateInternalFormat2(EHI:GetOption("show_assault_enemy_count"), false, true)
 end
 
 ---@param format boolean
----@param reposition boolean?
----@param from_init boolean?
-function FakeEHIAssaultTimeTracker:UpdateFormat(format, reposition, from_init)
+function FakeEHIAssaultTimeTracker:UpdateInternalFormat(format, reposition, from_init)
     if self._show_diff == format then
         return
     end
@@ -869,7 +890,8 @@ end
 
 ---@param format boolean
 ---@param reposition boolean?
-function FakeEHIAssaultTimeTracker:UpdateFormat2(format, reposition, from_init)
+---@param from_init boolean?
+function FakeEHIAssaultTimeTracker:UpdateInternalFormat2(format, reposition, from_init)
     if self._show_enemy_count == format then
         return
     end
@@ -900,6 +922,7 @@ end
 ---@class FakeEHISniperTracker : FakeEHITracker
 ---@field super FakeEHITracker
 FakeEHISniperTracker = class(FakeEHITracker)
+FakeEHISniperTracker._UPDATE_TIME_FORMAT_DISABLED = true
 function FakeEHISniperTracker:post_init(params)
     self._text:set_text(tostring(math.random(1, 4)))
     self._text:set_w(self._bg_box:w() / 2)

@@ -1,9 +1,4 @@
-local EHI = EHI
-if EHI:CheckLoadHook("VehicleDrivingExt") then
-    return
-end
-
-if EHI:IsTradeTrackerDisabled() or EHI:GetOption("show_trade_delay_option") == 2 then
+if EHI:CheckLoadHook("VehicleDrivingExt") or EHI:IsTradeTrackerDisabled() or EHI:GetOption("show_trade_delay_option") == 2 then
     return
 end
 

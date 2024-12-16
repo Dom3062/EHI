@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("CivilianLogicSurrender") or EHI:IsClient() or not EHI:CanShowCivilianCountTracker() or EHI:GetOption("civilian_count_tracker_format") == 1 then
+if EHI:CheckLoadHook("CivilianLogicSurrender") or EHI.IsClient or not EHI:CanShowCivilianCountTracker() or EHI:GetOption("civilian_count_tracker_format") == 1 then
     return
 end
 

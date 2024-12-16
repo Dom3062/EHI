@@ -148,7 +148,7 @@ EHI.Manager:ParseTriggers({
 })
 
 local tbl = {}
-if EHI:GetOption("show_waypoints") then
+if EHI:GetWaypointOption("show_waypoints_mission") then
     local function f(id, unit_data, unit)
         local trigger_id = unit_data.trigger_id
         managers.ehi_manager:AddWaypointToTrigger(trigger_id, { unit = unit })

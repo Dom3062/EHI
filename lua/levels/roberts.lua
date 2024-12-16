@@ -32,7 +32,7 @@ local triggers = {
     [102940] = { time = 10, id = "AnswerPhone", icons = { Icon.Phone }, class = TT.Warning, hint = Hints.PickUpPhone, remove_on_alarm = true },
     [102945] = { id = "AnswerPhone", special_function = SF.RemoveTracker }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[101934] = EHI:ClientCopyTrigger(triggers[101929], { time = delay })
 end
 

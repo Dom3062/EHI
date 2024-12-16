@@ -89,7 +89,7 @@ elseif Global.game_settings.level_id == "rvd1" then
     EHIHealthFloatRect._unit_name.old_hoxton_mission = "Mr. Blonde"
     EHIHealthFloatRect._unit_name.escort = "Mr. Pink"
 elseif Global.game_settings.level_id == "rvd2" then
-    if EHI:IsHost() then
+    if EHI.IsHost then
         EHIHealthFloatRect._unit_name.civilian = "Cabot Crew" -- Applies to both Mr. Pink and Mr. Blonde as they use same ID
     else
         EHIHealthFloatRect._unit_name.civilian = "Mr. Blonde"

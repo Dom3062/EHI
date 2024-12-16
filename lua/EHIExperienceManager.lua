@@ -22,7 +22,6 @@ EHIExperienceManager._XPElementLevelNoCheck =
 }
 EHIExperienceManager._XPElement = 0
 ---@param level_id string
----@return boolean
 function EHIExperienceManager:IsOneXPElementHeist(level_id)
     if self._XPElementLevelNoCheck[level_id] then
         return false
@@ -44,14 +43,9 @@ end
 
 ---@param xp ExperienceManager
 function EHIExperienceManager:ExperienceInit(xp)
-    if self._xp_class then
+    if self._config then
         return
     end
-    self._xp_class = xp
-    self.cash_string = xp.cash_string
-    self.experience_string = xp.experience_string
-    self._cash_sign = xp._cash_sign
-    self._cash_tousand_separator = xp._cash_tousand_separator
     self:ExperienceReload(xp)
     if EHI:CheckNotLoad() or EHI:IsXPTrackerDisabled() then
         self._xp_disabled = true
@@ -115,12 +109,11 @@ end
 function EHIExperienceManager:ExperienceReload(xp)
     self._xp = self._xp or {}
     self._xp.level = xp:current_level()
-    local max_level = self._xp.level >= xp:level_cap()
-    self._xp.level_xp_to_100 = max_level and 0 or self:GetRemainingXPToMaxLevel()
+    local max_level = xp:reached_level_cap()
+    self._xp.level_xp_to_100 = max_level and 0 or self:GetRemainingXPToMaxLevel(xp)
     self._xp.level_xp_to_next_level = max_level and 0 or math.max(xp:next_level_data_points() - xp:next_level_data_current_points(), 0)
     self._xp.prestige_xp = xp:get_current_prestige_xp()
     self._xp.prestige_xp_remaining = xp:get_max_prestige_xp() - self._xp.prestige_xp
-    self._xp.prestige_xp_overflowed = self._xp.prestige_xp_remaining < 0 ---Not possible in Vanilla, mod check
     self._xp.prestige_enabled = max_level and xp:current_rank() > 0
 end
 
@@ -254,7 +247,7 @@ function EHIExperienceManager:HookAwardXP()
             end
         end
     end
-    EHI:Hook(self._xp_class, "on_loot_drop_xp", function(xp, value_id)
+    EHI:Hook(ExperienceManager, "on_loot_drop_xp", function(xp, value_id)
         local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
         if amount <= 0 then
             return
@@ -302,8 +295,7 @@ end
 function EHIExperienceManager:MissionXPAwarded(amount)
     if amount <= 0 or self._xp_disabled then
         return
-    end
-    if self._xp_awarded then
+    elseif self._xp_awarded then
         self._xp_awarded(0, amount)
     end
 end
@@ -480,18 +472,19 @@ function EHIExperienceManager:RecalculateXP(id)
     end
 end
 
+---@param xp ExperienceManager
 ---@return number
-function EHIExperienceManager:GetRemainingXPToMaxLevel()
+function EHIExperienceManager:GetRemainingXPToMaxLevel(xp)
     local totalXpTo100 = 0
     for _, level in ipairs(tweak_data.experience_manager.levels) do
         totalXpTo100 = totalXpTo100 + Application:digest_value(level.points, false)
     end
-    return math.max(totalXpTo100 - self._xp_class:total(), 0)
+    return math.max(totalXpTo100 - xp:total(), 0)
 end
 
 function EHIExperienceManager:GetPlayerXPLimit()
     if self._xp.prestige_enabled then
-        if self._xp.prestige_xp_overflowed then
+        if self:IsInfamyPoolOverflowed() then
             return self._xp.prestige_xp
         end
         return self._xp.prestige_xp_remaining
@@ -505,7 +498,7 @@ end
 
 ---Not possible in Vanilla, mod check
 function EHIExperienceManager:IsInfamyPoolOverflowed()
-    return self._xp.prestige_xp_overflowed
+    return self._xp.prestige_xp_remaining < 0 --- Not possible in Vanilla, mod check
 end
 
 function EHIExperienceManager:SetAIOnDeathListener()

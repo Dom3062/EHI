@@ -69,7 +69,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[105713] = { time = 60, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
     other[105716] = { time = 90, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
     other[105717] = { time = 30, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
-    if EHI:IsClient() then
+    if EHI.IsClient then
         other[102177] = EHI:ClientCopyTrigger(other[102321], { time = 1 + 5 + 30 + 45 + 45 + 120, trigger_once = true })
         other[100973] = EHI:ClientCopyTrigger(other[102321], { time = 5 + 30 + 45 + 45 + 120 })
         other[101190] = EHI:ClientCopyTrigger(other[102321], { time = 30 + 45 + 45 + 120 })

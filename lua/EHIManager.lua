@@ -30,7 +30,7 @@ function EHIManager:init(managers)
     self._buff = managers.ehi_buff
     self._escape = managers.ehi_escape
     self._deployable = managers.ehi_deployable
-    self._achievements = managers.ehi_achievement
+    self._unlockable = managers.ehi_unlockable
     self._experience = managers.ehi_experience
     self._assault = managers.ehi_assault
     self._phalanx = managers.ehi_phalanx
@@ -97,7 +97,7 @@ function EHIManager:init(managers)
             max = true
         }
     }
-    if EHI:IsClient() then
+    if EHI.IsClient then
         self._HookOnLoad = {}
         self._load_sync = CallbackEventHandler:new()
         self._full_sync = CallbackEventHandler:new()
@@ -116,7 +116,7 @@ function EHIManager:init_finalize()
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddOnCustodyCallback(callback(self, self, "SetCustodyState"))
     EHI:AddOnSpawnedCallback(callback(self, self, "Spawned"))
-    if EHI:IsClient() then
+    if EHI.IsClient then
         managers.network:add_event_listener("EHIManagerDropIn", "on_set_dropin", function()
             self._is_dropin = true
             managers.network:remove_event_listener("EHIManagerDropIn")
@@ -131,14 +131,9 @@ function EHIManager:init_finalize()
 end
 
 ---@param name string
+---@return table
 function EHIManager:CreateInternal(name)
     self._internal[name] = {}
-end
-
----@param name string
----@return table
-function EHIManager:CreateAndCopyInternal(name)
-    self:CreateInternal(name)
     return self._internal[name]
 end
 
@@ -297,7 +292,6 @@ end
 
 ---@param path string
 ---@param slotmask integer
----@return integer
 function EHIManager:CountUnitsAvailable(path, slotmask)
     local _, n = self:GetUnits(path, slotmask)
     return n - 1
@@ -388,14 +382,14 @@ end
 
 ---@param f fun(self: EHIManager)
 function EHIManager:AddLoadSyncFunction(f)
-    if EHI:IsClient() then
+    if EHI.IsClient then
         self._load_sync:add(f)
     end
 end
 
 ---@param f fun(self: EHIManager)
 function EHIManager:AddFullSyncFunction(f)
-    if EHI:IsClient() then
+    if EHI.IsClient then
         self._full_sync:add(f)
     end
 end
@@ -659,7 +653,7 @@ end
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 function EHIManager:_add_host_triggers(type, new_triggers, trigger_id_all, trigger_icons_all)
-    if EHI:IsClient() then
+    if EHI.IsClient then
         return
     end
     host_triggers = host_triggers or {}
@@ -729,7 +723,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         end
     end
     if new_triggers.sync_triggers then
-        local host = EHI:IsHost()
+        local host = EHI.IsHost
         for key, tbl in pairs(new_triggers.sync_triggers) do
             if host then
                 self:_add_host_triggers(key, tbl)
@@ -751,15 +745,15 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
         end
         if data.failed_on_alarm then
             EHI:AddOnAlarmCallback(function()
-                self._achievements:SetAchievementFailed(id)
+                self._unlockable:SetAchievementFailed(id)
             end)
         end
         if data.mission_end_callback then
             EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
                 if success then
-                    self._achievements:SetAchievementComplete(id, true)
+                    self._unlockable:SetAchievementComplete(id, true)
                 else
-                    self._achievements:SetAchievementFailed(id)
+                    self._unlockable:SetAchievementFailed(id)
                 end
             end)
         end
@@ -835,7 +829,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     end
     local achievement_triggers = new_triggers.achievement or {}
     if next(achievement_triggers) then
-        self._achievements:ParseAchievementDefinition(achievement_triggers)
+        self._unlockable:ParseAchievementDefinition(achievement_triggers)
         if EHI:ShowMissionAchievements() then
             ---@param data ParseAchievementDefinitionTable
             ---@param id string
@@ -896,7 +890,7 @@ function EHIManager:ParseOtherTriggers(other_triggers, trigger_id_all, trigger_i
             self:_parse_vanilla_waypoint_trigger(data)
         end
     end
-    self:AddTriggers(other_triggers, trigger_id_all or "Trigger", trigger_icons_all)
+    self:AddTriggers2(other_triggers, trigger_id_all or "Trigger", trigger_icons_all)
 end
 
 ---@param mission_triggers table<number, ElementTrigger>
@@ -916,7 +910,7 @@ function EHIManager:ParseMissionTriggers(mission_triggers, trigger_id_all, trigg
         end
         return
     end
-    local host = EHI:IsHost()
+    local host = EHI.IsHost
     if no_host_override then
         host = false
     end
@@ -1090,7 +1084,7 @@ function EHIManager:InitElements()
     end
     self.__init_done = true
     self:HookElements(triggers)
-    if EHI:IsClient() then
+    if EHI.IsClient then
         return
     end
     self:_add_position_to_waypoint_from_load()
@@ -1151,7 +1145,7 @@ end
 
 ---@param elements_to_hook table<number, _>
 function EHIManager:HookElements(elements_to_hook)
-    local client = EHI:IsClient()
+    local client = EHI.IsClient
     local f = client and function(element, ...) ---@param element MissionScriptElement
         self:Trigger(element._id, element, true)
     end or function(element, ...) ---@param element MissionScriptElement
@@ -1302,11 +1296,11 @@ function EHIManager:Trigger(id, element, enabled)
                     self:CreateTracker(trigger)
                 end
             elseif f == SF.SetAchievementComplete then
-                self._achievements:SetAchievementComplete(trigger.id, true)
+                self._unlockable:SetAchievementComplete(trigger.id, true)
             elseif f == SF.SetAchievementStatus then
-                self._achievements:SetAchievementStatus(trigger.id, trigger.status or "ok")
+                self._unlockable:SetAchievementStatus(trigger.id, trigger.status or "ok")
             elseif f == SF.SetAchievementFailed then
-                self._achievements:SetAchievementFailed(trigger.id)
+                self._unlockable:SetAchievementFailed(trigger.id)
             elseif f == SF.AddAchievementToCounter then
                 local data = trigger.data or {} ---@cast data AchievementLootCounterTable
                 data.achievement = data.achievement or trigger.id
@@ -1499,7 +1493,7 @@ function EHIManager:Trigger(id, element, enabled)
                     self:Call(trigger.id, trigger.f --[[@as string]])
                 end
             elseif f == SF.CallTrackerManagerFunction then
-                local _tf = self._trackers[trigger.f --[[@as string]]] ---@type fun(self: EHITrackerManager)?
+                local _tf = self._trackers[trigger.f --[[@as string]]] ---@type fun(self: EHITrackerManager, ...)?
                 if _tf then
                     if trigger.arg then
                         _tf(self._trackers, unpack(trigger.arg))
@@ -1508,7 +1502,7 @@ function EHIManager:Trigger(id, element, enabled)
                     end
                 end
             elseif f == SF.CallWaypointManagerFunction then
-                local _tf = self._waypoints[trigger.f --[[@as string]]] ---@type fun(self: EHIWaypointManager)?
+                local _tf = self._waypoints[trigger.f --[[@as string]]] ---@type fun(self: EHIWaypointManager, ...)?
                 if _tf then
                     if trigger.arg then
                         _tf(self._waypoints, unpack(trigger.arg))
@@ -1604,14 +1598,6 @@ end
 ---@param id number
 ---@param waypoint ElementWaypointTrigger
 function EHIManager:AddWaypointToTrigger(id, waypoint)
-    if EHI:GetOption("show_waypoints_mission") then
-        self:_AddWaypointToTrigger(id, waypoint)
-    end
-end
-
----@param id number
----@param waypoint ElementWaypointTrigger
-function EHIManager:_AddWaypointToTrigger(id, waypoint)
     local t = triggers[id]
     if t then
         local w = deep_clone(waypoint)
@@ -1660,7 +1646,7 @@ function EHIManager:RegisterCustomSyncedSF(f)
     self.SyncedSFF = self.SyncedSFF or {}
     local f_id = (self._cache.SyncedSFFUsed or SF.CustomSyncedSF) + 1
     self.SFF[f_id] = f
-    if EHI:IsHost() then
+    if EHI.IsHost then
         self.SyncFunctions[f_id] = true
     end
     self._cache.SyncedSFFUsed = f_id
@@ -1793,7 +1779,7 @@ if EHI:GetOption("show_mission_trackers") then
     ---@param trigger ElementTrigger
     ---@param id number
     function EHIManager:_get_element_timer_accurate(trigger, id)
-        if EHI:IsHost() then
+        if EHI.IsHost then
             local element = managers.mission:get_element_by_id(trigger.element) --[[@as ElementTimer?]]
             if element then
                 local t = (element._timer or 0) + (trigger.additional_time or 0)
@@ -1818,7 +1804,7 @@ else
     ---@param trigger ElementTrigger
     ---@param id number
     function EHIManager:_get_element_timer_accurate(trigger, id)
-        if EHI:IsHost() then
+        if EHI.IsHost then
             local element = managers.mission:get_element_by_id(trigger.element)
             if element then
                 local t = (element._timer or 0) + (trigger.additional_time or 0)

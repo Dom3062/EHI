@@ -20,7 +20,7 @@ local triggers =
     [EHI:GetInstanceElementID(100056, 55850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_NextMethIngredient },
     [EHI:GetInstanceElementID(100056, 56850)] = { time = 15, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_NextMethIngredient }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     local cooking_start = { additional_time = 30, random_time = 10, id = "CookingStartDelay", icons = MethlabStart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Restarting }
     local meth_ready = { additional_time = 10, random_time = 5, id = "MethReady", icons = MethlabPickup, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_MethDone }
     local next_ingredient = { additional_time = 40, random_time = 5, id = "NextIngredient", icons = MethlabRestart, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.mia_1_NextMethIngredient }

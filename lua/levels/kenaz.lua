@@ -96,7 +96,7 @@ local achievements =
             [100282] = { time = 840, class = TT.Achievement.Base }
         },
         load_sync = function(self)
-            self._achievements:AddTimedAchievementTracker("kenaz_4", 840)
+            self._unlockable:AddTimedAchievementTracker("kenaz_4", 840)
         end,
         mission_end_callback = true
     },
@@ -142,7 +142,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101050] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[101408] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    if EHI:IsClient() then
+    if EHI.IsClient then
         other[101038] = EHI:CopyTrigger(other[100548], { chance = 25, time = 120 }, SF.AddTrackerIfDoesNotExist)
     end
 end
@@ -220,7 +220,7 @@ EHI:AddXPBreakdown({
     }
 })
 
-if EHI:IsHost() then
+if EHI.IsHost then
     keycode_units = nil ---@diagnostic disable-line
     return
 end

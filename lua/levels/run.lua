@@ -165,7 +165,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             })
         end
     end)
-    if EHI:IsHost() then
+    if EHI.IsHost then
         local element = managers.mission:get_element_by_id(103674) --[[@as ElementLogicChance?]]
         if element then
             element:add_trigger("EHITrigger", "success", function()

@@ -26,7 +26,7 @@ end
 
 ---@param amount number?
 function BodyBagsBagBase:UpdateAmount(amount)
-    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, amount or self:GetRealAmount(), "bodybags_bag", "BodyBags")
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), "bodybags_bag", "BodyBags")
 end
 
 function BodyBagsBagBase:_set_visual_stage(...)

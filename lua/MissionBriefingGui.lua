@@ -245,11 +245,11 @@ function XPBreakdownPanel:ProcessBreakdown()
         local data = self._params.wave_all
         if type(data) == "table" then
             local xp_multiplied = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
-            local total_xp = self._xp:cash_string(xp_multiplied, "+")
+            local total_xp = managers.experience:cash_string(xp_multiplied, "+")
             self:_add_xp_text(string.format("%s (%s): ", self._loc:text("ehi_experience_each_wave_survived"), self._loc:text("ehi_experience_trigger_times", { times = data.times })), total_xp)
-            self:_add_total_xp(self._xp:cash_string(xp_multiplied * data.times, "+"))
+            self:_add_total_xp(managers.experience:cash_string(xp_multiplied * data.times, "+"))
         else
-            local total_xp = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
+            local total_xp = managers.experience:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data), "+")
             self:_add_xp_text(string.format("%s: %s", self._loc:text("ehi_experience_each_wave_survived")), total_xp)
         end
     elseif self._params.wave then
@@ -257,9 +257,9 @@ function XPBreakdownPanel:ProcessBreakdown()
         for wave, xp in ipairs(self._params.wave) do
             local xp_computed = self._xp:FakeMultiplyXPWithAllBonuses(xp)
             total_xp = total_xp + xp_computed
-            self:_add_xp_text(self._loc:text("ehi_experience_wave_survived", { wave = wave }), self._xp:cash_string(xp_computed, "+"))
+            self:_add_xp_text(self._loc:text("ehi_experience_wave_survived", { wave = wave }), managers.experience:cash_string(xp_computed, "+"))
         end
-        self:_add_total_xp(self._xp:cash_string(total_xp, "+"))
+        self:_add_total_xp(managers.experience:cash_string(total_xp, "+"))
     elseif self._params.objective then
         local total_xp = { base = 0, add = not self._params.no_total_xp }
         for key, data in pairs(self._params.objective) do
@@ -270,7 +270,7 @@ function XPBreakdownPanel:ProcessBreakdown()
                 self:_process_random_objectives(data, total_xp)
             elseif type(data) == "table" then
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
-                local xp = self._xp:cash_string(value, "+")
+                local xp = managers.experience:cash_string(value, "+")
                 local xp_with_gage
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data.amount)
@@ -303,7 +303,7 @@ function XPBreakdownPanel:ProcessBreakdown()
             else
                 total_xp.base = total_xp.base + data
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
-                local xp = self._xp:cash_string(value, "+")
+                local xp = managers.experience:cash_string(value, "+")
                 local xp_with_gage
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
@@ -324,13 +324,13 @@ function XPBreakdownPanel:ProcessBreakdown()
                     local str = data.name and self:_get_translated_key(data.name, data.additional_name) or "<Unknown objective>"
                     if data.times then
                     else
-                        local stealth_value = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.stealth), "+")
+                        local stealth_value = managers.experience:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.stealth), "+")
                         local stealth_value_gage
                         if self._gage then
                             stealth_value_gage = self._gui:FormatXPWithAllGagePackages(data.stealth)
                         end
                         self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", stealth_value, stealth_value_gage)
-                        local loud_value = self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.loud), "+")
+                        local loud_value = managers.experience:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(data.loud), "+")
                         local loud_value_gage
                         if self._gage then
                             loud_value_gage = self._gui:FormatXPWithAllGagePackages(data.loud)
@@ -344,7 +344,7 @@ function XPBreakdownPanel:ProcessBreakdown()
                 else
                     local amount = data.amount or 0
                     local value = self._xp:FakeMultiplyXPWithAllBonuses(amount)
-                    local xp = self._xp:cash_string(value, "+")
+                    local xp = managers.experience:cash_string(value, "+")
                     local xp_with_gage
                     if self._gage then
                         xp_with_gage = self._gui:FormatXPWithAllGagePackages(amount)
@@ -455,7 +455,7 @@ function XPBreakdownPanel:_process_escape(str, params, total_xp)
         for _, value in ipairs(params) do
             local s
             local _value = self._xp:FakeMultiplyXPWithAllBonuses(value.amount)
-            local xp = self._xp:cash_string(_value, "+")
+            local xp = managers.experience:cash_string(_value, "+")
             local xp_with_gage
             if self._gage then
                 xp_with_gage = self._gui:FormatXPWithAllGagePackages(value.amount)
@@ -480,7 +480,7 @@ function XPBreakdownPanel:_process_escape(str, params, total_xp)
         end
     elseif type(params) == "number" then
         local value = self._xp:FakeMultiplyXPWithAllBonuses(params)
-        local xp = self._xp:cash_string(value, "+")
+        local xp = managers.experience:cash_string(value, "+")
         local xp_with_gage
         if self._gage then
             xp_with_gage = self._gui:FormatXPWithAllGagePackages(params)
@@ -542,7 +542,7 @@ function XPBreakdownPanel:_process_random_objectives(random, total_xp)
                 for _, xp in ipairs(data) do
                     local str = "- " .. self:_get_translated_key(xp.name)
                     local value = self._xp:FakeMultiplyXPWithAllBonuses(xp.amount)
-                    local _xp = self._xp:cash_string(value, "+")
+                    local _xp = managers.experience:cash_string(value, "+")
                     local xp_with_gage
                     if self._gage then
                         xp_with_gage = self._gui:FormatXPWithAllGagePackages(xp.amount)
@@ -556,7 +556,7 @@ function XPBreakdownPanel:_process_random_objectives(random, total_xp)
             else
                 local str = "- " .. self:_get_translated_key(obj)
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
-                local _xp = self._xp:cash_string(value, "+")
+                local _xp = managers.experience:cash_string(value, "+")
                 local xp_with_gage
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
@@ -641,7 +641,7 @@ function XPBreakdownPanel:_process_loot(total_xp)
         local secured_bag = self._loc:text("ehi_experience_each_loot_secured")
         if type(data) == "table" then
             local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
-            local xp = self._xp:cash_string(value, "+")
+            local xp = managers.experience:cash_string(value, "+")
             local xp_with_gage
             if self._gage then
                 xp_with_gage = self._gui:FormatXPWithAllGagePackages(data.amount)
@@ -660,7 +660,7 @@ function XPBreakdownPanel:_process_loot(total_xp)
             total_xp.base = total_xp.base + data.amount
         else
             local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
-            local xp = self._xp:cash_string(value, "+")
+            local xp = managers.experience:cash_string(value, "+")
             local xp_with_gage
             if self._gage then
                 xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
@@ -673,7 +673,7 @@ function XPBreakdownPanel:_process_loot(total_xp)
         for loot, data in pairs(self._params.loot) do
             if type(data) == "table" then
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
-                local xp = self._xp:cash_string(value, "+")
+                local xp = managers.experience:cash_string(value, "+")
                 local xp_with_gage
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data.amount)
@@ -685,7 +685,7 @@ function XPBreakdownPanel:_process_loot(total_xp)
                 total_xp.base = total_xp.base + data.amount
             else
                 local value = self._xp:FakeMultiplyXPWithAllBonuses(data)
-                local xp = self._xp:cash_string(value, "+")
+                local xp = managers.experience:cash_string(value, "+")
                 local xp_with_gage
                 if self._gage then
                     xp_with_gage = self._gui:FormatXPWithAllGagePackages(data)
@@ -763,7 +763,7 @@ function XPBreakdownPanel:_process_total_xp(total_xp)
                 end
             end
             local value = self._xp:FakeMultiplyXPWithAllBonuses(base)
-            local xp = self._xp:cash_string(value, "+")
+            local xp = managers.experience:cash_string(value, "+")
             local xp_with_gage
             if self._gage then
                 xp_with_gage = self._gui:FormatXPWithAllGagePackages(base)
@@ -776,7 +776,7 @@ function XPBreakdownPanel:_process_total_xp(total_xp)
         if self._gage then
             xp_with_gage = self._gui:FormatXPWithAllGagePackages(total_xp.base)
         end
-        self:_add_total_xp(self._xp:cash_string(total, "+"), xp_with_gage)
+        self:_add_total_xp(managers.experience:cash_string(total, "+"), xp_with_gage)
     end
 end
 
@@ -1070,7 +1070,7 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
     elseif o_params.max_level then
         format_max = false
         local max_n = self._xp:GetPlayerXPLimit()
-        max = self._xp:experience_string(max_n)
+        max = managers.experience:experience_string(max_n)
         local xp = self._loc:text("ehi_experience_xp")
         if o_params.max_level_bags then
             if false then --self._xp:FakeMultiplyXPWithAllBonuses(min) > max_n then
@@ -1254,8 +1254,8 @@ function XPBreakdownPanel:_params_escape(o_params)
         end
         local _min = self._xp:FakeMultiplyXPWithAllBonuses(value.amount + min)
         local _max = self._xp:FakeMultiplyXPWithAllBonuses(value.amount + max_xp)
-        local xp_min = self._xp:cash_string(_min, "+")
-        local xp_max = self._xp:cash_string(_max, "+")
+        local xp_min = managers.experience:cash_string(_min, "+")
+        local xp_max = managers.experience:cash_string(_max, "+")
         local xp_min_with_gage, xp_max_with_gage
         if self._gage then
             xp_min_with_gage = self._gui:FormatXPWithAllGagePackages(value.amount + min)
@@ -1358,7 +1358,7 @@ function XPBreakdownPanel:_add_total_minmax_xp(min, max, format_max, post_fix)
     if not post_fix then
         self:_add_total_xp()
     end
-    self:_add_line((post_fix and ("Min (" .. post_fix_text .. "): ") or "Min: ") .. self._xp:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(min), "+") .. " " .. xp, colors.total_xp)
+    self:_add_line((post_fix and ("Min (" .. post_fix_text .. "): ") or "Min: ") .. managers.experience:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(min), "+") .. " " .. xp, colors.total_xp)
     if max then
         if format_max then
             self:_add_line((post_fix and ("Max (" .. post_fix_text .. "): +") or "Max: +") .. self._gui:FormatXPWithAllGagePackages(max or 0 --[[@as number]]) .. " " .. xp, colors.total_xp)
@@ -1434,7 +1434,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
         last_modifier = pro
     end
     if xp.infamy_bonus and xp.infamy_bonus > 1 then
-        local texture, texture_rect = tweak_data.hud_icons:get_icon_data(self._xp._xp_class:rank_icon(self._xp._xp_class:current_rank()))
+        local texture, texture_rect = managers.experience:rank_icon_data(managers.experience:current_rank())
         local infamy_icon = self._panel:bitmap({
             blend_mode = "add",
             x = last_modifier:right() + 2,
@@ -2049,7 +2049,7 @@ end
 
 ---@param base_xp number
 function MissionBriefingGui:FormatXPWithAllGagePackages(base_xp)
-    return self._xp:experience_string(self:FormatXPWithAllGagePackagesNoString(base_xp))
+    return managers.experience:experience_string(self:FormatXPWithAllGagePackagesNoString(base_xp))
 end
 
 function MissionBriefingGui:RefreshXPOverview()

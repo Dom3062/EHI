@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("DoctorBagBase")then
+if EHI:CheckLoadHook("DoctorBagBase") then
     return
 end
 
@@ -37,7 +37,7 @@ end
 
 ---@param amount number?
 function DoctorBagBase:UpdateAmount(amount)
-    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, amount or self:GetRealAmount(), "doctor_bag", self._ehi_tracker)
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), "doctor_bag", self._ehi_tracker)
 end
 
 function DoctorBagBase:_set_visual_stage(...)

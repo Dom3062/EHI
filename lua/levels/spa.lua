@@ -48,7 +48,7 @@ local other =
 {
     [EHI:GetInstanceElementID(100003, 7950)] = EHI:AddAssaultDelay({ control_additional_time = 3 + 12 + 12 + 4 + 10, random_time = 5, trigger_once = true })
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     local original = other[EHI:GetInstanceElementID(100003, 7950)]
     other[EHI:GetInstanceElementID(100024, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 12 + 12 + 4 + 10 })
     other[EHI:GetInstanceElementID(100053, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 12 + 4 + 10 })

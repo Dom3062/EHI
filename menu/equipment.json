@@ -176,6 +176,7 @@
             "callback": "SetColor",
             "callback_arguments": ["doctor_bag", "equipment"],
             "setting_value": "colors",
+            "color_type": "equipment",
             "parent": "ehi_show_equipment_aggregate_all_choice",
             "ehi_ver" : 21
         },
@@ -189,6 +190,7 @@
             "callback": "SetColor",
             "callback_arguments": ["ammo_bag", "equipment"],
             "setting_value": "colors",
+            "color_type": "equipment",
             "parent": "ehi_show_equipment_aggregate_all_choice",
             "ehi_ver" : 21
         },
@@ -202,6 +204,7 @@
             "callback": "SetColor",
             "callback_arguments": ["grenade_crate", "equipment"],
             "setting_value": "colors",
+            "color_type": "equipment",
             "parent": "ehi_show_equipment_aggregate_all_choice",
             "ehi_ver" : 21
         },
@@ -215,6 +218,7 @@
             "callback": "SetColor",
             "callback_arguments": ["first_aid_kit", "equipment"],
             "setting_value": "colors",
+            "color_type": "equipment",
             "parent": "ehi_show_equipment_aggregate_all_choice",
             "ehi_ver" : 21
         },
@@ -228,6 +232,7 @@
             "callback": "SetColor",
             "callback_arguments": ["bodybags_bag", "equipment"],
             "setting_value": "colors",
+            "color_type": "equipment",
             "parent": "ehi_show_equipment_aggregate_all_choice",
             "ehi_ver" : 21
         }

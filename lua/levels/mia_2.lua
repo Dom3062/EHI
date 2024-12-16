@@ -58,7 +58,7 @@ if not EHI:CanShowAchievement("pig_7") then
     end
 end
 
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100426] = { id = "HeliDropDrill", icons = Icon.HeliDropDrill, special_function = SF.SetRandomTime, data = { 44, 54 } }
 end
 

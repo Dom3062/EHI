@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:IsClient() then
+if EHI.IsClient then
     return
 end
 EHI:AddOnSpawnedCallback(function()

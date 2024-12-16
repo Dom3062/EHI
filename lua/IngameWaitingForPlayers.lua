@@ -372,7 +372,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
         return
     end
     EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, not Global.hud_disabled)
-    EHI:RunOnSpawnedCallbacks()
+    EHI:CallCallbackOnce("Spawned")
     if EHI._cache.UnlockablesAreDisabled or GunGameGame or TIM then -- Twitch Integration Mod
         challenges = nil
         sh_dailies = nil
@@ -713,7 +713,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         class = EHI.Trackers.Achievement.Status
                     })
                     local function fail()
-                        managers.ehi_achievement:SetAchievementFailed("man_5")
+                        managers.ehi_unlockable:SetAchievementFailed("man_5")
                         EHI:Unhook("man_5_killed")
                         EHI:Unhook("man_5_shot_fired")
                     end
@@ -998,7 +998,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     end
                 end)
                 Hooks:PostHook(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
-                    managers.ehi_achievement:SetAchievementFailed("ovk_3")
+                    managers.ehi_unlockable:SetAchievementFailed("ovk_3")
                 end)
                 Hooks:PostHook(AchievmentManager, "award", "EHI_ovk_3_award", function(am, id)
                     if id == "ovk_3" then
@@ -1155,46 +1155,36 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
         if managers.challenge:can_progress_challenges() and challenges then
             for _, challenge in pairs(managers.challenge:get_all_active_challenges()) do
                 local c = challenges[challenge.id or ""]
-                if c and not challenge.completed then
-                    local all_pass = true
-                    if c.check then
-                        if c.check.weapon_type and not HasWeaponTypeEquipped(c.check.weapon_type) then
-                            all_pass = false
-                        elseif c.check.enemy_check and not tweak_data.group_ai:IsSpecialEnemyAllowedToSpawn(c.check.enemy_check) then
-                            all_pass = false
-                        end
+                if c and not challenge.completed and (not c.check or (c.check.weapon_type and HasWeaponTypeEquipped(c.check.weapon_type)) or (c.check.enemy_check and tweak_data.group_ai:IsSpecialEnemyAllowedToSpawn(c.check.enemy_check))) then
+                    if c.icon then
+                        local icon = tweak_data.hud_icons[c.icon] or tweak_data.ehi.icons[c.icon]
+                        tweak_data.ehi.icons[challenge.id] = icon
+                        tweak_data.hud_icons[challenge.id] = icon
                     end
-                    if all_pass then
-                        if c.icon then
-                            local icon = tweak_data.hud_icons[c.icon] or tweak_data.ehi.icons[c.icon]
-                            tweak_data.ehi.icons[challenge.id] = icon
-                            tweak_data.hud_icons[challenge.id] = icon
-                        end
-                        if c.check_on_completion then
-                            if not c.contact or managers.job:current_contact_id() == c.contact then
-                                EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
-                                    if success and managers.job:on_last_stage() and managers.statistics:started_session_from_beginning() then
-                                        local progress, max = EHI:GetDailyChallengeProgressAndMax(challenge.id, c.progress_id)
-                                        if progress + 1 < max then
-                                            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("menu_challenge_" .. challenge.id), tostring(progress + 1) .. "/" .. tostring(max), c.icon)
-                                        end
+                    if c.check_on_completion then
+                        if not c.contact or managers.job:current_contact_id() == c.contact then
+                            EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
+                                if success and managers.job:on_last_stage() and managers.statistics:started_session_from_beginning() then
+                                    local progress, max = EHI:GetDailyChallengeProgressAndMax(challenge.id, c.progress_id)
+                                    if progress + 1 < max then
+                                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("menu_challenge_" .. challenge.id), tostring(progress + 1) .. "/" .. tostring(max), c.icon)
                                     end
-                                end)
-                            end
-                        elseif c.loud_only then
-                            ShowTrackerInLoud(function()
-                                AddDailyChallengeTracker(challenge.id, c.desc, c.progress_id, c.icon)
-                            end)
-                        else
-                            AddDailyChallengeTracker(challenge.id, c.desc, c.progress_id, c.icon)
-                        end
-                        if not c.do_not_track then
-                            managers.ehi_hook:HookChallengeAwardProgress(challenge.id, function(am, stat, value)
-                                if stat == c.progress_id then
-                                    managers.ehi_tracker:IncreaseTrackerProgress(challenge.id, value)
                                 end
                             end)
                         end
+                    elseif c.loud_only then
+                        ShowTrackerInLoud(function()
+                            AddDailyChallengeTracker(challenge.id, c.desc, c.progress_id, c.icon)
+                        end)
+                    else
+                        AddDailyChallengeTracker(challenge.id, c.desc, c.progress_id, c.icon)
+                    end
+                    if not c.do_not_track then
+                        managers.ehi_hook:HookChallengeAwardProgress(challenge.id, function(am, stat, value)
+                            if stat == c.progress_id then
+                                managers.ehi_tracker:IncreaseTrackerProgress(challenge.id, value)
+                            end
+                        end)
                     end
                 end
             end

@@ -14,7 +14,7 @@ local triggers = {
     [102370] = { id = "PickUpBalloonSecondTry", icons = { Icon.Escape }, class = TT.Pausable, special_function = SF.GetElementTimerAccurate, element = 100732, hint = Hints.Escape },
     [102324] = EHI:AddEndlessAssault(3)
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[102368].client = { time = 120, random_time = 10 }
     triggers[102371] = { time = 60, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.Defend }
     triggers[102366] = { time = 30, id = "PickUpBalloonFirstTry", icons = { Icon.Defend }, class = TT.Pausable, special_function = SF.SetTrackerAccurate, hint = Hints.Defend }

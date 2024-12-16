@@ -57,7 +57,7 @@ local achievements =
         },
         load_sync = function(self)
             if self.ConditionFunctions.IsStealth() then
-                self._achievements:AddAchievementStatusTracker("man_3")
+                self._unlockable:AddAchievementStatusTracker("man_3")
             end
         end
     },
@@ -75,7 +75,7 @@ local achievements =
             if progress >= 10 then
                 return
             end
-            self._achievements:AddAchievementProgressTracker("man_4", 10, progress)
+            self._unlockable:AddAchievementProgressTracker("man_4", 10, progress)
         end
     }
 }
@@ -88,7 +88,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102161] = { chance = 20, time = 30 + 20, recheck_t = 20, id = "Snipers", class = TT.Sniper.TimedChance, trigger_once = true }
     other[103169] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[101756] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
-        if EHI:IsHost() and not element:_values_ok() then
+        if EHI.IsHost and not element:_values_ok() then
             return
         elseif self._trackers:CallFunction2("Snipers", "SnipersKilled", 40) then -- 20 + 20
             self._trackers:AddTracker({

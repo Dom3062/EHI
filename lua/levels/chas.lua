@@ -11,7 +11,7 @@ local element_sync_triggers = {
 local triggers = {
     [102863] = { time = 41.5, id = "TramArrivesWithDrill", icons = { Icon.Train, Icon.Drill, Icon.Goto }, hint = Hints.DrillDelivery }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100602] = { additional_time = 90 + 5, random_time = 20, id = "LoudEscape", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape }
     triggers[102453] = { additional_time = 60 + 12.5, random_time = 20, id = "HeliArrivesWithDrill", icons = Icon.HeliDropDrill, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.DrillDelivery }
 end
@@ -36,7 +36,7 @@ local achievements =
             [100107] = { time = 360, class = TT.Achievement.Base }
         },
         load_sync = function(self)
-            self._achievements:AddTimedAchievementTracker("chas_11", 360)
+            self._unlockable:AddTimedAchievementTracker("chas_11", 360)
         end
     }
 }

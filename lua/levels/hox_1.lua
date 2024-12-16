@@ -25,7 +25,7 @@ local other =
 EHI.Manager:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 
 local tbl = {}
-if EHI:GetOption("show_waypoints") then
+if EHI:GetWaypointOption("show_waypoints_mission") then
     --units/payday2/vehicles/anim_vehicle_pickup_sportcab_armored/anim_vehicle_pickup_sportcab_armored/the_car
     tbl[102482] = { f = function(id, unit_data, unit)
         local t = { unit = unit }

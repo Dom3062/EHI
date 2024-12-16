@@ -32,7 +32,7 @@ if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
     sync_triggers[EHI:GetInstanceElementID(100013, 4800)] = heli
     sync_triggers[EHI:GetInstanceElementID(100013, 4850)] = heli
 end
-if EHI:IsClient() then
+if EHI.IsClient then
     local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.data.id)
         if self._trackers:TrackerDoesNotExist(trigger.id) then
@@ -76,7 +76,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102956] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[102957] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[102960] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
-        if EHI:IsHost() and not element:_values_ok() then
+        if EHI.IsHost and not element:_values_ok() then
             return
         end
         self._trackers:CallFunction("Snipers", "SnipersKilled")

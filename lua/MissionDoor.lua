@@ -11,7 +11,8 @@ local function StartC4Sequence(unit)
         managers.ehi_tracker:AddTracker({
             id = key,
             time = 5,
-            icons = { C4 }
+            icons = { C4 },
+            hint = EHI.Hints.Explosion
         })
     end
     if show_waypoint then
@@ -23,7 +24,7 @@ local function StartC4Sequence(unit)
     end
 end
 
-if EHI:IsHost() then
+if EHI.IsHost then
     local initiate_c4_sequence = MissionDoor._initiate_c4_sequence
     function MissionDoor:_initiate_c4_sequence(...)
         initiate_c4_sequence(self, ...)
@@ -39,7 +40,7 @@ else
     end
 end
 
-if EHI.debug.mission_door and EHI:IsHost() then
+if EHI.debug.mission_door and EHI.IsHost then
     local door = {}
     Hooks:PostHook(MissionDoor, "init", "EHI_MissionDoorDebug_Init", function(self, ...)
         if self.tweak_data then

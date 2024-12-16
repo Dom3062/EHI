@@ -1,65 +1,65 @@
 ---@class EHIDeployableManager
 EHIDeployableManagerVR = EHIDeployableManager
-EHIDeployableManagerVR.old_AddToDeployableCache = EHIDeployableManager.AddToDeployableCache
-EHIDeployableManagerVR.old_LoadFromDeployableCache = EHIDeployableManager.LoadFromDeployableCache
-EHIDeployableManagerVR.old_RemoveFromDeployableCache = EHIDeployableManager.RemoveFromDeployableCache
-EHIDeployableManagerVR.old_UpdateDeployableAmount = EHIDeployableManager.UpdateDeployableAmount
+EHIDeployableManagerVR.old_AddToCache = EHIDeployableManager.AddToCache
+EHIDeployableManagerVR.old_LoadFromCache = EHIDeployableManager.LoadFromCache
+EHIDeployableManagerVR.old_RemoveFromCache = EHIDeployableManager.RemoveFromCache
+EHIDeployableManagerVR.old_UpdateAmount = EHIDeployableManager.UpdateAmount
 
 ---@param key string
----@param data { f: string, type: string, unit: UnitDeployable, tracker_type: string? }
+---@param data { f: string, ehi_tracker: string, unit: UnitDeployable, tracker_type: string? }
 function EHIDeployableManagerVR:ReturnLoadCall(key, data)
     if data.f then
-        self[data.f](self, data.type, key, data.unit, data.tracker_type)
+        self[data.f](self, data.ehi_tracker, key, data.unit, data.tracker_type)
     else
-        self:old_RemoveFromDeployableCache(key)
+        self:old_RemoveFromCache(key)
     end
 end
 
----@param type string
+---@param ehi_tracker string
 ---@param key string
 ---@param unit UnitDeployable
 ---@param tracker_type string?
-function EHIDeployableManagerVR:AddToDeployableCache(type, key, unit, tracker_type)
+function EHIDeployableManagerVR:AddToCache(ehi_tracker, key, unit, tracker_type)
     if key and self._trackers:IsLoading() then
-        self._trackers:AddToLoadQueue(key, { type = type, unit = unit, tracker_type = tracker_type, f = "AddToDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
+        self._trackers:AddToLoadQueue(key, { ehi_tracker = ehi_tracker, unit = unit, tracker_type = tracker_type, f = "AddToDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
         return
     end
-    self:old_AddToDeployableCache(type, key, unit, tracker_type)
+    self:old_AddToCache(ehi_tracker, key, unit, tracker_type)
 end
 
----@param type string
+---@param ehi_tracker string
 ---@param key string
-function EHIDeployableManagerVR:LoadFromDeployableCache(type, key)
+function EHIDeployableManagerVR:LoadFromCache(ehi_tracker, key)
     if key and self._trackers:IsLoading() then
-        self._trackers:AddToLoadQueue(key, { type = type, f = "LoadFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
+        self._trackers:AddToLoadQueue(key, { ehi_tracker = ehi_tracker, f = "LoadFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
         return
     end
-    self:old_LoadFromDeployableCache(type, key)
+    self:old_LoadFromCache(ehi_tracker, key)
 end
 
 ---@param key string
-function EHIDeployableManagerVR:RemoveFromDeployableCache(key)
+function EHIDeployableManagerVR:RemoveFromCache(key)
     if key and self._trackers:IsLoading() then
         self._trackers:AddToLoadQueue(key, {}, callback(self, self, "ReturnLoadCall"), true)
         return
     end
-    self:old_RemoveFromDeployableCache(key)
+    self:old_RemoveFromCache(key)
 end
 
 ---@param key string
 ---@param data { amount: number, id: string, t_id: string }
 function EHIDeployableManagerVR:ReloadDeployable(key, data)
-    self:old_UpdateDeployableAmount(key, data.amount, data.id, data.t_id)
+    self:old_UpdateAmount(key, data.amount, data.id, data.t_id)
 end
 
 ---@param key string
 ---@param amount number
 ---@param id string
 ---@param t_id string
-function EHIDeployableManagerVR:UpdateDeployableAmount(key, amount, id, t_id)
+function EHIDeployableManagerVR:UpdateAmount(key, amount, id, t_id)
     if self._trackers:IsLoading() then
         self._trackers:AddToLoadQueue(key, { amount = amount, id = id, t_id = t_id }, callback(self, self, "ReloadDeployable"))
         return
     end
-    self:old_UpdateDeployableAmount(key, amount, id, t_id)
+    self:old_UpdateAmount(key, amount, id, t_id)
 end

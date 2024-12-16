@@ -51,7 +51,7 @@ function JobManager:activate_job(...)
     return result
 end
 
-if EHI.IsHost and EHI:IsHost() then
+if EHI.IsHost then
     original.next_stage = JobManager.next_stage
     function JobManager:next_stage(...)
         if not self:has_active_job() then

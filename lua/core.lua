@@ -548,7 +548,7 @@ _G.EHI =
     },
 
     ModInstance = ModInstance,
-    ModVersion = ModInstance and tonumber(ModInstance:GetVersion()) or 0,
+    ModVersion = ModInstance:GetVersion(),
     -- PAYDAY 2/mods/Extra Heist Info/
     ModPath = ModPath,
     -- PAYDAY 2/mods/Extra Heist Info/loc/
@@ -1165,24 +1165,13 @@ function EHI:IsMayhemOrAbove()
 end
 
 if Global.load_level then
-    local function return_true()
-        return true
-    end
-    local function return_false()
-        return false
-    end
-    if Network:is_server() then
-        EHI.IsHost = return_true
-        EHI.IsClient = return_false
-    else
-        EHI.IsHost = return_false
-        EHI.IsClient = return_true
-    end
+    EHI.IsHost = Network:is_server() ---@type boolean
+    EHI.IsClient = Network:is_client() ---@type boolean
 end
 
 ---@return boolean
 function EHI:IsPlayingFromStart()
-    return self:IsHost() or (self:IsClient() and not managers.statistics:is_dropin())
+    return self.IsHost or (self.IsClient and not managers.statistics:is_dropin())
 end
 
 function EHI:Log(s)
@@ -1193,6 +1182,27 @@ end
 ---@param s AnyExceptNil
 function EHI:Log2(prefix, s)
     log(string.format("[EHI] [%s] %s", prefix, s))
+end
+
+---Logs provided string from the file it was called from
+---@param s AnyExceptNil
+function EHI:LogWithCurrentFile(s)
+    local active_file = debug.getinfo(2, "S")
+    local last_pos, file
+    while true do
+        local st, _ = string.find(active_file.source, "/", last_pos)
+        if st then
+            last_pos = st + 1
+        else
+            break
+        end
+    end
+    if last_pos then
+        file = string.gsub(active_file.source, string.sub(active_file.source, 0, last_pos - 1), "")
+    else
+        file = "unknown"
+    end
+    self:Log2(file, s)
 end
 
 ---Works the same way as EHI:Log(), but the string is not saved on HDD
@@ -1430,7 +1440,7 @@ function EHI:IsLootCounterVisible()
 end
 
 function EHI:IsSyncedLootCounterVisible()
-    return self:IsHost() and not self:IsPlayingCrimeSpree()
+    return self.IsHost and not self:IsPlayingCrimeSpree()
 end
 
 function EHI:IsPlayingCrimeSpree()
@@ -1494,7 +1504,8 @@ end
 function EHI:CallCallbackOnce(id, ...)
     local handler = table.remove_key(self._callback, id)
     if handler then
-        handler:dispatch_and_clear(...)
+        handler:dispatch(...)
+        handler:clear()
     end
 end
 
@@ -1513,18 +1524,9 @@ function EHI:AddOnCustodyCallback(f)
     self:AddCallback("Custody", f)
 end
 
----@param custody_state boolean
-function EHI:RunOnCustodyCallbacks(custody_state)
-    self:CallCallback("Custody", custody_state)
-end
-
 ---@param f function
 function EHI:AddOnSpawnedCallback(f)
     self:AddCallback("Spawned", f)
-end
-
-function EHI:RunOnSpawnedCallbacks()
-    self:CallCallbackOnce("Spawned")
 end
 
 ---@generic T
@@ -1578,7 +1580,7 @@ function EHI:HookLootRemovalElement(elements)
     end
     local hook = managers.ehi_hook
     local f, HookFunction
-    if self:IsHost() then
+    if self.IsHost then
         HookFunction = hook.PrehookElement
         f = function(e, instigator, ...)
             if not e._values.enabled or not alive(instigator) then
@@ -1618,7 +1620,7 @@ end
 
 ---@return boolean
 function EHI:ShowDramaTracker()
-    return self:IsHost() and self:GetOption("show_drama_tracker") and Global.game_settings.level_id ~= "haunted"
+    return self.IsHost and self:GetOption("show_drama_tracker") and Global.game_settings.level_id ~= "haunted"
 end
 
 ---@return boolean
@@ -1627,7 +1629,7 @@ function EHI:IsRunningBB()
 end
 
 function EHI:IsRunningUsefulBots()
-    if self:IsHost() then
+    if self.IsHost then
         return UsefulBots and Global.game_settings.team_ai
     end
     return self._cache.HostHasUsefulBots and self._cache.HostHasBots
@@ -1935,7 +1937,7 @@ function EHI:ShowLootCounterNoChecks(params)
     params = params or {}
     local offset = params.offset or 0
     if not params.skip_offset and managers.job:IsPlayingMultidayHeist() then
-        if self:IsHost() or params.client_from_start then
+        if self.IsHost or params.client_from_start then
             offset = managers.loot:GetSecuredBagsAmount()
         else
             managers.ehi_manager:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
@@ -1959,6 +1961,7 @@ function EHI:ShowLootCounterNoChecks(params)
             managers.ehi_manager:AddTriggers2(triggers, "LootCounter")
             params.max_bags_for_level.objective_triggers = nil
         end
+        params.no_sync_load = true
         managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level)
     else
         if not self:GetOption("show_loot_max_xp_bags") then
@@ -2035,9 +2038,9 @@ end
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounterNoCheck(params)
     if params.show_loot_counter and self:GetOption("show_loot_counter") and not self:IsPlayingCrimeSpree() then
-        managers.ehi_achievement:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
+        managers.ehi_unlockable:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
     else
-        managers.ehi_achievement:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target)
+        managers.ehi_unlockable:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target)
     end
     if params.load_sync then
         managers.ehi_manager:AddLoadSyncFunction(params.load_sync)
@@ -2047,15 +2050,15 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
     end
     if params.failed_on_alarm then
         self:AddOnAlarmCallback(function()
-            managers.ehi_achievement:SetAchievementFailed(params.achievement)
+            managers.ehi_unlockable:SetAchievementFailed(params.achievement)
         end)
     end
     if params.silent_failed_on_alarm then
         self:AddOnAlarmCallback(function()
             if managers.ehi_manager:GetInSyncState() then
-                managers.ehi_achievement:SetAchievementFailedSilent(params.achievement)
+                managers.ehi_unlockable:SetAchievementFailedSilent(params.achievement)
             else
-                managers.ehi_achievement:SetAchievementFailed(params.achievement)
+                managers.ehi_unlockable:SetAchievementFailed(params.achievement)
             end
         end)
     end
@@ -2079,7 +2082,7 @@ function EHI:ShowAchievementBagValueCounter(params)
     if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked(params.achievement) then
         return
     end
-    managers.ehi_achievement:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
+    managers.ehi_unlockable:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
     managers.ehi_loot:AddAchievementListener(params)
 end
 
@@ -2105,7 +2108,7 @@ function EHI:ShowAchievementKillCounter(params)
         self:Log(string.format("progress: %d; max: %d", progress, max))
         return
     end
-    managers.ehi_achievement:AddAchievementKillCounter(id, progress, max)
+    managers.ehi_unlockable:AddAchievementKillCounter(id, progress, max)
     Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_award_progress_%s", id), function(am, stat, value)
         if stat == id_stat then
             managers.ehi_tracker:IncreaseTrackerProgress(id, value)

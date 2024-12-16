@@ -20,7 +20,7 @@ local triggers = {
     [100207] = { time = 260/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape },
     [100209] = { time = 250/30, id = "Escape", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTrackerIfEnabled, hint = Hints.LootEscape }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100753] = EHI:ClientCopyTrigger(triggers[100778], { time = 17 + 13 + 15 + 17 })
     triggers[100756] = EHI:ClientCopyTrigger(triggers[100778], { time = 13 + 15 + 17 })
     triggers[100757] = EHI:ClientCopyTrigger(triggers[100778], { time = 15 + 17 })

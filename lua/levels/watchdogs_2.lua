@@ -68,7 +68,7 @@ local triggers = {
         end
     end}
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[101127] = EHI:ClientCopyTrigger(triggers[101560], { time = 75 + 30 + boat_delay })
     local boat_return = { time = anim_delay, id = "BoatLootDropReturnRandom", id2 = "BoatLootDropReturn", id3 = "BoatLootFirst", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         if self:Exists(trigger.id) then

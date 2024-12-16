@@ -534,7 +534,7 @@ EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param m
     end)
 end)
 
-if EHI:IsClient() then
+if EHI.IsClient then
     instances["levels/instances/unique/pbr/pbr_flare/world"][100025] = EHI:ClientCopyTrigger(instances["levels/instances/unique/pbr/pbr_flare/world"][100024], { time = 27 })
     instances["levels/instances/unique/mad/mad_emp/world"][100017] = EHI:CopyTrigger(instances["levels/instances/unique/mad/mad_emp/world"][100013], { time = 90 }, SF.SetTimeOrCreateTracker)
     instances["levels/instances/unique/mad/mad_emp/world"][100019] = EHI:CopyTrigger(instances["levels/instances/unique/mad/mad_emp/world"][100013], { time = 60 }, SF.SetTimeOrCreateTracker)

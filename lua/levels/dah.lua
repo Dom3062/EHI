@@ -165,7 +165,7 @@ local xp =
     }
 }
 EHI:AddXPBreakdown(xp)
-if EHI:IsHost() then
+if EHI.IsHost then
     dah_laptop_codes = nil ---@diagnostic disable-line
     return
 end

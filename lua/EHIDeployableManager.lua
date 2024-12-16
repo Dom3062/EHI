@@ -48,7 +48,7 @@ end
 ---@param key string
 ---@param unit UnitDeployable
 ---@param tracker_type string?
-function EHIDeployableManager:AddToDeployableCache(ehi_tracker, key, unit, tracker_type)
+function EHIDeployableManager:AddToCache(ehi_tracker, key, unit, tracker_type)
     if not key then
         return
     end
@@ -58,18 +58,18 @@ end
 
 ---@param ehi_tracker string
 ---@param key string
-function EHIDeployableManager:LoadFromDeployableCache(ehi_tracker, key)
+function EHIDeployableManager:LoadFromCache(ehi_tracker, key)
     if not key then
         return
     end
     local deployable = table.remove_key(self._deployables, key)
     if deployable and self:IsDeployableAllowed(deployable.tracker_type) then
-        self:UpdateDeployableAmount(key, deployable.unit:base():GetRealAmount(), deployable.tracker_type, ehi_tracker)
+        self:UpdateAmount(key, deployable.unit:base():GetRealAmount(), deployable.tracker_type, ehi_tracker)
     end
 end
 
 ---@param key string
-function EHIDeployableManager:RemoveFromDeployableCache(key)
+function EHIDeployableManager:RemoveFromCache(key)
     if not key then
         return
     end
@@ -140,7 +140,7 @@ end
 ---@param amount number
 ---@param id string
 ---@param t_id string
-function EHIDeployableManager:UpdateDeployableAmount(key, amount, id, t_id)
+function EHIDeployableManager:UpdateAmount(key, amount, id, t_id)
     local tracker = self._all_deployables_tracker or t_id
     if self._trackers:TrackerDoesNotExist(tracker) and amount > 0 then
         self:CreateDeployableTracker(tracker, id)

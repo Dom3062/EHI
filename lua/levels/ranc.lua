@@ -58,7 +58,7 @@ local triggers = {
     [EHI:GetInstanceElementID(100056, 25650)] = FultonRemoveCatch
 }
 
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[102053].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
     triggers[1020702].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
     local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatchAgain", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootTimed }

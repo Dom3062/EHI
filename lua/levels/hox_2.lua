@@ -14,7 +14,7 @@ local element_sync_triggers =
 local request = { Icon.PCHack, Icon.Wait }
 local hoxton_hack = { "hoxton_character" }
 local CheckOkValueHostCheckOnly = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
-    if EHI:IsHost() and not element:_values_ok() then
+    if EHI.IsHost and not element:_values_ok() then
         return
     elseif self._trackers:TrackerExists(trigger.id) then
         self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
@@ -74,7 +74,7 @@ local tracker_merge =
         }
     }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[EHI:GetInstanceElementID(100055, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, special_function = SF.SetRandomTime, data = { 45, 55, 65 }, hint = Hints.Teargas }
 end
 
@@ -94,7 +94,7 @@ local achievements =
         },
         load_sync = function(self)
             if self:IsMissionElementEnabled(100270) then -- No keycard achievement
-                self._achievements:AddAchievementStatusTracker("slakt_3")
+                self._unlockable:AddAchievementStatusTracker("slakt_3")
             end
         end
     },

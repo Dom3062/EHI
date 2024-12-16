@@ -6,7 +6,7 @@ local triggers =
 {
     [100391] = { id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, special_function = SF.SetTimeByPreplanning, data = { id = 100486, yes = 60 + 25, no = 120 + 25 }, waypoint = { icon = Icon.Escape, position_from_element = 100420 }, hint = Hints.Escape }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100414] = EHI:ClientCopyTrigger(triggers[100391], { time = 25 }, true)
 end
 

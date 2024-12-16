@@ -20,41 +20,39 @@ function EHIMenu:SetBuffDeckOption(value, deck, option)
 end
 
 function EHIMenu:SetXPPanelOption(value, option)
-    self:UpdateTracker(option, value <= 2)
+    self._preview_panel:UpdateTracker("show_gained_xp", value <= 2)
 end
 
 function EHIMenu:UpdateTradeDelayFormat(value)
-    self._preview_panel:CallFunction("show_trade_delay", "UpdateFormat", value)
+    self._preview_panel:UpdateTrackerInternalFormat("killed_civilians", "show_trade_delay", value)
 end
 
 function EHIMenu:SetGagePanelOption(value, option)
-    self:UpdateTracker(option, value == 1)
+    self._preview_panel:UpdateTracker("show_gage_tracker", value == 1)
 end
 
 function EHIMenu:UpdateCivilianPanelOption(value)
-    self._preview_panel:UpdateTrackerFormat("show_civilian_count_tracker", value)
+    self._preview_panel:UpdateTrackerInternalFormat("civilian_count", "show_civilian_count_tracker", value)
 end
 
 function EHIMenu:UpdateHostagePanelOption(value)
-    self._preview_panel:UpdateTrackerFormat("show_hostage_count_tracker", value)
+    self._preview_panel:UpdateTrackerInternalFormat("hostage_count", "show_hostage_count_tracker", value)
 end
 
 function EHIMenu:UpdateAssaultTracker(value)
-    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateFormat", value, true)
-    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateFormat", value, true)
+    self._preview_panel:CallFunction("assault", "UpdateInternalFormat", value, true)
+    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateInternalFormat", value, true)
+    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateInternalFormat", value, true)
 end
 
 function EHIMenu:UpdateAssaultTracker2(value)
-    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateFormat2", value, true)
-    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateFormat2", value, true)
-end
-
-function EHIMenu:UpdateTracker(option, value)
-    self._preview_panel:UpdateTracker(option, value)
+    self._preview_panel:CallFunction("assault", "UpdateInternalFormat2", value, true)
+    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateInternalFormat2", value, true)
+    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateInternalFormat2", value, true)
 end
 
 function EHIMenu:UpdateEnemyCountTracker(value)
-    self._preview_panel:UpdateTrackerFormat("show_enemy_count_tracker", value)
+    self._preview_panel:UpdateTrackerInternalFormat("show_alarm_enemies", "show_enemy_count_tracker", value)
 end
 
 function EHIMenu:SetFocus2(focus, value)
@@ -77,8 +75,8 @@ function EHIMenu:UpdateScale(scale)
     self._preview_panel:UpdateScale(scale)
 end
 
-function EHIMenu:UpdateFormat(format)
-    self._preview_panel:UpdateFormat(format)
+function EHIMenu:UpdateTimeFormat(format)
+    self._preview_panel:UpdateTimeFormat(format)
 end
 
 function EHIMenu:UpdateEquipmentFormat(format)
@@ -88,6 +86,11 @@ end
 function EHIMenu:UpdateTrackerVisibility(value, option)
     self._preview_panel:Redraw()
     self:SetFocus(value, option)
+end
+
+function EHIMenu:UpdateTrackerVisibility_Assault(value, option)
+    self:UpdateTrackerVisibility(value, option)
+    self:SetFocus(value, "assault")
 end
 
 function EHIMenu:UpdateBGVisibility(visibility)
@@ -118,6 +121,11 @@ function EHIMenu:SetFocus(focus, value)
     self._preview_panel:SetSelected(value)
 end
 
+function EHIMenu:SetFocus_Assault(focus, value)
+    self:SetFocus(focus, value)
+    self:SetFocus(focus, "assault")
+end
+
 function EHIMenu:fcc_equipment_tracker(focus, ...)
     self:SetFocus(focus, focus and "show_equipment_tracker" or "")
 end
@@ -129,7 +137,7 @@ function EHIMenu:fcc_equipment_tracker_menu(focus, ...)
 end
 
 function EHIMenu:UpdateMinionTracker(value)
-    self._preview_panel:UpdateTrackerFormat("show_minion_tracker", value)
+    self._preview_panel:UpdateTrackerInternalFormat("minion", "show_minion_tracker", value)
 end
 
 function EHIMenu:UpdateMinionHealthTracker(value)

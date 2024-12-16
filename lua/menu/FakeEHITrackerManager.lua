@@ -11,10 +11,7 @@ FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
 ---@param aspect_ratio number
 function FakeEHITrackerManager:new(panel, aspect_ratio)
     dofile(EHI.LuaPath .. "menu/FakeEHITracker.lua")
-    self._hud_panel = panel:panel({
-        --layer = -10,
-        alpha = 1
-    })
+    self._hud_panel = panel:panel({ alpha = 1 })
     if _G.IS_VR then
         self._scale = EHI:GetOption("vr_scale") --[[@as number]]
         local x, y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
@@ -48,6 +45,16 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
         y = self._y,
         y_offset = 0,
         max_icons = 4
+    }
+    self._tracker_format_data =
+    {
+        time = EHI:GetOption("time_format"), ---@type number
+        equipment = EHI:GetOption("equipment_format"), ---@type number
+        killed_civilians = EHI:GetOption("show_trade_delay_amount_of_killed_civilians"), ---@type boolean
+        show_alarm_enemies = EHI:GetOption("show_enemy_count_show_pagers"), ---@type boolean
+        civilian_count = EHI:GetOption("civilian_count_tracker_format"), ---@type number
+        hostage_count = EHI:GetOption("hostage_count_tracker_format"), ---@type number
+        minion = EHI:GetOption("show_minion_option") ---@type number
     }
     self:AddFakeTrackers()
     return self
@@ -103,8 +110,12 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_civilian_count_tracker", count = math.random(1, 15), icons = { "civilians", "hostage" }, class = "FakeEHICivilianCountTracker" })
     self:AddFakeTracker({ id = "show_hostage_count_tracker", count = math.random(4, 10), icons = { "hostage", { icon = "hostage", color = Color(0, 1, 1) } }, class = "FakeEHIHostageCountTracker" })
     self:AddFakeTracker({ id = "show_laser_tracker", time = math.rand(0.5, 4), icons = { EHI.Icons.Lasers } })
-    self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), diff = math.random(0, 100), count = math.random(0, 100), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker", control = true })
-    self:AddFakeTracker({ id = "show_assault_time_tracker", time = math.random(0, 240), diff = math.random(0, 100), count = math.random(0, 100), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
+    if EHI:CombineAssaultDelayAndAssaultTime() then
+        self:AddFakeTracker({ ids = { "assault" }, time = math.random(0, 240), diff = math.random(0, 100), count = math.random(0, 100), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker", control = math.random() <= 0.5 })
+    else
+        self:AddFakeTracker({ id = "show_assault_delay_tracker", time = math.random(30, 120), diff = math.random(0, 100), count = math.random(0, 100), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker", control = true })
+        self:AddFakeTracker({ id = "show_assault_time_tracker", time = math.random(0, 240), diff = math.random(0, 100), count = math.random(0, 100), icons = { "assaultbox" }, class = "FakeEHIAssaultTimeTracker" })
+    end
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" })
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
     self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, chance = math.random(100), class = "FakeEHIChanceTracker" })
@@ -132,6 +143,7 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     params.icon_pos = self._icons_pos
     params.tracker_alignment = self._tracker_alignment
     params.tracker_vertical_anim = self._tracker_vertical_anim
+    params.format = self._tracker_format_data
     local tracker = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params, self) --[[@as FakeEHITracker]]
     self._n_of_trackers = self._n_of_trackers + 1
     self._fake_trackers[self._n_of_trackers] = tracker
@@ -143,9 +155,21 @@ end
 function FakeEHITrackerManager:CreateFirstFakeTracker(params)
     params.first = true
     self:CreateFakeTracker(params)
-    local bg_box = self._fake_trackers[1]._bg_box
+    self:_update_border_color(self._fake_trackers[1]._bg_box)
+end
+
+---@param bg_box Panel
+function FakeEHITrackerManager:_update_border_color(bg_box)
+    bg_box:child("right_bottom"):set_color(Color.white)
+    bg_box:child("left_bottom"):set_color(Color.white)
+    bg_box:child("right_top"):set_color(Color.white)
+    bg_box:child("left_top"):set_color(Color.white)
     if self._tracker_alignment == 2 then
-        bg_box:child("left_bottom"):set_color(Color.red)
+        if self._tracker_vertical_anim == 2 then
+            bg_box:child("right_bottom"):set_color(Color.red)
+        else
+            bg_box:child("left_bottom"):set_color(Color.red)
+        end
     elseif self._tracker_alignment <= 2 and self._tracker_vertical_anim == 2 then
         bg_box:child("right_top"):set_color(Color.red)
     else
@@ -275,39 +299,36 @@ end
 
 ---@param id string
 function FakeEHITrackerManager:UpdateTracker(id, value)
-    local correct_id = ""
-    if id == "xp_panel" then
-        correct_id = "show_gained_xp"
-    elseif id == "gage_tracker_panel" then
-        correct_id = "show_gage_tracker"
-    end
-    if correct_id == "" then
-        return
-    end
-    local tracker = self:GetTracker(correct_id)
+    local tracker = self:GetTracker(id)
     if not not tracker ~= value then
         self:Redraw()
     end
 end
 
----@param id string
-function FakeEHITrackerManager:UpdateTrackerFormat(id, value)
-    local tracker = self:GetTracker(id)
+---@param format_key string
+---@param tracker_id string
+function FakeEHITrackerManager:UpdateTrackerInternalFormat(format_key, tracker_id, value)
+    self._tracker_format_data[format_key] = value
+    local tracker = self:GetTracker(tracker_id)
     if tracker then
-        tracker:UpdateFormat(value)
+        tracker:UpdateInternalFormat(format_key, value)
     end
 end
 
-function FakeEHITrackerManager:UpdateFormat(format)
+---@param format number
+function FakeEHITrackerManager:UpdateTimeFormat(format)
+    self._tracker_format_data.time = format
     for _, tracker in ipairs(self._fake_trackers) do
-        tracker:UpdateFormat(format)
+        tracker:UpdateTimeFormat()
     end
 end
 
+---@param format number
 function FakeEHITrackerManager:UpdateEquipmentFormat(format)
+    self._tracker_format_data.equipment = format
     for _, tracker in ipairs(self._fake_trackers) do ---@cast tracker FakeEHIEquipmentTracker
         if tracker.UpdateEquipmentFormat then
-            tracker:UpdateEquipmentFormat(format)
+            tracker:UpdateEquipmentFormat()
         end
     end
 end
@@ -332,6 +353,11 @@ end
 function FakeEHITrackerManager:UpdateXOffset(x)
     local x_full, _ = managers.gui_data:safe_to_full(x, 0)
     self._x = x_full
+    self:_update_x_offset_fast(x_full)
+end
+
+---@param x_full number?
+function FakeEHITrackerManager:_update_x_offset_fast(x_full)
     self:_update_tracker_x(x_full)
     self:SetPreviewTextPosition()
 end
@@ -408,8 +434,9 @@ end
 function FakeEHITrackerManager:UpdateIconsPosition(position)
     self._icons_pos = position
     for _, tracker in ipairs(self._fake_trackers) do
-        tracker:UpdateIconsPos(position)
+        tracker:UpdateIconsPosition(position)
     end
+    self:_update_x_offset_fast()
 end
 
 function FakeEHITrackerManager:UpdateTrackerAlignment(alignment)

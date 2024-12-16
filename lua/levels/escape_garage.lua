@@ -11,7 +11,7 @@ local achievements =
             [104263] = { special_function = SF.CustomCode2, f = function(self)
                 self._cache.bilbo_baggin_bags = self._cache.bilbo_baggin_bags - 1
                 if self._cache.bilbo_baggin_bags == 0 then
-                    self._achievements:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
+                    self._unlockable:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
                     self._loot:AddAchievementListener({
                         achievement = "bilbo_baggin",
                         max = 8

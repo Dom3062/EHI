@@ -35,7 +35,7 @@ local triggers = {
 
     [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
     triggers[103500] = EHI:ClientCopyTrigger(triggers[102104], { time = 26 })
 end
@@ -58,7 +58,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         overkill_or_above = 2
     })
     other[100314] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
-        if EHI:IsHost() and element:counter_value() ~= 0 then
+        if EHI.IsHost and element:counter_value() ~= 0 then
             return
         end
         local t = 20 + 10 + 25

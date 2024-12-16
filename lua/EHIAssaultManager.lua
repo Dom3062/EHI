@@ -23,12 +23,12 @@ end
 
 ---@param manager EHIManager
 function EHIAssaultManager:init_finalize(manager)
-    self._internal = manager:CreateAndCopyInternal("assault")
+    self._internal = manager:CreateInternal("assault")
     self._is_skirmish = tweak_data.levels:IsLevelSkirmish()
     local combine = EHI:CombineAssaultDelayAndAssaultTime()
     self._anticipation =
     {
-        sync_f = (EHI:IsHost() or self._is_skirmish) and "SyncAnticipationColor" or "SyncAnticipation",
+        sync_f = (EHI.IsHost or self._is_skirmish) and "SyncAnticipationColor" or "SyncAnticipation",
         t = 30 -- Get it from tweak_data; although `HUDManager:sync_start_anticipation_music()` checks if the time is less than 30s; Time is disabled in Holdout as the time is accurate enough even for clients
     }
     self._assault_delay =
@@ -82,7 +82,7 @@ function EHIAssaultManager:init_finalize(manager)
             self:OnEnterSustain(duration)
         end)
     end
-    if EHI:IsHost() then
+    if EHI.IsHost then
         ---@class EHISustainListenerModifier : BaseModifier
         local EHISustainListenerModifier = class(BaseModifier)
         ---@param duration number
@@ -230,7 +230,7 @@ end
 function EHIAssaultManager:EndlessAssaultChanged()
     local data
     if not self._endless_assault then
-        if EHI:IsHost() then
+        if EHI.IsHost then
             local ai_state = managers.groupai:state()
             local assault_data = ai_state._task_data.assault or {}
             local current_state = assault_data.phase

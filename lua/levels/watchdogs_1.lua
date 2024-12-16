@@ -18,7 +18,7 @@ local triggers = {
     [101221] = { time = 30 + 30 + escape_delay, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape }
 }
 
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[101307] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay })
     triggers[101308] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay })
     triggers[101309] = EHI:ClientCopyTrigger(triggers[102873], { time = 5 + 3 + 60 + 30 + 38 + 7 + longest_car_drop_delay })

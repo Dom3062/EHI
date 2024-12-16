@@ -31,7 +31,7 @@ end
 
 ---@param amount number?
 function GrenadeCrateBase:UpdateAmount(amount)
-    managers.ehi_deployable:UpdateDeployableAmount(self._ehi_key, amount or self:GetRealAmount(), "grenade_crate", "GrenadeCases")
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), "grenade_crate", "GrenadeCases")
 end
 
 function GrenadeCrateBase:_set_visual_stage(...)

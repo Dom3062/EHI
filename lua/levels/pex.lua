@@ -12,7 +12,7 @@ local triggers = {
 
     [101389] = { time = 120 + 20 + 4, id = "HeliEscape", icons = { Icon.Heli, Icon.Winch }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101391 }, hint = Hints.Escape }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100233] = EHI:ClientCopyTrigger(triggers[101389], { time = 20 + 4 })
 end
 

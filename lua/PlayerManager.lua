@@ -227,7 +227,7 @@ if meele_boost_tweak then
         end
         local ratio = multiplier / max_multiplier
         if ratio >= bloodthirst_ratio then
-            bloodthirst_max = ratio == 1
+            bloodthirst_max = ratio >= 1
             managers.ehi_buff:AddGauge("melee_damage_stacking", ratio, multiplier)
         end
     end

@@ -14,7 +14,7 @@ local original =
 
 function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
-    local server = EHI:IsHost()
+    local server = EHI.IsHost
     local hud_panel = self:script(PlayerBase.PLAYER_INFO_HUD_PD2).panel
     self._ehi = managers.ehi_tracker
     managers.ehi_waypoint:SetPlayerHUD(self)

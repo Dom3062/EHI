@@ -9,7 +9,7 @@ local triggers = {
     [100323] = { id = "Fuel", special_function = SF.PauseTracker }
 }
 
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[100047] = EHI:ClientCopyTrigger(triggers[100322], { time = 60 })
     triggers[100049] = EHI:ClientCopyTrigger(triggers[100322], { time = 30 })
 end

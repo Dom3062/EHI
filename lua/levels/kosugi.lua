@@ -87,7 +87,7 @@ local achievements =
                 counter = counter + math.min(amount, 1)
             end
             if counter < 7 then
-                self._achievements:AddAchievementProgressTracker("kosugi_3", 7, counter)
+                self._unlockable:AddAchievementProgressTracker("kosugi_3", 7, counter)
             end
         end,
         preparse_callback = function(data)
@@ -111,7 +111,7 @@ local achievements =
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
             local counter_loot = managers.loot:GetSecuredBagsAmount()
             if counter_loot < 16 or counter_armor < 4 then
-                self._achievements:AddAchievementProgressTracker("kosugi_5", 0, 0, nil, "EHIkosugi5Tracker")
+                self._unlockable:AddAchievementProgressTracker("kosugi_5", 0, 0, nil, "EHIkosugi5Tracker")
                 self._trackers:CallFunction("kosugi_5", "AddFromSync", {
                     { progress = math.min(counter_loot, 16), max = 16, id = "bags" },
                     { progress = math.min(counter_armor, 4), max = 4, id = "armor" }

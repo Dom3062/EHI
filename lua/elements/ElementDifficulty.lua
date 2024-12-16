@@ -48,7 +48,7 @@ if tweak_data.levels:IsLevelSkirmish() then
             self:FitTheText(self._progress_text)
             self:AnimateBG()
         end
-        if EHI:IsHost() then -- On host, create the tracker after spawn
+        if EHI.IsHost then -- On host, create the tracker after spawn
             EHI:AddOnSpawnedCallback(function()
                 managers.ehi_tracker:AddTracker({
                     id = "AssaultDiff",

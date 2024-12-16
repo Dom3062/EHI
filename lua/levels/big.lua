@@ -44,7 +44,7 @@ local triggers = {
 
     [104783] = { time = 8, id = "Bus", icons = { Icon.Wait }, hint = Hints.Wait }
 }
-if EHI:IsClient() then
+if EHI.IsClient then
     triggers[101605] = { time = 16.7 * 17, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(ThermiteWP), hint = Hints.Thermite }
     local doesnotexists = {
         [101817] = true,
@@ -75,7 +75,7 @@ local achievements =
             [2] = { special_function = SF.RemoveTrigger, data = { 100107, 106140, 106150 } }
         },
         load_sync = function(self)
-            self._achievements:AddTimedAchievementTracker("bigbank_4", 720)
+            self._unlockable:AddTimedAchievementTracker("bigbank_4", 720)
         end,
         preparse_callback = function(data)
             local trigger = { special_function = SF.Trigger, data = { 1, 2 } }
@@ -96,7 +96,7 @@ local achievements =
             if dropin or not managers.preplanning:IsAssetBought(106594) then -- C4 Escape
                 return
             end
-            managers.ehi_achievement:AddAchievementStatusTracker("cac_22")
+            managers.ehi_unlockable:AddAchievementStatusTracker("cac_22")
         end,
         sync_params = { from_start = true }
     }
@@ -104,9 +104,36 @@ local achievements =
 if TheFixes then
     local Preventer = TheFixesPreventer or {}
     if not Preventer.achi_matrix_with_lasers and achievements.cac_22.difficulty_pass then -- Fixed
-        achievements.cac_22.cleanup_callback = EHIAchievementManager:AddTFCallback("cac_22", "EHI_BigBank_TheFixes")
+        achievements.cac_22.cleanup_callback = EHIUnlockableManager:AddTFCallback("cac_22", "EHI_BigBank_TheFixes")
     end
 end
+
+local sidejob =
+{
+    daily_helicopter =
+    {
+        elements = {},
+        alarm_callback = function(dropin)
+            if dropin or not managers.preplanning:IsAssetBought(104305) then -- Default Heli escape (Loud)
+                return
+            end
+            local offset = managers.loot:GetSecuredBagsAmount()
+            managers.ehi_unlockable:AddSHDailyProgressTracker("daily_helicopter", 16)
+            managers.ehi_loot:AddAchievementListener({
+                achievement = "daily_helicopter",
+                counter = {
+                    check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
+                    f = function(loot)
+                        local secured = loot:GetSecuredBagsAmount() - offset
+                        managers.ehi_tracker:SetTrackerProgress("daily_helicopter", secured)
+                        if secured >= 16 then
+                            managers.ehi_loot:RemoveEventListener("daily_helicopter")
+                        end
+                end }
+            })
+        end
+    }
+}
 
 local other =
 {
@@ -129,7 +156,8 @@ end
 EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    sidejob = sidejob
 })
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",
@@ -149,7 +177,7 @@ local tbl =
     [105320] = { remove_vanilla_waypoint = 103704 },
     [105321] = { remove_vanilla_waypoint = 103705 }
 }
-if EHI:GetOption("show_waypoints") then
+if EHI:GetWaypointOption("show_waypoints_mission") then
     --units/payday2/props/gen_prop_construction_crane/gen_prop_construction_crane_arm
     tbl[105111] = { f = function(id, unit_data, unit)
         local t = { unit = unit }

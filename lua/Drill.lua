@@ -30,7 +30,7 @@ local function SetAutorepair(unit_key, autorepair)
     managers.ehi_manager:SetTimerAutorepair(unit_key, autorepair)
 end
 
-if EHI:IsHost() then
+if EHI.IsHost then
     original.set_autorepair = Drill.set_autorepair
     function Drill:set_autorepair(...)
         original.set_autorepair(self, ...)

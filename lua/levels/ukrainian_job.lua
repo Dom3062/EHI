@@ -28,7 +28,7 @@ local achievements =
             [101784] = { special_function = SF.SetAchievementComplete },
         },
         load_sync = function(self)
-            self._achievements:AddTimedAchievementTracker("lets_do_this", 36)
+            self._unlockable:AddTimedAchievementTracker("lets_do_this", 36)
         end
     },
     cac_12 =
