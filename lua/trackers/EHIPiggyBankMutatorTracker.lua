@@ -8,7 +8,7 @@ function EHIPiggyBankMutatorTracker:init(panel, params, ...)
     self._current_level = 1
     self._max_levels = 7
     params.flash_times = 1
-    if params.revenge then
+    if params.id == "pda10_event" then
         self._piggy_tweak_data = tweak_data.mutators.piggyrevenge.pig_levels
     else
         self._piggy_tweak_data = tweak_data.mutators.piggybank.pig_levels
@@ -20,16 +20,12 @@ end
 function EHIPiggyBankMutatorTracker:OverridePanel()
     self:SetBGSize()
     self._levels_text = self:CreateText({
-        text = self:FormatLevels(),
+        text = self:Format(self._current_level, self._max_levels),
         w = self._bg_box:w() / 2,
         left = self._text:right(),
         FitTheText = true
     })
     self:SetIconsX()
-end
-
-function EHIPiggyBankMutatorTracker:FormatLevels()
-    return self._current_level .. "/" .. self._max_levels
 end
 
 function EHIPiggyBankMutatorTracker:SetNewMax()
@@ -52,14 +48,10 @@ function EHIPiggyBankMutatorTracker:SetCompleted(force)
         self:SetNewMax()
         self:AnimateNewLevel()
     end
-    self._levels_text:set_text(self:FormatLevels())
+    self._levels_text:set_text(self:Format(self._current_level, self._max_levels))
 end
 
 function EHIPiggyBankMutatorTracker:SyncLoad(data)
-    if data.exploded_pig_level then
-        self:delete()
-        return
-    end
     self._progress = data.pig_fed_count
     if self._progress == 0 then -- The game has not started yet or players haven't secured bags yet
         return

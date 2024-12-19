@@ -1,3 +1,6 @@
+r284 (19. 12. 2024):
+Added support for mod "Hostages Extend Break Time"
+
 r283 (16. 12. 2024):
 Converts Tracker: Fixed misaligned convert health text
 Converts Tracker: Fixed misaligned tracker that overlap with other trackers if tracker alignment is set to "Horizontal; Right to Left"

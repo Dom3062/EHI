@@ -1,7 +1,7 @@
 local EHI = EHI
 local Icon = EHI.Icons
-local panel_size_original = 32
-local panel_offset_original = 6
+local panel_size_original = tweak_data.ehi.default.tracker.size_h
+local panel_offset_original = tweak_data.ehi.default.tracker.offset
 local panel_size = panel_size_original
 local panel_offset = panel_offset_original
 ---@class FakeEHITrackerManager

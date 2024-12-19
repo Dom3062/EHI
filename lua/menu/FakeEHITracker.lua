@@ -195,12 +195,6 @@ function FakeEHITracker:init(panel, params, parent_class)
     self:post_init(params)
 end
 
-function FakeEHITracker:UpdateBorderConfig()
-    if self._first then
-        self._parent_class:_update_border_color(self._bg_box)
-    end
-end
-
 ---`self._bg_box:right() - self._bg_box:x()`
 function FakeEHITracker:GetBGBoxRight()
     return self._bg_box:right() - self._bg_box:x()
@@ -363,7 +357,9 @@ function FakeEHITracker:UpdateTrackerVerticalAnim(anim)
         return
     end
     self._tracker_vertical_anim_left = vertical
-    self:UpdateBorderConfig()
+    if self._first then
+        self._parent_class:_update_border_color(self._bg_box)
+    end
     self:UpdateCornerVisibility(self._bg_box:child("bg"):visible() and self._corners_visible)
 end
 

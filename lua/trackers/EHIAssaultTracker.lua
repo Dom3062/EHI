@@ -60,10 +60,10 @@ if type(tweak_values) == "table" then
         end
     end
     if match then -- All numbers the same, use it and avoid computation because it is expensive
-        EHIAssaultTracker._assault_delay = first_value
+        EHIAssaultTracker._ASSAULT_DELAY = first_value
     end
 else -- If for some reason the assault delay is not a table, use the value directly
-    EHIAssaultTracker._assault_delay = tonumber(tweak_values) or tweak_data.levels:IsLevelSkirmish() and 25 or 30
+    EHIAssaultTracker._ASSAULT_DELAY = tonumber(tweak_values) or tweak_data.levels:IsLevelSkirmish() and 25 or 30
 end
 if type(hostage_values) == "table"  then
     local first_value = hostage_values[1] or 0
@@ -76,13 +76,16 @@ if type(hostage_values) == "table"  then
     end
     if match then -- All numbers the same, use it and avoid computation because it is expensive
         EHIAssaultTracker._precomputed_hostage_delay = true
-        EHIAssaultTracker._hostage_delay = first_value
+        EHIAssaultTracker._HOSTAGE_DELAY = first_value
     end
 else -- If for some reason the hesitation delay is not a table, use the value directly
     EHIAssaultTracker._precomputed_hostage_delay = true
-    EHIAssaultTracker._hostage_delay = tonumber(hostage_values) or 30
+    EHIAssaultTracker._HOSTAGE_DELAY = tonumber(hostage_values) or 30
 end
-EHIAssaultTracker._anticipation_delay = tweak_data.levels:IsLevelSkirmish() and 15 or 30
+EHIAssaultTracker._ANTICIPATION_DELAY = tweak_data.levels:IsLevelSkirmish() and 15 or 30
+if EHI.IsHost and EHI:IsModInstalled("Hostages Extend Break Time", "Pat") then
+    EHIAssaultTracker._ANTICIPATION_DELAY_PER_HOSTAGE = 5
+end
 function EHIAssaultTracker:init(panel, params, parent_class)
     self._refresh_on_delete = true
     self:CalculateDifficultyRamp(params.diff or 0)
@@ -235,7 +238,7 @@ function EHIAssaultTracker:ComputeHostageDelay()
     if self._precomputed_hostage_delay then
         return
     end
-    self._hostage_delay = math.lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
+    self._HOSTAGE_DELAY = math.lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
 
 function EHIAssaultTracker:SyncAnticipationColorInaccurate()
@@ -260,31 +263,45 @@ function EHIAssaultTracker:SyncAnticipation(t)
 end
 
 function EHIAssaultTracker:CheckIfHostageIsPresent()
-    if managers.groupai:state()._hostage_headcount == 0 then
+    self._hostages_count = managers.groupai:state()._hostage_headcount
+    if self._hostages_count == 0 then
         return
     end
-    self:UpdateTime(self._hostage_delay)
+    self:UpdateTime(self._HOSTAGE_DELAY)
     self._hostages_found = true
+    if self._ANTICIPATION_DELAY_PER_HOSTAGE then
+        self:UpdateTime(self._hostages_count * self._ANTICIPATION_DELAY_PER_HOSTAGE)
+    end
 end
 
 function EHIAssaultTracker:CalculateBreakTime()
-    if self._assault_delay then
-        return self._assault_delay + self._anticipation_delay
+    if self._ASSAULT_DELAY then
+        return self._ASSAULT_DELAY + self._ANTICIPATION_DELAY
     end
     local base_delay = math.lerp(tweak_values[self._difficulty_point_index], tweak_values[self._difficulty_point_index + 1], self._difficulty_ramp)
-    return base_delay + self._anticipation_delay
+    return base_delay + self._ANTICIPATION_DELAY
 end
 
----@param has_hostages boolean?
-function EHIAssaultTracker:SetHostages(has_hostages)
+---@param nr_hostages number
+function EHIAssaultTracker:SetHostages(nr_hostages)
+    local has_hostages = nr_hostages > 0
     if self._hostage_delay_disabled then
         return
     elseif has_hostages and not self._hostages_found then
         self._hostages_found = true
-        self:UpdateTime(self._hostage_delay)
+        self:UpdateTime(self._HOSTAGE_DELAY)
     elseif self._hostages_found and not has_hostages then
         self._hostages_found = false
-        self:UpdateTime(-self._hostage_delay)
+        self:UpdateTime(-self._HOSTAGE_DELAY)
+    end
+    if self._ANTICIPATION_DELAY_PER_HOSTAGE then
+        local t = math.abs(self._hostages_count - nr_hostages) * self._ANTICIPATION_DELAY_PER_HOSTAGE
+        if self._hostages_count > nr_hostages then
+            self:UpdateTime(-t)
+        elseif self._hostages_count < nr_hostages then
+            self:UpdateTime(t)
+        end
+        self._hostages_count = nr_hostages
     end
 end
 
@@ -296,7 +313,7 @@ function EHIAssaultTracker:UpdateTime(t)
             self._text:set_text(self:Format())
         end
     else
-        self._t_diff = t
+        self._t_diff = (self._t_diff or 0) + t
     end
 end
 
@@ -349,7 +366,7 @@ function EHIAssaultTracker:UpdateDiff(diff)
     elseif self._hostage_delay_disabled or self._precomputed_hostage_delay then
         return
     else
-        self:SetHostages(false)
+        self:SetHostages(0)
         self:ComputeHostageDelay()
         self:CheckIfHostageIsPresent()
     end

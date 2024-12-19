@@ -118,7 +118,7 @@ end
 function EHIAssaultManager:init_hud(hud)
     self._hud = hud
     self._control_info_f = function(_, data)
-        self._trackers:CallFunction(self._assault_delay.name, "SetHostages", data.nr_hostages > 0)
+        self._trackers:CallFunction(self._assault_delay.name, "SetHostages", data.nr_hostages)
     end
     Hooks:PostHook(hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
 end

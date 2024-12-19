@@ -23,7 +23,7 @@ function JobManager:IsPlayingMultidayHeist()
     elseif self._global.current_job.current_stage == 1 then
         return false
     elseif string.sub(self._global.current_job.job_id, 1, -4) == "dayselect_random_" then -- `Any Day Any Heist` mod check
-        return self._global.current_job.current_stage == self._global.current_job.stages
+        return self:on_last_stage()
     end
     return self._global.current_job.stages >= 2
 end
@@ -64,9 +64,5 @@ if EHI.IsHost then
         end
     end
 else
-    original.set_current_stage = JobManager.set_current_stage
-    function JobManager:set_current_stage(...)
-        original.set_current_stage(self, ...)
-        UpdateVanillaLevelSetting(self)
-    end
+    Hooks:PostHook(JobManager, "set_current_stage", "EHI_JobManager_set_current_stage", UpdateVanillaLevelSetting)
 end

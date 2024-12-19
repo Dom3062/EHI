@@ -365,15 +365,22 @@ EHILootTracker.FormatProgress = EHILootTracker.Format
 
 ---@class EHILootCountTracker : EHICountTracker
 EHILootCountTracker = class(EHICountTracker)
-EHILootCountTracker._forced_hint_text = "loot_counter"
-EHILootCountTracker._forced_icons = { EHI.Icons.Loot }
+EHILootCountTracker._forced_hint_text = EHILootTracker._forced_hint_text
+EHILootCountTracker._forced_icons = EHILootTracker._forced_icons
 EHILootCountTracker.SetProgress = EHILootCountTracker.SetCount
+---Called during GameSetup:load()
+---@param progress number
+---@param set_progress_remaining boolean?
+function EHILootCountTracker:SyncData(progress, set_progress_remaining)
+    self:SetProgress(progress)
+end
 
 ---@class EHILootMaxTracker : EHILootTracker
 ---@field super EHILootTracker
 EHILootMaxTracker = class(EHILootTracker)
 function EHILootMaxTracker:post_init(params)
     EHILootMaxTracker.super.post_init(self, params)
+    self._show_progress_on_finish = true
     self._params = params.xp_params or {} ---@type LootCounterTable.MaxBagsForMaxLevel
     self._refresh_max = 5
     self._show_finish_after_reaching_target = true

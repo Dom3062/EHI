@@ -24,8 +24,8 @@ function EHITrackerManager:init()
     self._trackers_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITracker?>
     self._n_of_trackers = 0
     self._delay_popups = true
-    self._panel_size = 32 * self._scale
-    self._panel_offset = 6 * self._scale
+    self._panel_size = tweak_data.ehi.default.tracker.size_h * self._scale
+    self._panel_offset = tweak_data.ehi.default.tracker.offset * self._scale
     self._base_tracker_class = EHI.Trackers.Base
 end
 

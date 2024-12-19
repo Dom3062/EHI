@@ -136,7 +136,7 @@ function EHILootManager:AddAchievementListener(params, endless_counter)
             end
         end)
     end
-    if not (params.load_sync or params.no_sync) then
+    if EHI.IsClient and not (params.load_sync or params.no_sync) then
         ---@param loot LootManager
         EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
             if f then

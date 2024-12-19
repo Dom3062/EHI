@@ -24,7 +24,10 @@ end
 function EHIChanceTracker:pre_init(params)
     if params.chances then
         self._current_chance_index = 1
-        self._chances = params.chances
+        self._chances = {}
+        for i = 1, params.chances, 1 do
+            self._chances[i] = math.ceil(100 / (params.chances - (i - 1)))
+        end
         self._chance = self._chances[1] or 0
     else
         self._chance = params.chance or 0

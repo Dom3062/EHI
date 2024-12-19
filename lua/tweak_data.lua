@@ -10,6 +10,14 @@ local Icon = EHI.Icons
 
 tweak_data.ehi =
 {
+    default =
+    {
+        tracker =
+        {
+            size_h = 32,
+            offset = 6
+        }
+    },
     colors =
     {
         WaterColor = Color("D4F1F9"),

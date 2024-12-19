@@ -11,7 +11,6 @@ if EHI:GetOption("civilian_count_tracker_format") >= 2 then
         function EHICivilianCountTracker:Format()
             return self._tied_count .. "|" .. self._count
         end
-        EHICivilianCountTracker.FormatCount = EHICivilianCountTracker.Format
     else
         if not EHICivilianCountTracker._ONE_ICON then
             EHICivilianCountTracker._forced_icons[2] = "hostage"
@@ -19,8 +18,8 @@ if EHI:GetOption("civilian_count_tracker_format") >= 2 then
         function EHICivilianCountTracker:Format()
             return self._count .. "|" .. self._tied_count
         end
-        EHICivilianCountTracker.FormatCount = EHICivilianCountTracker.Format
     end
+    EHICivilianCountTracker.FormatCount = EHICivilianCountTracker.Format
 end
 function EHICivilianCountTracker:init(...)
     self._tied_count = 0
@@ -38,15 +37,9 @@ function EHICivilianCountTracker:SetCount(count)
     EHICivilianCountTracker.super.SetCount(self, count)
 end
 
----@param count number
-function EHICivilianCountTracker:SetCount2(count)
-    self:SetCount(count - self._tied_count)
-end
-
 ---@param civilian_key string
 function EHICivilianCountTracker:DecreaseCount(civilian_key)
-    if self._tied_units[civilian_key] then
-        self._tied_units[civilian_key] = nil
+    if table.remove_key(self._tied_units, civilian_key) then
         self._tied_count = self._tied_count - 1
         self._count = self._count + 1
     end
@@ -65,13 +58,8 @@ end
 
 ---@param unit_key string
 function EHICivilianCountTracker:CivilianUntied(unit_key)
-    if self._tied_units[unit_key] then
-        self._tied_units[unit_key] = nil
+    if table.remove_key(self._tied_units, unit_key) then
         self._tied_count = self._tied_count - 1
         self:IncreaseCount()
     end
-end
-
-function EHICivilianCountTracker:ResetCounter()
-    self._count = 0
 end

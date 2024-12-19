@@ -51,7 +51,7 @@ local triggers = {
     [104481] = { id = "HoxtonMaxHacks", max = 4, progress = 3, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
     [104482] = { id = "HoxtonMaxHacks", max = 4, progress = 4, dont_create = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly },
 
-    [105113] = { chances = EHI.Utils:GetTableChance(4), id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
+    [105113] = { chances = 4, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
     [102257] = EHI:AddCustomCode(function(self)
         self._trackers:CallFunction("ForensicsMatchChance", "IncreaseChance2")
     end),

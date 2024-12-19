@@ -89,7 +89,8 @@ _G.EHI =
         InstanceUnits = {}, ---@type table<number, UnitUpdateDefinition>
         InstanceMissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
         IgnoreWaypoints = {}, ---@type table<number, boolean>
-        ElementWaypoint = {} ---@type table<number, ElementWaypoint?>
+        ElementWaypoint = {}, ---@type table<number, ElementWaypoint?>
+        Mod = {} ---@type { [string]: true|false }
     },
 
     _callback = {}, ---@type table<string|number, CallbackEventHandler>
@@ -1122,13 +1123,19 @@ end
 ---@param name string
 ---@param author string
 function EHI:IsModInstalled(name, author)
+    local mod_key = string.format("%s_%s", name, author)
+    if self._cache.Mod[mod_key] ~= nil then
+        return self._cache.Mod[mod_key]
+    end
     if BLT and BLT.Mods then
         for _, mod in ipairs(BLT.Mods:Mods()) do
             if mod:IsEnabled() and mod:GetName() == name and mod:GetAuthor() == author then
+                self._cache.Mod[mod_key] = true
                 return true
             end
         end
     end
+    self._cache.Mod[mod_key] = false
     return false
 end
 
