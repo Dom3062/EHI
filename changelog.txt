@@ -1,3 +1,6 @@
+r285 (30. 12. 2024):
+Grouped ECM Refresh trackers into one tracker
+
 r284 (19. 12. 2024):
 Added support for mod "Hostages Extend Break Time"
 

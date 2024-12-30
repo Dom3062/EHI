@@ -84,7 +84,6 @@ function EHIGroupTracker:Remove(i)
         return
     end
     local timer = table.remove(self._timers, i) --[[@as EHIWarningGroupTracker.Timer]]
-    timer.label:stop()
     timer.label:parent():remove(timer.label)
     local pos = timer.pos
     for _, t in ipairs(self._timers) do
@@ -197,6 +196,7 @@ function EHIWarningGroupTracker:_SetTimeNoAnim(timer, time)
     timer.warning = false
     timer.check_timer_progress = time <= 10
     timer.label:stop()
+    self:SetTextColor(nil, timer.label)
 end
 
 ---@class EHIProgressGroupTracker : EHIProgressTracker
