@@ -1,3 +1,6 @@
+r286 (31. 12. 2024):
+Fixed a crash after placing an ECM and when ECM Refresh tracker is disabled
+
 r285 (30. 12. 2024):
 Grouped ECM Refresh trackers into one tracker
 

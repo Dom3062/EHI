@@ -33,7 +33,7 @@ local original =
 function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     local unit = original.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     unit:base():SetPeerID(peer_id)
-    if not show_waypoint_only and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") then
+    if not show_waypoint_only and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
         managers.ehi_tracker:PreloadTracker({
             id = "ECMFeedbackRetrigger",
             icons = { "ecm_feedback", "restarter" },
@@ -61,7 +61,7 @@ function ECMJammerBase:set_owner(...)
     self:SetPeerID(self._owner_id or 0)
     managers.ehi_tracker:CallFunction("ECMJammer", "UpdateOwnerID", self._ehi_peer_id)
     managers.ehi_tracker:CallFunction("ECMFeedback", "UpdateOwnerID", self._ehi_peer_id)
-    if not show_waypoint_only and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") then
+    if not show_waypoint_only and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
         managers.ehi_tracker:PreloadTracker({
             id = "ECMFeedbackRetrigger",
             icons = { "ecm_feedback", "restarter" },
