@@ -122,13 +122,11 @@ local function HasNonExplosiveGrenadeEquipped()
 end
 
 ---@param player_style_id string
----@return boolean
 local function HasPlayerStyleEquipped(player_style_id)
     return managers.blackmarket:equipped_player_style() == player_style_id
 end
 
 ---@param variation_id string
----@return boolean
 local function HasSuitVariationEquipped(variation_id)
     return managers.blackmarket:equipped_suit_variation() == variation_id
 end
@@ -337,29 +335,6 @@ local function pxp1_1()
         end
     end
     pxp1_1_checked = true
-end
-
----@param achievement_id string
----@param keys string[]
-local function OnSetSavedJobValue(achievement_id, keys)
-    Hooks:PreHook(MissionManager, "on_set_saved_job_value", "EHI_" .. achievement_id .. "_Achievement",
-    ---@param key string
-    ---@param value number
-    function(mm, key, value)
-        if table.contains(keys, key) and value == 1 then
-            local progress, max = 0, 0
-            for _, item in ipairs(keys) do
-                max = max + 1 -- To not rely on hardcoded max number
-                if Global.mission_manager.saved_job_values[item] then
-                    progress = progress + 1
-                end
-            end
-            if progress == max then
-                return
-            end
-            ShowPopup(achievement_id, progress, max)
-        end
-    end)
 end
 
 local _f_at_exit = IngameWaitingForPlayersState.at_exit
@@ -652,7 +627,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         end
                         ---@param id number
                         function EHItango_achieve_3Tracker:WeaponSwitched(id)
-                            if self._weapon_id == id or self._finished then
+                            if self._weapon_id == id then
                                 return
                             end
                             local previous_weapon_id = self._weapon_id
@@ -667,7 +642,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         function EHItango_achieve_3Tracker:SetCompleted(...)
                             EHItango_achieve_3Tracker.super.SetCompleted(self, ...)
                             if self._status == "completed" then
-                                self._finished = true
+                                managers.player:unregister_message(Message.OnSwitchWeapon, "EHI_tango_achieve_3")
                             end
                         end
                         managers.ehi_tracker:AddTracker({
@@ -692,8 +667,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         end)
                     elseif primary_index or secondary_index then
                         AddAchievementTracker("tango_achieve_3", 0, 200)
-                        local weapon_required = primary_index and primary.weapon_id or secondary.weapon_id
-                        managers.ehi_hook:HookKillFunction("tango_achieve_3", weapon_required, true)
+                        managers.ehi_hook:HookKillFunction("tango_achieve_3", primary_index and primary.weapon_id or secondary.weapon_id, true)
                     end
                 end
             end
@@ -1081,12 +1055,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         end
                     end)
                 end
-            end
-            if EHI:IsAchievementLocked2("xm20_1") and EHI._cache.xm20_1_active then
-                OnSetSavedJobValue("xm20_1", tweak_data.achievement.collection_achievements.xm20_1.collection)
-            end
-            if EHI:IsAchievementLocked2("pent_11") and EHI._cache.pent_11_active then
-                OnSetSavedJobValue("pent_11", tweak_data.achievement.collection_achievements.pent_11.collection)
             end
             if VeryHardOrAbove then
                 if level == "help" and EHI:IsAchievementLocked2("tawp_1") and mask_id == tweak_data.achievement.complete_heist_achievements.tawp_1.mask then -- "Cloaker Charmer" achievement

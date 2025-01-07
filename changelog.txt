@@ -1,3 +1,12 @@
+r287 (07. 01. 2025):
+Escape: Overpass: Fixed overlapping waypoints for Van and Escape
+Mission Briefing: Fixed negative bags to secure in endless heists
+Added how much health you regenerate in Health Regen buff
+Added Tag Team - Absorption buff
+Added options "Show Current Real Time In-game" and "Show Marshal Initial Spawn Tracker"
+Fixed an issue where XP Panel in Mission Briefing is still visible if you are kicked in briefing
+Fixed an issue where disabled Gage Packages tracker does not show correct XP in Mission Briefing
+
 r286 (31. 12. 2024):
 Fixed a crash after placing an ECM and when ECM Refresh tracker is disabled
 

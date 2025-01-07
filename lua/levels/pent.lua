@@ -122,22 +122,21 @@ function DigitalGui:pent_10()
     end
 end
 
-local tbl =
-{
+EHI:UpdateUnits({
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
-    [102452] = { f = function(unit_id, unit_data, unit)
-        unit:digital_gui():SetRemoveOnPause(true)
-        unit:digital_gui():SetWarning(true)
+    [102452] = { f = function(unit_id, unit_data, unit) ---@param unit UnitDigitalTimer
+        local gui = unit:digital_gui()
+        gui:SetRemoveOnPause(true)
+        gui:SetWarning(true)
         if EHI:CanShowAchievement("pent_10") then
-            unit:digital_gui():SetIcons(EHI:GetAchievementIcon("pent_10"))
-            unit:digital_gui():pent_10()
+            gui:SetIcons(EHI:GetAchievementIcon("pent_10"))
+            gui:pent_10()
         else
-            unit:digital_gui():SetIcons({ EHI.Icons.Trophy })
+            gui:SetIcons({ EHI.Icons.Trophy })
         end
     end },
     [103872] = { ignore = true }
-}
-EHI:UpdateUnits(tbl)
+})
 local stealth_loot =
 {
     gold_mission = { amount = 500, name = "gold", mandatory = 4 },

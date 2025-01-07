@@ -83,11 +83,11 @@ if EHI.IsClient then
             EM._trackers:ForceRemoveTracker("CookChance")
             EM:UnhookTrigger(100721)
             EM:UnhookTrigger(100724)
-            EM._loot:RemoveEventListener("alex_1")
+            EM._loot:RemoveListener("alex_1")
         end
     end
-    EM._loot:AddEventListener("alex_1", SyncBagsCooked)
-    EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, SyncBagsCooked)
+    EM._loot:AddListener("alex_1", SyncBagsCooked)
+    EM._loot:AddSyncListener(SyncBagsCooked)
 end
 
 local tracker_merge =

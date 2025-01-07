@@ -11,6 +11,13 @@ local original =
 --///////////////////--
 --//  Sixth Sense  //--
 --///////////////////--
+EHI:AddOnAlarmCallback(function(dropin)
+    managers.ehi_buff:DeleteBuff("standstill_omniscience_initial")
+    managers.ehi_buff:DeleteBuff("standstill_omniscience")
+    managers.ehi_buff:DeleteBuff("standstill_omniscience_highlighted")
+    PlayerStandard._update_omniscience = original._update_omniscience
+end)
+
 -- Assume default, recomputed after spawn
 local computed_duration_civilian = 4.5
 local computed_duration_security = 13.5
@@ -103,7 +110,7 @@ if EHI:GetBuffOption("reload") then
     function PlayerStandard:_start_action_reload(t, ...)
         original._start_action_reload(self, t, ...)
         if self._state_data.reload_expire_t then
-            managers.ehi_buff:AddBuff2("Reload", t, self._state_data.reload_expire_t)
+            managers.ehi_buff:AddBuff("Reload", self._state_data.reload_expire_t - t)
         end
     end
 

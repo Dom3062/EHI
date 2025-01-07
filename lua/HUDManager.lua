@@ -11,13 +11,14 @@ local original =
 }
 
 ---@class HUDManager
----@field _hud table
+---@field _hud { waypoints: table<string|number, Waypoint>, ehi_removed_waypoints: table<string, true>, stored_waypoints: table<string|number, WaypointInitData> }
 ---@field _hud_hint table HUDHint class
+---@field _hud_heist_timer HUDHeistTimer
 ---@field _hud_mission_briefing HUDMissionBriefing
 ---@field PLAYER_PANEL number
 ---@field add_waypoint fun(self: self, id: number|string, params: table)
 ---@field remove_waypoint fun(self: self, id: number|string)
----@field get_waypoint_data fun(self: self, id: number|string): WaypointDataTable?
+---@field get_waypoint_data fun(self: self, id: number|string): Waypoint?
 ---@field add_updator fun(self: self, id: string, cb: function)
 ---@field remove_updator fun(self: self, id: string)
 ---@field script fun(self: self, name: string): { panel: Panel }
@@ -26,8 +27,8 @@ local original =
 ---@field make_fine_text fun(self: self, text: PanelText)
 
 ---@param id string
----@param params AddWaypointTable|ElementWaypointTrigger
----@return WaypointDataTable?
+---@param params WaypointInitData
+---@return Waypoint?
 function HUDManager:AddEHIWaypoint(id, params)
     self:add_waypoint(id, params)
     return self:get_waypoint_data(id)
@@ -49,7 +50,7 @@ function HUDManager:AddWaypointFromTrigger(id, params)
 end
 
 ---@param id number
----@param data WaypointDataTable|VanillaWaypointDataTable
+---@param data WaypointInitData
 function HUDManager:AddWaypointSoft(id, data)
     self._hud.stored_waypoints[id] = data
     self._hud.ehi_removed_waypoints = self._hud.ehi_removed_waypoints or {}
@@ -125,7 +126,7 @@ function HUDManager:load(data, ...)
     local state = data.HUDManager
     managers.ehi_assault:SetCurrentAssaultNumber(state.assault_number or 1, state.in_assault)
     original.load(self, data, ...)
-    for id, _ in pairs(self._hud.waypoints or {}) do
+    for id, _ in pairs(self._hud.waypoints or {}) do ---@cast id -string
         if EHI._cache.IgnoreWaypoints[id] then
             self:SoftRemoveWaypoint(id)
         end

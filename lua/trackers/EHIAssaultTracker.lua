@@ -75,11 +75,11 @@ if type(hostage_values) == "table"  then
         end
     end
     if match then -- All numbers the same, use it and avoid computation because it is expensive
-        EHIAssaultTracker._precomputed_hostage_delay = true
+        EHIAssaultTracker._PRECOMPUTED_HOSTAGE_DELAY = true
         EHIAssaultTracker._HOSTAGE_DELAY = first_value
     end
 else -- If for some reason the hesitation delay is not a table, use the value directly
-    EHIAssaultTracker._precomputed_hostage_delay = true
+    EHIAssaultTracker._PRECOMPUTED_HOSTAGE_DELAY = true
     EHIAssaultTracker._HOSTAGE_DELAY = tonumber(hostage_values) or 30
 end
 EHIAssaultTracker._ANTICIPATION_DELAY = tweak_data.levels:IsLevelSkirmish() and 15 or 30
@@ -113,7 +113,7 @@ function EHIAssaultTracker:init(panel, params, parent_class)
         self._text_color = self._inaccurate_text_color
     end
     EHIAssaultTracker.super.init(self, panel, params, parent_class)
-    self._update = not params.endless_assault
+    self._needs_update = not params.endless_assault
     if params.endless_assault then
         self:SetEndlessAssault(true)
     end
@@ -149,14 +149,13 @@ function EHIAssaultTracker:post_init(params)
         self:SetBGSize(self._default_bg_size)
         self._count_text = self:CreateText({
             text = self:FormatCount(),
-            left = (self._chance_text and self._chance_text:right()) or (self._progress_text and self._progress_text:right()) or self._text:right(),
+            left = (self._chance_text or self._progress_text or self._text):right(),
             w = self._default_bg_size,
             color = Color.white,
             FitTheText = true
         })
         EHI:CallCallbackOnce("AssaultTracker_Enemies")
     end
-    self:SetIconsX()
 end
 
 if EHIAssaultTracker._SHOW_ASSAULT_DIFF_SKIRMISH then
@@ -235,7 +234,7 @@ function EHIAssaultTracker:CalculateDifficultyRamp(diff)
 end
 
 function EHIAssaultTracker:ComputeHostageDelay()
-    if self._precomputed_hostage_delay then
+    if self._PRECOMPUTED_HOSTAGE_DELAY then
         return
     end
     self._HOSTAGE_DELAY = math.lerp(hostage_values[self._difficulty_point_index], hostage_values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
@@ -265,6 +264,7 @@ end
 function EHIAssaultTracker:CheckIfHostageIsPresent()
     self._hostages_count = managers.groupai:state()._hostage_headcount
     if self._hostages_count == 0 then
+        self._hostages_found = false
         return
     end
     self:UpdateTime(self._HOSTAGE_DELAY)
@@ -309,7 +309,7 @@ end
 function EHIAssaultTracker:UpdateTime(t)
     if self._time then
         self._time = self._time + t
-        if not self._update then
+        if not self._needs_update then
             self._text:set_text(self:Format())
         end
     else
@@ -322,7 +322,7 @@ function EHIAssaultTracker:StartAnticipation(t)
     self:StopTextAnim()
     self._hostage_delay_disabled = true
     self._time = t
-    if not self._update then
+    if not self._needs_update then
         self:AddTrackerToUpdate()
     end
 end
@@ -331,7 +331,7 @@ end
 ---@param t number
 function EHIAssaultTracker:SetControlStateBlock(block, t)
     if block then
-        if self._state == State.control then
+        if self._state == State.control and not self._hostage_delay_disabled then
             self:RemoveTrackerFromUpdate()
             self:SetStatusText("break")
             self._control_state_block = true
@@ -363,7 +363,7 @@ function EHIAssaultTracker:UpdateDiff(diff)
         if self._is_client and self._state == State.build then
             self._recalculate_on_sustain = true
         end
-    elseif self._hostage_delay_disabled or self._precomputed_hostage_delay then
+    elseif self._hostage_delay_disabled or self._PRECOMPUTED_HOSTAGE_DELAY then
         return
     else
         self:SetHostages(0)

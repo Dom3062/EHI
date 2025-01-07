@@ -17,7 +17,6 @@ function EHIdailycakeTracker:OverridePanel()
         FitTheText = true
     })
     self._text:set_left(self._progress_text:right())
-    self:SetIconsX()
 end
 
 function EHIdailycakeTracker:SetCompleted(force)

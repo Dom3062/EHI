@@ -18,6 +18,27 @@ function EHIBaseManager:RoundChanceNumber(n)
     return self.RoundNumber(n, 0.01) * 100
 end
 
+---Creates listener from `ListenerHolder` class -> `self._listener`
+function EHIBaseManager:CreateListener()
+    self._listener = ListenerHolder:new()
+end
+
+---@param id string
+---@param f function
+function EHIBaseManager:AddListener(id, f)
+    self._listener:add(id, f)
+end
+
+function EHIBaseManager:Call(...)
+    self._listener:call(...)
+end
+
+---@param id string
+function EHIBaseManager:RemoveListener(id)
+    self._listener:remove(id)
+end
+
+---Creates listener from `EventListenerHolder` class -> `self._event_listener`
 function EHIBaseManager:CreateEventListener()
     self._event_listener = EventListenerHolder:new()
 end
@@ -42,6 +63,11 @@ end
 ---@param id string
 function EHIBaseManager:RemoveEventListener(id)
     self._event_listener:remove(id)
+end
+
+---@param peer_id number
+function EHIBaseManager:GetPeerColorByPeerID(peer_id)
+    return peer_id and tweak_data.chat_colors[peer_id] or Color.white
 end
 
 ---@param message_id string A message to sync data to

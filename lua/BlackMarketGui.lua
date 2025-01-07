@@ -6,10 +6,7 @@ end
 ---@class BlackMarketGui
 ---@field make_fine_text fun(self: self|any, text: PanelText)
 
-local function LoadClasses()
-    if Global.load_level then
-        return
-    end
+if not Global.load_level then
     local classes =
     {
         ECMJammerBase = "lib/units/equipment/ecm_jammer/ECMJammerBase",
@@ -26,7 +23,6 @@ local function LoadClasses()
         end
     end
 end
-LoadClasses()
 
 local hide_original_desc = EHI:GetOption("hide_original_desc")
 
@@ -54,6 +50,7 @@ EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
     strs.dot = loc:text("ehi_bm_dot")
     strs.dot_tick_period = loc:text("ehi_bm_dot_tick_period")
     strs.dot_chance = loc:text("ehi_bm_dot_chance")
+    strs.dot_max_distance = loc:text("ehi_bm_dot_max_distance")
     strs.charges = loc:text("ehi_bm_charges")
     strs.charges_no_total = loc:text("ehi_bm_charges_no_total")
     if loc_loaded == "czech" then
@@ -74,7 +71,6 @@ end
 
 ---@param dot_data_name string
 ---@param variant string?
----@return string
 local function FormatDOTData(dot_data_name, variant)
     if not dot_data_name then
         return ""
@@ -112,6 +108,10 @@ local function FormatDOTData(dot_data_name, variant)
     local total_damage = dot_damage * dot_trigger_times
     if total_damage > 0 then
         str = string.format("%s\n>> %s: %d", str, strs.max_dmg, total_damage)
+    end
+    local dot_trigger_max_distance = dot_data.dot_trigger_max_distance or 0
+    if dot_trigger_max_distance > 0 then
+        str = string.format("%s\n>> %s: %dm", str, strs.dot_max_distance, dot_trigger_max_distance)
     end
     return str
 end

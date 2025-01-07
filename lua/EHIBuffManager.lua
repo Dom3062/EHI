@@ -95,6 +95,7 @@ end
 ---@param scale number
 function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     if not EHI:GetBuffDeckOption("tag_team", "tagged") then
+        _G.EHITagTeamBuffTracker = nil
         return
     end
     local local_peer_id = EHI.IsHost and 1 or EHI._cache.LocalPeerID
@@ -113,10 +114,22 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             params.texture = texture
             params.texture_rect = texture_rect
             params.good = true
-            params.icon_color = tweak_data.chat_colors[i] or Color.white
+            params.icon_color = self:GetPeerColorByPeerID(i)
             params.scale = scale
+            params.class = "EHITagTeamBuffTracker"
             self:_create_buff(params)
         end
+    end
+    if CustomNameColor and CustomNameColor.ModID and not Global.game_settings.single_player then
+        self:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
+            if data and data ~= "" then
+                local buff = self._buffs["TagTeamTagged_" .. sender .. local_peer_id]
+                if buff then
+                    local col = NetworkHelper:StringToColour(data) ---@cast col -?
+                    buff._icon:set_color(col)
+                end
+            end
+        end)
     end
 end
 
@@ -238,21 +251,11 @@ function EHIBuffManager:AddBuff(id, t)
     end
 end
 
----@param id string
----@param start_t number
----@param end_t number
-function EHIBuffManager:AddBuff2(id, start_t, end_t)
-    local t = end_t - start_t
-    self:AddBuff(id, t)
-end
-
 ---To stop moving buffs left and right on the screen
 ---@param id string
----@param start_t number
----@param end_t number
-function EHIBuffManager:AddBuff3(id, start_t, end_t)
-    local t = end_t - start_t + 0.2
-    self:AddBuff(id, t)
+---@param t number
+function EHIBuffManager:AddBuff2(id, t)
+    self:AddBuff(id, t + 0.2)
 end
 
 ---@param id string
@@ -292,12 +295,10 @@ function EHIBuffManager:RemoveBuff(id)
 end
 
 ---@param id string
----@param t number
----@param max number
-function EHIBuffManager:AddTimeCeil(id, t, max)
+function EHIBuffManager:DeleteBuff(id)
     local buff = self._buffs[id]
     if buff then
-        buff:AddTimeCeil(t, max)
+        buff:Remove()
     end
 end
 
@@ -313,18 +314,16 @@ end
 ---@param buff EHIBuffTracker
 function EHIBuffManager:_add_visible_buff(buff)
     self._visible_buffs[buff._id] = buff
-    buff:SetPos(self._n_visible)
+    buff._pos = self._n_visible
     self._n_visible = self._n_visible + 1
     self:ReorganizeFast(self._n_visible, buff)
 end
 
----@param id string
----@param pos number?
-function EHIBuffManager:_remove_visible_buff(id, pos)
-    local buff = self._visible_buffs[id] or self._buffs[id] --[[@as EHIBuffTracker]]
-    self._visible_buffs[id] = nil
+---@param buff EHIBuffTracker
+function EHIBuffManager:_remove_visible_buff(buff)
+    self._visible_buffs[buff._id] = nil
     self._n_visible = self._n_visible - 1
-    self:Reorganize(pos, buff, true)
+    self:Reorganize(buff._pos, buff, true)
 end
 
 ---@param buff EHIBuffTracker

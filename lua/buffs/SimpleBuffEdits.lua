@@ -22,9 +22,10 @@ function EHIHealthRegenBuffTracker:post_init(...)
         h = icon:h()
     })
     self:SetIcon("hostage_taker")
-    --[[self._minion_count, self._ai_health_regen = 0, 0
+    self._minion_count, self._ai_health_regen, self._max_health, self._healing_reduction = 0, 0, 0, 1
     self._health_format = "+%g"
     self._player_manager = managers.player
+    self._perform_update_from_spawn = false
     EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
         if local_peer then
             self._minion_count = self._minion_count + 1
@@ -35,18 +36,33 @@ function EHIHealthRegenBuffTracker:post_init(...)
     end)
     EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
         if local_peer then
-            self._minion_count = math.max(self._minion_count - 1)
-            if self._minion_count == 0 then
+            self._minion_count = math.max(self._minion_count - 1, 0)
+            if self._minion_count == 0 and self._character_damage then
                 self:AddBuffToUpdate2()
             end
         end
     end)
-    EHI:AddCallback(EHI.CallbackMessage.TeamAISkillBoostChange, function(boost, operation)
+    EHI:AddCallback(EHI.CallbackMessage.TeamAISkillChange, function(boost, operation)
         if boost == "crew_regen" then
             self._ai_health_regen = operation == "add" and self._player_manager:upgrade_value("team", "crew_health_regen", 0) or 0
-            self:SetHintText(string.format(self._health_format, self:GetHealthRegen()))
+            if self._character_damage and self._perform_update_from_spawn then
+                self:SetHintText(string.format(self._health_format, self:GetHealthRegen()))
+            end
+        elseif boost == "crew_healthy" and self._character_damage and self._perform_update_from_spawn then
+            self:AddBuffToUpdate2()
         end
-    end)]]
+    end)
+    EHI:AddCallback("PlayerSpawned", function(character_damage) ---@param character_damage PlayerDamage
+        self._character_damage = character_damage
+        if self._perform_update_from_spawn then
+            self:AddBuffToUpdate2()
+        end
+    end)
+    EHI:AddCallback("PlayerDespawned", function()
+        self:RemoveBuffFromUpdate2()
+        self._character_damage = nil
+        self._max_health = 0
+    end)
 end
 
 function EHIHealthRegenBuffTracker:update_health_regen(...)
@@ -60,21 +76,19 @@ end
 
 ---@param max_health number?
 function EHIHealthRegenBuffTracker:GetHealthRegen(max_health)
-    local original_hostage_count = managers.groupai:state():hostage_count()
-    managers.groupai:state()._hostage_headcount = managers.groupai:state()._hostage_headcount + 1 -- Temporary increase hostage count to get health regen
-    local regen = self._player_manager:health_regen()
-    managers.groupai:state()._hostage_headcount = original_hostage_count -- Set original hostage count to restore the original value
+    local regen
+    if self._minion_count <= 0 then
+        local ai_state = managers.groupai:state()
+        local original_hostage_count = ai_state:hostage_count()
+        ai_state._hostage_headcount = ai_state._hostage_headcount + 1 -- Temporarily increase hostage count to get health regen
+        regen = self._player_manager:health_regen()
+        ai_state._hostage_headcount = original_hostage_count -- Set original hostage count to restore the original value
+    else
+        regen = self._player_manager:health_regen()
+    end
     max_health = max_health or self._character_damage:_max_health() -- Max health does not get updated immediately for some reason, update it next frame or after (see -> :update_health_regen())
     local hp_to_restore_from_regen = max_health * regen * self._healing_reduction -- Health regen is not static, it needs to be scaled down by your max hp
     local hp_to_restore_from_ai = self._ai_health_regen * self._healing_reduction -- AI Regen is static, no scaling from max hp
-    --[[EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> Hostages: " .. tostring(original_hostage_count))
-    EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> Converts: " .. tostring(self._player_manager:num_local_minions()))
-    EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> regen: " .. tostring(regen))
-    EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> self._ai_health_regen: " .. tostring(self._ai_health_regen))
-    EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> max_health: " .. tostring(max_health))
-    EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> hp_to_restore_from_regen: " .. tostring(hp_to_restore_from_regen))
-    EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> hp_to_restore_from_ai: " .. tostring(hp_to_restore_from_ai))
-    EHI:Log("[EHIHealthRegenBuffTracker] GetHealthRegen() -> Rounded: " .. tostring(self._parent_class:RoundHealthNumber(hp_to_restore_from_regen + hp_to_restore_from_ai))]]
     return self._parent_class:RoundHealthNumber(hp_to_restore_from_regen + hp_to_restore_from_ai)
 end
 
@@ -99,40 +113,18 @@ function EHIHealthRegenBuffTracker:SetIcon(buff)
 end
 
 function EHIHealthRegenBuffTracker:PreUpdateCheck()
-    --[[local player_unit = managers.player:player_unit()
-    local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
-    if not character_damage then
-        self:delete_with_class()
-        return false
-    end
-    self._character_damage = character_damage
-    self._max_health = character_damage:_max_health()
     self._healing_reduction = self._player_manager:upgrade_value("player", "healing_reduction", 1)
-    self:SetHintText(string.format(self._health_format, self:GetHealthRegen(self._max_health)))]]
+    self:AddBuffToUpdate2()
+    self._perform_update_from_spawn = true
     return true
 end
 
-function EHIHealthRegenBuffTracker:SetCustodyState(state)
-    --[[if state then
-        self:RemoveBuffFromUpdate2()
-    else
-        local player_unit = managers.player:player_unit()
-        local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
-        if not character_damage then
-            return
-        end
-        self._character_damage = character_damage
-        self._max_health = character_damage:_max_health()
-        self:SetHintText(string.format(self._health_format, self:GetHealthRegen(self._max_health)))
-    end]]
-end
-
 function EHIHealthRegenBuffTracker:AddBuffToUpdate2()
-    --managers.hud:add_updator(self._id, callback(self, self, "update_health_regen"))
+    managers.hud:add_updator(self._id, callback(self, self, "update_health_regen"))
 end
 
 function EHIHealthRegenBuffTracker:RemoveBuffFromUpdate2()
-    --managers.hud:remove_updator(self._id)
+    managers.hud:remove_updator(self._id)
 end
 
 ---@class EHIStaminaBuffTracker : EHIGaugeBuffTracker
@@ -320,4 +312,12 @@ function EHIReplenishThrowableBuffTracker:SetCustodyState(state)
     if state and self._active then
         self:Deactivate()
     end
+end
+
+---@class EHITagTeamBuffTracker : EHIBuffTracker
+EHITagTeamBuffTracker = class(EHIBuffTracker)
+---@param t number
+---@param max number
+function EHITagTeamBuffTracker:AddTimeCeil(t, max)
+    self._time = math.min(self._time + t, max)
 end

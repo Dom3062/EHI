@@ -25,7 +25,6 @@ function EHIPiggyBankMutatorTracker:OverridePanel()
         left = self._text:right(),
         FitTheText = true
     })
-    self:SetIconsX()
 end
 
 function EHIPiggyBankMutatorTracker:SetNewMax()

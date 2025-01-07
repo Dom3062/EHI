@@ -198,7 +198,7 @@ end
 ---@param center_x number
 function EHIBuffTracker:SetCenterDefaultX(center_x)
     self._panel:set_center_x(center_x)
-    self:SetPos(0)
+    self._pos = 0
 end
 
 ---@param x number
@@ -267,16 +267,9 @@ function EHIBuffTracker:Extend(t)
     self._time_set = t
 end
 
----@param t number
----@param max number
-function EHIBuffTracker:AddTimeCeil(t, max)
-    self._time = math.min(self._time + t, max)
-    self._time_set = self._time
-end
-
 function EHIBuffTracker:Deactivate()
     self._parent_class:_remove_buff_from_update(self._id)
-    self._parent_class:_remove_visible_buff(self._id, self._pos)
+    self._parent_class:_remove_visible_buff(self)
     self._panel:stop()
     self._panel:animate(self._hide)
     self._active = false
@@ -286,7 +279,7 @@ function EHIBuffTracker:DeactivateSoft()
     if not self._visible then
         return
     end
-    self._parent_class:_remove_visible_buff(self._id, self._pos)
+    self._parent_class:_remove_visible_buff(self)
     self._panel:stop()
     self._panel:animate(self._hide)
     self._visible = false
@@ -295,11 +288,6 @@ end
 ---@param t number
 function EHIBuffTracker:Shorten(t)
     self._time = self._time - t
-end
-
----@param pos number
-function EHIBuffTracker:SetPos(pos)
-    self._pos = pos
 end
 
 function EHIBuffTracker:SetHintText(text)
@@ -367,7 +355,7 @@ function EHIBuffTracker:AddVisibleBuff()
 end
 
 function EHIBuffTracker:RemoveVisibleBuff()
-    self._parent_class:_remove_visible_buff(self._id, self._pos)
+    self._parent_class:_remove_visible_buff(self)
 end
 
 function EHIBuffTracker:PreUpdate()
@@ -410,6 +398,17 @@ if EHI:GetOption("time_format") == 1 then
     EHIBuffTracker.Format = tweak_data.ehi.functions.FormatSecondsOnly
 else
     EHIBuffTracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
+end
+
+function EHIBuffTracker:Remove()
+    self:RemoveBuffFromUpdate()
+    self._panel:stop()
+    self._panel:animate(function(o) ---@param o Panel
+        if self._active or o:alpha() > 0 then
+            self._hide(o)
+        end
+        self:delete()
+    end)
 end
 
 function EHIBuffTracker:delete()

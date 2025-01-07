@@ -1,6 +1,6 @@
 ---@class EHICodeTracker : EHITracker
 EHICodeTracker = class(EHITracker)
-EHICodeTracker._update = false
+EHICodeTracker._needs_update = false
 EHICodeTracker._forced_icons = { "code" }
 EHICodeTracker._forced_hint_text = "code"
 ---@param code string?

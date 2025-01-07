@@ -135,7 +135,7 @@ function EHITrackerManager:AddTracker(params, pos)
     pos = self:_move_tracker(pos, w)
     local x = self:_get_x(pos, w)
     local y = self:_get_y(pos)
-    if tracker._update then
+    if tracker._needs_update then
         self._trackers_to_update[params.id] = tracker
     end
     tracker:PosAndSetVisible(x, y)
@@ -151,7 +151,7 @@ function EHITrackerManager:AddHiddenTracker(params)
         self._trackers[params.id].tracker:ForceDelete()
     end
     local tracker = _G[params.class or self._base_tracker_class]:new(self._panel, params, self) --[[@as EHITracker]]
-    if tracker._update then
+    if tracker._needs_update then
         self._trackers_to_update[params.id] = tracker
     end
     self._trackers[params.id] = { tracker = tracker }
@@ -186,7 +186,7 @@ function EHITrackerManager:RunTracker(id, params)
     tbl.pos = self._n_of_trackers
     tbl.x = x
     tbl.w = w
-    if tbl.tracker._update then
+    if tbl.tracker._needs_update then
         self:_add_tracker_to_update(tbl.tracker)
     end
     self._n_of_trackers = self._n_of_trackers + 1
@@ -849,20 +849,6 @@ function EHITrackerManager:ReturnValue(id, f, ...)
     if tracker and tracker[f] then
         return tracker[f](tracker, ...)
     end
-end
-
----@generic T
----@param id string
----@param f string
----@param default T
----@param ... any
----@return ...|T
-function EHITrackerManager:ReturnValueOrDefault(id, f, default, ...)
-    local tracker = self:GetTracker(id)
-    if tracker and tracker[f] then
-        return tracker[f](tracker, ...)
-    end
-    return default
 end
 
 do

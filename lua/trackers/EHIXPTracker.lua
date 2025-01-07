@@ -23,7 +23,7 @@ end
 ---@class EHIHiddenXPTracker : EHIXPTracker
 ---@field super EHIXPTracker
 EHIHiddenXPTracker = class(EHIXPTracker)
-EHIHiddenXPTracker._update = false
+EHIHiddenXPTracker._needs_update = false
 EHIHiddenXPTracker._init_create_text = false
 function EHIHiddenXPTracker:pre_init(params)
     self._total_xp = 0
@@ -92,7 +92,7 @@ end
 ---@field super EHIXPTracker
 EHITotalXPTracker = class(EHIXPTracker)
 EHITotalXPTracker._forced_hint_text = "total_xp"
-EHITotalXPTracker._update = false
+EHITotalXPTracker._needs_update = false
 ---@param o PanelText
 ---@param self EHITotalXPTracker
 EHITotalXPTracker._anim_xp = function(o, self)
@@ -120,7 +120,7 @@ function EHITotalXPTracker:init(panel, params, ...)
     if self._xp_overflow_enabled then
         self._player_xp_limit = 0
     elseif self._player_xp_limit <= 0 then
-        self._update = true -- Request deletion next frame
+        self._needs_update = true -- Request deletion next frame
     end
 end
 
@@ -131,7 +131,6 @@ end
 function EHITotalXPTracker:OverridePanel()
     self:SetBGSize(self._bg_box:w() / 2)
     self._text:set_w(self._bg_box:w())
-    self:SetIconsX()
 end
 
 ---@param amount number?

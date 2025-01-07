@@ -155,6 +155,7 @@
     "ehi_hint_piggy" : "Piggy Bank",
     "ehi_hint_turret_en_route" : "Enemy Turret En Route",
     "ehi_hint_modifier_civilian_alarm" : "Counter of civilian kills to alarm",
+    "ehi_hint_marshal" : "Marshal Groups",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
@@ -592,6 +593,9 @@
 
     "ehi_show_sniper_logic_end_popup" : "Show 'SNIPER LOGIC ENDED' Popup",
     "ehi_show_sniper_logic_end_popup_desc" : "Shows a popup in green when tracker with scripted snipers is deleted",
+
+    "ehi_show_marshal_initial_time" : "Show Marshal Initial Spawn Tracker",
+    "ehi_show_marshal_initial_time_desc" : "Shows a tracker for Marshal enemies when their spawn gets enabled",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",
@@ -684,7 +688,7 @@
 
     "ehi_buffs_skills_enforcer_menu" : "Enforcer",
     "ehi_buffs_skills_enforcer_shotgunner_subclass" : "Shotgunner",
-    "ehi_buffs_skills_enforcer_overkill" : "Overkill",
+    "ehi_buffs_skills_enforcer_overkill" : "OVERKILL",
     "ehi_buffs_skills_enforcer_underdog" : "Underdog",
     "ehi_buffs_skills_enforcer_tank_subclass" : "Tank",
     "ehi_buffs_skills_enforcer_bullseye" : "Bullseye",
@@ -781,6 +785,7 @@
     "ehi_buffs_perks_tag_team_desc" : "Shows buffs and cooldowns in Tag Team perk deck",
     "ehi_buffs_perks_tag_team_cooldown" : "Gas Dispenser Cooldown",
     "ehi_buffs_perks_tag_team_effect" : "Tag Team - Effect",
+    "ehi_buffs_perks_tag_team_absorption" : "Tag Team - Absorption",
     "ehi_buffs_perks_tag_team_tagged" : "Tag Team - Tagged",
     "ehi_buffs_perks_hacker" : "Hacker",
     "ehi_buffs_perks_hacker_desc" : "Shows buffs and cooldowns in Hacker perk deck",
@@ -878,6 +883,7 @@
     "ehi_bm_dot" : "DOT",
     "ehi_bm_dot_tick_period" : "Damage every %ss",
     "ehi_bm_dot_chance" : "Trigger Chance",
+    "ehi_bm_dot_max_distance" : "Max Distance",
     "ehi_bm_explosion" : "Explosion",
     "ehi_bm_fir_com" : "Explodes first, then releases a fire blast",
     "ehi_bm_concussion_1" : "Flashes and stuns enemies",
@@ -941,6 +947,9 @@
 
     "ehi_other_show_colored_bag_contour" : "Show Bag Outline color based on their weight",
     "ehi_other_show_colored_bag_contour_desc" : "Sets custom bag outline color based on their weight\n\nTo set the color range, go to EHI Settings -> Colors",
+
+    "ehi_other_show_real_time_ingame" : "Show Current Real Time In-game",
+    "ehi_other_show_real_time_ingame_desc" : "Shows current real time in OS under heist time",
 
     "ehi_colors_menu" : "Colors",
     "ehi_colors_menu_desc" : "Changes used colors",

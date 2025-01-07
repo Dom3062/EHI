@@ -102,20 +102,16 @@ _G.EHI =
         MissionEnd = "MissionEnd",
         GameRestart = "GameRestart",
         GameEnd = "GameEnd",
-        -- Provides `self` (a LootManager class)
-        LootSecured = "LootSecured",
         -- Provides `managers` (a global table with all managers)
         InitManagers = "InitManagers",
         InitFinalize = "InitFinalize",
-        -- Provides `self` (a LootManager class)
-        LootLoadSync = "LootLoadSync",
         -- Provides `key` (a unit key; a string value), `local_peer` (a boolean value) and `peer_id` (a number value)
         OnMinionAdded = "OnMinionAdded",
         -- Provides `key` (a unit key; a string value), `local_peer` (a boolean value) and `peer_id` (a number value)
         OnMinionKilled = "OnMinionKilled",
-        -- Provides `boost` (a string value) and `operation` (a string value -> `add`, `remove`)
-        TeamAISkillBoostChange = "TeamAISkillBoostChanged",
-        -- Provides `boost` (a string value) and `operation` (a string value -> `add`, `remove`)
+        -- Provides `skill` (a string value) and `operation` (a string value -> `add`, `remove`)
+        TeamAISkillChange = "TeamAISkillChanged",
+        -- Provides `ability` (a string value) and `operation` (a string value -> `add`, `remove`)
         TeamAIAbilityBoostChange = "TeamAIAbilityBoostChanged",
         -- Provides `mode` (a string value -> `normal`, `phalanx`)
         AssaultModeChanged = "AssaultModeChanged",
@@ -441,22 +437,22 @@ _G.EHI =
     {
         Base = "EHITracker",
         Warning = "EHIWarningTracker",
-        -- Optional `paused`
+        -- Optional `paused (boolean)`
         Pausable = "EHIPausableTracker",
-        -- Optional `chance`
+        -- Optional `chance (number)`
         Chance = "EHIChanceTracker",
-        -- Optional `count`
+        -- Optional `count (number)`
         Counter = "EHICountTracker",
-        -- Optional `max` and `progress`
+        -- Optional `max (number)` and `progress (number)`
         Progress = "EHIProgressTracker",
         NeededValue = "EHINeededValueTracker",
         Timed =
         {
-            -- Optional `chance`
+            -- Optional `chance (number)`
             Chance = "EHITimedChanceTracker",
-            -- Optional `max`, `progress` and `remove_on_max_progress`
+            -- Optional `max (number)`, `progress (number)` and `remove_on_max_progress (boolean)`
             Progress = "EHITimedProgressTracker",
-            -- Optional `chance`
+            -- Optional `chance (number)`
             WarningChance = "EHITimedWarningChanceTracker"
         },
         Timer =
@@ -839,6 +835,7 @@ local function LoadDefaultValues(self)
         show_sniper_spawned_popup = true,
         show_sniper_logic_start_popup = true,
         show_sniper_logic_end_popup = true,
+        show_marshal_initial_time = true,
 
         -- Waypoints
         show_waypoints = true,
@@ -968,6 +965,7 @@ local function LoadDefaultValues(self)
             {
                 cooldown = true,
                 effect = true,
+                absorption = true,
                 tagged = true
             },
             hacker =
@@ -1035,7 +1033,8 @@ local function LoadDefaultValues(self)
         show_use_left_doctor_bag = true,
         show_use_left_bodybags_bag = true,
         show_use_left_grenades = true,
-        show_colored_bag_contour = true
+        show_colored_bag_contour = true,
+        show_real_time_ingame = false
     }
 end
 
@@ -1518,11 +1517,15 @@ end
 
 ---@param f fun(dropin: boolean)
 function EHI:AddOnAlarmCallback(f)
+    if self._cache.Alarm then
+        return
+    end
     self:AddCallback("Alarm", f)
 end
 
 ---@param dropin boolean
 function EHI:RunOnAlarmCallbacks(dropin)
+    self._cache.Alarm = true
     self:CallCallbackOnce("Alarm", dropin)
 end
 
@@ -1640,11 +1643,6 @@ function EHI:IsRunningUsefulBots()
         return UsefulBots and Global.game_settings.team_ai
     end
     return self._cache.HostHasUsefulBots and self._cache.HostHasBots
-end
-
----@param peer_id number
-function EHI:GetPeerColorByPeerID(peer_id)
-    return peer_id and tweak_data.chat_colors[peer_id] or Color.white
 end
 
 ---@param id number
@@ -1990,7 +1988,7 @@ function EHI:ShowLootCounterNoChecks(params)
         params.max_bags_for_level.custom_counter.achievement = "LootCounter"
         managers.ehi_loot:AddAchievementListener(params.max_bags_for_level.custom_counter, true)
     else
-        managers.ehi_loot:AddListener(params.no_sync_load)
+        managers.ehi_loot:AddLootListener(params.no_sync_load)
     end
     if params.carry_data then
         if params.carry_data.loot and EHICarryData then

@@ -737,10 +737,10 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     ---@param data ParseAchievementDefinitionTable
     ---@param id string
     local function ParseParams(data, id)
-        if type(data.alarm_callback) == "function" then
+        if data.alarm_callback then
             EHI:AddOnAlarmCallback(data.alarm_callback)
         end
-        if type(data.load_sync) == "function" then
+        if data.load_sync then
             self:AddLoadSyncFunction(data.load_sync)
         end
         if data.failed_on_alarm then
@@ -757,28 +757,29 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
                 end
             end)
         end
-        if type(data.parsed_callback) == "function" then
+        if data.parsed_callback then
             data.parsed_callback()
             data.parsed_callback = nil
         end
     end
     ---@param data ParseAchievementDefinitionTable
     local function PreparseParams(data)
-        if type(data.preparse_callback) == "function" then
+        if data.preparse_callback then
             data.preparse_callback(data)
             data.preparse_callback = nil
         end
     end
+    ---@param data ParseAchievementDefinitionTable
     local function Cleanup(data)
         for _, element in pairs(data.elements or {}) do
             if element.special_function and element.special_function > SF.CustomSF then
                 self:UnregisterCustomSF(element.special_function)
             end
         end
-        if type(data.cleanup_callback) == "function" then
+        if data.cleanup_callback then
             data.cleanup_callback()
         end
-        if type(data.cleanup_class) == "string" then
+        if data.cleanup_class then
             _G[data.cleanup_class] = nil
         end
     end
@@ -1805,7 +1806,7 @@ else
     ---@param id number
     function EHIManager:_get_element_timer_accurate(trigger, id)
         if EHI.IsHost then
-            local element = managers.mission:get_element_by_id(trigger.element)
+            local element = managers.mission:get_element_by_id(trigger.element) --[[@as ElementTimer?]]
             if element then
                 local t = (element._timer or 0) + (trigger.additional_time or 0)
                 self._trackers:Sync(id, t)

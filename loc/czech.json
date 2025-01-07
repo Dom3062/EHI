@@ -155,6 +155,7 @@
     "ehi_hint_piggy" : "Piggy Bank",
     "ehi_hint_turret_en_route" : "Nepřátelský Turret je na cestě",
     "ehi_hint_modifier_civilian_alarm" : "Počet zabití civilistů do alarmu",
+    "ehi_hint_marshal" : "Maršálové",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -592,6 +593,9 @@
 
     "ehi_show_sniper_logic_end_popup" : "Zobrazovat vyskakovací okno 'UKONČENA LOGIKA ODSTŘELOVAČŮ'",
     "ehi_show_sniper_logic_end_popup_desc" : "Zobrazuje vyskakovací okno zeleně když se smaže sledovač s naskriptovanými odstřelovači",
+
+    "ehi_show_marshal_initial_time" : "Zobrazovat sledovač Maršálů",
+    "ehi_show_marshal_initial_time_desc" : "Zobrazuje sledovač kdy budou povoleny spawny pro Maršály",
     
     "ehi_waypoints_menu" : "Ukazatele",
     "ehi_waypoints_menu_desc" : "",
@@ -684,7 +688,7 @@
 
     "ehi_buffs_skills_enforcer_menu" : "Enforcer",
     "ehi_buffs_skills_enforcer_shotgunner_subclass" : "Shotgunner",
-    "ehi_buffs_skills_enforcer_overkill" : "Overkill",
+    "ehi_buffs_skills_enforcer_overkill" : "OVERKILL",
     "ehi_buffs_skills_enforcer_underdog" : "Underdog",
     "ehi_buffs_skills_enforcer_tank_subclass" : "Tank",
     "ehi_buffs_skills_enforcer_bullseye" : "Bullseye",
@@ -781,6 +785,7 @@
     "ehi_buffs_perks_tag_team_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Tag Team",
     "ehi_buffs_perks_tag_team_cooldown" : "Gas Dispenser - Reaktivace",
     "ehi_buffs_perks_tag_team_effect" : "Tag Team - Efekt",
+    "ehi_buffs_perks_tag_team_absorption" : "Tag Team - Absorpce",
     "ehi_buffs_perks_tag_team_tagged" : "Tag Team - Označený",
     "ehi_buffs_perks_hacker" : "Hacker",
     "ehi_buffs_perks_hacker_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Hacker",
@@ -878,6 +883,7 @@
     "ehi_bm_dot" : "DOT",
     "ehi_bm_dot_tick_period" : "Poškození každých %ss",
     "ehi_bm_dot_chance" : "Šance",
+    "ehi_bm_dot_max_distance" : "Max vzdálenost",
     "ehi_bm_explosion" : "Exploze",
     "ehi_bm_fir_com" : "Nejprve vybuchne a poté vypustí ohnivou kouli",
     "ehi_bm_concussion_1" : "Oslepí a omráčí nepřátele",
@@ -941,6 +947,9 @@
 
     "ehi_other_show_colored_bag_contour" : "Zobrazovat barevné ohraničení pytlů podle jejich váhy",
     "ehi_other_show_colored_bag_contour_desc" : "Nastavuje barvu ohračení pytle podle jeho váhy\n\nPro nastavení barevného rozsahu, jděte do Nastavení EHI -> Barvy",
+
+    "ehi_other_show_real_time_ingame" : "Zobrazovat aktuální čas ve hře",
+    "ehi_other_show_real_time_ingame_desc" : "Zobrazuje aktuální reálný čas v OS pod časem loupeže",
 
     "ehi_colors_menu" : "Barvy",
     "ehi_colors_menu_desc" : "Mění použité barvy",

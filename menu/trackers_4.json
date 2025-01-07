@@ -58,7 +58,7 @@
         },
         {
             "type": "toggle",
-            "id": "show_sniper_logic_end_popup_choice",
+            "id": "ehi_show_sniper_logic_end_popup_choice",
             "title": "ehi_show_sniper_logic_end_popup",
             "description": "ehi_show_sniper_logic_end_popup_desc",
             "callback": "SetOption",
@@ -67,6 +67,21 @@
             "default_value": true,
             "parent" : "ehi_show_sniper_tracker_choice",
             "ehi_ver" : 239
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_marshal_initial_time_choice",
+            "title": "ehi_show_marshal_initial_time",
+            "description": "ehi_show_marshal_initial_time_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_marshal_initial_time",
+            "value": "show_marshal_initial_time",
+            "default_value": true,
+            "ehi_ver" : 287
         }
     ]
 }

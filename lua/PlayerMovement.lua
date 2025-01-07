@@ -7,10 +7,11 @@ local original =
 {
     init = PlayerMovement.init
 }
+PlayerMovement.__ehi_inspire_basic = EHI:GetBuffOption("inspire_basic") --[[@as boolean]]
 function PlayerMovement:init(...)
     original.init(self, ...)
     managers.ehi_buff:CallFunction("Stamina", "Spawned", self._stamina)
-    if EHI:GetBuffOption("inspire_basic") and self._rally_skill_data and self._rally_skill_data.morale_boost_delay_t then
+    if self.__ehi_inspire_basic and self._rally_skill_data and self._rally_skill_data.morale_boost_delay_t then
         local _t = self._rally_skill_data
         self._rally_skill_data = {}
         local _mt = {

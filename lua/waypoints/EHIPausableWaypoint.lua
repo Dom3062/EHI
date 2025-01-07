@@ -4,12 +4,12 @@ EHIPausableWaypoint = class(EHIWaypoint)
 EHIPausableWaypoint._paused_color = EHI:GetColorFromOption("tracker_waypoint", "pause")
 function EHIPausableWaypoint:pre_init(params)
     self._force_format = params.paused
-    self._update = not params.paused
+    self._needs_update = not params.paused
 end
 
 ---@param params table
 function EHIPausableWaypoint:post_init(params)
-    self:_set_pause(not self._update)
+    self:_set_pause(not self._needs_update)
 end
 
 ---@param pause boolean

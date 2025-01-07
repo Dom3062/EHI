@@ -5,7 +5,7 @@ end
 
 ---@class GroupAIStateBase
 ---@field _converted_police table
----@field _drama_data table
+---@field _drama_data { amount: number }
 ---@field _enemy_weapons_hot number
 ---@field _hostage_headcount number
 ---@field _hunt_mode boolean
@@ -94,6 +94,7 @@ if not tweak_data.levels:IsStealthRequired() then
                 hint = "drama",
                 class = EHI.Trackers.Chance
             }, pos)
+            managers.ehi_tracker:SetChance("Drama", managers.groupai:state()._drama_data.amount, 2)
         end
         original._add_drama = GroupAIStateBase._add_drama
         function GroupAIStateBase:_add_drama(...)
@@ -183,6 +184,28 @@ if not tweak_data.levels:IsStealthRequired() then
         end
         EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
             UpdateTracker(key, 0, peer_id)
+        end)
+    end
+    if EHI:GetOption("show_marshal_initial_time") then
+        EHI:AddOnAlarmCallback(function(drop)
+            if drop then
+                return
+            end
+            local level_data = tweak_data.levels[Global.game_settings.level_id] or {}
+            if level_data.ai_marshal_spawns_disabled then
+                return
+            end
+            local marshal_spawn_group = tweak_data.group_ai.enemy_spawn_groups and tweak_data.group_ai.enemy_spawn_groups.marshal_squad
+            local t = marshal_spawn_group and marshal_spawn_group.initial_spawn_delay or marshal_spawn_group.spawn_cooldown or 0
+            if t > 0 then
+                managers.ehi_tracker:AddTracker({
+                    id = "Marshals",
+                    time = t,
+                    icons = { "equipment_sheriff_star" },
+                    hint = "marshal",
+                    class = EHI.Trackers.Warning
+                })
+            end
         end)
     end
 end
@@ -313,7 +336,8 @@ if EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
             id = "HostageCount",
             class = "EHIHostageCountTracker"
         })
-        local police = EHI.IsHost and managers.groupai:state():police_hostage_count()
-        managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", managers.groupai:state():hostage_count(), police)
+        local ai_state = managers.groupai:state()
+        local police = EHI.IsHost and ai_state:police_hostage_count()
+        managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", ai_state:hostage_count(), police)
     end)
 end

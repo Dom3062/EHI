@@ -16,7 +16,7 @@ _G.Global = {}
 ---@class World
 ---@field find_units fun(self: self, ...): Unit[]
 ---@field find_units_quick fun(self: self, ...): Unit[]
----@field make_slot_mask fun(self: self, ...: number): number
+---@field make_slot_mask fun(self: self, ...: number): SlotMask
 _G.World = {}
 ---@class tweak_data
 _G.TweakData = {}
@@ -530,6 +530,18 @@ _G.tweak_data.achievement.collection_achievements = {
     }
 }
 _G.tweak_data.hud = {}
+---@class tweak_data.screen_colors
+---@field button_stage_1 Color
+---@field button_stage_2 Color
+---@field button_stage_3 Color
+---@field event_color Color
+---@field ghost_color Color
+---@field heat_cold_color Color
+---@field heat_warm_color Color
+---@field important_1 Color
+---@field text Color
+---@field pro_color Color
+---@field risk Color
 _G.tweak_data.screen_colors = {}
 ---@class CarryTweakData
 ---@field types table<string, { move_speed_modifier: number, jump_modifier: number, can_run: boolean, throw_distance_multiplier: number }>
@@ -593,6 +605,11 @@ _G.tweak_data.group_ai = {
 ---@field get_icon_or fun(self: self, icon_id: string, ...): string, { number: x, number: y, number: w, number: h } If the provided icon is not found, `...` is returned
 ---@field get_icon_data fun(self: self, icon_id: string, default_rect: { number: x, number: y, number: w, number: h }? ): string, { number: x, number: y, number: w, number: h }
 _G.tweak_data.hud_icons = {}
+---@class LootDropTweakData
+_G.tweak_data.lootdrop = {}
+---@class LootDropTweakData.global_values
+---@field [string] { color: Color }
+_G.tweak_data.lootdrop.global_values = {}
 ---@class MenuTweakData
 ---@field medium_font string
 ---@field pd2_small_font string
@@ -773,6 +790,7 @@ _G.GrenadeCrateInteractionExt = {}
 ---@field add fun(self: self, func: function)
 ---@field dispatch fun(self: self, ...)
 ---@field clear fun(self: self)
+---@field remove fun(self: self, func: function)
 _G.CallbackEventHandler = {}
 ---@class CarryTweakData
 _G.CarryTweakData = {}
@@ -786,9 +804,17 @@ _G.CopDamage = {}
 _G.Drill = {}
 ---@class ECMJammerBase
 _G.ECMJammerBase = {}
----@class ElementExperience
+---@class ElementExperience : MissionScriptElement
+---@field super MissionScriptElement
+---@field _values ElementExperience._values
 _G.ElementExperience = {}
----@class ElementWaypoint
+---@class ElementJobValue : MissionScriptElement
+---@field super MissionScriptElement
+---@field _values ElementJobValue._values
+_G.ElementJobValue = {}
+---@class ElementWaypoint : MissionScriptElement
+---@field super MissionScriptElement
+---@field _values ElementWaypoint._values
 _G.ElementWaypoint = {}
 ---@class EventListenerHolder
 ---@field new fun(self: self): self
@@ -808,7 +834,42 @@ _G.ExperienceManager = {}
 ---@class GamePlayCentralManager
 _G.GamePlayCentralManager = {}
 ---@class GroupAITweakData
-_G.GroupAITweakData = {}
+_G.GroupAITweakData = {
+    enemy_spawn_groups = {
+        marshal_squad = {
+            spawn_cooldown = 60,
+            max_nr_simultaneous_groups = 2,
+            initial_spawn_delay = 90,
+            amount = {
+                2,
+                2
+            },
+            spawn = {
+                {
+                    respawn_cooldown = 30,
+                    amount_min = 1,
+                    rank = 2,
+                    freq = 1,
+                    unit = "marshal_shield",
+                    tactics = self._tactics.marshal_shield
+                },
+                {
+                    respawn_cooldown = 30,
+                    amount_min = 1,
+                    rank = 1,
+                    freq = 1,
+                    unit = "marshal_marksman",
+                    tactics = self._tactics.marshal_marksman
+                }
+            },
+            spawn_point_chk_ref = table.list_to_set({
+                "tac_shield_wall",
+                "tac_shield_wall_ranged",
+                "tac_shield_wall_charge"
+            })
+        }
+    }
+}
 ---@class GroupAIStateBase
 _G.GroupAIStateBase = {}
 ---@class IngameWaitingForPlayersState
@@ -818,8 +879,18 @@ _G.JobManager = {}
 ---@class LevelsTweakData
 ---@field get_default_team_ID fun(self: self, type: string): string
 _G.LevelsTweakData = {}
+---@class LobbyCodeMenuComponent
+---@field _panel Panel
+_G.LobbyCodeMenuComponent = {}
 ---@class LootManager
 _G.LootManager = {}
+---@class ListenerHolder
+---@field _listeners table<string, function>?
+---@field new fun(self: self): self
+---@field add fun(self: self, key: string, clbk: function)
+---@field call fun(self: self, ...)
+---@field remove fun(self: self, key: string)
+_G.ListenerHolder = {}
 ---@class CriminalsManager
 _G.CriminalsManager = {}
 ---@class EnemyManager
@@ -836,6 +907,12 @@ _G.GageAssignmentManager = {}
 _G.HUDManager = {}
 ---@class HUDMissionBriefing
 _G.HUDMissionBriefing = {}
+---@class HUDHeistTimer
+---@field _enabled boolean
+---@field _last_time number
+---@field _timer_text PanelText
+---@field _heist_timer_panel Panel
+_G.HUDHeistTimer = {}
 ---@class ObjectInteractionManager
 ---@field _interactive_units UnitWithInteraction[]
 _G.ObjectInteractionManager = {}
@@ -856,8 +933,22 @@ _G.MoneyManager = {}
 _G.mvector3 = {}
 ---@class NetworkPeer
 _G.NetworkPeer = {}
+---@class PlayerMovement
+---@field _stamina number
+---@field current_state fun(self: self): PlayerStandard?
+---@field crouching fun(self: self): boolean
+---@field m_head_pos fun(self: self): Vector3
+---@field m_head_rot fun(self: self): Rotation
+---@field running fun(self: self): boolean
+---@field zipline_unit fun(self: self): UnitZipline
+_G.PlayerMovement = {}
 ---@class SkirmishTweakData
 _G.SkirmishTweakData = {}
+---@class TeamAIBase : CopBase
+---@field _loadout { skill: string?, ability: string? }?
+---@field _unit UnitTeamAI
+---@field _registered boolean
+_G.TeamAIBase = {}
 ---@class TradeManager
 _G.TradeManager = {}
 ---@class UseInteractionExt : BaseInteractionExt
@@ -1008,49 +1099,39 @@ end
 ---@field add_trigger fun(self: self, id: any, outcome: "success"|"fail", callback: function)
 
 ---@class ElementLogicChanceOperator : MissionScriptElement
----@field _values ElementLogicChanceValues
+---@field _values ElementLogicChance._values
 
----@class ElementLogicChanceValues : MissionScriptElementValues
+---@class ElementLogicChance._values : MissionScriptElement._values
 ---@field chance number
 
----@class ElementWaypointValues : MissionScriptElementValues
+---@class ElementWaypoint._values : MissionScriptElement._values
 ---@field only_in_civilian boolean
 ---@field only_on_instigator boolean
 ---@field icon string
 ---@field text_id string
 
----@class ElementWaypoint : MissionScriptElement
----@field super MissionScriptElement
----@field _values ElementWaypointValues
-
 ---@class ElementTimer : MissionScriptElement
 ---@field super MissionScriptElement
 ---@field _timer number
 
----@class ElementSpecialObjectiveValues : MissionScriptElementValues
+---@class ElementSpecialObjective._values : MissionScriptElement._values
 ---@field so_action string
 
 ---@class ElementSpecialObjective : MissionScriptElement
 ---@field super MissionScriptElement
----@field _values ElementSpecialObjectiveValues
+---@field _values ElementSpecialObjective._values
 
----@class ElementExperienceValues : MissionScriptElementValues
+---@class ElementExperience._values : MissionScriptElement._values
 ---@field amount number
 
----@class ElementExperience : MissionScriptElement
----@field super MissionScriptElement
----@field _values ElementExperienceValues
-
----@class ElementJobValueValues : MissionScriptElementValues
+---@class ElementJobValue._values : MissionScriptElement._values
 ---@field value number
+---@field key string
+---@field save boolean
 
----@class ElementJobValue : MissionScriptElement
----@field _values ElementJobValueValues
-
----@class MissionScriptElementValues
+---@class MissionScriptElement._values
 ---@field amount number `ElementCounter` | `ElementCounterOperator`
 ---@field enabled boolean
----@field value number `ElementJobValue`
 ---@field position Vector3
 ---@field rotation Rotation
 
@@ -1065,10 +1146,10 @@ end
 ---@field on_executed function
 ---@field _is_inside fun(self: self, position: Vector3): boolean `ElementAreaReportTrigger `
 ---@field _values_ok fun(self: self): boolean `ElementStopwatchFilter`
----@field _values MissionScriptElementValues
+---@field _values MissionScriptElement._values
 ---@field _calc_base_delay fun(self: self): number
 ---@field _calc_element_delay fun(self: self, params: table): number
----@field _timer number `ElementTimer` | `ElementTimerOperator`
+---@field _timer number `ElementTimerOperator`
 
 ---@class MissionScript
 ---@field element fun(self: self, id: number): MissionScriptElement?
@@ -1219,8 +1300,12 @@ end
 ---@class SkirmishManager
 ---@field current_wave_number fun(self: self): number
 
+---@class SlotMask
+---@operator add(self): self
+---@operator add(number): self
+
 ---@class SlotManager
----@field get_mask fun(self: self, ...: string): number
+---@field get_mask fun(self: self, ...: string): SlotMask
 
 ---@class StatisticsManager
 ---@field _get_boom_guns fun(self: self): string[]
@@ -1230,10 +1315,12 @@ end
 
 ---@class UnoAchievementChallenge
 ---@field challenge fun(self: self): string[]?
+---@field challenge_completed fun(self: self): boolean
 
 ---@class ViewportManager
 ---@field add_resolution_changed_func fun(self: self, func: function): function
 ---@field get_current_camera fun(self: self): Camera
+---@field remove_resolution_changed_func fun(self: self, func: function)
 
 ---@class WeaponFactoryManager
 ---@field get_ammo_data_from_weapon fun(self: self, factory_id: string, blueprint: table): table?
@@ -1460,14 +1547,6 @@ end
 
 ---@class HuskPlayerInventory : PlayerInventory
 
----@class PlayerMovement
----@field current_state fun(self: self): PlayerStandard?
----@field crouching fun(self: self): boolean
----@field m_head_pos fun(self: self): Vector3
----@field m_head_rot fun(self: self): Rotation
----@field running fun(self: self): boolean
----@field zipline_unit fun(self: self): UnitZipline
-
 ---@class HuskPlayerMovement
 ---@field current_state fun(self: self): self
 ---@field m_head_pos fun(self: self): Vector3
@@ -1504,12 +1583,12 @@ end
 ---@field _ON_STUN_ACCURACY_DECREASE number
 ---@field _ON_STUN_ACCURACY_DECREASE_TIME number
 ---@field _unit UnitEnemy
----@field add_listener fun(self: self, key: string, events: string[]?, clbk: function)
+---@field add_listener fun(self: self, key: string, events: string|string[]?, clbk: function) Adds listener to the unit itself
 ---@field dead fun(self: self): boolean
 ---@field health_ratio fun(self: self): number
 ---@field immortal boolean
 ---@field is_civilian fun(type: string): boolean
----@field register_listener fun(key: string, event_types: string[], clbk: function)
+---@field register_listener fun(key: string, event_types: string|string[], clbk: function) Adds listener to all units
 ---@field remove_listener fun(self: self, key: string)
 ---@field unregister_listener fun(key: string)
 
@@ -1534,9 +1613,8 @@ end
 ---@class HuskCivilianDamage : HuskCopDamage
 ---@field _unit UnitCivilian
 
----@class TeamAIBase : CopBase
-
 ---@class HuskTeamAIBase : HuskCopBase
+---@field _unit UnitTeamAI
 
 ---@class C_Vehicle
 ---@field velocity fun(self: self): Vector3
@@ -1718,7 +1796,7 @@ end
 ---@field font_size number
 ---@field font string Idstring
 ---@field color Color
----@field vertical "center"
+---@field vertical "center"|"top"
 ---@field wrap boolean
 ---@field word_wrap boolean
 
@@ -1767,3 +1845,21 @@ end
 ---@field set_texture_rect fun(self: self, x: number, y: number, w: number, h: number)
 
 ---@class PanelRectangle : PanelBaseObject
+
+---@class Waypoint
+---@field init_data WaypointInitData
+---@field bitmap PanelBitmap
+---@field bitmap_world PanelBitmap VR only
+---@field timer_gui PanelText
+---@field distance PanelText
+---@field arrow PanelBitmap
+---@field position Vector3
+---@field size Vector3
+
+---@class WaypointInitData
+---@field distance boolean
+---@field present_timer number
+---@field position Vector3
+---@field text string
+---@field icon string
+---@field state "dirty"|"sneak_present"|"present_ended"|"present"|"offscreen"|"onscreen"?

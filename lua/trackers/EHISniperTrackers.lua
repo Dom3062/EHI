@@ -252,7 +252,7 @@ end
 
 function EHISniperTimedCountTracker:post_init(params)
     if params.snipers_spawned then
-        self._update = false
+        self._needs_update = false
         self:Refresh()
     end
 end
@@ -314,7 +314,7 @@ end
 
 function EHISniperTimedChanceTracker:post_init(params)
     if params.chance_success then
-        self._update = false
+        self._needs_update = false
         self:SniperSpawnsSuccess()
     elseif not params.no_logic_annoucement then
         self:SniperLogicStarted()
@@ -449,7 +449,6 @@ function EHISniperLoopTracker:OverridePanel()
         color = self._sniper_text_color,
         left = self._text:right()
     })
-    self:SetIconsX()
 end
 
 function EHISniperLoopTracker:SetTimeNoAnim(time)
@@ -619,7 +618,7 @@ function EHISniperHeliTracker:post_init(params)
         visible = false
     })
     if self._time <= 0 then
-        self._update = false
+        self._needs_update = false
         self._count_text:set_text("0")
         self._count_text:set_visible(true)
         self._text:set_visible(false)

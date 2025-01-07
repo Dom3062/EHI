@@ -1,4 +1,3 @@
-local lerp = math.lerp
 ---@class EHIGaugeBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIGaugeBuffTracker = class(EHIBuffTracker)
@@ -8,7 +7,7 @@ EHIGaugeBuffTracker = class(EHIBuffTracker)
 EHIGaugeBuffTracker._anim = function(o, ratio, progress)
     local r = progress.red
     over(0.25, function(p, t)
-        progress.red = lerp(r, ratio, p)
+        progress.red = math.lerp(r, ratio, p)
         o:set_color(progress)
     end)
 end

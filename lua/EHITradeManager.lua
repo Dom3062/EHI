@@ -35,7 +35,7 @@ function EHITradeManager:AddCustodyTimeTrackerWithPeer(peer_id, time, civilians_
     self:AddPeerCustodyTime(peer_id, time, civilians_killed)
     if self._trade.normal or self._trade.ai then
         local f = self._trade.normal and "SetTrade" or "SetAITrade"
-        self:CallFunction(f, true, managers.trade:GetTradeCounterTick(), true)
+        self:CallFunction(f, true, managers.trade._trade_counter_tick, true)
     end
 end
 

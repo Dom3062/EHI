@@ -116,10 +116,10 @@ function EHIPhalanxManager:AddTracker()
             self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
         end)
     end
-    Hooks:PostHook(HUDManager, "sync_start_assault", "EHI_PhalanxManager_sync_start_assault", function(...)
+    self._manager._assault:AddAssaultStartCallback(function()
         self._trackers:CallFunction("CaptainChance", "AssaultStart")
     end)
-    Hooks:PostHook(HUDManager, "sync_end_assault", "EHI_PhalanxManager_sync_end_assault", function(...)
+    self._manager._assault:AddAssaultEndCallback(function()
         self._trackers:CallFunction("CaptainChance", "AssaultEnd")
     end)
     if not self._no_endless_assault_check[Global.game_settings.level_id] then

@@ -108,7 +108,7 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                     managers.ehi_tracker:AddTracker({
                         id = "ECMJammer",
                         time = battery_life,
-                        icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
+                        icons = { { icon = "ecm_jammer", peer_id = self._ehi_peer_id } },
                         unit = self._unit,
                         hint = "ecm_jammer",
                         class = "EHIECMTracker"
@@ -133,7 +133,7 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
             managers.ehi_tracker:AddTracker({
                 id = "ECMFeedback",
                 time = self._feedback_duration,
-                icons = { { icon = "ecm_feedback", color = EHI:GetPeerColorByPeerID(self._ehi_peer_id) } },
+                icons = { { icon = "ecm_feedback", peer_id = self._ehi_peer_id } },
                 unit = self._unit,
                 hint = "ecm_feedback",
                 class = "EHIECMTracker"

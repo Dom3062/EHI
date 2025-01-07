@@ -9,12 +9,13 @@ local original =
     remove_upgrades = TeamAIBase.remove_upgrades
 }
 
+---@param loadout { skill: string?, ability: string? }?
 function TeamAIBase:set_loadout(loadout, ...)
     original.set_loadout(self, loadout, ...)
     if not loadout then
         return
     end
-    EHI:CallCallback(EHI.CallbackMessage.TeamAISkillBoostChange, loadout.skill or "none", "add")
+    EHI:CallCallback(EHI.CallbackMessage.TeamAISkillChange, loadout.skill or "none", "add")
     EHI:CallCallback(EHI.CallbackMessage.TeamAIAbilityBoostChange, loadout.ability or "none", "add")
 end
 
@@ -23,7 +24,9 @@ function TeamAIBase:remove_upgrades(...)
         original.remove_upgrades(self, ...)
         return
     end
-    EHI:CallCallback(EHI.CallbackMessage.TeamAISkillBoostChange, self._loadout.skill or "none", "remove")
-    EHI:CallCallback(EHI.CallbackMessage.TeamAIAbilityBoostChange, self._loadout.ability or "none", "remove")
+    local skill = self._loadout.skill
+    local ability = self._loadout.ability
     original.remove_upgrades(self, ...)
+    EHI:CallCallback(EHI.CallbackMessage.TeamAISkillChange, skill or "none", "remove")
+    EHI:CallCallback(EHI.CallbackMessage.TeamAIAbilityBoostChange, ability or "none", "remove")
 end

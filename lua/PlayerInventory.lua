@@ -47,7 +47,7 @@ function PlayerInventory:_start_jammer_effect(end_time, ...)
             managers.ehi_tracker:AddTracker({
                 id = "ECMJammer",
                 time = end_time,
-                icons = { { icon = "ecm_jammer", color = EHI:GetPeerColorByPeerID(peer_id) } },
+                icons = { { icon = "ecm_jammer", peer_id = peer_id } },
                 hint = "ecm_jammer",
                 class = "EHIECMTracker"
             })

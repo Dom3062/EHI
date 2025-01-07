@@ -127,7 +127,7 @@ local sidejob =
                         local secured = loot:GetSecuredBagsAmount() - offset
                         managers.ehi_tracker:SetTrackerProgress("daily_helicopter", secured)
                         if secured >= 16 then
-                            managers.ehi_loot:RemoveEventListener("daily_helicopter")
+                            managers.ehi_loot:RemoveListener("daily_helicopter")
                         end
                 end }
             })

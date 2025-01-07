@@ -2,7 +2,7 @@
 ---@field super EHITracker
 EHITradeDelayTracker = class(EHITracker)
 EHITradeDelayTracker._forced_hint_text = "trade_delay"
-EHITradeDelayTracker._update = false
+EHITradeDelayTracker._needs_update = false
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 EHITradeDelayTracker._init_create_text = false
 function EHITradeDelayTracker:post_init(params)
@@ -12,7 +12,6 @@ function EHITradeDelayTracker:post_init(params)
     self._tick = 0
     if self._SIZE_INCREASE_NEEDED then
         self:SetBGSize(self._bg_box:w() / 2)
-        self:SetIconsX()
     end
     self._default_panel_w = self._panel:w()
     self._default_bg_box_w = self._bg_box:w()
@@ -25,7 +24,7 @@ function EHITradeDelayTracker:SetTextPeerColor()
         return
     end
     for id, data in pairs(self._peers) do
-        data.label:set_color(tweak_data.chat_colors[id] or Color.white)
+        data.label:set_color(self._parent_class:GetPeerColorByPeerID(id))
     end
 end
 
@@ -46,7 +45,7 @@ function EHITradeDelayTracker:SetIconColor()
         EHITradeDelayTracker.super.SetIconColor(self, Color.white)
     else
         local peer_id, _ = next(self._peers)
-        EHITradeDelayTracker.super.SetIconColor(self, tweak_data.chat_colors[peer_id] or Color.white)
+        EHITradeDelayTracker.super.SetIconColor(self, self._parent_class:GetPeerColorByPeerID(peer_id))
     end
 end
 

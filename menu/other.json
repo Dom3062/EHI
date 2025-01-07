@@ -166,6 +166,21 @@
             "value": "show_colored_bag_contour",
             "default_value": true,
             "ehi_ver" : 279
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_real_time_ingame_choice",
+            "title": "ehi_other_show_real_time_ingame",
+            "description": "ehi_other_show_real_time_ingame_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_real_time_ingame",
+            "value": "show_real_time_ingame",
+            "default_value": false,
+            "ehi_ver" : 287
         }
     ]
 }

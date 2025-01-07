@@ -33,11 +33,11 @@ local triggers = {
             hint = "loot_counter",
             class = self.Trackers.NeededValue
         })
-        self._loot:AddEventListener("four_stores", function(loot)
+        self._loot:AddListener("four_stores", function(loot)
             local progress = loot:get_real_total_small_loot_value()
             self._trackers:SetTrackerProgress("ObjectiveSteal", progress)
             if progress >= 15000 then
-                self._loot:RemoveEventListener("four_stores")
+                self._loot:RemoveListener("four_stores")
             end
         end)
     end), trigger_once = true },

@@ -691,7 +691,8 @@ tweak_data.ehi =
             {
                 deck = "tag_team",
                 option = "effect"
-            }
+            },
+            class = "EHITagTeamBuffTracker"
         },
         pocket_ecm_kill_dodge =
         {
@@ -890,8 +891,8 @@ tweak_data.ehi =
             return n
         end,
         ---@param truck_id number
-        ---@param forced_loot string[]?
-        HookArmoredTransportUnit = function(truck_id, forced_loot)
+        ---@param loot string[]?
+        HookArmoredTransportUnit = function(truck_id, loot)
             local exploded
             local function GarbageFound()
                 managers.ehi_loot:SyncRandomLootDeclined()
@@ -909,7 +910,7 @@ tweak_data.ehi =
             managers.mission:add_runned_unit_sequence_trigger(truck_id, "set_exploded", function()
                 exploded = true
             end)
-            for _, loot in ipairs(forced_loot or { "gold", "money", "art" }) do
+            for _, loot in ipairs(loot or { "gold", "money", "art" }) do
                 for i = 1, 9, 1 do
                     local sequence = string.format("spawn_loot_%s_%d", loot, i)
                     if i <= 2 then -- Explosion can disable this loot
@@ -1055,6 +1056,13 @@ tweak_data.ehi.buff.smoke_screen_grenade_cooldown = deep_clone(tweak_data.ehi.bu
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown.folder = "max"
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown.deck_option.deck = "sicario"
 tweak_data.ehi.buff.smoke_screen_grenade_cooldown.deck_option.option = "smoke_bomb_cooldown"
+tweak_data.ehi.buff.TagTeamAbsorption = deep_clone(tweak_data.ehi.buff.TagTeamEffect)
+tweak_data.ehi.buff.TagTeamAbsorption.deck_option.option = "absorption"
+tweak_data.ehi.buff.TagTeamAbsorption.x = 2
+tweak_data.ehi.buff.TagTeamAbsorption.y = 0
+tweak_data.ehi.buff.TagTeamAbsorption.text = "Absorption"
+tweak_data.ehi.buff.TagTeamAbsorption.format = "damage"
+tweak_data.ehi.buff.TagTeamAbsorption.class = "EHIGaugeBuffTracker"
 tweak_data.ehi.buff.tag_team_cooldown = deep_clone(tweak_data.ehi.buff.chico_injector_cooldown)
 tweak_data.ehi.buff.tag_team_cooldown.folder = "ecp"
 tweak_data.ehi.buff.tag_team_cooldown.deck_option.deck = "tag_team"
@@ -1075,7 +1083,6 @@ tweak_data.ehi.buff.copr_ability_cooldown.class = "EHIReplenishThrowableBuffTrac
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown = deep_clone(tweak_data.ehi.buff.mrwi_health_invulnerable)
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.bad = true
 tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.deck_option.option = "grace_period_cooldown"
-tweak_data.ehi.buff.mrwi_health_invulnerable_cooldown.class = "EHIReplenishThrowableBuffTracker"
 
 tweak_data.hud_icons.EHI_XP = { texture = tweak_data.ehi.icons.xp.texture }
 tweak_data.hud_icons.EHI_Gage = { texture = tweak_data.ehi.icons.gage.texture }

@@ -52,7 +52,6 @@ function EHILootTracker:IncreaseTrackerSize(animate)
     else
         self:SetBGSize(self._bg_box:w() / 2, "add")
         self._text:set_w(self._bg_box:w())
-        self:SetIconsX()
         self:SetAndFitTheText()
         self:AdjustHintX(self._default_bg_size_half)
     end
@@ -76,7 +75,6 @@ function EHILootTracker:DecreaseTrackerSize(animate)
     else
         self:SetBGSize(self._default_bg_size, "set")
         self._text:set_w(self._bg_box:w())
-        self:SetIconsX()
         self:SetAndFitTheText()
         self:AdjustHintX(-self._default_bg_size_half)
     end
@@ -359,7 +357,7 @@ function EHILootTracker:ExplosionInTransport()
 end
 
 function EHILootTracker:pre_delete()
-    self._loot_parent:RemoveEventListener(self._id)
+    self._loot_parent:RemoveListener(self._id)
 end
 EHILootTracker.FormatProgress = EHILootTracker.Format
 
@@ -390,7 +388,7 @@ function EHILootMaxTracker:post_init(params)
     EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
     if EHI.IsClient then
-        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot) ---@param loot LootManager
+        self._loot_parent:AddSyncListener(function(loot)
             self._offset = loot:GetSecuredBagsAmount()
         end)
     end

@@ -3,6 +3,7 @@ local EHI = EHI
 ---@class EHILootManager : EHIBaseManager
 ---@field super EHIBaseManager
 ---@field new fun(self: self, ehi_tracker: EHITrackerManager): self
+---@field AddListener fun(self: self, id: string, f: fun(loot: LootManager))
 ---@field _loot_counter_sync_data LootCounterTable
 EHILootManager = class(EHIBaseManager)
 EHILootManager._sync_lm_add_loot_counter = "EHI_LM_AddLootCounter"
@@ -12,7 +13,10 @@ EHILootManager._sync_lm_update_loot_counter = "EHI_LM_SyncUpdateLootCounter"
 function EHILootManager:init(ehi_tracker)
     self._trackers = ehi_tracker
     self._delay_popups = true
-    self:CreateEventListener()
+    self:CreateListener()
+    if EHI.IsClient then
+        self._sync_listener = CallbackEventHandler:new()
+    end
 end
 
 function EHILootManager:init_finalize()
@@ -20,7 +24,7 @@ function EHILootManager:init_finalize()
         self:AddReceiveHook(self._sync_lm_add_loot_counter, function(data, sender)
             local params = json.decode(data)
             self:ShowLootCounter(params.max, params.max_random, 0, params.offset)
-            self:AddListener(true)
+            self:AddLootListener(true)
         end)
         self:AddReceiveHook(self._sync_lm_update_loot_counter, function(data, sender)
             local params = json.decode(data)
@@ -89,17 +93,16 @@ function EHILootManager:SyncShowLootCounter(max, max_random, offset)
 end
 
 ---@param no_sync_load boolean?
-function EHILootManager:AddListener(no_sync_load)
-    if not self:HasEventListener("LootCounter") then
+function EHILootManager:AddLootListener(no_sync_load)
+    if not (self._listener._listeners and self._listener._listeners.LootCounter) then
         local BagsOnly = EHI.Const.LootCounter.CheckType.BagsOnly
-        self:AddEventListener("LootCounter", function(loot)
+        self:AddListener("LootCounter", function(loot)
             self._trackers:SetTrackerProgress("LootCounter", loot:EHIReportProgress(BagsOnly))
         end)
         -- If sync load is disabled, the counter needs to be updated via `EHIManager:AddLoadSyncFunction()` to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if EHI.IsClient and not no_sync_load then
-            ---@param loot LootManager
-            EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
+            self:AddSyncListener(function(loot)
                 self._trackers:SetTrackerSyncData("LootCounter", loot:EHIReportProgress(BagsOnly))
             end)
         end
@@ -116,7 +119,7 @@ function EHILootManager:AddAchievementListener(params, endless_counter)
         f = params.counter.f
     end
     if endless_counter then
-        self:AddEventListener(params.achievement, function(loot)
+        self:AddListener(params.achievement, function(loot)
             if f then
                 loot:EHIReportProgress(check_type, loot_type, f)
             else
@@ -124,21 +127,20 @@ function EHILootManager:AddAchievementListener(params, endless_counter)
             end
         end)
     else
-        self:AddEventListener(params.achievement, function(loot)
+        self:AddListener(params.achievement, function(loot)
             if f then
                 loot:EHIReportProgress(check_type, loot_type, f)
             else
                 local progress = loot:EHIReportProgress(check_type, loot_type)
                 self._trackers:SetTrackerProgress(params.achievement, progress)
                 if progress >= (params.max or params.value) then
-                    self:RemoveEventListener(params.achievement)
+                    self:RemoveListener(params.achievement)
                 end
             end
         end)
     end
     if EHI.IsClient and not (params.load_sync or params.no_sync) then
-        ---@param loot LootManager
-        EHI:AddCallback(EHI.CallbackMessage.LootLoadSync, function(loot)
+        self:AddSyncListener(function(loot)
             if f then
                 loot:EHIReportProgress(check_type, loot_type, f)
             else
@@ -149,8 +151,19 @@ function EHILootManager:AddAchievementListener(params, endless_counter)
 end
 
 ---@param f fun(loot: LootManager)
-function EHILootManager:AddEventListener(id, f)
-    EHILootManager.super.AddEventListener(self, id, EHI.CallbackMessage.LootSecured, f)
+function EHILootManager:AddSyncListener(f)
+    if self._sync_listener then
+        self._sync_listener:add(f)
+    end
+end
+
+---@param loot LootManager
+function EHILootManager:CallSyncListeners(loot)
+    if self._sync_listener then
+        self._sync_listener:dispatch(loot)
+        self._sync_listener:clear()
+        self._sync_listener = nil
+    end
 end
 
 function EHILootManager:SecuredMissionLoot()

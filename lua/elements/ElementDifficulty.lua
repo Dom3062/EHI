@@ -14,14 +14,14 @@ if tweak_data.levels:IsLevelSkirmish() then
         function EHIWaveDifficultyTracker:post_init(params)
             EHIWaveDifficultyTracker.super.post_init(self, params)
             self._in_assault = params.in_assault
-            Hooks:PostHook(HUDManager, "sync_start_assault", "EHI_HUDManager_sync_start_assault_EHIWaveDifficultyTracker", function(...)
+            managers.ehi_assault:AddAssaultStartCallback(function()
                 if self._in_assault then
                     return
                 end
                 self:IncreaseProgress()
                 self._in_assault = true
             end)
-            Hooks:PostHook(HUDManager, "sync_end_assault", "EHI_HUDManager_sync_end_assault_EHIWaveDifficultyTracker", function(...)
+            managers.ehi_assault:AddAssaultEndCallback(function()
                 self._in_assault = false
             end)
         end

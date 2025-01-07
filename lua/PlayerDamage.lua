@@ -25,6 +25,7 @@ end
 ---@field get_real_armor fun(self: self): number
 ---@field get_real_health fun(self: self): number
 ---@field got_max_doh_stacks fun(self: self): boolean
+---@field change_armor fun(self: self, change: number)
 ---@field health_ratio fun(self: self): number
 ---@field max_armor_stored_health fun(self: self): number
 ---@field need_revive fun(self: self): boolean
@@ -33,13 +34,15 @@ end
 
 local original =
 {
-    init = PlayerDamage.init
+    init = PlayerDamage.init,
+    pre_destroy = PlayerDamage.pre_destroy
 }
 
-original.init = PlayerDamage.init
+PlayerDamage.__ehi_dire_need = EHI:GetBuffOption("dire_need") --[[@as boolean]]
+PlayerDamage.__ehi_anarchist_kill_armor_regen = EHI:GetBuffDeckOption("anarchist", "kill_armor_regen_cooldown") --[[@as boolean]]
 function PlayerDamage:init(...)
     original.init(self, ...)
-    if self._dire_need and EHI:GetBuffOption("dire_need") then
+    if self._dire_need and self.__ehi_dire_need then
         managers.player:register_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed", function(stagger)
             if stagger then
                 managers.ehi_buff:AddBuffNoUpdate("DireNeed")
@@ -48,7 +51,7 @@ function PlayerDamage:init(...)
             end
         end)
     end
-    if self._damage_to_armor and EHI:GetBuffDeckOption("anarchist", "kill_armor_regen_cooldown") then
+    if self._damage_to_armor and self.__ehi_anarchist_kill_armor_regen then
         self._damage_to_armor.ehi_cached_elapsed_t = 0
         local function on_damage(damage_info)
             local t = self._damage_to_armor.elapsed
@@ -59,6 +62,15 @@ function PlayerDamage:init(...)
         end
         CopDamage.register_listener("EHI_anarchist_on_damage", { "on_damage" }, on_damage)
     end
+    EHI:CallCallback("PlayerSpawned", self)
+end
+
+function PlayerDamage:pre_destroy(...)
+    EHI:CallCallback("PlayerDespawned")
+    CopDamage.unregister_listener("EHI_anarchist_on_damage")
+    managers.player:unregister_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed")
+    managers.ehi_buff:RemoveBuff("DireNeed")
+    original.pre_destroy(self, ...)
 end
 
 --//////////////////////////////--
@@ -66,8 +78,8 @@ end
 --//////////////////////////////--
 if EHI:GetBuffOption("hostage_taker_muscle") then
     local TeamAIHealthRegen = false
-    EHI:AddCallback(EHI.CallbackMessage.TeamAISkillBoostChange, function(boost, operation)
-        if boost == "crew_regen" then
+    EHI:AddCallback(EHI.CallbackMessage.TeamAISkillChange, function(skill, operation)
+        if skill == "crew_regen" then
             TeamAIHealthRegen = operation == "add"
         end
     end)

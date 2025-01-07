@@ -1096,7 +1096,9 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
             local bags_to_secure = math.ceil((max_n - min_objective_xp) / loot_xp)
             local bags_to_secure_gage = math.ceil((max_n - min_objective_xp_gage) / loot_xp_gage)
             local to_secure = self._loc:text("ehi_experience_to_secure", { amount = bags_to_secure })
-            if bags_to_secure == bags_to_secure_gage then -- Securing gage packages does not matter -> you still need to secure the same amount of bags
+            if bags_to_secure_gage <= 0 then -- If your XP limit is lower than maximum set by a heist, secured bags will be negative, skip them
+                max = string.format("+%s %s", max, xp)
+            elseif bags_to_secure == bags_to_secure_gage then -- Securing gage packages does not matter -> you still need to secure the same amount of bags
                 max = string.format("+%s %s (%s)", max, xp, to_secure)
             else -- Securing gage packages will make a difference in bags, reflect it
                 max = string.format("+%s %s (%s; %s %s)", max, xp, to_secure, self._loc:text("ehi_experience_all_gage_packages"), tostring(bags_to_secure_gage))
@@ -1110,7 +1112,9 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
             local bags_to_secure = math.ceil((max_n - min_objectives_xp) / loot_xp)
             local bags_to_secure_gage = math.ceil((max_n - min_objectives_xp_gage) / loot_xp_gage)
             local to_secure = self._loc:text("ehi_experience_to_secure", { amount = bags_to_secure })
-            if bags_to_secure == bags_to_secure_gage then -- Securing gage packages does not matter -> you still need to secure the same amount of bags
+            if bags_to_secure_gage <= 0 then -- If your XP limit is lower than maximum set by a heist, secured bags will be negative, skip them
+                max = string.format("+%s %s", max, xp)
+            elseif bags_to_secure == bags_to_secure_gage then -- Securing gage packages does not matter -> you still need to secure the same amount of bags
                 max = string.format("+%s %s (%s)", max, xp, to_secure)
             else -- Securing gage packages will make a difference in bags, reflect it
                 max = string.format("+%s %s (%s; %s %s)", max, xp, to_secure, self._loc:text("ehi_experience_all_gage_packages"), tostring(bags_to_secure_gage))
@@ -2090,7 +2094,7 @@ end
 
 function LobbyCodeMenuComponent:init(...)
     original.lobby_code_init(self, ...)
-    if self._panel:alpha() ~= 0 then
+    if self._panel:alpha() > 0 then
         self._panel:set_y(0)
         if managers.hud._hud_mission_briefing and managers.hud._hud_mission_briefing.MoveJobName then
             managers.hud._hud_mission_briefing:MoveJobName(self._panel:w())
@@ -2111,11 +2115,14 @@ local function f()
         end
         _buttons = nil
     end
-    XPBreakdownButtonSwitch:destroy()
-    XPBreakdownButtonSwitch = nil
+    if XPBreakdownButtonSwitch then
+        XPBreakdownButtonSwitch:destroy()
+        XPBreakdownButtonSwitch = nil
+    end
 end
 if _G.IS_VR then
     Hooks:PostHook(MissionBriefingGui, "set_enabled", "EHI_VR_MissionBriefingGui_set_enabled", f)
 else
     EHI:AddOnSpawnedCallback(f)
 end
+EHI:AddCallback(EHI.CallbackMessage.MissionEnd, f)

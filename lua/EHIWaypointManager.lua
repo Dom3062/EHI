@@ -10,7 +10,7 @@ EHIWaypointManager._bitmap_h = 32
 function EHIWaypointManager:new()
     self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
     self._present_timer = EHI:GetOption("show_waypoints_present_timer") --[[@as number]]
-    self._stored_waypoints = {}
+    self._stored_waypoints = {} ---@type table<string, AddWaypointTable|ElementWaypointTrigger>
     self._waypoints = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
     self._waypoints_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
     self._base_waypoint_class = EHI.Waypoints.Base
@@ -34,14 +34,13 @@ function EHIWaypointManager:AddWaypoint(id, params)
     elseif not self._hud then
         self._stored_waypoints[id] = params
         return
-    end
-    if self._waypoints[id] then
+    elseif self._waypoints[id] then
         self:RemoveWaypoint(id)
     end
     params.id = id
-    params.timer = 0 ---@diagnostic disable-line
-    params.pause_timer = 1 ---@diagnostic disable-line
-    params.no_sync = true ---@diagnostic disable-line
+    params.timer = 0
+    params.pause_timer = 1
+    params.no_sync = true
     params.present_timer = params.present_timer or self._present_timer
     local waypoint = self._hud:AddEHIWaypoint(id, params)
     if not waypoint then
@@ -59,7 +58,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     waypoint.timer_gui:set_font(self._font)
     waypoint.timer_gui:set_font_size(self._timer_font_size)
     local w = _G[params.class or self._base_waypoint_class]:new(waypoint, params, self) --[[@as EHIWaypoint]]
-    if w._update then
+    if w._needs_update then
         self._waypoints_to_update[id] = w
     end
     self._waypoints[id] = w
@@ -101,7 +100,7 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
     end
 end
 
----@param wp WaypointDataTable
+---@param wp Waypoint
 ---@param params AddWaypointTable|ElementWaypointTrigger
 function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
     local bitmap = wp.bitmap

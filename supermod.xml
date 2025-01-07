@@ -16,8 +16,13 @@
             <post :hook_id="group_ai_states/groupaistatebesiege" :script_path="GroupAIStateBesiege.lua" />
             <post :hook_id="hudmanager" :script_path="HUDManager.lua" />
             <post :hook_id="hudmanagerpd2" :script_path="HUDManagerPD2.lua" />
-            <post :hook_id="hud/hudchallengenotification" :script_path="HudChallengeNotification.lua" />
-            <post :hook_id="hud/hudmissionbriefing" :script_path="HUDMissionBriefing.lua" />
+
+            <group :hook_id="hud/">
+                <post :hook_id="hudchallengenotification" :script_path="HudChallengeNotification.lua" />
+                <post :hook_id="hudmissionbriefing" :script_path="HUDMissionBriefing.lua" />
+                <post :hook_id="hudheisttimer" :script_path="HUDHeistTimer.lua" />
+            </group>
+
             <post :hook_id="gameplaycentralmanager" :script_path="GamePlayCentralManager.lua"/>
             <post :hook_id="gageassignmentmanager" :script_path="GageAssignmentManager.lua" />
             <post :hook_id="enemymanager" :script_path="EnemyManager.lua" />
@@ -63,10 +68,12 @@
             <post :hook_id="trademanager" :script_path="TradeManager.lua" />
         </group>
 
-        <post hook_id="lib/modifiers/modifiercivilianalarm" :script_path="ModifierCivilianAlarm.lua" />
-        <post hook_id="lib/modifiers/modifierlesspagers" :script_path="ModifierLessPagers.lua" />
-        <post hook_id="lib/modifiers/boosts/gagemodifierlifesteal" :script_path="GageModifierLifeSteal.lua" />
-        <post hook_id="lib/modifiers/boosts/gagemodifiermeleeinvincibility" :script_path="GageModifierMeleeInvincibility.lua" />
+        <group hook_id="lib/modifiers/">
+            <post :hook_id="modifiercivilianalarm" :script_path="ModifierCivilianAlarm.lua" />
+            <post :hook_id="modifierlesspagers" :script_path="ModifierLessPagers.lua" />
+            <post :hook_id="boosts/gagemodifierlifesteal" :script_path="GageModifierLifeSteal.lua" />
+            <post :hook_id="boosts/gagemodifiermeleeinvincibility" :script_path="GageModifierMeleeInvincibility.lua" />
+        </group>
 
         <post hook_id="lib/mutators/mutatorpiggybank" :script_path="MutatorPiggyBank.lua" />
         <post hook_id="lib/mutators/mutatorpiggyrevenge" :script_path="MutatorPiggyRevenge.lua" />
@@ -80,13 +87,17 @@
             <post :hook_id="gamesetup" :script_path="GameSetup.lua" />
         </group>
 
-        <post hook_id="lib/states/ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />
-        <post hook_id="lib/states/ingamewaitingforrespawn" :script_path="IngameWaitingForRespawn.lua" />
-        <post hook_id="lib/states/missionendstate" :script_path="MissionEndState.lua" />
+        <group hook_id="lib/states/">
+            <post :hook_id="ingamewaitingforplayers" :script_path="IngameWaitingForPlayers.lua" />
+            <post :hook_id="ingamewaitingforrespawn" :script_path="IngameWaitingForRespawn.lua" />
+            <post :hook_id="missionendstate" :script_path="MissionEndState.lua" />
+        </group>
 
-        <post hook_id="lib/player_actions/skills/playeractionammoefficiency" :script_path="PlayerActionAmmoEfficiency.lua" />
-        <post hook_id="lib/player_actions/skills/playeractionexperthandling" :script_path="PlayerActionExpertHandling.lua" />
-        <post hook_id="lib/player_actions/skills/playeractiontriggerhappy" :script_path="PlayerActionTriggerHappy.lua" />
+        <group hook_id="lib/player_actions/skills/">
+            <post :hook_id="playeractionammoefficiency" :script_path="PlayerActionAmmoEfficiency.lua" />
+            <post :hook_id="playeractionexperthandling" :script_path="PlayerActionExpertHandling.lua" />
+            <post :hook_id="playeractiontriggerhappy" :script_path="PlayerActionTriggerHappy.lua" />
+        </group>
 
         <group hook_id="lib/units/">
             <post :hook_id="beings/player/playerdamage" :script_path="PlayerDamage.lua" />

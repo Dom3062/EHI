@@ -41,7 +41,7 @@ end
 function EHIECMFeedbackRefreshTracker:SetIconColor()
     if self._peers_n <= 1 then
         local peer_id, _ = next(self._peers)
-        EHIECMFeedbackRefreshTracker.super.SetIconColor(self, EHI:GetPeerColorByPeerID(peer_id))
+        EHIECMFeedbackRefreshTracker.super.SetIconColor(self, self._parent_class:GetPeerColorByPeerID(peer_id))
     else
         EHIECMFeedbackRefreshTracker.super.SetIconColor(self, Color.white)
     end
@@ -57,7 +57,7 @@ function EHIECMFeedbackRefreshTracker:SetTextColor()
         end
     else
         for _, timer in ipairs(self._timers) do
-            EHIECMFeedbackRefreshTracker.super.SetTextColor(self, EHI:GetPeerColorByPeerID(timer.peer_id), timer.label)
+            EHIECMFeedbackRefreshTracker.super.SetTextColor(self, self._parent_class:GetPeerColorByPeerID(timer.peer_id), timer.label)
         end
     end
 end

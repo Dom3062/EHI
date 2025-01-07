@@ -126,14 +126,14 @@ local loud_objectives =
     { amount = 4000, name = "twh_disable_aa" },
     { amount = 2000, name = "heli_arrival" }
 }
-local secret_objectives =
-{
-    stop_at_inclusive = "twh_pardons_stolen",
-    mark_optional = { twh_mainframe_hacked = true, twh_pardons_stolen = true }
-}
-EHI:AddXPBreakdown({
-    plan =
+local xp_breakdown = {}
+if managers.custom_safehouse:uno_achievement_challenge():challenge_completed() then
+    local secret_objectives =
     {
+        stop_at_inclusive = "twh_pardons_stolen",
+        mark_optional = { twh_mainframe_hacked = true, twh_pardons_stolen = true }
+    }
+    xp_breakdown.plan = {
         custom =
         {
             {
@@ -172,4 +172,16 @@ EHI:AddXPBreakdown({
             }
         }
     }
-})
+else
+    xp_breakdown.plan = {
+        stealth =
+        {
+            objectives = stealth_objectives
+        },
+        loud =
+        {
+            objectives = loud_objectives
+        }
+    }
+end
+EHI:AddXPBreakdown(xp_breakdown)

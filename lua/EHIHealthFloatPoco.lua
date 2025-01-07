@@ -250,6 +250,10 @@ function EHIHealthFloatPoco:destroy()
     self._parent._floats[self._key] = nil
 end
 
+---@param o Panel
+---@param lastD number
+---@param done_cb function?
+---@param seconds number
 function EHIHealthFloatPoco._fade(o, lastD, done_cb, seconds)
     o:set_visible(true)
     o:set_alpha(1)
@@ -260,6 +264,39 @@ function EHIHealthFloatPoco._fade(o, lastD, done_cb, seconds)
         o:set_alpha(lastD * t / seconds)
     end
     o:set_visible(false)
-    done_cb()
+    if done_cb then
+        done_cb()
+    end
 end
 EHIHealthFloatPoco._destroy_callback = callback(EHIHealthFloatPoco, EHIHealthFloatPoco, "destroy")
+
+---@class EHIHealthFloatPocoTeamAI : EHIHealthFloatPoco
+---@field super EHIHealthFloatPoco
+EHIHealthFloatPocoTeamAI = class(EHIHealthFloatPoco)
+function EHIHealthFloatPocoTeamAI:init(...)
+    self._keep_alive = false
+    EHIHealthFloatPocoTeamAI.super.init(self, ...)
+end
+
+function EHIHealthFloatPocoTeamAI:renew(...)
+    self._keep_alive = true
+    EHIHealthFloatPocoTeamAI.super.renew(self, ...)
+end
+
+function EHIHealthFloatPocoTeamAI:delete()
+    if self._death then
+        EHIHealthFloatPocoTeamAI.super.delete(self)
+    elseif self._keep_alive then
+        self._keep_alive = false
+        local pnl = self._pnl
+        if alive(pnl) then
+            pnl:stop()
+            pnl:animate(self._fade, self.lastD or 1, nil, 0.2)
+        end
+    end
+end
+
+function EHIHealthFloatPocoTeamAI:force_delete()
+    self._death = true
+    EHIHealthFloatPocoTeamAI.super.force_delete(self)
+end

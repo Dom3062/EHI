@@ -10,7 +10,7 @@ local Color = Color
 ---@field _panel_w number Inherited class needs to populate this field
 ---@field _panel_double number Inherited class needs to populate this field
 EHITimerTracker = class(EHIWarningTracker)
-EHITimerTracker._update = false
+EHITimerTracker._needs_update = false
 EHITimerTracker._autorepair_color = EHI:GetColorFromOption("tracker_waypoint", "drill_autorepair")
 EHITimerTracker._paused_color = EHIPausableTracker._paused_color
 EHITimerTracker._not_powered_color = EHI:GetColorFromOption("tracker_waypoint", "drill_not_powered")

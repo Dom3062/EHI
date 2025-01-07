@@ -81,10 +81,39 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
+    -- Mr. Pink
     other[101105] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100490 } }
     other[101104] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101196 } }
     other[101106] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101201 } }
     other[101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101138 } }
+    -- Escape (Waypoints are dynamic based on secured loot)
+    local ShowWP = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+        if enabled then
+            local escape = self:IsMissionElementDisabled(trigger.data.loot_area)
+            self._cache.rvd1_escape_bags = not escape and trigger.data.position_bags
+            trigger.id = escape and trigger.data.position_escape or trigger.data.position_bags
+            self:_parse_vanilla_waypoint_trigger(trigger)
+            managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
+        end
+    end)
+    other[100207] = { special_function = ShowWP, data = { icon = Icon.Car, position_bags = 100482, position_escape = 101029, loot_area = 100311 } } -- drive_in001
+    other[100208] = { special_function = ShowWP, data = { icon = Icon.Car, position_bags = 100527, position_escape = 100276, loot_area = 100322 } } -- drive_in003
+    other[100209] = { special_function = ShowWP, data = { icon = Icon.Car, position_bags = 100524, position_escape = 100532, loot_area = 100321 } } -- drive_in002
+    other[1002071] = deep_clone(other[100207]) -- A copy is needed because players can secure all bags AFTER the escape waypoint is visible
+    other[1002081] = deep_clone(other[100208])
+    other[1002091] = deep_clone(other[100209])
+    other[100467] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+        if self._cache.rvd1_escape_bags then
+            managers.hud:remove_waypoint(self._cache.rvd1_escape_bags)
+            if self._cache.rvd1_escape_bags == 100482 then
+                self:Trigger(1002071, element, true)
+            elseif self._cache.rvd1_escape_bags == 100527 then
+                self:Trigger(1002081, element, true)
+            elseif self._cache.rvd1_escape_bags == 100524 then
+                self:Trigger(1002091, element, true)
+            end
+        end
+    end) }
 end
 EHI.Manager:ParseTriggers({
     mission = triggers,

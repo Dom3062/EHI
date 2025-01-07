@@ -59,10 +59,10 @@ local triggers = {
         local bags = self:CountLootbagsOnTheGround(10)
         if bags % 4 == 0 then -- 4/8/12
             local trigger = bags - 3
-            self._loot:AddEventListener("watchdogs_2", function(loot)
+            self._loot:AddListener("watchdogs_2", function(loot)
                 if loot:GetSecuredBagsAmount() == trigger then
                     self:Trigger(1)
-                    self._loot:RemoveEventListener("watchdogs_2")
+                    self._loot:RemoveListener("watchdogs_2")
                 end
             end)
         end

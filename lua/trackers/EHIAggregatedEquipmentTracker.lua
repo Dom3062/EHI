@@ -10,7 +10,7 @@ local color =
 ---@class EHIAggregatedEquipmentTracker : EHITracker
 ---@field super EHITracker
 EHIAggregatedEquipmentTracker = class(EHITracker)
-EHIAggregatedEquipmentTracker._update = false
+EHIAggregatedEquipmentTracker._needs_update = false
 EHIAggregatedEquipmentTracker._dont_show_placed = { first_aid_kit = true }
 EHIAggregatedEquipmentTracker._ids = { "doctor_bag", "ammo_bag", "grenade_crate", "first_aid_kit", "bodybags_bag" }
 EHIAggregatedEquipmentTracker._init_create_text = false

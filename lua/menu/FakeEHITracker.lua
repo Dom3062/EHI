@@ -200,11 +200,11 @@ function FakeEHITracker:GetBGBoxRight()
     return self._bg_box:right() - self._bg_box:x()
 end
 
-function FakeEHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
+function FakeEHITracker:SetBGSize(w, type, dont_recalculate_panel_w, dont_move_icons)
     if self._tracker_vertical_anim_left or self.__icon_pos_left then
         self._panel:set_x(self._panel:x() - (w or self._bg_box:w()))
     end
-    self:_SetBGSize(w, type, dont_recalculate_panel_w)
+    self:_SetBGSize(w, type, dont_recalculate_panel_w, dont_move_icons)
 end
 
 ---@param previous_icon PanelBitmap?
@@ -407,7 +407,6 @@ function FakeEHITradeDelayTracker:UpdateInternalFormat(format_key, format)
     end
     self._text:set_w(self._bg_box:w())
     self:UpdateTimeFormat()
-    self:SetIconsX()
     self:Reposition()
 end
 
@@ -549,7 +548,6 @@ function FakeEHIMinionTracker:UpdateInternalFormat(format_key, format, repositio
         if self._size_increased then
             self._size_increased = nil
             self:SetBGSize(self._bg_box_w, "set")
-            self:SetIconsX()
             self:Reposition()
         end
         local w = self._bg_box_w / 2
@@ -596,7 +594,6 @@ function FakeEHIMinionTracker:SetMinionHealth(health, from_init)
         if self._format.minion >= 2 then
             self._size_increased = true
             self:SetBGSize()
-            self:SetIconsX()
         else
             self._text:set_visible(false)
             self._minion_health_repositioned = true
@@ -617,7 +614,6 @@ function FakeEHIMinionTracker:SetMinionHealth(health, from_init)
         self:SetBGSize(self._bg_box_w, "set")
         self._first_minion_health:set_visible(false)
         self._second_minion_health:set_visible(false)
-        self:SetIconsX()
     elseif self._minion_health_repositioned then
         self._minion_health_repositioned = nil
         self._first_minion_health:set_visible(false)
@@ -878,7 +874,6 @@ function FakeEHIAssaultTimeTracker:UpdateInternalFormat(format, reposition, from
     else
         self:SetBGSize(self._bg_size, "set")
     end
-    self:SetIconX()
     if reposition then
         self:Reposition()
     end
@@ -903,7 +898,6 @@ function FakeEHIAssaultTimeTracker:UpdateInternalFormat2(format, reposition, fro
     else
         self:SetBGSize(self._bg_size, "set")
     end
-    self:SetIconX()
     if reposition then
         self:Reposition()
     end

@@ -20,10 +20,9 @@ end
 function EHITimedChanceTracker:post_init(params)
     if params.start_opened then
         self:SetBGSize(self._bg_box_double, "set")
-        self:SetIconsX()
     elseif params.stop_timer_on_end then
         self._stop_timer_on_end = true
-        self._update = false
+        self._needs_update = false
     end
 end
 

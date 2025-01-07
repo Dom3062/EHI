@@ -12,7 +12,15 @@ function EHIHealthFloatManager:new(hud, hud_panel)
     if EHI:GetOption("show_floating_health_bar_civilians") then -- +Slot mask 21
         self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
     end
-    hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+    Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_init", function(base, ...)
+        self._player_movement = base
+        hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+    end)
+    Hooks:PreHook(PlayerMovement, "pre_destroy", "EHI_PlayerMovement_pre_destroy", function(...)
+        hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+        self._player_movement = nil
+        self:update_last()
+    end)
     self:post_init(hud_panel)
 end
 
@@ -25,15 +33,43 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         self._pnl = self._ws:panel():panel({ layer = 4 })
         self._ww = self._pnl:w()
         self._hh = self._pnl:h()
-        managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
-        self._floats = {}
-        self._smokes = {}
+        self._resolution_changed_clbk = managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
+        self._floats = {} ---@type table<string, EHIHealthFloatPoco>
+        self._smokes = {} ---@type table<string, Vector3>
         Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
             local unit = base._unit
             self._smokes[unit:key()] = unit:position()
         end)
         Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
             self._smokes[base._unit:key()] = nil
+        end)
+        Hooks:PreHook(TeamAIBase, "_register", "EHI_TeamAIBase_register", function(base, ...)
+            if base._registered then
+                return
+            end
+            local key = base._unit.key and base._unit:key()
+            if not key then
+                return
+            elseif self._floats[key] then
+                self._floats[key]:destroy()
+            end
+            self._floats[key] = EHIHealthFloatPocoTeamAI:new(self, key, base._unit, 0)
+        end)
+        Hooks:PreHook(TeamAIBase, "unregister", "EHI_TeamAIBase_unregister", function(base, ...)
+            if not base._registered then
+                return
+            end
+            local key = base._unit.key and base._unit:key()
+            if not key then
+                return
+            elseif self._floats[key] then
+                self._floats[key]:force_delete()
+            end
+        end)
+        Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_init_Poco", function(...)
+            if not self._resolution_changed_clbk then -- Re-register the callback again in case you are taken into custody
+                self._resolution_changed_clbk = managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
+            end
         end)
     end
 
@@ -61,6 +97,10 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
     function EHIHealthFloatManager:update_last()
         for _, float in pairs(self._floats) do
             float:force_delete()
+        end
+        if self._resolution_changed_clbk then
+            managers.viewport:remove_resolution_changed_func(self._resolution_changed_clbk) -- In case stupid player decided after finishing a heist to change resolution
+            self._resolution_changed_clbk = nil
         end
     end
 
@@ -124,13 +164,13 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         local rot = self._cam:rotation()
         self._nl_cam_forward = rot:y()
 
-        self.state = self.state or self:_tryGetState()
+        self.state = self._player_movement:current_state()
         self.ADS = self.state and self.state._state_data.in_steelsight
 
         local r = nil
-        local from = alive(managers.player:player_unit()) and managers.player:player_unit():movement():m_head_pos()
+        local from = self._player_movement:m_head_pos()
         if from then
-            local to = from + managers.player:player_unit():movement():m_head_rot():y() * 30000
+            local to = from + self._player_movement:m_head_rot():y() * 30000
             r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
         end
         local unit = r and r.unit
@@ -149,14 +189,6 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         for _, float in pairs(self._floats) do
             float:draw(t)
         end
-    end
-
-    function EHIHealthFloatManager:_tryGetState()
-        local unit = managers.player:player_unit()
-        if unit and unit:movement() then
-            return unit:movement():current_state()
-        end
-        return nil
     end
 else
     if EHI:GetOption("show_floating_health_bar_style") == 2 then
@@ -186,9 +218,9 @@ else
     ---@param t number
     function EHIHealthFloatManager:update(t, dt)
         local r = nil
-        local from = alive(managers.player:player_unit()) and managers.player:player_unit():movement():m_head_pos()
+        local from = self._player_movement:m_head_pos()
         if from then
-            local to = from + managers.player:player_unit():movement():m_head_rot():y() * 30000
+            local to = from + self._player_movement:m_head_rot():y() * 30000
             r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitEnemy? }]]
         end
         local unit = r and r.unit

@@ -19,12 +19,12 @@ local original =
 
 function LootManager:sync_secure_loot(...)
     original.sync_secure_loot(self, ...)
-    managers.ehi_loot:CallEvent(EHI.CallbackMessage.LootSecured, self)
+    managers.ehi_loot:Call(self)
 end
 
 function LootManager:sync_load(...)
     original.sync_load(self, ...)
-    EHI:CallCallbackOnce(EHI.CallbackMessage.LootLoadSync, self)
+    managers.ehi_loot:CallSyncListeners(self)
 end
 
 ---@return integer

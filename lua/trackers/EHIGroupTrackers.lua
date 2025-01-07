@@ -234,7 +234,6 @@ function EHIProgressGroupTracker:Add(progress, max, id)
     self._counters = n
     if n >= 2 then
         self:SetBGSize(self._default_bg_size * n, "set")
-        self:SetIconsX()
         self:ChangeTrackerWidth()
     end
 end

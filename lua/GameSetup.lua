@@ -235,11 +235,10 @@ local custom_levels =
 local init_finalize = GameSetup.init_finalize
 function GameSetup:init_finalize(...)
     init_finalize(self, ...)
-    EHI.Manager = managers.ehi_manager
-    if EHI.Manager.__init_done then
-        EHI.Manager = nil
+    if managers.ehi_manager.__init_done then
         return
     end
+    EHI.Manager = managers.ehi_manager
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
     if tweak_data.levels:IsLevelCustom(level_id) then

@@ -51,7 +51,31 @@ function EHIAssaultManager:init_finalize(manager)
             return
         end
         self._endless_assault = mode == "endless"
-        self:EndlessAssaultChanged()
+        local data
+        if not self._endless_assault then
+            if EHI.IsHost then
+                local ai_state = managers.groupai:state()
+                local assault_data = ai_state._task_data.assault or {}
+                local current_state = assault_data.phase
+                local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
+                if current_state then
+                    data = {
+                        state = current_state
+                    }
+                    if current_state == "build" then
+                        data.t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
+                    elseif current_state == "sustain" then
+                        local t = ai_state._t
+                        data.sustain_original_t = assault_data.phase_end_t - t
+                        data.sustain_t = ai_state:assault_phase_end_time() - t
+                    end
+                    self._trackers:SyncTable(self._sync_endless_stop, data)
+                end
+            elseif self._synced_from_host then
+                return
+            end
+        end
+        self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault, data)
     end)
     if not self._assault_time.blocked then
         EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
@@ -164,8 +188,7 @@ end
 function EHIAssaultManager:StartAssaultCountdown(t, block_if_exists)
     if self._assault_delay.blocked or self._control_block or self._internal.is_assault then
         return
-    end
-    if block_if_exists and self._trackers:TrackerExists(self._assault_delay.name) then
+    elseif block_if_exists and self._trackers:TrackerExists(self._assault_delay.name) then
         return
     end
     self._trackers:AddTracker({
@@ -200,6 +223,9 @@ function EHIAssaultManager:AssaultStart()
     if self._assault_delay.delete_on_assault then
         self._trackers:ForceRemoveTracker(self._assault_delay.name)
     end
+    if not self._internal.is_assault and self._assault_start_callback then
+        self._assault_start_callback:dispatch()
+    end
     if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._internal.is_assault or self._assault_block then
         self._internal.is_assault = true
         if self._force_assault_start and not self._endless_assault then
@@ -227,35 +253,18 @@ function EHIAssaultManager:AssaultStart()
     self._internal.is_assault = true
 end
 
-function EHIAssaultManager:EndlessAssaultChanged()
-    local data
-    if not self._endless_assault then
-        if EHI.IsHost then
-            local ai_state = managers.groupai:state()
-            local assault_data = ai_state._task_data.assault or {}
-            local current_state = assault_data.phase
-            local assault_values = tweak_data.group_ai[tweak_data.levels:GetGroupAIState()].assault
-            if current_state then
-                data = {
-                    state = current_state
-                }
-                if current_state == "build" then
-                    data.t_correction = assault_values.build_duration - (assault_data.phase_end_t - ai_state._t)
-                elseif current_state == "sustain" then
-                    local t = ai_state._t
-                    data.sustain_original_t = assault_data.phase_end_t - t
-                    data.sustain_t = ai_state:assault_phase_end_time() - t
-                end
-                self._trackers:SyncTable(self._sync_endless_stop, data)
-            end
-        elseif self._synced_from_host then
-            return
-        end
+---@param f function
+function EHIAssaultManager:AddAssaultStartCallback(f)
+    if not self._assault_start_callback then
+        self._assault_start_callback = CallbackEventHandler:new()
     end
-    self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault, data)
+    self._assault_start_callback:add(f)
 end
 
 function EHIAssaultManager:AssaultEnd()
+    if self._internal.is_assault and self._assault_end_callback then
+        self._assault_end_callback:dispatch()
+    end
     self._internal.is_assault = false
     if self._is_skirmish then
         self._current_assault_number = (self._current_assault_number or 0) + 1
@@ -280,16 +289,24 @@ function EHIAssaultManager:AssaultEnd()
     Hooks:PostHook(self._hud, "set_control_info", "EHI_Assault_set_control_info", self._control_info_f)
 end
 
----@param n number
+---@param f function
+function EHIAssaultManager:AddAssaultEndCallback(f)
+    if not self._assault_end_callback then
+        self._assault_end_callback = CallbackEventHandler:new()
+    end
+    self._assault_end_callback:add(f)
+end
+
+---@param assault_number number
 ---@param in_assault boolean
-function EHIAssaultManager:SetCurrentAssaultNumber(n, in_assault)
+function EHIAssaultManager:SetCurrentAssaultNumber(assault_number, in_assault)
     if not self._is_skirmish then
         return
-    elseif n == 0 or not in_assault then
-        n = n + 1
+    elseif assault_number == 0 or not in_assault then
+        assault_number = assault_number + 1
     end
-    self._current_assault_number = n
-    self:CallFunction("SetProgress", n)
+    self._current_assault_number = assault_number
+    self:CallFunction("SetProgress", assault_number)
 end
 
 ---@param t number

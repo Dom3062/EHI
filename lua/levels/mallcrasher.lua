@@ -51,7 +51,6 @@ function EHIameno3Tracker:OverridePanel()
         FitTheText = true
     })
     self._text:set_left(self._money_text:right())
-    self:SetIconsX()
 end
 
 function EHIameno3Tracker:SetProgress(progress)
@@ -82,7 +81,7 @@ function EHIameno3Tracker:SetTextColor(color)
 end
 
 function EHIameno3Tracker:pre_delete()
-    self._loot_parent:RemoveEventListener("ameno_3")
+    self._loot_parent:RemoveListener("ameno_3")
 end
 
 local Icon = EHI.Icons

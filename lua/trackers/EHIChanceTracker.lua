@@ -3,7 +3,7 @@
 ---@field _anim_flash_set_chance number?
 ---@field _custom_chance_anim function?
 EHIChanceTracker = class(EHITracker)
-EHIChanceTracker._update = false
+EHIChanceTracker._needs_update = false
 ---@param o PanelText
 ---@param self EHIChanceTracker
 EHIChanceTracker._anim_chance = function(o, self)

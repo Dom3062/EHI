@@ -35,10 +35,11 @@
 ---@field get_infamy_exp_multiplier fun(self: self): number
 ---@field damage_absorption fun(self: self): number
 ---@field damage_reduction_skill_multiplier fun(self: self, damage_type: string): number
----@field _wild_kill_triggers table
+---@field _wild_kill_triggers number[]
 ---@field _peer_used_deployable boolean
 ---@field count_up_player_minions fun(self: self)
 ---@field count_down_player_minions fun(self: self)
+---@field current_state fun(self: self): string
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -73,8 +74,8 @@ function PlayerManager:init(...)
             end
             managers.ehi_buff:AddGauge("crew_throwable_regen", progress / max, progress)
         end
-        EHI:AddCallback(EHI.CallbackMessage.TeamAISkillBoostChange, function(boost, operation)
-            if boost == "crew_generous" then
+        EHI:AddCallback(EHI.CallbackMessage.TeamAISkillChange, function(skill, operation)
+            if skill == "crew_generous" then
                 if operation == "add" then
                     progress = self._throw_regen_kills or 0
                     managers.ehi_buff:AddGauge("crew_throwable_regen", progress / max, progress)
@@ -179,7 +180,7 @@ function PlayerManager:activate_temporary_upgrade(category, upgrade, ...)
     original.activate_temporary_upgrade(self, category, upgrade, ...)
     local end_time = self._temporary_upgrades[category] and self._temporary_upgrades[category][upgrade] and self._temporary_upgrades[category][upgrade].expire_time
     if end_time then
-        managers.ehi_buff:AddBuff2(upgrade, Application:time(), end_time)
+        managers.ehi_buff:AddBuff(upgrade, end_time - Application:time())
     end
 end
 
@@ -294,22 +295,28 @@ end
 --////////////////--
 --//  Tag Team  //--
 --////////////////--
-if EHI:GetBuffDeckOption("tag_team", "effect") then
+if EHI:GetBuffDeckOption("tag_team", "effect") or EHI:GetBuffDeckOption("tag_team", "absorption") then
     local Effect =
     {
         Priority = 1,
         Function = function(tagged, owner)
             local base_values = managers.player:upgrade_value("player", "tag_team_base")
+            local absorption_bonus = managers.player:has_category_upgrade("player", "tag_team_damage_absorption") and managers.player:upgrade_value("player", "tag_team_damage_absorption")
             local timer = TimerManager:game()
             local kill_extension = base_values.kill_extension
             local duration = base_values.duration
+            local absorption = 0
             local end_time = timer:time() + base_values.duration
             local function on_damage(damage_info)
                 local was_killed = damage_info.result.type == "death"
                 local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
                 if was_killed and valid_player then
                     end_time = math.min(end_time + kill_extension, timer:time() + duration)
-                    managers.ehi_buff:AddTimeCeil("TagTeamEffect", kill_extension, duration)
+                    managers.ehi_buff:CallFunction("TagTeamEffect", "AddTimeCeil", kill_extension, duration)
+                    if absorption_bonus then
+                        absorption = math.min(absorption + absorption_bonus.kill_gain, absorption_bonus.max)
+                        managers.ehi_buff:AddGauge("TagTeamAbsorption", absorption / absorption_bonus.max, absorption)
+                    end
                 end
             end
             local on_damage_key = "TagTeam_EHI_on_damage"
@@ -318,6 +325,10 @@ if EHI:GetBuffDeckOption("tag_team", "effect") then
                 coroutine.yield()
             end
             CopDamage.unregister_listener(on_damage_key)
+            while not managers.player:got_max_grenades() do
+                coroutine.yield()
+            end
+            managers.ehi_buff:RemoveBuff("TagTeamAbsorption")
         end
     }
     original._attempt_tag_team = PlayerManager._attempt_tag_team
@@ -352,7 +363,7 @@ if EHI:GetBuffDeckOption("tag_team", "tagged") then
                 local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
                 if was_killed and valid_player then
                     end_time = math.min(end_time + kill_extension, timer:time() + duration)
-                    managers.ehi_buff:AddTimeCeil(BuffKey, kill_extension, duration)
+                    managers.ehi_buff:CallFunction(BuffKey, "AddTimeCeil", kill_extension, duration)
                 end
             end
             CopDamage.register_listener(on_damage_key, { "on_damage" }, on_damage)
@@ -362,14 +373,12 @@ if EHI:GetBuffDeckOption("tag_team", "tagged") then
                 local tagged_match = tagged == end_tagged
                 local owner_match = owner == end_owner
                 ended_by_owner = tagged_match and owner_match
-                if ended_by_owner then
-                    managers.ehi_buff:RemoveBuff(BuffKey)
-                end
             end
             managers.player:add_listener(on_end_key, { "tag_team_end" }, on_action_end)
             while not ended_by_owner and alive(tagged) and (alive(owner) or timer:time() < end_time) do
                 coroutine.yield()
             end
+            managers.ehi_buff:RemoveBuff(BuffKey)
             CopDamage.unregister_listener(on_damage_key)
             managers.player:remove_listener(on_end_key)
         end
@@ -430,14 +439,14 @@ if EHI:GetBuffOption("bullseye") or EHI:GetBuffDeckOption("copycat", "head_games
         if self:has_category_upgrade("player", "headshot_regen_armor_bonus") then
             local t = Application:time()
             if t >= previouscooldown then
-                managers.ehi_buff:AddBuff2("headshot_regen_armor_bonus", t, self._on_headshot_dealt_t)
+                managers.ehi_buff:AddBuff("headshot_regen_armor_bonus", self._on_headshot_dealt_t - t)
             end
         end
 
         if self:has_category_upgrade("player", "headshot_regen_health_bonus") then
             local t = Application:time()
             if t >= previouscooldown then
-                managers.ehi_buff:AddBuff2("headshot_regen_health_bonus", t, self._on_headshot_dealt_t)
+                managers.ehi_buff:AddBuff("headshot_regen_health_bonus", self._on_headshot_dealt_t - t)
             end
         end
 
@@ -533,17 +542,17 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_conve
 
         -- t here is identical to the timestamp returned by PlayerManager:player_timer():time() so do not bother calling the latter
         if t >= previousstack and ShowManiacStackTicks then
-            managers.ehi_buff:AddBuff3("ManiacStackTicks", t, self._damage_dealt_to_cops_t)
+            managers.ehi_buff:AddBuff2("ManiacStackTicks", self._damage_dealt_to_cops_t - t)
         end
 
         if t >= previousdecay and ShowManiacDecayTicks then
-            managers.ehi_buff:AddBuff3("ManiacDecayTicks", t, self._damage_dealt_to_cops_decay_t)
+            managers.ehi_buff:AddBuff2("ManiacDecayTicks", self._damage_dealt_to_cops_decay_t - t)
         end
 
         -- Poll accumulated hysteria stacks, but not every frame
         if t >= next_maniac_stack_poll then
             if ShowManiacAccumulatedStacks then
-                local newstacks = (self._damage_dealt_to_cops or 0) * (tweak_data.gui.stats_present_multiplier or 10) * self:upgrade_value("player", "cocaine_stacking", 0)
+                local newstacks = (self._damage_dealt_to_cops or 0) * tweak_data.gui.stats_present_multiplier * self:upgrade_value("player", "cocaine_stacking", 0)
                 local maxstacks = tweak_data.upgrades.max_cocaine_stacks_per_tick or 20
                 if newstacks > maxstacks then
                     newstacks = maxstacks
@@ -569,7 +578,7 @@ if EHI:GetBuffDeckOption("grinder", "stack_cooldown") then
         local previouscooldown = self._next_allowed_doh_t or 0
         original._check_damage_to_hot(self, t, ...)
         if self._next_allowed_doh_t and self._next_allowed_doh_t > previouscooldown then
-            managers.ehi_buff:AddBuff2("GrinderStackCooldown", t, self._next_allowed_doh_t)
+            managers.ehi_buff:AddBuff("GrinderStackCooldown", self._next_allowed_doh_t - t)
         end
     end
 end

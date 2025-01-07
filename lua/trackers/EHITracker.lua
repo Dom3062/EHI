@@ -143,19 +143,6 @@ local function icon_x(o, target_x)
         o:set_x(math.lerp(from_x, target_x, lerp))
     end
 end
----@param bg PanelRectangle
----@param total_t number
-local function bg_attention(bg, total_t)
-    local color = Color.white
-	local t = total_t or 3
-	while t > 0 do
-		local dt = coroutine.yield()
-		t = t - dt
-		local cv = math.abs(math.sin(t * 180 * 1))
-		bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
-	end
-	bg:set_color(Color(1, 0, 0, 0))
-end
 ---@param o PanelBaseObject
 ---@param skip boolean
 ---@param self EHITracker
@@ -263,7 +250,7 @@ end
 ---@field _hint_no_localization boolean?
 ---@field _hint_vanilla_localization boolean?
 EHITracker = class()
-EHITracker._update = true
+EHITracker._needs_update = true
 EHITracker._fade_time = 5
 EHITracker._tracker_type = "accurate"
 EHITracker._gap = 5
@@ -502,7 +489,8 @@ if EHI:GetOption("show_one_icon") then
             self:CreateIcon(1, texture, rect, icon_pos)
         elseif type(first_icon) == "table" then
             local texture, rect = GetIcon(first_icon.icon or "default")
-            self:CreateIcon(1, texture, rect, icon_pos, first_icon.visible, first_icon.color, first_icon.alpha)
+            self:CreateIcon(1, texture, rect, icon_pos, first_icon.visible,
+            first_icon.peer_id and self._parent_class:GetPeerColorByPeerID(first_icon.peer_id) or first_icon.color, first_icon.alpha)
         end
     end
 else
@@ -515,7 +503,7 @@ else
                 self:CreateIcon(i, texture, rect, icon_pos)
             elseif type(v) == "table" then -- table
                 local texture, rect = GetIcon(v.icon or "default")
-                self:CreateIcon(i, texture, rect, icon_pos, v.visible, v.color, v.alpha)
+                self:CreateIcon(i, texture, rect, icon_pos, v.visible, v.peer_id and self._parent_class:GetPeerColorByPeerID(v.peer_id) or v.color, v.alpha)
             end
             icon_pos = icon_pos + self._icon_gap_size_scaled
         end
@@ -785,7 +773,8 @@ end
 ---|"short" # Shorts `w` on the BG
 ---|"set" # Sets `w` on the BG
 ---@param dont_recalculate_panel_w boolean? Setting this to `true` will not recalculate the total width on the main panel
-function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
+---@param dont_move_icons boolean? Setting this to `true` will not move icons when size of the panel changes
+function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w, dont_move_icons)
     local original_w = self._bg_box:w()
     w = w or original_w
     if not type or type == "add" then
@@ -799,6 +788,9 @@ function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w)
         local start = self._bg_box:w()
         local icons_with_gap = self._icon_gap_size_scaled * self._n_of_icons
         self._panel:set_w(start + icons_with_gap)
+        if not dont_move_icons then
+            self:SetIconsX()
+        end
     end
     if self._VERTICAL_ANIM_W_LEFT and self._panel:alpha() == 0 then
         -- Panel is not visible, adjustment will be performed when manager calls the `EHITracker:PosAndSetVisible()` function  
@@ -892,14 +884,33 @@ function EHITracker:Run(params)
     self:SetTextColor()
 end
 
----@param t number?
-function EHITracker:AnimateBG(t)
-    t = t or self._flash_times
-    if self._anim_flash and t > 0 then
-        local bg = self._bg_box:child("bg") --[[@as PanelBitmap]]
-        bg:stop()
+if EHI:GetOption("show_tracker_bg") then
+    ---@param bg PanelRectangle
+    ---@param total_t number
+    EHITracker._anim_bg_attention = function(bg, total_t)
+        local color = Color.white
+        local t = total_t or 3
+        while t > 0 do
+            local dt = coroutine.yield()
+            t = t - dt
+            local cv = math.abs(math.sin(t * 180 * 1))
+            bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
+        end
         bg:set_color(Color(1, 0, 0, 0))
-        bg:animate(bg_attention, t)
+    end
+    ---@param t number?
+    function EHITracker:AnimateBG(t)
+        t = t or self._flash_times
+        if self._anim_flash and t > 0 then
+            local bg = self._bg_box:child("bg") --[[@as PanelBitmap]]
+            bg:stop()
+            bg:set_color(Color(1, 0, 0, 0))
+            bg:animate(self._anim_bg_attention, t)
+        end
+    end
+else
+    ---@param t number?
+    function EHITracker:AnimateBG(t)
     end
 end
 
@@ -1065,7 +1076,9 @@ end
 ---@param animate_f fun(bg: PanelRectangle, total_t: number)
 function EHITracker.SetCustomBGFunctions(create_f, animate_f)
     CreateHUDBGBox = create_f
-    bg_attention = animate_f
+    if EHITracker._anim_bg_attention then
+        EHITracker._anim_bg_attention = animate_f
+    end
 end
 
 if EHITracker._ICON_LEFT_SIDE_START then

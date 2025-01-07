@@ -1,7 +1,7 @@
 ---@class EHIProgressWaypoint : EHIWaypoint, EHIProgressTracker
 ---@field super EHIWaypoint
 EHIProgressWaypoint = class(EHIWaypoint)
-EHIProgressWaypoint._update = false
+EHIProgressWaypoint._needs_update = false
 EHIProgressWaypoint._force_format = true
 EHIProgressWaypoint.Format = EHIProgressTracker.Format
 EHIProgressWaypoint.update = EHIProgressWaypoint.update_fade

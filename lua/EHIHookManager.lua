@@ -64,7 +64,7 @@ end
 function EHIHookManager:HookSecuredBag(id, trophy, icon)
     local progress, max = EHI:GetSHSideJobProgressAndMax(id)
     local current_progress = progress
-    self._loot:AddEventListener(id, function(loot)
+    self._loot:AddListener(id, function(loot)
         local new_current_progress = progress + loot:GetSecuredBagsTypeAmount(trophy.carry_id)
         if current_progress == new_current_progress then
             return
@@ -72,7 +72,7 @@ function EHIHookManager:HookSecuredBag(id, trophy, icon)
             managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(new_current_progress) .. "/" .. tostring(max), icon)
             current_progress = new_current_progress
         else
-            self._loot:RemoveEventListener(id)
+            self._loot:RemoveListener(id)
         end
     end)
 end

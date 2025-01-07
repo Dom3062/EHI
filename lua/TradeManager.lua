@@ -47,11 +47,9 @@ local original =
 local function CreateTracker(peer_id, respawn_penalty, civilians_killed)
     if respawn_penalty <= tweak_data.player.damage.base_respawn_time_penalty then
         return
-    end
-    if show_trade_for_other_players and peer_id == managers.network:session():local_peer():id() then
+    elseif show_trade_for_other_players and peer_id == managers.network:session():local_peer():id() then
         return
-    end
-    if suppress_in_stealth and managers.groupai:state():whisper_mode() then
+    elseif suppress_in_stealth and managers.groupai:state():whisper_mode() then
         managers.ehi_trade:AddToTradeDelayCache(peer_id, respawn_penalty, civilians_killed, true)
         return
     end
@@ -84,7 +82,7 @@ function TradeManager:init(...)
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_trade:LoadFromTradeDelayCache()
         if not dropin then
-            managers.ehi_trade:SetTrade("normal", true, self:GetTradeCounterTick())
+            managers.ehi_trade:SetTrade("normal", true, self._trade_counter_tick)
         end
     end)
     Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
@@ -95,10 +93,6 @@ end
 function TradeManager:pause_trade(time, ...)
     original.pause_trade(self, time, ...)
     managers.ehi_trade:CallFunction("SetTradePause", time)
-end
-
-function TradeManager:GetTradeCounterTick()
-    return self._trade_counter_tick
 end
 
 ---@param criminal_name string

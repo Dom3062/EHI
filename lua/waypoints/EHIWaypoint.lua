@@ -3,10 +3,10 @@
 ---@field _force_format boolean Forces formatting (some waypoints need it and will force it)
 ---@field _forced_time number? Forces specific time in the waypoint
 EHIWaypoint = class()
-EHIWaypoint._update = true
+EHIWaypoint._needs_update = true
 EHIWaypoint._fade_time = 5
 EHIWaypoint._default_color = Color.white
----@param waypoint WaypointDataTable
+---@param waypoint Waypoint
 ---@param params table
 ---@param parent_class EHIWaypointManager
 function EHIWaypoint:init(waypoint, params, parent_class)

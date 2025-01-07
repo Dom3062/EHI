@@ -1,7 +1,7 @@
 ---@class EHITimerWaypoint : EHIWarningWaypoint
 ---@field super EHIWarningWaypoint
 EHITimerWaypoint = class(EHIWarningWaypoint)
-EHITimerWaypoint._update = false
+EHITimerWaypoint._needs_update = false
 EHITimerWaypoint._force_format = true
 EHITimerWaypoint._autorepair_color = EHI:GetColorFromOption("tracker_waypoint", "drill_autorepair")
 EHITimerWaypoint._completion_color = EHI:GetColorFromOption("tracker_waypoint", "completion")

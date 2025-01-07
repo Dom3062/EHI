@@ -67,7 +67,6 @@ end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102110] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102120 } } -- Heli
     other[102130] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102138 } } -- Heli
-    other[100953] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102141 } } -- Van
 end
 EHI.Manager:ParseTriggers({
     mission = triggers,

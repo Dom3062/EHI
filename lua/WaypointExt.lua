@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("WaypointExt") then
     return
 end
@@ -21,8 +20,6 @@ function WaypointExt:ReplaceWaypointFunction()
         self._icon_id = tostring(self._unit:key())
         self:remove_waypoint()
         self._icon_id = nil
-        if EHI.IsHost then
-            self._is_active = true
-        end
+        self._is_active = true
     end
 end

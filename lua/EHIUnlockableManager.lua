@@ -215,7 +215,7 @@ end
 ---@param max number
 ---@param show_finish_after_reaching_target boolean?
 function EHIUnlockableManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target)
-    self._trackers:AddTracker({ -- `uno_1` achievement gets synced via `LootLoadSync` callback
+    self._trackers:AddTracker({ -- `uno_1` achievement gets synced via `EHILootManager:CallSyncListeners()` callback
         id = id,
         max = max,
         icons = self:GetAchievementIcon(id),

@@ -16,7 +16,7 @@ function EHIkosugi5Tracker:post_init(...)
                 self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
                 self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
                 if self._counters == self._completed_counters then
-                    self._loot_parent:RemoveEventListener("kosugi_5")
+                    self._loot_parent:RemoveListener("kosugi_5")
                 end
             end
         }

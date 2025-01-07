@@ -14,7 +14,7 @@ _G.EHI.Manager = managers.ehi_manager
 
 ---@class AnyExceptNil : table, string, boolean, number, userdata
 
----@class ElementWaypointTrigger
+---@class ElementWaypointTrigger : WaypointInitData
 ---@field id number|string? ID of the waypoint, if not provided, `id` is then copied from the trigger
 ---@field icon string? 
 ---@field time number? Time to run down. If not provided, `time` is then copied from the trigger
@@ -198,7 +198,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field achievement_option string? If achievement belongs to some EHI setting
 ---@field difficulty_pass boolean?
 
----@class AddWaypointTable
+---@class AddWaypointTable : WaypointInitData
 ---@field id string Waypoint ID
 ---@field time number
 ---@field class string? Waypoint class, defaults to `EHIWaypoint` if not provided
@@ -207,23 +207,9 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field icon string|table
 ---@field texture string
 ---@field text_rect { number: x, number: y, number: w, number: h }
----@field present_timer number
-
----@class _WaypointDataTable
----@field bitmap PanelBitmap
----@field bitmap_world PanelBitmap VR only
----@field timer_gui PanelText
----@field distance PanelText
----@field arrow PanelBitmap
----@field position Vector3
----@field size Vector3
-
----@class WaypointDataTable : _WaypointDataTable
----@field init_data _WaypointDataTable
-
----@class VanillaWaypointDataTable : _WaypointDataTable
----@field init_data _WaypointDataTable
----@field distance boolean
+---@field timer 0
+---@field pause_timer 1
+---@field no_sync true
 
 ---@class MissionDoorTable
 ---@field w_id number Waypoint ID

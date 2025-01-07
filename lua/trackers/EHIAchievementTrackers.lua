@@ -164,7 +164,7 @@ end
 
 function EHIAchievementProgressTracker:pre_delete()
     if self._loot_parent then
-        self._loot_parent:RemoveEventListener(self._id)
+        self._loot_parent:RemoveListener(self._id)
     end
 end
 
@@ -230,7 +230,7 @@ end
 ---@field super EHIAchievementTracker
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
 EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
-EHIAchievementStatusTracker._update = false
+EHIAchievementStatusTracker._needs_update = false
 function EHIAchievementStatusTracker:init(panel, params, ...)
     self._status = params.status or "ok"
     EHIAchievementStatusTracker.super.init(self, panel, params, ...)

@@ -3,7 +3,7 @@
 EHIProgressTracker = class(EHITracker)
 EHIProgressTracker.update = EHIProgressTracker.update_fade
 EHIProgressTracker._progress_bad = Color(255, 255, 165, 0) / 255
-EHIProgressTracker._update = false
+EHIProgressTracker._needs_update = false
 function EHIProgressTracker:pre_init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
@@ -46,6 +46,9 @@ end
 function EHIProgressTracker:DecreaseProgressMaxIfProgress(max_check, max)
     if self._max == max_check then
         self:DecreaseProgressMax(max)
+        if self._max <= 0 then
+            self:delete()
+        end
     end
 end
 

@@ -14,7 +14,7 @@ function EHIbex11Tracker:pre_init(...)
                 local progress = loot:GetSecuredBagsAmount()
                 self:SetProgress(progress, "bags")
                 if progress >= self._max then
-                    self._loot_parent:RemoveEventListener("bex_11")
+                    self._loot_parent:RemoveListener("bex_11")
                 end
             end
         }
@@ -22,7 +22,7 @@ function EHIbex11Tracker:pre_init(...)
 end
 
 function EHIbex11Tracker:pre_delete()
-    self._loot_parent:RemoveEventListener("bex_11")
+    self._loot_parent:RemoveListener("bex_11")
 end
 
 function EHIbex11Tracker:CountersDone()

@@ -9,7 +9,9 @@ local original =
     sync_set_assault_mode = HUDManager.sync_set_assault_mode,
     destroy = HUDManager.destroy,
     set_disabled = HUDManager.set_disabled,
-    set_enabled = HUDManager.set_enabled
+    set_enabled = HUDManager.set_enabled,
+    sync_start_assault = HUDManager.sync_start_assault,
+    sync_end_assault = HUDManager.sync_end_assault
 }
 
 function HUDManager:_setup_player_info_hud_pd2(...)
@@ -125,6 +127,14 @@ function HUDManager:AddEHIUpdator(id, class)
     self:add_updator(id, callback(class, class, "update"))
 end
 
+---@param id string
+function HUDManager:RemoveEHIUpdator(id)
+    if self._ehi_updators then
+        self:remove_updator(id)
+        self._ehi_updators[id] = nil
+    end
+end
+
 function HUDManager:sync_set_assault_mode(mode, ...)
     original.sync_set_assault_mode(self, mode, ...)
     EHI:CallCallback(EHI.CallbackMessage.AssaultModeChanged, mode)
@@ -166,17 +176,14 @@ if EHI:GetOption("show_assault_delay_tracker") then
     end
 end
 
-if EHI:IsAssaultTrackerEnabled() then
-    original.sync_start_assault = HUDManager.sync_start_assault
-    function HUDManager:sync_start_assault(...)
-        original.sync_start_assault(self, ...)
-        managers.ehi_assault:AssaultStart()
-    end
-    original.sync_end_assault = HUDManager.sync_end_assault
-    function HUDManager:sync_end_assault(...)
-        original.sync_end_assault(self, ...)
-        managers.ehi_assault:AssaultEnd()
-    end
+function HUDManager:sync_start_assault(...)
+    original.sync_start_assault(self, ...)
+    managers.ehi_assault:AssaultStart()
+end
+
+function HUDManager:sync_end_assault(...)
+    original.sync_end_assault(self, ...)
+    managers.ehi_assault:AssaultEnd()
 end
 
 ---@param id string

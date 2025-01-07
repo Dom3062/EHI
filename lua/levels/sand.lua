@@ -25,7 +25,6 @@ function EHIsand11Tracker:OverridePanel()
         color = self._text_color
     })
     self._text_chance:set_right(self._bg_box:right())
-    self:SetIconsX()
 end
 
 function EHIsand11Tracker:SetChance(amount)

@@ -4,11 +4,10 @@ local Icon = EHI.Icons
 ---@field super EHITracker
 EHIChemSetTracker = class(EHITracker)
 EHIChemSetTracker._forced_icons = { Icon.Methlab }
-EHIChemSetTracker._update = false
+EHIChemSetTracker._needs_update = false
 EHIChemSetTracker._init_create_text = false
 function EHIChemSetTracker:post_init(params)
     self:SetBGSize(self._bg_box:w() / 2)
-    self:SetIconsX()
     local third = self._bg_box:w() / 3
     self._ingredients = { {}, {}, {} } ---@type table<number, { text: PanelText, ingredient: string }>
     self._ingredients[1].text = self:CreateText({

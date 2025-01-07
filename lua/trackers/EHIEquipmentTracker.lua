@@ -1,7 +1,7 @@
 ---@class EHIEquipmentTracker : EHITracker
 ---@field super EHITracker
 EHIEquipmentTracker = class(EHITracker)
-EHIEquipmentTracker._update = false
+EHIEquipmentTracker._needs_update = false
 function EHIEquipmentTracker:pre_init(params)
     self._format = params.format or "charges"
     self._dont_show_placed = params.dont_show_placed

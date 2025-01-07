@@ -4,8 +4,8 @@ EHIPausableTracker = class(EHITracker)
 EHIPausableTracker._paused_color = EHI:GetColorFromOption("tracker_waypoint", "pause")
 function EHIPausableTracker:init(panel, params, ...)
     EHIPausableTracker.super.init(self, panel, params, ...)
-    self._update = not params.paused
-    self:_set_pause(not self._update)
+    self._needs_update = not params.paused
+    self:_set_pause(not self._needs_update)
 end
 
 ---@param pause boolean

@@ -1,6 +1,6 @@
 ---@class EHIcac10Tracker : EHIAchievementTracker, EHIProgressTracker
 EHIcac10Tracker = class(EHIAchievementTracker)
-EHIcac10Tracker._update = false
+EHIcac10Tracker._needs_update = false
 EHIcac10Tracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIcac10Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
@@ -33,7 +33,6 @@ function EHIcac10Tracker:OverridePanel()
         FitTheText = true
     })
     self._text:set_left(self._progress_text:right())
-    self:SetIconsX()
 end
 
 function EHIcac10Tracker:SetProgressMax(max)
