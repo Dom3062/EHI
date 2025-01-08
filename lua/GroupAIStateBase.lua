@@ -196,7 +196,7 @@ if not tweak_data.levels:IsStealthRequired() then
                 return
             end
             local marshal_spawn_group = tweak_data.group_ai.enemy_spawn_groups and tweak_data.group_ai.enemy_spawn_groups.marshal_squad
-            local t = marshal_spawn_group and marshal_spawn_group.initial_spawn_delay or marshal_spawn_group.spawn_cooldown or 0
+            local t = marshal_spawn_group and (marshal_spawn_group.initial_spawn_delay or marshal_spawn_group.spawn_cooldown or 0) or 0
             if t > 0 then
                 managers.ehi_tracker:AddTracker({
                     id = "Marshals",
