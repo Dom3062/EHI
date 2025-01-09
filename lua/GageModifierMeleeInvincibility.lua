@@ -1,4 +1,4 @@
-if EHI:CheckLoadHook("GageModifierMeleeInvincibility") or not EHI:GetBuffDeckOption("gage_boosts", "melee_invulnerability") then
+if EHI:CheckLoadHook("GageModifierMeleeInvincibility") or not (EHI:GetOption("show_buffs") and EHI:GetBuffDeckOption("gage_boosts", "melee_invulnerability")) then
     return
 end
 

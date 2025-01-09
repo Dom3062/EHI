@@ -70,7 +70,7 @@ local sh_dailies =
 
 local armored_4_levels = table.list_to_set(tweak_data.achievement.complete_heist_achievements.i_take_scores.jobs)
 
-local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false ---@type table, table, string, string, boolean
+local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false ---@type EquippedWeaponData, EquippedWeaponData, string, string, boolean
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local stats = {}
@@ -131,25 +131,22 @@ local function HasSuitVariationEquipped(variation_id)
     return managers.blackmarket:equipped_suit_variation() == variation_id
 end
 
+---@param blueprint string
 local function WeaponsContainBlueprint(blueprint)
+    ---@param weapon_data EquippedWeaponData
     local function CheckWeaponBlueprint(weapon_data)
         return table.contains(weapon_data.blueprint or {}, blueprint)
     end
     return CheckWeaponBlueprint(primary) or CheckWeaponBlueprint(secondary)
 end
 
+---@param blueprint string
 local function CheckWeaponsBlueprint(blueprint)
+    ---@param weapon_data EquippedWeaponData
     local function CheckWeaponBlueprint(weapon_data)
         return table.contains(weapon_data.blueprint or {}, blueprint)
     end
-    local primary_pass, secondary_pass = false, false
-    if CheckWeaponBlueprint(primary) then
-        primary_pass = true
-    end
-    if CheckWeaponBlueprint(secondary) then
-        secondary_pass = true
-    end
-    return primary_pass, secondary_pass
+    return CheckWeaponBlueprint(primary), CheckWeaponBlueprint(secondary)
 end
 
 local function ArbiterHasStandardAmmo()
@@ -228,7 +225,7 @@ local persistent_stat_unlocks = tweak_data.achievement.persistent_stat_unlocks
 ---@param dont_flash_bg boolean?
 ---@param show_finish_after_reaching_target boolean?
 ---@param status_is_overridable boolean?
-local function AddAchievementTracker2(id_stat, remove_on_alarm, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
+local function AddAchievementTrackerFromStat(id_stat, remove_on_alarm, dont_flash_bg, show_finish_after_reaching_target, status_is_overridable)
     local achievement = persistent_stat_unlocks[id_stat] or {}
     local stat = achievement[1]
     if not stat then
@@ -331,7 +328,7 @@ local function pxp1_1()
         local player_style_pass = HasPlayerStyleEquipped(grenade_data.player_style.style)
         local variation_pass = HasSuitVariationEquipped(grenade_data.player_style.variation)
         if (grenade_pass or (primary_parts_pass or secondary_parts_pass) or melee_pass or HasViperGrenadesOnLauncherEquipped()) and player_style_pass and variation_pass then
-            AddAchievementTracker2("pxp1_1_stats")
+            AddAchievementTrackerFromStat("pxp1_1_stats")
         end
     end
     pxp1_1_checked = true
@@ -364,48 +361,48 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     if EHI:GetUnlockableAndOption("show_achievements") then
         if EHI:GetUnlockableOption("show_achievements_weapon") then -- Kill with weapons (primary or secondary)
             if EHI:IsAchievementLocked2("halloween_6") and mask_id == tweak_data.achievement.pump_action.mask and HasWeaponTypeEquipped("shotgun") then -- "Pump-Action" achievement
-                AddAchievementTracker2("halloween_6_stats")
+                AddAchievementTrackerFromStat("halloween_6_stats")
             end
             if EHI:IsAchievementLocked2("halloween_8") and HasWeaponEquipped("usp") then -- "The Pumpkin King Made Me Do It!" achievement
-                AddAchievementTracker2("halloween_8_stats")
+                AddAchievementTrackerFromStat("halloween_8_stats")
             end
             if EHI:IsAchievementLocked2("armored_5") and HasWeaponEquipped("ppk") then -- "License to Kill" achievement
-                AddAchievementTracker2("armored_5_stat")
+                AddAchievementTrackerFromStat("armored_5_stat")
             end
             if EHI:IsAchievementLocked2("armored_7") and HasWeaponEquipped("s552") and mask_id == tweak_data.achievement.enemy_kill_achievements.im_not_a_crook.mask then -- "I'm Not a Crook!" achievement
                 local function f()
-                    AddAchievementTracker2("armored_7_stat")
+                    AddAchievementTrackerFromStat("armored_7_stat")
                 end
                 ShowTrackerInLoud(f)
                 stats.armored_7_stat = "armored_7"
             end
             if EHI:IsAchievementLocked2("armored_9") and HasWeaponEquipped("m45") and mask_id == tweak_data.achievement.enemy_kill_achievements.fool_me_once.mask then -- "Fool Me Once, Shame on -Shame on You. Fool Me - You Can't Get Fooled Again" achievement
                 local function f()
-                    AddAchievementTracker2("armored_9_stat")
+                    AddAchievementTrackerFromStat("armored_9_stat")
                 end
                 ShowTrackerInLoud(f)
                 stats.armored_9_stat = "armored_9"
             end
             if EHI:IsAchievementLocked2("gage_1") and HasWeaponEquipped("ak5") and mask_id == tweak_data.achievement.enemy_kill_achievements.wanted.mask then -- "Wanted" achievement
-                AddAchievementTracker2("gage_1_stats")
+                AddAchievementTrackerFromStat("gage_1_stats")
             end
             if EHI:IsAchievementLocked2("gage_2") and HasWeaponEquipped("p90") and mask_id == tweak_data.achievement.enemy_kill_achievements.three_thousand_miles.mask then -- "3000 Miles to the Safe House" achievement
-                AddAchievementTracker2("gage_2_stats")
+                AddAchievementTrackerFromStat("gage_2_stats")
             end
             if EHI:IsAchievementLocked2("gage_3") and HasWeaponEquipped("aug") and mask_id == tweak_data.achievement.enemy_kill_achievements.commando.mask then -- "Commando" achievement
-                AddAchievementTracker2("gage_3_stats")
+                AddAchievementTrackerFromStat("gage_3_stats")
             end
             if EHI:IsAchievementLocked2("gage_4") and HasWeaponEquipped("colt_1911") and mask_id == tweak_data.achievement.enemy_kill_achievements.public_enemies.mask then -- "Public Enemies" achievement
-                AddAchievementTracker2("gage_4_stats")
+                AddAchievementTrackerFromStat("gage_4_stats")
             end
             if EHI:IsAchievementLocked2("gage_5") and HasWeaponEquipped("scar") then -- "Inception" achievement
-                AddAchievementTracker2("gage_5_stats")
+                AddAchievementTrackerFromStat("gage_5_stats")
             end
             if EHI:IsAchievementLocked2("gage_6") and HasWeaponEquipped("mp7") then -- "Hard Corps" achievement
-                AddAchievementTracker2("gage_6_stats")
+                AddAchievementTrackerFromStat("gage_6_stats")
             end
             if EHI:IsAchievementLocked2("gage_7") and HasWeaponEquipped("p226") then -- "Above the Law" achievement
-                AddAchievementTracker2("gage_7_stats")
+                AddAchievementTrackerFromStat("gage_7_stats")
             end
             if EHI:IsAchievementLocked2("gage2_5") and HasWeaponTypeEquipped("lmg") then -- "The Eighth and Final Rule" achievement
                 AddAchievementTracker("gage2_5", 0, 220)
@@ -417,32 +414,32 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
             if EHI:IsAchievementLocked2("gage3_6") and HasWeaponTypeEquipped("snp") then
                 if EHI:IsAchievementLocked2("gage3_3") then -- "Lord of the Flies" achievement
-                    AddAchievementTracker2("gage3_3_stats")
+                    AddAchievementTrackerFromStat("gage3_3_stats")
                 end
                 if EHI:IsAchievementLocked2("gage3_4") then -- "Arachne's Curse" achievement
-                    AddAchievementTracker2("gage3_4_stats")
+                    AddAchievementTrackerFromStat("gage3_4_stats")
                 end
                 if EHI:IsAchievementLocked2("gage3_5") then -- "Pest Control" achievement
-                    AddAchievementTracker2("gage3_5_stats")
+                    AddAchievementTrackerFromStat("gage3_5_stats")
                 end
-                AddAchievementTracker2("gage3_6_stats") -- "Seer of Death" achievement
+                AddAchievementTrackerFromStat("gage3_6_stats") -- "Seer of Death" achievement
             end
             if EHI:IsAchievementLocked2("gage3_7") and HasWeaponEquipped("m95") then -- "Far, Far Away" achievement
-                AddAchievementTracker2("gage3_7_stats")
+                AddAchievementTrackerFromStat("gage3_7_stats")
             end
             if EHI:IsAchievementLocked2("gage3_10") and HasWeaponEquipped("r93") then -- "Maximum Penetration" achievement
-                AddAchievementTracker2("gage3_10_stats")
+                AddAchievementTrackerFromStat("gage3_10_stats")
             end
             if EHI:IsAchievementLocked2("gage3_11") and HasWeaponEquipped("m95") then -- "Dodge This" achievement
                 local function f()
-                    AddAchievementTracker2("gage3_11_stats")
+                    AddAchievementTrackerFromStat("gage3_11_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage3_11_stats = "gage3_11"
             end
             if EHI:IsAchievementLocked2("gage3_12") and HasWeaponEquipped("m95") then -- "Surprise Motherfucker" achievement
                 local function f()
-                    AddAchievementTracker2("gage3_12_stats")
+                    AddAchievementTrackerFromStat("gage3_12_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage3_12_stats = "gage3_12"
@@ -472,30 +469,30 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
             if EHI:IsAchievementLocked2("gage3_14") and HasWeaponEquipped("msr") then -- "Return to Sender" achievement
                 local function f()
-                    AddAchievementTracker2("gage3_14_stats")
+                    AddAchievementTrackerFromStat("gage3_14_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage3_14_stats = "gage3_14"
             end
             if EHI:IsAchievementLocked2("gage3_15") and HasWeaponEquipped("r93") then -- "You Can't Hide" achievement
-                AddAchievementTracker2("gage3_15_stats")
+                AddAchievementTrackerFromStat("gage3_15_stats")
             end
             if EHI:IsAchievementLocked2("gage3_16") and HasWeaponEquipped("msr") then -- "Double Kill" achievement
-                AddAchievementTracker2("gage3_16_stats")
+                AddAchievementTrackerFromStat("gage3_16_stats")
             end
             if EHI:IsAchievementLocked2("gage3_17") and HasWeaponEquipped("msr") then -- "Public Enemy No. 1" achievement
-                AddAchievementTracker2("gage3_17_stats")
+                AddAchievementTrackerFromStat("gage3_17_stats")
             end
             if EHI:IsAchievementLocked2("gage4_6") and HasWeaponTypeEquipped("shotgun") and WeaponsContainBlueprint("wpn_fps_upg_a_slug") then -- "Knock, Knock" achievement
                 local function f()
-                    AddAchievementTracker2("gage4_6_stats")
+                    AddAchievementTrackerFromStat("gage4_6_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage4_6_stats = "gage4_6"
             end
             if EHI:IsAchievementLocked2("gage4_8") and HasWeaponTypeEquipped("shotgun") and WeaponsContainBlueprint("wpn_fps_upg_a_piercing") then -- "Clay Pigeon Shooting" achievement
                 local function f()
-                    AddAchievementTracker2("gage4_8_stats")
+                    AddAchievementTrackerFromStat("gage4_8_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage4_8_stats = "gage4_8"
@@ -503,7 +500,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if EHI:IsAchievementLocked2("gage4_10") and HasWeaponTypeEquipped("shotgun") then -- "Bang for the Buck" achievement
                 if WeaponsContainBlueprint("wpn_fps_upg_a_custom") or WeaponsContainBlueprint("wpn_fps_upg_a_custom_free") then
                     local function f()
-                        AddAchievementTracker2("gage4_10_stats")
+                        AddAchievementTrackerFromStat("gage4_10_stats")
                     end
                     ShowTrackerInLoud(f)
                     stats.gage4_10_stats = "gage4_10"
@@ -511,27 +508,27 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
             if EHI:IsAchievementLocked2("gage5_1") and HasWeaponEquipped("g3") then -- "Precision Aiming" achievement
                 local function f()
-                    AddAchievementTracker2("gage5_1_stats")
+                    AddAchievementTrackerFromStat("gage5_1_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage5_1_stats = "gage5_1"
             end
             if EHI:IsAchievementLocked2("gage5_5") and HasWeaponEquipped("gre_m79") then -- "Artillery Barrage" achievement
-                AddAchievementTracker2("gage5_5_stats")
+                AddAchievementTrackerFromStat("gage5_5_stats")
             end
             if EHI:IsAchievementLocked2("gage5_9") and HasWeaponEquipped("galil") then -- "Rabbit Hunting" achievement
                 local function f()
-                    AddAchievementTracker2("gage5_9_stats")
+                    AddAchievementTrackerFromStat("gage5_9_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage5_9_stats = "gage5_9"
             end
             if EHI:IsAchievementLocked2("gage5_10") and HasWeaponEquipped("famas") then -- "Tour de Clarion" achievement
-                AddAchievementTracker2("gage5_10_stats")
+                AddAchievementTrackerFromStat("gage5_10_stats")
             end
             if EHI:IsAchievementLocked2("eagle_1") and HasWeaponEquipped("mosin") then -- "Death From Below" achievement
                 local function f()
-                    AddAchievementTracker2("eagle_1_stats")
+                    AddAchievementTrackerFromStat("eagle_1_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.eagle_1_stats = "eagle_1"
@@ -541,7 +538,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 local primary_pass = table.index_of(needed_weapons, primary.weapon_id) ~= -1
                 local secondary_pass = table.index_of(needed_weapons, secondary.weapon_id) ~= -1
                 if primary_pass or secondary_pass then
-                    AddAchievementTracker2("ameno_08_stats")
+                    AddAchievementTrackerFromStat("ameno_08_stats")
                 end
             end
             if EHI:IsAchievementLocked2("turtles_1") and HasWeaponEquipped("wa2000") then -- "Names Are for Friends, so I Don't Need One" achievement
@@ -559,7 +556,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
             if EHI:IsAchievementLocked2("tango_achieve_2") and HasWeaponEquipped("arbiter") and ArbiterHasStandardAmmo() then -- "Let Them Fly" achievement
                 local function f()
-                    AddAchievementTracker2("tango_2_stats")
+                    AddAchievementTrackerFromStat("tango_2_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.tango_2_stats = "tango_achieve_2"
@@ -578,7 +575,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 local pass = table.index_of(weapons_required, primary.weapon_id) ~= -1
                 local pass2 = table.index_of(weapons_required, secondary.weapon_id) ~= -1
                 if pass or pass2 then
-                    AddAchievementTracker2("grv_3_stats")
+                    AddAchievementTrackerFromStat("grv_3_stats")
                 end
             end
             if EHI:IsAchievementLocked2("cac_2") then -- "Human Sentry Gun" achievement
@@ -603,10 +600,10 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end
             end
             if EHI:IsAchievementLocked2("pxp2_1") and HasWeaponEquipped("hailstorm") and WeaponsContainFiremode("volley") then -- "Field Test" achievement
-                AddAchievementTracker2("pxp2_1_stats")
+                AddAchievementTrackerFromStat("pxp2_1_stats")
             end
             if EHI:IsAchievementLocked2("pxp2_2") and (HasWeaponEquipped("sko12") or HasWeaponEquipped("x_sko12")) then -- "Heister With A Shotgun" achievement
-                AddAchievementTracker2("pxp2_2_stats")
+                AddAchievementTrackerFromStat("pxp2_2_stats")
             end
             if VeryHardOrAbove then
                 if EHI:IsAchievementLocked2("tango_achieve_3") and not self:check_is_dropin() then -- "The Reckoning" achievement
@@ -674,7 +671,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if OVKOrAbove then
                 if EHI:IsAchievementLocked2("pim_1") and HasWeaponTypeEquipped("snp") then -- "Nothing Personal" achievement
                     local function f()
-                        AddAchievementTracker2("pim_1_stats")
+                        AddAchievementTrackerFromStat("pim_1_stats")
                     end
                     ShowTrackerInLoud(f)
                     stats.pim_1_stats = "pim_1"
@@ -706,7 +703,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     end)
                 end
                 if level == "mad" and EHI:IsAchievementLocked2("pim_3") and HasWeaponTypeEquipped("smg") then -- "UMP for Me, UMP for You" achievement
-                    AddAchievementTracker2("pim_3_stats")
+                    AddAchievementTrackerFromStat("pim_3_stats")
                 end
                 if level == "sand" and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
                     managers.ehi_tracker:AddTracker({
@@ -724,9 +721,9 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     end)
                 end
             end
-            if EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish) and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
+            if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
                 local function f()
-                    AddAchievementTracker2("gage3_2_stats")
+                    AddAchievementTrackerFromStat("gage3_2_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.gage3_2_stats = "gage3_2"
@@ -734,13 +731,13 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
         end
         if EHI:GetUnlockableOption("show_achievements_melee") then -- Kill with melee
             if EHI:IsAchievementLocked2("halloween_7") and mask_id == tweak_data.achievement.cant_hear_you_scream.mask and is_stealth then -- "No One Can Hear You Scream" achievement
-                AddAchievementTracker2("halloween_7_stats", true)
+                AddAchievementTrackerFromStat("halloween_7_stats", true)
             end
             if EHI:IsAchievementLocked2("gage5_8") and HasMeleeEquipped("dingdong") then -- "Hammertime" achievement
-                AddAchievementTracker2("gage5_8_stats")
+                AddAchievementTrackerFromStat("gage5_8_stats")
             end
             if EHI:IsAchievementLocked2("eagle_2") and HasMeleeEquipped("fairbair") and is_stealth then -- "Special Operations Execution" achievement
-                AddAchievementTracker2("eagle_2_stats", true)
+                AddAchievementTrackerFromStat("eagle_2_stats", true)
             end
             if EHI:IsAchievementLocked2("steel_2") then -- "Their Armor Is Thick and Their Shields Broad" achievement
                 local melee_required = tweak_data.achievement.enemy_melee_hit_achievements.steel_2.melee_weapons
@@ -755,31 +752,31 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end
             end
             if EHI:IsAchievementLocked2("gsu_01") and HasMeleeEquipped("spoon") then -- "For all you legends" achievement
-                AddAchievementTracker2("gsu_stat")
+                AddAchievementTrackerFromStat("gsu_stat")
             end
             if level == "nightclub" then
                 if EHI:IsAchievementLocked2("gage2_3") and HasMeleeEquipped("fists") then -- "The Eighth and Final Rule" achievement
                     local function f()
-                        AddAchievementTracker2("gage2_3_stats")
+                        AddAchievementTrackerFromStat("gage2_3_stats")
                     end
                     ShowTrackerInLoud(f)
                     stats.gage2_3_stats = "gage2_3"
                 end
                 if EHI:IsAchievementLocked2("gage4_7") and HasMeleeEquipped("shovel") then -- "Every day I'm Shovelin'" achievement
                     local function f()
-                        AddAchievementTracker2("gage4_7_stats")
+                        AddAchievementTrackerFromStat("gage4_7_stats")
                     end
                     ShowTrackerInLoud(f)
                     stats.gage4_7_stats = "gage4_7"
                 end
             end
             if (level == "mia_1" or level == "mia_2") and EHI:IsAchievementLocked2("pig_3") and HasMeleeEquipped("baseballbat") then -- "Do You Like Hurting Other People?" achievement
-                AddAchievementTracker2("pig_3_stats")
+                AddAchievementTrackerFromStat("pig_3_stats")
             end
             if OVKOrAbove then
                 if EHI:IsAchievementLocked2("gage2_9") and HasMeleeTypeEquipped("knife") then -- "I Ain't Got Time to Bleed" achievement
                     local function f()
-                        AddAchievementTracker2("gage2_9_stats")
+                        AddAchievementTrackerFromStat("gage2_9_stats")
                     end
                     ShowTrackerInLoud(f)
                     stats.gage2_9_stats = "gage2_9"
@@ -790,15 +787,15 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     local player_style_pass = HasPlayerStyleEquipped(achievement_data.player_style.style)
                     local variation_pass = HasSuitVariationEquipped(achievement_data.player_style.variation)
                     if melee_pass and player_style_pass and variation_pass then
-                        AddAchievementTracker2("sawp_stat")
+                        AddAchievementTrackerFromStat("sawp_stat")
                     end
                 end
                 pxp1_1()
                 if (level == "rvd1" or level == "rvd2") and EHI:IsAchievementLocked2("rvd_12") then -- "Close Shave" achievement
-                    AddAchievementTracker2("rvd_12_stats")
+                    AddAchievementTrackerFromStat("rvd_12_stats")
                 end
                 if level == "bph" and EHI:IsAchievementLocked2("bph_9") and HasMeleeEquipped("toothbrush") then -- "Prison Rules, Bitch!" achievement
-                    AddAchievementTracker2("bph_9_stat")
+                    AddAchievementTrackerFromStat("bph_9_stat")
                 end
             end
         end
@@ -817,13 +814,12 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                                 ShowPopup("gage_9", progress, 100)
                             end
                         end)
-                        ShowPopup("gage_9", progress, 100)
                         break
                     end
                 end
             end
             if EHI:IsAchievementLocked2("dec21_02") and HasNonExplosiveGrenadeEquipped() then -- "Gift Giver" achievement
-                AddAchievementTracker2("dec21_02_stat")
+                AddAchievementTrackerFromStat("dec21_02_stat")
             end
             if level == "dark" and EHI:IsAchievementLocked2("pim_2") then -- Crouched and Hidden, Flying Dagger
                 local progress = EHI:GetAchievementProgress("pim_2_stats")
@@ -845,33 +841,30 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if OVKOrAbove then
                 pxp1_1()
                 if EHI:IsAchievementLocked2("pxp2_3") and HasGrenadeEquipped("poison_gas_grenade") then -- "Snake Charmer" achievement
-                    AddAchievementTracker2("pxp2_3_stats")
+                    AddAchievementTrackerFromStat("pxp2_3_stats")
                 end
             end
         end
         if EHI:GetUnlockableOption("show_achievements_other") then
             if EHI:IsAchievementLocked2("halloween_4") and mask_id == tweak_data.achievement.witch_doctor.mask then -- "Witch Doctor" achievement
-                AddAchievementTracker2("halloween_4_stats")
+                AddAchievementTrackerFromStat("halloween_4_stats")
             end
             if EHI:IsAchievementLocked2("halloween_5") and mask_id == tweak_data.achievement.its_alive_its_alive.mask then -- "It's Alive! IT'S ALIVE!" achievement
                 local function f()
-                    AddAchievementTracker2("halloween_5_stats")
+                    AddAchievementTrackerFromStat("halloween_5_stats")
                 end
                 ShowTrackerInLoud(f)
                 stats.halloween_5_stats = "halloween_5"
             end
             if EHI:IsAchievementLocked2("armored_8") and mask_id == tweak_data.achievement.relation_with_bulldozer.mask then -- "I Did Not Have Sexual Relations With That Bulldozer" achievement
                 local function f()
-                    AddAchievementTracker2("armored_8_stat")
+                    AddAchievementTrackerFromStat("armored_8_stat")
                 end
                 ShowTrackerInLoud(f)
                 stats.armored_8_stat = "armored_8"
             end
             if EHI:IsAchievementLocked2("armored_10") and mask_id == tweak_data.achievement.no_we_cant.mask then -- "Affordable Healthcare" achievement
                 local progress = EHI:GetAchievementProgress("armored_10_stat")
-                ShowTrackerInLoud(function()
-                    ShowPopup("armored_10", progress, 61)
-                end)
                 managers.ehi_hook:HookAchievementAwardProgress("armored_10", function(am, stat, value)
                     if stat == "armored_10_stat" and progress < 61 then
                         progress = progress + (value or 1)
@@ -996,9 +989,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         end
                     end
                 end)
-                ShowTrackerInLoud(function() -- Show progress when alarm went off
-                    ShowPopup("cac_3", progress, 30)
-                end)
             end
             if EHI:IsAchievementLocked2("cac_34") then -- "Lieutenant Colonel" achievement
                 local listener_key = "EHI_cac_34_listener_key"
@@ -1014,7 +1004,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     end
                     ShowPopup("cac_34", progress, 300)
                 end)
-                ShowPopup("cac_34", progress, 300)
             end
             if eng_1_levels[level] then
                 if EHI:IsAchievementLocked2("eng_1") then -- "The only one that is true" achievement

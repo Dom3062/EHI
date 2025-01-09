@@ -114,7 +114,9 @@ end
 
 function EHIHealthRegenBuffTracker:PreUpdateCheck()
     self._healing_reduction = self._player_manager:upgrade_value("player", "healing_reduction", 1)
-    self:AddBuffToUpdate2()
+    if self._character_damage then
+        self:AddBuffToUpdate2()
+    end
     self._perform_update_from_spawn = true
     return true
 end

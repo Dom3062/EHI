@@ -944,6 +944,13 @@ _G.NetworkPeer = {}
 _G.PlayerMovement = {}
 ---@class SkirmishTweakData
 _G.SkirmishTweakData = {}
+---@class StatisticsManager
+---@field _get_boom_guns fun(self: self): string[]
+---@field _get_name_id_and_throwable_id fun(self: self, weapon_unit: UnitWeapon): string?, string?
+---@field is_dropin fun(self: self): boolean
+---@field session_hit_accuracy fun(self: self): number
+---@field started_session_from_beginning fun(self: self): boolean
+_G.StatisticsManager = {}
 ---@class TeamAIBase : CopBase
 ---@field _loadout { skill: string?, ability: string? }?
 ---@field _unit UnitTeamAI
@@ -1162,11 +1169,11 @@ end
 ---@class BlackMarketManager
 ---@field equipped_grenade fun(self: self): string
 ---@field equipped_grenade_allows_pickups fun(self: self): boolean
----@field equipped_mask fun(self: self): table
+---@field equipped_mask fun(self: self): { mask_id: string }
 ---@field equipped_melee_weapon fun(self: self): string
----@field equipped_primary fun(self: self): table
+---@field equipped_primary fun(self: self): EquippedWeaponData
 ---@field equipped_player_style fun(self: self): string
----@field equipped_secondary fun(self: self): table
+---@field equipped_secondary fun(self: self): EquippedWeaponData
 ---@field equipped_suit_variation fun(self: self): string
 ---@field get_suspicion_offset_of_local fun(self: self, lerp: number, ignore_armor_kit: boolean?): number
 ---@field outfit_string fun(self: self): table
@@ -1306,12 +1313,6 @@ end
 
 ---@class SlotManager
 ---@field get_mask fun(self: self, ...: string): SlotMask
-
----@class StatisticsManager
----@field _get_boom_guns fun(self: self): string[]
----@field _get_name_id_and_throwable_id fun(self: self, weapon_unit: UnitWeapon): string?, string?
----@field is_dropin fun(self: self): boolean
----@field started_session_from_beginning fun(self: self): boolean
 
 ---@class UnoAchievementChallenge
 ---@field challenge fun(self: self): string[]?
@@ -1863,3 +1864,8 @@ end
 ---@field text string
 ---@field icon string
 ---@field state "dirty"|"sneak_present"|"present_ended"|"present"|"offscreen"|"onscreen"?
+
+---@class EquippedWeaponData
+---@field blueprint table
+---@field factory_id string
+---@field weapon_id string

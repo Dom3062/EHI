@@ -1,4 +1,4 @@
-if EHI:CheckLoadHook("GageModifierLifeSteal") or not EHI:GetBuffDeckOption("gage_boosts", "life_steal") then
+if EHI:CheckLoadHook("GageModifierLifeSteal") or not (EHI:GetOption("show_buffs") and EHI:GetBuffDeckOption("gage_boosts", "life_steal")) then
     return
 end
 
