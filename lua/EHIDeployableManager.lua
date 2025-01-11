@@ -91,7 +91,6 @@ function EHIDeployableManager:CreateDeployableTracker(type, tracker_type)
     elseif type == "Health" then
         self._trackers:AddTracker({
             id = "Health",
-            format = {},
             hint = "doctor_fak",
             class = "EHIAggregatedHealthEquipmentTracker"
         })

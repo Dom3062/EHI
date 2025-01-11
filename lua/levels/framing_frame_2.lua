@@ -30,7 +30,11 @@ end
 EHI:AddXPBreakdown({
     objective =
     {
-        escape = 2000
+        escape =
+        {
+            { amount = 2000, stealth = true },
+            { amount = 2000, loud = true }
+        }
     },
     loot_all = 500,
     total_xp_override =
@@ -39,7 +43,8 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                loot_all = { min = 4, max = 9 }
+                loot_all = { min = 4, max = 9 },
+                bonus_xp = { min_max = 2000 }
             }
         }
     }

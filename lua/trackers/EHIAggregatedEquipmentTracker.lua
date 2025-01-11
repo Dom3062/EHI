@@ -20,8 +20,9 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     self._deployables = {}
     self._ignore = params.ignore or {}
     self._equipment = {} ---@type table<string, PanelText?>
+    self._format = params.format or {}
     for _, id in ipairs(self._ids) do
-        self._count[id] = { amount = 0, placed = 0, format = params.format[id] or "charges" }
+        self._count[id] = { amount = 0, placed = 0, format = self._format[id] or "charges" }
         self._deployables[id] = {}
     end
 end
@@ -29,6 +30,7 @@ end
 function EHIAggregatedEquipmentTracker:post_init(params)
     self._default_panel_w = self._panel:w()
     self._panel_w = self._default_panel_w
+    self._hide_on_delete = true
 end
 
 do
@@ -235,5 +237,22 @@ function EHIAggregatedEquipmentTracker:Reorganize(addition)
         self._panel_w = self._panel_w - self._default_bg_size_half
         self._bg_box:set_w(self._bg_box:w() - self._default_bg_size_half)
         self:AnimateMovement()
+    end
+end
+
+function EHIAggregatedEquipmentTracker:CleanupOnHide()
+    local _, last_text = next(self._equipment)
+    if alive(self._bg_box) and alive(last_text) then
+        self._bg_box:remove(last_text) ---@diagnostic disable-line
+    end
+    self._equipment = nil
+    self._equipment = {}
+    self._count = nil
+    self._count = {}
+    self._deployables = nil
+    self._deployables = {}
+    for _, id in ipairs(self._ids) do
+        self._count[id] = { amount = 0, placed = 0, format = self._format[id] or "charges" }
+        self._deployables[id] = {}
     end
 end

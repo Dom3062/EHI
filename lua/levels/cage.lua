@@ -25,7 +25,7 @@ EHI:AddXPBreakdown({
         { amount = 3000, name = "correct_pc_hack" },
         { amount = 3000, name = "c4_set_up" },
         { amount = 1000, name = "car_shop_car_secured" },
-        { escape = 3000 }
+        { escape = 3000, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() }
     },
     total_xp_override =
     {

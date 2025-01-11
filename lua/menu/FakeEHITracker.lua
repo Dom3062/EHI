@@ -104,8 +104,8 @@ FakeEHITracker.CreateText = EHITracker.CreateText
 FakeEHITracker.FitTheText = EHITracker.FitTheText
 FakeEHITracker._SetBGSize = EHITracker.SetBGSize
 FakeEHITracker.SetIconsX = EHITracker.SetIconsX
-FakeEHITracker._gap = 5
-FakeEHITracker._icon_size = 32
+FakeEHITracker._gap = tweak_data.ehi.default.tracker.gap
+FakeEHITracker._icon_size = tweak_data.ehi.default.tracker.size_h
 FakeEHITracker._icon_gap_size = FakeEHITracker._icon_size + FakeEHITracker._gap
 FakeEHITracker._selected_color = Color(255, 255, 165, 0) / 255
 ---@param panel Panel
@@ -122,7 +122,7 @@ function FakeEHITracker:init(panel, params, parent_class)
     self._corners_visible = params.corners
     self._icons = {}
     self._n_of_icons = 0
-    self._bg_box_w = 64 * self._scale
+    self._bg_box_w = tweak_data.ehi.default.tracker.size_w * self._scale
     self.__icon_pos_left = params.icon_pos == 1
     local gap = 0
     if params.icons then
@@ -131,7 +131,7 @@ function FakeEHITracker:init(panel, params, parent_class)
     end
     self._n = self._n_of_icons
     self._gap_scaled = self._gap * self._scale -- 5 * self._scale
-    self._icon_size_scaled = 32 * self._scale -- 32 * self._scale
+    self._icon_size_scaled = tweak_data.ehi.default.tracker.size_h * self._scale -- 32 * self._scale
     self._icon_gap_size_scaled = (self._icon_size + self._gap) * self._scale -- (32 + 5) * self._scale
     self._panel = panel:panel({
         x = params.x,

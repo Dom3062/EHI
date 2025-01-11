@@ -145,12 +145,13 @@ function EHIGroupTracker:delete()
             timer.label:parent():remove(timer.label)
         end
     end
-    if self._hide_on_delete then
-        self._timers = nil
-        self._timers = {}
-        self._timers_n = 0
-    end
     EHIGroupTracker.super.delete(self)
+end
+
+function EHIGroupTracker:CleanupOnHide()
+    self._timers = nil
+    self._timers = {}
+    self._timers_n = 0
 end
 
 ---@class EHIWarningGroupTracker : EHIWarningTracker, EHIGroupTracker
@@ -167,6 +168,7 @@ EHIWarningGroupTracker.RemoveByID = EHIGroupTracker.RemoveByID
 EHIWarningGroupTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
 EHIWarningGroupTracker.AddUnit = EHIGroupTracker.AddUnit
 EHIWarningGroupTracker.RemoveUnit = EHIGroupTracker.RemoveUnit
+EHIWarningGroupTracker.CleanupOnHide = EHIGroupTracker.CleanupOnHide
 EHIWarningGroupTracker.delete = EHIGroupTracker.delete
 function EHIWarningGroupTracker:update(dt)
     for i, timer in ipairs(self._timers) do

@@ -3,9 +3,6 @@ if EHI:CheckLoadHook("IngameWaitingForPlayersState") then
     return
 end
 
----@class IngameWaitingForPlayersState
----@field check_is_dropin fun(self: self): boolean
-
 local gage3_13_levels =
 {
     pbr = true,
@@ -76,13 +73,11 @@ local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local stats = {}
 
 ---@param weapon_id string
----@return boolean
 local function HasWeaponEquipped(weapon_id)
     return primary.weapon_id == weapon_id or secondary.weapon_id == weapon_id
 end
 
 ---@param type string
----@return boolean
 local function HasWeaponTypeEquipped(type)
     local primary_categories = tweak_data.weapon[primary.weapon_id] and tweak_data.weapon[primary.weapon_id].categories or {}
     local secondary_categories = tweak_data.weapon[secondary.weapon_id] and tweak_data.weapon[secondary.weapon_id].categories or {}
@@ -90,20 +85,17 @@ local function HasWeaponTypeEquipped(type)
 end
 
 ---@param melee_id string
----@return boolean
 local function HasMeleeEquipped(melee_id)
     return melee == melee_id
 end
 
 ---@param type string
----@return boolean
 local function HasMeleeTypeEquipped(type)
     local melee_tweak = tweak_data.blackmarket.melee_weapons[melee]
     return melee_tweak and melee_tweak.type and melee_tweak.type == type
 end
 
 ---@param grenade_id string
----@return boolean
 local function HasGrenadeEquipped(grenade_id)
     return grenade == grenade_id
 end
@@ -174,7 +166,9 @@ local function HasViperGrenadesOnLauncherEquipped()
     return HasViperAmmo(primary.factory_id, primary.blueprint) or HasViperAmmo(secondary.factory_id, secondary.blueprint)
 end
 
+---@param firemode string
 local function WeaponsContainFiremode(firemode)
+    ---@param weapon_id string
     local function FireModeExists(weapon_id)
         local tweak_data = tweak_data.weapon[weapon_id]
         if not tweak_data then

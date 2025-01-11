@@ -142,7 +142,11 @@ EHI:UpdateUnits({
 EHI:AddXPBreakdown({
     objective =
     {
-        escape = EscapeXP
+        escape =
+        {
+            { amount = EscapeXP, stealth = true },
+            { amount = EscapeXP, loud = true }
+        }
     },
     loot_all = 500,
     total_xp_override =
@@ -151,7 +155,8 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                loot_all = { min = EscapeXP == 12000 and 1 or 0, max = 5 + (EscapeXP == 12000 and 8 or 0) }
+                loot_all = { min = EscapeXP == 12000 and 1 or 0, max = 5 + (EscapeXP == 12000 and 8 or 0) },
+                bonus_xp = { min_max = EscapeXP }
             }
         }
     }

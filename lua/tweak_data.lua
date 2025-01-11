@@ -15,7 +15,9 @@ tweak_data.ehi =
         tracker =
         {
             size_h = 32,
-            offset = 6
+            size_w = 64,
+            offset = 6,
+            gap = 5
         }
     },
     colors =

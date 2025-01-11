@@ -28,13 +28,18 @@ EHI:AddXPBreakdown({
     {
         { amount = 1500, name = "big_oil_intel_pickup", times = 3, optional = true },
         { amount = 6000, name = "twh_safe_open", times = 1 },
-        { escape = 6000 }
+        { escape = {
+            { amount = 6000, stealth = true, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() },
+            { amount = 6000, loud = true },
+        }}
     },
     total_xp_override =
     {
         params =
         {
-            min_max = {}
+            min_max = {
+                bonus_xp = { min_max = 6000 }
+            }
         }
     }
 })

@@ -355,7 +355,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field stealth boolean
 ---@field loud boolean
 ---@field timer number `stealth` only
----@field xp_bonus number `stealth` only
+---@field ghost_bonus number `stealth` only
 ---@field c4_used boolean `loud` only
 
 ---@class XPBreakdown.escape
@@ -377,10 +377,12 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field optional boolean?
 ---@field times number?
 ---@field escape number|XPBreakdown.escape
+---@field escape_ghost_bonus_only number
 ---@field random XPBreakdown.random
 ---@field stealth number
 ---@field loud number
 ---@field _or boolean
+---@field ghost_bonus number
 
 ---@class XPBreakdown.objectives
 ---@field [number] _XPBreakdown.objectives

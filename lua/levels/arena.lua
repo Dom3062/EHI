@@ -110,7 +110,8 @@ EHI:AddXPBreakdown({
                 { amount = 1000, name = "alesso_find_c4" },
                 { amount = 2000, name = "c4_set_up" },
                 { amount = 3000, times = 3, name = "alesso_pyro_set" },
-                { amount = 1200, name = "loot_secured" }
+                { amount = 1200, name = "loot_secured" },
+                { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
             },
             total_xp_override = xp_override
         },

@@ -144,10 +144,10 @@ local function icon_x(o, target_x)
     end
 end
 ---@param o PanelBaseObject
----@param skip boolean
+---@param skip_anim boolean
 ---@param self EHITracker
-local function destroy(o, skip, self)
-    if not skip then
+local function destroy(o, skip_anim, self)
+    if not skip_anim then
         if self._hint then
             visibility_hint(o, self._hint, 0)
         else
@@ -253,8 +253,8 @@ EHITracker = class()
 EHITracker._needs_update = true
 EHITracker._fade_time = 5
 EHITracker._tracker_type = "accurate"
-EHITracker._gap = 5
-EHITracker._icon_size = 32
+EHITracker._gap = tweak_data.ehi.default.tracker.gap
+EHITracker._icon_size = tweak_data.ehi.default.tracker.size_h
 EHITracker._scale = EHI:GetOption(_G.IS_VR and "vr_scale" or "scale") --[[@as number]]
 EHITracker._text_scale = EHI:GetOption("text_scale") --[[@as number]]
 -- (32 + 5) * self._scale
@@ -263,7 +263,7 @@ EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * E
 EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
 -- 5 * self._scale
 EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
-EHITracker._default_bg_size = 64 * EHITracker._scale
+EHITracker._default_bg_size = tweak_data.ehi.default.tracker.size_w * EHITracker._scale
 EHITracker._default_bg_size_half = EHITracker._default_bg_size / 2
 EHITracker._text_color = Color.white
 if EHI:GetOption("show_tracker_hint") then
@@ -996,6 +996,9 @@ function EHITracker:GetPanelW()
     return self._panel_override_w or self._panel:w()
 end
 
+function EHITracker:CleanupOnHide()
+end
+
 function EHITracker:StopPanelAnims()
     self._panel:stop()
     if self._hint then
@@ -1006,14 +1009,14 @@ end
 function EHITracker:pre_delete()
 end
 
----@param skip boolean?
-function EHITracker:destroy(skip)
+---@param skip_anim boolean?
+function EHITracker:destroy(skip_anim)
     if alive(self._panel) then
         for _, icon in ipairs(self._icons) do
             icon:stop()
         end
         self:StopPanelAnims()
-        self._panel:animate(destroy, skip, self)
+        self._panel:animate(destroy, skip_anim, self)
     end
 end
 
@@ -1022,6 +1025,7 @@ function EHITracker:delete()
         self:StopPanelAnims()
         self:SetPanelAlpha(0)
         self._parent_class:HideTracker(self._id)
+        self:CleanupOnHide()
         return
     elseif self._refresh_on_delete then
         self:Refresh()

@@ -301,7 +301,7 @@ end
 
 function GroupAIStateBase:remove_minion(minion_key, ...)
     if self._converted_police[minion_key] then
-        EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled, minion_key, false, 0)
+        EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled, tostring(minion_key), false, 0)
     end
     original.remove_minion(self, minion_key, ...)
 end

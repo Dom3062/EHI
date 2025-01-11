@@ -133,7 +133,8 @@ EHI:AddXPBreakdown({
                 { amount = 1000, name = "scarface_made_a_call" },
                 { amount = 2000, name = "scarface_entered_sosa_office" },
                 { amount = 1000, name = "scarface_sosa_killed" },
-                { amount = 8000, name = "vault_open" }
+                { amount = 8000, name = "vault_open" },
+                { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
             },
             loot_all = 500,
             total_xp_override = xp_override

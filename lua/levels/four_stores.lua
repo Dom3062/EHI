@@ -95,7 +95,11 @@ EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload
 EHI:AddXPBreakdown({
     objective =
     {
-        escape = 6000
+        escape =
+        {
+            { amount = 6000, stealth = true },
+            { amount = 6000, loud = true }
+        }
     },
     no_total_xp = true
 })

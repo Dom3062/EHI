@@ -135,7 +135,8 @@ EHI:AddXPBreakdown({
                 { amount = 3000, name = "nmh_found_correct_patient" },
                 { amount = 3000, name = "nmh_valid_sample" },
                 { amount = 8000, name = "nmh_elevator_arrived" },
-                { amount = 2000, name = "nmh_exit_elevator" }
+                { amount = 2000, name = "nmh_exit_elevator" },
+                { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
             }
         },
         loud =

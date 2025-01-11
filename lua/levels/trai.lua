@@ -61,6 +61,20 @@ if EHI:IsMayhemOrAbove() then
 end
 local max_bags = required_bags + ((6 * bag_multiplier) + 8) -- (4 secondary wagons with 2 money bags); total 5 wagons, one is disabled
 EHI:ShowLootCounter({ max = max_bags })
+local total_xp_override =
+{
+    params =
+    {
+        min_max =
+        {
+            objectives =
+            {
+                texas2_found_correct_wagon = { min_max = 3 }
+            },
+            loot_all = { min = required_bags, max = max_bags }
+        }
+    }
+}
 EHI:AddXPBreakdown({
     plan =
     {
@@ -83,20 +97,7 @@ EHI:AddXPBreakdown({
                 { escape = 1000 }
             },
             loot_all = 250,
-            total_xp_override =
-            {
-                params =
-                {
-                    min_max =
-                    {
-                        objectives =
-                        {
-                            texas2_found_correct_wagon = { min_max = 3 }
-                        },
-                        loot_all = { min = required_bags, max = max_bags }
-                    }
-                }
-            }
+            total_xp_override = total_xp_override
         },
         loud =
         {
@@ -117,20 +118,7 @@ EHI:AddXPBreakdown({
                 { escape = 1000 }
             },
             loot_all = 250,
-            total_xp_override =
-            {
-                params =
-                {
-                    min_max =
-                    {
-                        objectives =
-                        {
-                            texas2_found_correct_wagon = { min_max = 3 }
-                        },
-                        loot_all = { min = required_bags, max = max_bags }
-                    }
-                }
-            }
+            total_xp_override = total_xp_override
         }
     }
 })

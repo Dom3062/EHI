@@ -59,7 +59,11 @@ EHI:ShowLootCounter({ max = 8 + 7 }) -- Mission bags + Artifacts
 EHI:AddXPBreakdown({
     objective =
     {
-        escape = 4000
+        escape =
+        {
+            { amount = 4000, stealth = true },
+            { amount = 4000, loud = true }
+        }
     },
     loot =
     {
@@ -76,7 +80,8 @@ EHI:AddXPBreakdown({
                 {
                     money = { min_max = 8 },
                     mus_artifact = { max = 7 }
-                }
+                },
+                bonus_xp = { min_max = 4000 }
             }
         }
     }

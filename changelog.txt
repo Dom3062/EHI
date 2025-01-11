@@ -1,3 +1,7 @@
+r290 (11. 01. 2025):
+Reduced used memory by using the same tracker for deployables
+Mission Briefing: Added stealth bonus after completing heists in stealth
+
 r289 (09. 01. 2025):
 Fixed a crash when Gage Boosts are enabled in Crime Spree
 Reduced achievement visual clutter after alarm

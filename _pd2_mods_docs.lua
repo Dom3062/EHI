@@ -22,7 +22,7 @@ _G.BLT = {}
 ---@field SetEnabled fun(self: self, enable: boolean, force: boolean?)
 
 ---@class DelayedCalls
----@field Add fun(self: self, id: any, time: number, func: function)
+---@field Add fun(self: self, id: string, time: number, func: function)
 _G.DelayedCalls = {}
 
 ---@class Hooks

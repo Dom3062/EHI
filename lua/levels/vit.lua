@@ -108,7 +108,8 @@ local stealth_objectives =
     { amount = 8000, name = "twh_mainframe_hacked" },
     { amount = 2000, name = "twh_pardons_stolen" },
     { amount = 2000, name = "twh_left_peoc" },
-    { amount = 2000, name = "heli_arrival" }
+    { amount = 2000, name = "heli_arrival" },
+    { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
 }
 local loud_objectives =
 {

@@ -297,7 +297,8 @@ local stealth_objectives =
     { amount = 1000, name = "vault_open" },
     { amount = 1000, name = "fs_secured_required_bags" },
     { amount = 2000, name = "china3_vault_empty" },
-    { amount = 1000, name = "china3_lifeboat_lowered" }
+    { amount = 1000, name = "china3_lifeboat_lowered" },
+    { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
 }
 local loud_objectives =
 {

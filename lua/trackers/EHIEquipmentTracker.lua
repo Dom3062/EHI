@@ -10,6 +10,10 @@ function EHIEquipmentTracker:pre_init(params)
     self._deployables = {}
 end
 
+function EHIEquipmentTracker:post_init(params)
+    self._hide_on_delete = true
+end
+
 do
     local format = EHI:GetOption("equipment_format")
     if format == 1 then -- Uses (Bags placed)
@@ -89,4 +93,9 @@ function EHIEquipmentTracker:UpdateAmount(key, amount)
         self:SetAndFitTheText()
         self:AnimateBG()
     end
+end
+
+function EHIEquipmentTracker:CleanupOnHide()
+    self._deployables = nil
+    self._deployables = {}
 end

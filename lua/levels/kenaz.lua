@@ -192,7 +192,8 @@ EHI:AddXPBreakdown({
                 { amount = 4000, name = "ggc_gas_planted" },
                 { amount = 4000, name = "ggc_color_code" },
                 { amount = 4000, name = "vault_open" },
-                { amount = 2000, name = "ggc_laser_disabled" }
+                { amount = 2000, name = "ggc_laser_disabled" },
+                { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
             },
             loot_all = 500,
             total_xp_override = xp_override

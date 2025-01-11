@@ -197,7 +197,8 @@ EHI:AddXPBreakdown({
                         { amount = 6000, name = "china4_decrypt_harddrive" },
                         { amount = 1000, name = "china4_fire_alarm_on" },
                         { amount = 4000, name = "china4_triad_leader_killed" },
-                        { amount = 6000, name = "fs_secured_required_bags" }
+                        { amount = 6000, name = "fs_secured_required_bags" },
+                        { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
                     },
                     loot = stealth_loot,
                     total_xp_override = stealth_total_xp_override

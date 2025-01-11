@@ -18,7 +18,28 @@ _G.Global = {}
 ---@field find_units_quick fun(self: self, ...): Unit[]
 ---@field make_slot_mask fun(self: self, ...: number): SlotMask
 _G.World = {}
----@class tweak_data
+---@class tweak_data Global table of all configuration data
+---@field achievement AchievementsTweakData
+---@field blackmarket BlackMarketTweakData
+---@field carry CarryTweakData
+---@field character CharacterTweakData
+---@field criminals tweak_data.criminals
+---@field dot DOTTweakData
+---@field ehi EHITweakData
+---@field experience_manager table
+---@field gage_assignment GageAssignmentTweakData
+---@field gui GuiTweakData
+---@field group_ai GroupAITweakData
+---@field hud_icons HudIconsTweakData
+---@field levels LevelsTweakData
+---@field menu MenuTweakData
+---@field mutators table
+---@field player PlayerTweakData
+---@field preplanning PrePlanningTweakData
+---@field projectiles tweak_data.projectiles
+---@field skirmish SkirmishTweakData
+---@field upgrades UpgradesTweakData
+---@field weapon WeaponTweakData
 _G.TweakData = {}
 ---@class tweak_data
 ---@field chat_colors Color[]
@@ -758,6 +779,14 @@ _G.tweak_data.upgrades.values.temporary = {
         { 0.2, 30, 1 }
     }
 }
+---@class WeaponTweakData
+---@field [string] { categories: string[], fire_mode_data: WeaponTweakData.fire_mode_data }
+---@field trip_mines { delay: 0.3, damage: 100, player_damage: 6, damage_size: 300, alert_radius: 5000 }
+_G.tweak_data.weapon = {}
+---@class WeaponTweakData.fire_mode_data
+---@field fire_rate number
+---@field toggable string[]
+---@field [string] {}
 ---@class managers
 _G.managers = {}
 ---@type boolean
@@ -872,7 +901,8 @@ _G.GroupAITweakData = {
 }
 ---@class GroupAIStateBase
 _G.GroupAIStateBase = {}
----@class IngameWaitingForPlayersState
+---@class IngameWaitingForPlayersState : GameState
+---@field check_is_dropin fun(self: self): boolean
 _G.IngameWaitingForPlayersState = {}
 ---@class JobManager
 _G.JobManager = {}
@@ -949,6 +979,7 @@ _G.SkirmishTweakData = {}
 ---@field _get_name_id_and_throwable_id fun(self: self, weapon_unit: UnitWeapon): string?, string?
 ---@field is_dropin fun(self: self): boolean
 ---@field session_hit_accuracy fun(self: self): number
+---@field special_unit_ids string[]
 ---@field started_session_from_beginning fun(self: self): boolean
 _G.StatisticsManager = {}
 ---@class TeamAIBase : CopBase
@@ -1247,8 +1278,6 @@ end
 ---@field at_exit fun(self: self, next_state: self)
 ---@field name fun(self: self): string
 
----@class IngameWaitingForPlayersState : GameState
-
 ---@class MissionManager
 ---@field _scripts table<string, MissionScript> All running scripts in a mission
 ---@field add_global_event_listener fun(self: self, key: string, event_types: string[], clbk: function)
@@ -1410,28 +1439,6 @@ end
 
 ---@class tweak_data.projectiles
 ---@field [string] table?
-
----@class tweak_data Global table of all configuration data
----@field achievement AchievementsTweakData
----@field blackmarket BlackMarketTweakData
----@field carry CarryTweakData
----@field character CharacterTweakData
----@field criminals tweak_data.criminals
----@field dot DOTTweakData
----@field ehi EHITweakData
----@field experience_manager table
----@field gage_assignment GageAssignmentTweakData
----@field gui GuiTweakData
----@field group_ai GroupAITweakData
----@field hud_icons HudIconsTweakData
----@field levels LevelsTweakData
----@field menu MenuTweakData
----@field mutators table
----@field player PlayerTweakData
----@field preplanning PrePlanningTweakData
----@field projectiles tweak_data.projectiles
----@field skirmish SkirmishTweakData
----@field upgrades UpgradesTweakData
 
 ---@class TimerManager
 ---@field time fun(self: self): number

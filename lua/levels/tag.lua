@@ -51,7 +51,8 @@ EHI:AddXPBreakdown({
         { amount = 2000, name = "breakin_feds_found_garret_office" },
         { amount = 4000, name = "breakin_feds_lure" },
         { amount = 1000, name = "breakin_feds_entered_office", times = 1 },
-        { amount = 1000, name = "breakin_feds_safe_found" }
+        { amount = 1000, name = "breakin_feds_safe_found" },
+        { escape_ghost_bonus_only = tweak_data.levels:GetLevelStealthBonus() }
     },
     loot_all = 1000,
     total_xp_override =

@@ -129,7 +129,11 @@ EHI.Manager:ParseTriggers({
 EHI:AddXPBreakdown({
     objective =
     {
-        escape = 2000
+        escape =
+        {
+            { amount = 2000, stealth = true, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() },
+            { amount = 2000, loud = true }
+        }
     },
     loot_all = 1000,
     total_xp_override =
@@ -138,7 +142,8 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                loot_all = { min = min_bags, max = 20 } -- 18 diamonds + 2 money (random)
+                loot_all = { min = min_bags, max = 20 }, -- 18 diamonds + 2 money (random)
+                bonus_xp = { min_max = 2000 } -- Escape
             }
         }
     }

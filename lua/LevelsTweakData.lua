@@ -11,7 +11,6 @@ function LevelsTweakData:GetGroupAIState(level_id)
 end
 
 ---@param level_id string?
----@return boolean
 function LevelsTweakData:IsLevelSkirmish(level_id)
 	return self:GetGroupAIState(level_id) == "skirmish"
 end
@@ -52,11 +51,4 @@ end
 function LevelsTweakData:GetLevelStealthBonus(level_id)
 	local level_data = self[level_id or Global.game_settings.level_id] or {}
 	return level_data.ghost_bonus or 0
-end
-
----@param level_id string?
----@return boolean
-function LevelsTweakData:IsLevelCustom(level_id)
-	local level_data = self[level_id or Global.game_settings.level_id] or {}
-	return level_data.custom or false
 end

@@ -232,23 +232,21 @@ local custom_levels =
     slaughter_house_new = true
 }
 
-local init_finalize = GameSetup.init_finalize
-function GameSetup:init_finalize(...)
-    init_finalize(self, ...)
+Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", function(...)
     if managers.ehi_manager.__init_done then
         return
     end
     EHI.Manager = managers.ehi_manager
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
-    if tweak_data.levels:IsLevelCustom(level_id) then
-        dofile(EHI.LuaPath .. "core_beardlib.lua")
-    end
     if levels[level_id] then
         local fixed_name = redirect[level_id] or level_id
         dofile(string.format("%s%s%s.lua", EHI.LuaPath, "levels/", fixed_name))
     end
     if custom_levels[level_id] then
+        if not redirect[level_id] then
+            dofile(EHI.LuaPath .. "core_beardlib.lua")
+        end
         local fixed_path = redirect[level_id] or ("custom_levels/" .. level_id)
         dofile(string.format("%s%s.lua", EHI.LuaPath, fixed_path))
     end
@@ -258,7 +256,7 @@ function GameSetup:init_finalize(...)
     levels = nil
     custom_levels = nil
     EHI.Manager = nil
-end
+end)
 
 Hooks:PreHook(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...) ---@param data SyncData
     managers.ehi_manager:SetInSync(true)

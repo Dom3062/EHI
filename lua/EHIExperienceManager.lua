@@ -68,9 +68,9 @@ function EHIExperienceManager:ExperienceInit(xp)
     self._base_xp = 0
     self._total_xp = 0
     self._ehi_xp = self:CreateXPTable()
-    EHI:AddOnSpawnedCallback(callback(self, self, "RecalculateSkillXPMultiplier"))
+    EHI:AddOnSpawnedCallback(callback(self, self, "UpdateSkillXPMultiplier"))
     Hooks:PostHook(HUDManager, "mark_cheater", "EHI_ExperienceManager_mark_cheater", function()
-        self:RecalculateSkillXPMultiplier()
+        self:UpdateSkillXPMultiplier()
     end)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
         local multiplier = 1
@@ -99,7 +99,7 @@ function EHIExperienceManager:CreateXPTable()
         gage_bonus = 1,
         stealth = true,
         bonus_xp = 0,
-        skill_xp_multiplier = 1, -- Recalculated in `EHIExperienceManager:RecalculateSkillXPMultiplier()`
+        skill_xp_multiplier = 1, -- Recalculated in `EHIExperienceManager:UpdateSkillXPMultiplier()`
         difficulty_multiplier = 1,
         projob_multiplier = 1 -- Unavailable since `Update 109`, however mods can still enable Pro Job modifier in heists
     }
@@ -110,7 +110,7 @@ function EHIExperienceManager:ExperienceReload(xp)
     self._xp = self._xp or {}
     self._xp.level = xp:current_level()
     local max_level = xp:reached_level_cap()
-    self._xp.level_xp_to_100 = max_level and 0 or self:GetRemainingXPToMaxLevel(xp)
+    self._xp.level_xp_to_100 = max_level and 0 or self:GetRemainingXPToMaxLevel(xp:total())
     self._xp.level_xp_to_next_level = max_level and 0 or math.max(xp:next_level_data_points() - xp:next_level_data_current_points(), 0)
     self._xp.prestige_xp = xp:get_current_prestige_xp()
     self._xp.prestige_xp_remaining = xp:get_max_prestige_xp() - self._xp.prestige_xp
@@ -288,7 +288,7 @@ function EHIExperienceManager:SwitchToLoudMode()
         return
     end
     self._ehi_xp.stealth = false
-    self:RecalculateSkillXPMultiplier()
+    self:UpdateSkillXPMultiplier()
 end
 
 ---@param amount number
@@ -300,14 +300,9 @@ function EHIExperienceManager:MissionXPAwarded(amount)
     end
 end
 
----@param multiplier number
-function EHIExperienceManager:UpdateSkillXPMultiplier(multiplier)
-    self._ehi_xp.skill_xp_multiplier = multiplier
+function EHIExperienceManager:UpdateSkillXPMultiplier()
+    self._ehi_xp.skill_xp_multiplier = managers.player:get_skill_exp_multiplier(self._ehi_xp.stealth)
     self:RecalculateXP(2)
-end
-
-function EHIExperienceManager:RecalculateSkillXPMultiplier()
-    self:UpdateSkillXPMultiplier(managers.player:get_skill_exp_multiplier(self._ehi_xp.stealth))
 end
 
 ---@param bonus number
@@ -325,7 +320,7 @@ function EHIExperienceManager:SetInCustody(in_custody)
     if in_custody then
         self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players - 1, 0)
     else
-        self._ehi_xp.alive_players = math.min(self._ehi_xp.alive_players + 1, 4)
+        self._ehi_xp.alive_players = self._ehi_xp.alive_players + 1
     end
     self:RecalculateXP(4)
 end
@@ -341,20 +336,20 @@ function EHIExperienceManager:QueryAmountOfAllPlayers()
     local bots = managers.groupai:state() and managers.groupai:state():amount_of_winning_ai_criminals()
     self._ehi_xp.alive_players = math.clamp(human_players + bots, 0, 4)
     if previous_value ~= self._ehi_xp.alive_players then
-        self:RecalculateSkillXPMultiplier()
+        self:UpdateSkillXPMultiplier()
     end
 end
 
 function EHIExperienceManager:QueryAmountOfAlivePlayers()
     self._ehi_xp.alive_players = managers.network:session() and managers.network:session():amount_of_alive_players()
-    self:RecalculateSkillXPMultiplier()
+    self:UpdateSkillXPMultiplier()
 end
 
 ---@param human_player boolean?
 function EHIExperienceManager:DecreaseAlivePlayers(human_player)
     self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players - 1, 0)
     if human_player then
-        self:RecalculateSkillXPMultiplier()
+        self:UpdateSkillXPMultiplier()
     else
         self:RecalculateXP(6)
     end
@@ -376,7 +371,6 @@ function EHIExperienceManager:ShowGainedXP(id, base_xp, xp_gained, xp_set)
     end
 end
 
-local math_round = math.round
 ---@param xp number?
 ---@param default_xp_if_zero number?
 function EHIExperienceManager:MultiplyXPWithAllBonuses(xp, default_xp_if_zero)
@@ -408,48 +402,48 @@ function EHIExperienceManager:MultiplyXPWithAllBonuses(xp, default_xp_if_zero)
     local bonus_xp = 0
 
     base_xp = job_xp_dissect + stage_xp_dissect + mission_xp_dissect
-    pro_job_xp_dissect = math_round(base_xp * pro_job_multiplier - base_xp)
+    pro_job_xp_dissect = math.round(base_xp * pro_job_multiplier - base_xp)
     base_xp = base_xp + pro_job_xp_dissect
 
     if self._ehi_xp.is_level_limited then
         local diff_in_stars = job_stars - player_stars
         local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
-        base_xp = math_round(base_xp * tweak_multiplier)
+        base_xp = math.round(base_xp * tweak_multiplier)
     end
 
     contract_xp = base_xp
-    risk_dissect = math_round(contract_xp * xp_multiplier)
+    risk_dissect = math.round(contract_xp * xp_multiplier)
     contract_xp = contract_xp + risk_dissect
 
     if self._ehi_xp.in_custody then
         local multiplier = tweak_data:get_value("experience_manager", "in_custody_multiplier") or 1
-        personal_win_dissect = math_round(contract_xp * multiplier - contract_xp)
+        personal_win_dissect = math.round(contract_xp * multiplier - contract_xp)
         contract_xp = contract_xp + personal_win_dissect
     end
 
     total_xp = contract_xp
     local total_contract_xp = total_xp
     bonus_xp = self._ehi_xp.skill_xp_multiplier or 1
-    skill_dissect = math_round(total_contract_xp * bonus_xp - total_contract_xp)
+    skill_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
     total_xp = total_xp + skill_dissect
     bonus_xp = self._ehi_xp.infamy_bonus
-    infamy_dissect = math_round(total_contract_xp * bonus_xp - total_contract_xp)
+    infamy_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
     total_xp = total_xp + infamy_dissect
 
     local num_players_bonus = num_winners and tweak_data:get_value("experience_manager", "alive_humans_multiplier", num_winners) or 1
-    alive_crew_dissect = math_round(total_contract_xp * num_players_bonus - total_contract_xp)
+    alive_crew_dissect = math.round(total_contract_xp * num_players_bonus - total_contract_xp)
     total_xp = total_xp + alive_crew_dissect
 
     bonus_xp = self._ehi_xp.gage_bonus
-    gage_assignment_dissect = math_round(total_contract_xp * bonus_xp - total_contract_xp)
+    gage_assignment_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
     total_xp = total_xp + gage_assignment_dissect
-    ghost_dissect = math_round(total_xp * ghost_multiplier - total_xp)
+    ghost_dissect = math.round(total_xp * ghost_multiplier - total_xp)
     total_xp = total_xp + ghost_dissect
     local heat_xp_mul = self._ehi_xp.heat
-    job_heat_dissect = math_round(total_xp * heat_xp_mul - total_xp)
+    job_heat_dissect = math.round(total_xp * heat_xp_mul - total_xp)
     total_xp = total_xp + job_heat_dissect
     bonus_xp = self._ehi_xp.limited_xp_bonus
-    extra_bonus_dissect = math_round(total_xp * bonus_xp - total_xp)
+    extra_bonus_dissect = math.round(total_xp * bonus_xp - total_xp)
     total_xp = total_xp + extra_bonus_dissect
     local bonus_mutators_dissect = total_xp * self._ehi_xp.mutator_xp_reduction
     total_xp = total_xp + bonus_mutators_dissect
@@ -472,22 +466,18 @@ function EHIExperienceManager:RecalculateXP(id)
     end
 end
 
----@param xp ExperienceManager
----@return number
-function EHIExperienceManager:GetRemainingXPToMaxLevel(xp)
+---@param xp_total number
+function EHIExperienceManager:GetRemainingXPToMaxLevel(xp_total)
     local totalXpTo100 = 0
     for _, level in ipairs(tweak_data.experience_manager.levels) do
         totalXpTo100 = totalXpTo100 + Application:digest_value(level.points, false)
     end
-    return math.max(totalXpTo100 - xp:total(), 0)
+    return math.max(totalXpTo100 - xp_total, 0)
 end
 
 function EHIExperienceManager:GetPlayerXPLimit()
     if self._xp.prestige_enabled then
-        if self:IsInfamyPoolOverflowed() then
-            return self._xp.prestige_xp
-        end
-        return self._xp.prestige_xp_remaining
+        return self:IsInfamyPoolOverflowed() and self._xp.prestige_xp or self._xp.prestige_xp_remaining
     end
     return self._xp.level_xp_to_100
 end
@@ -512,8 +502,12 @@ end
 function EHIExperienceManager:SetCriminalsListener(ub)
     if ub then
         local function Query(...)
-            self:QueryAmountOfAllPlayers()
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+            if not self._xp_disabled then
+                DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
+                    self:QueryAmountOfAllPlayers()
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                end)
+            end
         end
         if EHI:HookExists(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character") then
             EHI:UpdateExistingHook(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
@@ -527,8 +521,12 @@ function EHIExperienceManager:SetCriminalsListener(ub)
         EHI:UpdateExistingHookIfExistsOrHook(CriminalsManager, "_remove", "EHI_CriminalsManager_remove", Query)
     else
         local function Query(...)
-            self:QueryAmountOfAlivePlayers()
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+            if not self._xp_disabled then
+                DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
+                    self:QueryAmountOfAlivePlayers()
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                end)
+            end
         end
         Hooks:PostHook(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character", Query)
         Hooks:PostHook(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit", Query)

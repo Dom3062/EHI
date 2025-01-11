@@ -224,6 +224,7 @@ function XPBreakdownPanel:init(gui, ws_panel, panel_params, xp_params, loc, para
     self._diff_multiplier = xp_params.diff_multiplier --[[@as boolean]]
     self._no_overview_multipliers = xp_params.no_overview_multipliers --[[@as boolean]]
     self._lines = 0
+    self:_preparse_data()
     self:ProcessBreakdown()
 end
 
@@ -234,6 +235,18 @@ function XPBreakdownPanel:_recreate_bg()
         layer = 1,
         color = Color(0.5, 0, 0, 0)
     })
+end
+
+function XPBreakdownPanel:_preparse_data()
+    if self._params.objective then
+        if type(self._params.objective.escape) == "table" then
+            for _, escape in ipairs(self._params.objective.escape) do ---@diagnostic disable-line
+                if escape.stealth then
+                    escape.ghost_bonus = tweak_data.levels:GetLevelStealthBonus()
+                end
+            end
+        end
+    end
 end
 
 function XPBreakdownPanel:ProcessBreakdown()
@@ -265,7 +278,7 @@ function XPBreakdownPanel:ProcessBreakdown()
         for key, data in pairs(self._params.objective) do
             local str = self:_get_translated_key(key)
             if key == "escape" then
-                self:_process_escape(str, data, total_xp)
+                self:_process_escape(str, data, nil, total_xp)
             elseif key == "random" then
                 self:_process_random_objectives(data, total_xp)
             elseif type(data) == "table" then
@@ -338,7 +351,9 @@ function XPBreakdownPanel:ProcessBreakdown()
                         self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", loud_value, loud_value_gage)
                     end
                 elseif data.escape then
-                    self:_process_escape(self:_get_translated_key("escape"), data.escape, total_xp)
+                    self:_process_escape(self:_get_translated_key("escape"), data.escape, data.ghost_bonus, total_xp)
+                elseif data.escape_ghost_bonus_only then
+                    self:_process_escape(self:_get_translated_key("escape"), nil, data.escape_ghost_bonus_only, nil)
                 elseif data.random then
                     self:_process_random_objectives(data.random, total_xp)
                 else
@@ -429,7 +444,7 @@ function XPBreakdownPanel:_add_xp_text(txt, value, value_with_gage, text_color)
     else
         text = string.format("%s%s %s", txt, value, xp)
     end
-    self:_add_line(text, text_color)
+    return self:_add_line(text, text_color)
 end
 
 ---@param total string?
@@ -447,10 +462,31 @@ function XPBreakdownPanel:_add_total_xp(total, total_with_gage)
     self:_add_line(txt, colors.total_xp)
 end
 
+---@param text PanelText
+---@param ghost_bonus number?
+function XPBreakdownPanel:_process_escape_add_ghost_bonus(text, ghost_bonus)
+    if ghost_bonus and ghost_bonus > 0 then
+        self:make_fine_text(text)
+        local percent = ghost_bonus * 100
+        local stealth = self._panel:text({
+            blend_mode = "add",
+            x = text:right() + 2,
+            y = text:y(),
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = tweak_data.screen_colors.ghost_color,
+            text = string.format("%s +%d%s", self._loc:get_default_macro("BTN_GHOST"), percent, percent_format),
+            layer = 10
+        })
+        self:make_fine_text(stealth)
+    end
+end
+
 ---@param str string
----@param params table|number
----@param total_xp table
-function XPBreakdownPanel:_process_escape(str, params, total_xp)
+---@param params table|number?
+---@param ghost_bonus number?
+---@param total_xp table?
+function XPBreakdownPanel:_process_escape(str, params, ghost_bonus, total_xp)
     if type(params) == "table" then
         for _, value in ipairs(params) do
             local s
@@ -473,7 +509,10 @@ function XPBreakdownPanel:_process_escape(str, params, total_xp)
                 end
                 s = s .. ": "
             end
-            self:_add_xp_text(s, xp, xp_with_gage)
+            local text = self:_add_xp_text(s, xp, xp_with_gage)
+            if value.stealth then
+                self:_process_escape_add_ghost_bonus(text, value.ghost_bonus)
+            end
         end
         if next(params) then
             total_xp.add = false
@@ -485,13 +524,16 @@ function XPBreakdownPanel:_process_escape(str, params, total_xp)
         if self._gage then
             xp_with_gage = self._gui:FormatXPWithAllGagePackages(params)
         end
-        self:_add_xp_text(str .. ": ", xp, xp_with_gage)
-        total_xp.base = total_xp.base + params
+        local text = self:_add_xp_text(str .. ": ", xp, xp_with_gage)
+        self:_process_escape_add_ghost_bonus(text, ghost_bonus)
+        total_xp.base = total_xp.base + params ---@diagnostic disable-line
+    else
+        local text = self:_add_line(str .. ": ")
+        self:_process_escape_add_ghost_bonus(text, ghost_bonus)
     end
 end
 
 ---@param max number
----@return string
 function XPBreakdownPanel:_format_random_objectives_header(max)
     if localization == "czech" then
         if max == 1 then
@@ -1375,7 +1417,7 @@ end
 ---@param txt string
 ---@param txt_color Color?
 function XPBreakdownPanel:_add_line(txt, txt_color)
-    self._panel:text({
+    local text = self._panel:text({
         blend_mode = "add",
         x = 10,
         y = self:_get_panel_height(),
@@ -1386,6 +1428,7 @@ function XPBreakdownPanel:_add_line(txt, txt_color)
         layer = 10
     })
     self._lines = self._lines + 1
+    return text
 end
 
 function XPBreakdownPanel:_add_xp_overview_text()
@@ -1903,6 +1946,13 @@ function MissionBriefingGui:AddXPBreakdown(params)
                     end
                     custom.objectives_override = nil
                 end
+                if custom.name == "stealth" and custom.plan and custom.plan.objectives then
+                    for _, objective in ipairs(custom.plan.objectives) do
+                        if objective.escape then
+                            objective.ghost_bonus = tweak_data.levels:GetLevelStealthBonus()
+                        end
+                    end
+                end
                 _panels[i] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, custom.plan, i)
                 local button = XPBreakdownButton:new(self, ws_panel, "ehi_experience_" .. custom.name, custom.additional_name, loc, i)
                 if i == 1 then
@@ -1914,6 +1964,13 @@ function MissionBriefingGui:AddXPBreakdown(params)
             end
         else
             -- Process stealth plan first
+            if plan.stealth and plan.stealth.objectives then
+                for _, objective in ipairs(plan.stealth.objectives) do
+                    if objective.escape then
+                        objective.ghost_bonus = tweak_data.levels:GetLevelStealthBonus()
+                    end
+                end
+            end
             _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, plan.stealth)
             _buttons[1] = XPBreakdownButton:new(self, ws_panel, "ehi_experience_stealth", nil, loc)
             _buttons[1]:SetPosByPanel(_panels[1]._panel)

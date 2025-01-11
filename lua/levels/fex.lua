@@ -104,7 +104,7 @@ EHI:AddXPBreakdown({
                     add_objectives =
                     {
                         { amount = 2000, name = "mex4_found_car_keys" },
-                        { escape = 2000 }
+                        { escape = 2000, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() }
                     }
                 }
             },
@@ -121,7 +121,7 @@ EHI:AddXPBreakdown({
                 {
                     add_objectives =
                     {
-                        { escape = 1000 }
+                        { escape = 1000, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() }
                     }
                 }
             },

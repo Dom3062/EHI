@@ -210,7 +210,19 @@ EHI:AddXPBreakdown({
         { amount = 8000, name = "correct_pc_hack" },
         { amount = 4000, name = "timelock_done" },
         { amount = 10000, name = "fs_secured_required_bags" },
-        { escape = 8000 }
+        { escape = {
+            { amount = 8000, stealth = true, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() },
+            { amount = 8000, loud = true }
+        }}
     },
-    loot_all = 1000
+    loot_all = 1000,
+    total_xp_override =
+    {
+        params =
+        {
+            min_max = {
+                bonus_xp = { min_max = 8000 }
+            }
+        }
+    }
 })

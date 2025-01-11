@@ -382,14 +382,14 @@ end
 
 ---@param f fun(self: EHIManager)
 function EHIManager:AddLoadSyncFunction(f)
-    if EHI.IsClient then
+    if self._load_sync then
         self._load_sync:add(f)
     end
 end
 
 ---@param f fun(self: EHIManager)
 function EHIManager:AddFullSyncFunction(f)
-    if EHI.IsClient then
+    if self._full_sync then
         self._full_sync:add(f)
     end
 end
