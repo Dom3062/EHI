@@ -80,9 +80,12 @@ function EHIExperienceManager:ExperienceInit(xp)
         end
         self:SetGagePackageBonus(multiplier)
     end)
-    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function()
-        self._xp_disabled = true -- Block any XP updates if the mission ended
-    end)
+    local function Block()
+        self._xp_disabled = true -- Block any XP updates if the mission ended or player quitted to menu
+    end
+    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, Block)
+    EHI:AddCallback(EHI.CallbackMessage.GameEnd, Block)
+    EHI:AddCallback(EHI.CallbackMessage.GameRestart, Block)
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
     if not EHI:GetOption("show_xp_in_mission_briefing_only") then
         EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))

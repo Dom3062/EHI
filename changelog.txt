@@ -1,3 +1,6 @@
+r291 (12. 01. 2025):
+Attempt to fix random crashes after going to the main menu
+
 r290 (11. 01. 2025):
 Reduced used memory by using the same tracker for deployables
 Mission Briefing: Added stealth bonus after completing heists in stealth
