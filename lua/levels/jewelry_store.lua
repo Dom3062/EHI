@@ -90,7 +90,12 @@ EHI:AddXPBreakdown({
         {
             { amount = 2000, timer = 120, stealth = true },
             { amount = 6000, stealth = true },
-            { amount = 8000, loud = true }
+            { amount = 8000, loud = true, escape_chance = { start_chance = EHI:GetValueBasedOnDifficulty({
+                normal = 25,
+                hard = 27,
+                veryhard = 32,
+                overkill_or_above = 36
+            }), kill_add_chance = 5 } }
         }
     }
 })

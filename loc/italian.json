@@ -103,7 +103,6 @@
     "ehi_show_timers_desc" : "Mostra i timer per l'hacking, i trapani, la sega circolare, ecc...",
  
     "ehi_show_zipline_timer" : "Mostra Tracciatore Teleferica",
-    "ehi_show_zipline_timer_desc" : "Mostra 2 timer per la teleferica.\nIl primo timer mostra quanto tempo ci vuole per far cadere una borsa/giocatore, il secondo mostra il tempo per il ripristino della teleferica",
  
     "ehi_show_gage_tracker" : "Mostra Tracciatore di Gage",
     "ehi_show_gage_tracker_desc" : "Mostra il tracciatore per i pacchetti Gage sulla mappa.\nSe la mappa non consente i pacchetti di Gage, il tracciatore non verrà visualizzato",

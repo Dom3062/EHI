@@ -215,15 +215,15 @@ if EHI:GetOption("show_colored_bag_contour") then
         end
     end
     delta_range = max_range - min_range
-    local bag_color = {}
-    local light = EHI:GetVectorColorFromOption("bag_contour", "light")
-    local heavy = EHI:GetVectorColorFromOption("bag_contour", "heavy")
+    local bag_color = {} ---@type table<string, Vector3>
+    local light = EHI:GetColorFromOption("bag_contour", "light"):vector()
+    local heavy = EHI:GetColorFromOption("bag_contour", "heavy"):vector()
     for key, data in pairs(tweak_data.carry.types) do
         if key ~= "being" then
             bag_color[key] = math.lerp(light, heavy, (max_range - data.move_speed_modifier) / delta_range) -- Range is ratio
         end
     end
-    bag_color.being = EHI:GetVectorColorFromOption("bag_contour", "body")
+    bag_color.being = EHI:GetColorFromOption("bag_contour", "body"):vector()
     local ids_contour_color = Idstring("contour_color")
     local ids_contour_opacity = Idstring("contour_opacity")
     ---@param opacity number?
@@ -279,11 +279,11 @@ if EHI:GetOption("show_equipment_ammobag") then
     AmmoBagInteractionExt._ehi_tracker_id = all and "Deployables" or "AmmoBags"
     AmmoBagInteractionExt._ehi_unit = "ammo_bag"
     AmmoBagInteractionExt._ehi_unit_check = all
-    EHI:PreHook(AmmoBagInteractionExt, "init", function(self, unit, ...) ---@param unit UnitAmmoDeployable
+    Hooks:PreHook(AmmoBagInteractionExt, "init", "EHI_AmmoBagInteractionExt_init", function(self, unit, ...)
         self._ehi_key = unit:base()._ehi_key
     end)
     EHI:PreHookAndHook(AmmoBagInteractionExt, "set_active", pre_set_active, post_set_active)
-    EHI:Hook(AmmoBagInteractionExt, "destroy", destroy)
+    Hooks:PostHook(AmmoBagInteractionExt, "destroy", "EHI_AmmoBagInteractionExt_destroy", destroy)
 end
 
 if EHI:GetOption("show_equipment_bodybags") then
@@ -293,17 +293,17 @@ if EHI:GetOption("show_equipment_bodybags") then
         return managers.groupai:state():whisper_mode()
     end
     BodyBagsBagInteractionExt._ehi_unit_check = all
-    EHI:PreHook(BodyBagsBagInteractionExt, "init", function(self, unit, ...)
+    Hooks:PreHook(BodyBagsBagInteractionExt, "init", "EHI_BodyBagsBagInteractionExt_init", function(self, unit, ...)
         self._ehi_key = unit:base()._ehi_key
     end)
     EHI:PreHookAndHook(BodyBagsBagInteractionExt, "set_active", pre_set_active, post_set_active)
-    EHI:Hook(BodyBagsBagInteractionExt, "destroy", destroy)
+    Hooks:PostHook(BodyBagsBagInteractionExt, "destroy", "EHI_BodyBagsBagInteractionExt_destroy", destroy)
 end
 
 if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_firstaidkit") then
     local aggregate = EHI:GetOption("show_equipment_aggregate_health")
     DoctorBagBaseInteractionExt._ehi_unit_check = aggregate or all
-    EHI:PreHook(DoctorBagBaseInteractionExt, "init", function(self, unit, ...)
+    Hooks:PreHook(DoctorBagBaseInteractionExt, "init", "EHI_DoctorBagBaseInteractionExt_init", function(self, unit, ...)
         self._ehi_key = unit:base()._ehi_key
         if all then
             self._ehi_tracker_id = "Deployables"
@@ -317,5 +317,5 @@ if EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_fi
         self._ehi_unit = self.tweak_data == "first_aid_kit" and "first_aid_kit" or "doctor_bag"
     end)
     EHI:PreHookAndHook(DoctorBagBaseInteractionExt, "set_active", pre_set_active, post_set_active)
-    EHI:Hook(DoctorBagBaseInteractionExt, "destroy", destroy)
+    Hooks:PostHook(DoctorBagBaseInteractionExt, "destroy", "EHI_DoctorBagBaseInteractionExt_destroy", destroy)
 end

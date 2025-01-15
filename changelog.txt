@@ -1,3 +1,9 @@
+r292 (15. 01. 2025):
+Captain Chance Tracker: Fixed inconsistent tracking if the tracker is created mid-heist and not after alarm
+Mission Briefing: Added escape chance after completing heists in loud
+Adjusted Zipline trackers to match their waypoint counterpart
+Fixed sync info for Captain Chance Tracker send out twice in Crime Spree
+
 r291 (12. 01. 2025):
 Attempt to fix random crashes after going to the main menu
 

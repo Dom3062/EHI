@@ -90,11 +90,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
     self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, "reload" } })
     self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, Icon.Fix } })
-    do
-        local time = math.rand(1, 8)
-        self:AddFakeTracker({ id = "show_zipline_timer", time = time, icons = { "zipline_bag" } })
-        self:AddFakeTracker({ id = "show_zipline_timer", time = time * 2, icons = { "zipline", Icon.Loop } })
-    end
+    self:AddFakeTracker({ id = "show_zipline_timer", time = math.rand(1, 8) * 2, icons = { table.random({ "zipline_bag", "Other_H_Any_DidntSee" }) } })
     if EHI:GetOption("gage_tracker_panel") == 1 then
         self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" })
     end
@@ -118,7 +114,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     end
     self:AddFakeTracker({ id = "show_loot_counter", icons = { Icon.Loot }, class = "FakeEHIProgressTracker" })
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
-    self:AddFakeTracker({ id = "show_escape_chance", icons = { { icon = Icon.Car, color = Color.red } }, chance = math.random(100), class = "FakeEHIChanceTracker" })
+    self:AddFakeTracker({ id = "show_escape_chance", icons = { Icon.Car }, chance = math.random(100), class = "FakeEHIEscapeChanceTracker" })
     self:AddFakeTracker({ id = "show_sniper_tracker", icons = { "sniper" }, class = "FakeEHISniperTracker" })
     self:AddFakeTracker({ id = "show_marshal_initial_time", time = math.random(0, 480), icons = { "equipment_sheriff_star" } })
     self:AddPreviewText()

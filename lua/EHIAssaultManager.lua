@@ -46,7 +46,7 @@ function EHIAssaultManager:init_finalize(manager)
         show_endless_assault = true,
         hint = combine and "assault" or "assault_time"
     }
-    EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode, element_id)
+    self:AddAssaultTypeChangedCallback(function(mode, element_id)
         if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
             return
         end
@@ -78,7 +78,7 @@ function EHIAssaultManager:init_finalize(manager)
         self._trackers:CallFunction(self._assault_time.name, "SetEndlessAssault", self._endless_assault, data)
     end)
     if not self._assault_time.blocked then
-        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+        self:AddAssaultModeChangedCallback(function(mode)
             if mode == "phalanx" then
                 self._trackers:CallFunction(self._assault_time.name, "CaptainArrived")
             else
@@ -295,6 +295,37 @@ function EHIAssaultManager:AddAssaultEndCallback(f)
         self._assault_end_callback = CallbackEventHandler:new()
     end
     self._assault_end_callback:add(f)
+end
+
+---@param f fun(mode: "normal"|"endless", element_id: number)
+function EHIAssaultManager:AddAssaultTypeChangedCallback(f)
+    if not self._assault_type_changed_callback then
+        self._assault_type_changed_callback = CallbackEventHandler:new()
+    end
+    self._assault_type_changed_callback:add(f)
+end
+
+---@param mode "normal"|"endless"
+---@param element_id number
+function EHIAssaultManager:CallAssaultTypeChangedCallback(mode, element_id)
+    if self._assault_type_changed_callback then
+        self._assault_type_changed_callback:dispatch(mode, element_id)
+    end
+end
+
+---@param f fun(mode: "normal"|"phalanx")
+function EHIAssaultManager:AddAssaultModeChangedCallback(f)
+    if not self._assault_mode_changed_callback then
+        self._assault_mode_changed_callback = CallbackEventHandler:new()
+    end
+    self._assault_mode_changed_callback:add(f)
+end
+
+---@param mode "normal"|"phalanx"
+function EHIAssaultManager:CallAssaultModeChangedCallback(mode)
+    if self._assault_mode_changed_callback then
+        self._assault_mode_changed_callback:dispatch(mode)
+    end
 end
 
 ---@param assault_number number

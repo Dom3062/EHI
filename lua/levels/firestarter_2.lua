@@ -89,6 +89,7 @@ EHI:AddXPBreakdown({
         {
             { amount = 6000, stealth = true, timer = 180 },
             { amount = 12000, stealth = true },
+            { amount = 6000, loud = true, timer = 180 },
             { amount = 10000, loud = true }
         }
     },

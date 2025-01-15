@@ -18,7 +18,7 @@ local function NotifyListeners(wave_mode, element_id)
             return
         end
         mode = wave_mode
-        EHI:CallCallback(EHI.CallbackMessage.AssaultWaveModeChanged, wave_mode == "besiege" and "normal" or "endless", element_id)
+        managers.ehi_assault:CallAssaultTypeChangedCallback(wave_mode == "besiege" and "normal" or "endless", element_id)
     end
 end
 

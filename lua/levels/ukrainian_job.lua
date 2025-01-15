@@ -66,6 +66,7 @@ if EHI:IsLootCounterVisible() then
             end
         end
         EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract, client_from_start = true })
+        self._loot:SyncSecuredLoot()
     end, true)
     local DecreaseProgressMax = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._loot:DecreaseLootCounterProgressMax()
@@ -112,7 +113,12 @@ EHI:AddXPBreakdown({
         {
             { amount = 4000, timer = 120, stealth = true },
             { amount = 10000, stealth = true },
-            { amount = 10000, loud = true }
+            { amount = 10000, loud = true, escape_chance = { start_chance = EHI:GetValueBasedOnDifficulty({
+                normal = 30,
+                hard = 33,
+                veryhard = 35,
+                overkill_or_above = 37
+            }), kill_add_chance = 5 } }
         }
     }
 })

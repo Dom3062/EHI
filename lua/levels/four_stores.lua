@@ -98,7 +98,7 @@ EHI:AddXPBreakdown({
         escape =
         {
             { amount = 6000, stealth = true },
-            { amount = 6000, loud = true }
+            { amount = 6000, loud = true, escape_chance = { start_chance = 30, kill_add_chance = 5 } }
         }
     },
     no_total_xp = true

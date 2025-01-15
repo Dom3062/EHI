@@ -65,7 +65,8 @@ EHI:AddXPBreakdown({
         { _or = true },
         { amount = 6000, name = "rats2_trade" },
         { _or = true },
-        { amount = 6000 + 4000, name = "rats2_trade_and_steal" } -- Previous XP is counted too
+        { amount = 6000 + 4000, name = "rats2_trade_and_steal" }, -- Previous XP is counted too
+        { police_escape = true, escape_chance = { start_chance = 25 } }
     },
     total_xp_override =
     {

@@ -413,7 +413,7 @@
     "ehi_show_enemy_turret_trackers_desc" : "Zobrazovat sledovač když se nabíjí nebo se opravuje",
 
     "ehi_show_zipline_timer" : "Zobrazovat sledovač na Zipline",
-    "ehi_show_zipline_timer_desc" : "Zobrazuje 2 časovače.\nPrvní ukazuje, jak dlouho trvá přemístít pytel/hráče, druhý ukazuje, kdy bude Zipline znovu použitelná",
+    "ehi_show_zipline_timer_desc" : "Zobrazuje sledovač jak dlouho trvá přemístit pytel/hráče a návrat do původní pozice",
 
     "ehi_show_gage_tracker" : "Zobrazovat sledovač pro Gage balíčky",
     "ehi_show_gage_tracker_desc" : "Zobrazuje sledovač pro Gage balíčky na mapě\nPokud je mapa neumožňuje, sledovač nebude viditelný",
@@ -1033,6 +1033,8 @@
     "ehi_experience_heli_escape" : "Únik helikoptérou",
     "ehi_experience_loud_escape" : "Dokončení mise po alarmu",
     "ehi_experience_stealth_escape" : "Dokončení mise bez alarmu",
+    "ehi_experience_alarm_escape" : "Dokončení mise po alarmu za $time",
+    "ehi_experience_police_escape" : "Dokončení mise po příjezdu policie",
     "ehi_experience_escape" : "Dokončení mise",
     "ehi_experience_each_goat_secured" : "Každá zajištěná koza",
     "ehi_experience_each_loot_secured" : "Každý zajištěný pytel",

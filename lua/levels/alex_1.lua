@@ -51,8 +51,7 @@ local other =
         if self._trackers:CallFunction2(trigger.id, "SetTimeIfLower", trigger.time) then
             self:CreateTracker(trigger)
         end
-    end), trigger_once = true }),
-    [101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    end), trigger_once = true })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local SetRespawnTime = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
@@ -123,6 +122,7 @@ EHI:ShowAchievementLootCounter({
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 })
 if EHI:IsEscapeChanceEnabled() then
+    other[101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
     end)
@@ -143,21 +143,24 @@ local min_xp =
 {
     rats_lab_exploded = true
 }
+local lab_explode_increase_escape = 70
 if EHI:IsMayhemOrAbove() then
     obj1_xp = 0
     min_xp =
     {
         rats_3_bags_cooked = true
     }
+    lab_explode_increase_escape = nil ---@diagnostic disable-line
 end
 EHI:AddXPBreakdown({
     objectives =
     {
-        { amount = obj1_xp, name = "rats_lab_exploded" },
+        { amount = obj1_xp, name = "rats_lab_exploded", increase_escape_chance = lab_explode_increase_escape },
         { _or = true },
         { amount = 30000, name = "rats_3_bags_cooked" },
         { _or = true },
-        { amount = 30000 + 40000, name = "rats_all_7_bags_cooked" } -- Previous XP is counted too
+        { amount = 30000 + 40000, name = "rats_all_7_bags_cooked" }, -- Previous XP is counted too
+        { escape = true, escape_chance = { start_chance = 35, no_expert_driver_asset = true } }
     },
     total_xp_override =
     {

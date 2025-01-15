@@ -213,7 +213,6 @@
     "ehi_show_enemy_turret_trackers_desc" : "Mostrar / ocultar contadores cuando las torretas enemigas estén recargando o reparándose.",
 
     "ehi_show_zipline_timer" : "Mostrar contador de tirolinas",
-    "ehi_show_zipline_timer_desc" : "Mostrar / ocultar 2 temporizadores para tirolinas.\nEl primero, muestra cuánto tiempo le tomará dejar caer una bolsa / jugador.\nEl segundo, muestra el tiempo de reinicio de la tirolina.",
 
     "ehi_show_gage_tracker" : "Mostrar contador de 'Paquetes de Gage'",
     "ehi_show_gage_tracker_desc" : "Mostrar / ocultar un contador para los 'Paquetes de Gage' en el mapa.\nSi el mapa no permite estos paquetes, el contador no se mostrará.",

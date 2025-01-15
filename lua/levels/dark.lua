@@ -109,7 +109,7 @@ EHI:AddXPBreakdown({
     {
         { amount = 1000, name = "murky_station_equipment_found", times = 1 },
         { amount = 2000, name = "murky_station_found_emp_part", times = 2 },
-        { escape = 2000 }
+        { escape = 2000, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() }
     },
     loot =
     {

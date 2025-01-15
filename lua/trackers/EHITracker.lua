@@ -512,7 +512,7 @@ end
 
 ---@param i number
 ---@param texture string
----@param texture_rect number[]
+---@param texture_rect number[]?
 ---@param x number
 ---@param visible boolean?
 ---@param color Color?

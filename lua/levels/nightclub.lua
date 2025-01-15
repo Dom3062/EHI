@@ -66,8 +66,8 @@ EHI:AddXPBreakdown({
         escape =
         {
             { amount = 10000, stealth = true },
-            { amount = 8000, loud = true },
-            { amount = 4000, loud = true, c4_used = true }
+            { amount = 8000, loud = true, escape_chance = { start_chance = 25 } },
+            { amount = 4000, loud = true, c4_used = true, escape_chance = { start_chance = 25 } }
         }
     },
     loot_all = 1000,

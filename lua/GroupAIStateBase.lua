@@ -71,7 +71,7 @@ function GroupAIStateBase:load(...)
         if law1team and law1team.damage_reduction then -- PhalanxDamageReduction is created before this gets set; see GameSetup:load()
             managers.ehi_tracker:SetChancePercent("PhalanxDamageReduction", law1team.damage_reduction or 0)
         elseif self._hunt_mode then -- Assault and AssaultTime is created before this is checked; see GameSetup:load()
-            EHI:CallCallback(EHI.CallbackMessage.AssaultWaveModeChanged, "endless")
+            managers.ehi_assault:CallAssaultTypeChangedCallback("endless", 0)
         end
     else
         managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
@@ -102,7 +102,7 @@ if not tweak_data.levels:IsStealthRequired() then
             managers.ehi_tracker:SetChance("Drama", self._drama_data.amount, 2)
         end
         EHI:AddOnAlarmCallback(Create)
-        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+        EHIAssaultManager:AddAssaultTypeChangedCallback(function(mode, element_id)
             if mode == "endless" then
                 managers.ehi_tracker:RemoveTracker("Drama")
             elseif managers.ehi_tracker:TrackerDoesNotExist("Drama") then
@@ -110,7 +110,7 @@ if not tweak_data.levels:IsStealthRequired() then
             end
             assault_mode = mode
         end)
-        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+        EHIAssaultManager:AddAssaultModeChangedCallback(function(mode)
             if mode == "normal" and assault_mode == "endless" then
                 assault_mode = "normal"
                 Create()
@@ -140,10 +140,9 @@ if not tweak_data.levels:IsStealthRequired() then
                 end
             end
         else
-            local minion_class, requires_new_minion_func = "EHIEquipmentTracker", false
+            local minion_class = "EHIEquipmentTracker"
             if EHI:GetOption("show_minion_health") then
                 minion_class = "EHITotalMinionTracker"
-                requires_new_minion_func = true
                 EHI:LoadTracker("EHIMinionTracker")
             end
             ---@param key string
@@ -160,7 +159,7 @@ if not tweak_data.levels:IsStealthRequired() then
                         class = minion_class
                     })
                 end
-                if requires_new_minion_func then
+                if minion_class == "EHITotalMinionTracker" then
                     if amount == 0 then -- Removal
                         managers.ehi_tracker:CallFunction("Converts", "RemoveMinion", key)
                     else

@@ -4,6 +4,7 @@ if EHI:CheckLoadHook("GamePlayCentralManager") then
 end
 
 ---@class GamePlayCentralManager
+---@field _heist_timer { offset_time: number? }
 ---@field _mission_disabled_units table<number, boolean>
 ---@field get_heist_timer fun(self: self): number
 
@@ -26,9 +27,9 @@ else
     end
 end
 
-function GamePlayCentralManager:load(data, ...)
-    original.load(self, data, ...)
-    managers.ehi_manager:LoadTime(data.GamePlayCentralManager.heist_timer or 0)
+function GamePlayCentralManager:load(...)
+    original.load(self, ...)
+    managers.ehi_manager:LoadTime(self._heist_timer.offset_time or 0)
 end
 
 ---@param id number

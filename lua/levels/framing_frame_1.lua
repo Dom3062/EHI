@@ -138,7 +138,7 @@ EHI:AddXPBreakdown({
             objectives =
             {
                 { amount = 6000, name = "pc_hack" },
-                { escape = 2000 }
+                { escape = 2000, escape_chance = { start_chance = 25, kill_add_chance = 5 } }
             },
             loot_all = 500,
             total_xp_override = xp_override

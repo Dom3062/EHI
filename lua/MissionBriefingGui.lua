@@ -243,9 +243,28 @@ function XPBreakdownPanel:_preparse_data()
             for _, escape in ipairs(self._params.objective.escape) do ---@diagnostic disable-line
                 if escape.stealth then
                     escape.ghost_bonus = tweak_data.levels:GetLevelStealthBonus()
+                elseif escape.loud and escape.escape_chance and not escape.escape_chance.no_expert_driver_asset then
+                    self._needs_assets_hook = true
                 end
             end
         end
+    end
+    if self._needs_assets_hook then
+        local function check(assets, ...) ---@param assets MissionAssetsManager
+            local previous_value = self._expert_driver_asset_bought
+            self._expert_driver_asset_bought = assets:IsEscapeDriverAssetUnlocked()
+            if previous_value ~= self._expert_driver_asset_bought then
+                self:RefreshXPOverview()
+                self:ProcessBreakdown()
+            end
+        end
+        self._assets_hook =
+        {
+            "EHI_MissionBriefingGui_Loud_relock_XPBreakdownPanel_" .. tostring(self._panel),
+            "EHI_MissionBriefingGui_Loud_unlock_XPBreakdownPanel_" .. tostring(self._panel)
+        }
+        Hooks:PostHook(MissionAssetsManager, "sync_relock_assets", self._assets_hook[1], check)
+        Hooks:PostHook(MissionAssetsManager, "sync_unlock_asset", self._assets_hook[2], check)
     end
 end
 
@@ -278,7 +297,7 @@ function XPBreakdownPanel:ProcessBreakdown()
         for key, data in pairs(self._params.objective) do
             local str = self:_get_translated_key(key)
             if key == "escape" then
-                self:_process_escape(str, data, nil, total_xp)
+                self:_process_escape(str, data, nil, nil, total_xp)
             elseif key == "random" then
                 self:_process_random_objectives(data, total_xp)
             elseif type(data) == "table" then
@@ -351,9 +370,13 @@ function XPBreakdownPanel:ProcessBreakdown()
                         self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", loud_value, loud_value_gage)
                     end
                 elseif data.escape then
-                    self:_process_escape(self:_get_translated_key("escape"), data.escape, data.ghost_bonus, total_xp)
+                    self:_process_escape(self:_get_translated_key("escape"), data.escape, data.ghost_bonus, data.escape_chance, total_xp)
                 elseif data.escape_ghost_bonus_only then
-                    self:_process_escape(self:_get_translated_key("escape"), nil, data.escape_ghost_bonus_only, nil)
+                    self:_process_escape(self:_get_translated_key("escape"), nil, data.escape_ghost_bonus_only, nil, nil)
+                elseif data.loud_escape then
+                    self:_process_escape(self:_get_translated_key("loud_escape"), nil, nil, data.escape_chance, nil)
+                elseif data.police_escape then
+                    self:_process_escape(self:_get_translated_key("police_escape"), nil, nil, data.escape_chance, nil)
                 elseif data.random then
                     self:_process_random_objectives(data.random, total_xp)
                 else
@@ -372,6 +395,7 @@ function XPBreakdownPanel:ProcessBreakdown()
                     end
                     local text_color = data.optional and colors.optional ---@cast text_color Color?
                     local add_xp_to_base = true
+                    local text
                     if data.times then
                         local times_formatted = self._loc:text("ehi_experience_trigger_times", { times = data.times })
                         local s
@@ -386,21 +410,47 @@ function XPBreakdownPanel:ProcessBreakdown()
                         else
                             s = str .. " (" .. times_formatted .. ")"
                         end
-                        self:_add_xp_text(s .. ": ", xp, xp_with_gage, text_color)
+                        text = self:_add_xp_text(s .. ": ", xp, xp_with_gage, text_color)
                     elseif data.stealth then
                         total_xp.add = false
                         add_xp_to_base = false
-                        self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage, text_color)
+                        text = self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_stealth") .. "): ", xp, xp_with_gage, text_color)
                     elseif data.loud then
                         total_xp.add = false
                         add_xp_to_base = false
-                        self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage, text_color)
+                        text = self:_add_xp_text(str .. " (" .. self._loc:text("ehi_experience_loud") .. "): ", xp, xp_with_gage, text_color)
                     else
-                        self:_add_xp_text(str .. ": ", xp, xp_with_gage, text_color)
+                        text = self:_add_xp_text(str .. ": ", xp, xp_with_gage, text_color)
                     end
                     if add_xp_to_base then
                         local times = data.times or 1
                         total_xp.base = total_xp.base + (amount * times)
+                    end
+                    if data.increase_escape_chance then
+                        self:make_fine_text(text)
+                        local car = self._panel:bitmap({
+                            blend_mode = "add",
+                            x = text:right() + 2,
+                            y = text:y(),
+                            w = 16,
+                            h = 16,
+                            texture = "guis/textures/pd2/pd2_waypoints",
+                            texture_rect = { 32, 96, 32, 32 },
+                            color = Color.red,
+                            layer = 10
+                        })
+                        car:rotate(180)
+                        local chance = self._panel:text({
+                            blend_mode = "add",
+                            x = car:right() + 2,
+                            y = car:y(),
+                            font = tweak_data.menu.pd2_large_font,
+                            font_size = tweak_data.menu.pd2_small_font_size,
+                            color = Color.red,
+                            text = string.format("+%d%s", data.increase_escape_chance, percent_format),
+                            layer = 10
+                        })
+                        self:make_fine_text(chance)
                     end
                 end
             end
@@ -482,12 +532,78 @@ function XPBreakdownPanel:_process_escape_add_ghost_bonus(text, ghost_bonus)
     end
 end
 
+---@param text PanelText
+---@param escape_chance { start_chance: number, kill_add_chance: number? }?
+function XPBreakdownPanel:_process_escape_add_escape_chance(text, escape_chance)
+    if escape_chance and not self._expert_driver_asset_bought then
+        self:make_fine_text(text)
+        local car = self._panel:bitmap({
+            blend_mode = "add",
+            x = text:right() + 2,
+            y = text:y(),
+            w = 16,
+            h = 16,
+            texture = "guis/textures/pd2/pd2_waypoints",
+            texture_rect = { 32, 96, 32, 32 },
+            color = Color.red,
+            layer = 10
+        })
+        car:rotate(180)
+        local chance = self._panel:text({
+            blend_mode = "add",
+            x = car:right() + 2,
+            y = car:y(),
+            font = tweak_data.menu.pd2_large_font,
+            font_size = tweak_data.menu.pd2_small_font_size,
+            color = Color.red,
+            text = string.format("%d%s", escape_chance.start_chance, percent_format),
+            layer = 10
+        })
+        self:make_fine_text(chance)
+        if escape_chance.kill_add_chance and escape_chance.kill_add_chance > 0 then
+            local kill_add_chance = self._panel:text({
+                blend_mode = "add",
+                x = chance:right() + 2,
+                y = chance:y(),
+                font = tweak_data.menu.pd2_large_font,
+                font_size = tweak_data.menu.pd2_small_font_size,
+                color = Color.red,
+                text = string.format("+%d%s", escape_chance.kill_add_chance, percent_format),
+                layer = 10
+            })
+            self:make_fine_text(kill_add_chance)
+            local civ = self._panel:bitmap({
+                blend_mode = "add",
+                x = kill_add_chance:right() + 2,
+                y = kill_add_chance:y(),
+                w = 16,
+                h = 16,
+                texture = "guis/textures/pd2/skilltree/icons_atlas",
+                texture_rect = { 384, 448, 64, 64 },
+                color = Color.red,
+                layer = 10
+            })
+            local glock = self._panel:bitmap({
+                blend_mode = "add",
+                x = civ:right() + 2,
+                y = civ:y(),
+                w = 16,
+                h = 16,
+                texture = "guis/textures/pd2/blackmarket/icons/weapons/glock_18c",
+                texture_rect = { 64, 0, 128, 128 },
+                layer = 10
+            })
+        end
+    end
+end
+
 ---@param str string
----@param params table|number?
+---@param params table|number|true?
 ---@param ghost_bonus number?
+---@param escape_chance { start_chance: number, kill_add_chance: number? }?
 ---@param total_xp table?
-function XPBreakdownPanel:_process_escape(str, params, ghost_bonus, total_xp)
-    if type(params) == "table" then
+function XPBreakdownPanel:_process_escape(str, params, ghost_bonus, escape_chance, total_xp)
+    if type(params) == "table" then ---@cast params _XPBreakdown.escape[]
         for _, value in ipairs(params) do
             local s
             local _value = self._xp:FakeMultiplyXPWithAllBonuses(value.amount)
@@ -502,16 +618,22 @@ function XPBreakdownPanel:_process_escape(str, params, ghost_bonus, total_xp)
                     s = s .. " (<" .. self:_format_time(value.timer) .. ")"
                 end
                 s = s .. ": "
-            else
+            elseif value.loud then
                 s = self._loc:text("ehi_experience_loud_escape")
                 if value.c4_used then
                     s = s .. " (" .. self._loc:text("ehi_experience_c4_used") .. ")"
+                elseif value.timer then
+                    s = s .. " (<" .. self:_format_time(value.timer) .. ")"
                 end
                 s = s .. ": "
+            elseif value.escape_after_alarm_in then
+                s = self._loc:text("ehi_experience_alarm_escape", { time = self:_format_time(value.escape_after_alarm_in) }) .. ": "
             end
             local text = self:_add_xp_text(s, xp, xp_with_gage)
             if value.stealth then
                 self:_process_escape_add_ghost_bonus(text, value.ghost_bonus)
+            elseif value.loud then
+                self:_process_escape_add_escape_chance(text, value.escape_chance)
             end
         end
         if next(params) then
@@ -526,10 +648,12 @@ function XPBreakdownPanel:_process_escape(str, params, ghost_bonus, total_xp)
         end
         local text = self:_add_xp_text(str .. ": ", xp, xp_with_gage)
         self:_process_escape_add_ghost_bonus(text, ghost_bonus)
+        self:_process_escape_add_escape_chance(text, escape_chance)
         total_xp.base = total_xp.base + params ---@diagnostic disable-line
     else
         local text = self:_add_line(str .. ": ")
         self:_process_escape_add_ghost_bonus(text, ghost_bonus)
+        self:_process_escape_add_escape_chance(text, escape_chance)
     end
 end
 
@@ -1754,6 +1878,12 @@ function XPBreakdownPanel:destroy()
     self._destroyed = true
     if alive(self._panel) then
         self._panel:parent():remove(self._panel)
+    end
+    if self._needs_assets_hook then
+        Hooks:RemovePostHook(self._assets_hook[1])
+        Hooks:RemovePostHook(self._assets_hook[2])
+        self._needs_assets_hook = nil
+        self._assets_hook = nil
     end
 end
 

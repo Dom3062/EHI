@@ -21,9 +21,7 @@ function EHIEscapeChanceManager:AddEscapeChanceTracker(dropin, chance, civilian_
     self._trackers:AddTracker({
         id = "EscapeChance",
         chance = chance + (self._civilians_killed * (civilian_killed_multiplier or 5)),
-        icons = { { icon = EHI.Icons.Car, color = Color.red } },
-        class = EHI.Trackers.Chance,
-        hint = "van_crash_chance"
+        class = "EHIEscapeChanceTracker"
     })
 end
 

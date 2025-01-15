@@ -14,7 +14,7 @@ if EHI:GetOptionAndLoadTracker("show_captain_damage_reduction") then
         original.set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
         managers.ehi_tracker:SetChancePercent("PhalanxDamageReduction", damage_reduction or 0)
     end
-    EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+    EHIAssaultManager:AddAssaultModeChangedCallback(function(mode)
         if mode == "phalanx" then
             managers.ehi_tracker:AddTracker({
                 id = "PhalanxDamageReduction",

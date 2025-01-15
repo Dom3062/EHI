@@ -52,15 +52,6 @@ function ZipLine:init(unit, ...)
                 class = EHI.Trackers.Group.Base
             })
         end
-        if managers.ehi_tracker:CallFunction2("ZipLineReset", "AddUnit") then
-            managers.ehi_tracker:PreloadTracker({
-                id = "ZipLineReset",
-                icons = { "zipline", EHI.Icons.Loop },
-                unit = true,
-                hint = "zipline_reset",
-                class = EHI.Trackers.Group.Base
-            })
-        end
     end
     if self:is_usage_type_bag() then
         self:HookUpdateLoop()
@@ -76,8 +67,7 @@ function ZipLine:HookUpdateLoop()
         if self.__ehi_bag_attached and not self._attached_bag then
             self.__ehi_bag_attached = nil
             local t = self:total_time() * self._current_time
-            managers.ehi_tracker:CallFunction("ZipLineBag", "RemoveByID", self._ehi_key_bag)
-            managers.ehi_tracker:CallFunction("ZipLineReset", "SetTimeNoAnim", t, self._ehi_key_reset)
+            managers.ehi_tracker:CallFunction("ZipLineBag", "SetTimeNoAnim", t, self._ehi_key_reset)
             managers.ehi_waypoint:SetWaypointTime(self._ehi_key_reset, t)
         end
     end
@@ -112,13 +102,11 @@ end
 
 function ZipLine:attach_bag(...)
     original.attach_bag(self, ...)
-    local total_time = self:total_time()
-    local total_time_2 = total_time * 2
+    local total_time = self:total_time() * 2
     managers.ehi_tracker:RunTracker("ZipLineBag", { id = self._ehi_key_bag, time = total_time })
-    managers.ehi_tracker:RunTracker("ZipLineReset", { id = self._ehi_key_reset, time = total_time_2 })
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
-            time = total_time_2,
+            time = total_time,
             icon = "zipline_bag",
             unit = self:GetMovingObject()
         })
@@ -132,15 +120,14 @@ local function AddUserZipline(self, unit)
     if not unit then
         return
     end
-    local total_time = self:total_time()
-    local total_time_2 = total_time * 2
+    local t = self:total_time()
+    local total_time = t * 2
     managers.ehi_tracker:RunTracker("ZipLineUser", { id = self._ehi_key_user, time = total_time })
-    managers.ehi_tracker:RunTracker("ZipLineReset", { id = self._ehi_key_reset, time = total_time_2 })
     if show_waypoint then
         local local_unit = unit == managers.player:player_unit()
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reset, {
-            time = total_time_2,
-            present_timer = local_unit and total_time, ---@diagnostic disable-line
+            time = total_time,
+            present_timer = local_unit and t, ---@diagnostic disable-line
             icon = "Other_H_Any_DidntSee",
             unit = self:GetMovingObject()
         })
@@ -160,6 +147,5 @@ end
 function ZipLine:destroy(...)
     managers.ehi_manager:RemoveUnit("ZipLineBag", self._ehi_key_bag, true)
     managers.ehi_manager:RemoveUnit("ZipLineUser", self._ehi_key_user, true)
-    managers.ehi_manager:RemoveUnit("ZipLineReset", self._ehi_key_reset, true)
     original.destroy(self, ...)
 end

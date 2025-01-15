@@ -8,15 +8,27 @@ EHIPhalanxChanceTracker._sync_fade_state = "EHI_EHIPhalanxChanceTracker_sync_fad
 EHIPhalanxChanceTracker.IsHost = EHI.IsHost
 function EHIPhalanxChanceTracker:pre_init(params)
     if params.first_assault then
-        self._first_assault = true
-        self._captain_start_chance = params.chance or 0
-        params.chance = 0
+        self:SetFirstAssault(params)
     end
     params.start_opened = not self._first_assault
     EHIPhalanxChanceTracker.super.pre_init(self, params)
 end
 
 function EHIPhalanxChanceTracker:post_init(params)
+    if not self._first_assault then
+        if self._parent_class:GetInternalData("assault", "is_assault") then
+            if self.IsHost then
+                local ai_state = managers.groupai:state()
+                if ai_state._task_data and ai_state._task_data.assault and ai_state._task_data.assault.phase == "fade" then -- Captain got activated during Fade state, pretend it is the first assault
+                    self:SetFirstAssault(params)
+                    params.start_opened = false
+                end
+            end -- Not possible to check data on client...
+        else -- Captain got activated during Control/Anticipation state, pretend it is the first assault
+            self:SetFirstAssault(params)
+            params.start_opened = false
+        end
+    end
     EHIPhalanxChanceTracker.super.post_init(self, params)
     self._t_refresh = params.time
     self._chance_increase = params.chance_increase
@@ -38,7 +50,7 @@ function EHIPhalanxChanceTracker:post_init(params)
                 end
             end)
             local state = managers.groupai:state()
-            local phase = state and state._task_data.phase
+            local phase = state and state._task_data.assault and state._task_data.assault.phase
             if not phase or phase == "fade" then
                 self:SetTextColor(self._paused_color, self._chance_text)
             end
@@ -54,6 +66,13 @@ function EHIPhalanxChanceTracker:post_init(params)
     else
         self._assault_t = 0
     end
+end
+
+---@param params EHITracker.params
+function EHIPhalanxChanceTracker:SetFirstAssault(params)
+    self._first_assault = true
+    self._captain_start_chance = params.chance or 0
+    params.chance = 0
 end
 
 function EHIPhalanxChanceTracker:update(dt)

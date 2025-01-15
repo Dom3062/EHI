@@ -132,7 +132,7 @@ EHI:AddXPBreakdown({
         escape =
         {
             { amount = 2000, stealth = true, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() },
-            { amount = 2000, loud = true }
+            { amount = 2000, loud = true, escape_chance = { start_chance = 10, kill_add_chance = 5 } }
         }
     },
     loot_all = 1000,

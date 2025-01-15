@@ -7,15 +7,11 @@ local Hints = EHI.Hints
 local triggers = {
     [100915] = { time = 4640/30, id = "CraneMoveGas", icons = { Icon.Winch, Icon.Fire, Icon.Goto }, waypoint = { position_from_element = 100836 }, hint = Hints.des_Crane },
     [100967] = { time = 3660/30, id = "CraneMoveGold", icons = { Icon.Escape }, waypoint_f = function(self, trigger)
-        if self.SyncedSFF.dinner_EscapePos then
-            self._waypoints:AddWaypoint(trigger.id, {
-                time = trigger.time,
-                icon = Icon.Interact,
-                position = self.SyncedSFF.dinner_EscapePos
-            })
-            return
-        end
-        self._trackers:AddTrackerIfDoesNotExist(trigger, trigger.pos)
+        self._waypoints:AddWaypoint(trigger.id, {
+            time = trigger.time,
+            icon = Icon.Interact,
+            position = self.SyncedSFF.dinner_EscapePos or self:GetElementPositionOrDefault(100836)
+        })
     end, hint = Hints.Escape },
     -- C4 (Doors)
     [100985] = { time = 5, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100831 } },
@@ -109,7 +105,7 @@ if ovk_and_up then
         }
     })
     if EHI:CanShowAchievement("farm_1") then
-        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+        EHI.Manager._assault:AddAssaultModeChangedCallback(function(mode)
             if mode == "phalanx" then
                 managers.ehi_unlockable:AddAchievementStatusTracker("farm_1", "finish")
             else

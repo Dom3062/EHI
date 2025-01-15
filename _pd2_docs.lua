@@ -3,6 +3,9 @@
     This file is not loaded, it is here to provide code completion in VSCode
 ]]
 
+-- Exposed engine functions:
+-- https://github.com/Krimzin/pd2-class-members/
+
 ---
 --- Aliases
 ---
@@ -1116,6 +1119,7 @@ end
 ---@field b number
 ---@field blue number
 ---@field unpack fun(self: self): r: number, g: number, b: number
+---@field vector fun(self: self): Vector3 Returns color as vector; From exposed engine function
 ---@field with_alpha fun(self: self, alpha: number): self
 
 ---@class Idstring
@@ -1505,6 +1509,14 @@ end
 ---@field has fun(v: table, k: any): boolean Returns `true` or `false` if `k` key exists in the table
 ---@field delete fun(v: table, e: any) `v` is expected as list
 
+---@generic K
+---@param ... K
+function table.set(...)
+	return table.list_to_set({
+		...
+	})
+end
+
 ---Maps values as keys with value `true`
 ---@generic K
 ---@param list K[]
@@ -1769,6 +1781,8 @@ end
 ---@field set_leftbottom fun(self: self, left: number, bottom: number)
 ---@field set_righttop fun(self: self, right: number, top: number)
 ---@field set_rightbottom fun(self: self, right: number, bottom: number)
+---@field set_layer fun(self: self, layer: number)
+---@field layer fun(self: self): number
 ---@field alpha fun(self: self) : number
 ---@field set_alpha fun(self: self, alpha: number)
 ---@field stop fun(self: self, anim_thread: thread?) If `anim_thread` is not provided, the function stops all current active animations
@@ -1849,6 +1863,7 @@ end
 ---@field text fun(self: self): string
 
 ---@class PanelBitmap : PanelBaseObject
+---@field rotate fun(self: self, angle: number)
 ---@field set_image fun(self: self, texture_path: string, texture_rect_x: number?, texture_rect_y: number?, texture_rect_w: number?, texture_rect_h: number?)
 ---@field set_texture_rect fun(self: self, x: number, y: number, w: number, h: number)
 

@@ -402,7 +402,6 @@
     "ehi_show_enemy_turret_trackers_desc" : "在敌方炮塔维修或装弹时显示追踪器",
 
     "ehi_show_zipline_timer" : "显示滑索追踪器",
-    "ehi_show_zipline_timer_desc" : "显示2个滑索计时器\n第一个表示运送战利品/玩家的时间, 第二个表示滑索再次可用的冷却时间",
 
     "ehi_show_gage_tracker" : "显示盖奇包追踪器",
     "ehi_show_gage_tracker_desc" : "显示追踪地图上的盖奇包裹\n若地图上没有盖奇包裹，此追踪器会自动隐藏",

@@ -135,9 +135,10 @@ function HUDManager:RemoveEHIUpdator(id)
     end
 end
 
+---@param mode string
 function HUDManager:sync_set_assault_mode(mode, ...)
     original.sync_set_assault_mode(self, mode, ...)
-    EHI:CallCallback(EHI.CallbackMessage.AssaultModeChanged, mode)
+    managers.ehi_assault:CallAssaultModeChangedCallback(mode)
 end
 
 if EHI:GetBuffAndOption("stamina") then

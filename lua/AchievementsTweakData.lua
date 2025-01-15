@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckMenuHook("AchievementsTweakData") then
     return
 end
@@ -135,7 +134,7 @@ local achievements = {
 }
 
 ---@class AchievementsTweakData
----@field tags table
+---@field tags { progress: string[] }
 ---@field persistent_stat_unlocks table<string, { [1]: { award: string, at: number } }>
 ---@field visual table<string, { icon_id: string, tags: string[] }>
 

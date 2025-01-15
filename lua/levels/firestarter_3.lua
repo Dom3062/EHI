@@ -8,6 +8,7 @@ local triggers = {}
 ---@type ParseAchievementTable
 local achievements = {}
 local other = {}
+local escape_chance
 local EscapeXP = 16000
 if Global.game_settings.level_id == "firestarter_3" then
     triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire }, hint = Hints.Fire }
@@ -36,6 +37,11 @@ else
         end)
     end
     EscapeXP = 12000
+    escape_chance =
+    {
+        start_chance = (managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3)) and 15 or 5,
+        kill_add_chance = 5
+    }
 end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
@@ -97,7 +103,7 @@ if EHI:IsLootCounterVisible() then
         104147, 101255, 101250, 104216, 104196, 104234, 104232, 104204, 104202, 104150,
         104148, 101254, 101251, 104211, 104201, 104233, 104203, 104149, 101253, 104206
     }
-    -- Standalone branchbank level uses the same level id `branchbank`. There is no way to distinguish between them if played from custom heists, only the mission filter differs
+    -- Standalone branchbank level uses the same level id `branchbank`. There is no way to distinguish between them if played from custom heists, only the mission filter differs  
     -- In Vanilla, the job id will be different
     local has_random_bags = Global.game_settings.level_id ~= "firestarter_3" and not managers.mission:check_mission_filter(1)
     other[105762] = EHI:AddLootCounter2(function()
@@ -145,7 +151,7 @@ EHI:AddXPBreakdown({
         escape =
         {
             { amount = EscapeXP, stealth = true },
-            { amount = EscapeXP, loud = true }
+            { amount = EscapeXP, loud = true, escape_chance = escape_chance }
         }
     },
     loot_all = 500,

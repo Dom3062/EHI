@@ -79,7 +79,6 @@
     "ehi_show_timers_desc" : "Mostra timers para hacks, furadeiras, serras, etc...",
 
     "ehi_show_zipline_timer" : "Mostrar o Tracker das Tirolesas",
-    "ehi_show_zipline_timer_desc" : "Mostra 2 timers para tirolesas.\nPrimeiro timer mostra quanto tempo vai demorar para soltar a bolsa/jogador, segundo vai mostrar quando a tirolesa vai ficar disponível de novo",
 
     "ehi_show_gage_tracker" : "Mostrar o Tracker de Gage",
     "ehi_show_gage_tracker_desc" : "Mostra o Tracker dos pacotes do Gage no mapa.\nSe o mapa não permite os pacotes do Gage, o Tracker não vai ser mostrado",

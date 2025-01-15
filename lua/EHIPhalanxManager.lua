@@ -7,9 +7,9 @@
 local EHI = EHI
 ---@class EHIPhalanxManager
 EHIPhalanxManager = {}
-EHIPhalanxManager._no_endless_assault_check = { pbr2 = true }
-EHIPhalanxManager._requires_manual_on_exec = { dinner = true, slaughter_house_new = true }
-EHIPhalanxManager._disabled_in_levels = { born = true }
+EHIPhalanxManager._no_endless_assault_check = table.set("pbr2")
+EHIPhalanxManager._requires_manual_on_exec = table.set("dinner", "slaughter_house_new")
+EHIPhalanxManager._disabled_in_levels = table.set("born")
 EHIPhalanxManager._counter_trigger = EHI.IsClient and 3 or 2
 EHIPhalanxManager._first_assault = true
 ---@param manager EHIManager
@@ -23,14 +23,14 @@ function EHIPhalanxManager:init_finalize(manager)
     end
 end
 
----@param element ElementSpecialObjective
-function EHIPhalanxManager:OnSOPhalanxCreated(element)
+---@param element_so ElementSpecialObjective
+function EHIPhalanxManager:OnSOPhalanxCreated(element_so)
     local level_id = Global.game_settings.level_id
     if self._disabled_in_levels[level_id] then
         return
     elseif self._requires_manual_on_exec[level_id] then
-        self._manager._hook:HookElement(element, function(e, ...)
-            if EHI.IsHost and not e._values.enabled then
+        self._manager._hook:HookElement(element_so, function(element, ...)
+            if EHI.IsHost and not element._values.enabled then
                 return
             end
             self:OnPhalanxAdded(true)
@@ -51,7 +51,7 @@ function EHIPhalanxManager:OnPhalanxAdded(manual)
         self:ReduceCounter() -- Reduce the counter because Captain Winters is activated now; due to Mission Script
     end
     self:ReduceCounter()
-    if EHI.IsHost and managers.modifiers:IsModifierActive("ModifierAssaultExtender", "crime_spree") then
+    if EHI.IsHost and managers.modifiers:IsModifierActive("ModifierAssaultExtender", "crime_spree") and not self._tracker_enabled then
         local assault_state = ""
         Hooks:PostHook(GroupAIStateBesiege, "_upd_assault_task", "EHI_EHIPhalanxManager_upd_assault_task", function(state, ...)
             local phase = state._task_data.assault.phase
@@ -62,7 +62,7 @@ function EHIPhalanxManager:OnPhalanxAdded(manual)
                 assault_state = phase
             end
         end)
-        EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+        self._manager._assault:AddAssaultModeChangedCallback(function(mode)
             if mode == "phalanx" then
                 Hooks:RemovePostHook("EHI_EHIPhalanxManager_upd_assault_task")
                 assault_state = nil ---@diagnostic disable-line
@@ -106,7 +106,7 @@ function EHIPhalanxManager:AddTracker()
         assault_extender = assault_extender,
         class = "EHIPhalanxChanceTracker"
     })
-    EHI:AddCallback(EHI.CallbackMessage.AssaultModeChanged, function(mode)
+    self._manager._assault:AddAssaultModeChangedCallback(function(mode)
         if mode == "phalanx" then
             self._trackers:ForceRemoveTracker("CaptainChance")
         end
@@ -123,7 +123,7 @@ function EHIPhalanxManager:AddTracker()
         self._trackers:CallFunction("CaptainChance", "AssaultEnd")
     end)
     if not self._no_endless_assault_check[Global.game_settings.level_id] then
-        EHI:AddCallback(EHI.CallbackMessage.AssaultWaveModeChanged, function(mode)
+        self._manager._assault:AddAssaultTypeChangedCallback(function(mode, element_id)
             self._trackers:CallFunction("CaptainChance", "SetEndlessAssault", mode == "endless")
         end)
     end

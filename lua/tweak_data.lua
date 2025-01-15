@@ -818,10 +818,9 @@ tweak_data.ehi =
         end,
         ShowNumberOfLootbagsOnTheGround = function()
             local max = managers.ehi_manager:CountLootbagsOnTheGround()
-            if max <= 0 then
-                return
+            if max > 0 then
+                EHI:ShowLootCounterNoCheck({ max = max, client_from_start = true })
             end
-            EHI:ShowLootCounterNoCheck({ max = max, client_from_start = true })
         end,
         ---Checks if graphic group `grp_wpn` is set (mission script calls both `state_visible` and `state_hide` during level init)
         ---@param weapons number[]
@@ -912,9 +911,9 @@ tweak_data.ehi =
             managers.mission:add_runned_unit_sequence_trigger(truck_id, "set_exploded", function()
                 exploded = true
             end)
-            for _, loot in ipairs(loot or { "gold", "money", "art" }) do
+            for _, l in ipairs(loot or { "gold", "money", "art" }) do
                 for i = 1, 9, 1 do
-                    local sequence = string.format("spawn_loot_%s_%d", loot, i)
+                    local sequence = string.format("spawn_loot_%s_%d", l, i)
                     if i <= 2 then -- Explosion can disable this loot
                         managers.mission:add_runned_unit_sequence_trigger(truck_id, sequence, LootFoundExplosionCheck)
                     else
@@ -1103,7 +1102,6 @@ end
 tweak_data.ehi.icons.heli = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_ace_pilot.icon) }
 tweak_data.hud_icons.EHI_Heli = tweak_data.ehi.icons.heli
 tweak_data.ehi.icons.oil = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.kenaz_drill_improved_cooling_system.icon) }
-tweak_data.ehi.icons.zipline = { texture = path, texture_rect = preplanning:get_type_texture_rect(81) } -- Zipline, currently unused -> hardcoded number
 tweak_data.ehi.icons.zipline_bag = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.corp_zipline_north.icon) }
 tweak_data.ehi.icons.tablet = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.crojob2_manifest.icon) }
 tweak_data.ehi.icons.code = { texture = path, texture_rect = preplanning:get_type_texture_rect(84) } -- Code, currently unused -> hardcoded number

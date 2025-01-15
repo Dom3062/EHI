@@ -152,7 +152,6 @@
   "ehi_show_camera_loop_desc": "監視カメラのカメラループトラッカーを表示します。",
 
   "ehi_show_zipline_timer": "ジップライントラッカーを表示",
-  "ehi_show_zipline_timer_desc": "ジップラインのタイマーを2つ表示します。\n1つ目のタイマーはバッグやプレイヤーを落とすまでの時間で、\n2つ目のタイマーはジップラインのリセット時間を表示します。",
 
   "ehi_show_gage_tracker": "Gageトラッカーを表示",
   "ehi_show_gage_tracker_desc": "マップ上のGageパッケージのトラッカーを表示します。\nマップ上にパッケージが存在していない場合はトラッカーは表示されません。",

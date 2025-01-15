@@ -27,7 +27,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field data_from_element number?
 ---@field data_from_element_and_remove_vanilla_waypoint number?
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
----@field present_timer number
+---@field present_timer number?
 ---@field remove_on_alarm boolean Removes the waypoint on alarm
 ---@field skip_if_not_found boolean Skips error message if the instance is not placed on the map
 
@@ -354,9 +354,11 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field amount number
 ---@field stealth boolean
 ---@field loud boolean
----@field timer number `stealth` only
+---@field timer number
 ---@field ghost_bonus number `stealth` only
 ---@field c4_used boolean `loud` only
+---@field escape_chance { start_chance: number, kill_add_chance: number?, no_expert_driver_asset: boolean } `loud` only
+---@field escape_after_alarm_in number for `stealth` only missions
 
 ---@class XPBreakdown.escape
 ---@field [number] _XPBreakdown.escape
@@ -376,13 +378,17 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field additional_name string? `ehi_experience_<name>`
 ---@field optional boolean?
 ---@field times number?
----@field escape number|XPBreakdown.escape
+---@field escape number|XPBreakdown.escape|true
 ---@field escape_ghost_bonus_only number
+---@field loud_escape true
+---@field police_escape true
 ---@field random XPBreakdown.random
 ---@field stealth number
 ---@field loud number
 ---@field _or boolean
 ---@field ghost_bonus number
+---@field escape_chance { start_chance: number, kill_add_chance: number?, no_expert_driver_asset: boolean }
+---@field increase_escape_chance number?
 
 ---@class XPBreakdown.objectives
 ---@field [number] _XPBreakdown.objectives

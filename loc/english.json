@@ -413,7 +413,7 @@
     "ehi_show_enemy_turret_trackers_desc" : "Shows a tracker when it is reloading or repairing",
 
     "ehi_show_zipline_timer" : "Show Zipline Tracker",
-    "ehi_show_zipline_timer_desc" : "Shows 2 timers for zipline.\nFirst timer shows how long it takes to drop a bag/player, second timer shows zipline reset",
+    "ehi_show_zipline_timer_desc" : "Shows a tracker how long it takes for a zipline to drop a bag/player and then return back",
 
     "ehi_show_gage_tracker" : "Show Gage Tracker",
     "ehi_show_gage_tracker_desc" : "Shows tracker for Gage Packages on the map.\nIf the map does not allow Gage Packages, the tracker will not show",
@@ -1033,6 +1033,8 @@
     "ehi_experience_heli_escape" : "Heli Escape",
     "ehi_experience_loud_escape" : "Loud Escape",
     "ehi_experience_stealth_escape" : "Stealth Escape",
+    "ehi_experience_alarm_escape" : "Escape after alarm in $time",
+    "ehi_experience_police_escape" : "Escape after police arrived",
     "ehi_experience_escape" : "Escape",
     "ehi_experience_each_goat_secured" : "Each goat secured",
     "ehi_experience_each_loot_secured" : "Each bag secured",

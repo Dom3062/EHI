@@ -38,6 +38,11 @@ _G.EHI =
         show_hostage_count_tracker =
         {
             file = "EHIHostageCountTracker"
+        },
+        show_escape_chance =
+        {
+            file = "EHIEscapeChanceTracker",
+            count = 2
         }
     },
 
@@ -113,10 +118,6 @@ _G.EHI =
         TeamAISkillChange = "TeamAISkillChanged",
         -- Provides `ability` (a string value) and `operation` (a string value -> `add`, `remove`)
         TeamAIAbilityBoostChange = "TeamAIAbilityBoostChanged",
-        -- Provides `mode` (a string value -> `normal`, `phalanx`)
-        AssaultModeChanged = "AssaultModeChanged",
-        -- Provides `mode` (a string value -> `normal`, `endless`) and `element_id` (a number value)
-        AssaultWaveModeChanged = "AssaultWaveModeChanged",
         -- Provides `visibility` (a boolean value)
         HUDVisibilityChanged = "HUDVisibilityChanged",
         -- Provides `picked_up` (a number value), `max_units` (a number value) and `client_sync_load` (a boolean value)
@@ -1311,12 +1312,6 @@ function EHI:GetColorFromOption(option, color)
     return self:GetColor(option and self.settings.colors[option] and self.settings.colors[option][color])
 end
 
----@param option string
----@param color string
-function EHI:GetVectorColorFromOption(option, color)
-    return self:GetColorAsVector3(option and self.settings.colors[option] and self.settings.colors[option][color])
-end
-
 ---@return boolean
 function EHI:ShowMissionAchievements()
     return self:GetUnlockableAndOption("show_achievements_mission") and self:GetUnlockableOption("show_achievements")
@@ -1370,14 +1365,6 @@ function EHI:GetColor(color)
         return Color(255, color.r, color.g, color.b) / 255
     end
     return Color.white
-end
-
----@param color { r: number, g: number, b: number }?
-function EHI:GetColorAsVector3(color)
-    if color and color.r and color.g and color.b then
-        return Vector3(color.r / 255, color.g / 255, color.b / 255)
-    end
-    return Vector3(1, 1, 1)
 end
 
 ---@param option string?
@@ -1470,7 +1457,11 @@ function EHI:CombineAssaultDelayAndAssaultTime()
 end
 
 function EHI:IsEscapeChanceEnabled()
-    return self:GetOption("show_escape_chance") and not self:IsPlayingCrimeSpree()
+    if self:GetOption("show_escape_chance") and not self:IsPlayingCrimeSpree() then
+        self:OptionAndLoadTracker("show_escape_chance")
+        return true
+    end
+    return false
 end
 
 function EHI:IsTradeTrackerDisabled()

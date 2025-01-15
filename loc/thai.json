@@ -373,7 +373,6 @@
     "ehi_show_enemy_turret_trackers_desc" : "Shows a tracker when it is reloading or repairing",
 
     "ehi_show_zipline_timer" : "แสดงไอคอนติดตามการใช้โหนสลิง",
-    "ehi_show_zipline_timer_desc" : "แสดงค่า 2 ไอคอนติดตามที่เกี่ยวข้องกับการใช้โหนสลิงหรือ Zipline\nไอคอนบรรทัดแรกแสดงเวลาที่ไอเท็มจะไปถึงผู้เล่นหรือตำแหน่งที่ปลายทาง, ไอคอนบรรทัดที่สองแสดงเวลาที่รอกจะกลับมาที่ตำแหน่งเริ่มต้นอีกครั้ง",
 
     "ehi_show_gage_tracker" : "แสดงไอคอนติดตาม Gage Packages",
     "ehi_show_gage_tracker_desc" : "แสดงไอคอนติดตามจำนวน Gage Packagesที่มีในด่านนั้นๆ\nหากด่านนั้นไม่อนุญาตให้มี Gage Packages ปรากฎในด่าน ไอคอนติดตามนี้จะไม่แสดงค่าให้เห็น",

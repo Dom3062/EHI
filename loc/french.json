@@ -93,7 +93,6 @@
     "ehi_show_timers_desc": "Montre les décomptes pour les piratages, percages, découpes, etc",
     
     "ehi_show_zipline_timer": "Montre le moniteur de tirolienne",
-    "ehi_show_zipline_timer_desc": "Montre deux décomptes pour les tiroliennes.\nLe premier indique le temps jusqu'a que la tirolienne dépose le sac/joueur, le second indique sa période de réintialisation.",
     
     "ehi_show_gage_tracker": "Montre le moniteur de packets de Gage",
     "ehi_show_gage_tracker_desc": "Montre un moniteur pour les packets de Gage.\nSi la carte ne supporte pas les packets de Gage, le moniteur ne sera pas affiché.",
