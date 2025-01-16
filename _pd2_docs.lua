@@ -801,6 +801,7 @@ _G.AmmoBagBase = {}
 _G.AmmoBagInteractionExt = {}
 ---@class BaseInteractionExt
 ---@field _active boolean
+---@field _contour_override unknown Appears to be unused
 ---@field _materials U_Material[]
 ---@field _add_string_macros fun(self: self, macros: table<string, string>)
 ---@field active fun(self: self): boolean

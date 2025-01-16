@@ -29,7 +29,7 @@ function EHIHealthRegenBuffTracker:post_init(...)
     EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
         if local_peer then
             self._minion_count = self._minion_count + 1
-            if self._minion_count == 1 then
+            if self._minion_count == 1 and self._character_damage and self._perform_update_from_spawn then
                 self:AddBuffToUpdate2()
             end
         end

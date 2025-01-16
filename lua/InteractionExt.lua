@@ -224,14 +224,17 @@ if EHI:GetOption("show_colored_bag_contour") then
         end
     end
     bag_color.being = EHI:GetColorFromOption("bag_contour", "body"):vector()
+    bag_color.default = tweak_data.contour.interactable.standard_color or Vector3(1, 0.5, 0)
     local ids_contour_color = Idstring("contour_color")
     local ids_contour_opacity = Idstring("contour_opacity")
     ---@param opacity number?
     ---@param from_ehi boolean?
     function UseInteractionExt:set_contour(color, opacity, from_ehi)
-        if from_ehi then
+        if self._tweak_data.no_contour or self._contour_override then
+            return
+        elseif from_ehi then
             for _, m in ipairs(self._materials) do
-                m:set_variable(ids_contour_color, color and bag_color[color] or Vector3(1, 1, 1))
+                m:set_variable(ids_contour_color, color and bag_color[color] or bag_color.default)
                 m:set_variable(ids_contour_opacity, opacity or self._active and 1 or 0)
             end
         else

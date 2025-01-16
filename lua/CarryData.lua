@@ -21,7 +21,7 @@ end
 function CarryData:SetCustomContour()
     if self._carry_id and self._carry_id ~= "vehicle_falcogini" and self._unit:interaction() then
         local tweak = tweak_data.carry[self._carry_id] or {}
-        self._unit:interaction():set_contour(tweak.type or "medium", nil, true)
+        self._unit:interaction():set_contour(tweak.type or "standard_color", nil, true)
     end
 end
 

@@ -1,3 +1,7 @@
+r293 (16. 01. 2025):
+Buffs: Fixed a possible crash after converting an enemy
+Possible fix for a crash after throwing a bag and "Show Bag Outline color based on their weight" is enabled
+
 r292 (15. 01. 2025):
 Captain Chance Tracker: Fixed inconsistent tracking if the tracker is created mid-heist and not after alarm
 Mission Briefing: Added escape chance after completing heists in loud
