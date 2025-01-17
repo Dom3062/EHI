@@ -1,3 +1,6 @@
+r294 (17. 01. 2025):
+Fixed for real a crash after throwing a bag and "Show Bag Outline color based on their weight" is enabled
+
 r293 (16. 01. 2025):
 Buffs: Fixed a possible crash after converting an enemy
 Possible fix for a crash after throwing a bag and "Show Bag Outline color based on their weight" is enabled

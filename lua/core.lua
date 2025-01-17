@@ -1312,6 +1312,14 @@ function EHI:GetColorFromOption(option, color)
     return self:GetColor(option and self.settings.colors[option] and self.settings.colors[option][color])
 end
 
+function EHI:GetVectorFromOption(option, color)
+    local c = option and self.settings.colors[option] and self.settings.colors[option][color]
+    if c then
+        return Vector3(c.r / 255, c.g / 255, c.b / 255)
+    end
+    return Vector3()
+end
+
 ---@return boolean
 function EHI:ShowMissionAchievements()
     return self:GetUnlockableAndOption("show_achievements_mission") and self:GetUnlockableOption("show_achievements")

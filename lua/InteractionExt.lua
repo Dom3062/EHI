@@ -216,14 +216,14 @@ if EHI:GetOption("show_colored_bag_contour") then
     end
     delta_range = max_range - min_range
     local bag_color = {} ---@type table<string, Vector3>
-    local light = EHI:GetColorFromOption("bag_contour", "light"):vector()
-    local heavy = EHI:GetColorFromOption("bag_contour", "heavy"):vector()
+    local light = EHI:GetVectorFromOption("bag_contour", "light")
+    local heavy = EHI:GetVectorFromOption("bag_contour", "heavy")
     for key, data in pairs(tweak_data.carry.types) do
         if key ~= "being" then
             bag_color[key] = math.lerp(light, heavy, (max_range - data.move_speed_modifier) / delta_range) -- Range is ratio
         end
     end
-    bag_color.being = EHI:GetColorFromOption("bag_contour", "body"):vector()
+    bag_color.being = EHI:GetVectorFromOption("bag_contour", "body")
     bag_color.default = tweak_data.contour.interactable.standard_color or Vector3(1, 0.5, 0)
     local ids_contour_color = Idstring("contour_color")
     local ids_contour_opacity = Idstring("contour_opacity")
