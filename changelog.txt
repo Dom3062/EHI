@@ -1,3 +1,6 @@
+r295 (18. 01. 2025):
+Reservoir Dogs Day 2: Fixed a crash with waypoints
+
 r294 (17. 01. 2025):
 Fixed for real a crash after throwing a bag and "Show Bag Outline color based on their weight" is enabled
 

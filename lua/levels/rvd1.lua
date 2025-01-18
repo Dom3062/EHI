@@ -91,7 +91,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         if enabled then
             local escape = self:IsMissionElementDisabled(trigger.data.loot_area)
             self._cache.rvd1_escape_bags = not escape and trigger.data.position_bags
-            trigger.id = escape and trigger.data.position_escape or trigger.data.position_bags
+            trigger.data.position_from_element = escape and trigger.data.position_escape or trigger.data.position_bags
             self:_parse_vanilla_waypoint_trigger(trigger)
             managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
         end
