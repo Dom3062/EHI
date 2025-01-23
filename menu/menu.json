@@ -220,12 +220,29 @@
             "ehi_ver" : 287
         },
         {
-            "type": "button",
-            "id": "ehi_waypoints_menu",
-            "title": "ehi_waypoints_menu",
-            "description": "ehi_waypoints_menu_desc",
-            "next_menu": "ehi_waypoints_menu",
-            "ehi_ver" : 231
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_waypoints_choice",
+                    "title": "ehi_show_waypoints",
+                    "description": "ehi_show_waypoints_desc",
+                    "callback": "SetOption",
+                    "callback_arguments": "show_waypoints",
+                    "value": "show_waypoints",
+                    "default_value": true,
+                    "is_parent" : true,
+                    "ehi_ver" : 21
+                },
+                {
+                    "type": "button",
+                    "id": "ehi_waypoints_menu",
+                    "title": "ehi_waypoints_menu",
+                    "description": "ehi_waypoints_menu_desc",
+                    "next_menu": "ehi_waypoints_menu",
+                    "parent" : "ehi_show_waypoints_choice",
+                    "ehi_ver" : 231
+                }
+            ]
         },
         {
             "type": "button",
@@ -249,7 +266,7 @@
             "title": "ehi_other_menu",
             "description": "ehi_other_menu_desc",
             "next_menu": "ehi_other_menu",
-            "ehi_ver" : 287
+            "ehi_ver" : 296
         },
         {
             "type": "button",

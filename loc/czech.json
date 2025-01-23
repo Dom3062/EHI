@@ -936,6 +936,8 @@
     "ehi_other_show_floating_health_bar_style_2" : "Kruh",
     "ehi_other_show_floating_health_bar_style_3" : "Obdélník",
 
+    "ehi_other_show_floating_health_bar_style_poco_blur" : "Zobrazovat rozmazání pozadí",
+
     "ehi_other_show_floating_health_bar_converts" : "Zobrazovat zdraví převedenců",
     "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat zdraví civilistů",
     "ehi_other_show_floating_health_bar_team_ai" : "Zobrazovat zdraví botů",

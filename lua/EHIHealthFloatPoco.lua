@@ -9,6 +9,7 @@ EHIHealthFloatPoco = class()
 EHIHealthFloatPoco._size = 16
 EHIHealthFloatPoco._margin = 2
 EHIHealthFloatPoco._opacity = 0.9
+EHIHealthFloatPoco._show_blur = EHI:GetOption("show_floating_health_bar_style_poco_blur")
 EHIHealthFloatPoco._color_start = Color("FFA500"):with_alpha(1)
 EHIHealthFloatPoco._color_end = Color("FF0000"):with_alpha(1)
 EHIHealthFloatPoco._color_friendly = Color("00FF00"):with_alpha(1)
@@ -39,7 +40,8 @@ function EHIHealthFloatPoco:init(owner, key, unit, t)
         render_template = 'VertexColorTexturedBlur3D',
         layer = -1,
         x = 0,
-        y = 0
+        y = 0,
+        visible = self._show_blur
     })
     self.pie = CircleBitmapGuiObject:new(pnl, {
         use_bg = false,

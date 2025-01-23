@@ -936,6 +936,8 @@
     "ehi_other_show_floating_health_bar_style_2" : "Circle",
     "ehi_other_show_floating_health_bar_style_3" : "Rectangle",
 
+    "ehi_other_show_floating_health_bar_style_poco_blur" : "Show Background Blur",
+
     "ehi_other_show_floating_health_bar_converts" : "Show Floating Health Bars for Converts",
     "ehi_other_show_floating_health_bar_civilians" : "Show Floating Health Bars for Civilians",
     "ehi_other_show_floating_health_bar_team_ai" : "Show Floating Health Bars for Team AI",

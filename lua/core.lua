@@ -1027,6 +1027,7 @@ local function LoadDefaultValues(self)
         show_mission_xp_overview = true,
         show_floating_health_bar = true,
         show_floating_health_bar_style = 1, -- 1 = Poco; 2 = Circle; 3 = Rectangle
+        show_floating_health_bar_style_poco_blur = true,
         show_floating_health_bar_converts = true,
         show_floating_health_bar_civilians = true,
         show_floating_health_bar_team_ai = true,

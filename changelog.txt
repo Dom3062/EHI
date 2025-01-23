@@ -1,3 +1,7 @@
+r296 (23. 01. 2025):
+Assault Tracker: Disabled hostage delay in Control state will be reflected in the tracker with a yellow color
+Poco Health Float Style: Added "Show Background Blur" option
+
 r295 (18. 01. 2025):
 Reservoir Dogs Day 2: Fixed a crash with waypoints
 

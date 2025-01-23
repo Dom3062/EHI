@@ -1989,3 +1989,7 @@ function EHIMenu:UpdateAssaultOptions(menu, item)
         end
     end
 end
+
+function EHIMenu:IsFloatingHealthBarPocoBlurVisible()
+    return EHI:GetOption("show_floating_health_bar") and EHI:GetOption("show_floating_health_bar_style") == 1
+end

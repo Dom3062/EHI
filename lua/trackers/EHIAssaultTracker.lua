@@ -319,7 +319,7 @@ end
 
 ---@param t number
 function EHIAssaultTracker:StartAnticipation(t)
-    self:StopTextAnim()
+    self:StopTextAnim(Color.yellow)
     self._hostage_delay_disabled = true
     self._time = t
     if not self._needs_update then
