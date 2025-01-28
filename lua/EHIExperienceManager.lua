@@ -478,9 +478,10 @@ function EHIExperienceManager:GetRemainingXPToMaxLevel(xp_total)
     return math.max(totalXpTo100 - xp_total, 0)
 end
 
-function EHIExperienceManager:GetPlayerXPLimit()
+---@param return_number boolean?
+function EHIExperienceManager:GetPlayerXPLimit(return_number)
     if self._xp.prestige_enabled then
-        return self:IsInfamyPoolOverflowed() and self._xp.prestige_xp or self._xp.prestige_xp_remaining
+        return self:IsInfamyPoolOverflowed() and (return_number and self._xp.prestige_xp or math.huge) or self._xp.prestige_xp_remaining
     end
     return self._xp.level_xp_to_100
 end

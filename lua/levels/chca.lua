@@ -27,7 +27,8 @@ local triggers = {
         if not paper_unit then
             return
         end
-        local object = paper_unit:damage() and paper_unit:damage()._state and paper_unit:damage()._state.object
+        local unit_damage = paper_unit:damage()
+        local object = unit_damage and unit_damage._state and unit_damage._state.object
         if not object then
             return
         end

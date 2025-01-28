@@ -78,6 +78,11 @@ function EHIEquipmentTracker:UpdateAmount(key, amount)
     if not key then
         return
     end
+    if self._restore_after_cleanup then
+        self._restore_after_cleanup = nil
+        self._parent_class:RunTracker(self._id)
+        self._deployables = {}
+    end
     self._deployables[key] = amount
     self._amount = 0
     self._placed = 0
@@ -96,6 +101,9 @@ function EHIEquipmentTracker:UpdateAmount(key, amount)
 end
 
 function EHIEquipmentTracker:CleanupOnHide()
+    if self._restore_after_cleanup then -- No need to clean up again if the tracker is pending restoration
+        return
+    end
     self._deployables = nil
-    self._deployables = {}
+    self._restore_after_cleanup = true
 end

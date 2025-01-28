@@ -19,8 +19,8 @@ local function GetIcon(params)
 end
 
 local EHI = EHI
-local buff_w_original = 32
-local buff_h_original = 64
+local buff_w_original = tweak_data.ehi.default.buff.size_w
+local buff_h_original = tweak_data.ehi.default.buff.size_h
 local buff_w = buff_w_original
 local buff_h = buff_h_original
 ---@class FakeEHIBuffsManager
@@ -43,7 +43,7 @@ function FakeEHIBuffsManager:new(panel)
     self._y = EHI:GetOption("buffs_y_offset") --[[@as number]]
     self._n_visible = 0
 	self._buffs_alignment = EHI:GetOption("buffs_alignment") --[[@as number]]
-    self._gap = 6
+    self._gap = tweak_data.ehi.default.buff.gap
     self:AddFakeBuffs()
     self:OrganizeBuffs()
     return self

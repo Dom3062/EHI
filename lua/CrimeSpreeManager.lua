@@ -5,10 +5,10 @@ end
 Hooks:PostHook(CrimeSpreeManager, "_setup_global_from_mission_id", "EHI_CrimeSpreeManager_setup_global_from_mission_id", function(self, mission_id, ...)
     local mission_data = self:get_mission(mission_id)
     if mission_data and mission_data.level.level_id then
-        local level = tweak_data.levels[mission_data.level.level_id] or {}
         if mission_data.level.level_id == "four_stores_remixed" then -- Restoration Mod Overhaul bs
             Global.game_settings.ehi_vanilla_heist = true
         else
+            local level = tweak_data.levels[mission_data.level.level_id] or {}
             Global.game_settings.ehi_vanilla_heist = not level.custom
         end
     end

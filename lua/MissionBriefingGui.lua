@@ -463,11 +463,11 @@ function XPBreakdownPanel:ProcessBreakdown()
         self:_process_total_xp(total_xp)
     else
         for key, params in pairs(self._params) do
-            EHI:Log("[XPBreakdownPanel] Unknown key! " .. tostring(key))
+            EHI:LogWithCurrentLine("Unknown key! " .. tostring(key))
             if type(params) == "table" then
                 EHI:PrintTable(params, tostring(key))
             else
-                EHI:Log("[XPBreakdownPanel] params: " .. tostring(params))
+                EHI:LogWithCurrentLine("params: " .. tostring(params))
             end
         end
     end
@@ -908,7 +908,7 @@ function XPBreakdownPanel:_process_total_xp(total_xp)
                     if type(data.escape) == "number" then
                         base = base + data.escape
                     else
-                        EHI:Log("[XPBreakdownPanel] Unknown type for escape!")
+                        EHI:LogWithCurrentLine("Unknown type for escape!")
                     end
                 else
                     base = base + (data.amount or 0)
@@ -956,7 +956,7 @@ function XPBreakdownPanel:_params_custom(o_params)
         elseif c_params.type == "max_only" then
             self:_params_max_only(c_params)
         else
-            EHI:Log("Custom type not recognized! " .. tostring(c_params.type))
+            EHI:LogWithCurrentLine("Custom type not recognized! " .. tostring(c_params.type))
         end
     end
 end
@@ -1083,7 +1083,7 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
                         if type(data.escape) == "number" then
                             min = min + data.escape
                         else
-                            EHI:Log("[XPBreakdownPanel] Unknown type for escape!")
+                            EHI:LogWithCurrentLine("Unknown type for escape!")
                         end
                     elseif data.random then
                         for random, _ in pairs(objectives.random) do
@@ -1168,7 +1168,7 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
                             if type(data.escape) == "number" then
                                 max = max + data.escape
                             else
-                                EHI:Log("[XPBreakdownPanel] Unknown type for escape!")
+                                EHI:LogWithCurrentLine("Unknown type for escape!")
                             end
                         elseif data.random then
                             for random, random_data in pairs(objectives.random) do
@@ -1186,7 +1186,7 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
                                                 end
                                             end
                                         else
-                                            EHI:Log("Table length does not match for random objective '" .. tostring(random) .. "'; skipping")
+                                            EHI:LogWithCurrentLine("Table length does not match for random objective '" .. tostring(random) .. "'; skipping")
                                         end
                                     elseif type(r_data) == "table" then -- Assume "true" value -> compute
                                         for _, ro_data in ipairs(r_data) do
@@ -1235,7 +1235,7 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
         max = max + (o_params.max.bonus_xp or 0)
     elseif o_params.max_level then
         format_max = false
-        local max_n = self._xp:GetPlayerXPLimit()
+        local max_n = self._xp:GetPlayerXPLimit(true)
         max = managers.experience:experience_string(max_n)
         local xp = self._loc:text("ehi_experience_xp")
         if o_params.max_level_bags then
@@ -1306,7 +1306,7 @@ function XPBreakdownPanel:_params_min_with_max(o_params)
                 if type(data.escape) == "number" then
                     max = max + data.escape
                 else
-                    EHI:Log("[XPBreakdownPanel] Unknown type for escape!")
+                    EHI:LogWithCurrentLine("Unknown type for escape!")
                 end
             else
                 local key = data.name or "unknown"
@@ -1336,7 +1336,7 @@ function XPBreakdownPanel:_params_max_only(o_params)
                 if type(data.escape) == "number" then
                     actual_value = data.escape --[[@as number]]
                 else
-                    EHI:Log("[XPBreakdownPanel] Unknown type for escape!")
+                    EHI:LogWithCurrentLine("Unknown type for escape!")
                 end
             end
             if o_max[key] then
@@ -1477,7 +1477,7 @@ function XPBreakdownPanel:_sum_objectives(override_objectives, random_objectives
             if type(data.escape) == "number" then
                 xp = xp + data.escape
             else
-                EHI:Log("[XPBreakdownPanel] Unknown type for escape!")
+                EHI:LogWithCurrentLine("Unknown type for escape!")
             end
         elseif data.random then
             if type(random_objectives) == "table" then
@@ -1496,7 +1496,7 @@ function XPBreakdownPanel:_sum_objectives(override_objectives, random_objectives
                                     end
                                 end
                             else
-                                EHI:Log("Table length does not match for random objective '" .. tostring(random) .. "'; skipping")
+                                EHI:LogWithCurrentLine("Table length does not match for random objective '" .. tostring(random) .. "'; skipping")
                             end
                         elseif type(ro_data) == "boolean" then -- Boolean, count all objectives
                             for _, _ro_data in ipairs(random_data) do
@@ -1506,7 +1506,7 @@ function XPBreakdownPanel:_sum_objectives(override_objectives, random_objectives
                     end
                 end
             else
-                EHI:Log("[XPBreakdownPanel] Random objectives cannot be counted! Use min or max and count them manually")
+                EHI:LogWithCurrentLine("Random objectives cannot be counted! Use min or max and count them manually")
             end
         elseif not data.optional or (data.optional and not skip_optional) then
             local key = data.name or "unknown"
@@ -1624,7 +1624,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
             color = tweak_data.lootdrop.global_values.infamy.color,
-            text = string.format("+%s%s", tostring((xp.infamy_bonus - 1) * 100), percent_format),
+            text = string.format("+%d%s", EHI.RoundNumber((xp.infamy_bonus - 1) * 100), percent_format),
             layer = 10
         })
         self:make_fine_text(infamy_text)

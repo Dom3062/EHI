@@ -1,3 +1,13 @@
+r298 (28. 01. 2025):
+Added "Show Floating Damage Popup" and "Show Converts Colored to its Owner" option
+Added "Weapon Swap" buff
+Deployable Tracker: Fixed an issue where the tracker won't show up again after hiding when all deployables were used
+Interact buff: Fixed an issue where deployable timer is not covered
+Mission Briefing: Fixed an issue where Infamy XP boost is not sometimes properly rounded
+Menu: VR related options will appear in VR only
+Poco Health Float Style: Fixed an issue where preloaded health floats for Team AI get deleted after you are taken to the custody
+XP Diff Tracker: Tracker will increase its size after gaining 1M XP
+
 r297 (26. 01. 2025):
 Four Stores: Attempt to fix a crash after opening safes with Restoration Mod Overhaul installed
 

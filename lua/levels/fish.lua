@@ -3,25 +3,24 @@ local EHI = EHI
 ---@field super EHIAchievementProgressTracker
 EHIfish6Tracker = class(EHIAchievementProgressTracker)
 EHIfish6Tracker._forced_icons = EHI:GetAchievementIcon("fish_6")
-function EHIfish6Tracker:init(panel, params, ...)
+function EHIfish6Tracker:pre_init(params)
     params.max = managers.enemy:GetNumberOfEnemies()
-    EHIfish6Tracker.super.init(self, panel, params, ...)
     CopDamage.register_listener("EHI_fish_6_listener", { "on_damage" }, function(damage_info)
         if damage_info.result.type == "death" then
             self:IncreaseProgress()
         end
     end)
+    EHIfish6Tracker.super.pre_init(self, params)
 end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 ---@type ParseAchievementTable
 local achievements = {
     -- "fish_4" achievement is not in the Mission Script
     fish_4 =
     {
-        difficulty_pass = ovk_and_up,
+        difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
             [100244] = { time = 360, class = TT.Achievement.Base },

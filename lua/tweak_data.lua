@@ -18,6 +18,12 @@ tweak_data.ehi =
             size_w = 64,
             offset = 6,
             gap = 5
+        },
+        buff =
+        {
+            size_h = 64,
+            size_w = 32,
+            gap = 6
         }
     },
     colors =
@@ -173,7 +179,7 @@ tweak_data.ehi =
         Interact =
         {
             texture = "guis/textures/pd2/pd2_waypoints",
-            texture_rect = {224, 32, 32, 32},
+            texture_rect = { 224, 32, 32, 32 },
             option = "interact"
         },
         ArmorRegenDelay =
@@ -1140,4 +1146,10 @@ function table.remove_key(map, key)
     local value = map[key]
     map[key] = nil
     return value
+end
+
+---Works the same as `table.size` but it returns 0 if nil table is passed to the function
+---@param v table?
+function table.ehi_size(v)
+    return v and table.size(v) or 0
 end

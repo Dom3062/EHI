@@ -7,7 +7,7 @@ FakeEHIBuffTracker = class()
 FakeEHIBuffTracker.FitTheText = EHIBuffTracker.FitTheText
 FakeEHIBuffTracker._rect_circle = { 128, 0, -128, 128 }
 FakeEHIBuffTracker._rect_square = { 32, 0, -32, 32 }
-FakeEHIBuffTracker._gap = 6
+FakeEHIBuffTracker._gap = tweak_data.ehi.default.buff.gap
 ---@param panel Panel
 ---@param params table
 function FakeEHIBuffTracker:init(panel, params)

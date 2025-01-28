@@ -4,8 +4,7 @@ EHIcorp9Tracker = ehi_achievement_class(EHIColoredCodesTracker)
 EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
 EHIcorp9Tracker._forced_hint_text = "achievement_corp_9"
 EHIcorp9Tracker._hint_vanilla_localization = true
-function EHIcorp9Tracker:init(...)
-    EHIcorp9Tracker.super.init(self, ...)
+function EHIcorp9Tracker:post_init(params)
     self:ShowStartedPopup()
     self:ShowAchievementDescription()
 end

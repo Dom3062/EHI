@@ -64,12 +64,12 @@ end
 
 ---@return table?, table?
 function TimerGui:GetUpgrades()
-    if self._unit:base()._disable_upgrades or not (self._unit:base().is_drill or self._unit:base().is_saw) or table.size(self._original_colors or {}) == 0 then
+    if self._unit:base()._disable_upgrades or not (self._unit:base().is_drill or self._unit:base().is_saw) or table.ehi_size(self._original_colors) == 0 then
         return nil, nil
     end
     local upgrade_table = nil
     local skills = self._unit:base().get_skill_upgrades and self._unit:base():get_skill_upgrades()
-    if skills and table.size(self._original_colors or {}) > 0 then
+    if skills and table.ehi_size(self._original_colors) > 0 then
         upgrade_table = {
             restarter = (skills.auto_repair_level_1 or 0) + (skills.auto_repair_level_2 or 0),
             faster = (skills.speed_upgrade_level or 0),

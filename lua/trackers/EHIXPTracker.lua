@@ -8,6 +8,16 @@ function EHIXPTracker:pre_init(params)
     self._xp = params.amount or 0
 end
 
+function EHIXPTracker:OverridePanel()
+    if self._xp and self._xp >= 1000000 then
+        self._size_increased = true
+        self:SetBGSize(self._bg_box:w() / 2)
+        self._text:set_w(self._bg_box:w())
+        self:SetIconsX()
+        self:SetAndFitTheText()
+    end
+end
+
 function EHIXPTracker:Format()
     return managers.experience:cash_string(self._xp, self._xp >= 0 and "+" or "")
 end
@@ -16,6 +26,17 @@ end
 function EHIXPTracker:AddXP(amount)
     self._fade_time = 5
     self._xp = self._xp + amount
+    if self._xp >= 1000000 and not self._size_increased then
+        self._size_increased = true
+        local w = self._bg_box:w() / 2
+        self:SetBGSize(w, "add", true)
+        self._text:set_w(self._bg_box:w())
+        local panel_w = self._panel:w() + w
+        self:AnimatePanelWAndRefresh(panel_w)
+        self:ChangeTrackerWidth(panel_w)
+        self:AnimIconsX()
+        self:AnimateAdjustHintX(w)
+    end
     self:SetAndFitTheText()
     self:AnimateBG()
 end
@@ -111,17 +132,18 @@ EHITotalXPTracker._anim_xp = function(o, self)
     self:FitTheText(o)
 end
 
-function EHITotalXPTracker:init(panel, params, ...)
+function EHITotalXPTracker:pre_init(params)
+    self._size_increased = true
     self._total_xp = params.amount or 0
     self._total_xp_anim = self._total_xp
     self._player_xp_limit = params.xp_limit or 0
     self._xp_overflow_enabled = params.xp_overflow_enabled
-    EHITotalXPTracker.super.init(self, panel, params, ...)
     if self._xp_overflow_enabled then
         self._player_xp_limit = 0
     elseif self._player_xp_limit <= 0 then
         self._needs_update = true -- Request deletion next frame
     end
+    EHITotalXPTracker.super.pre_init(self, params)
 end
 
 function EHITotalXPTracker:update(dt)

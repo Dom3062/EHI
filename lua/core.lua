@@ -305,7 +305,6 @@ _G.EHI =
         Chance = "chance",
         Defend = "defend",
         Restarting = "restarting",
-        TurretEnRoute = "turret_en_route",
 
         -- Heist specific hints
         big_Piggy = "big_piggy",
@@ -999,6 +998,7 @@ local function LoadDefaultValues(self)
             melee_charge = true,
             shield_regen = true,
             stamina = true,
+            weapon_swap = true,
             dodge = true,
             dodge_refresh = 1, -- 1 / value
             dodge_persistent = false,
@@ -1031,12 +1031,19 @@ local function LoadDefaultValues(self)
         show_floating_health_bar_converts = true,
         show_floating_health_bar_civilians = true,
         show_floating_health_bar_team_ai = true,
+        show_floating_damage_popup = true,
+        show_floating_damage_popup_size = 22, -- 10 - 30
+        show_floating_damage_popup_time_on_screen = 10, -- 2 - 15
+        show_floating_damage_popup_my_damage = true,
+        show_floating_damage_popup_ai_damage = true,
+        show_floating_damage_popup_crew_damage = true,
         show_use_left_ammo_bag = true,
         show_use_left_doctor_bag = true,
         show_use_left_bodybags_bag = true,
         show_use_left_grenades = true,
         show_colored_bag_contour = true,
-        show_real_time_ingame = false
+        show_real_time_ingame = false,
+        show_minion_colored_to_owner = true
     }
 end
 
@@ -1195,10 +1202,10 @@ end
 ---Logs provided string from the file it was called from
 ---@param s AnyExceptNil
 function EHI:LogWithCurrentFile(s)
-    local active_file = debug.getinfo(2, "S")
+    local info = debug.getinfo(2, "S")
     local last_pos, file
     while true do
-        local st, _ = string.find(active_file.source, "/", last_pos)
+        local st, _ = string.find(info.source, "/", last_pos)
         if st then
             last_pos = st + 1
         else
@@ -1206,11 +1213,32 @@ function EHI:LogWithCurrentFile(s)
         end
     end
     if last_pos then
-        file = string.gsub(active_file.source, string.sub(active_file.source, 0, last_pos - 1), "")
+        file = string.gsub(info.source, string.sub(info.source, 0, last_pos - 1), "")
     else
         file = "unknown"
     end
     self:Log2(file, s)
+end
+
+---Logs provided string from the line in the file it was called from
+---@param s AnyExceptNil
+function EHI:LogWithCurrentLine(s)
+    local info = debug.getinfo(2, "Sl")
+    local last_pos, file
+    while true do
+        local st, _ = string.find(info.source, "/", last_pos)
+        if st then
+            last_pos = st + 1
+        else
+            break
+        end
+    end
+    if last_pos then
+        file = string.gsub(info.source, string.sub(info.source, 0, last_pos - 1), "")
+    else
+        file = "unknown"
+    end
+    self:Log2(string.format("%s:%s", file, tostring(info.currentline or "???")), s)
 end
 
 ---Works the same way as EHI:Log(), but the string is not saved on HDD
@@ -1310,11 +1338,11 @@ end
 ---@param option string
 ---@param color string
 function EHI:GetColorFromOption(option, color)
-    return self:GetColor(option and self.settings.colors[option] and self.settings.colors[option][color])
+    return self:GetColor(option and self.settings.colors[option] and self.settings.colors[option][color or ""])
 end
 
 function EHI:GetVectorFromOption(option, color)
-    local c = option and self.settings.colors[option] and self.settings.colors[option][color]
+    local c = option and self.settings.colors[option] and self.settings.colors[option][color or ""]
     if c then
         return Vector3(c.r / 255, c.g / 255, c.b / 255)
     end
@@ -2544,7 +2572,7 @@ function EHI:AddIncomingTurret(t, wp_vector, id, trigger_once)
             icon = self.Icons.Turret,
             position = wp_vector
         },
-        hint = self.Hints.TurretEnRoute,
+        hint = "turret_en_route",
         trigger_once = trigger_once
     }
 end
@@ -2657,19 +2685,11 @@ else
     end
 end
 
----@return string?
-function EHI:GetActiveSHDaily()
-    local current_daily = managers.custom_safehouse:get_daily_challenge()
-    if current_daily and not (current_daily.state == "completed" or current_daily.state == "rewarded") then
-        return current_daily.id
-    end
-end
-
 ---@param daily_id string
 ---@param skip_unlockables_check boolean?
 function EHI:IsSHSideJobAvailable(daily_id, skip_unlockables_check)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
-    if current_daily.id == daily_id then
+    if current_daily.id == daily_id and managers.custom_safehouse:can_progress_trophies(daily_id) then
         if current_daily.state == "completed" or current_daily.state == "rewarded" then
             return false
         elseif skip_unlockables_check then
@@ -2696,7 +2716,7 @@ end
 ---@return number progress, number max
 function EHI:GetSHSideJobProgressAndMax(daily_id, progress_id)
     local current_daily = managers.custom_safehouse:get_daily_challenge()
-    if current_daily and current_daily.id == daily_id then
+    if current_daily and current_daily.id == daily_id and managers.custom_safehouse:can_progress_trophies(daily_id) then
         return self._get_objective_progress(current_daily.trophy.objectives, progress_id or daily_id)
     end
     return 0, 0
@@ -2707,7 +2727,7 @@ end
 ---@return number progress, number max
 function EHI:GetDailyChallengeProgressAndMax(daily_id, progress_id)
     local current_job = managers.challenge:get_active_challenge(daily_id)
-    if current_job and current_job.id == daily_id and current_job.objectives then
+    if current_job and current_job.id == daily_id and current_job.objectives and managers.challenge:can_progress_challenges() then
         return self._get_objective_progress(current_job.objectives, progress_id or daily_id)
     end
     return 0, 0

@@ -45,9 +45,12 @@ function GroupAIStateBase:init(...)
         self:remove_listener("EHI_EnemyWeaponsHot")
     end)
     if EHI:GetOption("show_minion_health") then
-        self.__ehi_minion_health_events = deep_clone(CopDamage._all_event_types)
-        table.delete(self.__ehi_minion_health_events, "death") -- "death" event is already handled in a different callback
+        self.__ehi_minion_health_events = table.exclude(CopDamage._all_event_types, "death") -- "death" event is already handled in a different callback
+        if not next(self.__ehi_minion_health_events) then -- If, for some reason, the table is empty, disable the callback
+            self.__ehi_minion_health_events = nil
+        end
     end
+    self.__ehi_color_minions_to_owner = EHI:GetOption("show_minion_colored_to_owner")
 end
 
 function GroupAIStateBase:on_successful_alarm_pager_bluff(...) -- Called by host
@@ -85,7 +88,6 @@ if not tweak_data.levels:IsStealthRequired() then
             if managers.ehi_tracker:TrackerExists("Drama") then
                 return
             end
-            local pos = managers.ehi_assault:TrackerExists() and 1 or 0
             managers.ehi_tracker:AddTracker({
                 id = "Drama",
                 icons = { "C_Escape_H_Street_Bullet" },
@@ -93,7 +95,7 @@ if not tweak_data.levels:IsStealthRequired() then
                 flash_bg = false,
                 hint = "drama",
                 class = EHI.Trackers.Chance
-            }, pos)
+            }, managers.ehi_assault:TrackerExists() and 1 or 0)
             managers.ehi_tracker:SetChance("Drama", managers.groupai:state()._drama_data.amount, 2)
         end
         original._add_drama = GroupAIStateBase._add_drama
@@ -278,6 +280,10 @@ function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
     unit:character_damage():add_listener("EHIConvert", { "death" }, callback(self, self, "EHIConvertDied", data))
     if local_peer and self.__ehi_minion_health_events then
         unit:character_damage():add_listener("EHIConvertDamage", self.__ehi_minion_health_events, callback(self, self, "EHIConvertDamaged", key))
+    end
+    if self.__ehi_color_minions_to_owner and unit:contour() then
+        local colors = tweak_data.chat_colors
+        unit:contour():change_color("friendly", colors[peer_id] or colors[#colors] or tweak_data.contour.character.friendly_minion_color)
     end
 end
 

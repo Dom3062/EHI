@@ -37,7 +37,13 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min_max = {
+            min_max =
+            {
+                objectives =
+                {
+                    big_oil_intel_pickup = { min = 0, max = 3 },
+                    twh_safe_open = { min_max = 1 }
+                },
                 bonus_xp = { min_max = 6000 }
             }
         }

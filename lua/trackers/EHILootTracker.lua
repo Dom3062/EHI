@@ -426,7 +426,7 @@ function EHILootMaxTracker:VerifyStatus()
 end
 
 function EHILootMaxTracker:CacheVariables()
-    self._xp_player_limit = managers.ehi_experience:GetPlayerXPLimit()
+    self._xp_player_limit = managers.ehi_experience:GetPlayerXPLimit(true)
 end
 
 function EHILootMaxTracker:Refresh()

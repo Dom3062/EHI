@@ -40,6 +40,7 @@
 ---@field count_up_player_minions fun(self: self)
 ---@field count_down_player_minions fun(self: self)
 ---@field current_state fun(self: self): string
+---@field is_damage_health_ratio_active fun(self: self, health_ratio: number): boolean
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -524,11 +525,11 @@ end
 --//  Maniac  //--
 --//////////////--
 if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_convert_rate") then
-    local next_maniac_stack_poll = 0
+    local next_maniac_stack_poll = EHI:GetBuffDeckOption("maniac", "stack") and 0 or math.huge
     local ShowManiacStackTicks = EHI:GetBuffDeckOption("maniac", "stack_convert_rate")
     local ShowManiacDecayTicks = EHI:GetBuffDeckOption("maniac", "stack_decay")
-    local ShowManiacAccumulatedStacks = EHI:GetBuffDeckOption("maniac", "stack")
     local NextStackPoll = EHI:GetBuffDeckOption("maniac", "stack_refresh")
+    local maxstacks = tweak_data.upgrades.max_cocaine_stacks_per_tick or 20
     original._update_damage_dealt = PlayerManager._update_damage_dealt
     function PlayerManager:_update_damage_dealt(t, dt, ...)
         local previousstack = self._damage_dealt_to_cops_t or 0
@@ -551,18 +552,15 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_conve
 
         -- Poll accumulated hysteria stacks, but not every frame
         if t >= next_maniac_stack_poll then
-            if ShowManiacAccumulatedStacks then
-                local newstacks = (self._damage_dealt_to_cops or 0) * tweak_data.gui.stats_present_multiplier * self:upgrade_value("player", "cocaine_stacking", 0)
-                local maxstacks = tweak_data.upgrades.max_cocaine_stacks_per_tick or 20
-                if newstacks > maxstacks then
-                    newstacks = maxstacks
-                end
-                local ratio = newstacks / maxstacks
-                if ratio > 0 then
-                    managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", EHI.RoundNumber(ratio, 2))
-                else
-                    managers.ehi_buff:RemoveBuff("ManiacAccumulatedStacks")
-                end
+            local newstacks = (self._damage_dealt_to_cops or 0) * tweak_data.gui.stats_present_multiplier * self:upgrade_value("player", "cocaine_stacking", 0)
+            if newstacks > maxstacks then
+                newstacks = maxstacks
+            end
+            local ratio = newstacks / maxstacks
+            if ratio > 0 then
+                managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", EHI.RoundNumber(ratio, 2))
+            else
+                managers.ehi_buff:RemoveBuff("ManiacAccumulatedStacks")
             end
             next_maniac_stack_poll = t + NextStackPoll
         end

@@ -259,10 +259,8 @@
     "ehi_vr_y_offset" : "Posun Y (VR)",
 
     "ehi_vr_scale": "Měřítko (VR)",
-    "ehi_vr_scale_desc": "Nastavuje měřítko sledovačů ve VR. Čím větší číslo, tím jsou sledovače větší a naopak",
 
     "ehi_vr_tracker_alignment" : "Zarovnání sledovačů (VR)",
-    "ehi_vr_tracker_alignment_desc" : "Nastavuje zarovnání sledovačů ve VR",
 
     "ehi_visuals_menu" : "Vizuální zobrazení",
     "ehi_visuals_menu_desc" : "",
@@ -813,6 +811,7 @@
     "ehi_buffs_other_melee_charge" : "Prodleva nabití melee",
     "ehi_buffs_other_shield_regen" : "Prodleva na obnovení armoru",
     "ehi_buffs_other_stamina" : "Stamina",
+    "ehi_buffs_other_weapon_swap" : "Výměna zbraní",
     "ehi_buffs_other_dodge" : "Šance na Dodge",
     "ehi_buffs_other_dodge_refresh" : "Aktualizace šance na Dodge",
     "ehi_buffs_other_dodge_refresh_desc" : "Nastavuje jak často se má šance aktualizovat za sekundu",
@@ -942,6 +941,18 @@
     "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat zdraví civilistů",
     "ehi_other_show_floating_health_bar_team_ai" : "Zobrazovat zdraví botů",
 
+    "ehi_other_show_floating_damage_popup" : "Zobrazovat udělenené poškození NPC",
+    "ehi_other_show_floating_damage_popup_desc" : "Zobrazuje udělené poškození, když někoho trefíš",
+
+    "ehi_other_show_floating_damage_popup_size" : "Velikost",
+
+    "ehi_other_show_floating_damage_popup_time_on_screen" : "Čas na obrazovce",
+    "ehi_other_show_floating_damage_popup_time_on_screen_desc" : "Mění jak dlouho poškození zůstane na obrazovce",
+
+    "ehi_other_show_floating_damage_popup_my_damage" : "Zobrazovat moje poškození",
+    "ehi_other_show_floating_damage_popup_ai_damage" : "Zobrazovat poškození od AI",
+    "ehi_other_show_floating_damage_popup_crew_damage" : "Zobrazovat poškození spoluhráčů",
+
     "ehi_other_show_use_left_ammo_bag" : "Zobrazovat počet použití u Ammo Bagů",
     "ehi_other_show_use_left_doctor_bag" : "Zobrazovat počet použití u Doctor Bagů",
     "ehi_other_show_use_left_bodybags_bag" : "Zobrazovat počet použití u Bodybagů",
@@ -952,6 +963,9 @@
 
     "ehi_other_show_real_time_ingame" : "Zobrazovat aktuální čas ve hře",
     "ehi_other_show_real_time_ingame_desc" : "Zobrazuje aktuální reálný čas v OS pod časem loupeže",
+
+    "ehi_other_show_minion_colored_to_owner" : "Zobrazovat barvu převedence podle vlastníka",
+    "ehi_other_show_minion_colored_to_owner_desc" : "Nastavuje barvu ohraničení převedence podle jeho vlastníka",
 
     "ehi_colors_menu" : "Barvy",
     "ehi_colors_menu_desc" : "Mění použité barvy",

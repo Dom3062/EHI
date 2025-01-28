@@ -766,7 +766,9 @@ function EHIMenu:_get_menu_from_json(path, settings_table)
         })
 
         for _, item in ipairs(items) do
-            if item.table then
+            if item.vr then
+                self:_create_item(_G.IS_VR and item.vr[1] or item.vr[2], items, menu, settings_table)
+            elseif item.table then
                 self:_create_one_line_items(item, items, menu, settings_table)
             else
                 self:_create_item(item, items, menu, settings_table)
@@ -1935,43 +1937,6 @@ function EHIMenu:UpdateXPDiffEnabled(menu, item)
     end
 end
 
-function EHIMenu:IsVR()
-    return _G.IS_VR
-end
-
-function EHIMenu:IsNotVR()
-    return not _G.IS_VR
-end
-
-function EHIMenu:GetBuffOffsetEnabled()
-    return EHI:GetOption("show_buffs") and not _G.IS_VR
-end
-
-function EHIMenu:GetBuffVROffsetEnabled()
-    return EHI:GetOption("show_buffs") and _G.IS_VR
-end
-
-function EHIMenu:UpdateAllBuffOffset(menu, item)
-    local enabled = self:GetBuffVROffsetEnabled()
-    local items =
-    {
-        ehi_vr_x_offset = true,
-        ehi_vr_y_offset = true
-    }
-    local items2 =
-    {
-        ehi_x_offset = true,
-        ehi_y_offset = true
-    }
-    for _, m_item in ipairs(menu.items) do
-        if items[m_item.id or ""] then
-            self:AnimateItemEnabled(m_item, enabled)
-        elseif items2[m_item.id or ""] then
-            self:AnimateItemEnabled(m_item, not enabled)
-        end
-    end
-end
-
 function EHIMenu:IsAssaultTrackerEnabled()
     return EHI:IsAssaultTrackerEnabled()
 end
@@ -1992,4 +1957,7 @@ end
 
 function EHIMenu:IsFloatingHealthBarPocoBlurVisible()
     return EHI:GetOption("show_floating_health_bar") and EHI:GetOption("show_floating_health_bar_style") == 1
+end
+
+function EHIMenu:UpdateFloatingHealthBarPocoBlurOption()
 end

@@ -169,7 +169,7 @@ function EHITrackerManager:PreloadTracker(params)
 end
 
 ---@param id string
----@param params ElementTrigger
+---@param params ElementTrigger?
 function EHITrackerManager:RunTracker(id, params)
     local tbl = self._trackers[id]
     if not tbl then
@@ -883,15 +883,10 @@ do
     if EHI:GetOption("show_loot_counter") then
         dofile(path .. "EHILootTracker.lua")
     end
-    if EHI:IsAssaultTrackerEnabled() then
-        dofile(path .. "EHIAssaultTracker.lua")
-    end
-end
-
-if VoidUI then
-    dofile(EHI.LuaPath .. "hud/tracker/void_ui.lua")
 end
 
 if _G.IS_VR then
     dofile(EHI.LuaPath .. "EHITrackerManagerVR.lua")
+elseif VoidUI then
+    dofile(EHI.LuaPath .. "hud/tracker/void_ui.lua")
 end

@@ -103,6 +103,10 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
         EHIHealthFloatManager:new(self, hud_panel)
     end
+    if EHI:GetOption("show_floating_damage_popup") then
+        dofile(EHI.LuaPath .. "EHIDamageFloatManager.lua")
+        EHIDamageFloatManager:new(self)
+    end
 end
 
 ---@param id string
@@ -117,7 +121,7 @@ function HUDManager:AddEHIUpdator(id, class)
             for _id, _class in pairs(self._ehi_updators or {}) do
                 self:remove_updator(_id)
                 if _class.update_last then
-                    _class:update_last()
+                    _class:update_last(true)
                 end
             end
             self._ehi_updators = nil

@@ -220,7 +220,14 @@ EHI:AddXPBreakdown({
     {
         params =
         {
-            min_max = {
+            min_max =
+            {
+                objectives =
+                {
+                    correct_pc_hack = { min_max = 1 },
+                    timelock_done = { min_max = 1 },
+                    fs_secured_required_bags = { min_max = 1 }
+                },
                 bonus_xp = { min_max = 8000 }
             }
         }

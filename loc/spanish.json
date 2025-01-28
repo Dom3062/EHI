@@ -90,10 +90,8 @@
     "ehi_vr_y_offset" : "Posición vertical en VR",
 
     "ehi_vr_scale": "Tamaño en VR",
-    "ehi_vr_scale_desc": "Ajustar el tamaño de los contadores en realidad virtual.\nCuanto mayor sea el número, más grandes serán los contadores y viceversa.",
 
     "ehi_vr_tracker_alignment" : "Alineación en VR",
-    "ehi_vr_tracker_alignment_desc" : "Definir cómo se alinean los contadores en pantalla en realidad virtual.",
 
     "ehi_visuals_menu" : "Aspecto visual",
     "ehi_visuals_menu_desc" : "",

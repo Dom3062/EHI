@@ -259,10 +259,8 @@
     "ehi_vr_y_offset" : "Y offset (VR)",
 
     "ehi_vr_scale": "VR Scale",
-    "ehi_vr_scale_desc": "Sets scale of trackers in VR. The higher number the bigger trackers are and vice versa",
 
     "ehi_vr_tracker_alignment" : "VR Tracker Alignment",
-    "ehi_vr_tracker_alignment_desc" : "Defines how trackers should be aligned in VR",
 
     "ehi_visuals_menu" : "Visuals",
     "ehi_visuals_menu_desc" : "",
@@ -813,6 +811,7 @@
     "ehi_buffs_other_melee_charge" : "Melee Charge Delay",
     "ehi_buffs_other_shield_regen" : "Armor Regen Delay",
     "ehi_buffs_other_stamina" : "Stamina",
+    "ehi_buffs_other_weapon_swap" : "Weapon Swap",
     "ehi_buffs_other_dodge" : "Dodge Chance",
     "ehi_buffs_other_dodge_refresh" : "Dodge Chance Refresh",
     "ehi_buffs_other_dodge_refresh_desc" : "Sets how often 'Dodge Chance' gauge should be updated per second",
@@ -929,7 +928,7 @@
     "ehi_other_show_mission_xp_overview_desc" : "Shows a panel in Mission Briefing with possible XP you can get",
 
     "ehi_other_show_floating_health_bar" : "Show Floating Health Bar",
-    "ehi_other_show_floating_health_bar_desc" : "Shows floating health bar when you aim at someone",
+    "ehi_other_show_floating_health_bar_desc" : "Shows a floating health bar when you aim at someone",
 
     "ehi_other_show_floating_health_bar_style" : "Floating Health Bar Style",
     "ehi_other_show_floating_health_bar_style_1" : "PocoHud",
@@ -942,6 +941,18 @@
     "ehi_other_show_floating_health_bar_civilians" : "Show Floating Health Bars for Civilians",
     "ehi_other_show_floating_health_bar_team_ai" : "Show Floating Health Bars for Team AI",
 
+    "ehi_other_show_floating_damage_popup" : "Show Floating Damage Popup",
+    "ehi_other_show_floating_damage_popup_desc" : "Shows a floating damage popup of how much damage you have done to someone",
+
+    "ehi_other_show_floating_damage_popup_size" : "Size",
+
+    "ehi_other_show_floating_damage_popup_time_on_screen" : "Time on Screen",
+    "ehi_other_show_floating_damage_popup_time_on_screen_desc" : "Changes how long the damage popup will stay on the screen",
+
+    "ehi_other_show_floating_damage_popup_my_damage" : "Show My Damage",
+    "ehi_other_show_floating_damage_popup_ai_damage" : "Show AI Damage",
+    "ehi_other_show_floating_damage_popup_crew_damage" : "Show Crew Damage",
+
     "ehi_other_show_use_left_ammo_bag" : "Show uses left for Ammo Bags",
     "ehi_other_show_use_left_doctor_bag" : "Show uses left for Doctor Bags",
     "ehi_other_show_use_left_bodybags_bag" : "Show uses left for Bodybag Bags",
@@ -952,6 +963,9 @@
 
     "ehi_other_show_real_time_ingame" : "Show Current Real Time In-game",
     "ehi_other_show_real_time_ingame_desc" : "Shows current real time in OS under heist time",
+
+    "ehi_other_show_minion_colored_to_owner" : "Show Converts Colored to its Owner",
+    "ehi_other_show_minion_colored_to_owner_desc" : "Sets convert's contour color to its owner",
 
     "ehi_colors_menu" : "Colors",
     "ehi_colors_menu_desc" : "Changes used colors",

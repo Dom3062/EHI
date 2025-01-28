@@ -147,6 +147,7 @@ if EHI:CanShowCivilianCountTracker() then
             managers.ehi_tracker:AddTracker({
                 id = "CivilianCount",
                 count = count,
+                flash_times = 1,
                 class = "EHICivilianCountTracker"
             })
         end

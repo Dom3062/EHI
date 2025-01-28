@@ -35,6 +35,7 @@ local function hint_wait(o, t, self)
     if not self._hide_on_delete then
         o:parent():remove(o)
         self._hint = nil
+        self._hint_pos = nil
     end
 end
 ---@param o PanelBaseObject
@@ -567,7 +568,7 @@ end
 ---@param delay_popup boolean?
 function EHITracker:CreateHint(text, delay_popup)
     text = self._forced_hint_text or text
-    if self._hint_disabled or not text then
+    if self._hint_disabled or not text or self._hint then
         return
     end
     local loc
@@ -878,8 +879,11 @@ function EHITracker:SetTimeIfLower(time)
     end
 end
 
----@param params ElementTrigger
+---@param params ElementTrigger?
 function EHITracker:Run(params)
+    if not params then
+        return
+    end
     self:SetTimeNoAnim(params.time or 0)
     self:SetTextColor()
 end

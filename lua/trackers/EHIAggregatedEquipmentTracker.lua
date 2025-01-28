@@ -18,9 +18,9 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     self._n_of_deployables = 0
     self._count = {} ---@type table<string, { amount: number, placed: number, format: string }>
     self._deployables = {}
-    self._ignore = params.ignore or {}
+    self._ignore = self._ignore or params.ignore or {}
     self._equipment = {} ---@type table<string, PanelText?>
-    self._format = params.format or {}
+    self._format = self._format or params.format or {}
     for _, id in ipairs(self._ids) do
         self._count[id] = { amount = 0, placed = 0, format = self._format[id] or "charges" }
         self._deployables[id] = {}
@@ -109,6 +109,9 @@ end
 ---@param id string
 function EHIAggregatedEquipmentTracker:AddToIgnore(id)
     self._ignore[id] = true
+    if not self._deployables then -- Do not do anything if the tracker is hidden waiting (the tables are already clear) to be restored once a valid deployable is placed
+        return
+    end
     self._deployables[id] = {}
     self._count[id] = { amount = 0, placed = 0 }
     self:CheckAmount(id)
@@ -120,6 +123,10 @@ end
 function EHIAggregatedEquipmentTracker:UpdateAmount(key, amount, id)
     if not key or self._ignore[id] then
         return
+    elseif self._restore_after_cleanup then
+        self._restore_after_cleanup = nil
+        self._parent_class:RunTracker(self._id)
+        self:pre_init()
     end
     self._deployables[id][key] = amount
     local deployable = self._count[id]
@@ -241,18 +248,15 @@ function EHIAggregatedEquipmentTracker:Reorganize(addition)
 end
 
 function EHIAggregatedEquipmentTracker:CleanupOnHide()
+    if self._restore_after_cleanup then -- No need to clean up again if the tracker is pending restoration
+        return
+    end
     local _, last_text = next(self._equipment)
     if alive(self._bg_box) and alive(last_text) then
         self._bg_box:remove(last_text) ---@diagnostic disable-line
     end
     self._equipment = nil
-    self._equipment = {}
     self._count = nil
-    self._count = {}
     self._deployables = nil
-    self._deployables = {}
-    for _, id in ipairs(self._ids) do
-        self._count[id] = { amount = 0, placed = 0, format = self._format[id] or "charges" }
-        self._deployables[id] = {}
-    end
+    self._restore_after_cleanup = true
 end

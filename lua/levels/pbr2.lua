@@ -37,30 +37,21 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 if EHI:GetOption("show_mission_trackers") then
-    local thermite = { time = 300/30, id = "ThermiteSewerGrate", icons = { Icon.Fire }, hint = EHI.Hints.Thermite }
     local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
-    for _, id in ipairs({ 101405, 101432, 100896, 101031 }) do
+    for _, id in ipairs({ 101405, 101432, 100896, 101031, 101032, 101406 }) do
         managers.mission:add_runned_unit_sequence_trigger(id, "interact", function(unit)
+            local t = 300 / 30
             if not show_waypoint_only then
-                managers.ehi_tracker:AddTracker(thermite)
-            end
-            if show_waypoint then
-                managers.ehi_waypoint:AddWaypoint(tostring(id), {
-                    time = thermite.time,
-                    icon = Icon.Fire,
-                    position = managers.ehi_manager:GetUnitPositionOrDefault(id)
+                managers.ehi_tracker:AddTracker({
+                    id = tostring(id),
+                    time = t,
+                    icons = { Icon.Fire },
+                    hint = EHI.Hints.Thermite
                 })
             end
-        end)
-    end
-    for _, id in ipairs({ 101032, 101406 }) do
-        managers.mission:add_runned_unit_sequence_trigger(id, "interact", function(unit)
-            if not show_waypoint_only then
-                managers.ehi_tracker:AddTracker(thermite)
-            end
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(tostring(id), {
-                    time = thermite.time,
+                    time = t,
                     icon = Icon.Fire,
                     position = managers.ehi_manager:GetUnitPositionOrDefault(id)
                 })

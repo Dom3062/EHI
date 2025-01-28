@@ -46,6 +46,9 @@ function EHIAssaultManager:init_finalize(manager)
         show_endless_assault = true,
         hint = combine and "assault" or "assault_time"
     }
+    if not (self._assault_delay.blocked and self._assault_time.blocked) then
+        EHI:LoadTracker("EHIAssaultTracker")
+    end
     self:AddAssaultTypeChangedCallback(function(mode, element_id)
         if self._blocked_wave_mode_elements and self._blocked_wave_mode_elements[element_id] then
             return

@@ -4,10 +4,10 @@ local Icon = EHI.Icons
 ---@field super EHIPausableTracker
 EHIElevatorTimerTracker = class(EHIPausableTracker)
 EHIElevatorTimerTracker._forced_icons = { Icon.Door }
-function EHIElevatorTimerTracker:init(panel, params, ...)
+function EHIElevatorTimerTracker:pre_init(params)
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
-    EHIElevatorTimerTracker.super.init(self, panel, params, ...)
+    EHIElevatorTimerTracker.super.pre_init(self, params)
 end
 
 function EHIElevatorTimerTracker:GetElevatorTime()

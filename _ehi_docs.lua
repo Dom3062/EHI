@@ -4,6 +4,7 @@
 ]]
 
 _G.EHI._cache.LocalPeerID = math.random()
+_G.EHI._cache.Beardlib = {} ---@type table<string, { name: string, objective: string }>
 _G.EHI.HeistTimerIsInverted = math.random() == math.random()
 _G.EHI.GagePackagesSpawned = math.random() == math.random()
 _G.EHI.Manager = managers.ehi_manager

@@ -18,16 +18,14 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
         local _f_init = HudChallengeNotification.init
         if VoidUI and VoidUI.options.enable_challanges then
             function HudChallengeNotification:init(title, ...)
-                local valid = false
                 local color = nil
                 if title and titles[title] then
-                    valid = true
                     local _t = titles[title]
                     title = _t.localization
                     color = _t.color
                 end
                 _f_init(self, title, ...)
-                if valid then
+                if color then
                     for i, d in ipairs(self._hud:children()) do
                         if d.panel then
                             for ii, dd in ipairs(d:children()) do
@@ -41,16 +39,14 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
             end
         else
             function HudChallengeNotification:init(title, ...)
-                local valid = false
                 local color = nil
                 if title and titles[title] then
-                    valid = true
                     local _t = titles[title]
                     title = _t.localization
                     color = _t.color
                 end
                 _f_init(self, title, ...)
-                if valid and self._box then
+                if color and self._box then
                     for i, d in ipairs(self._box:children()) do
                         if d.set_image then
                             d:set_color(color)

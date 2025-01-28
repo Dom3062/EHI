@@ -244,15 +244,15 @@ end
 EHIBerserkerBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIBerserkerBuffTracker._refresh_option = "berserker_refresh"
 function EHIBerserkerBuffTracker:post_init(...)
-    self._time = 0.2
     self._damage_multiplier = 0
     self._melee_damage_multiplier = 0
     EHIBerserkerBuffTracker.super.post_init(self, ...)
+    self._time = 0.2
 end
 
 function EHIBerserkerBuffTracker:PreUpdate()
     EHIBerserkerBuffTracker.super.PreUpdate(self)
-    if self._player_manager:upgrade_value("player", "melee_damage_health_ratio_multiplier", 0) == 0 then
+    if not self._player_manager:is_damage_health_ratio_active(0) then
         self:delete_with_class()
         return
     end

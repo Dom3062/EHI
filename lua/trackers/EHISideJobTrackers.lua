@@ -37,7 +37,7 @@ end
 ---@class EHISideJobProgressTracker : EHIAchievementProgressTracker
 ---@field super EHIAchievementProgressTracker
 EHISideJobProgressTracker = ehi_sidejob_class(EHIAchievementProgressTracker)
-function EHISideJobProgressTracker:init(panel, params, ...)
+function EHISideJobProgressTracker:pre_init(params)
     self._daily_job = params.daily_job
-    EHISideJobProgressTracker.super.init(self, panel, params, ...)
+    EHISideJobProgressTracker.super.pre_init(self, params)
 end

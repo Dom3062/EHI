@@ -832,6 +832,7 @@ _G.CoreWorldInstanceManager = {}
 ---@class CivilianDamage
 _G.CivilianDamage = {}
 ---@class CopDamage
+---@field _dead boolean
 _G.CopDamage = {}
 ---@class Drill
 _G.Drill = {}
@@ -963,10 +964,14 @@ _G.MoneyManager = {}
 ---@field dot fun(cam_fwd: number|Vector3, test_vec: Vector3): number
 ---@field normalize fun(vec: Vector3)
 ---@field set fun(vec1: Vector3, vec2: Vector3) Sets `vec2` into `vec1`
+---@field set_y fun(vec: Vector3, y: number) Sets `y` in `vec`
 ---@field set_z fun(vec: Vector3, z: number) Sets `z` in `vec`
 _G.mvector3 = {}
 ---@class NetworkPeer
 _G.NetworkPeer = {}
+---@class PlayerCamera
+---@field _camera_object Camera
+_G.PlayerCamera = {}
 ---@class PlayerMovement
 ---@field _stamina number
 ---@field current_state fun(self: self): PlayerStandard?
@@ -976,6 +981,18 @@ _G.NetworkPeer = {}
 ---@field running fun(self: self): boolean
 ---@field zipline_unit fun(self: self): UnitZipline
 _G.PlayerMovement = {}
+---@class PlayerStandard
+---@field get_animation fun(self: self, anim: string|number): Idstring
+---@field _camera_unit Camera
+---@field _equipped_unit UnitWeapon
+---@field _equip_weapon_expire_t number?
+---@field _ext_inventory PlayerInventory
+---@field _get_swap_speed_multiplier fun(self: self): number
+---@field _interact_expire_t number?
+---@field _state_data PlayerStandard._state_data
+---@field _unequip_weapon_expire_t number?
+---@field _use_item_expire_t number?
+_G.PlayerStandard = {}
 ---@class SkirmishTweakData
 _G.SkirmishTweakData = {}
 ---@class StatisticsManager
@@ -1061,6 +1078,7 @@ _G.Idstring = {}
 ---@field y fun(self: self): number
 
 ---@class Camera
+---@field anim_state_machine fun(): UnitAnimStateMachine
 ---@field position fun(self: self): Vector3
 ---@field rotation fun(self: self): Rotation
 
@@ -1120,8 +1138,8 @@ end
 ---@field b number
 ---@field blue number
 ---@field unpack fun(self: self): r: number, g: number, b: number
----@field vector fun(self: self): Vector3 Returns color as vector; From exposed engine function
----@field with_alpha fun(self: self, alpha: number): self
+---@field with_alpha fun(self: self, alpha: number): self Returns a new `Color` object with modified alpha
+---@field with_red fun(self: self, red: number): self Returns a new `Color` object with modified red
 
 ---@class Idstring
 ---@field key fun(self: self): string
@@ -1236,8 +1254,10 @@ end
 ---@field is_active fun(self: self): boolean
 
 ---@class CustomSafehouseManager
+---@field can_progress_trophies fun(self: self, id: string): boolean
 ---@field get_daily_challenge fun(self: self): CustomSafehouseManager._global.daily
 ---@field is_trophy_unlocked fun(self: self, id: string): boolean
+---@field unlocked fun(self: self): boolean
 ---@field uno_achievement_challenge fun(self: self): UnoAchievementChallenge
 
 ---@class CustomSafehouseManager._global.daily
@@ -1508,7 +1528,6 @@ end
 ---@field get_vector_index fun(v: table, e: any): number?
 ---@field empty fun(v: table): boolean
 ---@field has fun(v: table, k: any): boolean Returns `true` or `false` if `k` key exists in the table
----@field delete fun(v: table, e: any) `v` is expected as list
 
 ---@generic K
 ---@param ... K
@@ -1525,7 +1544,7 @@ end
 function table.list_to_set(list)
 end
 
----Returns `key name` if value exists
+---Returns `key` associated with `value`
 ---@generic K, V
 ---@param map table<K, V>
 ---@param wanted_key_value V
@@ -1546,11 +1565,26 @@ end
 function table.random_key(t)
 end
 
+---@generic T
+---@param v T[]
+---@param e T
+function table.delete(v, e)
+end
+
+---Returns a new copied table without the provided value in `e`
+---@generic T
+---@param t T[]
+---@param e T
+---@return T[]
+function table.exclude(t, e)
+end
+
 ---@class string
 ---@field key fun(self: self): string Returns Idstring
 
 ---@class ContourExt
 ---@field _contour_list table?
+---@field change_color fun(self: self, type: string, color: Color|Vector3?)
 
 ---@class InteractionExt
 ---@field tweak_data string
@@ -1573,14 +1607,15 @@ end
 ---@field m_head_pos fun(self: self): Vector3
 ---@field m_head_rot fun(self: self): Rotation
 
----@class PlayerStandard
----@field _state_data PlayerStandard._state_data
-
 ---@class PlayerStandard._state_data
 ---@field in_steelsight boolean
+---@field melee_expire_t number?
+---@field omniscience_t number?
+---@field reload_expire_t number?
 
 ---@class CopBase : UnitBase
 ---@field _unit UnitEnemy
+---@field _stats_name string
 ---@field _tweak_table string
 ---@field has_tag fun(self: self, tag: string): boolean
 
@@ -1740,6 +1775,9 @@ end
 
 ---@class U_Material
 ---@field set_variable fun(self: self, material_name: Idstring, value: any)
+
+---@class UnitAnimStateMachine
+---@field segment_state fun(self: self, state: Idstring): Idstring
 
 ---@class LocalizationManager
 ---@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string

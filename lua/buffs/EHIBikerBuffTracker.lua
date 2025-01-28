@@ -29,7 +29,7 @@ function EHIBikerBuffTracker:SetCustodyState(state)
             self._visible = false
         end
     else
-        Hooks:PostHook(PlayerManager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", self._f)
+        Hooks:PostHook(self._player_manager, "chk_wild_kill_counter", "EHI_BikerBuff_Post", self._f)
         if self._persistent then
             self:SetPersistent() -- Cheap text reset
             self:ActivateSoft()

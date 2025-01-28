@@ -37,13 +37,11 @@ if EHI.IsHost then
         SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id --[[@as boolean]])
         managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair_clbk_id and HasAutorepair or NoAutorepair)
     end
-    original.clbk_autorepair = Drill.clbk_autorepair
-    function Drill:clbk_autorepair(...)
-        original.clbk_autorepair(self, ...)
-        if alive(self._unit) then
-            managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", NoAutorepair)
-            SetAutorepair(tostring(self._unit:key()), false)
-        end
+    original.on_autorepair = Drill.on_autorepair
+    function Drill:on_autorepair(...)
+        original.on_autorepair(self, ...)
+        managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", NoAutorepair)
+        SetAutorepair(tostring(self._unit:key()), false)
     end
     original.set_jammed = Drill.set_jammed
     function Drill:set_jammed(...)

@@ -3,104 +3,103 @@ if EHI:CheckLoadHook("PlayerStandard") or not EHI:GetOption("show_buffs") then
     return
 end
 
-local original =
-{
-    _update_omniscience = PlayerStandard._update_omniscience
-}
+local original = {}
 
 --///////////////////--
 --//  Sixth Sense  //--
 --///////////////////--
-EHI:AddOnAlarmCallback(function(dropin)
-    managers.ehi_buff:DeleteBuff("standstill_omniscience_initial")
-    managers.ehi_buff:DeleteBuff("standstill_omniscience")
-    managers.ehi_buff:DeleteBuff("standstill_omniscience_highlighted")
-    PlayerStandard._update_omniscience = original._update_omniscience
-end)
-
--- Assume default, recomputed after spawn
-local computed_duration_civilian = 4.5
-local computed_duration_security = 13.5
-local target_resense_delay = tweak_data.player.omniscience.target_resense_t or 15
-local sense_latch = false
-EHI:AddOnSpawnedCallback(function()
-    local playermanager = managers.player
-    local ContourExt = ContourExt
-    local tmp = ContourExt._types
-    if tmp then
-        local multiplier = playermanager:upgrade_value("player", "mark_enemy_time_multiplier", 1)
-        local contour_type = playermanager:has_category_upgrade("player", "marked_enemy_extra_damage") and "mark_enemy_damage_bonus" or "mark_enemy"
-        tmp = tmp[contour_type]
-        if tmp then
-            computed_duration_civilian = tmp.fadeout and (tmp.fadeout * multiplier) or 4.5
-            computed_duration_security = tmp.fadeout_silent and (tmp.fadeout_silent * multiplier) or 13.5
-        end
-    end
-end)
-
-local DoNotTrackSixthSenseInitial = not EHI:GetBuffOption("sixth_sense_initial")
-local TrackSixthSenseSubsequent = EHI:GetBuffOption("sixth_sense_refresh")
-local TrackSixthSenseHighlighted = EHI:GetBuffOption("sixth_sense_marked")
-local latch_t = 0
-function PlayerStandard:_update_omniscience(t, dt, ...)
-    local previoustime = self._state_data.omniscience_t
-
-    original._update_omniscience(self, t, dt, ...)
-
-    if previoustime and self._state_data.omniscience_t == nil then
-        -- The game forbade the skill, kill the buffs (this does not run every frame due to the combined check in the above
-        -- conditional clause)
-        managers.ehi_buff:RemoveBuff("standstill_omniscience_initial")
-        managers.ehi_buff:RemoveBuff("standstill_omniscience")
-        managers.ehi_buff:RemoveBuff("standstill_omniscience_highlighted")
-        sense_latch = false
-        return
-    end
-
-    -- Player does not have the skill or alarm has been raised; do not set update function back to vanilla function as this will break the buff if the condition is true
-    if previoustime == nil and self._state_data.omniscience_t == nil then
-        return
-    end
-
-    if previoustime == nil and self._state_data.omniscience_t then -- Delay prior to initial poll
-        if DoNotTrackSixthSenseInitial then
-            return
-        end
-        managers.ehi_buff:AddBuff("standstill_omniscience_initial", tweak_data.player.omniscience.start_t)
-    elseif previoustime ~= self._state_data.omniscience_t then
-        -- Subsequent poll (called once every second)
-        local detected = 0
-        local tmp = self._state_data.omniscience_units_detected
-        local civilians = managers.enemy:all_civilians()
-        if tmp then
-            local begin_t = 0
-            local end_t = 0
-            for key, data in pairs(tmp) do
-                -- Since only expiry times are stored, work backwards to figure out when the start time was, and calculate the
-                -- time the highlight will expire
-                begin_t = data - target_resense_delay
-                end_t = begin_t + (civilians[key] and computed_duration_civilian or computed_duration_security)
-                if t >= begin_t and t < end_t then
-                    detected = detected + 1
+do
+    local TrackSixthSenseInitial = EHI:GetBuffOption("sixth_sense_initial")
+    local TrackSixthSenseSubsequent = EHI:GetBuffOption("sixth_sense_refresh")
+    local TrackSixthSenseHighlighted = EHI:GetBuffOption("sixth_sense_marked")
+    if TrackSixthSenseInitial or TrackSixthSenseSubsequent or TrackSixthSenseHighlighted then
+        original._update_omniscience = PlayerStandard._update_omniscience
+        EHI:AddOnAlarmCallback(function(dropin)
+            managers.ehi_buff:DeleteBuff("standstill_omniscience_initial")
+            managers.ehi_buff:DeleteBuff("standstill_omniscience")
+            managers.ehi_buff:DeleteBuff("standstill_omniscience_highlighted")
+            PlayerStandard._update_omniscience = original._update_omniscience
+        end)
+        -- Assume default, recomputed after spawn
+        local computed_duration_civilian = 4.5
+        local computed_duration_security = 13.5
+        local target_resense_delay = tweak_data.player.omniscience.target_resense_t or 15
+        local sense_latch = false
+        EHI:AddOnSpawnedCallback(function()
+            local playermanager = managers.player
+            local ContourExt = ContourExt
+            local tmp = ContourExt._types
+            if tmp then
+                local multiplier = playermanager:upgrade_value("player", "mark_enemy_time_multiplier", 1)
+                local contour_type = playermanager:has_category_upgrade("player", "marked_enemy_extra_damage") and "mark_enemy_damage_bonus" or "mark_enemy"
+                tmp = tmp[contour_type]
+                if tmp then
+                    computed_duration_civilian = tmp.fadeout and (tmp.fadeout * multiplier) or 4.5
+                    computed_duration_security = tmp.fadeout_silent and (tmp.fadeout_silent * multiplier) or 13.5
                 end
             end
-        end
+        end)
+        local latch_t = 0
+        function PlayerStandard:_update_omniscience(t, dt, ...)
+            local previoustime = self._state_data.omniscience_t
 
-        if detected > 0 and TrackSixthSenseSubsequent then
-            if sense_latch then
-                if t >= latch_t then
-                    managers.ehi_buff:AddBuff("standstill_omniscience", target_resense_delay)
-                    latch_t = t + target_resense_delay
-                end
-            else
-                managers.ehi_buff:AddBuff("standstill_omniscience", target_resense_delay)
-                sense_latch = true
-                latch_t = t + target_resense_delay
+            original._update_omniscience(self, t, dt, ...)
+
+            if previoustime and self._state_data.omniscience_t == nil then
+                -- The game forbade the skill, kill the buffs (this does not run every frame due to the combined check in the above
+                -- conditional clause)
+                managers.ehi_buff:RemoveBuff("standstill_omniscience_initial")
+                managers.ehi_buff:RemoveBuff("standstill_omniscience")
+                managers.ehi_buff:RemoveBuff("standstill_omniscience_highlighted")
+                sense_latch = false
+                return
             end
-        end
 
-        if TrackSixthSenseHighlighted then
-            managers.ehi_buff:AddGauge("standstill_omniscience_highlighted", detected)
+            -- Player does not have the skill or alarm has been raised; do not set update function back to vanilla function as this will break the buff if the condition is true
+            if previoustime == nil and self._state_data.omniscience_t == nil then
+                return
+            end
+
+            if previoustime == nil and self._state_data.omniscience_t then -- Delay prior to initial poll
+                if TrackSixthSenseInitial then
+                    managers.ehi_buff:AddBuff("standstill_omniscience_initial", tweak_data.player.omniscience.start_t)
+                end
+            elseif previoustime ~= self._state_data.omniscience_t then
+                -- Subsequent poll (called once every second)
+                local detected = 0
+                local tmp = self._state_data.omniscience_units_detected
+                local civilians = managers.enemy:all_civilians()
+                if tmp then
+                    local begin_t = 0
+                    local end_t = 0
+                    for key, data in pairs(tmp) do
+                        -- Since only expiry times are stored, work backwards to figure out when the start time was, and calculate the
+                        -- time the highlight will expire
+                        begin_t = data - target_resense_delay
+                        end_t = begin_t + (civilians[key] and computed_duration_civilian or computed_duration_security)
+                        if t >= begin_t and t < end_t then
+                            detected = detected + 1
+                        end
+                    end
+                end
+
+                if detected > 0 and TrackSixthSenseSubsequent then
+                    if sense_latch then
+                        if t >= latch_t then
+                            managers.ehi_buff:AddBuff("standstill_omniscience", target_resense_delay)
+                            latch_t = t + target_resense_delay
+                        end
+                    else
+                        managers.ehi_buff:AddBuff("standstill_omniscience", target_resense_delay)
+                        sense_latch = true
+                        latch_t = t + target_resense_delay
+                    end
+                end
+
+                if TrackSixthSenseHighlighted then
+                    managers.ehi_buff:AddGauge("standstill_omniscience_highlighted", detected)
+                end
+            end
         end
     end
 end
@@ -137,6 +136,20 @@ if EHI:GetBuffOption("interact") then
             managers.ehi_buff:RemoveBuff("Interact")
         end
     end
+
+    original._start_action_use_item = PlayerStandard._start_action_use_item
+    function PlayerStandard:_start_action_use_item(t, ...)
+        original._start_action_use_item(self, t, ...)
+        managers.ehi_buff:AddBuff("Interact", self._use_item_expire_t - t)
+    end
+
+    original._interupt_action_use_item = PlayerStandard._interupt_action_use_item
+    function PlayerStandard:_interupt_action_use_item(...)
+        if self._use_item_expire_t then
+            managers.ehi_buff:RemoveBuff("Interact")
+        end
+        original._interupt_action_use_item(self, ...)
+    end
 end
 
 if EHI:GetBuffOption("melee_charge") then
@@ -167,5 +180,36 @@ if EHI:GetBuffOption("melee_charge") then
     function PlayerStandard:_interupt_action_melee(...)
         original._interupt_action_melee(self, ...)
         managers.ehi_buff:RemoveBuff("MeleeCharge")
+    end
+end
+
+if EHI:GetBuffOption("weapon_swap") then
+    original._start_action_unequip_weapon = PlayerStandard._start_action_unequip_weapon
+    function PlayerStandard:_start_action_unequip_weapon(t, data, ...)
+        local previous_selected_weapon = self._equipped_unit
+        original._start_action_unequip_weapon(self, t, data, ...)
+        if self._unequip_weapon_expire_t then
+            local next_weapon_equip_t = 0
+            local next_previous_weapon_selection = data.selection_wanted
+            if data.next then
+                local _, selection = self._ext_inventory:get_next_selection()
+                next_previous_weapon_selection = selection
+            elseif data.previous then
+                local _, selection = self._ext_inventory:get_previous_selection()
+                next_previous_weapon_selection = selection
+            end
+            if next_previous_weapon_selection then
+                local select_equip = self._ext_inventory:get_selected(next_previous_weapon_selection)
+                local weapon_unit = select_equip and select_equip.unit
+                if weapon_unit then
+                    self._equipped_unit = weapon_unit -- Swap the equipped weapon unit so the function below correctly calculates speed multiplier
+                    local speed_multiplier = self:_get_swap_speed_multiplier()
+                    local tweak_data = self._equipped_unit:base():weapon_tweak_data()
+                    self._equipped_unit = previous_selected_weapon -- Return back previous weapon so nothing breaks
+                    next_weapon_equip_t = (tweak_data.timers.equip or 0.7) / speed_multiplier
+                end
+            end
+            managers.ehi_buff:AddBuff("WeaponSwap", self._unequip_weapon_expire_t - t + next_weapon_equip_t)
+        end
     end
 end

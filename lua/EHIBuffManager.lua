@@ -27,11 +27,12 @@ EHIBuffManager._sync_add_buff = "EHISyncAddBuff"
 ---@param hud HUDManager
 ---@param panel Panel
 function EHIBuffManager:init_finalize(hud, panel)
+    local tweak_data = tweak_data.ehi.default.buff
     self._buffs = {} ---@type table<string, EHIBuffTracker?>
     self._update_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
     self._visible_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
     self._n_visible = 0
-    self._gap = 6
+    self._gap = tweak_data.gap
     self._x = EHI:GetOption(_G.IS_VR and "buffs_vr_x_offset" or "buffs_x_offset") --[[@as number]]
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
@@ -41,8 +42,8 @@ function EHIBuffManager:init_finalize(hud, panel)
     self._panel = panel
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
     local buff_y = EHI:GetOption(_G.IS_VR and "buffs_vr_y_offset" or "buffs_y_offset") --[[@as number]]
-    local buff_w = 32 * scale
-    local buff_h = 64 * scale
+    local buff_w = tweak_data.size_w * scale
+    local buff_h = tweak_data.size_h * scale
     self:_init_buffs(buff_y, buff_w, buff_h, scale)
     self:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     self:_cleanup_unused_buff_classes()
@@ -95,11 +96,14 @@ end
 ---@param scale number
 function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     if not EHI:GetBuffDeckOption("tag_team", "tagged") then
+        if EHI:GetBuffDeckOption("tag_team", "effect") then
+            return
+        end
         _G.EHITagTeamBuffTracker = nil
         return
     end
     local local_peer_id = EHI.IsHost and 1 or EHI._cache.LocalPeerID
-    if not local_peer_id then
+    if Global.game_settings.single_player or not local_peer_id then
         return
     end
     local texture, texture_rect = GetIcon(tweak_data.ehi.buff.TagTeamEffect)
@@ -120,7 +124,7 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             self:_create_buff(params)
         end
     end
-    if CustomNameColor and CustomNameColor.ModID and not Global.game_settings.single_player then
+    if CustomNameColor and CustomNameColor.ModID then
         self:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
             if data and data ~= "" then
                 local buff = self._buffs["TagTeamTagged_" .. sender .. local_peer_id]

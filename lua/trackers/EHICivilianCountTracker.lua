@@ -21,11 +21,10 @@ if EHI:GetOption("civilian_count_tracker_format") >= 2 then
     end
     EHICivilianCountTracker.FormatCount = EHICivilianCountTracker.Format
 end
-function EHICivilianCountTracker:init(...)
+function EHICivilianCountTracker:pre_init(...)
     self._tied_count = 0
     self._tied_units = {}
-    EHICivilianCountTracker.super.init(self, ...)
-    self._flash_times = 1
+    EHICivilianCountTracker.super.pre_init(self, ...)
 end
 
 ---@param count number

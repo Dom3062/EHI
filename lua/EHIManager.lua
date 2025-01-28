@@ -601,8 +601,8 @@ function EHIManager:AddTriggers2(new_triggers, trigger_id_all, trigger_icons_all
                 if value.special_function and self.TriggerFunction[value.special_function] then
                     if t.data then
                         local data = value.data or {}
-                        for i = 1, #data, 1 do
-                            t.data[#t.data + 1] = data[i]
+                        for _, data_value in ipairs(data) do
+                            table.insert(t.data, data_value)
                         end
                     else
                         EHI:Log("key: " .. tostring(key) .. " does not have 'data' table, new triggers won't be added!")
@@ -614,7 +614,7 @@ function EHIManager:AddTriggers2(new_triggers, trigger_id_all, trigger_icons_all
                     end
                     triggers[new_key] = value
                     FillRestOfProperties(new_key, value)
-                    t.data[#t.data + 1] = new_key
+                    table.insert(t.data, new_key)
                 else
                     EHI:Log("key: " .. tostring(key) .. " does not have 'data' table, the trigger " .. tostring(new_key) .. " will not be called!")
                 end
@@ -627,7 +627,7 @@ function EHIManager:AddTriggers2(new_triggers, trigger_id_all, trigger_icons_all
                     triggers[new_key] = t
                     triggers[key] = value
                     FillRestOfProperties(key, value)
-                    value.data[#value.data + 1] = new_key
+                    table.insert(value.data, new_key)
                 else
                     EHI:Log("key: " .. tostring(key) .. " with ID: " .. tostring(value.id) .. " does not have 'data' table, the former trigger won't be moved and triggers assigned to this one will not be called!")
                 end
@@ -1043,6 +1043,10 @@ function EHIManager:_parse_vanilla_waypoint_trigger(data)
             data.data.icon = redirect
             data.data.icon_redirect = true
         end
+    end
+    if not data.data.position then
+        EHI:Log(string.format("Parsed Vanilla waypoint trigger with ID '%s' does not have a valid position. Position vector set to default value to avoid crashing.", tostring(data.id)))
+        data.data.position = Vector3()
     end
 end
 

@@ -1,5 +1,5 @@
-local function round(num, dec)
-    local res = string.format('%.' .. (dec or 0) .. 'g', num)
+local function round(num)
+    local res = string.format('%.2g', num)
     return res:find('e') and tostring(math.floor(num)) or res
 end
 
@@ -185,7 +185,7 @@ function EHIHealthFloatPoco:draw(t)
             local isTurret = unit:base() and unit:base().get_type and unit:base():get_type() == "swat_turret" ---@diagnostic disable-line
             local color = ((isEnemy and not isConverted) or isTurret) and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
             if pDist <= 100000 and cHealth > 0 then
-                txts[1] = { round(cHealth, 2) .. '/' .. round(fHealth, 2), color }
+                txts[1] = { round(cHealth) .. '/' .. round(fHealth), color }
             end
             pPos = pPos:with_y(pPos.y - size * 2)
             self.pie:set_current(prog)
@@ -202,17 +202,19 @@ function EHIHealthFloatPoco:draw(t)
             self._pnl:set_size(m * 2 + (w > 0 and w + m + 1 or 0) + size, h + 2 * m)
             self.bg:set_size(self._pnl:size())
             self._pnl:set_center(pPos.x, pPos.y)
+            d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
+            d = math.min(d, self._opacity)
+            if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then
+                d = math.min(d, self._parent:_visibility(pos))
+            end
         else
             self.pie:set_visible(false)
             self.pieBg:set_visible(false)
             self.lbl:set_visible(false)
+            self.bg:set_visible(false)
             self.lblShadow1:set_visible(false)
             self.lblShadow2:set_visible(false)
-        end
-        d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
-        d = math.min(d, self._opacity)
-        if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then
-            d = math.min(d, self._parent:_visibility(pos))
+            d = 0
         end
         if not self._dying then
             self._pnl:set_alpha(d)
@@ -234,7 +236,7 @@ function EHIHealthFloatPoco:delete()
     if alive(pnl) and not self._dying then
         self._dying = true
         pnl:stop()
-        pnl:animate(self._fade, self.lastD or 1, self._destroy_callback, 0.2)
+        pnl:animate(self._fade, self.lastD or 1, 0.2, self._destroy_callback)
     end
 end
 
@@ -254,13 +256,13 @@ end
 
 ---@param o Panel
 ---@param lastD number
----@param done_cb function?
 ---@param seconds number
-function EHIHealthFloatPoco._fade(o, lastD, done_cb, seconds)
+---@param done_cb function?
+function EHIHealthFloatPoco._fade(o, lastD, seconds, done_cb)
     o:set_visible(true)
     o:set_alpha(1)
     local t = seconds
-    while alive(o) and t > 0 do
+    while t > 0 do
         local dt = coroutine.yield()
         t = t - dt
         o:set_alpha(lastD * t / seconds)
@@ -293,12 +295,14 @@ function EHIHealthFloatPocoTeamAI:delete()
         local pnl = self._pnl
         if alive(pnl) then
             pnl:stop()
-            pnl:animate(self._fade, self.lastD or 1, nil, 0.2)
+            pnl:animate(self._fade, self.lastD or 1, 0.2)
         end
     end
 end
 
-function EHIHealthFloatPocoTeamAI:force_delete()
-    self._death = true
+---@param finished boolean?
+function EHIHealthFloatPocoTeamAI:force_delete(finished)
+    self._death = finished
+    self._keep_alive = not finished
     EHIHealthFloatPocoTeamAI.super.force_delete(self)
 end

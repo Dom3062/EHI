@@ -1,4 +1,3 @@
-local EHI = EHI
 ---@class EHIEscapeChanceManager
 EHIEscapeChanceManager = {}
 ---@param ehi_tracker EHITrackerManager

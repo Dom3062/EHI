@@ -248,10 +248,8 @@
     "ehi_vr_y_offset" : "Y轴偏移 (VR)",
 
     "ehi_vr_scale": "VR追踪器大小",
-    "ehi_vr_scale_desc": "更改VR模式下的追踪器大小，数值越大追踪器越大",
 
     "ehi_vr_tracker_alignment" : "VR追踪器对齐",
-    "ehi_vr_tracker_alignment_desc" : "设置使用VR时如何对齐追踪器",
 
     "ehi_visuals_menu" : "显示设置",
     "ehi_visuals_menu_desc" : "",

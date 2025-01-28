@@ -90,10 +90,8 @@
     "ehi_vr_y_offset" : "Смещение по вертикали (VR)",
 
     "ehi_vr_scale": "Размер значков в VR",
-    "ehi_vr_scale_desc": "Изменяет размер трекеров в VR. Чем больше число, тем крупнее размер трекера",
 
     "ehi_vr_tracker_alignment" : "Выравнивание трекера в VR",
-    "ehi_vr_tracker_alignment_desc" : "Определяет выравнивание трекера в VR",
 
     "ehi_visuals_menu" : "Настройки отображения",						   
     "ehi_visuals_menu_desc" : "",
