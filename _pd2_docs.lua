@@ -575,8 +575,6 @@ _G.tweak_data.carry = {}
 ---@class DOTTweakData
 ---@field get_dot_data fun(self: self, tweak_name: string): table?
 _G.tweak_data.dot = {}
----@class EHITweakData
-_G.tweak_data.ehi = {}
 ---@class EquipmentsTweakData
 _G.tweak_data.equipments = {
     ammo_bag = {

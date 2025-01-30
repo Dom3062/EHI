@@ -145,3 +145,10 @@ EHI:AddXPBreakdown({
         }
     }
 })
+if managers.job:current_job_id() == "framing_frame" then -- Check if we are playing the Vanilla Framing Frame job
+    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
+        if success then
+            managers.job:set_memory("ehi_ff_saved_bags", managers.loot:GetSecuredBagsAmount())
+        end
+    end)
+end

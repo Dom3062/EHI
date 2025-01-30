@@ -91,10 +91,11 @@ function EHITrackerManagerVR:_AddLaserTracker(key, params)
 end
 
 ---@param id string
-function EHITrackerManagerVR:RemoveLaserTracker(id)
+---@param t number
+function EHITrackerManagerVR:RemoveLaserTracker(id, t)
     if self:IsLoading() then
         self._load_callback[id] = nil
         return
     end
-    self:old_RemoveLaserTracker(id)
+    self:old_RemoveLaserTracker(id, t)
 end

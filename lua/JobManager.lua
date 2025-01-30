@@ -16,6 +16,8 @@ end
 ---@field is_level_christmas fun(self: self, level_id: string): boolean
 ---@field on_last_stage fun(self: self): boolean
 ---@field current_level_wave_count fun(self: self): number
+---@field set_memory fun(self: self, key: string, value: any, is_shortterm: boolean?)
+---@field get_memory fun(self: self, key: string, is_shortterm: boolean?): any
 
 function JobManager:IsPlayingMultidayHeist()
     if not self._global.current_job then

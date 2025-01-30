@@ -163,7 +163,7 @@ EHI:AddXPBreakdown({
             {
                 objectives =
                 {
-                    watchdogs2_bonus_xp = { max = 9 }
+                    watchdogs2_bonus_xp = { max = (managers.job:get_memory("ehi_watchdogs_saved_bags") or 12) - 3 } -- 9 bags is the maximum XP you can get
                 }
             }
         }

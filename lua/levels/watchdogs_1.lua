@@ -91,3 +91,10 @@ EHI:AddXPBreakdown({
         }
     }
 })
+if table.contains({ "watchdogs_wrapper", "watchdogs_night", "watchdogs" }, managers.job:current_job_id()) then -- Check if we are playing the Vanilla Watchdogs job
+    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
+        if success then
+            managers.job:set_memory("ehi_watchdogs_saved_bags", managers.loot:GetSecuredBagsAmount())
+        end
+    end)
+end

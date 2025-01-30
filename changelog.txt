@@ -1,3 +1,7 @@
+r299 (30. 01. 2025):
+Mission Briefing: Framing Frame Day 2 will properly reflect maximum XP based on secured bags in Day 1
+Mission Briefing: Watchdogs Day 2 will properly reflect maximum XP based on secured bags in Day 1
+
 r298 (28. 01. 2025):
 Added "Show Floating Damage Popup" and "Show Converts Colored to its Owner" option
 Added "Weapon Swap" buff

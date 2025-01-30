@@ -1959,5 +1959,11 @@ function EHIMenu:IsFloatingHealthBarPocoBlurVisible()
     return EHI:GetOption("show_floating_health_bar") and EHI:GetOption("show_floating_health_bar_style") == 1
 end
 
-function EHIMenu:UpdateFloatingHealthBarPocoBlurOption()
+function EHIMenu:UpdateFloatingHealthBarPocoBlurOption(menu, item)
+    for _, m_item in ipairs(menu.items) do
+        if m_item.id == "ehi_other_show_floating_health_bar_style_poco_blur_choice" then
+            self:AnimateItemEnabled(m_item, self:IsFloatingHealthBarPocoBlurVisible())
+            break
+        end
+    end
 end

@@ -43,7 +43,7 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                loot_all = { min = 4, max = 9 },
+                loot_all = { min = 4, max = managers.job:get_memory("ehi_ff_saved_bags") or 9 },
                 bonus_xp = { min_max = 2000 }
             }
         }

@@ -1,15 +1,15 @@
 local EHI = EHI
 local Icon = EHI.Icons
-local panel_size_original = tweak_data.ehi.default.tracker.size_h
-local panel_offset_original = tweak_data.ehi.default.tracker.offset
-local panel_size = panel_size_original
-local panel_offset = panel_offset_original
+local panel_size_original, panel_size = 0, 0
+local panel_offset_original, panel_offset = 0, 0
 ---@class FakeEHITrackerManager
 FakeEHITrackerManager = {}
 FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
 ---@param panel Panel
 ---@param aspect_ratio number
 function FakeEHITrackerManager:new(panel, aspect_ratio)
+    panel_size_original = tweak_data.ehi.default.tracker.size_h
+    panel_offset_original = tweak_data.ehi.default.tracker.offset
     dofile(EHI.LuaPath .. "menu/FakeEHITracker.lua")
     self._hud_panel = panel:panel({ alpha = 1 })
     if _G.IS_VR then

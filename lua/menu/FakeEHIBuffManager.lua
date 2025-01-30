@@ -19,14 +19,16 @@ local function GetIcon(params)
 end
 
 local EHI = EHI
-local buff_w_original = tweak_data.ehi.default.buff.size_w
-local buff_h_original = tweak_data.ehi.default.buff.size_h
-local buff_w = buff_w_original
-local buff_h = buff_h_original
+local buff_w_original, buff_w = 0, 0
+local buff_h_original, buff_h = 0, 0
 ---@class FakeEHIBuffsManager
 FakeEHIBuffsManager = {}
 ---@param panel Panel
 function FakeEHIBuffsManager:new(panel)
+    buff_w_original = tweak_data.ehi.default.buff.size_w
+    buff_h_original = tweak_data.ehi.default.buff.size_h
+    buff_w = buff_w_original
+    buff_h = buff_h_original
     dofile(EHI.LuaPath .. "menu/FakeEHIBuffTracker.lua")
     self._class_redirect =
     {

@@ -200,20 +200,17 @@ end
 
 ---@param params ElementTrigger
 function EHITrackerManager:AddLaserTracker(params)
-    for id, _ in pairs(self._stealth_trackers.lasers) do
-        -- Don't add this tracker if the "next_cycle_t" is the same as time to prevent duplication
-        local tracker = self:GetTracker(id) --[[@as EHILaserTracker?]]
-        if tracker and tracker._next_cycle_t == params.time then
-            return
-        end
+    if self._stealth_trackers.lasers[params.time] then
+        return
     end
-    self._stealth_trackers.lasers[params.id] = true
+    self._stealth_trackers.lasers[params.time] = true
     self:AddTracker(params)
 end
 
 ---@param id string
-function EHITrackerManager:RemoveLaserTracker(id)
-    self._stealth_trackers.lasers[id] = nil
+---@param t number
+function EHITrackerManager:RemoveLaserTracker(id, t)
+    self._stealth_trackers.lasers[t] = nil
     self:RemoveTracker(id)
 end
 
@@ -834,8 +831,7 @@ function EHITrackerManager:CallFunction2(id, f, ...)
     local tracker = self:GetTracker(id)
     if not tracker then
         return true
-    end
-    if tracker[f] then
+    elseif tracker[f] then
         tracker[f](tracker, ...)
     end
 end
