@@ -40,7 +40,7 @@ local function UpdateVanillaLevelSetting(self)
     local job = tweak_data.narrative.jobs[self._global.current_job.job_id] or {}
     if job and job.chain and job.chain[self._global.current_job.current_stage] then
         local level_id = job.chain[self._global.current_job.current_stage].level_id or ""
-        if level_id == "four_stores_remixed" then -- Restoration Mod Overhaul bs
+        if EHI.ModUtils._restoration_vanilla_levels_bs[level_id] then -- Restoration Mod Overhaul bs
             Global.game_settings.ehi_vanilla_heist = true
         else
             local level = tweak_data.levels[level_id] or {}

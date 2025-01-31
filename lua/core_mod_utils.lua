@@ -2,6 +2,10 @@ if EHI.ModUtils then
     return
 end
 EHI.ModUtils = {}
+EHI.ModUtils._restoration_vanilla_levels_bs = {
+    alex_2_res = true,
+    four_stores_remixed = true
+}
 
 function EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn()
     if EHI.IsHost and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then

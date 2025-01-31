@@ -2,7 +2,6 @@
 ---@field super EHITracker
 EHIXPTracker = class(EHITracker)
 EHIXPTracker._forced_icons = { "xp" }
-EHIXPTracker._forced_hint_text = "gained_xp"
 EHIXPTracker.update = EHIXPTracker.update_fade
 function EHIXPTracker:pre_init(params)
     self._xp = params.amount or 0
@@ -16,6 +15,10 @@ function EHIXPTracker:OverridePanel()
         self:SetIconsX()
         self:SetAndFitTheText()
     end
+end
+
+function EHIXPTracker:post_init(params)
+    params.hint = self._xp > 0 and "gained_xp" or "lost_xp"
 end
 
 function EHIXPTracker:Format()
@@ -44,6 +47,8 @@ end
 ---@class EHIHiddenXPTracker : EHIXPTracker
 ---@field super EHIXPTracker
 EHIHiddenXPTracker = class(EHIXPTracker)
+EHIHiddenXPTracker.post_init = EHIHiddenXPTracker.super.super.post_init
+EHIHiddenXPTracker.OverridePanel = EHIHiddenXPTracker.super.super.OverridePanel
 EHIHiddenXPTracker._needs_update = false
 EHIHiddenXPTracker._init_create_text = false
 function EHIHiddenXPTracker:pre_init(params)
@@ -112,6 +117,7 @@ end
 ---@class EHITotalXPTracker : EHIXPTracker
 ---@field super EHIXPTracker
 EHITotalXPTracker = class(EHIXPTracker)
+EHITotalXPTracker.post_init = EHITotalXPTracker.super.super.post_init
 EHITotalXPTracker._forced_hint_text = "total_xp"
 EHITotalXPTracker._needs_update = false
 ---@param o PanelText

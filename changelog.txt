@@ -1,3 +1,6 @@
+r300 (31. 01. 2025):
+Rats Day 2: Attempt to fix a load crash with Restoration Mod Overhaul installed
+
 r299 (30. 01. 2025):
 Mission Briefing: Framing Frame Day 2 will properly reflect maximum XP based on secured bags in Day 1
 Mission Briefing: Watchdogs Day 2 will properly reflect maximum XP based on secured bags in Day 1

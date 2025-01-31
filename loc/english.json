@@ -84,6 +84,7 @@
     "ehi_hint_timelock" : "Time lock",
     "ehi_hint_timer" : "Timer",
     "ehi_hint_gained_xp" : "Gained XP",
+    "ehi_hint_lost_xp" : "Lost XP",
     "ehi_hint_total_xp" : "Total XP",
     "ehi_hint_endless_assault" : "Endless Assault",
     "ehi_hint_fire" : "Fire",

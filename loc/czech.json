@@ -84,6 +84,7 @@
     "ehi_hint_timelock" : "Časový zámek",
     "ehi_hint_timer" : "Časovač",
     "ehi_hint_gained_xp" : "Získané ZK",
+    "ehi_hint_lost_xp" : "Ztracené ZK",
     "ehi_hint_total_xp" : "Celkem ZK",
     "ehi_hint_endless_assault" : "Nekonečný útok",
     "ehi_hint_fire" : "Oheň",
