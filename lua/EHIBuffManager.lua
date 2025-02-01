@@ -300,7 +300,7 @@ end
 
 ---@param id string
 function EHIBuffManager:DeleteBuff(id)
-    local buff = self._buffs[id]
+    local buff = self._buffs and self._buffs[id]
     if buff then
         buff:Remove()
     end
