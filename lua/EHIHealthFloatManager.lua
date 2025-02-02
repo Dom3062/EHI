@@ -96,15 +96,19 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
 
     ---@param finished boolean?
     function EHIHealthFloatManager:update_last(finished)
-        for _, float in pairs(self._floats) do ---@cast float EHIHealthFloatPocoTeamAI
+        if self._finished then
+            return
+        end
+        for _, float in pairs(self._floats or {}) do ---@cast float EHIHealthFloatPocoTeamAI
             float:force_delete(finished)
         end
-        if not next(self._floats) then
+        if self._floats and not next(self._floats) then
             self._floats = nil
         end
         if finished then
             managers.viewport:remove_resolution_changed_func(self._resolution_changed_clbk) -- In case stupid player decided after finishing a heist to change resolution
             self._resolution_changed_clbk = nil
+            self._finished = true
         elseif not self._floats then
             self._floats = {}
         end

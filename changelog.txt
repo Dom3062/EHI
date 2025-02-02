@@ -1,3 +1,6 @@
+r302 (02. 02. 2025):
+Poco Health Floats: Fixed possible crashes after going into custody or finishing a heist
+
 r301 (01. 02. 2025):
 Heat Street: Fixed a load crash with Restoration Mod Overhaul installed
 
