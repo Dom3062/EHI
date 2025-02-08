@@ -37,7 +37,7 @@ function table.remove_key(map, key)
     return value
 end
 
----Works the same as `table.size` but it returns 0 if nil table is passed to the function
+---Works the same as `table.size` but it returns 0 if a nil table is passed to the function
 ---@param v table?
 function table.ehi_size(v)
     return v and table.size(v) or 0
@@ -54,4 +54,22 @@ function table.list_count(v, func)
         end
     end
     return count
+end
+
+---@param n number
+---@param bracket number? Number formatted as multiples of 10 -> 1, 10, 100, 0.1, 0.01, 0.001...
+function math.ehi_round(n, bracket)
+    bracket = bracket or 1
+    local sign = n >= 0 and 1 or -1
+    return math.floor(n / bracket + sign * 0.5) * bracket
+end
+
+---@param n number
+function math.ehi_round_chance(n)
+    return math.ehi_round(n, 0.01) * 100
+end
+
+---@param n number
+function math.ehi_round_health(n)
+    return math.ehi_round(n * 10, 0.1)
 end

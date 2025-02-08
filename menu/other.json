@@ -131,16 +131,32 @@
             "size": 20
         },
         {
-            "type": "toggle",
-            "id": "ehi_other_show_floating_damage_popup_choice",
-            "title": "ehi_other_show_floating_damage_popup",
-            "description": "ehi_other_show_floating_damage_popup_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_floating_damage_popup",
-            "value": "show_floating_damage_popup",
-            "default_value": true,
-            "ehi_ver" : 298,
-            "is_parent" : true
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_other_show_floating_damage_popup_choice",
+                    "title": "ehi_other_show_floating_damage_popup",
+                    "description": "ehi_other_show_floating_damage_popup_desc",
+                    "callback": "SetOption",
+                    "callback_arguments": "show_floating_damage_popup",
+                    "value": "show_floating_damage_popup",
+                    "default_value": true,
+                    "ehi_ver" : 298,
+                    "is_parent" : true
+                },
+                {
+                    "type": "toggle",
+                    "id": "ehi_other_show_floating_damage_popup_accumulate_choice",
+                    "title": "ehi_other_show_floating_damage_popup_accumulate",
+                    "description": "ehi_other_show_floating_damage_popup_accumulate_desc",
+                    "callback": "SetOption",
+                    "callback_arguments": "show_floating_damage_popup_accumulate",
+                    "value": "show_floating_damage_popup_accumulate",
+                    "default_value": false,
+                    "ehi_ver" : 303,
+                    "parent" : "ehi_other_show_floating_damage_popup_choice"
+                }
+            ]
         },
         {
             "type": "slider",

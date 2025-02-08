@@ -3,7 +3,7 @@
 EHITimedChanceTracker = class(EHITracker)
 EHITimedChanceTracker.pre_init = EHIChanceTracker.pre_init
 EHITimedChanceTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
-EHITimedChanceTracker.IncreaseChance2 = EHIChanceTracker.IncreaseChance2
+EHITimedChanceTracker.IncreaseChanceIndex = EHIChanceTracker.IncreaseChanceIndex
 EHITimedChanceTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHITimedChanceTracker.SetChance = EHIChanceTracker.SetChance
 EHITimedChanceTracker.FormatChance = EHIChanceTracker.FormatChance

@@ -558,7 +558,7 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_conve
             end
             local ratio = newstacks / maxstacks
             if ratio > 0 then
-                managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", EHI.RoundNumber(ratio, 2))
+                managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", math.ehi_round(ratio, 0.01))
             else
                 managers.ehi_buff:RemoveBuff("ManiacAccumulatedStacks")
             end

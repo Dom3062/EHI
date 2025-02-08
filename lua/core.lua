@@ -1032,6 +1032,7 @@ local function LoadDefaultValues(self)
         show_floating_health_bar_civilians = true,
         show_floating_health_bar_team_ai = true,
         show_floating_damage_popup = true,
+        show_floating_damage_popup_accumulate = false,
         show_floating_damage_popup_size = 22, -- 10 - 30
         show_floating_damage_popup_time_on_screen = 10, -- 2 - 15
         show_floating_damage_popup_my_damage = true,
@@ -1700,13 +1701,6 @@ function EHI:GetBaseUnitID(final_index, start_index, continent_index)
     return (final_index - 30000 - start_index - continent_index) + 100000
 end
 
-EHI.RoundNumber = math.round_with_precision
-
----@param n number
-function EHI:RoundChanceNumber(n)
-    return self.RoundNumber(n, 2) * 100
-end
-
 ---@param id string
 function EHI:GetAchievementIcon(id)
     local achievement = tweak_data.achievement.visual[id]
@@ -1951,10 +1945,9 @@ end
 
 ---@param params LootCounterTable?
 function EHI:ShowLootCounter(params)
-    if not self:GetOption("show_loot_counter") then
-        return
+    if self:GetOption("show_loot_counter") then
+        self:ShowLootCounterNoCheck(params)
     end
-    self:ShowLootCounterNoCheck(params)
 end
 
 ---@param params LootCounterTable?
@@ -2774,9 +2767,8 @@ if EHI.debug.all_instances then -- For testing purposes
     ---@param instance_name string
     function EHI:DebugInstance(instance_name)
         local scripts = managers.mission._scripts or {}
-        local instances = managers.world_instance:instance_data()
         local element_f = managers.ehi_hook._element_hook_function
-        for _, instance in ipairs(instances) do
+        for _, instance in ipairs(managers.world_instance:instance_data()) do
             if instance.name == instance_name then
                 self:PrintTable(instance)
                 local start = self:GetInstanceElementID(100000, instance.start_index)

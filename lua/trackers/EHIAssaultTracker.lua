@@ -38,6 +38,7 @@ if EHI:GetOption("show_assault_diff_in_assault_trackers") then
         EHIAssaultTracker._SHOW_ASSAULT_DIFF = true
         EHIAssaultTracker.FormatChance = EHIChanceTracker.Format
         EHIAssaultTracker.SetChance = EHIChanceTracker.SetChance
+        EHIAssaultTracker.SetChancePercent = EHIChanceTracker.SetChancePercent
         EHIAssaultTracker._anim_chance = EHIChanceTracker._anim_chance
     end
 end
@@ -229,7 +230,7 @@ function EHIAssaultTracker:CalculateDifficultyRamp(diff)
     self._difficulty_point_index = i
     self._difficulty_ramp = (diff - (ramp[i - 1] or 0)) / ((ramp[i] or 1) - (ramp[i - 1] or 0))
     if self._chance_text then
-        self:SetChance(self._parent_class:RoundChanceNumber(diff))
+        self:SetChancePercent(diff)
     end
 end
 

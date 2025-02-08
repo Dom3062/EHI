@@ -84,15 +84,12 @@ end
 
 if level_id == "shoutout_raid" then
     local old_time = 0
-    local created = false
     ---@param timer number
     function DigitalGui:timer_set(timer, ...)
         original.timer_set(self, timer, ...)
         if old_time == timer then
             return
-        end
-        old_time = timer
-        if not created then
+        elseif old_time == 0 then
             if not show_waypoint_only then
                 managers.ehi_tracker:AddTracker({
                     id = self._ehi_key,
@@ -108,10 +105,9 @@ if level_id == "shoutout_raid" then
                     class = "EHIVaultTemperatureWaypoint"
                 })
             end
-            created = true
         end
-        local t = EHI.RoundNumber(timer, 1)
-        managers.ehi_manager:Call(self._ehi_key, "CheckTime", t)
+        old_time = timer
+        managers.ehi_manager:Call(self._ehi_key, "CheckTime", math.ehi_round(timer, 0.1))
     end
 else
     if show_waypoint_only then

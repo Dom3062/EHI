@@ -53,7 +53,7 @@ local triggers = {
 
     [105113] = { chances = 4, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
     [102257] = EHI:AddCustomCode(function(self)
-        self._trackers:CallFunction("ForensicsMatchChance", "IncreaseChance2")
+        self._trackers:CallFunction("ForensicsMatchChance", "IncreaseChanceIndex")
     end),
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }

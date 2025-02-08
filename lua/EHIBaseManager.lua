@@ -1,12 +1,6 @@
 ---@class EHIBaseManager
 EHIBaseManager = class()
----@param n number
----@param bracket number?
-EHIBaseManager.RoundNumber = function(n, bracket)
-    bracket = bracket or 1
-    local sign = n >= 0 and 1 or -1
-    return math.floor(n / bracket + sign * 0.5) * bracket
-end
+EHIBaseManager.RoundNumber = math.ehi_round
 
 ---@param n number
 function EHIBaseManager:RoundHealthNumber(n)
@@ -65,7 +59,7 @@ function EHIBaseManager:RemoveEventListener(id)
     self._event_listener:remove(id)
 end
 
----@param peer_id number
+---@param peer_id number?
 function EHIBaseManager:GetPeerColorByPeerID(peer_id)
     return peer_id and tweak_data.chat_colors[peer_id] or Color.white
 end

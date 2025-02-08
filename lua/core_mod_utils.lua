@@ -2,16 +2,13 @@ if EHI.ModUtils then
     return
 end
 EHI.ModUtils = {}
-EHI.ModUtils._restoration_vanilla_levels_bs = {
+EHI.ModUtils._restoration_vanilla_levels_bs = { -- Restoration Mod Overhaul bs
     alex_2_res = true,
     four_stores_remixed = true
 }
 
 function EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn()
-    if EHI.IsHost and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
-        return false
-    end
-    return true
+    return EHI.IsHost and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id)
 end
 
 ---@param pager_count number

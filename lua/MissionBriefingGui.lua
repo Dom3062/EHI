@@ -1598,7 +1598,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
             color = tweak_data.screen_colors.pro_color,
-            text = string.format("%s +%d%s", self._loc:text("ehi_experience_modifier_projob"), EHI:RoundChanceNumber(xp.projob_multiplier - 1), percent_format),
+            text = string.format("%s +%d%s", self._loc:text("ehi_experience_modifier_projob"), math.ehi_round(xp.projob_multiplier - 1) * 100, percent_format),
             layer = 10
         })
         self:make_fine_text(pro)
@@ -1624,7 +1624,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
             color = tweak_data.lootdrop.global_values.infamy.color,
-            text = string.format("+%d%s", EHI.RoundNumber((xp.infamy_bonus - 1) * 100), percent_format),
+            text = string.format("+%d%s", math.ehi_round(xp.infamy_bonus - 1, 0.01) * 100, percent_format),
             layer = 10
         })
         self:make_fine_text(infamy_text)
@@ -1726,7 +1726,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
     end
     if self._gui._skill_bonus > 1 then
         local passive_xp_reduction = managers.player:upgrade_value("player", "passive_xp_multiplier", 1) - 1
-        local real_bonus = EHI.RoundNumber(self._gui._skill_bonus - passive_xp_reduction - 1, 2)
+        local real_bonus = math.ehi_round(self._gui._skill_bonus - passive_xp_reduction - 1, 0.01)
         if real_bonus > 0 then
             local percent = real_bonus * 100
             local skill_icon = self._panel:bitmap({
@@ -1754,7 +1754,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
     if math.clamp(self._gui._num_winners, 1, 4) > 1 then
         local bonus = (tweak_data:get_value("experience_manager", "alive_humans_multiplier", self._gui._num_winners) or 1) - 1
         if bonus > 0 then
-            local percent = EHI:RoundChanceNumber(bonus)
+            local percent = math.ehi_round_chance(bonus)
             local player_icon = self._panel:bitmap({
                 blend_mode = "add",
                 x = last_modifier:right() + 2,

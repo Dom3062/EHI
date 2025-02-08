@@ -945,6 +945,9 @@
     "ehi_other_show_floating_damage_popup" : "Zobrazovat udělenené poškození NPC",
     "ehi_other_show_floating_damage_popup_desc" : "Zobrazuje udělené poškození, když někoho trefíš",
 
+    "ehi_other_show_floating_damage_popup_accumulate" : "Sčítat udělené poškození",
+    "ehi_other_show_floating_damage_popup_accumulate_desc" : "Zobrazuje jeden text uděleného poškození, který sčítá všechno udělené poškození NPC",
+
     "ehi_other_show_floating_damage_popup_size" : "Velikost",
 
     "ehi_other_show_floating_damage_popup_time_on_screen" : "Čas na obrazovce",

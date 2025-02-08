@@ -88,7 +88,7 @@ function EHIMinionTracker:Reorganize(addition)
         if addition then
             return
         end
-        local _, peer_data = next(self._peers)
+        local _, peer_data = next(self._peers) ---@cast peer_data -?
         peer_data.label:set_color(Color.white)
         peer_data.label:set_x(0)
         peer_data.label:set_w(self._bg_box:w() - (self._minion_health and self._default_bg_size or 0))
@@ -126,7 +126,7 @@ function EHIMinionTracker:RemovePeer(peer_id)
         self:delete()
         return
     end
-    local peer = table.remove_key(self._peers, peer_id)
+    local peer = table.remove_key(self._peers, peer_id) ---@cast peer -?
     self._bg_box:remove(peer.label)
     self:AnimateBG()
     self:SetIconColor()

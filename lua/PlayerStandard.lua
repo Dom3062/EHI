@@ -40,10 +40,10 @@ do
             end
         end)
         local latch_t = 0
-        function PlayerStandard:_update_omniscience(t, dt, ...)
+        function PlayerStandard:_update_omniscience(t, ...)
             local previoustime = self._state_data.omniscience_t
 
-            original._update_omniscience(self, t, dt, ...)
+            original._update_omniscience(self, t, ...)
 
             if previoustime and self._state_data.omniscience_t == nil then
                 -- The game forbade the skill, kill the buffs (this does not run every frame due to the combined check in the above
@@ -204,7 +204,7 @@ if EHI:GetBuffOption("weapon_swap") then
                 if weapon_unit then
                     self._equipped_unit = weapon_unit -- Swap the equipped weapon unit so the function below correctly calculates speed multiplier
                     local speed_multiplier = self:_get_swap_speed_multiplier()
-                    local tweak_data = self._equipped_unit:base():weapon_tweak_data()
+                    local tweak_data = weapon_unit:base():weapon_tweak_data()
                     self._equipped_unit = previous_selected_weapon -- Return back previous weapon so nothing breaks
                     next_weapon_equip_t = (tweak_data.timers.equip or 0.7) / speed_multiplier
                 end

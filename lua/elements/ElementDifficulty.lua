@@ -78,7 +78,7 @@ local original =
 
 if EHI:GetOption("show_difficulty_tracker") and not EHI:IsAssaultTrackerEnabledAndOption("show_assault_diff_in_assault_trackers") then
     EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, function(diff) ---@param diff number
-        local chance = managers.ehi_tracker:RoundChanceNumber(diff)
+        local chance = math.ehi_round_chance(diff)
         if managers.ehi_tracker:CallFunction2("AssaultDiff", "SetChance", chance) then
             managers.ehi_tracker:AddTracker({
                 id = "AssaultDiff",

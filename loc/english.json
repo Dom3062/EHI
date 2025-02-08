@@ -945,6 +945,9 @@
     "ehi_other_show_floating_damage_popup" : "Show Floating Damage Popup",
     "ehi_other_show_floating_damage_popup_desc" : "Shows a floating damage popup of how much damage you have done to someone",
 
+    "ehi_other_show_floating_damage_popup_accumulate" : "Accumulate Damage",
+    "ehi_other_show_floating_damage_popup_accumulate_desc" : "Shows one floating damage popup that adds up all damage done to an enemy",
+
     "ehi_other_show_floating_damage_popup_size" : "Size",
 
     "ehi_other_show_floating_damage_popup_time_on_screen" : "Time on Screen",

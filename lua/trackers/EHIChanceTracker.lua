@@ -52,7 +52,7 @@ function EHIChanceTracker:IncreaseChance(amount)
     self:SetChance(self._chance + amount)
 end
 
-function EHIChanceTracker:IncreaseChance2()
+function EHIChanceTracker:IncreaseChanceIndex()
     self._current_chance_index = self._current_chance_index + 1
     self:SetChance(self._chances[self._current_chance_index] or 0)
 end
@@ -73,5 +73,10 @@ function EHIChanceTracker:SetChance(amount)
         self:FitTheText(self._chance_text)
     end
     self:AnimateBG(self._anim_flash_set_chance)
+end
+
+---@param amount number Chance between 0 and 1
+function EHIChanceTracker:SetChancePercent(amount)
+    self:SetChance(self._parent_class:RoundChanceNumber(amount))
 end
 EHIChanceTracker.FormatChance = EHIChanceTracker.Format

@@ -633,7 +633,7 @@ function EHITrackerManager:IncreaseChance(id, amount, rounding, bracket)
     if tracker and tracker.IncreaseChance then
         if rounding then
             if rounding == self.Rounding.Standard then
-                amount = self.RoundNumber(amount, bracket)
+                amount = math.ehi_round(amount, bracket)
             else
                 amount = self:RoundChanceNumber(amount)
             end
@@ -651,7 +651,7 @@ function EHITrackerManager:DecreaseChance(id, amount, rounding, bracket)
     if tracker and tracker.DecreaseChance then
         if rounding then
             if rounding == self.Rounding.Standard then
-                amount = self.RoundNumber(amount, bracket)
+                amount = math.ehi_round(amount, bracket)
             else
                 amount = self:RoundChanceNumber(amount)
             end
@@ -669,7 +669,7 @@ function EHITrackerManager:SetChance(id, amount, rounding, bracket)
     if tracker and tracker.SetChance then
         if rounding then
             if rounding == self.Rounding.Standard then
-                amount = self.RoundNumber(amount, bracket)
+                amount = math.ehi_round(amount, bracket)
             else
                 amount = self:RoundChanceNumber(amount)
             end

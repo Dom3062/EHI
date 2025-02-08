@@ -1136,8 +1136,8 @@ end
 ---@field b number
 ---@field blue number
 ---@field unpack fun(self: self): r: number, g: number, b: number
----@field with_alpha fun(self: self, alpha: number): self Returns a new `Color` object with modified alpha
----@field with_red fun(self: self, red: number): self Returns a new `Color` object with modified red
+---@field with_alpha fun(self: self, alpha: number): self Returns a new `Color` object with modified `alpha` value
+---@field with_red fun(self: self, red: number): self Returns a new `Color` object with modified `red` value
 
 ---@class Idstring
 ---@field key fun(self: self): string
@@ -1597,6 +1597,9 @@ end
 
 ---@class PlayerInventory
 ---@field equipped_unit fun(self: self): UnitWeapon
+---@field get_next_selection fun(self: self): { unit: UnitWeapon, use_data: unknown }?, number?
+---@field get_previous_selection fun(self: self): { unit: UnitWeapon, use_data: unknown }?, number?
+---@field get_selected fun(self: self, selection_index: number?): { unit: UnitWeapon, use_data: unknown }?
 
 ---@class HuskPlayerInventory : PlayerInventory
 
@@ -1645,6 +1648,24 @@ end
 ---@field register_listener fun(key: string, event_types: string|string[], clbk: function) Adds listener to all units
 ---@field remove_listener fun(self: self, key: string)
 ---@field unregister_listener fun(key: string)
+
+---@class CopDamage.AttackData
+---@field attacker_unit UnitPlayer|UnitTeamAI
+---@field col_ray CopDamage.AttackData.CollisionRay?
+---@field critical_hit boolean
+---@field damage number
+---@field headshot boolean
+---@field is_synced boolean
+---@field pos Vector3
+---@field result CopDamage.AttackData.Result
+---@field variant "explosion"|"stun"|"fire"|"healed"|"graze"|"bullet"|"poison"
+
+---@class CopDamage.AttackData.CollisionRay
+---@field hit_position Vector3?
+---@field position Vector3?
+
+---@class CopDamage.AttackData.Result
+---@field type "explosion"|"stun"|"fire"|"healed"|"graze"|"bullet"|"poison"
 
 ---@class HuskCopDamage : CopDamage
 

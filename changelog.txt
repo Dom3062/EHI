@@ -1,3 +1,6 @@
+r303 (08. 02. 2025):
+Added option "Accumulate Damage"
+
 r302 (02. 02. 2025):
 Poco Health Floats: Fixed possible crashes after going into custody or finishing a heist
 
