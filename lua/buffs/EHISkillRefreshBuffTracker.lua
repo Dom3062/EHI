@@ -94,7 +94,15 @@ function EHIDodgeChanceBuffTracker:UpdateValue()
     end
     local armorchance = self._player_manager:body_armor_value("dodge") --[[@as number]]
     local skillchance = self._player_manager:skill_dodge_chance(player_movement:running(), player_movement:crouching(), player_movement:zipline_unit() --[[@as boolean]])
-    local total = self._DODGE_INIT + armorchance + skillchance
+    local base_total = self._DODGE_INIT + armorchance + skillchance
+    local max_smoke_dodge = 0
+    for _, smoke_screen in ipairs(self._player_manager._smoke_screen_effects or {}) do
+        if smoke_screen:is_in_smoke(player) then
+            max_smoke_dodge = tweak_data.projectiles.smoke_screen_grenade.dodge_chance
+            break
+        end
+    end
+    local total = 1 - (1 - base_total) * (1 - max_smoke_dodge)
     if self._skill_value == total then
         return
     elseif self._persistent or total > 0 then
@@ -110,14 +118,12 @@ function EHIDodgeChanceBuffTracker:ForceUpdate()
     if self._update_disabled then
         return
     end
-    self:UpdateValue()
-    self._time = self._refresh_time
+    self._time = 0.01 -- Activate next frame or the buff will be stuck in the buff that forced an update
 end
 
 function EHIDodgeChanceBuffTracker:PreUpdate2()
     local function update()
-        self:UpdateValue()
-        self._time = self._refresh_time
+        self._time = 0.01 -- Activate next frame or the buff will be stuck in the buff that forced an update
     end
     Hooks:PostHook(PlayerStandard, "_start_action_zipline", "EHI_DodgeBuff_start_action_zipline", update)
     Hooks:PostHook(PlayerStandard, "_end_action_zipline", "EHI_DodgeBuff_end_action_zipline", update)
@@ -164,8 +170,7 @@ function EHICritChanceBuffTracker:ForceUpdate()
     if self._update_disabled then
         return
     end
-    self:UpdateValue()
-    self._time = self._refresh_time
+    self._time = 0.01 -- Activate next frame or the buff will be stuck in the buff that forced an update
 end
 
 function EHICritChanceBuffTracker:PreUpdate()

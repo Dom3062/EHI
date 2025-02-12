@@ -1,3 +1,7 @@
+r304 (12. 02. 2025):
+Dodge Buff: Adjusted dodge calculation to also include Sicario's Smoke Bomb (if player is inside)
+Dodge Buff: Fixed an issue where the buff could be stuck in another buff
+
 r303 (08. 02. 2025):
 Added option "Accumulate Damage"
 
