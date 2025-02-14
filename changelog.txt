@@ -1,3 +1,6 @@
+r305 (14. 02. 2025):
+Menu: Fixed an issue where it is not possible to move in the menu with arrow keys or gamepad once you are in a heist
+
 r304 (12. 02. 2025):
 Dodge Buff: Adjusted dodge calculation to also include Sicario's Smoke Bomb (if player is inside)
 Dodge Buff: Fixed an issue where the buff could be stuck in another buff

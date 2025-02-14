@@ -151,7 +151,9 @@ function EHIMenu:init()
         self._menu_ver = tonumber(EHI.ModVersion)
     end
 
-    if Utils:IsInHeist() then
+    local update_loop = "MenuUpdate"
+    local update_class = MenuManager
+    if Utils:IsInGameState() then
         local restart = self._panel:text({
             text = managers.localization:text("ehi_level_restart_required"),
             font_size = 24,
@@ -164,6 +166,8 @@ function EHIMenu:init()
         })
         restart:set_right(self._options_panel:x() - 20)
         restart:set_top(self._options_panel:bottom())
+        update_loop = "GameSetupUpdate"
+        update_class = GameSetup
     end
 
     self:_get_menu_from_json(EHI.MenuPath .. "menu.json")
@@ -204,12 +208,19 @@ function EHIMenu:init()
 
     self:OpenMenu("ehi_menu")
 
-    Hooks:Add("MenuUpdate", "MenuUpdate_EHIMenu", function(t, dt)
+    Hooks:Add(update_loop, "MenuUpdate_EHIMenu", function(t, dt)
         if self._enabled then
             self:update(t, dt)
         end
     end)
-    Hooks:PostHook(MenuManager, "destroy", "destroy_menu_EHIMenu", function(...)
+    if update_loop == "GameSetupUpdate" then -- Single-Player pauses the update loop above, another loop is needed (down below)
+        Hooks:Add("GameSetupPausedUpdate", "MenuUpdatePaused_EHIMenu", function(t, dt)
+            if self._enabled then
+                self:update(t, dt)
+            end
+        end)
+    end
+    Hooks:PostHook(update_class, "destroy", "destroy_menu_EHIMenu", function(...)
         self._enabled = false
         EHI.Menu = nil
     end)
