@@ -3,43 +3,46 @@ if EHI:CheckLoadHook("InteractionExt") then
     return
 end
 
-if EHI:GetOption("show_pager_callback") then
+if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager") then
     local answered_behavior = EHI:GetOption("show_pager_callback_answered_behavior") --[[@as 1|2]]
-    ---@class EHIPagerTracker : EHIWarningTracker
-    ---@field super EHIWarningTracker
-    EHIPagerTracker = class(EHIWarningTracker)
-    EHIPagerTracker._forced_icons = { "pager_icon" }
-    EHIPagerTracker._forced_time = 12
-    function EHIPagerTracker:SetAnswered()
-        self:RemoveTrackerFromUpdate()
-        self._text:stop()
-        self:SetTextColor(Color.green)
-        self:AnimateBG()
-    end
-
-    ---@class EHIPagerWaypoint : EHIWarningWaypoint
-    ---@field super EHIWarningWaypoint
-    EHIPagerWaypoint = class(EHIWarningWaypoint)
-    EHIPagerWaypoint._forced_time = 12
-    function EHIPagerWaypoint:SetAnswered()
-        self:RemoveWaypointFromUpdate()
-        self._gui:stop()
-        self._bitmap:stop()
-        self._arrow:stop()
-        if self._bitmap_world then
-            self._bitmap_world:stop()
+    local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_pager_callback", "show_waypoints_pager")
+    if show_tracker then
+        ---@class EHIPagerTracker : EHIWarningTracker
+        ---@field super EHIWarningTracker
+        EHIPagerTracker = class(EHIWarningTracker)
+        EHIPagerTracker._forced_icons = { "pager_icon" }
+        EHIPagerTracker._forced_time = 12
+        function EHIPagerTracker:SetAnswered()
+            self:RemoveTrackerFromUpdate()
+            self._text:stop()
+            self:SetTextColor(Color.green)
+            self:AnimateBG()
         end
-        self:SetColor(Color.green)
+    end
+    if show_waypoint then
+        ---@class EHIPagerWaypoint : EHIWarningWaypoint
+        ---@field super EHIWarningWaypoint
+        EHIPagerWaypoint = class(EHIWarningWaypoint)
+        EHIPagerWaypoint._forced_time = 12
+        function EHIPagerWaypoint:SetAnswered()
+            self:RemoveWaypointFromUpdate()
+            self._gui:stop()
+            self._bitmap:stop()
+            self._arrow:stop()
+            if self._bitmap_world then
+                self._bitmap_world:stop()
+            end
+            self:SetColor(Color.green)
+        end
     end
 
-    local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_pager")
     Hooks:PostHook(IntimitateInteractionExt, "init", "EHI_pager_init", function(self, unit, ...)
         self._ehi_key = "pager_" .. tostring(unit:key())
     end)
 
     Hooks:PostHook(IntimitateInteractionExt, "set_tweak_data", "EHI_pager_set_tweak_data", function(self, id)
         if id == "corpse_alarm_pager" and not self._pager_has_run then
-            if not show_waypoint_only then
+            if show_tracker then
                 managers.ehi_tracker:AddTracker({
                     id = self._ehi_key,
                     hint = "pager",
@@ -250,7 +253,7 @@ if EHI:GetOption("show_colored_bag_contour") then
     end
 end
 
-if not EHI:GetOption("show_equipment_tracker") then
+if not EHI:GetTrackerOption("show_equipment_tracker") then
     return
 end
 

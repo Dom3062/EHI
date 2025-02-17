@@ -179,9 +179,6 @@
     "ehi_show_waypoints" : "Mostrar Waypoints",
     "ehi_show_waypoints_desc" : "Mostra waypoints no mapa do jogo",
 
-    "ehi_show_waypoints_only" : "Mostrar apenas Waypoints",
-    "ehi_show_waypoints_only_desc" : "Quando ativado e quando um elemento tem um tracker e um waypoint definido, mostra apenas o waypoint\nCaso contrário, o Tracker vai ser mostrado",
-
     "ehi_show_waypoints_present_timer" : "Timer de Aviso",
     "ehi_show_waypoints_present_timer_desc" : "Define por quanto tempo o waypoint vai ficar na sua tela antes de 'mover' até o seu destino",
 

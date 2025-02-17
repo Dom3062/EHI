@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("MissionBriefingGui") or EHI:IsXPTrackerDisabled() or not EHI:GetOption("show_mission_xp_overview") then
+if EHI:CheckLoadHook("MissionBriefingGui") or not EHI:GetOption("show_mission_xp_overview") then
     return
 end
 
@@ -1419,6 +1419,8 @@ function XPBreakdownPanel:_params_escape(o_params)
             s = self._loc:text("ehi_experience_loud_escape")
             if value.c4_used then
                 s = s .. " (" .. self._loc:text("ehi_experience_c4_used") .. ")"
+            elseif value.timer then
+                s = s .. " (<" .. self:_format_time(value.timer) .. ")"
             end
             max_xp = max - max_stealth
         end

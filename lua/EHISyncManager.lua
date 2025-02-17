@@ -29,7 +29,7 @@ function EHISyncManager:load(data)
         if briefing and briefing.RefreshXPOverview then
             briefing:RefreshXPOverview()
         end
-        if EHI:IsXPTrackerEnabledAndVisible() then
+        if EHI:IsXPTrackerEnabled() then
             managers.ehi_experience:SetAIOnDeathListener()
             managers.ehi_experience:SetCriminalsListener(true)
         end

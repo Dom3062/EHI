@@ -166,6 +166,13 @@ end
 
 function EHIMenu:UpdateBuffsAlignment(alignment)
     self._buffs_preview_panel:UpdateAlignment(alignment)
+    local needed_item_id = _G.IS_VR and "ehi_vr_x_offset" or "ehi_x_offset"
+    for _, item in ipairs(self:GetMenu("ehi_buffs_menu").items) do
+        if item.id == needed_item_id then
+            self:AnimateItemEnabled(item, alignment ~= 2)
+            break
+        end
+    end
 end
 
 function EHIMenu:UpdateBuffsShape(value)

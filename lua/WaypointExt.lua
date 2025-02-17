@@ -7,7 +7,7 @@ function WaypointExt:add_waypoint_no_hud(icon_name, pos_z_offset, pos_locator, m
         self:remove_waypoint()
     end
     self._icon_name = icon_name or "pd2_goto"
-    self._pos_z_offset = pos_z_offset and Vector3(0, 0, pos_z_offset) or Vector3(0, 0, 0)
+    self._pos_z_offset = Vector3(0, 0, pos_z_offset or 0)
     self._pos_locator = pos_locator
     self._map_icon = map_icon
     self._show_on_hud = show_on_hud

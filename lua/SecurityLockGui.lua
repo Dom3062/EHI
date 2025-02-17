@@ -1,12 +1,12 @@
 local EHI = EHI
-if EHI:CheckLoadHook("SecurityLockGui") or not EHI:GetOption("show_timers") then
+if EHI:CheckLoadHook("SecurityLockGui") or not EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
     return
 end
 
 local HackIcon = EHI.Icons.PCHack
 local TimerClass = EHI.Trackers.Timer
 
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
 
 local original =
 {
@@ -21,14 +21,14 @@ local original =
 function SecurityLockGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    if not show_waypoint_only then
+    if show_tracker then
         EHI:OptionAndLoadTracker("show_timers")
     end
 end
 
 function SecurityLockGui:_start(...)
     original._start(self, ...)
-    if not show_waypoint_only then
+    if show_tracker then
         if self._bars > 1 and self._current_bar then
             if managers.ehi_tracker:CallFunction2(self._ehi_key, "SetProgress", self._current_bar) then
                 managers.ehi_tracker:AddTracker({
@@ -62,19 +62,19 @@ function SecurityLockGui:_start(...)
     end
 end
 
-if show_waypoint_only then
-    function SecurityLockGui:update(...)
-        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._current_timer)
-        original.update(self, ...)
-    end
-elseif show_waypoint then
+if show_tracker and show_waypoint then
     function SecurityLockGui:update(...)
         managers.ehi_manager:UpdateTimer(self._ehi_key, self._current_timer)
         original.update(self, ...)
     end
+elseif show_waypoint then
+    function SecurityLockGui:update(...)
+        managers.ehi_waypoint:SetTime(self._ehi_key, self._current_timer)
+        original.update(self, ...)
+    end
 else
     function SecurityLockGui:update(...)
-        managers.ehi_tracker:SetTrackerTimeNoAnim(self._ehi_key, self._current_timer)
+        managers.ehi_tracker:SetTimeNoAnim(self._ehi_key, self._current_timer)
         original.update(self, ...)
     end
 end

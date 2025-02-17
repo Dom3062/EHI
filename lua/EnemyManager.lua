@@ -18,7 +18,7 @@ function EnemyManager:GetNumberOfEnemies()
     return self._enemy_data.nr_units
 end
 
-if not (EHI:GetOption("show_enemy_count_tracker") or EHI:CanShowCivilianCountTracker() or EHI:IsAssaultTrackerEnabledAndOption("show_assault_enemy_count")) then
+if not (EHI:GetTrackerOption("show_enemy_count_tracker") or EHI:CanShowCivilianCountTracker() or EHI:IsAssaultTrackerEnabledAndOption("show_assault_enemy_count")) then
     return
 end
 

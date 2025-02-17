@@ -3,11 +3,11 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-if EHI:GetOption("show_mission_trackers") then
-    local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
+if EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission") then
+    local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_mission_trackers", "show_waypoints_mission")
     for _, pc_id in ipairs({ 104170, 104175, 104349, 104350, 104351, 104352, 104354, 101455 }) do
         managers.mission:add_runned_unit_sequence_trigger(pc_id, "interact", function(unit)
-            if not show_waypoint_only then
+            if show_tracker then
                 managers.ehi_tracker:AddTracker({
                     id = tostring(pc_id),
                     time = 13,

@@ -572,7 +572,7 @@ end
 
 ---@param id string
 ---@param pause boolean
-function EHITrackerManager:SetTrackerPaused(id, pause)
+function EHITrackerManager:SetPaused(id, pause)
     local tracker = self:GetTracker(id) --[[@as EHIPausableTracker]]
     if tracker and tracker.SetPause then
         tracker:SetPause(pause)
@@ -599,7 +599,7 @@ end
 
 ---@param id string
 ---@param time number
-function EHITrackerManager:SetTrackerTime(id, time)
+function EHITrackerManager:SetTime(id, time)
     local tracker = self:GetTracker(id)
     if tracker then
         tracker:SetTime(time)
@@ -608,7 +608,7 @@ end
 
 ---@param id string
 ---@param time number
-function EHITrackerManager:SetTrackerTimeNoAnim(id, time)
+function EHITrackerManager:SetTimeNoAnim(id, time)
     local tracker = self:GetTracker(id)
     if tracker then
         tracker:SetTimeNoAnim(time)
@@ -696,7 +696,7 @@ end
 
 ---@param id string
 ---@param value number?
-function EHITrackerManager:IncreaseTrackerProgress(id, value)
+function EHITrackerManager:IncreaseProgress(id, value)
     local tracker = self:GetTracker(id) --[[@as EHIProgressTracker]]
     if tracker and tracker.IncreaseProgress then
         tracker:IncreaseProgress(value)
@@ -714,7 +714,7 @@ end
 
 ---@param id string
 ---@param max number?
-function EHITrackerManager:IncreaseTrackerProgressMax(id, max)
+function EHITrackerManager:IncreaseProgressMax(id, max)
     local tracker = self:GetTracker(id) --[[@as EHIProgressTracker]]
     if tracker and tracker.IncreaseProgressMax then
         tracker:IncreaseProgressMax(max)
@@ -750,10 +750,10 @@ end
 
 ---@param id string
 ---@param time number
-function EHITrackerManager:SetTrackerAccurate(id, time)
+function EHITrackerManager:SetAccurate(id, time)
     local tracker = self:GetTracker(id)
     if tracker then
-        tracker:SetTrackerAccurate(time)
+        tracker:SetAccurate(time)
     end
 end
 
@@ -863,7 +863,7 @@ do
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHISideJobTrackers.lua")
-    if EHI:IsXPTrackerEnabledAndVisible() then
+    if EHI:IsXPTrackerEnabled() then
         dofile(path .. "EHIXPTracker.lua")
     end
     if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2 and not EHI:GetOption("show_minion_health")) then

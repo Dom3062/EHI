@@ -1,29 +1,9 @@
 local EHI = EHI
-local function GetIcon(params)
-    local texture, texture_rect
-    local x = params.x or 0
-    local y = params.y or 0
-    if params.skills then
-        texture = "guis/textures/pd2/skilltree/icons_atlas"
-		texture_rect = { x * 64, y * 64, 64, 64 }
-    elseif params.u100skill then
-        texture = "guis/textures/pd2/skilltree_2/icons_atlas_2"
-		texture_rect = { x * 80, y * 80, 80, 80 }
-    elseif params.deck then
-        texture = "guis/" .. (params.folder and ("dlcs/" .. params.folder .. "/") or "") .. "textures/pd2/specialization/icons_atlas"
-		texture_rect = { x * 64, y * 64, 64, 64 }
-    elseif params.texture then
-        texture = params.texture
-        texture_rect = params.texture_rect
-    end
-    return texture, texture_rect
-end
 
 ---@class EHIBuffManager : EHIBaseManager
 ---@field new fun(self: self): self
 EHIBuffManager = class(EHIBaseManager)
 EHIBuffManager._sync_add_buff = "EHISyncAddBuff"
-
 ---@param hud HUDManager
 ---@param panel Panel
 function EHIBuffManager:init_finalize(hud, panel)
@@ -65,6 +45,7 @@ end
 ---@param buff_h number
 ---@param scale number
 function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
+    local get_icon = tweak_data.ehi.default.buff.get_icon
     for id, buff in pairs(tweak_data.ehi.buff) do
         if buff.option and not EHI:GetBuffOption(buff.option) then
         elseif buff.deck_option and not EHI:GetBuffDeckOption(buff.deck_option.deck, buff.deck_option.option) then
@@ -76,7 +57,7 @@ function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
             params.w = buff_w
             params.h = buff_h
             params.text = buff.text
-            params.texture, params.texture_rect = GetIcon(buff)
+            params.texture, params.texture_rect = get_icon(buff)
             params.format = buff.format
             params.good = not buff.bad
             params.no_progress = buff.no_progress
@@ -106,7 +87,7 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     if Global.game_settings.single_player or not local_peer_id then
         return
     end
-    local texture, texture_rect = GetIcon(tweak_data.ehi.buff.TagTeamEffect)
+    local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(tweak_data.ehi.buff.TagTeamEffect)
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         if i ~= local_peer_id then -- You cannot tag yourself...
             local params = {}
@@ -182,7 +163,7 @@ function EHIBuffManager:UpdateBuffIcon(id)
     local tweak = tweak_data.ehi.buff[id]
     local buff = self._buffs[id]
     if buff and tweak then
-        local texture, texture_rect = GetIcon(tweak)
+        local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(tweak) ---@cast texture -?
         buff:UpdateIcon(texture, texture_rect)
     end
 end

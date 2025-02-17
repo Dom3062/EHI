@@ -1,3 +1,9 @@
+r306 (17. 02. 2025):
+Added option "Show Trackers"
+Menu: Increased X and Y offsets from 1280 and 720 to 1920 and 1080 respectively
+Removed option "Show Only Waypoints"; Waypoints no longer rely on their tracker counterpant and now they work on their own (disabling tracker will not affect waypoint)
+Removed option "Show gained XP in Mission Briefing only"; Gained XP in Mission Briefing will work if XP tracker is disabled
+
 r305 (14. 02. 2025):
 Menu: Fixed an issue where it is not possible to move in the menu with arrow keys or gamepad once you are in a heist
 

@@ -36,7 +36,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100018, 5750)] = true, -- Defend
     [EHI:GetInstanceElementID(100018, 6000)] = true -- Defend
 }
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objectives =
     {

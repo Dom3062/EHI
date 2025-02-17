@@ -20,7 +20,7 @@ function EHILootManager:init(ehi_tracker)
 end
 
 function EHILootManager:init_finalize()
-    if EHI.IsClient and EHI:GetOption("show_loot_counter") then
+    if EHI.IsClient and EHI:GetTrackerOption("show_loot_counter") then
         self:AddReceiveHook(self._sync_lm_add_loot_counter, function(data, sender)
             local params = json.decode(data)
             self:ShowLootCounter(params.max, params.max_random, 0, params.offset)
@@ -184,7 +184,7 @@ end
 
 ---@param max number?
 function EHILootManager:IncreaseLootCounterProgressMax(max)
-    self._trackers:IncreaseTrackerProgressMax("LootCounter", max)
+    self._trackers:IncreaseProgressMax("LootCounter", max)
 end
 
 ---@param max number?

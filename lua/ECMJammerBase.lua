@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("ECMJammerBase") or not EHI:GetOption("show_equipment_tracker") then
+if EHI:CheckLoadHook("ECMJammerBase") or not EHI:GetTrackerOrWaypointOption("show_equipment_tracker", "show_waypoints_ecmjammer") then
     return
 end
 
@@ -13,7 +13,7 @@ end
 ---@field battery_life fun(self: self): number
 ---@field owner fun(self: self): UnitPlayer
 
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_ecmjammer")
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_equipment_tracker", "show_waypoints_ecmjammer")
 
 local original =
 {
@@ -33,7 +33,7 @@ local original =
 function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     local unit = original.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     unit:base():SetPeerID(peer_id)
-    if not show_waypoint_only and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
+    if show_tracker and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
         managers.ehi_tracker:PreloadTracker({
             id = "ECMFeedbackRetrigger",
             icons = { "ecm_feedback", "restarter" },
@@ -61,7 +61,7 @@ function ECMJammerBase:set_owner(...)
     self:SetPeerID(self._owner_id or 0)
     managers.ehi_tracker:CallFunction("ECMJammer", "UpdateOwnerID", self._ehi_peer_id)
     managers.ehi_tracker:CallFunction("ECMFeedback", "UpdateOwnerID", self._ehi_peer_id)
-    if not show_waypoint_only and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
+    if show_tracker and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
         managers.ehi_tracker:PreloadTracker({
             id = "ECMFeedbackRetrigger",
             icons = { "ecm_feedback", "restarter" },
@@ -103,17 +103,15 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                     end
                 end
             end
-            if not show_waypoint_only then
-                if managers.ehi_tracker:CallFunction2("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id, self._unit) then
-                    managers.ehi_tracker:AddTracker({
-                        id = "ECMJammer",
-                        time = battery_life,
-                        icons = { { icon = "ecm_jammer", peer_id = self._ehi_peer_id } },
-                        unit = self._unit,
-                        hint = "ecm_jammer",
-                        class = "EHIECMTracker"
-                    })
-                end
+            if show_tracker and managers.ehi_tracker:CallFunction2("ECMJammer", "SetTimeIfLower", battery_life, self._ehi_peer_id, self._unit) then
+                managers.ehi_tracker:AddTracker({
+                    id = "ECMJammer",
+                    time = battery_life,
+                    icons = { { icon = "ecm_jammer", peer_id = self._ehi_peer_id } },
+                    unit = self._unit,
+                    hint = "ecm_jammer",
+                    class = "EHIECMTracker"
+                })
             end
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(tostring(self._unit:key()), {
@@ -143,7 +141,7 @@ if EHI:GetOption("show_equipment_ecmfeedback") then
 end
 
 if EHI:GetOption("show_ecmfeedback_refresh") then
-    if not show_waypoint_only then
+    if show_tracker then
         EHI:LoadTracker("EHIECMFeedbackRefreshTracker")
     end
     Hooks:PostHook(ECMJammerBase, "_set_feedback_active", "EHI_ECMJammerBase_set_feedback_active_false", function(self, state) ---@param state boolean

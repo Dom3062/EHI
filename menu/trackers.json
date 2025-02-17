@@ -64,23 +64,8 @@
             "callback_arguments": "show_gained_xp",
             "focus_changed_callback": "SetFocus",
             "value": "show_gained_xp",
-            "parent_func_update" : "UpdateAllXPOptions",
             "is_parent" : true,
             "default_value": true
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_xp_in_mission_briefing_only_choice",
-            "title": "ehi_show_xp_in_mission_briefing_only",
-            "description": "ehi_show_xp_in_mission_briefing_only_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_xp_in_mission_briefing_only",
-            "value": "show_xp_in_mission_briefing_only",
-            "is_parent" : true,
-            "parent" : "ehi_show_gained_xp_choice",
-            "parent_func_update" : "UpdateXPEnabledValue",
-            "default_value": false,
-            "ehi_ver" : 137
         },
         {
             "type": "multiple_choice",
@@ -96,7 +81,7 @@
                 "ehi_total_xp_difference_2"
             ],
             "value": "total_xp_difference",
-            "parent_func" : "GetXPEnabledValue",
+            "parent" : "ehi_show_gained_xp_choice",
             "default_value": 2,
             "ehi_ver" : 210
         },

@@ -29,7 +29,7 @@ local triggers = {
 
     [1] = { id = "HeliWaterFill", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._waypoints:RemoveWaypoint(trigger.id)
-        self._trackers:SetTrackerPaused(trigger.id, true)
+        self._trackers:SetPaused(trigger.id, true)
     end) },
     [2] = { id = "HeliWaterReset", icons = { Icon.Heli, Icon.Water, Icon.Loop }, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 62 + heli_anim_full, no = 122 + heli_anim_full }, hint = Hints.crojob3_WaterRefill, waypoint_f = function(self, trigger)
         if self._cache.HeliWaterFillPos then
@@ -174,9 +174,9 @@ if EHI:IsLootCounterVisible() then
             [EHI:GetInstanceElementID(100010, index)] = loot_trigger
         }
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
-            managers.ehi_loot:AddDelayedLootDeclinedCheck(crate)
+            self._loot:AddDelayedLootDeclinedCheck(crate)
         end)
-        self:AddTriggers2(LootTrigger, "LootCounter")
+        self:AddTriggers(LootTrigger, "LootCounter")
         self:HookElements(LootTrigger)
         self._loot:IncreaseLootCounterMaxRandom()
     end)

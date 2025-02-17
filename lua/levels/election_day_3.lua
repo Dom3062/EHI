@@ -51,7 +51,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         if element:_check_mode() then
             if self._cache.election_day_3_RefreshSniperTime then
                 self._cache.election_day_3_RefreshSniperTime = nil
-                self._trackers:SetTrackerTimeNoAnim("Snipers", t)
+                self._trackers:SetTimeNoAnim("Snipers", t)
                 self._trackers:StartTrackerCountdown("Snipers")
             end
             if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", 2) then

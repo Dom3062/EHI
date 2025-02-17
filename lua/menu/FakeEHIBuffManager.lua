@@ -1,34 +1,9 @@
-local function GetIcon(params)
-    local texture, texture_rect
-    local x = params.x or 0
-    local y = params.y or 0
-    if params.skills then
-        texture = "guis/textures/pd2/skilltree/icons_atlas"
-		texture_rect = { x * 64, y * 64, 64, 64 }
-    elseif params.u100skill then
-        texture = "guis/textures/pd2/skilltree_2/icons_atlas_2"
-		texture_rect = { x * 80, y * 80, 80, 80 }
-    elseif params.deck then
-        texture = "guis/" .. (params.folder and ("dlcs/" .. params.folder .. "/") or "") .. "textures/pd2/specialization/icons_atlas"
-		texture_rect = { x * 64, y * 64, 64, 64 }
-    elseif params.texture then
-        texture = params.texture
-        texture_rect = params.texture_rect
-    end
-    return texture, texture_rect
-end
-
 local EHI = EHI
-local buff_w_original, buff_w = 0, 0
-local buff_h_original, buff_h = 0, 0
 ---@class FakeEHIBuffsManager
 FakeEHIBuffsManager = {}
 ---@param panel Panel
 function FakeEHIBuffsManager:new(panel)
-    buff_w_original = tweak_data.ehi.default.buff.size_w
-    buff_h_original = tweak_data.ehi.default.buff.size_h
-    buff_w = buff_w_original
-    buff_h = buff_h_original
+    self._tweak_data = tweak_data.ehi.default.buff
     dofile(EHI.LuaPath .. "menu/FakeEHIBuffTracker.lua")
     self._class_redirect =
     {
@@ -45,7 +20,6 @@ function FakeEHIBuffsManager:new(panel)
     self._y = EHI:GetOption("buffs_y_offset") --[[@as number]]
     self._n_visible = 0
 	self._buffs_alignment = EHI:GetOption("buffs_alignment") --[[@as number]]
-    self._gap = tweak_data.ehi.default.buff.gap
     self:AddFakeBuffs()
     self:OrganizeBuffs()
     return self
@@ -54,8 +28,8 @@ end
 ---@param scale number
 function FakeEHIBuffsManager:SetScale(scale)
     self._scale = scale
-	buff_w = buff_w_original * scale
-    buff_h = buff_h_original * scale
+    self._buff_w = self._tweak_data.size_w * scale
+    self._buff_h = self._tweak_data.size_h * scale
 end
 
 function FakeEHIBuffsManager:AddFakeBuffs()
@@ -79,10 +53,10 @@ function FakeEHIBuffsManager:AddFakeBuffs()
                 if not visible_buffs[key] then
                     local params = {}
                     params.id = key
-                    params.texture, params.texture_rect = GetIcon(buff)
+                    params.texture, params.texture_rect = self._tweak_data.get_icon(buff)
                     params.text = buff.text
-                    params.w = buff_w
-                    params.h = buff_h
+                    params.w = self._buff_w
+                    params.h = self._buff_h
                     params.x = self._x - saferect_x
                     params.y = self._y + saferect_y
                     params.visible = visible

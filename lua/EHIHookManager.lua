@@ -42,7 +42,7 @@ function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian, cus
             if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
                 local name_id, _ = sm:_get_name_id_and_throwable_id(data.weapon_unit)
                 if name_id == weapon_id then
-                    self._trackers:IncreaseTrackerProgress(tracker_id)
+                    self._trackers:IncreaseProgress(tracker_id)
                 end
             end
         end)
@@ -51,7 +51,7 @@ function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian, cus
             if data.variant ~= "melee" then
                 local name_id, _ = sm:_get_name_id_and_throwable_id(data.weapon_unit)
                 if name_id == weapon_id then
-                    self._trackers:IncreaseTrackerProgress(tracker_id)
+                    self._trackers:IncreaseProgress(tracker_id)
                 end
             end
         end)

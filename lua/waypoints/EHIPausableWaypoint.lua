@@ -13,7 +13,7 @@ function EHIPausableWaypoint:post_init(params)
 end
 
 ---@param pause boolean
-function EHIPausableWaypoint:SetPaused(pause)
+function EHIPausableWaypoint:SetPause(pause)
     self:_set_pause(pause)
     if pause then
         self:RemoveWaypointFromUpdate()

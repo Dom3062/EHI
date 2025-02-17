@@ -330,9 +330,6 @@
     "ehi_show_waypoints" : "Mostrar indicadores de ruta",
     "ehi_show_waypoints_desc" : "Mostrar / ocultar los indicadores de ruta en los mapas.",
 
-    "ehi_show_waypoints_only" : "Mostrar solo indicadores de ruta",
-    "ehi_show_waypoints_only_desc" : "Si está activado y el elemento tiene un contador y un indicador de ruta definidos, solo se mostrará el indicador de ruta.\nDe lo contrario, también se mostrará el contador.",
-
     "ehi_show_waypoints_present_timer" : "Tiempo del indicador en pantalla",
     "ehi_show_waypoints_present_timer_desc" : "Definir cuánto tiempo se mantendrá el indicador de ruta en pantalla antes de 'moverse' a su destino.",
 

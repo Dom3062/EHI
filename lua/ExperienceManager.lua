@@ -17,7 +17,7 @@ end
 ---@field get_current_prestige_xp fun(self: self): number
 ---@field next_level_data_points fun(self: self): number
 ---@field next_level_data_current_points fun(self: self): number
----@field rank_icon_data fun(self: self, rank: number?): string, { x: number, y: number, w: number, h: number }
+---@field rank_icon_data fun(self: self, rank: number?): string, TextureRect
 ---@field reached_level_cap fun(self: self): boolean
 
 local original =

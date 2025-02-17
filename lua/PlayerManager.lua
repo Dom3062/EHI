@@ -41,6 +41,7 @@
 ---@field count_down_player_minions fun(self: self)
 ---@field current_state fun(self: self): string
 ---@field is_damage_health_ratio_active fun(self: self, health_ratio: number): boolean
+---@field _smoke_screen_effects SmokeScreenEffect[]
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -49,7 +50,7 @@ end
 
 local original = {}
 
-if EHI:GetOption("show_bodybags_counter") then
+if EHI:GetTrackerOption("show_bodybags_counter") then
     original._set_body_bags_amount = PlayerManager._set_body_bags_amount
     function PlayerManager:_set_body_bags_amount(...)
         original._set_body_bags_amount(self, ...)

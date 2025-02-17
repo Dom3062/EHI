@@ -572,9 +572,8 @@ local original =
 
 local EHIConfig =
 {
-    mission_trackers = EHI:GetOption("show_mission_trackers"),
-    show_waypoints = EHI:GetWaypointOption("show_waypoints_mission"),
-    show_waypoints_only = EHI:GetWaypointOption("show_waypoints_only"),
+    show_tracker = EHI:GetTrackerOption("show_mission_trackers"),
+    show_waypoint = EHI:GetWaypointOption("show_waypoints_mission"),
     escape_waypoints = EHI:GetWaypointOption("show_waypoints_escape")
 }
 
@@ -590,32 +589,30 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         for id, trigger in pairs(instances[folder]) do
             local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
             if trigger.create_tracker_class then
-                if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
+                if EHIConfig.show_tracker then -- It cannot be in the same if line because the game will crash later
                     trigger.create_tracker_class()
                 end
             elseif trigger.add_runned_unit_sequence_trigger then
-                if EHIConfig.mission_trackers then -- It cannot be in the same if line because the game will crash later
-                    managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
-                        local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
-                        if not EHIConfig.show_waypoints_only then
-                            managers.ehi_tracker:AddTracker({
-                                id = tostring(final_index),
-                                time = trigger.time + time_random,
-                                icons = trigger.icons,
-                                hint = trigger.hint,
-                                class = trigger.class
-                            })
-                        end
-                        if EHIConfig.show_waypoints then
-                            managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
-                                time = trigger.time + time_random,
-                                icon = trigger.icons[1],
-                                position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
-                                class = trigger.class and managers.ehi_manager._TrackerToWaypoint[trigger.class]
-                            })
-                        end
-                    end)
-                end
+                managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
+                    local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
+                    if EHIConfig.show_tracker then
+                        managers.ehi_tracker:AddTracker({
+                            id = tostring(final_index),
+                            time = trigger.time + time_random,
+                            icons = trigger.icons,
+                            hint = trigger.hint,
+                            class = trigger.class
+                        })
+                    end
+                    if EHIConfig.show_waypoint then
+                        managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
+                            time = trigger.time + time_random,
+                            icon = trigger.icons[1],
+                            position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
+                            class = trigger.class and managers.ehi_manager._TrackerToWaypoint[trigger.class]
+                        })
+                    end
+                end)
             elseif trigger.remove_vanilla_waypoint then
                 if trigger.mission then
                     mission_waypoints[final_index] = true
@@ -653,7 +650,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         end
         managers.ehi_manager:ParseMissionTriggers(triggers, nil, nil, defer_loading_waypoints)
         if next(waypoints) then
-            EHI:DisableWaypoints(waypoints)
+            EHI:DisableTimerWaypoints(waypoints)
         end
         if next(mission_waypoints) then
             EHI:DisableMissionWaypoints(mission_waypoints)

@@ -7,7 +7,7 @@ local Hints = EHI.Hints
 local anim_delay = 450/30
 local boat_delay = 60 + 30 + 30 + 450/30
 local GetFromCache
-if EHI:GetOption("show_mission_trackers") then
+if EHI.Manager._SHOW_MISSION_TRIGGERS then
     GetFromCache = EHI.Manager:RegisterCustomSyncedSF(function(self, trigger, ...)
         local t = self.SyncedSFF.watchdogs_2_boat_time --[[@as number]]
         self.SyncedSFF.watchdogs_2_boat_time = nil
@@ -131,7 +131,7 @@ local other =
     [101149] = { special_function = GetFromCache, hint = Hints.Loot },
     [101150] = { special_function = GetFromCache, hint = Hints.Loot }
 }
-if EHI:GetOption("show_mission_trackers") then
+if EHI.Manager._SHOW_MISSION_WAYPOINTS then
     other[101148].icons = Icon.BoatLootDrop
     other[101148].waypoint_f = waypoint_f
     other[101149].icons = Icon.BoatLootDrop

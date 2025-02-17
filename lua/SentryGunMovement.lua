@@ -1,12 +1,12 @@
 local EHI = EHI
-if EHI:CheckLoadHook("SentryGunMovement") or not EHI:GetOption("show_enemy_turret_trackers") then
+if EHI:CheckLoadHook("SentryGunMovement") or not EHI:GetTrackerOrWaypointOption("show_enemy_turret_trackers", "show_waypoints_enemy_turret") then
     return
 end
 
 local Icon = EHI.Icons
 local WWarning = EHI.Waypoints.Warning
 
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_enemy_turret")
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_enemy_turret_trackers", "show_waypoints_enemy_turret")
 
 local original =
 {
@@ -30,7 +30,7 @@ function SentryGunMovement:Preload()
     if self.__ehi_preloaded then
         return
     end
-    if not show_waypoint_only then
+    if show_tracker then
         if self._tweak.AUTO_RELOAD and managers.ehi_tracker:CallFunction2("EnemySentryGunReload", "AddUnit") then
             managers.ehi_tracker:PreloadTracker({
                 id = "EnemySentryGunReload",

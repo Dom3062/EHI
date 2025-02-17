@@ -14,10 +14,11 @@
                     "callback_arguments" : "buffs_vr_x_offset",
                     "value": "buffs_vr_x_offset",
                     "default_value": 0,
-                    "max": 1280,
+                    "max": 1920,
                     "min": 0,
                     "step": 0,
-                    "ehi_ver" : 144
+                    "ehi_ver" : 144,
+                    "parent_func" : "IsXOffsetAvailable"
                 },
                 {
                     "type": "slider",
@@ -28,10 +29,11 @@
                     "callback_arguments" : "buffs_x_offset",
                     "value": "buffs_x_offset",
                     "default_value": 0,
-                    "max": 1280,
+                    "max": 1920,
                     "min": 0,
                     "step": 0,
-                    "ehi_ver" : 58
+                    "ehi_ver" : 58,
+                    "parent_func" : "IsXOffsetAvailable"
                 }
             ]
         },
@@ -46,7 +48,7 @@
                     "callback_arguments": "buffs_vr_y_offset",
                     "value": "buffs_vr_y_offset",
                     "default_value": 80,
-                    "max": 720,
+                    "max": 1080,
                     "min": 0,
                     "step": 0,
                     "ehi_ver" : 144
@@ -60,7 +62,7 @@
                     "callback_arguments": "buffs_y_offset",
                     "value": "buffs_y_offset",
                     "default_value": 80,
-                    "max": 720,
+                    "max": 1080,
                     "min": 0,
                     "step": 0,
                     "ehi_ver" : 58

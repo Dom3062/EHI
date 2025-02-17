@@ -109,8 +109,6 @@ if EHI:IsLootCounterVisible() then
             client_from_start = true
         })
     end)
-    -- coke, money, meth
-    EHI:HookLootRemovalElement({ 101681, 101700, 101701 })
     local CokeDestroyedTrigger = EHI:AddCustomCode(function(self)
         self._loot:DecreaseLootCounterProgressMax()
     end)
@@ -156,7 +154,8 @@ EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    sync_triggers = { element = element_sync_triggers }
+    sync_triggers = { element = element_sync_triggers },
+    loot_removal_triggers = { 101681, 101700, 101701 } -- coke, money, meth
 })
 EHI:AddXPBreakdown({
     objectives =

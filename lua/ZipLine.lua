@@ -9,12 +9,11 @@
 ---@field total_time fun(self: self): number
 
 local EHI = EHI
-if EHI:CheckLoadHook("ZipLine") or not EHI:GetOption("show_zipline_timer") then
+if EHI:CheckLoadHook("ZipLine") or not EHI:GetTrackerOrWaypointOption("show_zipline_timer", "show_waypoints_zipline") then
     return
 end
 
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_zipline")
-
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_zipline_timer", "show_waypoints_zipline")
 local original =
 {
     init = ZipLine.init,
@@ -30,7 +29,7 @@ local original =
 function ZipLine:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    if not show_waypoint_only then
+    if show_tracker then
         if managers.ehi_tracker:CallFunction2("ZipLineBag", "AddUnit") then
             managers.ehi_tracker:PreloadTracker({
                 id = "ZipLineBag",
@@ -65,7 +64,7 @@ function ZipLine:HookUpdateLoop()
             self.__ehi_bag_attached = nil
             local t = self:total_time() * self._current_time
             managers.ehi_tracker:CallFunction("ZipLineBag", "SetTimeNoAnim", t, self._ehi_key)
-            managers.ehi_waypoint:SetWaypointTime(self._ehi_key, t)
+            managers.ehi_waypoint:SetTime(self._ehi_key, t)
         end
     end
     self.__ehi_update_hooked = true

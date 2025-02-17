@@ -12,7 +12,30 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) t
 elseif ovk_and_up then
     start_chance = 5
 end
-local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance, hint = Hints.man_Code }
+local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance, hint = Hints.man_Code, waypoint_f =
+---@param self EHIManager
+---@param trigger ElementTrigger
+function(self, trigger)
+    local position, remove_vanilla_waypoint
+    if self:IsMissionElementEnabled(102049) then
+        position = self:GetElementPositionOrDefault(102049)
+        remove_vanilla_waypoint = 102049
+    elseif self:IsMissionElementEnabled(102336) then
+        position = self:GetElementPositionOrDefault(102336)
+        remove_vanilla_waypoint = 102336
+    else
+        position = self:GetElementPositionOrDefault(103681)
+        remove_vanilla_waypoint = 103681
+    end
+    self._waypoints:AddWaypoint(trigger.id, {
+        chance = trigger.chance,
+        icon = "pd2_talk",
+        position = position,
+        remove_vanilla_waypoint = remove_vanilla_waypoint,
+        restore_on_done = true,
+        class = self.Waypoints.Chance
+    })
+end }
 ---@type ParseTriggerTable
 local triggers = {
     [101587] = { time = 30 + delay, id = "DealGoingDown", icons = deal, hint = Hints.Wait },
@@ -25,7 +48,7 @@ local triggers = {
 
     [101825] = CodeChance, -- First hack
     [102016] = CodeChance, -- Second and Third Hack
-    [102121] = { time = 10, id = "Escape", icons = { Icon.Escape }, hint = Hints.Escape },
+    [102121] = { time = 10, id = "Escape", icons = { Icon.Escape }, hint = Hints.Escape, waypoint = { position_from_element = 102080 } },
 
     [103163] = { additional_time = 1.5 + 25, random_time = 10, id = "Faint", icons = { "hostage", Icon.Wait }, hint = Hints.Wait },
 

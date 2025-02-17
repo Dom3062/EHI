@@ -23,11 +23,11 @@ function EHIkosugi5Tracker:post_init(...)
     })
 end
 
-if EHI:GetOption("show_mission_trackers") then
-    local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
+if EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission") then
+    local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_mission_trackers", "show_waypoints_mission")
     for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
         managers.mission:add_runned_unit_sequence_trigger(unit_id, "interact", function(unit)
-            if not show_waypoint_only then
+            if show_tracker then
                 managers.ehi_tracker:AddTracker({
                     id = tostring(unit_id),
                     time = 10,

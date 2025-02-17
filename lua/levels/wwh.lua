@@ -63,7 +63,7 @@ EHI.Manager:ParseTriggers({
     other = other,
     assault = { diff = 1 }
 })
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({ max = 8 })
 EHI:AddXPBreakdown({
     objectives =

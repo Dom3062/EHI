@@ -1,15 +1,15 @@
 local EHI = EHI
-if EHI:CheckLoadHook("QuickCsGrenade") or not EHI:GetOption("show_mission_trackers") then
+if EHI:CheckLoadHook("QuickCsGrenade") or not EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission") then
     return
 end
 local Icon = EHI.Icons
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_mission_trackers", "show_waypoints_mission")
 
 local _f_detonate = QuickCsGrenade.detonate
 function QuickCsGrenade:detonate(...)
     _f_detonate(self, ...)
     local key = tostring(self._unit:key())
-    if not show_waypoint_only then
+    if show_tracker then
         managers.ehi_tracker:AddTracker({
             id = key,
             time = self._duration,

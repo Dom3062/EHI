@@ -1,15 +1,12 @@
 local EHI = EHI
 local Icon = EHI.Icons
-local panel_size_original, panel_size = 0, 0
-local panel_offset_original, panel_offset = 0, 0
 ---@class FakeEHITrackerManager
 FakeEHITrackerManager = {}
 FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
 ---@param panel Panel
 ---@param aspect_ratio number
 function FakeEHITrackerManager:new(panel, aspect_ratio)
-    panel_size_original = tweak_data.ehi.default.tracker.size_h
-    panel_offset_original = tweak_data.ehi.default.tracker.offset
+    self._tweak_data = tweak_data.ehi.default.tracker
     dofile(EHI.LuaPath .. "menu/FakeEHITracker.lua")
     self._hud_panel = panel:panel({ alpha = 1 })
     if _G.IS_VR then
@@ -33,8 +30,8 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
     self._tracker_alignment = EHI:GetOption("tracker_alignment") --[[@as 1|2|3|4]]
     self._tracker_vertical_anim = EHI:GetOption("tracker_vertical_w_anim") --[[@as 1|2]]
     self._icons_pos = EHI:GetOption("show_icon_position")
-    panel_size = panel_size_original * self._scale
-    panel_offset = panel_offset_original * self._scale
+    self._panel_size = self._tweak_data.size_h * self._scale
+    self._panel_offset = self._tweak_data.offset * self._scale
     self._horizontal = {
         x = self._x,
         y = self._y,
@@ -63,6 +60,9 @@ end
 function FakeEHITrackerManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {} ---@type FakeEHITracker[]?
+    if not EHI:GetOption("show_trackers") then
+        return
+    end
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.rand(0.5, 9.99), icons = { Icon.Wait } })
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } })
     if EHI:GetOption("show_unlockables") then
@@ -221,9 +221,9 @@ function FakeEHITrackerManager:SetPreviewTextPosition()
     if self._preview_text then
         self._preview_text:set_x(self._x)
         if self._tracker_alignment == 2 then -- Vertical; Bottom to Top
-            self._preview_text:set_top(self:GetY(1) + panel_offset)
+            self._preview_text:set_top(self:GetY(1) + self._panel_offset)
         else
-            self._preview_text:set_bottom(self:GetY(0) - panel_offset)
+            self._preview_text:set_bottom(self:GetY(0) - self._panel_offset)
         end
     end
 end
@@ -241,7 +241,7 @@ function FakeEHITrackerManager:GetPos(pos)
     if self._tracker_alignment <= 2 then -- Vertical
         local from_bottom = self._tracker_alignment == 2
         local new_y = self:GetY(pos, true, from_bottom)
-        local h = from_bottom and (new_y - panel_offset - panel_size) or (new_y + panel_offset + panel_size)
+        local h = from_bottom and (new_y - self._panel_offset - self._panel_size) or (new_y + self._panel_offset + self._panel_size)
         if (from_bottom and h < 0) or h > self._hud_panel:h() then
             self._vertical.y_offset = pos
             local new_x
@@ -258,7 +258,7 @@ function FakeEHITrackerManager:GetPos(pos)
         end
     elseif pos > 0 and self._tracker_alignment == 3 then -- Horizontal; Left to Right
         local tracker = self._fake_trackers[pos]
-        x = tracker._panel:right() + (tracker:GetSize() - tracker._panel:w()) + panel_offset
+        x = tracker._panel:right() + (tracker:GetSize() - tracker._panel:w()) + self._panel_offset
     end
     return x, y
 end
@@ -269,7 +269,7 @@ function FakeEHITrackerManager:GetPos2(tracker, pos)
     local x = self._x
     if pos > 0 then
         local previous_tracker = self._fake_trackers[pos]
-        x = previous_tracker._panel:left() - tracker:GetSize() - panel_offset
+        x = previous_tracker._panel:left() - tracker:GetSize() - self._panel_offset
     end
     return x, self._y
 end
@@ -280,17 +280,17 @@ end
 function FakeEHITrackerManager:GetY(pos, vectical, vertical_from_bottom)
     local corrected_pos = vectical and (pos - self._vertical.y_offset) or pos
     if vertical_from_bottom then
-        return self._y - (corrected_pos * (panel_size + panel_offset))
+        return self._y - (corrected_pos * (self._panel_size + self._panel_offset))
     end
-    return self._y + (corrected_pos * (panel_size + panel_offset))
+    return self._y + (corrected_pos * (self._panel_size + self._panel_offset))
 end
 
 ---@param n_of_icons number
 function FakeEHITrackerManager:GetTrackerSize(n_of_icons)
-    local panel_with_offset = panel_size + panel_offset
+    local panel_with_offset = self._panel_size + self._panel_offset
     local gap = 5 * n_of_icons
-    local icons = panel_size_original * n_of_icons
-    local final_size = (64 + panel_with_offset + gap + icons) * self._scale
+    local icons = self._tweak_data.size_h * n_of_icons
+    local final_size = (self._tweak_data.size_w + panel_with_offset + gap + icons) * self._scale
     return final_size
 end
 
@@ -397,8 +397,8 @@ end
 ---@param scale number
 function FakeEHITrackerManager:UpdateScale(scale)
     self._scale = scale
-    panel_size = panel_size_original * scale
-    panel_offset = panel_offset_original * scale
+    self._panel_size = self._tweak_data.size_h * scale
+    self._panel_offset = self._tweak_data.offset * scale
     self:Redraw()
 end
 

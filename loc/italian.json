@@ -190,9 +190,6 @@
     "ehi_show_waypoints" : "Mostra Punti di Riferimento",
     "ehi_show_waypoints_desc" : "Mostra le punti di riferimento nel mondo di gioco",
  
-    "ehi_show_waypoints_only" : "Mostra Solo Punti di Riferimento",
-    "ehi_show_waypoints_only_desc" : "Quando questa impostazione viene attivata e un elemento ha sia un tracciatore che un punto di riferimento, mostra solo il punto di riferimento\nAltrimenti verrà mostrato il tracciatore",
- 
     "ehi_show_waypoints_present_timer" : "Timer Presente",
     "ehi_show_waypoints_present_timer_desc" : "Imposta per quanto tempo il punto di riferimento rimarrà sullo schermo prima che si 'sposti' verso la sua destinazione",
  

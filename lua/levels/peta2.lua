@@ -63,7 +63,7 @@ local achievements =
             end),
             [100716] = EHI:AddCustomCode(function(self)
                 if self._cache.IncreaseEnabled then
-                    self._trackers:IncreaseTrackerProgress("peta_5")
+                    self._trackers:IncreaseProgress("peta_5")
                 end
             end),
             [100580] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
@@ -114,7 +114,7 @@ EHI.Manager:ParseTriggers({
     other = other
 })
 
-EHI:DisableWaypoints({ [101738] = true }) -- Drill waypoint on mission door
+EHI:DisableTimerWaypoints({ [101738] = true }) -- Drill waypoint on mission door
 local GoatsToSecure = EHI:GetValueBasedOnDifficulty({
     normal = 5,
     hard = 7,

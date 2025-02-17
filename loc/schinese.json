@@ -362,9 +362,6 @@
     "ehi_xp_panel_3" : "获得经验时弹出窗口",
     "ehi_xp_panel_4" : "获得经验时显示提示",
 
-    "ehi_show_xp_in_mission_briefing_only" : "仅在简报页面显示获得的经验",
-    "ehi_show_xp_in_mission_briefing_only_desc" : "如果你想在简报页面而不在游戏中看到经验显示，请启用此功能",
-
     "ehi_total_xp_difference" : "显示经验值差异",
 	"ehi_total_xp_difference_desc" : "显示你获得了多少经验",
     "ehi_total_xp_difference_1" : "不显示",
@@ -579,9 +576,6 @@
 
     "ehi_show_waypoints" : "显示路径导航点",
     "ehi_show_waypoints_desc" : "在游戏中显示路径导航点",
-
-    "ehi_show_waypoints_only" : "仅显示导航点",
-    "ehi_show_waypoints_only_desc" : "勾选后，当一个可追踪的元素可以被导航点和追踪器追踪时，仅显示导航点\n否则将显示追踪器",
 
     "ehi_show_waypoints_present_timer" : "动画时间",
     "ehi_show_waypoints_present_timer_desc" : "设置导航点在'移动'到目标前在屏幕上停留的时间。",

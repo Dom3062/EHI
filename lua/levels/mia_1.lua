@@ -225,9 +225,6 @@ if EHI:IsLootCounterVisible() then
     other[100918] = CarLootBlockedTrigger -- Nothing spawned
     other[100912] = CarLootBlockedTrigger -- Empty money bundle, taken weapons or body spawned
     other[100553] = CarLootBlockedTrigger -- Car set on fire
-    -- Loot removal (Fire)
-    -- coke, meth, money, weapon
-    EHI:HookLootRemovalElement({ 104475, 106825, 106826, 106827 })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100159] = { chance = 100, time = 30 + 20, recheck_t = 20 + 20, id = "Snipers", class = TT.Sniper.TimedChance }
@@ -257,7 +254,8 @@ end
 EHI.Manager:ParseTriggers({
     mission = triggers,
     other = other,
-    sync_triggers = { element = element_sync_triggers }
+    sync_triggers = { element = element_sync_triggers },
+    loot_removal_triggers = { 104475, 106825, 106826, 106827 } -- Loot removal (Fire); coke, meth, money, weapon
 })
 local money = EHI:GetValueBasedOnDifficulty({
     normal = 5,

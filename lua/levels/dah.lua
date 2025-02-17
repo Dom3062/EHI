@@ -85,7 +85,7 @@ local DisableWaypoints =
 {
     [101368] = true -- Drill waypoint for vault with red diamond
 }
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 
 EHI:ShowLootCounter({
     max = 8,
@@ -169,7 +169,7 @@ if EHI.IsHost then
     dah_laptop_codes = nil ---@diagnostic disable-line
     return
 end
-if EHI:GetOption("show_mission_trackers") then
+if EHI.Manager._SHOW_MISSION_TRIGGERS then
     local bg = Idstring("g_code_screen"):key()
     local codes = {}
     for color, _ in pairs(dah_laptop_codes) do

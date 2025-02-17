@@ -53,7 +53,7 @@ function EHIExperienceManager:ExperienceInit(xp)
         {
             xp_format = EHI:GetOption("xp_format") --[[@as 1|2|3]]
         }
-        if Global.load_level and not Global.editor_mode and EHI:GetOption("show_xp_in_mission_briefing_only") then
+        if Global.load_level and not Global.editor_mode and EHI:GetOption("show_mission_xp_overview") then
             EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
         end
         return
@@ -87,9 +87,7 @@ function EHIExperienceManager:ExperienceInit(xp)
     EHI:AddCallback(EHI.CallbackMessage.GameEnd, Block)
     EHI:AddCallback(EHI.CallbackMessage.GameRestart, Block)
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
-    if not EHI:GetOption("show_xp_in_mission_briefing_only") then
-        EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))
-    end
+    EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))
 end
 
 function EHIExperienceManager:CreateXPTable()
@@ -329,6 +327,9 @@ function EHIExperienceManager:SetInCustody(in_custody)
 end
 
 function EHIExperienceManager:IncreaseAlivePlayers()
+    if self._xp_disabled then
+        return
+    end
     self._ehi_xp.alive_players = self._ehi_xp.alive_players + 1
     self:RecalculateXP(5)
 end
@@ -350,6 +351,9 @@ end
 
 ---@param human_player boolean?
 function EHIExperienceManager:DecreaseAlivePlayers(human_player)
+    if self._xp_disabled then
+        return
+    end
     self._ehi_xp.alive_players = math.max(self._ehi_xp.alive_players - 1, 0)
     if human_player then
         self:UpdateSkillXPMultiplier()
@@ -511,6 +515,10 @@ function EHIExperienceManager:SetCriminalsListener(ub)
                     self:QueryAmountOfAllPlayers()
                     EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
                 end)
+            else
+                DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                end)
             end
         end
         if EHI:HookExists(CriminalsManager, "add_character", "EHI_CriminalsManager_add_character") then
@@ -528,6 +536,10 @@ function EHIExperienceManager:SetCriminalsListener(ub)
             if not self._xp_disabled then
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
                     self:QueryAmountOfAlivePlayers()
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                end)
+            else
+                DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
                     EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
                 end)
             end

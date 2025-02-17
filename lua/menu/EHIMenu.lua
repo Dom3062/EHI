@@ -144,12 +144,7 @@ function EHIMenu:init()
     self._preview_panel = FakeEHITrackerManager:new(self._panel, AspectRatioEnum)
     self._buffs_preview_panel = FakeEHIBuffsManager:new(self._panel)
 
-    self._menu_ver = 1
-    if EHI.settings.ModVersion and EHI.settings.ModVersion ~= "N/A" then
-        self._menu_ver = tonumber(EHI.settings.ModVersion)
-    elseif EHI.ModVersion ~= "N/A" then
-        self._menu_ver = tonumber(EHI.ModVersion)
-    end
+    self._menu_ver = tonumber(EHI.ModInstance:GetVersion()) or 1
 
     local update_loop = "MenuUpdate"
     local update_class = MenuManager
@@ -204,6 +199,7 @@ function EHIMenu:init()
     self:_get_menu_from_json(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
     self:_get_menu_from_json(EHI.MenuPath .. "inventory.json")
     self:_get_menu_from_json(EHI.MenuPath .. "other.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "other_2.json")
     self:_get_menu_from_json(EHI.MenuPath .. "colors.json", EHI.settings.colors)
 
     self:OpenMenu("ehi_menu")
@@ -766,7 +762,7 @@ function EHIMenu:_get_menu_from_json(path, settings_table)
         local items = content.items
 
         if content.title == "ehi_mod_title" then
-            menu_title = menu_title .. " r" .. EHI.ModVersion
+            menu_title = menu_title .. " r" .. self._menu_ver
         end
 
         local menu = self:_create_menu({
@@ -1895,44 +1891,7 @@ function EHIMenu:ResetColorMenu()
 end
 
 function EHIMenu:GetXPEnabledValue()
-    return EHI:GetOption("show_gained_xp") and not EHI:GetOption("show_xp_in_mission_briefing_only")
-end
-
-function EHIMenu:UpdateXPEnabledValue(menu, item)
-    local enabled = self:GetXPEnabledValue()
-    local items =
-    {
-        ehi_total_xp_difference_choice = true,
-        ehi_xp_panel_choice = true
-    }
-    for _, m_item in ipairs(menu.items) do
-        if items[m_item.id or ""] then
-            self:AnimateItemEnabled(m_item, enabled)
-        end
-    end
-end
-
-function EHIMenu:UpdateAllXPOptions(menu, item)
-    local enabled = EHI:GetOption("show_gained_xp")
-    local enabled2 = enabled and not EHI:GetOption("show_xp_in_mission_briefing_only")
-    local items =
-    {
-        ehi_show_xp_in_mission_briefing_only_choice = true,
-        ehi_xp_format_choice = true,
-        ehi_xp_panel_choice = true
-    }
-    local items2 =
-    {
-        ehi_total_xp_difference_choice = true,
-        ehi_xp_panel_choice = true
-    }
-    for _, m_item in ipairs(menu.items) do
-        if items[m_item.id or ""] then
-            self:AnimateItemEnabled(m_item, enabled)
-        elseif items2[m_item.id or ""] then
-            self:AnimateItemEnabled(m_item, enabled2)
-        end
-    end
+    return EHI:GetOption("show_gained_xp")
 end
 
 function EHIMenu:UpdateXPDiffEnabled(menu, item)
@@ -1977,4 +1936,8 @@ function EHIMenu:UpdateFloatingHealthBarPocoBlurOption(menu, item)
             break
         end
     end
+end
+
+function EHIMenu:IsXOffsetAvailable()
+    return EHI:GetOption("buffs_alignment") ~= 2 -- Not Center alignment
 end

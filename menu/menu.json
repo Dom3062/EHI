@@ -41,7 +41,7 @@
                     "callback_arguments" : "vr_x_offset",
                     "value": "vr_x_offset",
                     "default_value": 0,
-                    "max": 1280,
+                    "max": 1920,
                     "min": 0,
                     "step": 0,
                     "ehi_ver" : 143
@@ -55,7 +55,7 @@
                     "callback_arguments" : "x_offset",
                     "value": "x_offset",
                     "default_value": 0,
-                    "max": 1280,
+                    "max": 1920,
                     "min": 0,
                     "step": 0
                 }
@@ -72,7 +72,7 @@
                     "callback_arguments": "vr_y_offset",
                     "value": "vr_y_offset",
                     "default_value": 150,
-                    "max": 720,
+                    "max": 1080,
                     "min": 0,
                     "step": 0,
                     "ehi_ver" : 143
@@ -86,7 +86,7 @@
                     "callback_arguments": "y_offset",
                     "value": "y_offset",
                     "default_value": 150,
-                    "max": 720,
+                    "max": 1080,
                     "min": 0,
                     "step": 0
                 }
@@ -216,16 +216,28 @@
             "size" : 15
         },
         {
-            "type" : "divider",
-            "size" : 15
-        },
-        {
-            "type": "button",
-            "id": "ehi_trackers_menu",
-            "title": "ehi_trackers_menu",
-            "description": "ehi_trackers_menu_desc",
-            "next_menu": "ehi_trackers_menu",
-            "ehi_ver" : 287
+            "table" : [
+                {
+                    "type": "toggle",
+                    "id": "ehi_show_trackers_choice",
+                    "title": "ehi_show_trackers",
+                    "callback": "SetOption",
+                    "callback_arguments": "show_trackers",
+                    "value": "show_trackers",
+                    "default_value": true,
+                    "is_parent" : true,
+                    "ehi_ver" : 306
+                },
+                {
+                    "type": "button",
+                    "id": "ehi_trackers_menu",
+                    "title": "ehi_trackers_menu",
+                    "description": "ehi_trackers_menu_desc",
+                    "next_menu": "ehi_trackers_menu",
+                    "parent" : "ehi_show_trackers_choice",
+                    "ehi_ver" : 287
+                }
+            ]
         },
         {
             "table" : [

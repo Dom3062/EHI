@@ -1,9 +1,9 @@
 local EHI = EHI
-if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetOption("show_camera_loop") then
+if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetTrackerOrWaypointOption("show_camera_loop", "show_waypoints_cameras") then
     return
 end
 
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_cameras")
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_camera_loop", "show_waypoints_cameras")
 
 local original =
 {
@@ -21,7 +21,7 @@ end
 function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
     original._start_tape_loop(self, tape_loop_t, ...)
     local t = tape_loop_t + 5
-    if not show_waypoint_only then
+    if show_tracker then
         managers.ehi_tracker:AddTracker({
             id = self._ehi_key,
             time = t,

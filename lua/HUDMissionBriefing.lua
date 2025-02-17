@@ -2,7 +2,7 @@
 ---@field _foreground_layer_one Panel
 
 local EHI = EHI
-if EHI:CheckLoadHook("HUDMissionBriefing") or Global.game_settings.single_player or EHI:IsXPTrackerDisabled() or not EHI:GetOption("show_mission_xp_overview") then
+if EHI:CheckLoadHook("HUDMissionBriefing") or Global.game_settings.single_player or not EHI:GetOption("show_mission_xp_overview") then
     return
 end
 

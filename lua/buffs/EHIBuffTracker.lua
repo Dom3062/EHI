@@ -412,10 +412,10 @@ function EHIBuffTracker:Remove()
 end
 
 function EHIBuffTracker:delete()
+    self:RemoveBuffFromUpdate()
     if alive(self._panel) then
         self._panel:parent():remove(self._panel)
     end
-    self:RemoveBuffFromUpdate()
     if self._pos then
         self:RemoveVisibleBuff()
     end

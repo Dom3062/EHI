@@ -18,48 +18,56 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     original._setup_player_info_hud_pd2(self, ...)
     local server = EHI.IsHost
     local hud_panel = self:script(PlayerBase.PLAYER_INFO_HUD_PD2).panel
-    self._ehi = managers.ehi_tracker
-    managers.ehi_waypoint:SetPlayerHUD(self)
+    self._ehi_tracker = managers.ehi_tracker
+    self._ehi_waypoint = managers.ehi_waypoint
+    self._ehi_waypoint:SetPlayerHUD(self)
     managers.ehi_assault:init_hud(self)
     self._ehi_manager = managers.ehi_manager
-    local EHIWaypoints = EHI:GetOption("show_waypoints")
     local level_id = Global.game_settings.level_id
+    local trackers_visible = EHI:GetOption("show_trackers")
     if server or EHI.HeistTimerIsInverted then
-        if EHIWaypoints then
+        if self._ehi_manager._SHOW_MISSION_TRIGGERS then
             self:AddEHIUpdator("EHIManager_Update", self._ehi_manager)
-        else
-            self:AddEHIUpdator("EHI_Update", self._ehi)
+        elseif self._ehi_manager._SHOW_MISSION_WAYPOINTS then
+            self:AddEHIUpdator("EHIWaypoints_Update", self._ehi_waypoint, "update2")
+        elseif self._ehi_manager._SHOW_MISSION_TRACKERS then
+            self:AddEHIUpdator("EHITrackers_Update", self._ehi_tracker)
         end
     else
         original.feed_heist_time = self.feed_heist_time
-        if EHIWaypoints then
+        if self._ehi_manager._SHOW_MISSION_TRIGGERS then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
                 self._ehi_manager:update_client(time)
             end
-        else
+        elseif self._ehi_manager._SHOW_MISSION_WAYPOINTS then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
-                self._ehi:update_client(time)
+                self._ehi_waypoint:update_client(time)
+            end
+        elseif self._ehi_manager._SHOW_MISSION_TRACKERS then
+            function HUDManager:feed_heist_time(time, ...)
+                original.feed_heist_time(self, time, ...)
+                self._ehi_tracker:update_client(time)
             end
         end
     end
-    if _G.IS_VR then
-        self._ehi:SetPanel(hud_panel)
+    if _G.IS_VR and trackers_visible then
+        self._ehi_tracker:SetPanel(hud_panel)
     end
     if EHI:GetOption("show_buffs") then
         managers.ehi_buff:init_finalize(self, hud_panel)
     end
     if tweak_data.levels:IsLevelSafehouse(level_id) then
         return
-    elseif tweak_data.levels:IsStealthAvailable(level_id) then
+    elseif tweak_data.levels:IsStealthAvailable(level_id) and trackers_visible then
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
             if server then
                 for _, value in ipairs(base) do
                     if value > 0 and value < 1 then
                         -- Random Chance
-                        self._ehi:AddTracker({
+                        self._ehi_tracker:AddTracker({
                             id = "PagersChance",
                             chance = math.ehi_round_chance(base[1] or 0),
                             icons = { EHI.Icons.Pager },
@@ -78,7 +86,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                 end
             end
             if max > 0 then
-                self._ehi:AddTracker({
+                self._ehi_tracker:AddTracker({
                     id = "Pagers",
                     max = EHI.ModUtils:SELH_GetModifiedPagerCount(max),
                     icons = { EHI.Icons.Pager },
@@ -90,7 +98,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end
         end
         if EHI:GetOption("show_bodybags_counter") then
-            self._ehi:AddTracker({
+            self._ehi_tracker:AddTracker({
                 id = "BodybagsCounter",
                 icons = { "equipment_body_bag" },
                 hint = "bodybags_counter",
@@ -111,8 +119,10 @@ end
 
 ---@param id string
 ---@param class table
-function HUDManager:AddEHIUpdator(id, class)
-    if not class.update then
+---@param update_loop_fun_name string?
+function HUDManager:AddEHIUpdator(id, class, update_loop_fun_name)
+    local update = update_loop_fun_name or "update"
+    if not class[update] then
         EHI:Log(string.format("Class with ID '%s' is missing 'update' function!", id))
         return
     elseif not self._ehi_updators then
@@ -128,7 +138,7 @@ function HUDManager:AddEHIUpdator(id, class)
         end)
     end
     self._ehi_updators[id] = class
-    self:add_updator(id, callback(class, class, "update"))
+    self:add_updator(id, callback(class, class, update))
 end
 
 ---@param id string

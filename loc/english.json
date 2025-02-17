@@ -286,6 +286,8 @@
     "ehi_show_tracker_hint_t" : "Tracker Description (Time)",
     "ehi_show_tracker_hint_t_desc" : "Defines how long the description will stay on the screen before it hides\n\nSetting this option to 0 makes the description permanently stay on the screen",
 
+    "ehi_show_trackers" : "Show Trackers",
+
     "ehi_trackers_menu" : "Trackers",
     "ehi_trackers_menu_desc" : "",
 
@@ -373,9 +375,6 @@
     "ehi_xp_panel_2" : "Show total XP gained from the heist",
     "ehi_xp_panel_3" : "Show popup for every XP gained and total XP",
     "ehi_xp_panel_4" : "Show hint for every XP gained and total XP",
-
-    "ehi_show_xp_in_mission_briefing_only" : "Show gained XP in Mission Briefing only",
-    "ehi_show_xp_in_mission_briefing_only_desc" : "Enable this function if you want to see XP in Mission Briefing, but not in-game",
 
     "ehi_total_xp_difference" : "Show XP difference",
     "ehi_total_xp_difference_desc" : "Shows how much you gained XP",
@@ -602,14 +601,11 @@
     "ehi_show_waypoints" : "Show Waypoints",
     "ehi_show_waypoints_desc" : "Show waypoints in the game world",
 
-    "ehi_show_waypoints_only" : "Show Only Waypoints",
-    "ehi_show_waypoints_only_desc" : "When enabled and an element has both tracker and waypoint defined, show only the waypoint\nOtherwise tracker will be shown",
-
     "ehi_show_waypoints_present_timer" : "Present Timer",
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
 
     "ehi_show_waypoints_mission" : "Show Waypoints For Heist Elements",
-    "ehi_show_waypoints_mission_desc" : "Shows a waypoint on heist elements",
+    "ehi_show_waypoints_mission_desc" : "Shows a waypoint on heist elements\n\nNote: If element does not have waypoint defined, tracker will be shown instead",
 
     "ehi_show_waypoints_escape" : "Show Waypoints for Escape Vehicles",
     "ehi_show_waypoints_escape_desc" : "Shows a waypoint where escape vehicles will arrive (no timer)",

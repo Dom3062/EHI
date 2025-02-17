@@ -128,7 +128,7 @@ local DisableWaypoints =
     [100916] = true,
     [100917] = true
 }
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 EHI:UpdateUnits({ [102192] = { remove_vanilla_waypoint = 100943 } }) -- Drill
 EHI:AddXPBreakdown({
     objectives =

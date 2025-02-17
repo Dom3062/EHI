@@ -59,7 +59,7 @@ EHI.Manager:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableWaypoints({
+EHI:DisableTimerWaypoints({
     -- Drill WP in the tech store
     [100241] = true,
 

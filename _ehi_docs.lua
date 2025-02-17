@@ -109,6 +109,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field pre_parse ParseTriggersTable.pre_parse?
 ---@field sync_triggers ParseTriggersTable.sync_triggers?
 ---@field tracker_merge table<string, { start_timer: boolean, elements: { [number]: ElementTrigger } }>?
+---@field loot_removal_triggers number[] Loot removal triggers
 
 ---@class ParseTriggersTable.assault
 ---@field diff number?
@@ -207,7 +208,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 ---@field icon string|table
 ---@field texture string
----@field text_rect { number: x, number: y, number: w, number: h }
+---@field text_rect TextureRect
 ---@field timer 0
 ---@field pause_timer 1
 ---@field no_sync true

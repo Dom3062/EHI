@@ -156,33 +156,6 @@
             "ehi_ver" : 273
         },
         {
-            "type": "toggle",
-            "id": "ehi_show_minion_killed_message_choice",
-            "title": "ehi_show_minion_killed_message",
-            "description": "ehi_show_minion_killed_message_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_minion_killed_message",
-            "value": "show_minion_killed_message",
-            "is_parent" : true,
-            "default_value": true,
-            "ehi_ver" : 68
-        },
-        {
-            "type": "multiple_choice",
-            "id": "ehi_show_minion_killed_message_type_choice",
-            "title": "ehi_show_minion_killed_message_type",
-            "callback": "SetOption",
-            "callback_arguments": "show_minion_killed_message_type",
-            "items": [
-                "ehi_gage_tracker_panel_2",
-                "ehi_show_minion_killed_message_type_2"
-            ],
-            "value": "show_minion_killed_message_type",
-            "parent": "ehi_show_minion_killed_message_choice",
-            "default_value": 1,
-            "ehi_ver" : 68
-        },
-        {
             "type": "divider",
             "size": 20
         },

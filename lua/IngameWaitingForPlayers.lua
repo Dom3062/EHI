@@ -387,7 +387,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 AddAchievementTracker("gage2_5", 0, 220)
                 Hooks:PostHook(StatisticsManager, "killed", "EHI_gage2_5_killed", function(self, data)
                     if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("lmg") and not CopDamage.is_civilian(data.name) then
-                        managers.ehi_tracker:IncreaseTrackerProgress("gage2_5")
+                        managers.ehi_tracker:IncreaseProgress("gage2_5")
                     end
                 end)
             end
@@ -560,7 +560,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     local enemy_killed_key = "EHI_cac_2_enemy_killed"
                     AddAchievementTracker("cac_2", 0, 20)
                     local function on_enemy_killed(...)
-                        managers.ehi_tracker:IncreaseTrackerProgress("cac_2")
+                        managers.ehi_tracker:IncreaseProgress("cac_2")
                     end
                     managers.player:register_message("player_state_changed", "EHI_cac_2_state_changed_key", function(state_name)
                         managers.ehi_tracker:SetTrackerProgress("cac_2", 0)
@@ -683,7 +683,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     })
                     Hooks:PostHook(StatisticsManager, "killed", "EHI_sand_11_killed", function(_, data)
                         if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
-                            managers.ehi_tracker:IncreaseTrackerProgress("sand_11")
+                            managers.ehi_tracker:IncreaseProgress("sand_11")
                         end
                     end)
                     Hooks:PostHook(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(sm, _)
@@ -716,7 +716,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     AddAchievementTracker("steel_2", 0, 10)
                     Hooks:PostHook(StatisticsManager, "killed", "EHI_steel_2_killed", function(_, data)
                         if data.variant == "melee" and data.name == "shield" then
-                            managers.ehi_tracker:IncreaseTrackerProgress("steel_2")
+                            managers.ehi_tracker:IncreaseProgress("steel_2")
                         end
                     end)
                 end
@@ -1002,7 +1002,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     AddAchievementTracker("tawp_1", 0, 1, false, true)
                     managers.ehi_hook:HookKillFunction("tawp_1", nil, nil, function(sm, data)
                         if data.name == "spooc" then
-                            managers.ehi_tracker:IncreaseTrackerProgress("tawp_1")
+                            managers.ehi_tracker:IncreaseProgress("tawp_1")
                         end
                     end)
                 end
@@ -1049,7 +1049,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     AddDailySHChallengeTracker(active_sh_daily, nil, icon)
                     Hooks:PostHook(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", active_sh_daily), function(csm, id)
                         if id == active_sh_daily then
-                            managers.ehi_tracker:IncreaseTrackerProgress(active_sh_daily)
+                            managers.ehi_tracker:IncreaseProgress(active_sh_daily)
                         end
                     end)
                 elseif sh_daily.hook_secured then
@@ -1095,7 +1095,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     if not c.do_not_track then
                         managers.ehi_hook:HookChallengeAwardProgress(challenge.id, function(am, stat, value)
                             if stat == c.progress_id then
-                                managers.ehi_tracker:IncreaseTrackerProgress(challenge.id, value)
+                                managers.ehi_tracker:IncreaseProgress(challenge.id, value)
                             end
                         end)
                     end
@@ -1108,7 +1108,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     for stat_id, id in pairs(stats) do
         managers.ehi_hook:HookAchievementAwardProgress(id, function(am, stat, value)
             if stat == stat_id then
-                managers.ehi_tracker:IncreaseTrackerProgress(id, value)
+                managers.ehi_tracker:IncreaseProgress(id, value)
             end
         end)
     end

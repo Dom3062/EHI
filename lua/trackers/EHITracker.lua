@@ -160,15 +160,7 @@ local function destroy(o, skip_anim, self)
         self._hint:parent():remove(self._hint)
     end
 end
-local icons = tweak_data.ehi.icons
----@param icon string
----@return string, number[]
-local function GetIcon(icon)
-    if icons[icon] then
-        return icons[icon].texture, icons[icon].texture_rect
-    end
-    return tweak_data.hud_icons:get_icon_or(icon, icons.default.texture, icons.default.texture_rect)
-end
+local GetIcon = tweak_data.ehi.default.tracker.get_icon
 
 local bg_visibility = EHI:GetOption("show_tracker_bg") --[[@as boolean]]
 local corner_visibility = EHI:GetOption("show_tracker_corners") --[[@as boolean]]
@@ -970,7 +962,7 @@ function EHITracker:SetStatusText(status, text)
 end
 
 ---@param time number
-function EHITracker:SetTrackerAccurate(time)
+function EHITracker:SetAccurate(time)
     self._tracker_type = "accurate"
     self:SetTextColor()
     self:SetTimeNoAnim(time)

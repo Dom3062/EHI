@@ -9,7 +9,7 @@ if EHI:CheckLoadHook("TradeManager") then
     return
 end
 
-if EHI:IsXPTrackerEnabledAndVisible() then
+if EHI:IsXPTrackerEnabled() then
     if EHI:IsRunningBB() or EHI:IsRunningUsefulBots() then
         EHIExperienceManager:SetAIOnDeathListener()
     end

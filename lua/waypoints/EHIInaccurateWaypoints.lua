@@ -8,7 +8,7 @@ function EHIInaccurateWaypoint:post_init(params)
 end
 
 ---@param time number
-function EHIInaccurateWaypoint:SetWaypointAccurate(time)
+function EHIInaccurateWaypoint:SetAccurate(time)
     self._default_color = Color.white
     self:SetColor()
     self:SetTime(time)
@@ -17,9 +17,9 @@ end
 ---@class EHIInaccuratePausableWaypoint: EHIPausableWaypoint
 EHIInaccuratePausableWaypoint = class(EHIPausableWaypoint)
 EHIInaccuratePausableWaypoint._default_color = color
-EHIInaccuratePausableWaypoint.SetWaypointAccurate = EHIInaccurateWaypoint.SetWaypointAccurate
+EHIInaccuratePausableWaypoint.SetAccurate = EHIInaccurateWaypoint.SetAccurate
 
 ---@class EHIInaccurateWarningWaypoint: EHIWarningWaypoint
 EHIInaccurateWarningWaypoint = class(EHIWarningWaypoint)
 EHIInaccurateWarningWaypoint._default_color = color
-EHIInaccurateWarningWaypoint.SetWaypointAccurate = EHIInaccurateWaypoint.SetWaypointAccurate
+EHIInaccurateWarningWaypoint.SetAccurate = EHIInaccurateWaypoint.SetAccurate

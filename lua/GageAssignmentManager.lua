@@ -50,7 +50,7 @@ function GageAssignmentManager:sync_load(...)
     UpdateTracker(self, secured_packages, true)
 end
 
-if not EHI:GetOption("show_gage_tracker") then
+if not EHI:GetTrackerOption("show_gage_tracker") then
     return
 end
 

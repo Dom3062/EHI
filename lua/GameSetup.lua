@@ -251,7 +251,7 @@ Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", functi
         dofile(string.format("%s%s.lua", EHI.LuaPath, fixed_path))
     end
     EHI.Manager:InitElements()
-    EHI:DisableWaypointsOnInit()
+    EHI:DisableTimerWaypointsOnInit()
     redirect = nil
     levels = nil
     custom_levels = nil

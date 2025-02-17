@@ -18,7 +18,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100022, 750)] = true -- Fix
 }
 
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 
 local tbl =
 {

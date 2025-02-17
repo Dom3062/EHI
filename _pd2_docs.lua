@@ -10,6 +10,7 @@
 --- Aliases
 ---
 ---@alias UnitObject UnitPlayer|UnitEnemy|UnitTeamAI|UnitCivilian|UnitBase
+---@alias TextureRect { number: x, number: y, number: w, number: h }
 ---@param obj (Unit|Workspace|PanelBaseObject)?
 ---@return boolean
 function alive(obj)
@@ -39,11 +40,28 @@ _G.World = {}
 ---@field mutators table
 ---@field player PlayerTweakData
 ---@field preplanning PrePlanningTweakData
----@field projectiles tweak_data.projectiles
 ---@field skirmish SkirmishTweakData
 ---@field upgrades UpgradesTweakData
 ---@field weapon WeaponTweakData
-_G.TweakData = {}
+_G.TweakData = {
+    projectiles =
+    {
+        smoke_screen_grenade = {
+            damage = 0,
+            curve_pow = 0.1,
+            range = 1500,
+            name_id = "bm_smoke_screen_grenade",
+            duration = 10,
+            dodge_chance = 0.5,
+            init_timer = 0,
+            accuracy_roll_chance = 0.5,
+            accuracy_fail_spread = {
+                5,
+                10
+            }
+        }
+    }
+}
 ---@class tweak_data
 ---@field chat_colors Color[]
 ---@field get_raw_value fun(self: self, ...): any
@@ -156,7 +174,16 @@ _G.tweak_data.achievement.complete_heist_achievements = {
     daily_discord = {
         converted_cops = 1,
         trophy_stat = "daily_discord"
-    }
+    },
+    trk_wd_0 = {
+        award = "trk_wd_0",
+        difficulty = normal_and_above,
+        jobs = {
+            "watchdogs_wrapper",
+            "watchdogs_night",
+            "watchdogs"
+        }
+    },
 }
 ---@class AchievementsTweakData.enemy_kill_achievements
 _G.tweak_data.achievement.enemy_kill_achievements = {
@@ -623,9 +650,9 @@ _G.tweak_data.group_ai = {
     }
 }
 ---@class HudIconsTweakData
----@field [string] { texture: string, texture_rect: { number: x, number: y, number: w, number: h } }
----@field get_icon_or fun(self: self, icon_id: string, ...): string, { number: x, number: y, number: w, number: h } If the provided icon is not found, `...` is returned
----@field get_icon_data fun(self: self, icon_id: string, default_rect: { number: x, number: y, number: w, number: h }? ): string, { number: x, number: y, number: w, number: h }
+---@field [string] { texture: string, texture_rect: TextureRect }
+---@field get_icon_or fun(self: self, icon_id: string, ...): string, TextureRect If the provided icon is not found, `...` is returned
+---@field get_icon_data fun(self: self, icon_id: string, default_rect: TextureRect? ): string, TextureRect
 _G.tweak_data.hud_icons = {}
 ---@class LootDropTweakData
 _G.tweak_data.lootdrop = {}
@@ -662,7 +689,7 @@ _G.tweak_data.player.damage = {
 ---@field target_resense_t number
 _G.tweak_data.player.damage.omniscience = {}
 ---@class PrePlanningTweakData
----@field get_type_texture_rect fun(self: self, num: number): { number: x, number: y, number: w, number: h }
+---@field get_type_texture_rect fun(self: self, num: number): TextureRect
 ---@field types table
 _G.tweak_data.preplanning = {
     gui = {
@@ -1000,6 +1027,9 @@ _G.SkirmishTweakData = {}
 ---@field session_hit_accuracy fun(self: self): number
 ---@field special_unit_ids string[]
 ---@field started_session_from_beginning fun(self: self): boolean
+---@class SmokeScreenEffect
+---@field is_in_smoke fun(self: self, unit: UnitPlayer): boolean, string?
+_G.SmokeScreenEffect = {}
 _G.StatisticsManager = {}
 ---@class TeamAIBase : CopBase
 ---@field _loadout { skill: string?, ability: string? }?
@@ -1114,12 +1144,6 @@ end
 ---@overload fun(self: self, category: string, upgrade: string, default: number): number
 function PlayerManager:upgrade_level(category, upgrade)
 end
-
----@class TextureRect
----@field [1] number X
----@field [2] number Y
----@field [3] number W
----@field [4] number H
 
 ---@class Vector3
 ---@field x number
@@ -1882,7 +1906,7 @@ end
 
 ---@class PanelBitmap_Params : PanelBaseObject_Params
 ---@field texture string
----@field text_rect number[]
+---@field text_rect TextureRect
 ---@field render_template "VertexColorTexturedRadial"|"VertexColorTexturedBlur3D"
 ---@field color Color
 ---@field rotation number In degrees

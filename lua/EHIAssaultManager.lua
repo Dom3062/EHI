@@ -33,14 +33,14 @@ function EHIAssaultManager:init_finalize(manager)
     }
     self._assault_delay =
     {
-        blocked = not (combine or EHI:GetOption("show_assault_delay_tracker")),
+        blocked = not (combine or EHI:GetTrackerOption("show_assault_delay_tracker")),
         name = combine and "Assault" or "AssaultDelay",
         delete_on_assault = not combine,
         hint = combine and "assault" or "assault_delay"
     }
     self._assault_time =
     {
-        blocked = not (combine or EHI:GetOption("show_assault_time_tracker")),
+        blocked = not (combine or EHI:GetTrackerOption("show_assault_time_tracker")),
         name = combine and "Assault" or "AssaultTime",
         delete_on_delay = not combine,
         show_endless_assault = true,

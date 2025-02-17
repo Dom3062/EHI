@@ -11,13 +11,43 @@ function EHITweakData:new(tweak_data)
             size_h = 32,
             size_w = 64,
             offset = 6,
-            gap = 5
+            gap = 5,
+            ---@param icon string
+            get_icon = function(icon)
+                local ehi_icons = self.icons
+                if ehi_icons[icon] then
+                    local custom_icon = ehi_icons[icon]
+                    return custom_icon.texture, custom_icon.texture_rect
+                end
+                return tweak_data.hud_icons:get_icon_or(icon, ehi_icons.default.texture, ehi_icons.default.texture_rect)
+            end
         },
         buff =
         {
             size_h = 64,
             size_w = 32,
-            gap = 6
+            gap = 6,
+            ---@return string?
+            ---@return number[]?
+            get_icon = function(params)
+                local texture, texture_rect
+                local x = params.x or 0
+                local y = params.y or 0
+                if params.skills then
+                    texture = "guis/textures/pd2/skilltree/icons_atlas"
+                    texture_rect = { x * 64, y * 64, 64, 64 }
+                elseif params.u100skill then
+                    texture = "guis/textures/pd2/skilltree_2/icons_atlas_2"
+                    texture_rect = { x * 80, y * 80, 80, 80 }
+                elseif params.deck then
+                    texture = "guis/" .. (params.folder and ("dlcs/" .. params.folder .. "/") or "") .. "textures/pd2/specialization/icons_atlas"
+                    texture_rect = { x * 64, y * 64, 64, 64 }
+                elseif params.texture then
+                    texture = params.texture
+                    texture_rect = params.texture_rect
+                end
+                return texture, texture_rect
+            end
         }
     }
     self.colors =

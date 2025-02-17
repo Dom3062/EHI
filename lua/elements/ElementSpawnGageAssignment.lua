@@ -7,7 +7,7 @@ Hooks:PostHook(ElementSpawnGageAssignment, "init", "EHI_ElementSpawnGageAssignme
     EHI.GagePackagesSpawned = true
 end)
 
-if not EHI:GetOption("show_gage_tracker") or EHI:GetOption("gage_tracker_panel") ~= 1 then -- Tracker
+if not EHI:GetTrackerOption("show_gage_tracker") or EHI:GetOption("gage_tracker_panel") ~= 1 then -- Tracker
     return
 end
 

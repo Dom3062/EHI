@@ -69,10 +69,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101481] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         self._trackers:SetChance(id, element._values.chance) -- 20%
-        self._trackers:SetTrackerTimeNoAnim(id, 60)
+        self._trackers:SetTimeNoAnim(id, 60)
         self._trackers:CallFunction(id, "AnnounceSniperSpawn")
     end)}
-    other[101446] = { special_function = SF.CallTrackerManagerFunction, f = "SetTrackerTimeNoAnim", arg = { "Snipers", 60 } }
+    other[101446] = { special_function = SF.CallTrackerManagerFunction, f = "SetTimeNoAnim", arg = { "Snipers", 60 } }
     -- Sniper spawn
     other[103529] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[103534] = { id = "Snipers", special_function = SF.IncreaseCounter }

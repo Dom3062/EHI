@@ -174,9 +174,6 @@
     "ehi_show_waypoints" : "Show Waypoints",
     "ehi_show_waypoints_desc" : "Show waypoints in the game world",
 
-    "ehi_show_waypoints_only" : "Show Only Waypoints",
-    "ehi_show_waypoints_only_desc" : "When enabled and an element has both tracker and waypoint defined, show only the waypoint\nOtherwise tracker will be shown",
-
     "ehi_show_waypoints_present_timer" : "Present Timer",
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
 

@@ -140,7 +140,7 @@ local DisableWaypoints =
     -- levels/instances/unique/rvd/rvd_hackbox/world
     -- Handled in CoreWorldInstanceManager.lua
 }
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objectives =
     {

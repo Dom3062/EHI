@@ -59,8 +59,7 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
     ---@param dt number
     function EHIDamageFloatManager:update(t, dt)
         self._camPos = self._player_camera:position()
-        local rot = self._player_camera:rotation()
-        self._nl_cam_forward = rot:y()
+        self._nl_cam_forward = self._player_camera:rotation():y()
 
         self.state = self._player_movement:current_state()
         self.ADS = self.state and self.state._state_data.in_steelsight
@@ -188,8 +187,7 @@ else
     ---@param dt number
     function EHIDamageFloatManager:update(t, dt)
         self._camPos = self._player_camera:position()
-        local rot = self._player_camera:rotation()
-        self._nl_cam_forward = rot:y()
+        self._nl_cam_forward = self._player_camera:rotation():y()
 
         self.state = self._player_movement:current_state()
         self.ADS = self.state and self.state._state_data.in_steelsight

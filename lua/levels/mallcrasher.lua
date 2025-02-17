@@ -89,7 +89,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local MoneyTrigger = { id = "MallDestruction", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
-    self._trackers:IncreaseTrackerProgress(trigger.id, element._values.amount)
+    self._trackers:IncreaseProgress(trigger.id, element._values.amount)
 end) }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
 local triggers =

@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("TimerGui") or not EHI:GetOption("show_timers") then
+if EHI:CheckLoadHook("TimerGui") or not EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
     return
 end
 
@@ -18,7 +18,7 @@ end
 
 local Icon = EHI.Icons
 
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
 ---@type { [string]: number|MissionDoorTable? }
 TimerGui._ehi_MissionDoor = {}
 
@@ -44,7 +44,7 @@ function TimerGui:init(unit, ...)
     self._ehi_icon = { { icon = icon } }
     self._ehi_hint = icon == Icon.Drill and "drill" or icon == Icon.PCHack and "hack" or icon == "pd2_generic_saw" and "saw" or "process"
     self._ehi_group = icon == Icon.Drill and "drill" or icon == Icon.PCHack and "hack" or icon == "pd2_generic_saw" and "saw" or "process"
-    if not show_waypoint_only then
+    if show_tracker then
         EHI:OptionAndLoadTracker("show_timers")
     end
 end
@@ -93,7 +93,7 @@ function TimerGui:StartTimer()
     local autorepair = self:GetAutorepairState()
     -- In case the conversion fails, fallback to "self._time_left" which is a number
     local t = tonumber(self._current_timer) or self._time_left
-    if not show_waypoint_only then
+    if show_tracker then
         if self.__ehi_merge then
             managers.ehi_tracker:CallFunction(self._ehi_key, "StartTimer", t, true)
         else
@@ -173,14 +173,14 @@ function TimerGui:_start(...)
     self:StartTimer()
 end
 
-if show_waypoint_only then
+if show_tracker and show_waypoint then
     function TimerGui:update(...)
-        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._time_left or self._current_timer or 0)
+        managers.ehi_manager:UpdateTimer(self._ehi_key, self._time_left or self._current_timer or 0)
         original.update(self, ...)
     end
 elseif show_waypoint then
     function TimerGui:update(...)
-        managers.ehi_manager:UpdateTimer(self._ehi_key, self._time_left or self._current_timer or 0)
+        managers.ehi_waypoint:SetTime(self._ehi_key, self._time_left or self._current_timer or 0)
         original.update(self, ...)
     end
 else

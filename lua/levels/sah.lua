@@ -10,7 +10,7 @@ local triggers = {
 
     -- Heli Escape is in CoreWorldInstanceManager
 }
-if EHI:GetOption("show_mission_trackers") then
+if EHI.Manager._SHOW_MISSION_TRIGGERS then
     triggers[EHI:GetInstanceElementID(100088, 18200)] = { id = "VaultCode", class = TT.Code }
     ---@param self EHIManager
     local function ShowCodePart(self, arg)

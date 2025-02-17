@@ -8,6 +8,7 @@ EHIWaypointManager._distance_font_size = tweak_data.hud.default_font_size
 EHIWaypointManager._bitmap_w = 32
 EHIWaypointManager._bitmap_h = 32
 function EHIWaypointManager:new()
+    self._t = 0
     self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
     self._present_timer = EHI:GetOption("show_waypoints_present_timer") --[[@as number]]
     self._stored_waypoints = {} ---@type table<string, AddWaypointTable|ElementWaypointTrigger>
@@ -15,6 +16,11 @@ function EHIWaypointManager:new()
     self._waypoints_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
     self._base_waypoint_class = EHI.Waypoints.Base
     return self
+end
+
+---@param t number
+function EHIWaypointManager:LoadTime(t)
+    self._t = t
 end
 
 ---@param hud HUDManager
@@ -170,7 +176,7 @@ end
 
 ---@param id string
 ---@param time number
-function EHIWaypointManager:SetWaypointTime(id, time)
+function EHIWaypointManager:SetTime(id, time)
     local wp = self._waypoints[id]
     if wp then
         wp:SetTime(time)
@@ -205,27 +211,36 @@ end
 
 ---@param id string
 ---@param pause boolean
-function EHIWaypointManager:SetWaypointPause(id, pause)
+function EHIWaypointManager:SetPaused(id, pause)
     local wp = self._waypoints[id] --[[@as EHIPausableWaypoint]]
-    if wp and wp.SetPaused then
-        wp:SetPaused(pause)
+    if wp and wp.SetPause then
+        wp:SetPause(pause)
     end
 end
 
 ---@param id string
 ---@param t number
-function EHIWaypointManager:SetWaypointAccurate(id, t)
+function EHIWaypointManager:SetAccurate(id, t)
     local wp = id and self._waypoints[id] --[[@as EHIInaccurateWaypoint]]
-    if wp and wp.SetWaypointAccurate then
-        wp:SetWaypointAccurate(t)
+    if wp and wp.SetAccurate then
+        wp:SetAccurate(t)
     end
 end
 
 ---@param id string
-function EHIWaypointManager:IncreaseWaypointProgress(id)
+function EHIWaypointManager:IncreaseProgress(id)
     local wp = id and self._waypoints[id] --[[@as EHIProgressWaypoint]]
     if wp and wp.IncreaseProgress then
         wp:IncreaseProgress()
+    end
+end
+
+---@param id string
+---@param amount number
+function EHIWaypointManager:IncreaseChance(id, amount)
+    local wp = id and self._waypoints[id] --[[@as EHIChanceWaypoint]]
+    if wp and wp.IncreaseChance then
+        wp:IncreaseChance(amount)
     end
 end
 
@@ -252,6 +267,20 @@ function EHIWaypointManager:update(dt)
     end
 end
 
+---@param dt number
+function EHIWaypointManager:update2(t, dt)
+    for _, waypoint in pairs(self._waypoints_to_update) do
+        waypoint:update(dt)
+    end
+end
+
+---@param t number
+function EHIWaypointManager:update_client(t)
+    local dt = t - self._t
+    self._t = t
+    self:update(dt)
+end
+
 function EHIWaypointManager:destroy()
     for key, _ in pairs(self._waypoints) do
         self._waypoints[key] = nil
@@ -275,6 +304,7 @@ do
     dofile(path .. "EHIPausableWaypoint.lua")
     dofile(path .. "EHITimerWaypoint.lua")
     dofile(path .. "EHIProgressWaypoint.lua")
+    dofile(path .. "EHIChanceWaypoint.lua")
     dofile(path .. "EHIInaccurateWaypoints.lua")
 end
 

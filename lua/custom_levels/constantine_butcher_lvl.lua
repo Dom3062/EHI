@@ -39,7 +39,7 @@ local DisableWaypoints =
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b_002
     [EHI:GetInstanceElementID(100018, 3750)] = true -- Defend
 }
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objectives =
     {

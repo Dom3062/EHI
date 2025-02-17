@@ -528,6 +528,7 @@ _G.EHI =
         Warning = "EHIWarningWaypoint",
         Progress = "EHIProgressWaypoint",
         Pausable = "EHIPausableWaypoint",
+        Chance = "EHIChanceWaypoint",
         Inaccurate = "EHIInaccurateWaypoint",
         InaccuratePausable = "EHIInaccuratePausableWaypoint",
         InaccurateWarning = "EHIInaccurateWarningWaypoint"
@@ -545,7 +546,6 @@ _G.EHI =
     },
 
     ModInstance = ModInstance,
-    ModVersion = ModInstance:GetVersion(),
     -- PAYDAY 2/mods/Extra Heist Info/
     ModPath = ModPath,
     -- PAYDAY 2/mods/Extra Heist Info/loc/
@@ -741,6 +741,7 @@ local function LoadDefaultValues(self)
         show_tracker_hint_t = 15,
 
         -- Trackers
+        show_trackers = true,
         show_mission_trackers = true,
         show_unlockables = true,
         unlockables =
@@ -772,7 +773,6 @@ local function LoadDefaultValues(self)
             show_daily_started_popup = true
         },
         show_gained_xp = true,
-        show_xp_in_mission_briefing_only = false,
         xp_format = 3,
         xp_panel = 2,
         total_xp_difference = 2,
@@ -839,7 +839,6 @@ local function LoadDefaultValues(self)
 
         -- Waypoints
         show_waypoints = true,
-        show_waypoints_only = false,
         show_waypoints_present_timer = 2,
         show_waypoints_mission = true,
         show_waypoints_escape = true,
@@ -1259,7 +1258,7 @@ end
 
 function EHI:SaveOptions()
     self.settings.SaveDataVer = self.SaveDataVer
-    self.settings.ModVersion = self.ModVersion
+    self.settings.ModVersion = self.ModInstance:GetVersion()
     local file = io.open(self.SettingsSaveFilePath, "w+")
     if file then
         file:write(json.encode(self.settings) or "{}")
@@ -1299,7 +1298,7 @@ end
 
 ---@param option string
 function EHI:GetOptionAndLoadTracker(option)
-    local result = self:GetOption(option)
+    local result = self:GetTrackerOption(option)
     if result and self.OptionTracker[option] then
         local tracker = self.OptionTracker[option]
         tracker.count = (tracker.count or 1) - 1
@@ -1350,6 +1349,11 @@ function EHI:GetVectorFromOption(option, color)
     return Vector3()
 end
 
+---@param option string
+function EHI:GetTrackerOption(option)
+    return self:GetOption("show_trackers") and self:GetOption(option)
+end
+
 ---@return boolean
 function EHI:ShowMissionAchievements()
     return self:GetUnlockableAndOption("show_achievements_mission") and self:GetUnlockableOption("show_achievements")
@@ -1376,12 +1380,18 @@ end
 
 ---@param option string
 function EHI:GetUnlockableAndOption(option)
-    return self:GetOption("show_unlockables") and self:GetUnlockableOption(option)
+    return self:GetTrackerOption("show_unlockables") and self:GetUnlockableOption(option)
 end
 
 ---@param option string
 function EHI:GetEquipmentOption(option)
-    return self:GetOption("show_equipment_tracker") and self:GetOption(option)
+    return self:GetTrackerOption("show_equipment_tracker") and self:GetOption(option)
+end
+
+---@param tracker string
+---@param waypoint string
+function EHI:GetTrackerOrWaypointOption(tracker, waypoint)
+    return self:GetTrackerOption(tracker) or self:GetWaypointOption(waypoint)
 end
 
 ---@param waypoint string
@@ -1390,11 +1400,11 @@ function EHI:GetWaypointOption(waypoint)
     return self:GetOption("show_waypoints") and self:GetOption(waypoint)
 end
 
+---@param tracker string
 ---@param waypoint string
 ---@return boolean, boolean
-function EHI:GetWaypointOptionWithOnly(waypoint)
-    local show = self:GetWaypointOption(waypoint)
-    return show, show and self:GetOption("show_waypoints_only")
+function EHI:GetShowTrackerAndWaypoint(tracker, waypoint)
+    return self:GetTrackerOption(tracker), self:GetWaypointOption(waypoint)
 end
 
 ---@param color { r: number, g: number, b: number }?
@@ -1447,27 +1457,19 @@ end
 
 ---@return boolean
 function EHI:MissionTrackersAndWaypointEnabled()
-    return self:GetOption("show_mission_trackers") and self:GetWaypointOption("show_waypoints_mission")
+    return self:GetTrackerOption("show_mission_trackers") and self:GetWaypointOption("show_waypoints_mission")
 end
 
 function EHI:IsXPTrackerEnabled()
-    return self:GetOption("show_gained_xp") and not self:IsPlayingCrimeSpree()
+    return self:GetTrackerOption("show_gained_xp") and not self:IsPlayingCrimeSpree()
 end
 
 function EHI:IsXPTrackerDisabled()
     return not self:IsXPTrackerEnabled()
 end
 
-function EHI:IsXPTrackerEnabledAndVisible()
-    return self:IsXPTrackerEnabled() and not self:GetOption("show_xp_in_mission_briefing_only")
-end
-
-function EHI:IsXPTrackerHidden()
-    return not self:IsXPTrackerEnabledAndVisible()
-end
-
 function EHI:IsLootCounterVisible()
-    return self:GetOption("show_loot_counter") and not self:IsPlayingCrimeSpree()
+    return self:GetTrackerOption("show_loot_counter") and not self:IsPlayingCrimeSpree()
 end
 
 function EHI:IsSyncedLootCounterVisible()
@@ -1480,7 +1482,10 @@ end
 
 ---@return boolean
 function EHI:IsAssaultTrackerEnabled()
-    return self:GetOption("show_assault_delay_tracker") or self:GetOption("show_assault_time_tracker")
+    if self:GetOption("show_trackers") then
+        return self:GetOption("show_assault_delay_tracker") or self:GetOption("show_assault_time_tracker")
+    end
+    return false
 end
 
 ---@param option string
@@ -1491,24 +1496,20 @@ end
 
 ---@return boolean
 function EHI:CombineAssaultDelayAndAssaultTime()
-    return self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker")
+    return self:GetOption("show_trackers") and self:GetOption("show_assault_delay_tracker") and self:GetOption("show_assault_time_tracker")
 end
 
 function EHI:IsEscapeChanceEnabled()
-    if self:GetOption("show_escape_chance") and not self:IsPlayingCrimeSpree() then
-        self:OptionAndLoadTracker("show_escape_chance")
-        return true
-    end
-    return false
+    return self:GetOptionAndLoadTracker("show_escape_chance") and not self:IsPlayingCrimeSpree()
 end
 
 function EHI:IsTradeTrackerDisabled()
-    return not self:GetOption("show_trade_delay") or Global.game_settings.level_id == "haunted"
+    return not self:GetTrackerOption("show_trade_delay") or Global.game_settings.level_id == "haunted"
 end
 
 ---@param params XPBreakdown
 function EHI:AddXPBreakdown(params)
-    if self:IsXPTrackerDisabled() or not managers.menu_component then
+    if not EHI:GetOption("show_mission_xp_overview") or not managers.menu_component then
         return
     elseif not managers.menu_component._mission_briefing_gui then
         self:AddCallback("MissionBriefingGuiInit", function(gui) ---@param gui MissionBriefingGui
@@ -1611,55 +1612,9 @@ function EHI:Unhook(id)
     Hooks:RemovePostHook("EHI_" .. id)
 end
 
----Hooks elements that removes loot bags (due to fire or out of bounds)
----@param elements number|number[] Index or indices of ElementCarry that removes loot bags with operation `remove`
-function EHI:HookLootRemovalElement(elements)
-    if type(elements) ~= "table" and type(elements) ~= "number" then
-        return
-    end
-    local hook = managers.ehi_hook
-    local f, HookFunction
-    if self.IsHost then
-        HookFunction = hook.PrehookElement
-        f = function(e, instigator, ...)
-            if not e._values.enabled or not alive(instigator) then
-                return
-            elseif e._values.type_filter and e._values.type_filter ~= "none" then
-                local carry_ext = instigator:carry_data()
-                if not carry_ext then
-                    return
-                end
-                local carry_id = carry_ext:carry_id()
-                if carry_id ~= e._values.type_filter then
-                    return
-                end
-            end
-            managers.ehi_loot:DecreaseLootCounterProgressMax()
-        end
-    else
-        HookFunction = hook.HookElement
-        f = function(...)
-            managers.ehi_loot:DecreaseLootCounterProgressMax()
-        end
-    end
-    if type(elements) == "table" then
-        for _, index in ipairs(elements) do
-            local element = managers.mission:get_element_by_id(index)
-            if element then
-                HookFunction(hook, element, f)
-            end
-        end
-    else -- number
-        local element = managers.mission:get_element_by_id(elements)
-        if element then
-            HookFunction(hook, element, f)
-        end
-    end
-end
-
 ---@return boolean
 function EHI:ShowDramaTracker()
-    return self.IsHost and self:GetOption("show_drama_tracker") and Global.game_settings.level_id ~= "haunted"
+    return self.IsHost and self:GetTrackerOption("show_drama_tracker") and Global.game_settings.level_id ~= "haunted"
 end
 
 ---@return boolean
@@ -1761,7 +1716,7 @@ end
 ---@param params AssaultElementTrigger
 ---@return ElementTrigger?
 function EHI:AddAssaultDelay(params)
-    if not self:GetOption("show_assault_delay_tracker") then
+    if not self:GetTrackerOption("show_assault_delay_tracker") then
         self:CleanupCustomSFTrigger(params)
         return nil
     end
@@ -1774,7 +1729,9 @@ function EHI:AddAssaultDelay(params)
     local tbl = {}
     -- Copy every passed value to the trigger
     for key, value in pairs(params) do
-        tbl[key] = value
+        if key ~= "control" and key ~= "control_additional_time" then
+            tbl[key] = value
+        end
     end
     if params.random_time then
         tbl.additional_time = (params.control_additional_time or 0) + (tbl.additional_time or 30)
@@ -1870,11 +1827,6 @@ function EHI:AddCustomCode(f, trigger_once)
     }
 end
 
----@return boolean
-function EHI:ShouldDisableWaypoints()
-    return self:GetOption("show_timers") and self:GetWaypointOption("show_waypoints_timers")
-end
-
 ---@param id number
 function EHI:DisableElementWaypoint(id)
     local element = managers.mission:get_element_by_id(id) ---@cast element ElementWaypoint?
@@ -1911,8 +1863,8 @@ function EHI:CacheDisabledWaypoints(waypoints)
 end
 
 ---@param waypoints table<number, boolean>?
-function EHI:DisableWaypoints(waypoints)
-    if not self:ShouldDisableWaypoints() or waypoints == nil then
+function EHI:DisableTimerWaypoints(waypoints)
+    if not self:GetWaypointOption("show_waypoints_timers") or waypoints == nil then
         return
     end
     self:CacheDisabledWaypoints(waypoints)
@@ -1920,13 +1872,13 @@ end
 
 ---@param waypoints table<number, boolean>?
 function EHI:DisableMissionWaypoints(waypoints)
-    if not self:GetOption("show_mission_trackers") or waypoints == nil then
+    if not self:GetWaypointOption("show_waypoints_mission") or waypoints == nil then
         return
     end
     self:CacheDisabledWaypoints(waypoints)
 end
 
-function EHI:DisableWaypointsOnInit()
+function EHI:DisableTimerWaypointsOnInit()
     for id, _ in pairs(self.DisableOnLoad or {}) do
         self:DisableElementWaypoint(id)
     end
@@ -1945,7 +1897,7 @@ end
 
 ---@param params LootCounterTable?
 function EHI:ShowLootCounter(params)
-    if self:GetOption("show_loot_counter") then
+    if self:GetTrackerOption("show_loot_counter") then
         self:ShowLootCounterNoCheck(params)
     end
 end
@@ -1973,7 +1925,7 @@ function EHI:ShowLootCounterNoChecks(params)
     if params.sequence_triggers or params.is_synced then
         managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, offset)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
-    elseif params.max_bags_for_level and self:IsXPTrackerEnabledAndVisible() then
+    elseif params.max_bags_for_level and self:IsXPTrackerEnabled() then
         if params.max_bags_for_level.objective_triggers then
             local xp_trigger = self:AddLootCounter3(function(manager, trigger, element, enabled) ---@cast element ElementExperience
                 if enabled then
@@ -1984,7 +1936,7 @@ function EHI:ShowLootCounterNoChecks(params)
             for _, id in ipairs(params.max_bags_for_level.objective_triggers) do
                 triggers[id] = xp_trigger
             end
-            managers.ehi_manager:AddTriggers2(triggers, "LootCounter")
+            managers.ehi_manager:AddTriggers(triggers, "LootCounter")
             params.max_bags_for_level.objective_triggers = nil
         end
         params.no_sync_load = true
@@ -2000,7 +1952,7 @@ function EHI:ShowLootCounterNoChecks(params)
         params.no_sync_load = true
     end
     if params.triggers and (not params.no_triggers_if_max_xp_bags_gt_max or (params.max_xp_bags or 0) >= (params.max or 0)) then
-        managers.ehi_manager:AddTriggers2(params.triggers, "LootCounter")
+        managers.ehi_manager:AddTriggers(params.triggers, "LootCounter")
         if params.hook_triggers then
             managers.ehi_manager:HookElements(params.triggers)
         end
@@ -2034,8 +1986,8 @@ end
 function EHI:ShowLootCounterSynced(params)
     if self:IsPlayingCrimeSpree() then
         return
-    elseif not self:GetOption("show_loot_counter") then
-        managers.ehi_manager:AddTriggers2(params.triggers or {}, "LootCounter")
+    elseif not self:GetTrackerOption("show_loot_counter") then
+        managers.ehi_manager:AddTriggers(params.triggers or {}, "LootCounter")
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
         managers.ehi_loot:SetSyncData({
             max = params.max or 0,
@@ -2063,7 +2015,7 @@ end
 
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounterNoCheck(params)
-    if params.show_loot_counter and self:GetOption("show_loot_counter") and not self:IsPlayingCrimeSpree() then
+    if params.show_loot_counter and self:GetTrackerOption("show_loot_counter") and not self:IsPlayingCrimeSpree() then
         managers.ehi_unlockable:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
     else
         managers.ehi_unlockable:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target)
@@ -2089,7 +2041,7 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
         end)
     end
     if params.triggers then
-        managers.ehi_manager:AddTriggers2(params.triggers, params.achievement)
+        managers.ehi_manager:AddTriggers(params.triggers, params.achievement)
         if params.hook_triggers then
             managers.ehi_manager:HookElements(params.triggers)
         end
@@ -2137,7 +2089,7 @@ function EHI:ShowAchievementKillCounter(params)
     managers.ehi_unlockable:AddAchievementKillCounter(id, progress, max)
     Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_award_progress_%s", id), function(am, stat, value)
         if stat == id_stat then
-            managers.ehi_tracker:IncreaseTrackerProgress(id, value)
+            managers.ehi_tracker:IncreaseProgress(id, value)
         end
     end)
 end
@@ -2237,7 +2189,7 @@ end
 
 ---@param tbl table<number, UnitUpdateDefinition>
 function EHI:UpdateUnits(tbl)
-    if self:GetOption("show_timers") then
+    if self:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
         self:UpdateUnitsNoCheck(tbl)
     end
 end
@@ -2253,7 +2205,7 @@ end
 ---@param tbl table<number, UnitUpdateDefinition>
 ---@param skip_finalize boolean
 function EHI:UpdateInstanceMissionUnits(tbl, skip_finalize)
-    if not self:GetOption("show_timers") then
+    if not self:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
         return
     elseif not skip_finalize then
         self:FinalizeUnits(tbl)
@@ -2267,7 +2219,7 @@ end
 ---@param instance_start_index number
 ---@param instance_continent_index number? Defaults to `100000` if not provided
 function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
-    if self:GetOption("show_timers") then
+    if self:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
         self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
     end
 end
@@ -2458,7 +2410,7 @@ function EHI:SetDeployableIgnorePos(type, pos)
 end
 
 function EHI:CanShowCivilianCountTracker()
-    return self:GetOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.has({
+    return self:GetTrackerOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.has({
         alex_1 = true, -- Rats Day 1
         haunted = true, -- Safehouse Nightmare
         man = true, -- Undercover
@@ -2528,7 +2480,11 @@ end
 ---@param time number|EHIRandomTime
 ---@param trigger_name string?
 ---@param loud_check boolean?
+---@return ElementTrigger?
 function EHI:AddEndlessAssault(time, trigger_name, loud_check)
+    if not self:GetOption("show_trackers") then
+        return nil
+    end
     local tbl = ---@type ElementTrigger
     {
         id = trigger_name or "EndlessAssault",
@@ -2553,7 +2509,7 @@ end
 ---@param wp_vector Vector3
 ---@param id string?
 ---@param trigger_once boolean?
----@return ElementTrigger
+---@return ElementTrigger?
 function EHI:AddIncomingTurret(t, wp_vector, id, trigger_once)
     return {
         id = id or "SWATTurretArrival",
@@ -2574,7 +2530,7 @@ end
 ---@param trigger_once boolean?
 ---@return ElementTrigger?
 function EHI:AddSniperSpawnedPopup(single_sniper, trigger_once)
-    if not (self:GetOption("show_sniper_tracker") and self:GetOption("show_sniper_spawned_popup")) then
+    if not (self:GetTrackerOption("show_sniper_tracker") and self:GetOption("show_sniper_spawned_popup")) then
         return nil
     end
     return {
@@ -2650,31 +2606,40 @@ function EHI:UpdateExistingHookIfExistsOrHook(object, func, id, new_f)
 end
 
 Load()
-if EHI:GetUnlockableOption("hide_unlocked_achievements") then
-    local G = Global
-    ---@param achievement string
-    ---@return boolean
-    function EHI:IsAchievementUnlocked(achievement)
-        local a = G.achievment_manager.achievments[achievement]
-        return a and a.awarded
+if EHI:GetOption("show_trackers") then
+    if EHI:GetUnlockableOption("hide_unlocked_achievements") then
+        local G = Global
+        ---@param achievement string
+        ---@return boolean
+        function EHI:IsAchievementUnlocked(achievement)
+            local a = G.achievment_manager.achievments[achievement]
+            return a and a.awarded
+        end
+    else -- Always show trackers for achievements
+        ---@param achievement string
+        function EHI:IsAchievementUnlocked(achievement)
+            return false
+        end
     end
-else -- Always show trackers for achievements
-    ---@param achievement string
-    ---@return boolean
-    function EHI:IsAchievementUnlocked(achievement)
-        return false
-    end
-end
-
-if EHI:GetUnlockableOption("hide_unlocked_trophies") then
-    ---@param trophy string
-    function EHI:IsTrophyUnlocked(trophy)
-        return managers.custom_safehouse:is_trophy_unlocked(trophy)
+    if EHI:GetUnlockableOption("hide_unlocked_trophies") then
+        ---@param trophy string
+        function EHI:IsTrophyUnlocked(trophy)
+            return managers.custom_safehouse:is_trophy_unlocked(trophy)
+        end
+    else
+        ---@param trophy string
+        function EHI:IsTrophyUnlocked(trophy)
+            return false
+        end
     end
 else
+    ---@param achievement string
+    function EHI:IsAchievementUnlocked(achievement)
+        return true
+    end
     ---@param trophy string
     function EHI:IsTrophyUnlocked(trophy)
-        return false
+        return true
     end
 end
 

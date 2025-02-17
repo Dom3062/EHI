@@ -2,10 +2,7 @@ local EHI = EHI
 if EHI:CheckLoadHook("SmokeScreenEffect") then
     return
 end
-local show_waypoint, show_waypoint_only = false, true
-if EHI:GetOption("show_mission_trackers") then
-    show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_mission")
-end
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_mission_trackers", "show_waypoints_mission")
 local buffs = EHI:GetBuffAndBuffDeckOption("sicario", "smoke_bomb")
 
 if show_waypoint then
@@ -36,7 +33,7 @@ function SmokeScreenEffect:init(position, normal, time, has_dodge_bonus, grenade
         color_id = #tweak_data.chat_colors
     end
     local color = tweak_data.chat_colors[color_id] or Color.white
-    if not show_waypoint_only then
+    if show_tracker then
         managers.ehi_tracker:AddTracker({
             id = "SmokeScreenGrenade_" .. key,
             time = time,

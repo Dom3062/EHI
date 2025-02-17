@@ -245,9 +245,6 @@
   "ehi_show_waypoints": "ウェイポイントを表示",
   "ehi_show_waypoints_desc": "ゲーム内ワールドにウェイポイントを表示します。",
 
-  "ehi_show_waypoints_only": "ウェイポイントのみ表示",
-  "ehi_show_waypoints_only_desc": "有効化すると要素にトラッカーとウェイポイントの両方が定義されている場合、ウェイポイントのみが表示されます。\nそれ以外はトラッカーが表示されます。",
-
   "ehi_show_waypoints_present_timer": "プレゼントタイマー",
   "ehi_show_waypoints_present_timer_desc": "ウェイポイントが目的地に「移動」するまでに、画面上に存在する時間を設定します。",
 

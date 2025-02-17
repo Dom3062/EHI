@@ -119,7 +119,7 @@ if EHI.IsClient then
     triggers[100564] = EHI:ClientCopyTrigger(triggers[100423], { time = 25 + 3 })
     -- Not worth adding the 3s delay here
 end
-if EHI:GetOption("show_mission_trackers") then
+if EHI.Manager._SHOW_MISSION_TRIGGERS then
     local SetIngredient = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("ChemSet", "SetIngredient", trigger.pos or 1, trigger.id)
     end)
@@ -272,7 +272,7 @@ end
 tbl[EHI:GetInstanceUnitID(100051, 29550)] = { tracker_merge_id = "HackChance" }
 
 EHI:UpdateUnits(tbl)
-EHI:DisableWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints(DisableWaypoints)
 EHI:ShowLootCounter({
     max = 8, -- 2 main loot; 6 artifacts in crates, one in Archaeology room -> 400511
     triggers =

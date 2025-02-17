@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("DigitalGui") or not EHI:GetOption("show_timers") then
+if EHI:CheckLoadHook("DigitalGui") or not EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
     return
 end
 
@@ -13,7 +13,7 @@ end
 
 local Icon = EHI.Icons
 
-local show_waypoint, show_waypoint_only = EHI:GetWaypointOptionWithOnly("show_waypoints_timers")
+local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
 
 local original =
 {
@@ -33,7 +33,7 @@ local level_id = Global.game_settings.level_id
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    if not show_waypoint_only then
+    if show_tracker then
         EHI:OptionAndLoadTracker("show_timers")
     end
 end
@@ -45,7 +45,7 @@ function DigitalGui:TimerStartCountDown()
         managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
         return
     end
-    if not show_waypoint_only then
+    if show_tracker then
         managers.ehi_timer:StartTimer({
             id = self._ehi_key,
             key = self._ehi_key,
@@ -90,7 +90,7 @@ if level_id == "shoutout_raid" then
         if old_time == timer then
             return
         elseif old_time == 0 then
-            if not show_waypoint_only then
+            if show_tracker then
                 managers.ehi_tracker:AddTracker({
                     id = self._ehi_key,
                     class = "EHIVaultTemperatureTracker",
@@ -110,14 +110,14 @@ if level_id == "shoutout_raid" then
         managers.ehi_manager:Call(self._ehi_key, "CheckTime", math.ehi_round(timer, 0.1))
     end
 else
-    if show_waypoint_only then
+    if show_tracker and show_waypoint then
         function DigitalGui:_update_timer_text(...)
-            managers.ehi_waypoint:SetWaypointTime(self._ehi_key, self._timer)
+            managers.ehi_manager:UpdateTimer(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     elseif show_waypoint then
         function DigitalGui:_update_timer_text(...)
-            managers.ehi_manager:UpdateTimer(self._ehi_key, self._timer)
+            managers.ehi_waypoint:SetTime(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     else
@@ -130,7 +130,7 @@ else
     function DigitalGui:timer_set(timer, ...)
         original.timer_set(self, timer, ...)
         managers.ehi_timer:SetTimerTime(self._ehi_key, timer)
-        managers.ehi_waypoint:SetWaypointTime(self._ehi_key, timer)
+        managers.ehi_waypoint:SetTime(self._ehi_key, timer)
     end
 end
 

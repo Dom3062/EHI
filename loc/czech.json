@@ -286,6 +286,8 @@
     "ehi_show_tracker_hint_t" : "Popis sledovače (Čas)",
     "ehi_show_tracker_hint_t_desc" : "Definuje jak dlouho popis zůstane na obrazovce než se skryje\n\nPopis zůstane na obrazovce, pokud se nastaví hodnota na 0",
 
+    "ehi_show_trackers" : "Zobrazovat sledovače",
+
     "ehi_trackers_menu" : "Sledovače",
     "ehi_trackers_menu_desc" : "",
 
@@ -373,9 +375,6 @@
     "ehi_xp_panel_2" : "Zobrazit sledovač s celkovou hodnotou ZK v loupeži",
     "ehi_xp_panel_3" : "Zobrazit vyskakovací okno za každé získané ZK a celkovou hodnotu",
     "ehi_xp_panel_4" : "Zobrazit oznámení za každé získané ZK a celkovou hodnotu",
-
-    "ehi_show_xp_in_mission_briefing_only" : "Zobrazovat ZK pouze v briefingu před loupeží",
-    "ehi_show_xp_in_mission_briefing_only_desc" : "Povolením této funkce se ZK zobrazí v briefingu před loupeží, ale ne ve hře samotné",
 
     "ehi_total_xp_difference" : "Zobrazovat rozdíl ZK",
     "ehi_total_xp_difference_desc" : "Zobrazuje kolik ZK jsi získal",
@@ -602,14 +601,11 @@
     "ehi_show_waypoints" : "Zobrazovat ukazatele",
     "ehi_show_waypoints_desc" : "Zobrazuje ukazatele v herním světě",
 
-    "ehi_show_waypoints_only" : "Zobrazovat pouze ukazatele",
-    "ehi_show_waypoints_only_desc" : "Je-li povoleno a element má nadefinovaný sledovač a ukazatel, zobrazí se pouze ukazatel\nJinak se zobrazí sledovač",
-
     "ehi_show_waypoints_present_timer" : "Čas na přesun",
     "ehi_show_waypoints_present_timer_desc" : "Nastavuje jak dlouho bude ukazatel na obrazovce než se 'přesune' do cílového místa",
 
     "ehi_show_waypoints_mission" : "Zobrazovat ukazatele pro elementy v misi",
-    "ehi_show_waypoints_mission_desc" : "Zobrazuje ukazatel pro elementy v misi",
+    "ehi_show_waypoints_mission_desc" : "Zobrazuje ukazatel pro elementy v misi\n\nPoznámka: Pokud element nemá nadefinovaný ukazatel, zobrazí se sledovač",
 
     "ehi_show_waypoints_escape" : "Zobrazovat ukazatele pro úniková vozidla",
     "ehi_show_waypoints_escape_desc" : "Zobrazuje ukazatel kam únikové vozidlo přijede (bez zbývajícího času)",
@@ -942,7 +938,7 @@
     "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat zdraví civilistů",
     "ehi_other_show_floating_health_bar_team_ai" : "Zobrazovat zdraví botů",
 
-    "ehi_other_show_floating_damage_popup" : "Zobrazovat udělenené poškození NPC",
+    "ehi_other_show_floating_damage_popup" : "Zobrazovat udělené poškození NPC",
     "ehi_other_show_floating_damage_popup_desc" : "Zobrazuje udělené poškození, když někoho trefíš",
 
     "ehi_other_show_floating_damage_popup_accumulate" : "Sčítat udělené poškození",

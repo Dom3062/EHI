@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("MutatorPiggyRevenge") or not EHI:GetOption("show_mission_trackers") then
+if EHI:CheckLoadHook("MutatorPiggyRevenge") or not EHI:GetTrackerOption("show_mission_trackers") then
     return
 end
 local original =

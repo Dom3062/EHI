@@ -119,7 +119,7 @@ if not tweak_data.levels:IsStealthRequired() then
             end
         end)
     end
-    if EHI:GetOption("show_minion_tracker") then
+    if EHI:GetTrackerOption("show_minion_tracker") then
         local UpdateTracker
         if EHI:GetOption("show_minion_option") ~= 2 then
             EHI:LoadTracker("EHIMinionTracker")
@@ -187,7 +187,7 @@ if not tweak_data.levels:IsStealthRequired() then
             UpdateTracker(key, 0, peer_id)
         end)
     end
-    if EHI:GetOption("show_marshal_initial_time") then
+    if EHI:GetTrackerOption("show_marshal_initial_time") then
         EHI:AddOnAlarmCallback(function(drop)
             if drop then
                 return
@@ -212,8 +212,10 @@ if not tweak_data.levels:IsStealthRequired() then
 end
 
 if EHI:GetOption("show_minion_killed_message") then
-    EHI:SetNotificationAlert("MINION", "ehi_popup_minion")
     local show_popup_type = EHI:GetOption("show_minion_killed_message_type")
+    if show_popup_type == 1 then
+        EHI:SetNotificationAlert("MINION", "ehi_popup_minion")
+    end
     local game_is_running = true
     local function GameEnd()
         game_is_running = false
