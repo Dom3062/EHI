@@ -577,6 +577,11 @@ local EHIConfig =
     escape_waypoints = EHI:GetWaypointOption("show_waypoints_escape")
 }
 
+if not EHIConfig.show_tracker then
+    instances["levels/instances/unique/trai/trai_crane/world"][100046].class = TT.Chance
+    instances["levels/instances/unique/trai/trai_crane/world"][100039].special_function = SF.RemoveTracker
+end
+
 ---@param instance CoreWorldInstanceManager.Instance
 function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     local instance_data = original.prepare_mission_data(self, instance, ...)

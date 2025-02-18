@@ -1,3 +1,6 @@
+r307 (18. 02. 2025):
+Lost in Transit: Fixed a crash after interacting with the crane
+
 r306 (17. 02. 2025):
 Added option "Show Trackers"
 Menu: Increased X and Y offsets from 1280 and 720 to 1920 and 1080 respectively
