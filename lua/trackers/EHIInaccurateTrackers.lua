@@ -7,7 +7,7 @@ EHIInaccurateTracker._tracker_type = "inaccurate"
 EHIInaccurateTracker._text_color = color
 function EHIInaccurateTracker:SetAccurate(...)
     self._text_color = Color.white
-    EHIInaccurateTracker.super.SetTrackerAccurate(self, ...)
+    EHIInaccurateTracker.super.SetAccurate(self, ...)
 end
 
 ---@class EHIInaccuratePausableTracker : EHIPausableTracker
@@ -17,7 +17,7 @@ EHIInaccuratePausableTracker._tracker_type = "inaccurate"
 EHIInaccuratePausableTracker._text_color = color
 function EHIInaccuratePausableTracker:SetAccurate(...)
     self._text_color = Color.white
-    EHIInaccuratePausableTracker.super.SetTrackerAccurate(self, ...)
+    EHIInaccuratePausableTracker.super.SetAccurate(self, ...)
 end
 
 ---@class EHIInaccurateWarningTracker : EHIWarningTracker
@@ -27,5 +27,5 @@ EHIInaccurateWarningTracker._tracker_type = "inaccurate"
 EHIInaccurateWarningTracker._text_color = color
 function EHIInaccurateWarningTracker:SetAccurate(...)
     self._text_color = Color.white
-    EHIInaccurateWarningTracker.super.SetTrackerAccurate(self, ...)
+    EHIInaccurateWarningTracker.super.SetAccurate(self, ...)
 end
