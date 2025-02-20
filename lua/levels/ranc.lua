@@ -61,9 +61,11 @@ local triggers = {
 if EHI.IsClient then
     triggers[102053].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
     triggers[1020702].client = { time = OVKorAbove and 60 or 30, random_time = 5 }
-    local FultonCatchAgainClient = { additional_time = 30, random_time = 30, id = "FultonCatchAgain", icons = FultonCatchAgain, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootTimed }
-    triggers[EHI:GetInstanceElementID(100070, 14950)] = FultonCatchAgainClient
-    triggers[EHI:GetInstanceElementID(100070, 25500)] = FultonCatchAgainClient
+    local FultonCatchAgainClient = deep_clone(FultonCatchAgain)
+    FultonCatchAgainClient.additional_time = 30
+    FultonCatchAgainClient.random_time = 30
+    triggers[EHI:GetInstanceElementID(100070, 14950)] = deep_clone(FultonCatchAgainClient)
+    triggers[EHI:GetInstanceElementID(100070, 25500)] = deep_clone(FultonCatchAgainClient)
     triggers[EHI:GetInstanceElementID(100070, 25650)] = FultonCatchAgainClient
 end
 

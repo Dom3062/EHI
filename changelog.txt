@@ -1,3 +1,6 @@
+r309 (20. 02. 2025):
+Fixed an issue where trackers and waypoints do not update correctly if mission trackers or waypoints are disabled
+
 r308 (19. 02. 2025):
 Fixed a crash in inaccurate trackers
 

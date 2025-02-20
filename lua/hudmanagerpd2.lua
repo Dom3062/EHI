@@ -20,32 +20,35 @@ function HUDManager:_setup_player_info_hud_pd2(...)
     local hud_panel = self:script(PlayerBase.PLAYER_INFO_HUD_PD2).panel
     self._ehi_tracker = managers.ehi_tracker
     self._ehi_waypoint = managers.ehi_waypoint
-    self._ehi_waypoint:SetPlayerHUD(self)
     managers.ehi_assault:init_hud(self)
     self._ehi_manager = managers.ehi_manager
     local level_id = Global.game_settings.level_id
     local trackers_visible = EHI:GetOption("show_trackers")
+    local waypoints_visible = EHI:GetOption("show_waypoints")
+    if waypoints_visible then
+        self._ehi_waypoint:SetPlayerHUD(self)
+    end
     if server or EHI.HeistTimerIsInverted then
-        if self._ehi_manager._SHOW_MISSION_TRIGGERS then
+        if trackers_visible and waypoints_visible then
             self:AddEHIUpdator("EHIManager_Update", self._ehi_manager)
-        elseif self._ehi_manager._SHOW_MISSION_WAYPOINTS then
+        elseif waypoints_visible then
             self:AddEHIUpdator("EHIWaypoints_Update", self._ehi_waypoint, "update2")
-        elseif self._ehi_manager._SHOW_MISSION_TRACKERS then
+        elseif trackers_visible then
             self:AddEHIUpdator("EHITrackers_Update", self._ehi_tracker)
         end
     else
         original.feed_heist_time = self.feed_heist_time
-        if self._ehi_manager._SHOW_MISSION_TRIGGERS then
+        if trackers_visible and waypoints_visible then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
                 self._ehi_manager:update_client(time)
             end
-        elseif self._ehi_manager._SHOW_MISSION_WAYPOINTS then
+        elseif waypoints_visible then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
                 self._ehi_waypoint:update_client(time)
             end
-        elseif self._ehi_manager._SHOW_MISSION_TRACKERS then
+        elseif trackers_visible then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
                 self._ehi_tracker:update_client(time)
