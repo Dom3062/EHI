@@ -125,7 +125,7 @@ if EHI:GetOption("show_equipment_ecmjammer") then
     end
 end
 
-if EHI:GetOption("show_equipment_ecmfeedback") then
+if EHI:GetOption("show_equipment_ecmfeedback") and show_tracker then
     Hooks:PostHook(ECMJammerBase, "_set_feedback_active", "EHI_ECMJammerBase_set_feedback_active_true", function(self, state) ---@param state boolean
         if state and self._feedback_duration and managers.ehi_tracker:CallFunction2("ECMFeedback", "SetTimeIfLower", self._feedback_duration, self._ehi_peer_id, self._unit) then
             managers.ehi_tracker:AddTracker({
