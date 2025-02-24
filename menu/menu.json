@@ -221,7 +221,7 @@
                     "type": "toggle",
                     "id": "ehi_show_trackers_choice",
                     "title": "ehi_show_trackers",
-                    "callback": "SetOption",
+                    "callback": [ "SetOption", "UpdateTrackerState" ],
                     "callback_arguments": "show_trackers",
                     "value": "show_trackers",
                     "default_value": true,

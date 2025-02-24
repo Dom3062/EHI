@@ -29,7 +29,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         self._ehi_waypoint:SetPlayerHUD(self)
     end
     if server or EHI.HeistTimerIsInverted then
-        if trackers_visible and waypoints_visible then
+        if (trackers_visible and waypoints_visible) or self._ehi_manager._SHOW_MISSION_TRIGGERS then
             self:AddEHIUpdator("EHIManager_Update", self._ehi_manager)
         elseif waypoints_visible then
             self:AddEHIUpdator("EHIWaypoints_Update", self._ehi_waypoint, "update2")
@@ -38,7 +38,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         end
     else
         original.feed_heist_time = self.feed_heist_time
-        if trackers_visible and waypoints_visible then
+        if (trackers_visible and waypoints_visible) or self._ehi_manager._SHOW_MISSION_TRIGGERS then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
                 self._ehi_manager:update_client(time)
@@ -55,7 +55,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
             end
         end
     end
-    if _G.IS_VR and trackers_visible then
+    if _G.IS_VR and (trackers_visible or self._ehi_manager._SHOW_MISSION_TRIGGERS) then
         self._ehi_tracker:SetPanel(hud_panel)
     end
     if EHI:GetOption("show_buffs") then

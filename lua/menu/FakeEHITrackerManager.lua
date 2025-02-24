@@ -53,6 +53,7 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
         hostage_count = EHI:GetOption("hostage_count_tracker_format"), ---@type number
         minion = EHI:GetOption("show_minion_option") ---@type number
     }
+    self._trackers_enabled = EHI:GetOption("show_trackers") ---@type boolean
     self:AddFakeTrackers()
     return self
 end
@@ -60,7 +61,7 @@ end
 function FakeEHITrackerManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {} ---@type FakeEHITracker[]?
-    if not EHI:GetOption("show_trackers") then
+    if not self._trackers_enabled then
         return
     end
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.rand(0.5, 9.99), icons = { Icon.Wait } })
@@ -197,6 +198,20 @@ function FakeEHITrackerManager:GetOtherPeerColor()
     return colors[math.random(#colors - 1)]
 end
 
+---@param state boolean
+function FakeEHITrackerManager:UpdateTrackerState(state)
+    if self._trackers_enabled == state then
+        return
+    end
+    self._trackers_enabled = state
+    if state then -- Trackers were enabled, show them on screen
+        self:AddFakeTrackers()
+    else -- Trackers were disabled, remove them
+        self:UpdatePreviewTextVisibility(false)
+        self:Redraw()
+    end
+end
+
 function FakeEHITrackerManager:AddPreviewText()
     if self._n_of_trackers == 0 then
         self:UpdatePreviewTextVisibility(false)
@@ -230,7 +245,7 @@ end
 
 ---@param visibility boolean
 function FakeEHITrackerManager:UpdatePreviewTextVisibility(visibility)
-    if self._preview_text then
+    if self._preview_text and self._n_of_trackers > 0 then
         self._preview_text:set_visible(visibility)
     end
 end

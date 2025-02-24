@@ -1,3 +1,8 @@
+r311 (24. 02. 2025):
+Fixed another instance of trackers or waypoints not updating correctly
+Menu: Fixed child options not correctly enabled if parent is enabled
+Menu: Fixed trackers not updating visibility when "Show Trackers" option is switched
+
 r310 (21. 02. 2025):
 Fixed a crash in ECM Jammer
 

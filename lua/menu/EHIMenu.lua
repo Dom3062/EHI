@@ -38,6 +38,15 @@ EHIMenu.AspectRatio =
     _4_3 = 2,
     Other = 3
 }
+EHIMenu._item_offset =
+{
+    label = 5,
+    button = 10,
+    toggle = 34,
+    slider = 110,
+    multiple_choice = 215,
+    color_select = 64
+}
 function EHIMenu:init()
     local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
     local _1_33 = 4 / 3
@@ -774,11 +783,11 @@ function EHIMenu:_get_menu_from_json(path, settings_table)
 
         for _, item in ipairs(items) do
             if item.vr then
-                self:_create_item(_G.IS_VR and item.vr[1] or item.vr[2], items, menu, settings_table)
+                self:_create_item(_G.IS_VR and item.vr[1] or item.vr[2], menu, settings_table)
             elseif item.table then
-                self:_create_one_line_items(item, items, menu, settings_table)
+                self:_create_one_line_items(item.table, menu, settings_table)
             else
-                self:_create_item(item, items, menu, settings_table)
+                self:_create_item(item, menu, settings_table)
             end
         end
         menu.panel:set_h(content.h or menu.items[#menu.items].panel:bottom())
@@ -788,7 +797,7 @@ function EHIMenu:_get_menu_from_json(path, settings_table)
     end
 end
 
-function EHIMenu:_create_item(item, items, menu, settings_table)
+function EHIMenu:_create_item(item, menu, settings_table)
     if not menu then
         return
     end
@@ -809,17 +818,17 @@ function EHIMenu:_create_item(item, items, menu, settings_table)
         end
     elseif parents then
         if type(parents) == "string" then
-            for _, pitem in ipairs(items) do
+            for _, pitem in ipairs(menu.items) do
                 if pitem.id == parents then
-                    enabled = settings_table[pitem.value]
+                    enabled = pitem.value
                     break
                 end
             end
         elseif type(parents) == "table" then
             for _, parent in ipairs(parents) do
-                for _, pitem in ipairs(items) do
+                for _, pitem in ipairs(menu.items) do
                     if pitem.id == parent then
-                        if not settings_table[pitem.value] then
+                        if not pitem.value then
                             enabled = false
                             break
                         end
@@ -951,39 +960,31 @@ function EHIMenu:_create_item(item, items, menu, settings_table)
     return itm
 end
 
-function EHIMenu:_create_one_line_items(item, items, menu, settings_table)
+function EHIMenu:_create_one_line_items(item_table, menu, settings_table)
     if not menu then
         return
     end
-    local offset = {
-        label = 5,
-        button = 10,
-        toggle = 34,
-        slider = 110,
-        multiple_choice = 215,
-        color_select = 64
-    }
-    local n = table.size(item.table)
+    local n = table.size(item_table)
     local previous_item
-    for _, v in ipairs(item.table) do
-        local itm = self:_create_item(v, items, menu, settings_table)
-        if itm then
-            itm.panel:set_w(itm.panel:w() / n)
-            local item_title = itm.panel:child("title")
+    for _, v in ipairs(item_table) do
+        local item = self:_create_item(v, menu, settings_table)
+        if item then
+            item.panel:set_w(item.panel:w() / n)
+            local item_title = item.panel:child("title")
             if item_title then
-                item_title:set_w(itm.panel:w() - (offset[itm.type] or 0))
+                item_title:set_w(item.panel:w() - (self._item_offset[item.type] or 0))
                 local w = select(3, item_title:text_rect())
                 if w > item_title:w() then
                     item_title:set_font_size(item_title:font_size() * (item_title:w() / w))
                 end
             end
             if previous_item then
-                itm.panel:set_left(previous_item.panel:right())
-                itm.panel:set_y(previous_item.panel:y())
-                self:AddItemToMenu(menu, nil, -(itm.panel:h() + 1))
+                item.panel:set_left(previous_item.panel:right())
+                item.panel:set_y(previous_item.panel:y())
+                menu.len = (menu.len or 50) - (item.panel:h() + 1)
             end
         end
-        previous_item = itm
+        previous_item = item
     end
 end
 

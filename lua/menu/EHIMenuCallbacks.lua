@@ -19,6 +19,10 @@ function EHIMenu:SetBuffDeckOption(value, deck, option)
     EHI.settings.buff_option[deck][option] = value
 end
 
+function EHIMenu:UpdateTrackerState(value, option)
+    self._preview_panel:UpdateTrackerState(value)
+end
+
 function EHIMenu:SetXPPanelOption(value, option)
     self._preview_panel:UpdateTracker("show_gained_xp", value <= 2)
 end
