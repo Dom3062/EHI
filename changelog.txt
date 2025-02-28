@@ -1,3 +1,9 @@
+r312 (28. 02. 2025):
+Added option "Show Buff Description"
+Camera Loop: Fixed an issue where the tracker could spam log
+Fixed an issue where bagable interactable loot is not properly colored based on their weight when interaction is enabled
+Fixed an issue where hidden Poco Health Floats would be briefly visible after finishing a heist
+
 r311 (24. 02. 2025):
 Fixed another instance of trackers or waypoints not updating correctly
 Menu: Fixed child options not correctly enabled if parent is enabled

@@ -259,15 +259,17 @@ end
 ---@param seconds number
 ---@param done_cb function?
 function EHIHealthFloatPoco._fade(o, lastD, seconds, done_cb)
-    o:set_visible(true)
-    o:set_alpha(1)
-    local t = seconds
-    while t > 0 do
-        local dt = coroutine.yield()
-        t = t - dt
-        o:set_alpha(lastD * t / seconds)
+    if lastD > 0 then
+        o:set_visible(true)
+        o:set_alpha(lastD)
+        local t = seconds
+        while t > 0 do
+            local dt = coroutine.yield()
+            t = t - dt
+            o:set_alpha(lastD * t / seconds)
+        end
+        o:set_visible(false)
     end
-    o:set_visible(false)
     if done_cb then
         done_cb()
     end
@@ -302,7 +304,9 @@ end
 
 ---@param finished boolean?
 function EHIHealthFloatPocoTeamAI:force_delete(finished)
+    self.lastD = self._pnl:visible() and self._pnl:alpha() or 0
     self._death = finished
     self._keep_alive = not finished
+    self._dying = self._keep_alive
     EHIHealthFloatPocoTeamAI.super.force_delete(self)
 end

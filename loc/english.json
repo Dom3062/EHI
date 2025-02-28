@@ -653,6 +653,9 @@
     "ehi_buffs_invert_progress" : "Invert Progress",
     "ehi_buffs_invert_progress_desc" : "When enabled, the progress will go counterclockwise\nWhen disabled, the progress will go clockwise",
 
+    "ehi_buffs_show_upper_text" : "Show Buff Description",
+    "ehi_buffs_show_upper_text_desc" : "Shows or hides the text above buff icon",
+
     "ehi_buffs_skills_cooldown" : "Shows cooldown",
     "ehi_buffs_skills_duration" : "Shows duration",
     "ehi_buffs_skills_progress" : "Shows progress",

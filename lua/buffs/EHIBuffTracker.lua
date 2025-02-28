@@ -1,10 +1,11 @@
-local progress = EHI:GetOption("buffs_show_progress")
+local progress = EHI:GetOption("buffs_show_progress") --[[@as boolean]]
 local circle_shape = EHI:GetOption("buffs_shape") == 2
-local invert = EHI:GetOption("buffs_invert_progress")
-local rect = {32, 0, -32, 32}
+local invert = EHI:GetOption("buffs_invert_progress") --[[@as boolean]]
+local show_hint = EHI:GetOption("buffs_show_upper_text") --[[@as boolean]]
+local rect = { 32, 0, -32, 32 }
 local prefix = "s"
 if circle_shape then
-    rect = {128, 0, -128, 128}
+    rect = { 128, 0, -128, 128 }
     prefix = "c"
 end
 if invert then
@@ -120,7 +121,8 @@ function EHIBuffTracker:init(panel, params, parent_class)
         color = Color.white,
         align = "center",
         x = 0,
-        y = 0
+        y = 0,
+        alpha = show_hint and 1 or 0
     })
     self:FitTheText(self._hint)
     self._text = self._panel:text({

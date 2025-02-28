@@ -143,6 +143,17 @@
             "ehi_ver" : 58
         },
         {
+            "type": "toggle",
+            "id": "ehi_buffs_show_upper_text_choice",
+            "title": "ehi_buffs_show_upper_text",
+            "description": "ehi_buffs_show_upper_text_desc",
+            "callback": "SetOption",
+            "callback_arguments": "buffs_show_upper_text",
+            "value": "buffs_show_upper_text",
+            "default_value": true,
+            "ehi_ver" : 312
+        },
+        {
             "type": "divider",
             "size": 20
         },

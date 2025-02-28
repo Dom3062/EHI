@@ -244,6 +244,13 @@ if EHI:GetOption("show_colored_bag_contour") then
             UseInteractionExt.super.set_contour(self, color, opacity)
         end
     end
+    function UseInteractionExt:set_active(...)
+        UseInteractionExt.super.set_active(self, ...)
+        if self:disabled() or not self._active or self._tweak_data.contour_preset or not self._unit:carry_data() then
+            return
+        end
+        self._unit:carry_data():SetCustomContour()
+    end
     local original = UseInteractionExt.unselect
     function UseInteractionExt:unselect(...)
         original(self, ...)

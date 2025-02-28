@@ -653,6 +653,9 @@
     "ehi_buffs_invert_progress" : "Invertovat postup",
     "ehi_buffs_invert_progress_desc" : "Je-li povoleno, postup půjde proti směru hodinových ručiček\nJe-li zakázáno, postup jde ve směru hodinových ručiček",
 
+    "ehi_buffs_show_upper_text" : "Zobrazovat popis buffu",
+    "ehi_buffs_show_upper_text_desc" : "Zobrazuje nebo skrývá text nad ikonou buffu",
+
     "ehi_buffs_skills_cooldown" : "Zobrazuje dobu, po kterou nelze skill či perk znovu aktivovat",
     "ehi_buffs_skills_duration" : "Zobrazuje trvání",
     "ehi_buffs_skills_progress" : "Zobrazuje postup",

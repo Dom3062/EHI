@@ -860,6 +860,7 @@ local function LoadDefaultValues(self)
         buffs_shape = 1, -- 1 = Square; 2 = Circle
         buffs_show_progress = true,
         buffs_invert_progress = false,
+        buffs_show_upper_text = true,
         buff_option =
         {
             -- Skills
