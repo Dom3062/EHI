@@ -297,6 +297,19 @@ function EHIWaypointManager:CallFunction(id, f, ...)
     end
 end
 
+---Returns `true` if the waypoint does not exist
+---@param id string
+---@param f string
+---@param ... any
+function EHIWaypointManager:CallFunction2(id, f, ...)
+    local wp = id and self._waypoints[id]
+    if not wp then
+        return true
+    elseif wp[f] then
+        wp[f](wp, ...)
+    end
+end
+
 do
     local path = EHI.LuaPath .. "waypoints/"
     dofile(path .. "EHIWaypoint.lua")

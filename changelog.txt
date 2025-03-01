@@ -1,3 +1,6 @@
+r313 (01. 03. 2025):
+Camera Loop: Fixed a crash related to waypoints
+
 r312 (28. 02. 2025):
 Added option "Show Buff Description"
 Camera Loop: Fixed an issue where the tracker could spam log
