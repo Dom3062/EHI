@@ -12,7 +12,20 @@
             "callback_arguments": [ "anarchist", "continuous_armor_regen" ],
             "value": "continuous_armor_regen",
             "default_value": true,
+            "is_parent" : true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_anarchist_persistent_continuous_armor_regen_choice",
+            "title": "ehi_buffs_perks_anarchist_persistent_continuous_armor_regen",
+            "description": "ehi_buffs_perks_anarchist_persistent_continuous_armor_regen_desc",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "anarchist", "persistent_continuous_armor_regen" ],
+            "value": "persistent_continuous_armor_regen",
+            "default_value": false,
+            "parent" : "ehi_buffs_perks_anarchist_continuous_armor_regen_choice",
+            "ehi_ver" : 314
         },
         {
             "type": "toggle",

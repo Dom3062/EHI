@@ -24,11 +24,17 @@ end
 function EHIProgressWaypoint:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then
         self._progress = progress
-        self._gui:set_text(self:Format())
+        self._gui:set_text(self:FormatProgress())
         if self._progress == self._max then
             self:SetCompleted()
         end
     end
+end
+
+---@param max number
+function EHIProgressWaypoint:SetProgressMax(max)
+    self._max = max
+    self._gui:set_text(self:FormatProgress())
 end
 
 function EHIProgressWaypoint:SetCompleted()

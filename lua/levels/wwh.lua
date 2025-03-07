@@ -64,7 +64,13 @@ EHI.Manager:ParseTriggers({
     assault = { diff = 1 }
 })
 EHI:DisableTimerWaypoints(DisableWaypoints)
-EHI:ShowLootCounter({ max = 8 })
+local wp_params = { element = {} }
+for i = 1050, 3525, 225 do
+    if i ~= 2175 then -- Different instance
+        table.insert(wp_params.element, EHI:GetInstanceElementID(100031, i))
+    end
+end
+EHI:ShowLootCounter({ max = 8 }, wp_params)
 EHI:AddXPBreakdown({
     objectives =
     {

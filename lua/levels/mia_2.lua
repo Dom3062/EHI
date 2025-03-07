@@ -108,7 +108,7 @@ if EHI:IsLootCounterVisible() then
             hook_triggers = true,
             client_from_start = true
         })
-    end)
+    end, { element = { 101340, 101856 }, disable_waypoint_removal = true })
     local CokeDestroyedTrigger = EHI:AddCustomCode(function(self)
         self._loot:DecreaseLootCounterProgressMax()
     end)

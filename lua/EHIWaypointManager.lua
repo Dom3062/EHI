@@ -25,6 +25,9 @@ end
 
 ---@param hud HUDManager
 function EHIWaypointManager:SetPlayerHUD(hud)
+    --[[Hooks:PostHook(hud, "add_waypoint", "EHI_Test_add_waypoint", function(_self, id, ...) ---@param id string|number
+        EHI:LogWithCurrentFile("Created waypoint with ID: " .. tostring(id))
+    end)]]
     self._hud = hud
     for id, params in pairs(self._stored_waypoints) do
         self:AddWaypoint(id, params)
@@ -71,6 +74,57 @@ function EHIWaypointManager:AddWaypoint(id, params)
     if params.remove_vanilla_waypoint then
         self._hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
     end
+end
+
+---@param id string
+---@param params AddWaypointTable|ElementWaypointTrigger
+function EHIWaypointManager:AddWaypointlessWaypoint(id, params)
+    if not self._enabled then
+        return
+    elseif self._waypoints[id] then
+        self:RemoveWaypoint(id)
+    end
+    params.id = id
+    params.no_sync = true
+    self._waypoints[id] = _G[params.class or self._base_waypoint_class]:new(nil, params, self) --[[@as EHIWaypoint]]
+end
+
+---Only Waypoints should call this. This function creates the waypoint on the HUD
+---@param id number
+---@param icon string
+---@param position Vector3
+---@param present_timer number?
+---@return Waypoint?
+function EHIWaypointManager:_create_waypoint(id, icon, position, present_timer)
+    if not self._enabled then
+        return
+    end
+    local params = {} ---@type WaypointInitData
+    params.id = id
+    params.icon = icon or "pd2_lootdrop"
+    params.timer = 0
+    params.pause_timer = 1
+    params.present_timer = present_timer or self._present_timer
+    params.position = position
+    local waypoint = self._hud:AddEHIWaypoint(id, params)
+    if not waypoint then
+        return
+    elseif not (waypoint.bitmap and waypoint.timer_gui) then
+        self._enabled = false -- Disable waypoints as they don't have correct fields
+        self._hud:remove_waypoint(id)
+        return
+    end
+    self:SetWaypointInitialIcon(waypoint, params) ---@diagnostic disable-line
+    if waypoint.distance then
+        waypoint.distance:set_font(self._font)
+        waypoint.distance:set_font_size(self._distance_font_size)
+    end
+    waypoint.timer_gui:set_font(self._font)
+    waypoint.timer_gui:set_font_size(self._timer_font_size)
+    --[[if params.remove_vanilla_waypoint then
+        self._hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
+    end]]
+    return waypoint
 end
 
 ---@param id string
@@ -228,10 +282,37 @@ function EHIWaypointManager:SetAccurate(id, t)
 end
 
 ---@param id string
+---@param progress number
+function EHIWaypointManager:SetProgress(id, progress)
+    local wp = id and self._waypoints[id] --[[@as EHIProgressWaypoint]]
+    if wp and wp.SetProgress then
+        wp:SetProgress(progress)
+    end
+end
+
+---@param id string
 function EHIWaypointManager:IncreaseProgress(id)
     local wp = id and self._waypoints[id] --[[@as EHIProgressWaypoint]]
     if wp and wp.IncreaseProgress then
         wp:IncreaseProgress()
+    end
+end
+
+---@param id string
+---@param max number?
+function EHIWaypointManager:IncreaseProgressMax(id, max)
+    local wp = id and self._waypoints[id] --[[@as EHIProgressWaypoint]]
+    if wp and wp.IncreaseProgressMax then
+        wp:IncreaseProgressMax(max)
+    end
+end
+
+---@param id string
+---@param max number?
+function EHIWaypointManager:DecreaseProgressMax(id, max)
+    local wp = id and self._waypoints[id] --[[@as EHIProgressWaypoint]]
+    if wp and wp.DecreaseProgressMax then
+        wp:DecreaseProgressMax(max)
     end
 end
 
@@ -319,6 +400,9 @@ do
     dofile(path .. "EHIProgressWaypoint.lua")
     dofile(path .. "EHIChanceWaypoint.lua")
     dofile(path .. "EHIInaccurateWaypoints.lua")
+    if EHI:GetWaypointOption("show_waypoints_loot_counter") then
+        dofile(path .. "EHILootWaypoint.lua")
+    end
 end
 
 if _G.IS_VR then

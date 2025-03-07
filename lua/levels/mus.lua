@@ -73,9 +73,9 @@ if EHI:IsLootCounterVisible() then
         return count
     end
 
-    other[100840] = { special_function = EHI.Manager:RegisterCustomSF(function(...)
-        EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1 })
-    end)}
+    other[100840] = EHI:AddLootCounter2(function()
+        EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1, client_from_start = true })
+    end, { element = { 100020, 102644, 102650, EHI:GetInstanceElementID(100028, 7200) } })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { time = 0.05 + 10 + 25, chance = 10, id = "Snipers", on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, class = TT.Sniper.Loop, single_sniper = true, sniper_count = 2 }

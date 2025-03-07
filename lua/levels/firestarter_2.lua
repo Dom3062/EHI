@@ -62,7 +62,7 @@ if EHI:IsLootCounterVisible() then
             hook_triggers = true,
             client_from_start = true
         })
-    end)
+    end, { element = 105191 })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102321] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", class = TT.Sniper.Warning }

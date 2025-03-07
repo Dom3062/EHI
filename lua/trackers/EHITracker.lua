@@ -245,7 +245,6 @@ end
 EHITracker = class()
 EHITracker._needs_update = true
 EHITracker._fade_time = 5
-EHITracker._tracker_type = "accurate"
 EHITracker._gap = tweak_data.ehi.default.tracker.gap
 EHITracker._icon_size = tweak_data.ehi.default.tracker.size_h
 EHITracker._scale = EHI:GetOption(_G.IS_VR and "vr_scale" or "scale") --[[@as number]]
@@ -887,8 +886,7 @@ if EHI:GetOption("show_tracker_bg") then
         local color = Color.white
         local t = total_t or 3
         while t > 0 do
-            local dt = coroutine.yield()
-            t = t - dt
+            t = t - coroutine.yield()
             local cv = math.abs(math.sin(t * 180 * 1))
             bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
         end
@@ -959,13 +957,6 @@ function EHITracker:SetStatusText(status, text)
         text:set_text(string.upper(status))
     end
     self:FitTheText(text)
-end
-
----@param time number
-function EHITracker:SetAccurate(time)
-    self._tracker_type = "accurate"
-    self:SetTextColor()
-    self:SetTimeNoAnim(time)
 end
 
 function EHITracker:AddTrackerToUpdate()

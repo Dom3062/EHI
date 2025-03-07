@@ -78,9 +78,11 @@ if EHI:IsEscapeChanceEnabled() then
     end)
 end
 if EHI:IsLootCounterVisible() then
-    other[101479] = { special_function = SF.CustomCode, f = function()
+    other[101479] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
-    end }
+    end, { element = { 101006, 103234 }, check_function = function(progress, max)
+        return max > 0
+    end })
     EHI.Manager:AddLoadSyncFunction(function(self)
         if self:IsMissionElementDisabled(101804) and managers.loot:GetSecuredBagsAmount() == 0 then
             self:Trigger(101479)

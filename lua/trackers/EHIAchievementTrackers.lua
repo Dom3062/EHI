@@ -157,6 +157,7 @@ end
 ---@param counter AchievementBagValueCounterTable|AchievementLootCounterTable
 function EHIAchievementProgressTracker:AddLootListener(counter)
     if self._loot_parent then
+        counter.achievement = counter.achievement or self._id
         counter.no_sync = true
         self._loot_parent:AddAchievementListener(counter)
     end

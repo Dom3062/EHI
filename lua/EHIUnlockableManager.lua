@@ -245,15 +245,10 @@ function EHIUnlockableManager:SetAchievementComplete(id, force)
 end
 
 ---@param id string
-function EHIUnlockableManager:SetAchievementFailed(id)
+---@param silent_fail boolean?
+function EHIUnlockableManager:SetAchievementFailed(id, silent_fail)
     self:SetAchievementDone(id)
-    self._trackers:CallFunction(id, "SetFailed")
-end
-
----@param id string
-function EHIUnlockableManager:SetAchievementFailedSilent(id)
-    self:SetAchievementDone(id)
-    self._trackers:CallFunction(id, "SetFailedSilent")
+    self._trackers:CallFunction(id, silent_fail and "SetFailedSilent" or "SetFailed")
 end
 
 ---@param id string

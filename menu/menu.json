@@ -34,7 +34,7 @@
             "vr" : [
                 {
                     "type": "slider",
-                    "id": "ehi_vr_x_offset",
+                    "id": "ehi_x_offset",
                     "title": "ehi_vr_x_offset",
                     "description": "ehi_x_offset_desc",
                     "callback": "SetOption",
@@ -65,7 +65,7 @@
             "vr" : [
                 {
                     "type": "slider",
-                    "id": "ehi_vr_y_offset",
+                    "id": "ehi_y_offset",
                     "title": "ehi_vr_y_offset",
                     "description": "ehi_y_offset_desc",
                     "callback": "SetOption",
@@ -216,6 +216,15 @@
             "size" : 15
         },
         {
+            "type": "button",
+            "id": "ehi_shared_menu",
+            "title": "ehi_shared_menu",
+            "description": "ehi_shared_menu_desc",
+            "next_menu": "ehi_shared_menu",
+            "ehi_ver" : 314,
+            "parent_func" : "IsSharedMenuEnabled"
+        },
+        {
             "table" : [
                 {
                     "type": "toggle",
@@ -285,7 +294,7 @@
                     "description": "ehi_buffs_menu_desc",
                     "next_menu": "ehi_buffs_menu",
                     "parent" : "ehi_show_buffs_choice",
-                    "ehi_ver" : 312
+                    "ehi_ver" : 314
                 }
             ]
         },

@@ -35,7 +35,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
 end
 if EHI:IsLootCounterVisible() then
     local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
-    other[100073] = EHI:AddLootCounter3(function(...)
+    other[100073] = EHI:AddLootCounter2(function()
         local jewelry_to_subtract = 0
         for _, jewelry_id in ipairs(jewelry) do
             if managers.game_play_central:IsMissionUnitDisabled(jewelry_id) then
@@ -47,7 +47,7 @@ if EHI:IsLootCounterVisible() then
             max_random = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 0,
             client_from_start = true
         })
-    end, true)
+    end, { element = { 103216, 103217, 103218, 103219, 101155 } }, nil, true)
     other[102029] = EHI:AddCustomCode(function(self)
         self._loot:SetLootCounterMaxRandom(2)
     end)

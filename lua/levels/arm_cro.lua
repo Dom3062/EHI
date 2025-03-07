@@ -37,6 +37,7 @@ if EHI:IsLootCounterVisible() then
     other[102180] = { special_function = SF.CustomCode, f = LootCounter, arg = 2 }
     other[102181] = { special_function = SF.CustomCode, f = LootCounter, arg = 3 }
     other[102182] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
+    EHI:ShowLootCounterWaypoint({ element = { 100233, 100008, 100020 } })
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100233 } }

@@ -82,7 +82,7 @@ if EHI:IsLootCounterVisible() then
             -- Collision is visible, less loot spawned
             self._loot:DecreaseLootCounterMaxRandom(2)
         end
-    end, true)
+    end, { element = { 100635, 106303, 100148, 105965 } }, true)
     -- Random loot in crates
     local IncreaseMaximumTrigger = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
         self._loot:RandomLootSpawned()

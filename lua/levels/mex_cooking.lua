@@ -59,7 +59,11 @@ EHI:ShowAchievementLootCounter({
     show_finish_after_reaching_target = true,
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 })
-EHI:ShowLootCounter({ max = 50 })
+local wp_params = { element = {}, present_timer = 0 }
+for i = 9400, 10400, 500 do
+    table.insert(wp_params.element, EHI:GetInstanceElementID(100072, i))
+end
+EHI:ShowLootCounter({ max = 50 }, wp_params)
 EHI:AddXPBreakdown({
     objectives =
     {

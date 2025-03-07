@@ -16,21 +16,18 @@ local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Ho
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 function(self, trigger)
-    local position, remove_vanilla_waypoint
+    local remove_vanilla_waypoint
     if self:IsMissionElementEnabled(102049) then
-        position = self:GetElementPositionOrDefault(102049)
         remove_vanilla_waypoint = 102049
     elseif self:IsMissionElementEnabled(102336) then
-        position = self:GetElementPositionOrDefault(102336)
         remove_vanilla_waypoint = 102336
     else
-        position = self:GetElementPositionOrDefault(103681)
         remove_vanilla_waypoint = 103681
     end
     self._waypoints:AddWaypoint(trigger.id, {
         chance = trigger.chance,
         icon = "pd2_talk",
-        position = position,
+        position = self:GetElementPositionOrDefault(remove_vanilla_waypoint),
         remove_vanilla_waypoint = remove_vanilla_waypoint,
         restore_on_done = true,
         class = self.Waypoints.Chance

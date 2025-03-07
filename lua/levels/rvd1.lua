@@ -62,9 +62,9 @@ local other =
     [100179] = EHI:AddAssaultDelay({ control = 1 + 9.5 + 11 + 1 })
 }
 if EHI:IsLootCounterVisible() then
-    other[100107] = { special_function = SF.CustomCode, f = function()
+    other[100107] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({ max = 6, client_from_start = true })
-    end }
+    end, { element = { 101542, 100260, 100305, 100306 } })
     other[100037] = EHI:AddCustomCode(function(self)
         self._loot:SecuredMissionLoot() -- Secured diamonds at Mr. Blonde or in a Van
     end)
@@ -91,9 +91,10 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         if enabled then
             local escape = self:IsMissionElementDisabled(trigger.data.loot_area)
             self._cache.rvd1_escape_bags = not escape and trigger.data.position_bags
-            trigger.data.position_from_element = escape and trigger.data.position_escape or trigger.data.position_bags
+            local position_id = escape and trigger.data.position_escape or trigger.data.position_bags
+            trigger.data.position_from_element = position_id
             self:_parse_vanilla_waypoint_trigger(trigger)
-            managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
+            managers.hud:add_waypoint(position_id, trigger.data)
         end
     end)
     other[100207] = { special_function = ShowWP, data = { icon = Icon.Car, position_bags = 100482, position_escape = 101029, loot_area = 100311 } } -- drive_in001

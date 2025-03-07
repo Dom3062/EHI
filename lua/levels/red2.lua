@@ -149,9 +149,11 @@ EHI:ShowLootCounter({
     max = 14,
     triggers =
     {
-        [106684] = { max = 70, special_function = SF.IncreaseProgressMax2 }
+        [106684] = EHI:AddCustomCode(function(self)
+            self._loot:IncreaseLootCounterProgressMax(70)
+        end)
     }
-})
+}, { element = 103546 })
 
 local min_bags = EHI:GetValueBasedOnDifficulty({
     hard_or_below = 4,

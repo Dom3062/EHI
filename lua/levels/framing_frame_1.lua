@@ -6,7 +6,7 @@ local TT = EHI.Trackers
 local achievements = nil
 local other = {}
 ---@param self EHIManager
-local LootCounterSyncFunction = function(self)
+local function LootCounterSyncFunction(self)
     local max_reduction = 0
     if self:IsMissionElementDisabled(104285) then
         max_reduction = max_reduction + 1
@@ -17,6 +17,12 @@ local LootCounterSyncFunction = function(self)
     self._loot:DecreaseLootCounterProgressMax(max_reduction)
     self._loot:SyncSecuredLoot()
 end
+local LootCounterTriggers =
+{
+    [102860] = EHI:AddCustomCode(function(self)
+        self._loot:DecreaseLootCounterProgressMax() -- Painting flushed
+    end)
+}
 
 local min_bags = 4
 if Global.game_settings.level_id == "gallery" then
@@ -43,12 +49,9 @@ if Global.game_settings.level_id == "gallery" then
 
     EHI:ShowLootCounter({
         max = 9,
-        triggers =
-        {
-            [102860] = { special_function = SF.DecreaseProgressMax } -- Painting flushed
-        },
+        triggers = LootCounterTriggers,
         load_sync = LootCounterSyncFunction
-    })
+    }, { element = 100995 })
 
     min_bags = 6
 else -- Framing Frame Day 1
@@ -63,10 +66,7 @@ else -- Framing Frame Day 1
             [100559] = { special_function = SF.CallCustomFunction, f = "SetStarted" },
             [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
         },
-        loot_counter_triggers =
-        {
-            [102860] = { special_function = SF.DecreaseProgressMax } -- Painting flushed
-        },
+        loot_counter_triggers = LootCounterTriggers,
         load_sync = function(self)
             if self.ConditionFunctions.IsLoud() then
                 return
@@ -80,7 +80,8 @@ else -- Framing Frame Day 1
         loot_counter_load_sync = LootCounterSyncFunction,
         add_to_counter = true,
         show_loot_counter = true,
-        loot_counter_on_fail = true
+        loot_counter_on_fail = true,
+        waypoint_loot_counter = { element = 100995 }
     })
 
     if EHI:IsEscapeChanceEnabled() then

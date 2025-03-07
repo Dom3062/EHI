@@ -21,7 +21,7 @@ local triggers = {
 
     [102975] = { special_function = SF.Trigger, data = { 1029751, 1029752 } },
     [1029751] = { chance = 5, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, hint = Hints.man_Code, remove_on_alarm = true },
-    [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, "pd2_generic_look" }, class = TT.Warning, hint = Hints.roberts_GenSecWarning, remove_on_alarm = true },
+    [1029752] = { time = 30, id = "GenSecArrivalWarning", icons = { Icon.Phone, Icon.ExclamationMark }, class = TT.Warning, hint = Hints.roberts_GenSecWarning, remove_on_alarm = true },
     [102986] = { special_function = SF.RemoveTracker, data = { "CorrectPaperChance", "GenSecArrivalWarning" } },
     [102985] = { id = "CorrectPaperChance", special_function = SF.IncreaseChanceFromElement }, -- +25%
     [102937] = { time = 30, id = "GenSecArrival", icons = { { icon = Icon.Car, color = Color.red } }, class = TT.Warning, trigger_once = true, hint = Hints.roberts_GenSec, remove_on_alarm = true },
@@ -55,7 +55,7 @@ local other =
 if EHI:IsLootCounterVisible() then
     other[103610] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({ max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot(103625, 103684), client_from_start = true })
-    end, function(self)
+    end, nil, function(self)
         self:Trigger(103610)
         self._loot:SyncSecuredLoot()
     end, true)

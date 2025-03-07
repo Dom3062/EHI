@@ -41,6 +41,7 @@ if EHI:IsLootCounterVisible() then
     other[101197] = { special_function = SF.CustomCode, f = LootCounter, arg = 2 }
     other[101199] = { special_function = SF.CustomCode, f = LootCounter, arg = 3 }
     other[101204] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
+    EHI:ShowLootCounterWaypoint({ element = { 100233, 100008, 100020, 102650 } })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100015] = { chance = 10, time = 1 + 35 + 30, on_fail_refresh_t = 30, on_success_refresh_t = 20 + 35 + 30, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }

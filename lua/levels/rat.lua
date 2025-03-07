@@ -73,7 +73,6 @@ if EHI:IsMayhemOrAbove() then
         local VanPos = 101454 -- 101454 - Left; 101449 - Center
         local function ResetWaypoint()
             managers.hud:RestoreWaypoint(VanPos)
-            EHI._cache.IgnoreWaypoints[VanPos] = nil
             VanPos = 101454 -- Reset to default position
         end
         table.insert(triggers[101001].data, 1010013)
@@ -88,7 +87,6 @@ if EHI:IsMayhemOrAbove() then
         end }
         local function DisableWaypoint()
             managers.hud:SoftRemoveWaypoint2(VanPos)
-            EHI._cache.IgnoreWaypoints[VanPos] = true
         end
         triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
         triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }

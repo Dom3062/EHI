@@ -103,6 +103,7 @@ function EHIManager:init(managers)
     if EHI.IsClient then
         self.ClientSyncFunctions = deep_clone(self.SyncFunctions)
         self._HookOnLoad = {}
+        self._OverrideOnLoad = {}
         self._load_sync = CallbackEventHandler:new()
         self._full_sync = CallbackEventHandler:new()
     end
@@ -111,6 +112,7 @@ end
 
 function EHIManager:_post_init()
     self._phalanx:init_finalize(self)
+    self._loot:init_manager(self)
 end
 
 function EHIManager:init_finalize()
@@ -543,9 +545,30 @@ function EHIManager:SetTimeNoAnim(id, t)
 end
 
 ---@param id string
+---@param progress number
+function EHIManager:SetProgress(id, progress)
+    self._trackers:SetTrackerProgress(id, progress)
+    self._waypoints:SetProgress(id, progress)
+end
+
+---@param id string
 function EHIManager:IncreaseProgress(id)
     self._trackers:IncreaseProgress(id)
     self._waypoints:IncreaseProgress(id)
+end
+
+---@param id string
+---@param max number?
+function EHIManager:IncreaseProgressMax(id, max)
+    self._trackers:IncreaseProgressMax(id, max)
+    self._waypoints:IncreaseProgressMax(id, max)
+end
+
+---@param id string
+---@param max number?
+function EHIManager:DecreaseProgressMax(id, max)
+    self._trackers:DecreaseTrackerProgressMax(id, max)
+    self._waypoints:DecreaseProgressMax(id, max)
 end
 
 ---@param id string
@@ -571,6 +594,8 @@ end
 local SF = EHI.SpecialFunctions
 ---@type table<number, ElementTrigger?>
 local triggers = {}
+---@type table<number, { on_executed: fun(self: MissionScriptElement, ...), operation_remove: fun(self: MissionScriptElement) }>
+local element_overrides = {}
 ---@type table<number, ElementTrigger>
 local host_triggers, base_delay_triggers, element_delay_triggers = nil, nil, nil
 ---Adds trigger to mission element when they run. If trigger already exists, it is moved and added into table
@@ -643,9 +668,6 @@ end
 ---@param trigger_id_all string?
 ---@param trigger_icons_all table?
 function EHIManager:_add_host_triggers(type, new_triggers, trigger_id_all, trigger_icons_all)
-    if EHI.IsClient then
-        return
-    end
     host_triggers = host_triggers or {}
     for key, value in pairs(new_triggers) do
         if host_triggers[key] then
@@ -809,7 +831,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     self:ParseOtherTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
     local trophy = new_triggers.trophy or {}
     if next(trophy) then
-        if EHI:GetOption("show_trackers") and EHI:GetUnlockableAndOption("show_trophies") then
+        if EHI:GetUnlockableAndOption("show_trophies") then
             for id, data in pairs(trophy) do
                 if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
                     PreparseParams(data)
@@ -830,7 +852,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     end
     local sidejob = new_triggers.sidejob or {}
     if next(sidejob) then
-        if EHI:GetOption("show_trackers") and EHI:GetUnlockableAndOption("show_dailies") then
+        if EHI:GetUnlockableAndOption("show_dailies") then
             for id, data in pairs(sidejob) do
                 if data.difficulty_pass ~= false and EHI:IsSHSideJobAvailable(id) then
                     PreparseParams(data)
@@ -854,7 +876,7 @@ function EHIManager:ParseTriggers(new_triggers, trigger_id_all, trigger_icons_al
     local achievement_triggers = new_triggers.achievement or {}
     if next(achievement_triggers) then
         self._unlockable:ParseAchievementDefinition(achievement_triggers)
-        if EHI:GetOption("show_trackers") and EHI:ShowMissionAchievements() then
+        if EHI:ShowMissionAchievements() then
             ---@param data ParseAchievementDefinitionTable
             ---@param id string
             local function Parser(data, id)
@@ -938,7 +960,6 @@ function EHIManager:ParseMissionTriggers(mission_triggers, trigger_id_all, trigg
     if no_host_override then
         host = false
     end
-    local configure_waypoints = EHI:GetWaypointOption("show_waypoints_mission")
     for id, data in pairs(mission_triggers) do
         -- Don't bother with trackers that have "condition" set to false, they will never run and just occupy memory for no reason
         -- Unregister custom special function if it is there
@@ -961,7 +982,7 @@ function EHIManager:ParseMissionTriggers(mission_triggers, trigger_id_all, trigg
                 data.class = self.Trackers.Inaccurate
             end
             -- Fill the rest table properties for EHI Waypoints
-            if configure_waypoints then
+            if self._SHOW_MISSION_WAYPOINTS then
                 if data.waypoint then
                     data.waypoint.class = data.waypoint.class or self._TrackerToWaypoint[data.class or ""]
                     data.waypoint.remove_on_alarm = data.remove_on_alarm
@@ -1111,6 +1132,7 @@ function EHIManager:InitElements()
     end
     self.__init_done = true
     self:HookElements(triggers)
+    self:OverrideElements(element_overrides)
     if EHI.IsClient then
         return
     end
@@ -1201,6 +1223,46 @@ function EHIManager:HookElements(elements_to_hook)
     end
 end
 
+---@param elements_to_override table<number, { on_executed: fun(self: MissionScriptElement, ...), operation_remove: fun(self: MissionScriptElement) }>
+function EHIManager:OverrideElements(elements_to_override)
+    local client = EHI.IsClient
+    local scripts = managers.mission._scripts or {}
+    for id, tbl_f in pairs(elements_to_override) do
+        if math.within(id, 100000, 999999) then
+            for _, script in pairs(scripts) do
+                local element = script:element(id) --[[@as ElementWaypoint?]]
+                if element then
+                    element.__ehi_original_on_executed = element.on_executed
+                    element.on_executed = tbl_f.on_executed
+                    element.__ehi_original_operation_remove = element.operation_remove
+                    element.operation_remove = tbl_f.operation_remove
+                elseif client then
+                    --[[
+                        On client, the element was not found
+                        This is because the element is from an instance that is mission placed
+                        Mission Placed instances are preloaded and all elements are not cached until
+                        ElementInstancePoint is called
+                        These instances are synced when you join
+                        Delay the hook until the sync is complete (see: EHIManager:SyncLoad())
+                    ]]
+                    self._OverrideOnLoad[id] = tbl_f
+                end
+            end
+        end
+    end
+end
+
+---@param id number
+---@param on_executed fun(element: MissionScriptElement, ...)
+---@param operation_remove fun(element: MissionScriptElement)
+function EHIManager:AddElementToOverride(id, on_executed, operation_remove)
+    if element_overrides[id] then
+        EHI:Log("Element Override already exists! ID: " .. tostring(id))
+        return
+    end
+    element_overrides[id] = { on_executed = on_executed, operation_remove = operation_remove }
+end
+
 function EHIManager:_add_position_to_waypoint_from_load()
     for _, trigger in pairs(triggers) do
         if trigger.special_function == SF.ShowWaypoint and trigger.data and not trigger.data.position then
@@ -1256,6 +1318,8 @@ function EHIManager:SyncLoad()
     end
     self:HookElements(self._HookOnLoad)
     self._HookOnLoad = nil
+    self:OverrideElements(self._OverrideOnLoad)
+    self._OverrideOnLoad = nil
     EHI:DisableTimerWaypoints(EHI.DisableOnLoad)
     EHI:DisableTimerWaypointsOnInit()
     EHI.DisableOnLoad = nil
@@ -1471,10 +1535,10 @@ function EHIManager:Trigger(id, element, enabled)
                 self:Pause(t_id)
                 self:SetTimeNoAnim(t_id, trigger.time)
             elseif f == SF.IncreaseProgressMax then
-                self._trackers:IncreaseProgressMax(trigger.id, trigger.max)
+                self:IncreaseProgressMax(trigger.id, trigger.max)
             elseif f == SF.IncreaseProgressMax2 then
                 if self._trackers:TrackerExists(trigger.id) then
-                    self._trackers:IncreaseProgressMax(trigger.id, trigger.max)
+                    self:IncreaseProgressMax(trigger.id, trigger.max)
                 else
                     local new_trigger =
                     {
@@ -1504,9 +1568,9 @@ function EHIManager:Trigger(id, element, enabled)
             elseif f == SF.ShowWaypoint then
                 managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
             elseif f == SF.DecreaseProgressMax then
-                self._trackers:DecreaseTrackerProgressMax(trigger.id, trigger.max)
+                self:DecreaseProgressMax(trigger.id, trigger.max)
             elseif f == SF.DecreaseProgress then
-                self._trackers:DecreaseTrackerProgress(trigger.id, trigger.progress)
+                self._trackers:DecreaseProgress(trigger.id, trigger.progress)
             elseif f == SF.IncreaseCounter then
                 self._trackers:IncreaseTrackerCount(trigger.id, trigger.count)
             elseif f == SF.DecreaseCounter then
@@ -1734,6 +1798,26 @@ if EHIManager._SHOW_MISSION_WAYPOINTS and not EHIManager._SHOW_MISSION_TRACKERS 
             }, trigger.pos)
         end
     end
+
+    ---@param id number
+    ---@param delay number
+    function EHIManager:CreateTrackerAndSync(id, delay)
+        local trigger = host_triggers[id]
+        if trigger.waypoint_f then -- In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+            trigger.waypoint_f(self, trigger)
+        elseif trigger.waypoint then
+            self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
+        else
+            self._trackers:AddTracker({
+                id = trigger.id,
+                time = (trigger.time or 0) + (delay or 0),
+                icons = trigger.icons,
+                hint = trigger.hint,
+                class = trigger.class
+            })
+        end
+        self._trackers:Sync(id, delay)
+    end
 else
     ---@param trigger ElementTrigger
     function EHIManager:CreateTracker(trigger)
@@ -1781,9 +1865,7 @@ else
             self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
         end
     end
-end
 
-if EHIManager._SHOW_MISSION_TRACKERS then
     ---@param id number
     ---@param delay number
     function EHIManager:CreateTrackerAndSync(id, delay)
@@ -1802,7 +1884,9 @@ if EHIManager._SHOW_MISSION_TRACKERS then
             self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
         end
     end
+end
 
+if EHIManager._SHOW_MISSION_TRIGGERS then
     ---@param trigger ElementTrigger
     ---@param id number
     function EHIManager:_get_element_timer_accurate(trigger, id)

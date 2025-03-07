@@ -103,7 +103,7 @@ EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI:ShowLootCounter({ max = 16 })
+EHI:ShowLootCounter({ max = 16 }, { element = { 105873, 105874 } })
 EHI:AddXPBreakdown({
     objectives =
     {

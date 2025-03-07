@@ -705,7 +705,7 @@ end
 
 ---@param id string
 ---@param value number?
-function EHITrackerManager:DecreaseTrackerProgress(id, value)
+function EHITrackerManager:DecreaseProgress(id, value)
     local tracker = self:GetTracker(id) --[[@as EHIProgressTracker]]
     if tracker and tracker.DecreaseProgress then
         tracker:DecreaseProgress(value)
@@ -751,7 +751,7 @@ end
 ---@param id string
 ---@param time number
 function EHITrackerManager:SetAccurate(id, time)
-    local tracker = self:GetTracker(id)
+    local tracker = self:GetTracker(id) --[[@as EHIInaccurateTracker]]
     if tracker then
         tracker:SetAccurate(time)
     end

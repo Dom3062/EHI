@@ -37,7 +37,7 @@ local other =
     [100028] = EHI:AddAssaultDelay({ control = 20 })
 }
 
-EHI:ShowLootCounter({ max = 10 })
+EHI:ShowLootCounter({ max = 10 }, { element = 100443 })
 
 EHI.Manager:ParseTriggers({
     mission = triggers,

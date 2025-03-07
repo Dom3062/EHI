@@ -24,7 +24,7 @@ if EHI:IsLootCounterVisible() then
             },
             skip_offset = true
         })
-    end)
+    end, { element = 104445 })
     for i = 103715, 103724, 1 do
         other[i] = loot_trigger
     end

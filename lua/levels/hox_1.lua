@@ -7,7 +7,7 @@ local triggers = {
 
     [101595] = { time = 6, id = "Wait", icons = { Icon.Wait }, hint = Hints.Wait },
 
-    [102191] = { time = 10, id = "MoveVehicle", icons = { Icon.Wait }, hint = Hints.hox_1_VehicleMove }, -- First Police Car
+    [102191] = { time = 10, id = "MoveVehicle", icons = { Icon.Wait }, hint = Hints.hox_1_VehicleMove, waypoint = { data_from_element = 100432 } }, -- First Police Car
 
     -- Time for animated car (nothing in the mission script, time was debugged with custom code => using rounded number, which should be accurate enough)
     [102626] = { time = 36.2, id = "CarMoveForward", icons = car, hint = Hints.hox_1_Car },
@@ -29,17 +29,17 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
     --units/payday2/vehicles/anim_vehicle_pickup_sportcab_armored/anim_vehicle_pickup_sportcab_armored/the_car
     tbl[102482] = { f = function(id, unit_data, unit)
         local t = { unit = unit }
-        managers.ehi_manager:AddWaypointToTrigger(102626, t)
-        managers.ehi_manager:AddWaypointToTrigger(102627, t)
-        managers.ehi_manager:AddWaypointToTrigger(102628, t)
-        managers.ehi_manager:AddWaypointToTrigger(101383, t)
-        managers.ehi_manager:AddWaypointToTrigger(101397, t)
+        local trigger_index = { 102626, 102627, 102628, 101383, 101397, 101595 }
+        for _, index in ipairs(trigger_index) do
+            managers.ehi_manager:AddWaypointToTrigger(index, t)
+        end
         unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
-            managers.ehi_waypoint:RemoveWaypoint("CarMoveForward")
-            managers.ehi_waypoint:RemoveWaypoint("CarMoveLeft")
-            managers.ehi_waypoint:RemoveWaypoint("CarMoveRight")
-            managers.ehi_waypoint:RemoveWaypoint("CarGoingIntoGarage")
-            managers.ehi_waypoint:RemoveWaypoint("CarMoveRightFinal")
+            for _, index in ipairs(trigger_index) do
+                local trigger = triggers[index]
+                if trigger then
+                    managers.ehi_waypoint:RemoveWaypoint(trigger.id)
+                end
+            end
         end)
     end}
 end

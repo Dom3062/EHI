@@ -4,6 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
+EHI.Manager._cache.CurrentHackNumber = 0
 local SecurityTearGasRandomElement = EHI:GetInstanceElementID(100061, 6690)
 local element_sync_triggers =
 {
@@ -11,18 +12,28 @@ local element_sync_triggers =
     [EHI:GetInstanceElementID(100063, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement, hint = Hints.Teargas }, -- 55s
     [EHI:GetInstanceElementID(100064, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement, hint = Hints.Teargas } -- 65s
 }
-local request = { Icon.PCHack, Icon.Wait }
+local CheckOkValueHostCheckOnly
+if EHI.Manager._SHOW_MISSION_TRACKERS then
+    CheckOkValueHostCheckOnly = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
+        if EHI.IsHost and not element:_values_ok() then
+            return
+        elseif self._trackers:TrackerExists(trigger.id) then
+            self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
+        elseif not trigger.dont_create then
+            self:CreateTracker(trigger)
+        end
+        self._cache.CurrentHackNumber = trigger.progress
+    end)
+else
+    CheckOkValueHostCheckOnly = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
+        if EHI.IsHost and not element:_values_ok() then
+            return
+        end
+        self._cache.CurrentHackNumber = trigger.progress
+    end)
+end
 local hoxton_hack = { "hoxton_character" }
-local CheckOkValueHostCheckOnly = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
-    if EHI.IsHost and not element:_values_ok() then
-        return
-    elseif self._trackers:TrackerExists(trigger.id) then
-        self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
-    elseif not trigger.dont_create then
-        self:CreateTracker(trigger)
-    end
-    self._cache.CurrentHackNumber = trigger.progress
-end)
+local request = { Icon.PCHack, Icon.Wait }
 ---@type table<number, Vector3?>
 local PCVectors = {}
 ---@type ParseTriggerTable
@@ -30,7 +41,7 @@ local triggers = {
     [102016] = EHI:AddEndlessAssault(7),
 
     [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(self, trigger)
-        local vector = PCVectors[self._cache.CurrentHackNumber or 0]
+        local vector = PCVectors[self._cache.CurrentHackNumber]
         if vector then
             self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.time,
@@ -39,13 +50,14 @@ local triggers = {
             })
             self._waypoints:RemoveWaypoint("HoxtonHack")
             self._waypoints:RemoveWaypoint("HoxtonMaxHacks") -- In case the timer is merged with the progress
+            return
         end
+        self._trackers:AddTrackerIfDoesNotExist(trigger)
     end, hint = Hints.Restarting },
     [102189] = EHI:AddCustomCode(function(self)
         self:CallEvent("hox_2_restore_waypoint_hack")
     end),
 
-    [104472] = { id = "HoxtonMaxHacks", max = 4, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack },
     [104478] = { id = "HoxtonMaxHacks", max = 4, progress = 1, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
     [104480] = { id = "HoxtonMaxHacks", max = 4, progress = 2, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
     [104481] = { id = "HoxtonMaxHacks", max = 4, progress = 3, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, special_function = CheckOkValueHostCheckOnly, hint = Hints.Hack },
@@ -57,6 +69,10 @@ local triggers = {
     end),
     [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
 }
+if EHI.Manager._SHOW_MISSION_TRACKERS then
+    triggers[104472] = { id = "HoxtonMaxHacks", max = 4, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack }
+end
+
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
 local tracker_merge =
 {
@@ -241,10 +257,10 @@ local tbl =
                                 u:base():SetCountThisUnit()
                             end
                         end
+                        execute = false
                         break
                     end
                 end
-                execute = false
             end
         end)
         Hooks:PreHook(MissionDoorDeviceInteractionExt, "destroy", "EHI_100003_6840_destroy", function(...)

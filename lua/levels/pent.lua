@@ -94,14 +94,16 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
             })
         end)
     end
-    loot_triggers[103616] = { special_function = SF.IncreaseProgressMax2 }
-    loot_triggers[103617] = { special_function = SF.IncreaseProgressMax2 }
+    loot_triggers[103616] = EHI:AddCustomCode(function(self)
+        self._loot:IncreaseLootCounterProgressMax()
+    end)
+    loot_triggers[103617] = loot_triggers[103616]
 end
 
 EHI:ShowLootCounter({
     max = 9, -- 8 gold + 1 teaset
     triggers = loot_triggers
-})
+}, { element = { 101958, 102013 } })
 
 function DigitalGui:pent_10()
     local hook_key = string.format("EHI_pent_10_%s", self._ehi_key or tostring(self._unit:key()))

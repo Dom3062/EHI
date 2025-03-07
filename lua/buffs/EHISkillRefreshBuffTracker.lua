@@ -251,8 +251,20 @@ EHIBerserkerBuffTracker._refresh_option = "berserker_refresh"
 function EHIBerserkerBuffTracker:post_init(...)
     self._damage_multiplier = 0
     self._melee_damage_multiplier = 0
+    self._current_damage_multiplier = 1
+    self._current_melee_damage_multiplier = 1
+    local text_format = EHI:GetBuffOption("berserker_text_format")
+    if text_format == 1 then
+        self._text_format = "$dmg;$postfix; $mle;$postfix;"
+    elseif text_format == 2 then
+        self._text_format = "$mle;$postfix; $dmg;$postfix;"
+    elseif text_format == 3 then
+        self._text_format = "$dmg;$postfix;"
+    else -- 4
+        self._text_format = "$mle;$postfix;"
+    end
+    self._text_format_macros = { postfix = EHI:GetBuffOption("berserker_format") == 1 and "x" or "%" }
     EHIBerserkerBuffTracker.super.post_init(self, ...)
-    self._time = 0.2
 end
 
 function EHIBerserkerBuffTracker:PreUpdate()
@@ -270,26 +282,16 @@ function EHIBerserkerBuffTracker:PreUpdate()
     self._damage_multiplier = self._player_manager:upgrade_value('player', 'damage_health_ratio_multiplier', 0) --[[@as number]]
     self._melee_damage_multiplier = self._player_manager:upgrade_value('player', 'melee_damage_health_ratio_multiplier', 0) --[[@as number]]
     self:AddBuffToUpdate()
-    if self._persistent then
-        self:ActivateSoft()
-    end
 end
 
 function EHIBerserkerBuffTracker:SetCustodyState(state)
     if state then
         self:RemoveBuffFromUpdate()
-        if self._persistent then
-            self:Deactivate2()
-        else
-            self:Deactivate()
-        end
+        self:Deactivate()
     else
         self:Activate()
         self._time = self._refresh_time
         self:AddBuffToUpdate()
-        if self._persistent then
-            self:ActivateSoft()
-        end
     end
 end
 
@@ -300,12 +302,11 @@ function EHIBerserkerBuffTracker:UpdateValue()
         return
     end
     local health_ratio = character_damage:health_ratio()
-    if health_ratio <= self._THRESHOLD then
+    if self._persistent or health_ratio <= self._THRESHOLD then
         local damage_ratio = 1 - (health_ratio / math.max(0.01, self._THRESHOLD))
         self._current_melee_damage_multiplier = 1 + self._melee_damage_multiplier * damage_ratio
         self._current_damage_multiplier = 1 + self._damage_multiplier * damage_ratio
-        local mul = self._current_damage_multiplier * self._current_melee_damage_multiplier
-        if mul > 1 then
+        if self._persistent or (self._current_damage_multiplier > 1 or self._current_melee_damage_multiplier > 1) then
             self:ActivateSoft()
             self:SetRatio(damage_ratio)
         else
@@ -320,16 +321,6 @@ function EHIBerserkerBuffTracker:Activate()
     self._active = true
 end
 
-function EHIBerserkerBuffTracker:DeactivateSoft()
-    if self._persistent then
-        self._current_damage_multiplier = nil
-        self._current_melee_damage_multiplier = nil
-        self:SetRatio(0)
-        return
-    end
-    EHIBerserkerBuffTracker.super.DeactivateSoft(self)
-end
-
 function EHIBerserkerBuffTracker:Deactivate()
     if not self._active then
         return
@@ -340,39 +331,21 @@ function EHIBerserkerBuffTracker:Deactivate()
     self._progress:set_color(self._progress_bar)
 end
 
-function EHIBerserkerBuffTracker:Deactivate2()
-    self._persistent = false
-    self:Deactivate()
-    self._persistent = true
-end
-
 function EHIBerserkerBuffTracker:SetPersistent()
     self._persistent = true
 end
 
 if EHI:GetBuffOption("berserker_format") == 1 then
     function EHIBerserkerBuffTracker:Format()
-        local dmg = self._parent_class.RoundNumber(self._current_damage_multiplier or 0, 0.1)
-        local mdmg = self._parent_class.RoundNumber(self._current_melee_damage_multiplier or 0, 0.1)
-        local s
-        if dmg == 0 and mdmg == 0 then
-            s = "1x 1x"
-        else
-            s = (dmg > 1 and dmg .. "x" or "") .. (dmg > 1 and (mdmg > 1 and " " .. mdmg .. "x" or "") or (mdmg > 1 and mdmg .. "x" or ""))
-        end
-        return s
+        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_damage_multiplier, 0.1) or 1
+        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_damage_multiplier, 0.1) or 1
+        return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
     end
 else
     function EHIBerserkerBuffTracker:Format()
-        local dmg = self._parent_class:RoundChanceNumber((self._current_damage_multiplier or 1) - 1)
-        local mdmg = self._parent_class:RoundChanceNumber((self._current_melee_damage_multiplier or 1) - 1)
-        local s
-        if dmg == 0 and mdmg == 0 then
-            s = "0% 0%"
-        else
-            s = (dmg > 0 and dmg .. "%" or "") .. (dmg > 0 and (mdmg > 0 and " " .. mdmg .. "%" or "") or (mdmg > 0 and mdmg .. "%" or ""))
-        end
-        return s
+        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and self._parent_class:RoundChanceNumber(self._current_damage_multiplier - 1) or 0
+        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and self._parent_class:RoundChanceNumber(self._current_melee_damage_multiplier - 1) or 0
+        return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
     end
 end
 

@@ -9,13 +9,13 @@ local element_sync_triggers =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    --[100240] = { id = "PAL", special_function = SF.RemoveTracker },
-    [102502] = { time = 60, id = "PAL", icons = { Icon.Money }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.pal_Money },
-    [102505] = { id = "PAL", special_function = SF.RemoveTracker },
-    [102749] = { id = "PAL", special_function = SF.PauseTracker },
-    [102738] = { id = "PAL", special_function = SF.PauseTracker },
-    [102744] = { id = "PAL", special_function = SF.UnpauseTracker },
-    [102826] = { id = "PAL", special_function = SF.RemoveTracker },
+    --[100240] = { id = "PrintTime", special_function = SF.RemoveTracker },
+    [102502] = { time = 60, id = "PrintTime", icons = { Icon.Money }, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.pal_Money },
+    [102505] = { id = "PrintTime", special_function = SF.RemoveTracker },
+    [102749] = { id = "PrintTime", special_function = SF.PauseTracker },
+    [102738] = { id = "PrintTime", special_function = SF.PauseTracker },
+    [102744] = { id = "PrintTime", special_function = SF.UnpauseTracker },
+    [102826] = { id = "PrintTime", special_function = SF.RemoveTracker },
 
     [102301] = { time = 15, id = "Trap", icons = { Icon.C4 }, class = TT.Warning, hint = Hints.Explosion },
     [101566] = { id = "Trap", special_function = SF.RemoveTracker },
@@ -67,8 +67,7 @@ local other =
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
     for i = 4700, 4850, 50 do
-        local waypoint_id = EHI:GetInstanceElementID(100019, i)
-        other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_from_element = waypoint_id } }
+        other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_from_element = EHI:GetInstanceElementID(100019, i) } }
     end
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
@@ -119,16 +118,14 @@ EHI:ShowLootCounter({
     no_max = true
 })
 
-local DisableWaypoints =
-{
+EHI:DisableTimerWaypoints({
     -- Defend
     [100912] = true,
     [100913] = true,
     -- Fix
     [100916] = true,
     [100917] = true
-}
-EHI:DisableTimerWaypoints(DisableWaypoints)
+})
 EHI:UpdateUnits({ [102192] = { remove_vanilla_waypoint = 100943 } }) -- Drill
 EHI:AddXPBreakdown({
     objectives =

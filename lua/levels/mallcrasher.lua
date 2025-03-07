@@ -29,17 +29,8 @@ function EHIameno3Tracker:pre_init(params)
     self._cash_sign = managers.localization:text("cash_sign")
     self._max = params.max or 0
     self._progress = params.progress or 0
-    self._progress_formatted = self:FormatNumber2(0)
+    self._progress_formatted = self:FormatNumber2(self._progress)
     self._max_formatted = self:FormatNumber2(self._max)
-    self._loot_parent = managers.ehi_loot
-    self:AddLootListener({
-        achievement = "ameno_3",
-        max = self._max,
-        counter =
-        {
-            check_type = EHI.Const.LootCounter.CheckType.ValueOfSmallLoot
-        }
-    })
 end
 
 function EHIameno3Tracker:OverridePanel()
@@ -51,6 +42,14 @@ function EHIameno3Tracker:OverridePanel()
         FitTheText = true
     })
     self._text:set_left(self._money_text:right())
+    self._loot_parent = managers.ehi_loot
+    self:AddLootListener({
+        max = self._max,
+        counter =
+        {
+            check_type = EHI.Const.LootCounter.CheckType.ValueOfSmallLoot
+        }
+    })
 end
 
 function EHIameno3Tracker:SetProgress(progress)

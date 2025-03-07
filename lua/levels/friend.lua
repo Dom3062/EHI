@@ -107,7 +107,7 @@ EHI.Manager:ParseTriggers({
     other = other,
     sync_triggers = { element = element_sync_triggers }
 })
-EHI:ShowLootCounter({ max = 16 })
+EHI:ShowLootCounter({ max = 16 }, { element = { 101304, 101973, 101980 } })
 local xp_override =
 {
     params =

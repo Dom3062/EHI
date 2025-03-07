@@ -85,7 +85,12 @@ elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     required_bags = EHI:IsDifficulty(EHI.Difficulties.OVERKILL) and 9 or 12
     closets = 5
 end
-EHI:ShowLootCounter({ max = max })
+local wp_params = { element = {} }
+for i = 0, 2600, 200 do
+    table.insert(wp_params.element, EHI:GetInstanceElementID(100037, i)) -- Stealth secure
+end
+table.insert(wp_params.element, EHI:GetInstanceElementID(100014, 15100)) -- Loud secure
+EHI:ShowLootCounter({ max = max }, wp_params)
 local xp_override =
 {
     params =

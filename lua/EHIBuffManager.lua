@@ -16,6 +16,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     self._x = EHI:GetOption(_G.IS_VR and "buffs_vr_x_offset" or "buffs_x_offset") --[[@as number]]
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
+    dofile(path .. "EHIPermanentBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
     dofile(path .. "SimpleBuffEdits.lua")
     hud:AddEHIUpdator("EHI_Buff_Update", self)
@@ -62,10 +63,19 @@ function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
             params.good = not buff.bad
             params.no_progress = buff.no_progress
             params.max = buff.max
-            params.class = buff.class
             params.class_to_load = buff.class_to_load
             params.scale = scale
             params.enable_in_loud = buff.enable_in_loud
+            if buff.permanent then
+                if buff.permanent.deck_option and EHI:GetBuffDeckOption(buff.permanent.deck_option.deck, buff.permanent.deck_option.option) then
+                    params.class = buff.permanent.class
+                    params.skill_check = buff.permanent.skill_check
+                else
+                    params.class = buff.class
+                end
+            else
+                params.class = buff.class
+            end
             self:_create_buff(params, buff.persistent, buff.deck_option)
         end
     end
@@ -135,7 +145,10 @@ function EHIBuffManager:_create_buff(params, persistent, deck_option)
         buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
     end
     self._buffs[params.id] = buff
-    if persistent and EHI:GetBuffOption(persistent) then
+    if params.skill_check then
+        self._check_buff_on_spawn = self._check_buff_on_spawn or {} ---@type table<string, EHIBuffTracker>
+        self._check_buff_on_spawn[params.id] = buff
+    elseif persistent and EHI:GetBuffOption(persistent) then
         buff:SetPersistent()
     elseif deck_option and EHI:GetBuffDeckOption(deck_option.deck, deck_option.persistent) then
         buff:SetPersistent()
@@ -205,6 +218,12 @@ function EHIBuffManager:ActivateUpdatingBuffs()
             end
         end
     end
+    for _, buff in pairs(self._check_buff_on_spawn or {}) do
+        if buff:PreUpdateCheck() then
+            buff:PreUpdate()
+        end
+    end
+    self._check_buff_on_spawn = nil
 end
 
 ---@param state boolean
@@ -276,6 +295,14 @@ function EHIBuffManager:RemoveBuff(id)
     local buff = self._buffs[id]
     if buff and buff:IsActive() then
         buff:Deactivate()
+    end
+end
+
+---@param id string
+function EHIBuffManager:RemoveAndResetBuff(id)
+    local buff = self._buffs[id]
+    if buff and buff:IsActive() then
+        buff:DeactivateAndReset()
     end
 end
 

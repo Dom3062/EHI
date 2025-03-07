@@ -12,8 +12,8 @@ local triggers = {
 if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
     triggers[EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
     triggers[EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
-    triggers[EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element = EHI:GetInstanceElementID(100016, 10700) } }
-    triggers[EHI:GetInstanceElementID(100011, 11000)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element = EHI:GetInstanceElementID(100016, 11000) } }
+    triggers[EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100016, 10700) } }
+    triggers[EHI:GetInstanceElementID(100011, 11000)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100016, 11000) } }
 end
 
 ---@param present_amount number?

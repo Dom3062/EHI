@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetTrackerOrWaypointOption("show_camera_loop", "show_waypoints_cameras") then
     return
 end

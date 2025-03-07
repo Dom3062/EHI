@@ -23,9 +23,9 @@ local achievements =
 
 local other =
 {
-    [100968] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
-    [100969] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround),
-    [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
+    [100968] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } }),
+    [100969] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } }),
+    [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } })
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100318 } }

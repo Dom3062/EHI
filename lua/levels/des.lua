@@ -239,21 +239,6 @@ local tbl =
     [101324] = { remove_on_power_off = true }
 }
 
-local DisableWaypoints =
-{
-    -- Crane Fix WP
-    [102467] = true,
-
-    -- Turret charging computer
-    [101122] = true, -- Defend
-    [103191] = true, -- Fix
-
-    -- Outside hack turret box
-    [102901] = true, -- Defend
-    [102902] = true, -- Fix
-    [102926] = true, -- Defend
-    [102927] = true -- Fix
-}
 EHI:DisableMissionWaypoints({ [EHI:GetInstanceElementID(100156, 26050)] = true }) -- Defend WP Methlab
 
 -- levels/instances/unique/des/des_computer/001-004
@@ -272,12 +257,27 @@ end
 tbl[EHI:GetInstanceUnitID(100051, 29550)] = { tracker_merge_id = "HackChance" }
 
 EHI:UpdateUnits(tbl)
-EHI:DisableTimerWaypoints(DisableWaypoints)
+EHI:DisableTimerWaypoints({
+    -- Crane Fix WP
+    [102467] = true,
+
+    -- Turret charging computer
+    [101122] = true, -- Defend
+    [103191] = true, -- Fix
+
+    -- Outside hack turret box
+    [102901] = true, -- Defend
+    [102902] = true, -- Fix
+    [102926] = true, -- Defend
+    [102927] = true -- Fix
+})
 EHI:ShowLootCounter({
     max = 8, -- 2 main loot; 6 artifacts in crates, one in Archaeology room -> 400511
     triggers =
     {
-        [102491] = { special_function = SF.IncreaseProgressMax } -- Archaeology, one more bag next to the objective
+        [102491] = EHI:AddCustomCode(function(self)
+            self._loot:IncreaseLootCounterProgressMax()
+        end) -- Archaeology, one more bag next to the objective
     },
     load_sync = function(self)
         if self:IsMissionElementDisabled(101506) then
@@ -285,7 +285,7 @@ EHI:ShowLootCounter({
         end
         self._loot:SyncSecuredLoot()
     end
-})
+}, { element = 100451, disable_waypoint_removal = true })
 EHI:AddXPBreakdown({
     objectives =
     {

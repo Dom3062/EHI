@@ -42,7 +42,7 @@ if EHI:IsLootCounterVisible() then
             self._cache.CreateCounter = true
         end
         self._loot:IncreaseLootCounterProgressMax()
-    end)
+    end, { element = { 101918, 101942, 101943, 101945 } })
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101285] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100786 } }

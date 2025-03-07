@@ -94,7 +94,7 @@ if EHI:IsLootCounterVisible() then
     EHI:ShowLootCounterNoChecks({
         max_random = 14,
         triggers = loot_triggers
-    })
+    }, { element = { 101196, 101342, 101375 } })
 end
 EHI:AddXPBreakdown({
     objectives =

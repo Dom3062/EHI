@@ -71,20 +71,8 @@ local sidejob =
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ control = 30 })
-}
-if EHI:GetWaypointOption("show_waypoints_escape") then
-    ---units/payday2/vehicles/str_vehicle_van_family_jewels_4/str_vehicle_van_family_jewels_4/escape1_van
-    other[101350] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101119 } }
-    ---units/payday2/vehicles/str_vehicle_van_family_jewels_3/str_vehicle_van_family_jewels_3/escape2_van
-    other[101351] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101284 } }
-    ---units/payday2/vehicles/str_vehicle_van_family_jewels_2/str_vehicle_van_family_jewels_2/escape3_van
-    other[101352] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101285 } }
-    ---units/payday2/vehicles/str_vehicle_van_family_jewels_5/str_vehicle_van_family_jewels_5/escape4_van
-    other[101353] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101286 } }
-end
-if EHI:IsLootCounterVisible() then
-    other[100107] = EHI:AddLootCounter2(function()
+    [100109] = EHI:AddAssaultDelay({ control = 30 }),
+    [100107] = EHI:AddLootCounter(function()
         EHI:ShowLootCounterNoChecks({
             max = 18,
             max_random = 2,
@@ -95,7 +83,17 @@ if EHI:IsLootCounterVisible() then
             },
             client_from_start = true
         })
-    end)
+    end, { element = { 100233, 101119, 101284, 101285, 101286 } })
+}
+if EHI:GetWaypointOption("show_waypoints_escape") then
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_4/str_vehicle_van_family_jewels_4/escape1_van
+    other[101350] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101119 } }
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_3/str_vehicle_van_family_jewels_3/escape2_van
+    other[101351] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101284 } }
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_2/str_vehicle_van_family_jewels_2/escape3_van
+    other[101352] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101285 } }
+    ---units/payday2/vehicles/str_vehicle_van_family_jewels_5/str_vehicle_van_family_jewels_5/escape4_van
+    other[101353] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101286 } }
 end
 if EHI:IsEscapeChanceEnabled() then
     other[102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }

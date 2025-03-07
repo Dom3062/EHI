@@ -46,7 +46,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi_unlockable = EHIUnlockableManager:new(managers.ehi_tracker)
     managers.ehi_phalanx = EHIPhalanxManager
     managers.ehi_timer = EHITimerManager:new(managers.ehi_tracker)
-    managers.ehi_loot = EHILootManager:new(managers.ehi_tracker)
+    managers.ehi_loot = EHILootManager:new()
     managers.ehi_sync = EHISyncManager
     managers.ehi_hook = EHIHookManager:new(managers.ehi_tracker, managers.ehi_loot)
     managers.ehi_manager = EHIManager:new(managers)

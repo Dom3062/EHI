@@ -40,16 +40,19 @@ local other =
             show_finish_after_reaching_target = true,
             difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish)
         })
+        local function DecreaseLootCounterProgressMax()
+            managers.ehi_loot:DecreaseLootCounterProgressMax()
+        end
         EHI:ShowLootCounter({
             max = n_of_weapons + 1, -- 1 bag of money
             triggers =
             {
-                [103427] = { special_function = SF.DecreaseProgressMax }, -- Weapons destroyed
+                [103427] = { special_function = SF.CustomCode, f = DecreaseLootCounterProgressMax }, -- Weapons destroyed
                 -- Why make 1 ElementCarry (remove) element when you can make 4...
-                [104470] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
-                [104471] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
-                [104472] = { special_function = SF.DecreaseProgressMax }, -- Money destroyed
-                [104473] = { special_function = SF.DecreaseProgressMax } -- Money destroyed
+                [104470] = { special_function = SF.CustomCode, f = DecreaseLootCounterProgressMax }, -- Money destroyed
+                [104471] = { special_function = SF.CustomCode, f = DecreaseLootCounterProgressMax }, -- Money destroyed
+                [104472] = { special_function = SF.CustomCode, f = DecreaseLootCounterProgressMax }, -- Money destroyed
+                [104473] = { special_function = SF.CustomCode, f = DecreaseLootCounterProgressMax } -- Money destroyed
             },
             hook_triggers = true,
             client_from_start = true
@@ -58,6 +61,9 @@ local other =
 
     [100531] = EHI:AddAssaultDelay({}) -- 30s
 }
+if EHI:IsLootCounterVisible() then
+    EHI:ShowLootCounterWaypoint({ element = 103215 })
+end
 
 EHI.Manager:ParseTriggers({
     other = other

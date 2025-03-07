@@ -9,10 +9,6 @@ _G.EHI.HeistTimerIsInverted = math.random() == math.random()
 _G.EHI.GagePackagesSpawned = math.random() == math.random()
 _G.EHI.Manager = managers.ehi_manager
 
----@class Global.game_settings
----@field ehi_vanilla_heist boolean
----@field ehi_applied_beardlib_fix boolean
-
 ---@class AnyExceptNil : table, string, boolean, number, userdata
 
 ---@class ElementWaypointTrigger : WaypointInitData
@@ -160,6 +156,13 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field no_triggers_if_max_xp_bags_gt_max boolean Disables triggers if provided `max_xp_bags` is greater than max
 ---@field carry_data { loot: boolean, no_loot: boolean, at_loot: boolean, no_at_loot: boolean } Enables tracking via `EHICarryData`, `EHINoCarryData`, `EHIATCarryData` and `EHIATNoCarryData` classes
 
+---@class WaypointLootCounterTable
+---@field element number|number[]
+---@field present_timer number|table<number, number> If number is provided, the present timer is applied to elements, if table is provided in this format `{ [element_id]: time }`, then the present timer will get applied only to the element. Not provided elements will get assigned a default value in `EHIWaypointManager`
+---@field check_function fun(progress: number, max: number): boolean
+---@field remove_check fun(progress: number, max: number): boolean
+---@field disable_waypoint_removal boolean Disables waypoint removal, useful if the mission script is killing the waypoint in the middle of securing loot. This will also remove vanilla waypoint from syncing (as per mission script design)
+
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.Const.LootCounter.CheckType`, defaults to `EHI.Const.LootCounter.CheckType.BagsOnly` if not provided
 ---@field loot_type string|string[] What loot should be counted
@@ -168,6 +171,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@class AchievementLootCounterTable
 ---@field achievement string Achievement ID
 ---@field show_loot_counter boolean If achievement is already earned, show Loot Counter instead
+---@field waypoint_loot_counter WaypointLootCounterTable
 ---@field max integer Maximum number of loot
 ---@field progress integer Start with progress if provided, otherwise 0
 ---@field show_finish_after_reaching_target boolean Setting this to `true` will show `FINISH` in the tracker

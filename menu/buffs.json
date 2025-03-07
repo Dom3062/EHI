@@ -7,7 +7,7 @@
             "vr" : [
                 {
                     "type": "slider",
-                    "id": "ehi_vr_x_offset",
+                    "id": "ehi_x_offset",
                     "title": "ehi_vr_x_offset",
                     "description": "ehi_x_offset_desc",
                     "callback": "SetOption",
@@ -41,7 +41,7 @@
             "vr" : [
                 {
                     "type": "slider",
-                    "id": "ehi_vr_y_offset",
+                    "id": "ehi_y_offset",
                     "title": "ehi_vr_y_offset",
                     "description": "ehi_y_offset_desc",
                     "callback": "SetOption",
@@ -162,14 +162,14 @@
             "id": "ehi_buffs_skills_menu",
             "title": "ehi_buffs_skills_menu",
             "next_menu": "ehi_buffs_skills_menu",
-            "ehi_ver" : 110
+            "ehi_ver" : 314
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_menu",
             "title": "ehi_buffs_perks_menu",
             "next_menu": "ehi_buffs_perks_menu",
-            "ehi_ver" : 272
+            "ehi_ver" : 314
         },
         {
             "type": "button",

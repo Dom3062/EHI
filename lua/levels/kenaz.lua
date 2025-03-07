@@ -161,7 +161,9 @@ elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
 elseif EHI:IsMayhemOrAbove() then
     bags = 12 + 5 + 12
 end
-EHI:ShowLootCounter({ max = 2 + bags }) -- Dentist loot (mandatory) + Money + Painting
+EHI:ShowLootCounter({ max = 2 + bags }, {
+    element = { EHI:GetInstanceElementID(100322, 37575), EHI:GetInstanceElementID(100093, 27750), EHI:GetInstanceElementID(100007, 11650), EHI:GetInstanceElementID(100044, 11650) }
+}) -- Dentist loot (mandatory) + Money + Painting
 
 local xp_override =
 {
@@ -223,54 +225,73 @@ EHI:AddXPBreakdown({
 
 if EHI.IsHost then
     keycode_units = nil ---@diagnostic disable-line
-    return
-end
-local bg = Idstring("g_top_opened"):key()
-local codes = {}
-for color, _ in pairs(keycode_units) do
-    codes[color] = {}
-    local _c = codes[color]
-    for i = 0, 9, 1 do
-        local str = "g_number_" .. color .. "_0" .. tostring(i)
-        _c[i] = Idstring(str):key()
-    end
-end
-local function CheckIfCodeIsVisible(unit, color)
-    if not unit then
-        return nil
-    end
-    local color_codes = codes[color]
-    local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
-    if object and object[bg] then
+elseif EHI.Manager._SHOW_MISSION_TRIGGERS then
+    local bg = Idstring("g_top_opened"):key()
+    local codes = {}
+    for color, _ in pairs(keycode_units) do
+        codes[color] = {}
+        local _c = codes[color]
         for i = 0, 9, 1 do
-            if object[color_codes[i]] then
-                return i
-            end
+            local str = "g_number_" .. color .. "_0" .. tostring(i)
+            _c[i] = Idstring(str):key()
         end
     end
-    return nil -- Has not been interacted yet
-end
-local function Cleanup()
-    keycode_units = nil ---@diagnostic disable-line
-    codes = nil
-    bg = nil ---@diagnostic disable-line
-end
-EHI.Manager:AddLoadSyncFunction(function(self)
-    if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
-        return Cleanup()
-    elseif self.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
-        return Cleanup()
-    elseif managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
-        return Cleanup()
+    local function CheckIfCodeIsVisible(unit, color)
+        if not unit then
+            return nil
+        end
+        local color_codes = codes[color]
+        local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
+        if object and object[bg] then
+            for i = 0, 9, 1 do
+                if object[color_codes[i]] then
+                    return i
+                end
+            end
+        end
+        return nil -- Has not been interacted yet
     end
-    self._trackers:AddTracker({
-        id = "ColorCodes",
-        class = TT.ColoredCodes
-    })
-    local wd = managers.worlddefinition
-    for color, data in pairs(keycode_units) do
-        if data.unit_ids then
-            for _, unit_id in ipairs(data.unit_ids) do
+    local function Cleanup()
+        keycode_units = nil ---@diagnostic disable-line
+        codes = nil
+        bg = nil ---@diagnostic disable-line
+    end
+    EHI.Manager:AddLoadSyncFunction(function(self)
+        if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
+            return Cleanup()
+        elseif self.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+            return Cleanup()
+        elseif managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
+            return Cleanup()
+        end
+        self._trackers:AddTracker({
+            id = "ColorCodes",
+            class = TT.ColoredCodes
+        })
+        local wd = managers.worlddefinition
+        for color, data in pairs(keycode_units) do
+            if data.unit_ids then
+                for _, unit_id in ipairs(data.unit_ids) do
+                    if data.indexes then
+                        for _, index in ipairs(data.indexes) do
+                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
+                            local code = CheckIfCodeIsVisible(unit, color)
+                            if code then
+                                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                                break
+                            end
+                        end
+                    else
+                        local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
+                        local code = CheckIfCodeIsVisible(unit, color)
+                        if code then
+                            self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                            break
+                        end
+                    end
+                end
+            else
+                local unit_id = data.unit_id
                 if data.indexes then
                     for _, index in ipairs(data.indexes) do
                         local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
@@ -289,26 +310,9 @@ EHI.Manager:AddLoadSyncFunction(function(self)
                     end
                 end
             end
-        else
-            local unit_id = data.unit_id
-            if data.indexes then
-                for _, index in ipairs(data.indexes) do
-                    local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
-                    local code = CheckIfCodeIsVisible(unit, color)
-                    if code then
-                        self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                        break
-                    end
-                end
-            else
-                local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
-                local code = CheckIfCodeIsVisible(unit, color)
-                if code then
-                    self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                    break
-                end
-            end
         end
-    end
-    Cleanup()
-end)
+        Cleanup()
+    end)
+else
+    keycode_units = nil ---@diagnostic disable-line
+end

@@ -1,5 +1,5 @@
 local EHI = EHI
-EHI:ShowLootCounter({ max = 18 })
+EHI:ShowLootCounter({ max = 18 }, { element = { EHI:GetInstanceElementID(100010, 1500), EHI:GetInstanceElementID(100010, 1750) } })
 EHI:SetMissionDoorData({
     [Vector3(5636.56, 7026.42, -1877.75)] = EHI:GetInstanceElementID(100006, 0),
     [Vector3(5743.57, 5743.44, -1877.75)] = EHI:GetInstanceElementID(100006, 250),

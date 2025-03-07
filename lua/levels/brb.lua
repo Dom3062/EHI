@@ -60,7 +60,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100027, 16400)] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[EHI:GetInstanceElementID(100026, 16400)] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-EHI:ShowLootCounter({ max = 24 })
+EHI:ShowLootCounter({ max = 24 }, { element = { 100468, 100667 } })
 
 EHI.Manager:ParseTriggers({
     mission = triggers,

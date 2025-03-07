@@ -21,7 +21,16 @@ local triggers = {
 
     [101691] = { time = 10 + 700/30, id = "PlaneEscape", icons = Icon.HeliEscape, waypoint = { data_from_element = 100058 }, hint = Hints.LootEscape },
 
-    [102996] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
+    [100123] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100130 } },
+    [104472] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 101495 } },
+    [104473] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 101401 } },
+    [104474] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100133 } },
+    [104475] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 101494 } },
+    [104476] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 101004 } },
+    [104477] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 101598 } },
+    [104478] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100587 } },
+    [104479] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100580 } },
+    [104480] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { position_from_unit = 100585 } },
 
     [102825] = { id = "WaterFill", icons = { Icon.Water }, class = TT.Pausable, special_function = SF.SetTimeByPreplanning, data = { id = 101033, yes = 160, no = 300 }, hint = Hints.crojob3_Water, waypoint = { icon = Icon.Defend, position_from_element_and_remove_vanilla_waypoint = 102789 } },
     [102905] = { id = "WaterFill", special_function = SF.PauseTracker },
@@ -145,21 +154,23 @@ local other =
     [100475] = EHI:AddAssaultDelay({ special_function = SF.AddTimeByPreplanning, data = { id = 101024, yes = 90, no = 60 } }) -- 30s
 }
 if EHI:IsLootCounterVisible() then
-    local Trigger = { id = "LootCounter", special_function = SF.IncreaseProgressMax } -- Money spawned
+    local Trigger = EHI:AddCustomCode(function(self)
+        self._loot:IncreaseLootCounterProgressMax()
+    end) -- Money spawned
     for _, index in ipairs({ 580, 830, 3120, 3370, 3620, 3870 }) do
         other[EHI:GetInstanceElementID(100197, index)] = Trigger
         other[EHI:GetInstanceElementID(100198, index)] = Trigger
         other[EHI:GetInstanceElementID(100201, index)] = Trigger
         other[EHI:GetInstanceElementID(100202, index)] = Trigger
     end
-    other[101041] = { special_function = SF.CustomCode, f = function()
+    other[101041] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance)
             -- If second money bundle spawns, the maximum is increased in the Trigger above
             max = 5, -- 4 Bomb parts + 1
             client_from_start = true
         })
-    end }
+    end, { element = { 101525, 100058, 100274 } })
     local RandomLootSpawnedCheck = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._loot:RandomLootSpawnedCheck(trigger.crate, true)
     end)

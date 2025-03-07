@@ -1,3 +1,10 @@
+r314 (07. 03. 2025):
+Converts Tracker: Fixed a possible crash after trading your convert and then going into custody a few seconds later
+Added options "Berserker Text Format", "Persistent Continuous Armor Regen" and "Show Loot Waypoint"
+Fixed synced trackers not appearing correctly when trackers are disabled
+Moved all related Loot Counter code to shared class, so tracker and waypoint can use it
+Reservoir Dogs Day 2: Fixed an issue with overlapping waypoints
+
 r313 (01. 03. 2025):
 Camera Loop: Fixed a crash related to waypoints
 

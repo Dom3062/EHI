@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("AmmoBagBase") then
     return
 end

@@ -40,7 +40,9 @@ local function waypoint_f(self, trigger)
             position = WPPos[self.SyncedSFF.watchdogs_2_boat_pos],
             class = trigger.additional_time and WT.Inaccurate
         })
+        return
     end
+    self._trackers:AddTrackerIfDoesNotExist(trigger, trigger.pos)
 end
 ---@type ParseTriggerTable
 local triggers = {
@@ -113,7 +115,7 @@ local other =
     [100124] = EHI:AddLootCounter(function()
         local bags = managers.ehi_manager:CountLootbagsOnTheGround(10)
         EHI:ShowLootCounterNoChecks({ max = bags, client_from_start = true })
-    end),
+    end, { element = { 100425, 100467, 100468 } }),
     [100220] = EHI:AddAssaultDelay({ control = 5 + 15 }),
 
     [100474] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 7 },

@@ -138,7 +138,7 @@ end
 ---@param key string
 ---@param amount number
 ---@param id string
----@param t_id string
+---@param t_id string Tracker ID
 function EHIDeployableManager:UpdateAmount(key, amount, id, t_id)
     local tracker = self._all_deployables_tracker or t_id
     if self._trackers:TrackerDoesNotExist(tracker) and amount > 0 then

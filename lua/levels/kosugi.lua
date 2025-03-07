@@ -8,7 +8,6 @@ function EHIkosugi5Tracker:post_init(...)
     EHIkosugi5Tracker.super.post_init(self, ...)
     self._loot_parent = managers.ehi_loot
     self:AddLootListener({
-        achievement = "kosugi_5",
         counter =
         {
             check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
@@ -16,7 +15,7 @@ function EHIkosugi5Tracker:post_init(...)
                 self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
                 self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
                 if self._counters == self._completed_counters then
-                    self._loot_parent:RemoveListener("kosugi_5")
+                    self._loot_parent:RemoveListener(self._id)
                 end
             end
         }
@@ -174,19 +173,20 @@ if EHI:IsLootCounterVisible() then
         random_paintings = 1
     end
     other[102700] = EHI:AddLootCounter2(function()
-        local loot_correction = CheckForBrokenWeapons() + CheckForBrokenCocaine()
         EHI:ShowLootCounterNoChecks({
-            max = base_amount + crates + random_weapons + random_paintings + loot_correction,
+            max = base_amount + crates + random_weapons + random_paintings + CheckForBrokenWeapons() + CheckForBrokenCocaine(),
             max_xp_bags = 16,
             triggers =
             {
-                [103396] = { special_function = SF.IncreaseProgressMax2 }
+                [103396] = EHI:AddCustomCode(function(self)
+                    self._loot:IncreaseLootCounterProgressMax()
+                end)
             },
             hook_triggers = true,
             no_triggers_if_max_xp_bags_gt_max = true,
             client_from_start = true
         })
-    end)
+    end, { element = { 100233, 100020, 103764, 103767, 103768, 103769, 103770 } })
     -- Not included bugged loot, this is checked after spawn -> 102700
     -- Reported here:
     -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/

@@ -175,6 +175,24 @@
             "ehi_ver" : 182
         },
         {
+            "type": "multiple_choice",
+            "id": "ehi_buffs_skills_fugitive_berserker_text_format_choice",
+            "title": "ehi_buffs_skills_fugitive_berserker_text_format",
+            "description": "ehi_buffs_skills_fugitive_berserker_text_format_desc",
+            "callback": "SetBuffOption",
+            "callback_arguments": "berserker_text_format",
+            "items": [
+                "ehi_buffs_skills_fugitive_berserker_text_format_1",
+                "ehi_buffs_skills_fugitive_berserker_text_format_2",
+                "ehi_buffs_skills_fugitive_berserker_text_format_3",
+                "ehi_buffs_skills_fugitive_berserker_text_format_4"
+            ],
+            "value": "berserker_text_format",
+            "parent": "ehi_buffs_skills_fugitive_berserker_choice",
+            "default_value": 1,
+            "ehi_ver" : 314
+        },
+        {
             "type": "toggle",
             "id": "ehi_buffs_skills_fugitive_berserker_persistent_choice",
             "title": "ehi_buffs_skills_fugitive_berserker_persistent",

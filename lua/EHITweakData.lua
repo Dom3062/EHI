@@ -625,6 +625,20 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "anarchist",
                 option = "continuous_armor_regen"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "anarchist",
+                    option = "persistent_continuous_armor_regen"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "armor_grinding"
+                },
+                class = "EHIPermanentBuffTracker"
             }
         },
         HealthRegen =

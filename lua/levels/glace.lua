@@ -63,10 +63,8 @@ local achievements =
 local other =
 {
     [101132] = EHI:AddAssaultDelay({ control = 59 }),
-    [100487] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }) -- 30s
-}
-if EHI:IsLootCounterVisible() then
-    other[101732] = { special_function = SF.CustomCode, f = function()
+    [100487] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }), -- 30s
+    [101732] = EHI:AddLootCounter(function()
         EHI:ShowLootCounterNoChecks({
             max_random = 9,
             carry_data =
@@ -77,8 +75,8 @@ if EHI:IsLootCounterVisible() then
             client_from_start = true
         })
         managers.ehi_loot:SetCountOfArmoredTransports(1)
-    end }
-end
+    end, { element = EHI:GetInstanceElementID(100023, 6500) })
+}
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104045] = { id = "SniperHeliSaw", refresh_t = 23 + 2, class = TT.Sniper.Heli }
     local sniper_respawn_saw = { id = "SniperHeliSaw", special_function = SF.CallCustomFunction, f = "SniperRespawn" }

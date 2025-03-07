@@ -6,19 +6,19 @@ local other =
     [100116] = EHI:AddAssaultDelay({ control = 60 })
 }
 if EHI:IsLootCounterVisible() then
-    other[100107] = { special_function = SF.CustomCode, trigger_once = true, f = function()
+    other[100107] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = 6,
             max_random = 7,
             client_from_start = true
         })
-    end}
-    other[100109] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
+    end, { element = 100008 }, nil, true)
+    other[100109] = EHI:AddCustomCode(function(self)
         self._loot:RandomLootDeclined(7)
-    end) }
-    other[107260] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
+    end)
+    other[107260] = EHI:AddCustomCode(function(self)
         self._loot:RandomLootSpawned(7)
-    end) }
+    end)
 end
 
 EHI.Manager:ParseTriggers({

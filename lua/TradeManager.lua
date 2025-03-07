@@ -85,9 +85,6 @@ function TradeManager:init(...)
             managers.ehi_trade:SetTrade("normal", true, self._trade_counter_tick)
         end
     end)
-    Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
-        managers.ehi_trade:CallFunction("RemovePeerFromCustody", peer_id)
-    end)
 end
 
 function TradeManager:pause_trade(time, ...)
@@ -180,3 +177,7 @@ function TradeManager:load(load_data, ...)
     end
     original.load(self, load_data, ...)
 end
+
+Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
+    managers.ehi_trade:CallFunction("RemovePeerFromCustody", peer_id)
+end)

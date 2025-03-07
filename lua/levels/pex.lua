@@ -45,7 +45,8 @@ EHI:ShowAchievementLootCounter({ -- Loot
     {
         [100357] = { special_function = SF.SetAchievementFailed }
     },
-    add_to_counter = true
+    add_to_counter = true,
+    waypoint_loot_counter = { element = { 100020, 103012 } }
 })
 EHI:ShowAchievementLootCounter({ -- Medals
     achievement = "pex_11",

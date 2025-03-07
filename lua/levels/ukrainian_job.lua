@@ -57,7 +57,7 @@ local other =
 if EHI:IsLootCounterVisible() then
     other[100073] = EHI:AddLootCounter(function()
         EHI:ShowLootCounterNoChecks({ max = 10, client_from_start = true })
-    end, true, function(self)
+    end, { element = { 103216, 103217, 103218, 103219, 104215 } }, true, function(self)
         local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
         local jewelry_to_subtract = 0
         for _, jewelry_id in ipairs(jewelry) do

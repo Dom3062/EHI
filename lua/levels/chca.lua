@@ -259,7 +259,7 @@ if EHI:IsLootCounterVisible() then
         if managers.game_play_central:IsMissionUnitEnabled(103818) then
             self._cache.chca_TeasetInMeetingRoom = true
         end
-    end, true)
+    end, nil, true)
     other[102751] = EHI:AddCustomCode(function(self)
         self._cache.chca_GlassDestroyed = true
     end)

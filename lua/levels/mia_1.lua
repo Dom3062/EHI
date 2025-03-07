@@ -124,7 +124,7 @@ if EHI:IsLootCounterVisible() then
     local MethbagsCooked = 0
     local MethbagsPossibleToSpawn = 19
     local MethlabExploded = false
-    other[101218] = { special_function = EHI.Manager:RegisterCustomSF(function(...)
+    other[101218] = EHI:AddLootCounter2(function()
         Methbags = GetNumberOfMethBags()
         EHI:ShowLootCounterNoChecks({
             max = money + Methbags,
@@ -133,7 +133,7 @@ if EHI:IsLootCounterVisible() then
             unknown_random = true,
             client_from_start = true
         })
-    end)}
+    end, { element = { 100168, 100245 }, present_timer = 0 })
     -- Basement
     local UnknownRandomLootSpawned = EHI:AddCustomCode(function(self)
         self._loot:IncreaseLootCounterProgressMax()

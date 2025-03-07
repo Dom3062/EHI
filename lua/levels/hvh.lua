@@ -10,7 +10,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard),
         elements =
         {
-            [100212] = { max = 6, class = TT.Achievement.Progress, special_function = SF.ShowAchievementFromStart },
+            [100212] = { max = 6, class = TT.Achievement.Progress, status_is_overridable = false, special_function = SF.ShowAchievementFromStart },
             [100224] = { special_function = SF.IncreaseProgress },
             [100181] = { special_function = SF.CustomCodeDelayed, t = 2, f = function()
                 managers.ehi_unlockable:SetAchievementFailed("cac_21")

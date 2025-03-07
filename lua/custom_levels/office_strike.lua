@@ -17,38 +17,27 @@ local triggers = {
                 self.SyncedSFF.office_strike_escape = "Van"
             end
         end
+        local t, icons, element
         if self.SyncedSFF.office_strike_escape == "Heli" then
-            local t = 50 + 25 + 6
-            self._trackers:AddTracker({
-                id = trigger.id,
-                time = t,
-                icons = Icons.HeliEscape,
-                hint = Hints.LootEscape
-            })
-            if trigger.waypoint then
-                trigger.waypoint.time = t
-                trigger.waypoint.icon = Icons.Heli
-                trigger.waypoint.position = self:GetElementPositionOrDefault(200179)
-            end
+            t = 50 + 25 + 6
+            icons = Icons.HeliEscape
+            element = 200179
         else -- Van
-            self._trackers:AddTracker({
-                id = trigger.id,
-                time = 80,
-                icons = Icons.CarEscape,
-                hint = Hints.LootEscape
-            })
-            if trigger.waypoint then
-                trigger.waypoint.time = 80
-                trigger.waypoint.icon = Icons.Car
-                trigger.waypoint.position = self:GetElementPositionOrDefault(200178)
-            end
+            t = 80
+            icons = Icons.CarEscape
+            element = 200178
         end
+        trigger.time = t
+        trigger.icons = icons
         if trigger.waypoint then
-            self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
+            trigger.waypoint.time = t
+            trigger.waypoint.icon = icons[1]
+            trigger.waypoint.position = self:GetElementPositionOrDefault(element)
         end
-    end), waypoint = {} }
+        self:CreateTracker(trigger)
+    end), waypoint = {}, hint = Hints.LootEscape }
 }
-managers.ehi_manager.SyncedSFF.office_strike_escape = "Heli"
+EHI.Manager.SyncedSFF.office_strike_escape = "Heli"
 
 ---@type ParseAchievementTable
 local achievements =
@@ -104,11 +93,15 @@ if EHI:IsLootCounterVisible() then
     other[200106] = EHI:AddLootCounter2(function()
         local servers = EHI:IsMayhemOrAbove() and 2 or 1
         EHI:ShowLootCounterNoChecks({ max = servers + 18, client_from_start = true })
-    end)
+    end, { element = { 200178, 200541 } })
     for i = 200502, 200519, 1 do
-        other[i] = { id = "LootCounter", special_function = SF.DecreaseProgressMax }
+        other[i] = EHI:AddCustomCode(function(self)
+            self._loot:DecreaseLootCounterProgressMax()
+        end)
     end
-    other[100092] = { max = 5, id = "LootCounter", special_function = SF.IncreaseProgressMax2 }
+    other[100092] = EHI:AddCustomCode(function(self)
+        self._loot:IncreaseLootCounterProgressMax(5)
+    end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@class EHISniperLoopBufferTracker : EHICountTracker, EHISniperBaseTracker

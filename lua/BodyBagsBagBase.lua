@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("BodyBagsBagBase") then
     return
 end

@@ -67,7 +67,7 @@ EHI:ShowAchievementLootCounter({
         loot_type = "ammo"
     }
 })
-EHI:ShowLootCounter({ max = 23 })
+EHI:ShowLootCounter({ max = 23 }, { element = { 100233, 100008, 100020, 102685, 103048, 104072, 103275 } })
 
 local tbl = {}
 for i = 0, 500, 100 do

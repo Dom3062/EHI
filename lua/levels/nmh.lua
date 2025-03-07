@@ -47,7 +47,7 @@ local triggers = {
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning, hint = Hints.Alarm },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
 
-    [102701] = { time = 13, id = "Patrol", icons = { "pd2_generic_look" }, class = TT.Warning, hint = Hints.nmh_IncomingPolicePatrol, remove_on_alarm = true },
+    [102701] = { time = 13, id = "Patrol", icons = { Icon.ExclamationMark }, class = TT.Warning, hint = Hints.nmh_IncomingPolicePatrol, remove_on_alarm = true },
 
     [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_from_unit = 102296, class = "EHIElevatorTimerWaypoint" }, hint = Hints.Wait },
     [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },

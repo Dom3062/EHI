@@ -26,7 +26,7 @@ function EHITimerWaypoint:SetTime(t)
     if self._time == t then
         return
     end
-    EHITimerWaypoint.super.SetTime(self, t)
+    EHITimerWaypoint.super.super.SetTime(self, t)
     if t <= 10 and self._warning and not self._anim_started then
         self:AnimateColor()
         self._anim_started = true

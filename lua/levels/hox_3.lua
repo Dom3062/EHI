@@ -33,7 +33,7 @@ local other =
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { chance = 20, time = 1 + 10 + 45, on_fail_refresh_t = 45, on_success_refresh_t = 20 + 10 + 45, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }
     other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 3 })
-    other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 4 })
+    other[100360] = EHI:CopyTrigger(other[100358], { sniper_count = 4 })
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
@@ -44,7 +44,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 
 EHI.Manager:ParseTriggers({ mission = triggers, other = other })
-EHI:ShowLootCounter({ max = 8 })
+EHI:ShowLootCounter({ max = 8 }, { element = { 100233, EHI:GetInstanceElementID(100009, 2910) } })
 
 local required_bags = EHI:GetValueBasedOnDifficulty({
     hard_or_below = 4,

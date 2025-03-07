@@ -2,11 +2,10 @@ local EHI = EHI
 ---@class EHIbex11Tracker : EHIAchievementProgressGroupTracker
 ---@field super EHIAchievementProgressGroupTracker
 EHIbex11Tracker = class(EHIAchievementProgressGroupTracker)
-function EHIbex11Tracker:pre_init(...)
-    EHIbex11Tracker.super.pre_init(self, ...)
+function EHIbex11Tracker:post_init(...)
+    EHIbex11Tracker.super.post_init(self, ...)
     self._loot_parent = managers.ehi_loot
     self:AddLootListener({
-        achievement = "bex_11",
         counter =
         {
             check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
@@ -14,7 +13,7 @@ function EHIbex11Tracker:pre_init(...)
                 local progress = loot:GetSecuredBagsAmount()
                 self:SetProgress(progress, "bags")
                 if progress >= self._max then
-                    self._loot_parent:RemoveListener("bex_11")
+                    self._loot_parent:RemoveListener(self._id)
                 end
             end
         }
@@ -22,7 +21,7 @@ function EHIbex11Tracker:pre_init(...)
 end
 
 function EHIbex11Tracker:pre_delete()
-    self._loot_parent:RemoveListener("bex_11")
+    self._loot_parent:RemoveListener(self._id)
 end
 
 function EHIbex11Tracker:CountersDone()
@@ -134,7 +133,7 @@ EHI.Manager:ParseTriggers({
     other = other,
     sync_triggers = { element = element_sync_triggers }
 })
-EHI:ShowLootCounter({ max = 11 })
+EHI:ShowLootCounter({ max = 11 }, { element = { 100233, 100008 } })
 local xp_override =
 {
     params =

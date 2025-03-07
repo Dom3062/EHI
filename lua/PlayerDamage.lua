@@ -147,7 +147,7 @@ if EHI:GetBuffDeckOption("anarchist", "continuous_armor_regen") then
     function PlayerDamage:_remove_on_damage_event(...)
         original._remove_on_damage_event(self, ...)
         -- Getting downed or entering swan song pauses the timer, reflect this
-        managers.ehi_buff:RemoveBuff("armor_grinding")
+        managers.ehi_buff:RemoveAndResetBuff("armor_grinding")
     end
 
     original._update_armor_grinding = PlayerDamage._update_armor_grinding

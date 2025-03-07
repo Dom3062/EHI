@@ -79,7 +79,7 @@ EHI:ShowAchievementLootCounter({
     },
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 })
-EHI:ShowLootCounter({ max = 12 })
+EHI:ShowLootCounter({ max = 12 }, { element = 101120 })
 
 EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b

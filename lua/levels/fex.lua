@@ -26,7 +26,8 @@ EHI:ShowAchievementLootCounter({
     end,
     show_loot_counter = true,
     loot_counter_on_fail = true,
-    silent_failed_on_alarm = true
+    silent_failed_on_alarm = true,
+    waypoint_loot_counter = { element = { 100233, 100020, 102656, 102735, 102010 } }
 })
 
 local other =

@@ -108,6 +108,17 @@
             "value": "show_waypoints_ecmjammer",
             "default_value": true,
             "ehi_ver" : 136
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_loot_counter_choice",
+            "title": "ehi_show_waypoints_loot_counter",
+            "description": "ehi_show_waypoints_loot_counter_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_loot_counter",
+            "value": "show_waypoints_loot_counter",
+            "default_value": true,
+            "ehi_ver" : 314
         }
     ]
 }

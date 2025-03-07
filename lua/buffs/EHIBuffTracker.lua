@@ -374,25 +374,14 @@ end
 function EHIBuffTracker:SwitchToLoudMode()
 end
 
-if progress then
-    ---@param dt number
-    function EHIBuffTracker:update(dt)
-        self._time = self._time - dt
-        self._text:set_text(self:Format())
-        self._progress_bar.red = self._time / self._time_set
-        self._progress:set_color(self._progress_bar)
-        if self._time <= 0 then
-            self:Deactivate()
-        end
-    end
-else
-    ---@param dt number
-    function EHIBuffTracker:update(dt)
-        self._time = self._time - dt
-        self._text:set_text(self:Format())
-        if self._time <= 0 then
-            self:Deactivate()
-        end
+---@param dt number
+function EHIBuffTracker:update(dt)
+    self._time = self._time - dt
+    self._text:set_text(self:Format())
+    self._progress_bar.red = self._time / self._time_set
+    self._progress:set_color(self._progress_bar)
+    if self._time <= 0 then
+        self:Deactivate()
     end
 end
 
@@ -429,3 +418,5 @@ function EHIBuffTracker:delete_with_class()
     local buff = tweak_data.ehi.buff[self._id]
     _G[buff.class_to_load and buff.class_to_load.class or buff.class] = nil
 end
+
+EHIBuffTracker.DeactivateAndReset = EHIBuffTracker.Deactivate

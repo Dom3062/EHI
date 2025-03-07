@@ -8,7 +8,7 @@ local triggers = {
 
 local other =
 {
-    [101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, nil, nil, true)
+    [101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = 104450 }, nil, nil, true)
 }
 
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

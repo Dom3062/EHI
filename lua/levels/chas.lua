@@ -71,7 +71,8 @@ EHI:ShowAchievementLootCounter({
     show_loot_counter = true,
     loot_counter_on_fail = true,
     silent_failed_on_alarm = true,
-    difficulty_pass = ovk_and_up
+    difficulty_pass = ovk_and_up,
+    waypoint_loot_counter = { element = { 100233, 100008, 100020, 102655, 103791, 103792 }, present_timer = { [102655] = 0 } }
 })
 
 EHI.Manager:ParseTriggers({

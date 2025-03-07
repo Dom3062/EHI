@@ -272,7 +272,6 @@ _G.EHI =
     Hints =
     {
         -- Generic hints
-        EndlessAssault = "endless_assault",
         Fire = "fire",
         FireRecharge = "fire_recharge",
         Escape = "escape",
@@ -413,8 +412,8 @@ _G.EHI =
         USB = "equipment_usb_no_data",
         Destruction = "C_Vlad_H_Mallcrasher_Shoot",
         Tablet = "tablet",
+        ExclamationMark = "pd2_generic_look",
 
-        EndlessAssault = { { icon = "padlock", color = Color.red } },
         CarEscape = { "pd2_car", "pd2_escape", "pd2_lootdrop" },
         CarEscapeNoLoot = { "pd2_car", "pd2_escape" },
         CarWait = { "pd2_car", "pd2_escape", "pd2_lootdrop", "faster" },
@@ -848,6 +847,7 @@ local function LoadDefaultValues(self)
         show_waypoints_cameras = true,
         show_waypoints_zipline = true,
         show_waypoints_ecmjammer = true,
+        show_waypoints_loot_counter = true,
 
         -- Buffs
         show_buffs = true,
@@ -903,6 +903,7 @@ local function LoadDefaultValues(self)
             berserker = true,
             berserker_refresh = 4, -- 1 / value
             berserker_format = 1, -- 1 = Multiplier; 2 = Percent
+            berserker_text_format = 1, -- 1 = Weapon Damage | Melee / Saw Damage; 2 = Melee / Saw Damage | Weapon Damage; 3 = Weapon Damage; 4 = Melee / Saw Damage 
             berserker_persistent = true,
 
             -- Perks
@@ -931,6 +932,7 @@ local function LoadDefaultValues(self)
             anarchist =
             {
                 continuous_armor_regen = true,
+                persistent_continuous_armor_regen = false,
                 immunity = true,
                 immunity_cooldown = true,
                 kill_armor_regen_cooldown = true
@@ -1259,7 +1261,7 @@ end
 
 function EHI:SaveOptions()
     self.settings.SaveDataVer = self.SaveDataVer
-    self.settings.ModVersion = self.ModInstance:GetVersion()
+    self.settings.ModVersion = tonumber(self.ModInstance:GetVersion())
     local file = io.open(self.SettingsSaveFilePath, "w+")
     if file then
         file:write(json.encode(self.settings) or "{}")
@@ -1470,7 +1472,7 @@ function EHI:IsXPTrackerDisabled()
 end
 
 function EHI:IsLootCounterVisible()
-    return self:GetTrackerOption("show_loot_counter") and not self:IsPlayingCrimeSpree()
+    return self:GetTrackerOrWaypointOption("show_loot_counter", "show_waypoints_loot_counter") and not self:IsPlayingCrimeSpree()
 end
 
 function EHI:IsSyncedLootCounterVisible()
@@ -1674,7 +1676,7 @@ end
 ---@param f function
 ---@overload fun(self: EHI, id: string, f: function)
 function EHI:AddEventListener(id, events, f)
-    if self:GetOption("show_mission_trackers") then
+    if self:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission") then
         if f then
             managers.ehi_manager:AddEventListener(id, events, f)
         else
@@ -1746,17 +1748,19 @@ function EHI:AddAssaultDelay(params)
     return tbl
 end
 
+---Creates trigger as `SF.CustomCode` with boolean check of the Loot Counter option
 ---@param f function Loot counter function
----@param check boolean? Boolean value of option 'show_loot_counter'
+---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
+---@param check boolean? Boolean value of options 'show_loot_counter' and 'show_waypoints_loot_counter'
 ---@param load_sync fun(self: EHIManager)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger?
-function EHI:AddLootCounter(f, check, load_sync, trigger_once)
+function EHI:AddLootCounter(f, wp_params, check, load_sync, trigger_once)
     if self:IsPlayingCrimeSpree() then
         return nil
     elseif check ~= nil and check == false then
         return nil
-    elseif not self:GetOption("show_loot_counter") then
+    elseif not self:GetTrackerOrWaypointOption("show_loot_counter", "show_waypoints_loot_counter") then
         return nil
     end
     local tbl =
@@ -1765,32 +1769,39 @@ function EHI:AddLootCounter(f, check, load_sync, trigger_once)
         f = f,
         trigger_once = trigger_once
     }
+    self:ShowLootCounterWaypoint(wp_params)
     if load_sync then
         managers.ehi_manager:AddLoadSyncFunction(load_sync)
     end
     return tbl
 end
 
+---Creates trigger as `SF.CustomCode`
 ---@param f function Loot counter function
+---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param load_sync fun(self: EHIManager)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
-function EHI:AddLootCounter2(f, load_sync, trigger_once)
+function EHI:AddLootCounter2(f, wp_params, load_sync, trigger_once)
     local tbl = ---@type ElementTrigger
     {
         special_function = self.SpecialFunctions.CustomCode,
         f = f,
         trigger_once = trigger_once
     }
+    self:ShowLootCounterWaypoint(wp_params)
     if load_sync then
         managers.ehi_manager:AddLoadSyncFunction(load_sync)
     end
     return tbl
 end
 
+---Creates trigger as custom trigger function in `EHIManager`
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean) Loot counter function
+---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
-function EHI:AddLootCounter3(f, trigger_once)
+function EHI:AddLootCounter3(f, wp_params, trigger_once)
+    self:ShowLootCounterWaypoint(wp_params)
     return {
         special_function = managers.ehi_manager:RegisterCustomSF(f),
         trigger_once = trigger_once
@@ -1798,11 +1809,12 @@ function EHI:AddLootCounter3(f, trigger_once)
 end
 
 ---@param f function Loot counter function
+---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param t number Delays the loot counter
 ---@param load_sync fun(self: EHIManager)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
-function EHI:AddLootCounter4(f, t, load_sync, trigger_once)
+function EHI:AddLootCounter4(f, wp_params, t, load_sync, trigger_once)
     local tbl =
     {
         special_function = self.SpecialFunctions.CustomCodeDelayed,
@@ -1810,6 +1822,7 @@ function EHI:AddLootCounter4(f, t, load_sync, trigger_once)
         f = f,
         trigger_once = trigger_once
     }
+    self:ShowLootCounterWaypoint(wp_params)
     if load_sync then
         managers.ehi_manager:AddLoadSyncFunction(load_sync)
     end
@@ -1887,45 +1900,48 @@ end
 
 -- Used on clients when offset is required  
 -- Do not call it directly!
----@param params LootCounterTable
+---@param params { params: LootCounterTable, waypoint: WaypointLootCounterTable? }
 ---@param manager EHIManager
 function EHI:ShowLootCounterOffset(params, manager)
-    params.skip_offset = true
-    params.offset = managers.loot:GetSecuredBagsAmount()
-    params.hook_triggers = params.triggers ~= nil
-    self:ShowLootCounterNoChecks(params)
+    params.params.skip_offset = true
+    params.params.offset = managers.loot:GetSecuredBagsAmount()
+    params.params.hook_triggers = params.params.triggers ~= nil
+    self:ShowLootCounterNoChecks(params.params, params.waypoint)
 end
 
 ---@param params LootCounterTable?
-function EHI:ShowLootCounter(params)
-    if self:GetTrackerOption("show_loot_counter") then
-        self:ShowLootCounterNoCheck(params)
+---@param waypoint_params WaypointLootCounterTable?
+function EHI:ShowLootCounter(params, waypoint_params)
+    if self:GetTrackerOrWaypointOption("show_loot_counter", "show_waypoints_loot_counter") then
+        self:ShowLootCounterNoCheck(params, waypoint_params)
     end
 end
 
 ---@param params LootCounterTable?
-function EHI:ShowLootCounterNoCheck(params)
+---@param waypoint_params WaypointLootCounterTable?
+function EHI:ShowLootCounterNoCheck(params, waypoint_params)
     if self:IsPlayingCrimeSpree() then
         return
     end
-    self:ShowLootCounterNoChecks(params)
+    self:ShowLootCounterNoChecks(params, waypoint_params)
 end
 
 ---@param params LootCounterTable?
-function EHI:ShowLootCounterNoChecks(params)
+---@param waypoint_params WaypointLootCounterTable?
+function EHI:ShowLootCounterNoChecks(params, waypoint_params)
     params = params or {}
     local offset = params.offset or 0
     if not params.skip_offset and managers.job:IsPlayingMultidayHeist() then
         if self.IsHost or params.client_from_start then
             offset = managers.loot:GetSecuredBagsAmount()
         else
-            managers.ehi_manager:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", params))
+            managers.ehi_manager:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", { params = params, waypoint = waypoint_params }))
             return
         end
     end
     if params.sequence_triggers or params.is_synced then
         managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, offset)
-        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
+        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
     elseif params.max_bags_for_level and self:IsXPTrackerEnabled() then
         if params.max_bags_for_level.objective_triggers then
             local xp_trigger = self:AddLootCounter3(function(manager, trigger, element, enabled) ---@cast element ElementExperience
@@ -1981,15 +1997,87 @@ function EHI:ShowLootCounterNoChecks(params)
             EHIATExplosionData._enabled = true
         end
     end
+    self:ShowLootCounterWaypoint(waypoint_params)
+end
+
+---Hooks waypoints during game load so they correctly show in the game world  
+---If the Loot Counter is created during spawn, this function needs to be called before Loot Counter has a chance to initialize
+---@param waypoint_params WaypointLootCounterTable?
+function EHI:ShowLootCounterWaypoint(waypoint_params)
+    if waypoint_params and self:GetWaypointOption("show_waypoints_loot_counter") and not self:IsPlayingCrimeSpree() then
+        ---@param element ElementWaypoint
+        ---@param instigator UnitPlayer
+        local function on_executed(element, instigator, ...)
+            if not element._values.enabled then
+                return
+            elseif element._values.only_on_instigator and instigator ~= managers.player:player_unit() then
+                ElementWaypoint.super.on_executed(element, instigator, ...)
+                return
+            elseif not element._values.only_in_civilian or managers.player:current_state() == "civilian" then
+                local text = managers.localization:text(element._values.text_id)
+                if managers.ehi_loot:IsMasterActive() and managers.ehi_loot:IsMasterWaypointCheckValid() then
+                    managers.hud:AddWaypointSoft(element._id, {
+                        distance = true,
+                        state = "sneak_present",
+                        present_timer = 0,
+                        text = text,
+                        icon = element._values.icon,
+                        position = element._values.position
+                    })
+                    managers.ehi_loot:OverrideWaypoint(element)
+                    managers.ehi_waypoint:CallFunction("LootCounter", "CreateWaypoint", element._id, element._values.icon, element._values.position)
+                else
+                    managers.hud:add_waypoint(element._id, {
+                        distance = true,
+                        state = "sneak_present",
+                        present_timer = 0,
+                        text = text,
+                        icon = element._values.icon,
+                        position = element._values.position
+                    })
+                end
+            elseif managers.hud:get_waypoint_data(element._id) then
+                managers.hud:remove_waypoint(element._id)
+            end
+            ElementWaypoint.super.on_executed(element, instigator, ...)
+        end
+        ---@param element ElementWaypoint
+        local function operation_remove(element)
+            if managers.ehi_loot:IsWaypointOverriden(element._id) and managers.ehi_loot:CanRemoveWaypointCheck() then
+                managers.ehi_waypoint:CallFunction("LootCounter", "RemoveWaypoint", element._id)
+                managers.hud:RestoreWaypoint(element._id, true)
+            end
+            element.__ehi_original_operation_remove(element) ---@diagnostic disable-line
+        end
+        if type(waypoint_params.element) == "number" then
+            managers.ehi_manager:AddElementToOverride(waypoint_params.element --[[@as number]], on_executed, operation_remove)
+            managers.ehi_loot:AddWaypointElement(waypoint_params.element --[[@as number]])
+        else
+            for _, element in ipairs(waypoint_params.element --[[@as number[] ]]) do
+                managers.ehi_manager:AddElementToOverride(element, on_executed, operation_remove)
+                managers.ehi_loot:AddWaypointElement(element)
+            end
+        end
+        if waypoint_params.present_timer then
+            managers.ehi_loot:SetPresentTimerForWaypoints(waypoint_params.present_timer)
+        end
+        if waypoint_params.check_function then
+            managers.ehi_loot:WaypointFunctionCheck(waypoint_params.check_function)
+        end
+        if waypoint_params.remove_check then
+            managers.ehi_loot:WaypointRemoveFunctionCheck(waypoint_params.remove_check)
+        end
+    end
 end
 
 ---@param params LootCounterTable
-function EHI:ShowLootCounterSynced(params)
+---@param waypoint_params WaypointLootCounterTable?
+function EHI:ShowLootCounterSynced(params, waypoint_params)
     if self:IsPlayingCrimeSpree() then
         return
-    elseif not self:GetTrackerOption("show_loot_counter") then
+    elseif not self:GetTrackerOrWaypointOption("show_loot_counter", "show_waypoints_loot_counter") then
         managers.ehi_manager:AddTriggers(params.triggers or {}, "LootCounter")
-        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers or {})
+        managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
         managers.ehi_loot:SetSyncData({
             max = params.max or 0,
             max_random = params.max_random or 0,
@@ -1998,14 +2086,14 @@ function EHI:ShowLootCounterSynced(params)
         return
     end
     params.is_synced = true
-    self:ShowLootCounterNoChecks(params)
+    self:ShowLootCounterNoChecks(params, waypoint_params)
 end
 
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounter(params)
     if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
         if params.show_loot_counter then
-            self:ShowLootCounter({ max = params.max, triggers = params.loot_counter_triggers, load_sync = params.loot_counter_load_sync })
+            self:ShowLootCounter({ max = params.max, triggers = params.loot_counter_triggers, load_sync = params.loot_counter_load_sync }, params.waypoint_loot_counter)
         elseif params.triggers then
             self:CleanupCustomSFTriggers(params.triggers)
         end
@@ -2018,6 +2106,8 @@ end
 function EHI:ShowAchievementLootCounterNoCheck(params)
     if params.show_loot_counter and self:GetTrackerOption("show_loot_counter") and not self:IsPlayingCrimeSpree() then
         managers.ehi_unlockable:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
+        managers.ehi_loot:_create_waypoint_tracker(params.max)
+        self:ShowLootCounterWaypoint(params.waypoint_loot_counter)
     else
         managers.ehi_unlockable:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target)
     end
@@ -2033,12 +2123,8 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
         end)
     end
     if params.silent_failed_on_alarm then
-        self:AddOnAlarmCallback(function()
-            if managers.ehi_manager:GetInSyncState() then
-                managers.ehi_unlockable:SetAchievementFailedSilent(params.achievement)
-            else
-                managers.ehi_unlockable:SetAchievementFailed(params.achievement)
-            end
+        self:AddOnAlarmCallback(function(dropin)
+            managers.ehi_unlockable:SetAchievementFailed(params.achievement, managers.ehi_manager:GetInSyncState())
         end)
     end
     if params.triggers then
@@ -2069,8 +2155,7 @@ end
 function EHI:ShowAchievementKillCounter(params)
     if params.achievement_option and not self:GetUnlockableAndOption(params.achievement_option) then
         return
-    end
-    if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked2(params.achievement) or params.difficulty_pass == false then
+    elseif self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked2(params.achievement) or params.difficulty_pass == false then
         self:Log("Achievement disabled! id: " .. tostring(params.achievement))
         return
     end
@@ -2234,8 +2319,8 @@ function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_cont
     for id, data in pairs(tbl) do
         local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)
         local cloned_data = deep_clone(data)
-        if cloned_data.remove_vanilla_waypoint then
-            cloned_data.remove_vanilla_waypoint = self:GetInstanceElementID(cloned_data.remove_vanilla_waypoint, instance_start_index, instance_continent_index)
+        if data.remove_vanilla_waypoint then
+            cloned_data.remove_vanilla_waypoint = self:GetInstanceElementID(data.remove_vanilla_waypoint, instance_start_index, instance_continent_index)
         end
         cloned_data.base_index = id
         new_tbl[computed_id] = cloned_data
@@ -2423,7 +2508,7 @@ end
 ---@param params EHI.ColorTable.params?
 function EHI:HookColorCodes(color_table, params)
     params = params or {}
-    if not (params.no_mission_check or self:GetOption("show_mission_trackers")) then
+    if not (params.no_mission_check or self:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission")) then
         return
     end
     local tracker_name = params.tracker_name or "ColorCodes"
@@ -2481,17 +2566,13 @@ end
 ---@param time number|EHIRandomTime
 ---@param trigger_name string?
 ---@param loud_check boolean?
----@return ElementTrigger?
 function EHI:AddEndlessAssault(time, trigger_name, loud_check)
-    if not self:GetOption("show_trackers") then
-        return nil
-    end
     local tbl = ---@type ElementTrigger
     {
         id = trigger_name or "EndlessAssault",
-        icons = self.Icons.EndlessAssault,
+        icons = { { icon = "padlock", color = Color.red } },
         class = self.Trackers.Warning,
-        hint = self.Hints.EndlessAssault
+        hint = "endless_assault"
     }
     if type(time) == "number" then
         tbl.time = time

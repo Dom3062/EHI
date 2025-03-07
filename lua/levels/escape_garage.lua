@@ -30,7 +30,7 @@ if EHI:IsLootCounterVisible() then
             self._cache.CreateCounter = true
         end
         self._loot:IncreaseLootCounterProgressMax()
-    end)
+    end, { element = { 101999, 102000, 101442 } })
 end
 
 EHI.Manager:ParseTriggers({

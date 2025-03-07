@@ -40,7 +40,7 @@ if EHI:IsLootCounterVisible() then
             max = 9,
             client_from_start = true
         })
-    end)
+    end, { element = 100337 })
 end
 
 EHI.Manager:ParseTriggers({

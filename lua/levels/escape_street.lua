@@ -38,7 +38,7 @@ if EHI:IsLootCounterVisible() then
             self._cache.CreateCounter = true
         end
         self._loot:IncreaseLootCounterProgressMax()
-    end)
+    end, { element = { 100500, 102069 } })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102528] = { id = "Snipers", count_on_refresh = 2, snipers_spawned = true, class = TT.Sniper.TimedCount }

@@ -43,8 +43,8 @@ else
         kill_add_chance = 5
     }
 end
-triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
-triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, "pd2_generic_look" }, class = TT.Warning, hint = Hints.Teargas }
+triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, Icon.ExclamationMark }, class = TT.Warning, hint = Hints.Teargas }
+triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, Icon.ExclamationMark }, class = TT.Warning, hint = Hints.Teargas }
 triggers[104736] = EHI:AddIncomingTurret(616/30, Vector3(-420.226, -1011.89, 225.056), "SWATTurretArrival2", true)
 triggers[104737] = EHI:AddIncomingTurret(752/30, Vector3(805.013, 2253.48, 224.916), "SWATTurretArrival1", true)
 
@@ -112,7 +112,7 @@ if EHI:IsLootCounterVisible() then
             client_from_start = true,
             unknown_random = has_random_bags
         })
-    end)
+    end, { element = { 101060, 100510, 101065 } })
     other[103372] = EHI:AddCustomCode(function(self)
         if not self._trackers:TrackerExists("LootCounter") then
             self:Trigger(105762) --- You had your last chance here, son.

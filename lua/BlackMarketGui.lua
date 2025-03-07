@@ -348,12 +348,8 @@ local GrenadeFormattingFunction =
         strs.poison))
     end,
     concussion = function()
-        local accuracy = 0.5
-        local accuracy_reset = 5
-        if CopDamage then
-            accuracy = CopDamage._ON_STUN_ACCURACY_DECREASE or accuracy
-            accuracy_reset = CopDamage._ON_STUN_ACCURACY_DECREASE_TIME or accuracy_reset
-        end
+        local accuracy = CopDamage._ON_STUN_ACCURACY_DECREASE or 0.5
+        local accuracy_reset = CopDamage._ON_STUN_ACCURACY_DECREASE_TIME or 5
         return string.format("\n> %s\n> %s", managers.localization:text("ehi_bm_concussion_1"), string.format(
             managers.localization:text("ehi_bm_concussion_2"), tostring(accuracy * 100), percent_format, accuracy_reset
         ))

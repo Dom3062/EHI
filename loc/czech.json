@@ -628,6 +628,14 @@
     "ehi_show_waypoints_ecmjammer" : "Zobrazovat ukazatele pro ECM Jammery",
     "ehi_show_waypoints_ecmjammer_desc" : "Zobrazuje ukazatel pro aktivní ECM Jammer",
 
+    "ehi_show_waypoints_loot_counter" : "Zobrazovat ukazatele pro počet lupu",
+    "ehi_show_waypoints_loot_counter_desc" : "Zobrazuje ukazatel pro aktivní zónu k zajištění lupu\n\nTato možnost nahrazuje původní ukazatel ve hře\nPokud ikona lupu není viditelná, ukazatel může použít jinou ikonu",
+
+    "ehi_shared_menu" : "Sdílené nastavení pro Sledovače a Ukazatele",
+    "ehi_shared_menu_desc" : "",
+
+    "ehi_shared_loot_counter" : "Počet lupu",
+    
     "ehi_buffs_menu" : "Buffy",
     "ehi_buffs_menu_desc" : "",
 
@@ -727,6 +735,12 @@
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "Nastavuje jak formátovat buff Berserker, jak formátovat poškození zbraní či melee zbraní\n\nNásobitel: 1.4x 2.6x\n\nProcenta: 40% 160%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "Násobitel",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "Procenta",
+    "ehi_buffs_skills_fugitive_berserker_text_format" : "Berserker Text Format",
+    "ehi_buffs_skills_fugitive_berserker_text_format_desc" : "Nastavuje co za text zobrazit v buffu Berserker",
+    "ehi_buffs_skills_fugitive_berserker_text_format_1" : "Poškození zbraní | Poškození melee / pily",
+    "ehi_buffs_skills_fugitive_berserker_text_format_2" : "Poškození melee / pily | Poškození zbraní",
+    "ehi_buffs_skills_fugitive_berserker_text_format_3" : "Poškození zbraní",
+    "ehi_buffs_skills_fugitive_berserker_text_format_4" : "Poškození melee / pily",
     "ehi_buffs_skills_fugitive_berserker_persistent" : "Neschovávat Berserker",
     "ehi_buffs_skills_fugitive_berserker_persistent_desc" : "Buff zůstane na obrazovce, když je hodnota menší než minimální hodnota k aktivaci",
 
@@ -754,6 +768,8 @@
     "ehi_buffs_perks_anarchist" : "Anarchist / Armorer",
     "ehi_buffs_perks_anarchist_desc" : "Zobrazuje buffy a jejich dobu trvání v perku Anarchist / Armorer",
     "ehi_buffs_perks_anarchist_continuous_armor_regen" : "Průběžná regenerace armoru",
+    "ehi_buffs_perks_anarchist_persistent_continuous_armor_regen" : "Neschovávat průběžnou regeneraci armoru",
+    "ehi_buffs_perks_anarchist_persistent_continuous_armor_regen_desc" : "Buff zůstane na obrazovce, když skončí odpočet",
     "ehi_buffs_perks_anarchist_immunity" : "Imunita vůči utržení poškození",
     "ehi_buffs_perks_anarchist_immunity_cooldown" : "Reaktivace imunity",
     "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown" : "Udělování poškození - Reaktivace regenerace armoru",

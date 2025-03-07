@@ -25,4 +25,4 @@ local tbl =
     [EHI:GetInstanceUnitID(100037, 6750)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 6750) }
 }
 EHI:UpdateUnits(tbl)
-EHI:ShowLootCounter({ max = 5 })
+EHI:ShowLootCounter({ max = 5 }, { element = EHI:GetInstanceElementID(100010, 6500) })

@@ -222,7 +222,7 @@ end
 ---@param key string
 ---@param unit UnitEnemy
 function EHIMinionTracker:MinionDamaged(key, unit)
-    local minion_text = self._minion_health[key]
+    local minion_text = self._minion_health and self._minion_health[key]
     if minion_text then
         local percent = unit:character_damage():health_ratio()
         minion_text:set_text(string.format("%d%%", self._parent_class:RoundChanceNumber(percent)))

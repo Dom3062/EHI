@@ -61,7 +61,7 @@ if EHI.IsHost then
             [500001] = SafeTriggers, -- mkp continent
             [501562] = SafeTriggers -- mkp continent
         }
-    })
+    }, { element = { EHI:GetInstanceElementID(100037, 4650), EHI:GetInstanceElementID(100037, 4850) }, present_timer = 0 })
 else
     ---@param self EHIManager
     ---@param trigger ElementTrigger
@@ -104,6 +104,7 @@ else
     triggers[100035] = { time = 4 + 30 + 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
     triggers[101630] = { time = 30 + 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
+    EHI:ShowLootCounterWaypoint({ element = { EHI:GetInstanceElementID(100037, 4650), EHI:GetInstanceElementID(100037, 4850) }, present_timer = 0 })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }

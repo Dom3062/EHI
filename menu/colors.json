@@ -64,60 +64,64 @@
             "size": 20
         },
         {
-            "type": "color_select",
-            "id": "ehi_colors_warning_choice",
-            "title": "ehi_colors_warning",
-            "description": "ehi_colors_warning_desc",
-            "value": "warning",
-            "default_value": [255, 0, 0],
-            "callback": "SetColor",
-            "callback_arguments": ["warning", "tracker_waypoint"],
-            "color_type" : "tracker_waypoint",
-            "setting_value": "colors",
-            "ehi_ver" : 145
+            "table" : [
+                {
+                    "type": "color_select",
+                    "id": "ehi_colors_warning_choice",
+                    "title": "ehi_colors_warning",
+                    "description": "ehi_colors_warning_desc",
+                    "value": "warning",
+                    "default_value": [255, 0, 0],
+                    "callback": "SetColor",
+                    "callback_arguments": ["warning", "tracker_waypoint"],
+                    "color_type" : "tracker_waypoint",
+                    "setting_value": "colors",
+                    "ehi_ver" : 145
+                },
+                {
+                    "type": "color_select",
+                    "id": "ehi_colors_completion_choice",
+                    "title": "ehi_colors_completion",
+                    "description": "ehi_colors_completion_desc",
+                    "value": "completion",
+                    "default_value": [0, 255, 0],
+                    "callback": "SetColor",
+                    "callback_arguments": ["completion", "tracker_waypoint"],
+                    "color_type" : "tracker_waypoint",
+                    "setting_value": "colors",
+                    "ehi_ver" : 145
+                }
+            ]
         },
         {
-            "type": "color_select",
-            "id": "ehi_colors_completion_choice",
-            "title": "ehi_colors_completion",
-            "description": "ehi_colors_completion_desc",
-            "value": "completion",
-            "default_value": [0, 255, 0],
-            "callback": "SetColor",
-            "callback_arguments": ["completion", "tracker_waypoint"],
-            "color_type" : "tracker_waypoint",
-            "setting_value": "colors",
-            "ehi_ver" : 145
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
-        {
-            "type": "color_select",
-            "id": "ehi_colors_sniper_chance_choice",
-            "title": "ehi_colors_sniper_chance",
-            "description": "ehi_colors_sniper_chance_desc",
-            "value": "sniper_chance",
-            "default_value": [0, 255, 255],
-            "callback": "SetSniperChanceColor",
-            "callback_arguments": ["sniper_chance", "tracker_waypoint"],
-            "color_type" : "tracker_waypoint",
-            "setting_value": "colors",
-            "ehi_ver" : 258
-        },
-        {
-            "type": "color_select",
-            "id": "ehi_colors_sniper_count_choice",
-            "title": "ehi_colors_sniper_count",
-            "description": "ehi_colors_sniper_count_desc",
-            "value": "sniper_count",
-            "default_value": [255, 165, 0],
-            "callback": "SetSniperCountColor",
-            "callback_arguments": ["sniper_count", "tracker_waypoint"],
-            "color_type" : "tracker_waypoint",
-            "setting_value": "colors",
-            "ehi_ver" : 258
+            "table" : [
+                {
+                    "type": "color_select",
+                    "id": "ehi_colors_sniper_chance_choice",
+                    "title": "ehi_colors_sniper_chance",
+                    "description": "ehi_colors_sniper_chance_desc",
+                    "value": "sniper_chance",
+                    "default_value": [0, 255, 255],
+                    "callback": "SetSniperChanceColor",
+                    "callback_arguments": ["sniper_chance", "tracker_waypoint"],
+                    "color_type" : "tracker_waypoint",
+                    "setting_value": "colors",
+                    "ehi_ver" : 258
+                },
+                {
+                    "type": "color_select",
+                    "id": "ehi_colors_sniper_count_choice",
+                    "title": "ehi_colors_sniper_count",
+                    "description": "ehi_colors_sniper_count_desc",
+                    "value": "sniper_count",
+                    "default_value": [255, 165, 0],
+                    "callback": "SetSniperCountColor",
+                    "callback_arguments": ["sniper_count", "tracker_waypoint"],
+                    "color_type" : "tracker_waypoint",
+                    "setting_value": "colors",
+                    "ehi_ver" : 258
+                }
+            ]
         },
         {
             "type": "divider",
@@ -249,9 +253,9 @@
         },
         {
             "type": "color_select",
-            "id": "ehi_colors_trophy_choice",
-            "title": "ehi_colors_trophy",
-            "description": "ehi_colors_trophy_desc",
+            "id": "ehi_colors_bag_contour_body_choice",
+            "title": "ehi_colors_bag_contour_body",
+            "description": "ehi_colors_bag_contour_body_desc",
             "value": "body",
             "default_value": [20, 80, 100],
             "callback": "SetColor",

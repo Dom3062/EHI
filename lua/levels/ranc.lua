@@ -123,7 +123,7 @@ if EHI:IsLootCounterVisible() then
             client_from_start = true
         })
         managers.ehi_loot:SyncSecuredLoot()
-    end, 5, function(self)
+    end, { element = { 100233, 100008, 100020 } }, 5, function(self)
         self:Trigger(103097)
     end, true)
 end

@@ -74,12 +74,12 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100446] = EHI:AddSniperSpawnedPopup(true, true)
 end
 if EHI:IsLootCounterVisible() then
-    other[103293] = EHI:AddCustomCode(function(self)
+    other[103293] = EHI:AddLootCounter3(function(self, ...)
         local count = self:CountInteractionAvailable("money_wrap")
         if count > 0 then
             EHI:ShowLootCounterNoChecks({ max = count, client_from_start = true })
         end
-    end, true)
+    end, { element = { 103525, 103532, 104721 } }, true)
 end
 EHI:SetMissionDoorData({
     -- Vault Doors

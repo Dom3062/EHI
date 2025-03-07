@@ -29,8 +29,8 @@ local instances =
     },
     ["levels/instances/unique/hox_breakout_road001/world"] =
     {
-        [100000] = { time = 10, id = "hox_1_MovePoliceVehicle", icons = { Icon.Wait }, hint = Hints.hox_1_VehicleMove },
-        [100056] = { time = 10, id = "hox_1_MoveSWATVan", icons = { Icon.Wait }, hint = Hints.hox_1_VehicleMove }
+        [100000] = { time = 10, id = "hox_1_MovePoliceVehicle", icons = { Icon.Wait }, hint = Hints.hox_1_VehicleMove, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100001 } },
+        [100056] = { time = 10, id = "hox_1_MoveSWATVan", icons = { Icon.Wait }, hint = Hints.hox_1_VehicleMove, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100033 } }
     },
     ["levels/instances/unique/holly_2/heli_c4_drop/world"] =
     {
@@ -631,6 +631,17 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                     new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
                 end
                 if trigger.waypoint then
+                    if trigger.waypoint.data_from_element_and_remove_vanilla_waypoint then
+                        local wp_id = EHI:GetInstanceElementID(trigger.waypoint.data_from_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
+                        new_trigger.waypoint.data_from_element = wp_id
+                        new_trigger.waypoint.remove_vanilla_waypoint = wp_id
+                        new_trigger.waypoint.data_from_element_and_remove_vanilla_waypoint = nil
+                        defer_loading_waypoints = true
+                    end
+                    if trigger.waypoint.data_from_element then
+                        new_trigger.waypoint.data_from_element = EHI:GetInstanceElementID(trigger.waypoint.data_from_element, start_index, continent_data.base_id)
+                        defer_loading_waypoints = true
+                    end
                     if trigger.waypoint.position_from_element_and_remove_vanilla_waypoint then
                         local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_from_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
                         new_trigger.waypoint.position_from_element = wp_id

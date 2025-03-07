@@ -628,6 +628,14 @@
     "ehi_show_waypoints_ecmjammer" : "Show Waypoints for ECM Jammer",
     "ehi_show_waypoints_ecmjammer_desc" : "Shows a waypoint on active ECM Jammer",
 
+    "ehi_show_waypoints_loot_counter" : "Show Waypoints for Loot Counter",
+    "ehi_show_waypoints_loot_counter_desc" : "Shows a waypoint on active loot area\n\nThis option replaces vanilla loot area waypoint\nIf the loot icon is not visible, waypoint may use a different icon",
+
+    "ehi_shared_menu" : "Shared options between Trackers and Waypoints",
+    "ehi_shared_menu_desc" : "",
+
+    "ehi_shared_loot_counter" : "Loot Counter",
+
     "ehi_buffs_menu" : "Buffs",
     "ehi_buffs_menu_desc" : "",
 
@@ -727,6 +735,12 @@
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "Sets how to format Berserker buff, both ranged damage and melee damage\n\nMultiplier: 1.4x 2.6x\n\nPercent: 140% 260%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "Multiplier",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "Percent",
+    "ehi_buffs_skills_fugitive_berserker_text_format" : "Berserker Text Format",
+    "ehi_buffs_skills_fugitive_berserker_text_format_desc" : "Sets what text to show in Berserker buff",
+    "ehi_buffs_skills_fugitive_berserker_text_format_1" : "Weapon Damage | Melee / Saw Damage",
+    "ehi_buffs_skills_fugitive_berserker_text_format_2" : "Melee / Saw Damage | Weapon Damage",
+    "ehi_buffs_skills_fugitive_berserker_text_format_3" : "Weapon Damage",
+    "ehi_buffs_skills_fugitive_berserker_text_format_4" : "Melee / Saw Damage",
     "ehi_buffs_skills_fugitive_berserker_persistent" : "Persistent Berserker",
     "ehi_buffs_skills_fugitive_berserker_persistent_desc" : "'Berserker' gauge will stay on your screen when the value is lower than minimum value to activate the skill",
 
@@ -754,6 +768,8 @@
     "ehi_buffs_perks_anarchist" : "Anarchist / Armorer",
     "ehi_buffs_perks_anarchist_desc" : "Shows buffs and cooldowns in Anarchist / Armorer perk deck",
     "ehi_buffs_perks_anarchist_continuous_armor_regen" : "Continuous Armor Regen",
+    "ehi_buffs_perks_anarchist_persistent_continuous_armor_regen" : "Persistent Continuous Armor Regen",
+    "ehi_buffs_perks_anarchist_persistent_continuous_armor_regen_desc" : "Buff will stay on your screen when the timer hits 0",
     "ehi_buffs_perks_anarchist_immunity" : "Damage Immunity",
     "ehi_buffs_perks_anarchist_immunity_cooldown" : "Damage Immunity Cooldown",
     "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown" : "Dealing Damage - Armor Regen Cooldown",

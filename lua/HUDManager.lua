@@ -26,7 +26,7 @@ local original =
 ---@field show_hint fun(self: self, params: table)
 ---@field make_fine_text fun(self: self, text: PanelText)
 
----@param id string
+---@param id number|string
 ---@param params WaypointInitData
 ---@return Waypoint?
 function HUDManager:AddEHIWaypoint(id, params)
@@ -73,9 +73,10 @@ function HUDManager:SoftRemoveWaypoint2(id)
 end
 
 ---@param id number
-function HUDManager:RestoreWaypoint(id)
+---@param no_add boolean?
+function HUDManager:RestoreWaypoint(id, no_add)
     local wp_data = table.remove_key(self._hud.stored_waypoints, id)
-    if wp_data then
+    if wp_data and not no_add then
         self:add_waypoint(id, wp_data)
     end
     if self._hud.ehi_removed_waypoints then
@@ -125,6 +126,7 @@ end
 function HUDManager:load(data, ...)
     local state = data.HUDManager
     managers.ehi_assault:SetCurrentAssaultNumber(state.assault_number or 1, state.in_assault)
+    managers.ehi_loot:pre_load(state.waypoints)
     original.load(self, data, ...)
     for id, _ in pairs(self._hud.waypoints or {}) do ---@cast id -string
         if EHI._cache.IgnoreWaypoints[id] then

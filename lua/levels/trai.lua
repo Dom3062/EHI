@@ -60,7 +60,7 @@ if EHI:IsMayhemOrAbove() then
     bag_multiplier = 3
 end
 local max_bags = required_bags + ((6 * bag_multiplier) + 8) -- (4 secondary wagons with 2 money bags); total 5 wagons, one is disabled
-EHI:ShowLootCounter({ max = max_bags })
+EHI:ShowLootCounter({ max = max_bags }, { element = { 102037 } })
 local total_xp_override =
 {
     params =

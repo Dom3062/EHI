@@ -9,7 +9,7 @@ EHI.Manager:ParseTriggers({
     other = other
 })
 
-EHI:ShowLootCounter({ max = 10 })
+EHI:ShowLootCounter({ max = 10 }, { element = EHI:GetInstanceElementID(100010, 2500) })
 ---@param unit_id number
 ---@param unit_data UnitUpdateDefinition
 ---@param unit UnitTimer

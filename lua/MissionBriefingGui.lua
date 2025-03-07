@@ -426,7 +426,7 @@ function XPBreakdownPanel:ProcessBreakdown()
                         local times = data.times or 1
                         total_xp.base = total_xp.base + (amount * times)
                     end
-                    if data.increase_escape_chance then
+                    if data.increase_escape_chance and data.increase_escape_chance > 0 then
                         self:make_fine_text(text)
                         local car = self._panel:bitmap({
                             blend_mode = "add",

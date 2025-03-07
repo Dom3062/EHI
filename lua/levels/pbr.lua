@@ -90,7 +90,8 @@ EHI:ShowAchievementLootCounter({
     {
         [EHI:GetInstanceElementID(100041, 20050)] = { special_function = SF.FinalizeAchievement }
     },
-    add_to_counter = true
+    add_to_counter = true,
+    waypoint_loot_counter = { element = EHI:GetInstanceElementID(100013, 20050) }
 })
 
 EHI:AddXPBreakdown({

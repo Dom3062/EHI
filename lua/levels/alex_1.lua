@@ -119,7 +119,8 @@ EHI:ShowAchievementLootCounter({
     add_to_counter = true,
     show_loot_counter = true,
     loot_counter_on_fail = true,
-    difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+    difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
+    waypoint_loot_counter = { element = 101454 }
 })
 if EHI:IsEscapeChanceEnabled() then
     other[101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
@@ -144,13 +145,13 @@ local min_xp =
     rats_lab_exploded = true
 }
 local lab_explode_increase_escape = 70
-if EHI:IsMayhemOrAbove() then
+if EHI:IsMayhemOrAbove() then -- On Mayhem or above, blowing up the lab triggers PONR with 10s and whole map is on fire, plus the escape vehicle never arrives
     obj1_xp = 0
     min_xp =
     {
         rats_3_bags_cooked = true
     }
-    lab_explode_increase_escape = nil ---@diagnostic disable-line
+    lab_explode_increase_escape = 0
 end
 EHI:AddXPBreakdown({
     objectives =

@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("ElementTerminateAssault") or not EHI:IsAssaultTrackerEnabled() then
     return
 end

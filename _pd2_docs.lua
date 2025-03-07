@@ -830,6 +830,8 @@ _G.AmmoBagInteractionExt = {}
 ---@field _materials U_Material[]
 ---@field _add_string_macros fun(self: self, macros: table<string, string>)
 ---@field active fun(self: self): boolean
+---@field disabled fun(self: self): boolean
+---@field set_active fun(self: self, active: boolean, sync: boolean?)
 _G.BaseInteractionExt = {}
 ---@class BlackMarketGui
 _G.BlackMarketGui = {}
@@ -857,7 +859,22 @@ _G.CoreWorldInstanceManager = {}
 ---@class CivilianDamage
 _G.CivilianDamage = {}
 ---@class CopDamage
+---@field _all_event_types string[]
 ---@field _dead boolean
+---@field _health number
+---@field _HEALTH_INIT number
+---@field _health_max number
+---@field _ON_STUN_ACCURACY_DECREASE number
+---@field _ON_STUN_ACCURACY_DECREASE_TIME number
+---@field _unit UnitEnemy
+---@field add_listener fun(self: self, key: string, events: string|string[]?, clbk: function) Adds listener to the unit itself
+---@field dead fun(self: self): boolean
+---@field health_ratio fun(self: self): number
+---@field immortal boolean
+---@field is_civilian fun(type: string): boolean
+---@field register_listener fun(key: string, event_types: string|string[], clbk: function) Adds listener to all units
+---@field remove_listener fun(self: self, key: string) Removes listener from the unit itself
+---@field unregister_listener fun(key: string) Removes listener from all units
 _G.CopDamage = {}
 ---@class Drill
 _G.Drill = {}
@@ -874,6 +891,7 @@ _G.ElementJobValue = {}
 ---@class ElementWaypoint : MissionScriptElement
 ---@field super MissionScriptElement
 ---@field _values ElementWaypoint._values
+---@field operation_remove fun(self: self)
 _G.ElementWaypoint = {}
 ---@class EventListenerHolder
 ---@field new fun(self: self): self
@@ -976,6 +994,15 @@ _G.HUDHeistTimer = {}
 ---@class ObjectInteractionManager
 ---@field _interactive_units UnitWithInteraction[]
 _G.ObjectInteractionManager = {}
+---@class LocalizationManager
+---@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string
+---@field get_default_macro fun(self: self, macro: string): string
+---@field exists fun(self: self, string_id: string): boolean SuperBLT only
+---@field text fun(self: self, string_id: string, macros: table?): string
+---@field to_upper_text fun(self: self, string_id: string, macros: table?): string
+---@field _custom_localizations table<string, string> SuperBLT
+---@field _text_macroize fun(self: self, text: string, macros: table<string, any>?): string
+_G.LocalizationManager = {}
 ---@class MissionAssetsManager
 _G.MissionAssetsManager = {}
 ---@class MissionBriefingGui
@@ -1027,10 +1054,11 @@ _G.SkirmishTweakData = {}
 ---@field session_hit_accuracy fun(self: self): number
 ---@field special_unit_ids string[]
 ---@field started_session_from_beginning fun(self: self): boolean
+_G.StatisticsManager = {}
 ---@class SmokeScreenEffect
+---@field _mine boolean
 ---@field is_in_smoke fun(self: self, unit: UnitPlayer): boolean, string?
 _G.SmokeScreenEffect = {}
-_G.StatisticsManager = {}
 ---@class TeamAIBase : CopBase
 ---@field _loadout { skill: string?, ability: string? }?
 ---@field _unit UnitTeamAI
@@ -1226,7 +1254,7 @@ end
 ---@field value fun(self: self, value: string): any
 ---@field id fun(self: self): number
 ---@field editor_name fun(self: self): string
----@field on_executed function
+---@field on_executed fun(self: self, instigator: Unit?, alternative: string?, skip_execute_on_executed: boolean?, sync_id_from: number?)
 ---@field _is_inside fun(self: self, position: Vector3): boolean `ElementAreaReportTrigger `
 ---@field _values_ok fun(self: self): boolean `ElementStopwatchFilter`
 ---@field _values MissionScriptElement._values
@@ -1656,23 +1684,6 @@ end
 ---@field is_hostage fun(self: self): boolean
 ---@field sync_converted fun(self: self): boolean
 
----@class CopDamage
----@field _all_event_types string[]
----@field _health number
----@field _HEALTH_INIT number
----@field _health_max number
----@field _ON_STUN_ACCURACY_DECREASE number
----@field _ON_STUN_ACCURACY_DECREASE_TIME number
----@field _unit UnitEnemy
----@field add_listener fun(self: self, key: string, events: string|string[]?, clbk: function) Adds listener to the unit itself
----@field dead fun(self: self): boolean
----@field health_ratio fun(self: self): number
----@field immortal boolean
----@field is_civilian fun(type: string): boolean
----@field register_listener fun(key: string, event_types: string|string[], clbk: function) Adds listener to all units
----@field remove_listener fun(self: self, key: string)
----@field unregister_listener fun(key: string)
-
 ---@class CopDamage.AttackData
 ---@field attacker_unit UnitPlayer|UnitTeamAI
 ---@field col_ray CopDamage.AttackData.CollisionRay?
@@ -1822,13 +1833,6 @@ end
 ---@class UnitAnimStateMachine
 ---@field segment_state fun(self: self, state: Idstring): Idstring
 
----@class LocalizationManager
----@field btn_macro fun(self: self, button: string, to_upper: boolean?, nil_if_empty: boolean?): string
----@field get_default_macro fun(self: self, macro: string): string
----@field exists fun(self: self, string_id: string): boolean SuperBLT only
----@field text fun(self: self, string_id: string, macros: table?): string
----@field to_upper_text fun(self: self, string_id: string, macros: table?): string
-
 ---@class Workspace
 ---@field show fun(self: self)
 ---@field hide fun(self: self)
@@ -1883,6 +1887,7 @@ end
 ---@field show fun(self: self)
 ---@field hide fun(self: self)
 ---@field name fun(self: self): string
+---@field world_x fun(self: self) Returns X where object really is
 
 ---@class PanelBaseObject_Params
 ---@field name string

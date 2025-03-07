@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("ElementSpecialObjective") or not EHI:GetTrackerOption("show_captain_spawn_chance") then
     return
 end

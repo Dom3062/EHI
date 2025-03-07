@@ -41,7 +41,7 @@
             "title": "ehi_buffs_perks_anarchist",
             "description" : "ehi_buffs_perks_anarchist_desc",
             "next_menu" : "ehi_buffs_perks_anarchist_menu",
-            "ehi_ver" : 204
+            "ehi_ver" : 314
         },
         {
             "type": "button",

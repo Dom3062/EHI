@@ -62,7 +62,7 @@ if EHI:IsLootCounterVisible() then
             self._cache.CreateCounter = true
         end
         self._loot:IncreaseLootCounterProgressMax()
-    end)
+    end, { element = { 102121, 102125, 102140 } })
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102110] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102120 } } -- Heli

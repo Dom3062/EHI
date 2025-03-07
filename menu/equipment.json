@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_equipment_menu",
-    "parent_menu" : "ehi_trackers_menu",
+    "parent_menu" : "ehi_trackers_2_menu",
     "title": "ehi_equipment_menu",
     "focus_changed_callback": "fcc_equipment_tracker_menu",
     "items": [

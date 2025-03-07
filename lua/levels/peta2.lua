@@ -56,13 +56,13 @@ local achievements =
         {
             [100002] = { max = (EHI:IsMayhemOrAbove() and 14 or 12), class = TT.Achievement.Progress, show_finish_after_reaching_target = true },
             [102095] = EHI:AddCustomCode(function(self)
-                self._cache.IncreaseEnabled = true
+                self._cache.peta_5_IncreaseEnabled = true
             end),
             [102098] = EHI:AddCustomCode(function(self)
-                self._cache.IncreaseEnabled = false
+                self._cache.peta_5_IncreaseEnabled = false
             end),
             [100716] = EHI:AddCustomCode(function(self)
-                if self._cache.IncreaseEnabled then
+                if self._cache.peta_5_IncreaseEnabled then
                     self._trackers:IncreaseProgress("peta_5")
                 end
             end),

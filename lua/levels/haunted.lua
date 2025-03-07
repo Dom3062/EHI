@@ -6,4 +6,4 @@ EHI:AddXPBreakdown({
     },
     no_total_xp = true
 })
-EHI:ShowLootCounter({ max = 4 })
+EHI:ShowLootCounter({ max = 4 }, { element = 102208 })

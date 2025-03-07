@@ -29,8 +29,7 @@ end
 function SentryGunMovement:Preload()
     if self.__ehi_preloaded then
         return
-    end
-    if show_tracker then
+    elseif show_tracker then
         if self._tweak.AUTO_RELOAD and managers.ehi_tracker:CallFunction2("EnemySentryGunReload", "AddUnit") then
             managers.ehi_tracker:PreloadTracker({
                 id = "EnemySentryGunReload",

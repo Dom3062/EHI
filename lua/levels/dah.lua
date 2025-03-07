@@ -81,17 +81,17 @@ EHI.Manager:ParseTriggers({
     sync_triggers = { element = element_sync_triggers }
 })
 
-local DisableWaypoints =
-{
+EHI:DisableTimerWaypoints({
     [101368] = true -- Drill waypoint for vault with red diamond
-}
-EHI:DisableTimerWaypoints(DisableWaypoints)
+})
 
 EHI:ShowLootCounter({
     max = 8,
     triggers =
     {
-        [101019] = { special_function = SF.IncreaseProgressMax } -- Red Diamond
+        [101019] = EHI:AddCustomCode(function(self)
+            self._loot:IncreaseLootCounterProgressMax()
+        end) -- Red Diamond
     },
     load_sync = function(self)
         -- Red Diamond spawns on OVK or above only
@@ -100,7 +100,7 @@ EHI:ShowLootCounter({
         end
         self._loot:SyncSecuredLoot()
     end
-})
+}, { element = 102960 })
 local loot, loot_all
 if OVKorAbove then
     loot =
@@ -167,9 +167,7 @@ local xp =
 EHI:AddXPBreakdown(xp)
 if EHI.IsHost then
     dah_laptop_codes = nil ---@diagnostic disable-line
-    return
-end
-if EHI.Manager._SHOW_MISSION_TRIGGERS then
+elseif EHI.Manager._SHOW_MISSION_TRIGGERS then
     local bg = Idstring("g_code_screen"):key()
     local codes = {}
     for color, _ in pairs(dah_laptop_codes) do

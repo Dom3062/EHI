@@ -1,3 +1,97 @@
+---@class EHILootTrackerNew : EHITracker
+---@field super EHITracker
+EHILootTrackerNew = class(EHITracker)
+EHILootTrackerNew.update = EHILootTrackerNew.update_fade
+EHILootTrackerNew._forced_hint_text = "loot_counter"
+EHILootTrackerNew._forced_icons = { EHI.Icons.Loot }
+EHILootTrackerNew._needs_update = false
+function EHILootTrackerNew:post_init(params)
+    if params.max_random > 0 and params.unknown_random then
+        self:IncreaseTrackerSize()
+    end
+    if params.max_xp_bags > 0 then
+        self:SetTextColor(Color.yellow)
+    elseif params.max == 0 and params.max_random > 0 then
+        self:SetTextColor(Color.green)
+    end
+end
+
+---@param animate boolean?
+function EHILootTrackerNew:IncreaseTrackerSize(animate)
+    if self.__tracker_size_increased then
+        return
+    end
+    self.__tracker_size_increased = true
+    if animate then
+        self:SetBGSize(self._bg_box:w() / 2, "add", true)
+        local new_w = self._bg_box:w()
+        local new_panel_w = self:GetTrackerSize()
+        self._text:set_w(new_w)
+        self:AnimIconsX()
+        self:AnimatePanelWAndRefresh(new_panel_w)
+        self:ChangeTrackerWidth(new_panel_w)
+        self:AnimateAdjustHintX(self._default_bg_size_half)
+    else
+        self:SetBGSize(self._bg_box:w() / 2, "add")
+        self._text:set_w(self._bg_box:w())
+        self:SetAndFitTheText()
+        self:AdjustHintX(self._default_bg_size_half)
+    end
+end
+
+---@param animate boolean?
+function EHILootTrackerNew:DecreaseTrackerSize(animate)
+    if not self.__tracker_size_increased then
+        return
+    end
+    self.__tracker_size_increased = nil
+    if animate then
+        self:SetBGSize(self._default_bg_size, "set", true)
+        local new_w = self._bg_box:w()
+        local new_panel_w = self:GetTrackerSize()
+        self._text:set_w(new_w)
+        self:AnimIconsX()
+        self:AnimatePanelWAndRefresh(new_panel_w)
+        self:ChangeTrackerWidth(new_panel_w)
+        self:AnimateAdjustHintX(-self._default_bg_size_half)
+    else
+        self:SetBGSize(self._default_bg_size, "set")
+        self._text:set_w(self._bg_box:w())
+        self:SetAndFitTheText()
+        self:AdjustHintX(-self._default_bg_size_half)
+    end
+end
+
+---@param text string
+---@param silent_update boolean?
+function EHILootTrackerNew:SetText(text, silent_update)
+    self:SetAndFitTheText(text)
+    if not silent_update then
+        self:AnimateBG()
+    end
+end
+
+---@param state boolean
+function EHILootTrackerNew:UpdateUnknownLoot(state)
+    if state then
+        self:IncreaseTrackerSize(true)
+    else
+        self:DecreaseTrackerSize(true)
+    end
+end
+
+---@param random_loot_present boolean
+function EHILootTrackerNew:SetCompleted(random_loot_present)
+    self:SetTextColor(Color.green)
+    if not random_loot_present then
+        self:AddTrackerToUpdate()
+    end
+end
+
+function EHILootTrackerNew:MaxNoLongerLimited()
+    self:SetTextColor(Color.white)
+end
+
 ---@class EHILootTracker : EHIProgressTracker
 ---@field super EHIProgressTracker
 EHILootTracker = class(EHIProgressTracker)

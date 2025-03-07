@@ -9,6 +9,27 @@
     Color animation
 ]]
 
+---@class Menu
+---@field len number?
+---@field panel Panel
+---@field parent_menu string?
+---@field items MenuItem[]
+---@field focus_changed_callback string?
+
+---@class MenuItem
+---@field id string
+---@field default_value any
+---@field enabled boolean
+---@field panel Panel
+---@field parent (string|string[])?
+---@field parent_func_update string?
+---@field size number?
+---@field type string
+---@field value any
+
+---@class MenuMultipleChoicesItem : MenuItem
+---@field items string[]
+
 local EHI = EHI
 local function do_animation(TOTAL_T, clbk)
     local t = 0
@@ -47,6 +68,13 @@ EHIMenu._item_offset =
     multiple_choice = 215,
     color_select = 64
 }
+---@param text PanelText
+EHIMenu._adjust_font_size = function(text)
+    local w = select(3, text:text_rect()) ---@type number
+    if w > text:w() then
+        text:set_font_size(text:font_size() * (text:w() / w))
+    end
+end
 function EHIMenu:init()
     local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
     local _1_33 = 4 / 3
@@ -66,7 +94,7 @@ function EHIMenu:init()
     end
     self._ws:connect_keyboard(Input:keyboard())
     self._mouse_id = managers.mouse_pointer:get_id()
-    self._menus = {}
+    self._menus = {} ---@type table<string, Menu?>
     self._axis_timer = { x = 0, y = 0 }
     self._panel = self._ws:panel():panel({
         layer = 500,
@@ -183,6 +211,7 @@ function EHIMenu:init()
     self:_get_menu_from_json(EHI.MenuPath .. "unlockables.json", EHI.settings.unlockables)
     self:_get_menu_from_json(EHI.MenuPath .. "equipment.json")
     self:_get_menu_from_json(EHI.MenuPath .. "waypoints.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "shared.json")
     self:_get_menu_from_json(EHI.MenuPath .. "buffs.json")
     self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills.json")
     self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/mastermind.json", EHI.settings.buff_option)
@@ -242,7 +271,7 @@ function EHIMenu:CallCallback(item, params)
             local v = params.color_panels
             value = Color(v[1]:child("value"):text(), v[2]:child("value"):text(), v[3]:child("value"):text())
         end
-        local var = item.callback_arguments and type(item.callback_arguments) == "table" or false
+        local var = type(item.callback_arguments) == "table"
         if type(item.callback) == "table" then
             for _, clbk in ipairs(item.callback) do
                 if var then
@@ -444,7 +473,7 @@ function EHIMenu:mouse_press(o, button, x, y)
                 for i, item in ipairs(self._open_choice_dialog.items) do
                     if alive(item) and item:inside(x, y) and item:alpha() == 1 then
                         local parent_item = self._open_choice_dialog.parent_item
-                        parent_item.panel:child("title_selected"):set_text(self._open_choice_dialog.items[i]:text())
+                        parent_item.panel:child("title_selected"):set_text(self._open_choice_dialog.items[i]:text()) ---@diagnostic disable-line
                         parent_item.value = i
                         self:CloseMultipleChoicePanel()
                     end
@@ -457,7 +486,7 @@ function EHIMenu:mouse_press(o, button, x, y)
                 for i, item in ipairs(self._open_color_dialog.items) do
                     if alive(item) and item:inside(x, y) then
                         if item:child("slider") then
-                            self._slider = {slider = item, type = i}
+                            self._slider = { slider = item, type = i }
                             self:SetColorSlider(item, x, i)
                             managers.mouse_pointer:set_pointer_image("grab")
                         elseif item:name() == "reset_panel" then
@@ -493,7 +522,7 @@ function EHIMenu:Confirm()
         for i, item in ipairs(self._open_choice_dialog.items) do
             if alive(item) and self._open_choice_dialog.selected == i then
                 local parent_item = self._open_choice_dialog.parent_item
-                parent_item.panel:child("title_selected"):set_text(self._open_choice_dialog.items[i]:text())
+                parent_item.panel:child("title_selected"):set_text(self._open_choice_dialog.items[i]:text()) ---@diagnostic disable-line
                 parent_item.value = i
                 self:CloseMultipleChoicePanel()
             end
@@ -629,6 +658,9 @@ function EHIMenu:ActivateItem(item, x)
     end
 end
 
+---@param menu Menu
+---@param parent_item_id string
+---@param enabled boolean
 function EHIMenu:SetMenuItemsEnabled(menu, parent_item_id, enabled)
     for _, item in ipairs(menu.items) do
         local parents = item.parent
@@ -692,6 +724,9 @@ function EHIMenu:UnhighlightItem(item)
     self._highlighted_item = nil
 end
 
+---@param accept boolean
+---@param reset boolean
+---@param step boolean
 function EHIMenu:SetLegends(accept, reset, step)
     if self._button_legends then
         local text = managers.localization:text("menu_legend_back", {BTN_BACK = managers.localization:btn_macro("back")})
@@ -797,10 +832,11 @@ function EHIMenu:_get_menu_from_json(path, settings_table)
     end
 end
 
+---@param item table
+---@param menu Menu
+---@param settings_table table
+---@return MenuItem?
 function EHIMenu:_create_item(item, menu, settings_table)
-    if not menu then
-        return
-    end
     local item_type = item.type
     local id = item.id
     local title = item.title
@@ -960,23 +996,20 @@ function EHIMenu:_create_item(item, menu, settings_table)
     return itm
 end
 
+---@param item_table table
+---@param menu Menu
+---@param settings_table table
 function EHIMenu:_create_one_line_items(item_table, menu, settings_table)
-    if not menu then
-        return
-    end
     local n = table.size(item_table)
     local previous_item
     for _, v in ipairs(item_table) do
         local item = self:_create_item(v, menu, settings_table)
         if item then
             item.panel:set_w(item.panel:w() / n)
-            local item_title = item.panel:child("title")
+            local item_title = item.panel:child("title") --[[@as PanelText?]]
             if item_title then
                 item_title:set_w(item.panel:w() - (self._item_offset[item.type] or 0))
-                local w = select(3, item_title:text_rect())
-                if w > item_title:w() then
-                    item_title:set_font_size(item_title:font_size() * (item_title:w() / w))
-                end
+                self._adjust_font_size(item_title)
             end
             if previous_item then
                 item.panel:set_left(previous_item.panel:right())
@@ -989,7 +1022,7 @@ function EHIMenu:_create_one_line_items(item_table, menu, settings_table)
 end
 
 ---@param params table
----@return table
+---@return Menu
 function EHIMenu:_create_menu(params)
     if self._menus[params.menu_id] then
         return self._menus[params.menu_id]
@@ -1022,12 +1055,14 @@ function EHIMenu:_create_menu(params)
     return menu
 end
 
+---@param menu string
+---@param close boolean?
 function EHIMenu:OpenMenu(menu, close)
-    if not self._menus[menu] then
+    local next_menu = self._menus[menu]
+    if not next_menu then
         return
     end
     local prev_menu = self._open_menu
-    local next_menu = self._menus[menu]
     if prev_menu and prev_menu.focus_changed_callback then
         self[prev_menu.focus_changed_callback](self, false, prev_menu.id, menu) -- Ugly focus callback
     end
@@ -1081,6 +1116,9 @@ function EHIMenu:OpenMenu(menu, close)
     end)
 end
 
+---@param menu Menu
+---@param item MenuItem
+---@param total_size number?
 function EHIMenu:AddItemToMenu(menu, item, total_size)
     table.insert(menu.items, item)
     if total_size then
@@ -1090,11 +1128,15 @@ function EHIMenu:AddItemToMenu(menu, item, total_size)
     end
 end
 
+---@param menu Menu
 function EHIMenu:GetLastPosInMenu(menu)
     return menu.len or 50
 end
 
 --Label Items
+---@param menu Menu
+---@param params table
+---@return MenuItem
 function EHIMenu:CreateLabel(menu, params)
     local label_name = params.id or tostring(#menu.items)
     local label_panel = menu.panel:panel({
@@ -1115,10 +1157,7 @@ function EHIMenu:CreateLabel(menu, params)
         vertical = "center",
         layer = 1
     })
-    local w = select(3, title:text_rect())
-    if w > title:w() then
-        title:set_font_size(title:font_size() * (title:w()/w))
-    end
+    self._adjust_font_size(title)
     local label = {
         panel = label_panel,
         id = "label_"..label_name,
@@ -1132,6 +1171,9 @@ function EHIMenu:CreateLabel(menu, params)
 end
 
 --Divider Items
+---@param menu Menu
+---@param params table
+---@return MenuItem
 function EHIMenu:CreateDivider(menu, params)
     local num = #menu.items
     local div = {
@@ -1145,6 +1187,9 @@ function EHIMenu:CreateDivider(menu, params)
 end
 
 --Button Items
+---@param menu Menu
+---@param params table
+---@return MenuItem
 function EHIMenu:CreateButton(menu, params)
     local button_panel = menu.panel:panel({
         name = "button_"..tostring(params.id),
@@ -1169,10 +1214,7 @@ function EHIMenu:CreateButton(menu, params)
         layer = 1,
         color = params.new and Color.yellow or Color.white
     })
-    local w = select(3, title:text_rect())
-    if w > title:w() then
-        title:set_font_size(title:font_size() * (title:w()/w))
-    end
+    self._adjust_font_size(title)
     local button = {
         panel = button_panel,
         id = params.id,
@@ -1191,6 +1233,9 @@ function EHIMenu:CreateButton(menu, params)
 end
 
 --Toggle Items
+---@param menu Menu
+---@param params table
+---@return MenuItem
 function EHIMenu:CreateToggle(menu, params)
     local color = params.new and Color.yellow or Color.white
     local toggle_panel = menu.panel:panel({
@@ -1216,10 +1261,7 @@ function EHIMenu:CreateToggle(menu, params)
         layer = 1,
         color = color
     })
-    local w = select(3, title:text_rect())
-    if w > title:w() then
-        title:set_font_size(title:font_size() * (title:w()/w))
-    end
+    self._adjust_font_size(title)
     local check_bg = toggle_panel:bitmap({
         name = "check_bg",
         texture = "guis/textures/pd2_mod_ehi/menu_atlas",
@@ -1265,6 +1307,9 @@ function EHIMenu:CreateToggle(menu, params)
 end
 
 --Slider Items
+---@param menu Menu
+---@param params table
+---@return MenuItem
 function EHIMenu:CreateSlider(menu, params)
     local color = params.new and Color.yellow or Color.white
     local percentage = (params.value - params.min) / (params.max - params.min)
@@ -1321,10 +1366,7 @@ function EHIMenu:CreateSlider(menu, params)
         layer = 2,
         color = color
     })
-    local w = select(3, title:text_rect())
-    if w > title:w() then
-        title:set_font_size(title:font_size() * (title:w()/w))
-    end
+    self._adjust_font_size(title)
     local slider = {
         panel = slider_panel,
         id = params.id,
@@ -1371,6 +1413,9 @@ function EHIMenu:SetSlider(item, x, add)
 end
 
 --Multiple Choice Items
+---@param menu Menu
+---@param params table
+---@return MenuMultipleChoicesItem
 function EHIMenu:CreateMultipleChoice(menu, params)
     local multiple_panel = menu.panel:panel({
         name = "multiple_choice_"..tostring(params.id),
@@ -1395,10 +1440,7 @@ function EHIMenu:CreateMultipleChoice(menu, params)
         layer = 1,
         color = params.new and Color.yellow or Color.white
     })
-    local w = select(3, title:text_rect())
-    if w > title:w() then
-        title:set_font_size(title:font_size() * (title:w()/w))
-    end
+    self._adjust_font_size(title)
     local title_selected = multiple_panel:text({
         name = "title_selected",
         font_size = 20,
@@ -1429,6 +1471,7 @@ function EHIMenu:CreateMultipleChoice(menu, params)
     return multiple_choice
 end
 
+---@param item MenuMultipleChoicesItem
 function EHIMenu:OpenMultipleChoicePanel(item)
     local choice_dialog = item.panel:parent():panel({
         name = "choice_panel_"..tostring(item.id),
@@ -1487,10 +1530,7 @@ function EHIMenu:OpenMultipleChoicePanel(item)
             layer = 3,
             rotation = 360
         })
-        local w = select(3, title:text_rect())
-        if w > title:w() then
-            title:set_font_size(title:font_size() * (title:w()/w))
-        end
+        self._adjust_font_size(title)
         table.insert(self._open_choice_dialog.items, title)
     end
     choice_dialog:animate(function(o)
@@ -1510,12 +1550,12 @@ end
 function EHIMenu:CloseMultipleChoicePanel()
     self:SetItem(self._open_choice_dialog.parent_item, self._open_choice_dialog.parent_item.value)
     self._open_choice_dialog.panel:stop()
-    self._open_choice_dialog.panel:animate(function(o)
+    self._open_choice_dialog.panel:animate(function(o) ---@param o Panel
         local h = o:h()
         local alpha = o:alpha()
-        local border = o:child("border")
-        local bg = o:child("bg")
-        do_animation(0.1, function (p)
+        local border = o:child("border") ---@cast border -?
+        local bg = o:child("bg") ---@cast bg -?
+        do_animation(0.1, function(p)
             o:set_alpha(math.lerp(alpha, 0, p))
             border:set_h(math.lerp(h, 0, p))
             bg:set_h(border:h() - 4)
@@ -1530,6 +1570,9 @@ function EHIMenu:CloseMultipleChoicePanel()
 end
 
 -- Custom Color Items
+---@param menu Menu
+---@param params table
+---@return MenuItem
 function EHIMenu:CreateColorSelect(menu, params)
     local color_panel = menu.panel:panel({
         name = "color_select_"..tostring(params.id),
@@ -1553,10 +1596,7 @@ function EHIMenu:CreateColorSelect(menu, params)
         vertical = "center",
         layer = 1
     })
-    local w = select(3, title:text_rect())
-    if w > title:w() then
-        title:set_font_size(title:font_size() * (title:w()/w))
-    end
+    self._adjust_font_size(title)
     color_panel:bitmap({
         name = "color_border",
         x = 3,
@@ -1593,6 +1633,7 @@ function EHIMenu:CreateColorSelect(menu, params)
     return color
 end
 
+---@param item MenuItem
 function EHIMenu:OpenColorMenu(item)
     local dialog = item.panel:parent():panel({
         name = "color_panel_"..tostring(item.id),
@@ -1854,11 +1895,11 @@ end
 
 function EHIMenu:CloseColorMenu()
     self._open_color_dialog.panel:stop()
-    self._open_color_dialog.panel:animate(function(o)
+    self._open_color_dialog.panel:animate(function(o) ---@param o Panel
         local h = o:h()
         local alpha = o:alpha()
-        local border = o:child("border")
-        local bg = o:child("bg")
+        local border = o:child("border") ---@cast border -?
+        local bg = o:child("bg") ---@cast bg -?
         do_animation(0.1, function(p)
             o:set_alpha(math.lerp(alpha, 0, p))
             border:set_h(math.lerp(h, 0, p))
@@ -1891,6 +1932,10 @@ function EHIMenu:ResetColorMenu()
     end
 end
 
+function EHIMenu:IsSharedMenuEnabled()
+    return EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission")
+end
+
 function EHIMenu:GetXPEnabledValue()
     return EHI:GetOption("show_gained_xp")
 end
@@ -1909,7 +1954,7 @@ function EHIMenu:UpdateXPDiffEnabled(menu, item)
 end
 
 function EHIMenu:IsAssaultTrackerEnabled()
-    return EHI:IsAssaultTrackerEnabled()
+    return EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker")
 end
 
 function EHIMenu:UpdateAssaultOptions(menu, item)
