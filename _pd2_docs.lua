@@ -1007,6 +1007,9 @@ _G.LocalizationManager = {}
 _G.MissionAssetsManager = {}
 ---@class MissionBriefingGui
 _G.MissionBriefingGui = {}
+---@class MissionBriefingTabItem
+---@field deselect fun()
+_G.MissionBriefingTabItem = {}
 ---@class ModifiersManager
 _G.ModifiersManager = {}
 ---@class MoneyManager

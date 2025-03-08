@@ -68,13 +68,6 @@ local triggers = {
     [100558] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100655 }, hint = Hints.Thermite },
     [100559] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100656 }, hint = Hints.Thermite }
 }
-local IndexToWP =
-{
-    [100] = 101341,
-    [150] = 100589,
-    [250] = 101343,
-    [300] = 101345
-}
 ---@param self EHIManager
 ---@param trigger ElementTrigger
 local function HeliWaterRefillWPAdd(self, trigger)
@@ -107,7 +100,12 @@ local function HeliWaterRefillWPRestore(self, id)
         self._cache.HeliWaterRestoreWP = nil
     end
 end
-for index, element in pairs(IndexToWP) do
+for index, element in pairs({
+    [100] = 101341,
+    [150] = 100589,
+    [250] = 101343,
+    [300] = 101345
+}) do
     triggers[EHI:GetInstanceElementID(100032, index)] = { time = 240, id = "HeliWaterFill", icons = HeliWaterFill, class = TT.Pausable, special_function = SF.UnpauseTrackerIfExists, hint = Hints.crojob3_Water, waypoint_f = HeliWaterRefillWPAdd, element = element }
     triggers[EHI:GetInstanceElementID(100030, index)] = { id = "HeliWaterFill", special_function = SF.PauseTracker }
     triggers[EHI:GetInstanceElementID(100037, index)] = { special_function = SF.Trigger, data = { 1, 2 } }

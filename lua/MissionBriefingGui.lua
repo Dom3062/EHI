@@ -38,7 +38,6 @@ local _panels, _buttons, PlanSelected, PlanMax = nil, nil, 1, 1
 ---@class XPBreakdownButton
 ---@field new fun(self: self, gui: MissionBriefingGui, ws_panel: Panel, string: string, add_string: string?, loc: LocalizationManager, index: number?): self
 local XPBreakdownButton = class()
-XPBreakdownButton.show = function(...) end
 XPBreakdownButton.hide = function(...) end
 XPBreakdownButton.Unselect = MissionBriefingTabItem.deselect
 ---@param gui MissionBriefingGui

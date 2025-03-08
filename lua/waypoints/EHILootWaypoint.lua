@@ -94,7 +94,7 @@ function EHILootWaypoint:DisableWaypointRemoval()
 end
 
 function EHILootWaypoint:delete()
-    while next(self._waypoints) do
+    while self._waypoints and next(self._waypoints) do
         local id, _ = next(self._waypoints) ---@cast id -?
         self:RemoveWaypoint(id)
         self._parent_class._hud:RestoreWaypoint(id)

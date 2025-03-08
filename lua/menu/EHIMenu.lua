@@ -173,8 +173,9 @@ function EHIMenu:init()
             font_size = 23,
             font = tweak_data.menu.pd2_medium_font,
             align = "right",
-            text = managers.localization:text("menu_legend_select", {BTN_UPDATE  = managers.localization:btn_macro("menu_update")}).."    "..managers.localization:text("menu_legend_back", {BTN_BACK = managers.localization:btn_macro("back")})
+            text = ""
         })
+        self:SetLegends(true, true, false)
         self._button_legends:set_right(self._options_panel:right() - 5)
         self._button_legends:set_top(self._options_panel:bottom())
     end
@@ -261,8 +262,8 @@ function EHIMenu:init()
 end
 
 function EHIMenu:CallCallback(item, params)
-    if item.callback then
-        params = params or {}
+    params = params or {}
+    if item.callback and not params.no_call then
         local value = item.value
         if params.to_n then
             value = tonumber(value)
@@ -270,6 +271,9 @@ function EHIMenu:CallCallback(item, params)
         if params.color then
             local v = params.color_panels
             value = Color(v[1]:child("value"):text(), v[2]:child("value"):text(), v[3]:child("value"):text())
+        end
+        if params.color_raw then
+            value = Color(unpack(params.color_raw))
         end
         local var = type(item.callback_arguments) == "table"
         if type(item.callback) == "table" then
@@ -551,13 +555,13 @@ function EHIMenu:MenuDown()
             self._open_choice_dialog.selected = self._open_choice_dialog.selected + 1
         end
     elseif self._open_color_dialog then
-        if self._open_color_dialog.selected < 4 then
+        if self._open_color_dialog.selected < 5 then
             if self._open_color_dialog.selected > 0 then
                 self._open_color_dialog.items[self._open_color_dialog.selected]:child("bg"):set_alpha(0)
             end
             self._open_color_dialog.items[self._open_color_dialog.selected + 1]:child("bg"):set_alpha(0.1)
             self._open_color_dialog.selected = self._open_color_dialog.selected + 1
-            self:SetLegends(self._open_color_dialog.selected == 4, false, self._open_color_dialog.selected < 4)
+            self:SetLegends(math.within(self._open_color_dialog.selected, 4, 5), false, self._open_color_dialog.selected < 4)
         end
     elseif self._open_menu and not self._highlighted_item then
         for i, item in ipairs(self._open_menu.items) do
@@ -600,7 +604,7 @@ function EHIMenu:MenuUp()
             self._open_color_dialog.items[self._open_color_dialog.selected]:child("bg"):set_alpha(0)
             self._open_color_dialog.items[self._open_color_dialog.selected - 1]:child("bg"):set_alpha(0.1)
             self._open_color_dialog.selected = self._open_color_dialog.selected - 1
-            self:SetLegends(false, false, true)
+            self:SetLegends(math.within(self._open_color_dialog.selected, 4, 5), false, self._open_color_dialog.selected < 4)
         end
     elseif self._open_menu and self._highlighted_item then
         local current_num = self._highlighted_item.num + 1
@@ -783,11 +787,12 @@ function EHIMenu:SetItem(item, value, menu)
             item.panel:child("title_selected"):set_text(item.items[value])
             item.value = value
         elseif item.type == "color_select" then
-            value = Color(unpack(value))
+            self:CallCallback(item, { color_raw = value })
+            value = Color(unpack(value)) / 255
             item.panel:child("color"):set_color(value)
             item.value = value
         end
-        self:CallCallback(item, { to_n = item.type == "slider" })
+        self:CallCallback(item, { to_n = item.type == "slider", no_call = item.type == "color_select" })
         if item.is_parent then
             self:SetMenuItemsEnabled(menu, item.id, value)
         end
@@ -1873,6 +1878,7 @@ function EHIMenu:OpenColorMenu(item)
         border:set_h(h)
         bg:set_h(border:h() - 4)
     end)
+    self:SetLegends(false, false, true)
 end
 
 function EHIMenu:SetColorSlider(item, x, type, add)
@@ -1915,6 +1921,7 @@ function EHIMenu:CloseColorMenu()
         self._open_color_dialog.parent_item.panel:child("color"):set_color(c)
         self._open_color_dialog = nil
     end)
+    self:SetLegends(true, true, false)
 end
 
 function EHIMenu:ResetColorMenu()

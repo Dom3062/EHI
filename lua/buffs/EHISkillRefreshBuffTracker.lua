@@ -337,8 +337,8 @@ end
 
 if EHI:GetBuffOption("berserker_format") == 1 then
     function EHIBerserkerBuffTracker:Format()
-        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_damage_multiplier, 0.1) or 1
-        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_damage_multiplier, 0.1) or 1
+        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_damage_multiplier, 0.01) or 1
+        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_melee_damage_multiplier, 0.01) or 1
         return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
     end
 else
