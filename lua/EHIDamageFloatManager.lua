@@ -42,6 +42,13 @@ function EHIDamageFloatManager:new(hud)
             self:update_last()
         end
     end)
+    EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility) ---@param visibility boolean
+        if visibility then
+            self._ws:show()
+        else
+            self._ws:hide()
+        end
+    end)
     if self._post_hook then
         self:_post_hook()
     end

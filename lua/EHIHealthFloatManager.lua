@@ -71,6 +71,13 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             self._player_camera = base._camera_object
             hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
         end)
+        EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility) ---@param visibility boolean
+            if visibility then
+                self._ws:show()
+            else
+                self._ws:hide()
+            end
+        end)
     end
 
     function EHIHealthFloatManager:onResolutionChanged()

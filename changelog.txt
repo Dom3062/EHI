@@ -1,3 +1,6 @@
+r316 (12. 03. 2025):
+Poco Health and Damage Float: Fixed an issue where floats are visible when in-game hud is turned off
+
 r315 (08. 03. 2025):
 Berserker Buff: Made buff more accurate
 Berserker Buff: Fixed melee damage showing weapon damage in multiplier format
