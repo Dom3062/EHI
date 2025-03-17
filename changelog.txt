@@ -1,3 +1,6 @@
+r317 (17. 03. 2025):
+Green Bridge: Fixed a crash as a client on scaffolding
+
 r316 (12. 03. 2025):
 Poco Health and Damage Float: Fixed an issue where floats are visible when in-game hud is turned off
 

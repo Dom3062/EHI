@@ -752,7 +752,7 @@ end
 ---@param time number
 function EHITrackerManager:SetAccurate(id, time)
     local tracker = self:GetTracker(id) --[[@as EHIInaccurateTracker]]
-    if tracker then
+    if tracker and tracker.SetAccurate then
         tracker:SetAccurate(time)
     end
 end
