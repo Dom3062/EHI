@@ -25,6 +25,7 @@ end
 
 ---@param max number
 function EHIProgressTracker:SetProgressMax(max)
+    self._disable_counting = self._progress >= max
     self._max = max
     self._progress_text:set_text(self:FormatProgress())
     self:FitTheText(self._progress_text)

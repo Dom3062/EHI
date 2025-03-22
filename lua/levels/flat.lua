@@ -77,7 +77,7 @@ local other =
     [100290] = EHI:AddAssaultDelay({}) -- 30s
 }
 if EHI:IsLootCounterVisible() then
-    other[102741] = EHI:AddLootCounter3(function(self, ...)
+    other[102741] = EHI:AddLootCounter4(function(self, ...)
         local max = self:CountInteractionAvailable("gen_pku_cocaine")
         EHI:ShowLootCounterNoChecks({ max = max + 1, client_from_start = true })
     end, { element = { 104303, 104306 }, present_timer = 0 })

@@ -38,7 +38,6 @@ end
 ---@param icon string
 ---@param position Vector3
 function EHILootWaypoint:CreateWaypoint(id, icon, position)
-    self._waypoints = self._waypoints or {} ---@type table<number, { gui: PanelText, bitmap: PanelBitmap, arrow: PanelBitmap, bitmap_world: PanelBitmap }>
     local waypoint = self._parent_class:_create_waypoint(id, icon, position, self._present_timers and self._present_timers[id] or self._present_timer)
     if waypoint then
         local data = {}
@@ -52,6 +51,7 @@ function EHILootWaypoint:CreateWaypoint(id, icon, position)
                 object:set_color(self._forced_color)
             end
         end
+        self._waypoints = self._waypoints or {} ---@type table<number, { gui: PanelText, bitmap: PanelBitmap, arrow: PanelBitmap, bitmap_world: PanelBitmap }>
         self._waypoints[id] = data
     end
 end
@@ -64,7 +64,18 @@ function EHILootWaypoint:RemoveWaypoint(id)
     local wp = table.remove_key(self._waypoints or {}, id)
     if wp then
         self._parent_class._hud:remove_waypoint(id)
-        self._parent_class._hud:RestoreWaypoint(id)
+    end
+end
+
+---@param id number
+function EHILootWaypoint:ReplaceWaypoint(id)
+    local wp = table.remove_key(self._waypoints or {}, id)
+    if wp then
+        if self._parent_class._waypoints_to_update[self._id] then -- If the Waypoint is in the point to be deleted (players secured all possible loot bags), just color them to default color again to restore them)
+            for _, object in pairs(wp) do
+                object:set_color(EHILootWaypoint.super._default_color)
+            end
+        end
     end
 end
 
@@ -94,10 +105,10 @@ function EHILootWaypoint:DisableWaypointRemoval()
 end
 
 function EHILootWaypoint:delete()
-    while self._waypoints and next(self._waypoints) do
+    while next(self._waypoints or {}) do
         local id, _ = next(self._waypoints) ---@cast id -?
-        self:RemoveWaypoint(id)
-        self._parent_class._hud:RestoreWaypoint(id)
+        managers.ehi_loot:_restore_waypoint(id)
+        self._waypoints[id] = nil
     end
     self._parent_class:RemoveWaypoint(self._id)
 end

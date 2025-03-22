@@ -244,7 +244,7 @@
                     "description": "ehi_trackers_menu_desc",
                     "next_menu": "ehi_trackers_menu",
                     "parent" : "ehi_show_trackers_choice",
-                    "ehi_ver" : 287
+                    "ehi_ver" : 318
                 }
             ]
         },

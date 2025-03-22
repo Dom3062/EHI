@@ -30,7 +30,7 @@ local triggers = {
             max = 15000,
             icons = { Icon.Money },
             flash_times = 1,
-            hint = "loot_counter",
+            hint = "four_stores",
             class = self.Trackers.NeededValue
         })
         self._loot:AddListener("four_stores", function(loot)
@@ -42,7 +42,7 @@ local triggers = {
         end)
     end), trigger_once = true },
 
-    [103629] = EHI:AddIncomingTurret(540/30, Vector3(0.425327, -3362.29, 254.634))
+    [103629] = EHI:AddIncomingTurret(540/30, Vector3(0.425327, -3362.29, 254.634), nil, nil, _G.ch_settings == nil)
 }
 EHI.Manager:AddLoadSyncFunction(function(self)
     local objective = managers.loot:get_real_total_small_loot_value()
@@ -53,14 +53,12 @@ EHI.Manager:AddLoadSyncFunction(function(self)
     self._trackers:SetTrackerProgress("ObjectiveSteal", objective)
 end)
 
-local CopArrivalDelay = 30 -- Normal
-if EHI:IsDifficulty(EHI.Difficulties.Hard) then
-    CopArrivalDelay = 20
-elseif EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-    CopArrivalDelay = 10
-elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    CopArrivalDelay = 0
-end
+local CopArrivalDelay = EHI:GetValueBasedOnDifficulty({
+    normal = 30,
+    hard = 20,
+    veryhard = 10,
+    overkill_or_above = 0
+})
 local FirstAssaultBreak = 15 + 2.5 + 3 + 2 + 30 + 20
 local other =
 {
@@ -78,12 +76,12 @@ if EHI:IsEscapeChanceEnabled() then
     end)
 end
 if EHI:IsLootCounterVisible() then
-    other[101479] = EHI:AddLootCounter2(function()
+    other[101479] = EHI:AddLootCounter3(function(self)
         EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
+        self._loot:WaypointFunctionCheck() -- Loot bag is present on the map, show the Loot Waypoint once escape is available (overrides default behavior down below); will also work during load sync
     end, { element = { 101006, 103234 }, check_function = function(progress, max)
-        return max > 0
-    end })
-    EHI.Manager:AddLoadSyncFunction(function(self)
+        return false -- Return false because the loot bag is random => to not show Loot Waypoint once escape is available (default behavior)
+    end }, function(self)
         if self:IsMissionElementDisabled(101804) and managers.loot:GetSecuredBagsAmount() == 0 then
             self:Trigger(101479)
         end

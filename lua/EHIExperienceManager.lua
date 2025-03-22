@@ -87,7 +87,11 @@ function EHIExperienceManager:ExperienceInit(xp)
     EHI:AddCallback(EHI.CallbackMessage.GameEnd, Block)
     EHI:AddCallback(EHI.CallbackMessage.GameRestart, Block)
     EHI:AddCallback(EHI.CallbackMessage.InitManagers, callback(self, self, "LoadData"))
-    EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))
+    if _G.ch_settings then
+        EHI:AddOnSpawnedCallback(Block)
+    else
+        EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))
+    end
 end
 
 function EHIExperienceManager:CreateXPTable()
@@ -123,10 +127,11 @@ function EHIExperienceManager:LoadData(managers)
     self._ehi_xp = self._ehi_xp or self:CreateXPTable()
     -- Job
     local job = managers.job
+    local is_current_job_professional = job:is_current_job_professional()
     local difficulty_stars = job:current_difficulty_stars()
     self._ehi_xp.job_stars = job:current_job_stars()
     self._ehi_xp.stealth_bonus = job:get_ghost_bonus()
-    if job:is_current_job_professional() then
+    if is_current_job_professional then
         self._ehi_xp.projob_multiplier = tweak_data:get_value("experience_manager", "pro_job_multiplier") or 1
     end
     local heat = job:get_job_heat_multipliers(job:current_job_id())
@@ -147,6 +152,23 @@ function EHIExperienceManager:LoadData(managers)
     local mutator = managers.mutators
     if mutator:can_mutators_be_active() then
         self._ehi_xp.mutator_xp_reduction = mutator:get_experience_reduction() * -1
+    end
+    if _G.ch_settings then
+        self._ehi_xp.level_id = Global.game_settings.level_id
+        self._ehi_xp.current_difficulty_stars = difficulty_stars
+        local current_job_stage = job:current_stage() or 1
+        self._ehi_xp.current_job_stage = current_job_stage
+        self._ehi_xp.on_last_stage = job:on_last_stage()
+        self._ehi_xp.xp_multiplier = managers.experience:get_contract_difficulty_multiplier(difficulty_stars or 0)
+        self._ehi_xp.difficulty_multiplier = self._ehi_xp.xp_multiplier
+        if is_current_job_professional then
+            self._ehi_xp.prof = true
+            if _G.ch_settings.settings.u24_progress then
+                self._ehi_xp.projob_multiplier = tweak_data:get_value("experience_manager", "pro_day_multiplier", current_job_stage) or 1
+            else
+                self._ehi_xp.projob_multiplier = self._pro_day_multiplier[current_job_stage] or 1
+            end
+        end
     end
 end
 
@@ -378,84 +400,194 @@ function EHIExperienceManager:ShowGainedXP(id, base_xp, xp_gained, xp_set)
     end
 end
 
----@param xp number?
----@param default_xp_if_zero number?
-function EHIExperienceManager:MultiplyXPWithAllBonuses(xp, default_xp_if_zero)
-    if not xp or xp <= 0 then
-        return default_xp_if_zero or 0
+if _G.ch_settings then
+    EHIExperienceManager._pro_day_multiplier =
+    {
+        1.10,
+        1.15,
+        1.35,
+        5.5,
+        7,
+        8.5,
+        10
+    }
+    EHIExperienceManager._days_multiplier =
+    {
+        1,
+        Global.game_settings and Global.game_settings.level_id == "peta2" and 2.35 or 1.3,
+        1.75,
+        4,
+        5,
+        6,
+        7
+    }
+    ---@param xp number?
+    ---@param default_xp_if_zero number?
+    function EHIExperienceManager:MultiplyXPWithAllBonuses(xp, default_xp_if_zero)
+        if not xp or xp <= 0 then
+            return default_xp_if_zero or 0
+        end
+        local job_stars = self._ehi_xp.job_stars
+        local num_winners = self._ehi_xp.alive_players
+        local player_stars = self._ehi_xp.level_to_stars
+        local level_id = self._ehi_xp.level_id
+        local current_job_stage = self._ehi_xp.current_job_stage or 1
+        local days_multiplier = 1 --params.professional and tweak_data:get_value("experience_manager", "pro_day_multiplier", current_job_stage) or tweak_data:get_value("experience_manager", "day_multiplier", current_job_stage)
+        local ghost_multiplier = 1 + (self._ehi_xp.stealth_bonus or 0)
+        local total_stars = math.min(job_stars, player_stars)
+        local contract_xp = 0
+        local total_xp = 0
+        local stage_xp_dissect = 0
+        local job_xp_dissect = 0
+        local level_limit_dissect = 0
+        local risk_dissect = 0
+        local personal_win_dissect = 0
+        local alive_crew_dissect = 0
+        local skill_dissect = 0
+        local base_xp = 0
+        local days_dissect = 0
+        local job_heat_dissect = 0
+        local ghost_dissect = 0
+        local infamy_dissect = 0
+        local extra_bonus_dissect = 0
+        if _G.ch_settings.settings.u24_progress then
+            days_multiplier = self._ehi_xp.prof and tweak_data:get_value("experience_manager", "pro_day_multiplier", current_job_stage) or tweak_data:get_value("experience_manager", "day_multiplier", current_job_stage)
+        else
+            days_multiplier = self._ehi_xp.prof and self._pro_day_multiplier[current_job_stage] or self._days_multiplier[current_job_stage]
+        end
+
+        if self._ehi_xp.on_last_stage then
+            job_xp_dissect = managers.experience:get_job_xp_by_stars(total_stars)
+            level_limit_dissect = level_limit_dissect + managers.experience:get_job_xp_by_stars(job_stars)
+        end
+
+        local static_stage_experience = level_id and tweak_data.levels[level_id].static_experience
+        static_stage_experience = static_stage_experience and static_stage_experience[(self._ehi_xp.current_difficulty_stars or 0) + 1]
+        stage_xp_dissect = static_stage_experience or managers.experience:get_stage_xp_by_stars(total_stars)
+        level_limit_dissect = level_limit_dissect + (static_stage_experience or managers.experience:get_stage_xp_by_stars(job_stars))
+        base_xp = job_xp_dissect + stage_xp_dissect
+
+        days_dissect = math.round(base_xp * days_multiplier - base_xp)
+        if self._ehi_xp.is_level_limited then
+            local diff_in_stars = job_stars - player_stars
+            local days_tweak_multiplier = tweak_data:get_value("experience_manager", "day_multiplier", current_job_stage)
+            local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
+            days_multiplier = (days_multiplier - days_tweak_multiplier) * tweak_multiplier + days_tweak_multiplier
+        end
+
+        level_limit_dissect = math.round(base_xp * days_multiplier - base_xp)
+        level_limit_dissect = math.round(level_limit_dissect - days_dissect)
+        base_xp = base_xp + days_dissect + level_limit_dissect
+        risk_dissect = math.round(base_xp * self._ehi_xp.xp_multiplier)
+        contract_xp = base_xp + risk_dissect
+        if self._ehi_xp.in_custody then
+            local multiplier = tweak_data:get_value("experience_manager", "in_custody_multiplier") or 1
+            personal_win_dissect = math.round(contract_xp * multiplier - contract_xp)
+            contract_xp = contract_xp + personal_win_dissect
+        end
+
+        total_xp = contract_xp
+        local total_contract_xp = total_xp
+        local multiplier = self._ehi_xp.skill_xp_multiplier or 1
+        skill_dissect = math.round(total_contract_xp * multiplier - total_contract_xp)
+        total_xp = total_xp + skill_dissect
+        local bonus_xp = self._ehi_xp.infamy_bonus
+        infamy_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+        total_xp = total_xp + infamy_dissect
+        bonus_xp = tweak_data:get_value("experience_manager", "limited_bonus_multiplier") or 1
+        extra_bonus_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+        total_xp = total_xp + extra_bonus_dissect
+        local num_players_bonus = num_winners and tweak_data:get_value("experience_manager", "alive_humans_multiplier", num_winners) or 1
+        alive_crew_dissect = math.round(total_contract_xp * num_players_bonus - total_contract_xp)
+        total_xp = total_xp + alive_crew_dissect
+
+        ghost_dissect = math.round(total_xp * ghost_multiplier - total_xp)
+        total_xp = total_xp + ghost_dissect
+        job_heat_dissect = math.round(total_xp * self._ehi_xp.heat - total_xp)
+        total_xp = total_xp + job_heat_dissect
+
+        return math.round(total_xp)
     end
-    local job_stars = self._ehi_xp.job_stars
-    local num_winners = self._ehi_xp.alive_players
-    local player_stars = self._ehi_xp.level_to_stars
-    local pro_job_multiplier = self._ehi_xp.projob_multiplier or 1
-    local ghost_multiplier = 1 + (self._ehi_xp.stealth_bonus or 0)
-    local xp_multiplier = self._ehi_xp.difficulty_multiplier or 1
-    local contract_xp = 0
-    local total_xp = 0
-    local stage_xp_dissect = 0
-    local job_xp_dissect = 0
-    local risk_dissect = 0
-    local personal_win_dissect = 0
-    local alive_crew_dissect = 0
-    local skill_dissect = 0
-    local base_xp = 0
-    local job_heat_dissect = 0
-    local ghost_dissect = 0
-    local infamy_dissect = 0
-    local extra_bonus_dissect = 0
-    local gage_assignment_dissect = 0
-    local mission_xp_dissect = xp
-    local pro_job_xp_dissect = 0
-    local bonus_xp = 0
+else
+    ---@param xp number?
+    ---@param default_xp_if_zero number?
+    function EHIExperienceManager:MultiplyXPWithAllBonuses(xp, default_xp_if_zero)
+        if not xp or xp <= 0 then
+            return default_xp_if_zero or 0
+        end
+        local job_stars = self._ehi_xp.job_stars
+        local num_winners = self._ehi_xp.alive_players
+        local player_stars = self._ehi_xp.level_to_stars
+        local pro_job_multiplier = self._ehi_xp.projob_multiplier or 1
+        local ghost_multiplier = 1 + (self._ehi_xp.stealth_bonus or 0)
+        local xp_multiplier = self._ehi_xp.difficulty_multiplier or 1
+        local contract_xp = 0
+        local total_xp = 0
+        local stage_xp_dissect = 0
+        local job_xp_dissect = 0
+        local risk_dissect = 0
+        local personal_win_dissect = 0
+        local alive_crew_dissect = 0
+        local skill_dissect = 0
+        local base_xp = 0
+        local job_heat_dissect = 0
+        local ghost_dissect = 0
+        local infamy_dissect = 0
+        local extra_bonus_dissect = 0
+        local gage_assignment_dissect = 0
+        local mission_xp_dissect = xp
+        local pro_job_xp_dissect = 0
+        local bonus_xp = 0
 
-    base_xp = job_xp_dissect + stage_xp_dissect + mission_xp_dissect
-    pro_job_xp_dissect = math.round(base_xp * pro_job_multiplier - base_xp)
-    base_xp = base_xp + pro_job_xp_dissect
+        base_xp = job_xp_dissect + stage_xp_dissect + mission_xp_dissect
+        pro_job_xp_dissect = math.round(base_xp * pro_job_multiplier - base_xp)
+        base_xp = base_xp + pro_job_xp_dissect
 
-    if self._ehi_xp.is_level_limited then
-        local diff_in_stars = job_stars - player_stars
-        local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
-        base_xp = math.round(base_xp * tweak_multiplier)
+        if self._ehi_xp.is_level_limited then
+            local diff_in_stars = job_stars - player_stars
+            local tweak_multiplier = tweak_data:get_value("experience_manager", "level_limit", "pc_difference_multipliers", diff_in_stars) or 0
+            base_xp = math.round(base_xp * tweak_multiplier)
+        end
+
+        contract_xp = base_xp
+        risk_dissect = math.round(contract_xp * xp_multiplier)
+        contract_xp = contract_xp + risk_dissect
+
+        if self._ehi_xp.in_custody then
+            local multiplier = tweak_data:get_value("experience_manager", "in_custody_multiplier") or 1
+            personal_win_dissect = math.round(contract_xp * multiplier - contract_xp)
+            contract_xp = contract_xp + personal_win_dissect
+        end
+
+        total_xp = contract_xp
+        local total_contract_xp = total_xp
+        bonus_xp = self._ehi_xp.skill_xp_multiplier or 1
+        skill_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+        total_xp = total_xp + skill_dissect
+        bonus_xp = self._ehi_xp.infamy_bonus
+        infamy_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+        total_xp = total_xp + infamy_dissect
+
+        local num_players_bonus = num_winners and tweak_data:get_value("experience_manager", "alive_humans_multiplier", num_winners) or 1
+        alive_crew_dissect = math.round(total_contract_xp * num_players_bonus - total_contract_xp)
+        total_xp = total_xp + alive_crew_dissect
+
+        bonus_xp = self._ehi_xp.gage_bonus
+        gage_assignment_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
+        total_xp = total_xp + gage_assignment_dissect
+        ghost_dissect = math.round(total_xp * ghost_multiplier - total_xp)
+        total_xp = total_xp + ghost_dissect
+        local heat_xp_mul = self._ehi_xp.heat
+        job_heat_dissect = math.round(total_xp * heat_xp_mul - total_xp)
+        total_xp = total_xp + job_heat_dissect
+        bonus_xp = self._ehi_xp.limited_xp_bonus
+        extra_bonus_dissect = math.round(total_xp * bonus_xp - total_xp)
+        total_xp = total_xp + extra_bonus_dissect
+        local bonus_mutators_dissect = total_xp * self._ehi_xp.mutator_xp_reduction
+        total_xp = total_xp + bonus_mutators_dissect
+        total_xp = total_xp + self._ehi_xp.bonus_xp
+        return total_xp
     end
-
-    contract_xp = base_xp
-    risk_dissect = math.round(contract_xp * xp_multiplier)
-    contract_xp = contract_xp + risk_dissect
-
-    if self._ehi_xp.in_custody then
-        local multiplier = tweak_data:get_value("experience_manager", "in_custody_multiplier") or 1
-        personal_win_dissect = math.round(contract_xp * multiplier - contract_xp)
-        contract_xp = contract_xp + personal_win_dissect
-    end
-
-    total_xp = contract_xp
-    local total_contract_xp = total_xp
-    bonus_xp = self._ehi_xp.skill_xp_multiplier or 1
-    skill_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
-    total_xp = total_xp + skill_dissect
-    bonus_xp = self._ehi_xp.infamy_bonus
-    infamy_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
-    total_xp = total_xp + infamy_dissect
-
-    local num_players_bonus = num_winners and tweak_data:get_value("experience_manager", "alive_humans_multiplier", num_winners) or 1
-    alive_crew_dissect = math.round(total_contract_xp * num_players_bonus - total_contract_xp)
-    total_xp = total_xp + alive_crew_dissect
-
-    bonus_xp = self._ehi_xp.gage_bonus
-    gage_assignment_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
-    total_xp = total_xp + gage_assignment_dissect
-    ghost_dissect = math.round(total_xp * ghost_multiplier - total_xp)
-    total_xp = total_xp + ghost_dissect
-    local heat_xp_mul = self._ehi_xp.heat
-    job_heat_dissect = math.round(total_xp * heat_xp_mul - total_xp)
-    total_xp = total_xp + job_heat_dissect
-    bonus_xp = self._ehi_xp.limited_xp_bonus
-    extra_bonus_dissect = math.round(total_xp * bonus_xp - total_xp)
-    total_xp = total_xp + extra_bonus_dissect
-    local bonus_mutators_dissect = total_xp * self._ehi_xp.mutator_xp_reduction
-    total_xp = total_xp + bonus_mutators_dissect
-    total_xp = total_xp + self._ehi_xp.bonus_xp
-    return total_xp
 end
 
 ---@param id number
@@ -499,10 +631,14 @@ function EHIExperienceManager:IsInfamyPoolOverflowed()
     return self._xp.prestige_xp_remaining < 0 --- Not possible in Vanilla, mod check
 end
 
+function EHIExperienceManager:CurrentAlivePlayers()
+    return self._ehi_xp and self._ehi_xp.alive_players or 0
+end
+
 function EHIExperienceManager:SetAIOnDeathListener()
     EHI:UpdateExistingHookIfExistsOrHook(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(...)
         self:DecreaseAlivePlayers()
-        EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+        EHI:CallCallback("ExperienceManager_RefreshPlayerCount", self:CurrentAlivePlayers())
     end)
 end
 
@@ -513,11 +649,11 @@ function EHIExperienceManager:SetCriminalsListener(ub)
             if not self._xp_disabled then
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
                     self:QueryAmountOfAllPlayers()
-                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount", self:CurrentAlivePlayers())
                 end)
             else
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
-                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount", self:CurrentAlivePlayers())
                 end)
             end
         end
@@ -536,11 +672,11 @@ function EHIExperienceManager:SetCriminalsListener(ub)
             if not self._xp_disabled then
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
                     self:QueryAmountOfAlivePlayers()
-                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount", self:CurrentAlivePlayers())
                 end)
             else
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
-                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount")
+                    EHI:CallCallback("ExperienceManager_RefreshPlayerCount", self:CurrentAlivePlayers())
                 end)
             end
         end

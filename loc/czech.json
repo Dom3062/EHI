@@ -124,7 +124,6 @@
     "ehi_hint_pager_chance" : "Šance na pager",
     "ehi_hint_zipline_bag" : "Zipline (Pytel)",
     "ehi_hint_zipline_person" : "Zipline (Hráč)",
-    "ehi_hint_zipline_reset" : "Resetování Zipline",
     "ehi_hint_chance" : "Šance",
     "ehi_hint_loot_counter" : "Počet lupu",
     "ehi_hint_trade_delay" : "Délka ve vazbě",
@@ -157,6 +156,7 @@
     "ehi_hint_turret_en_route" : "Nepřátelský Turret je na cestě",
     "ehi_hint_modifier_civilian_alarm" : "Počet zabití civilistů do alarmu",
     "ehi_hint_marshal" : "Maršálové",
+    "ehi_hint_payday" : "Výplata po dokončení",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -171,6 +171,7 @@
     "ehi_hint_des_chem_set_cooking" : "Chemický set vaří",
     "ehi_hint_election_day_3_crash_chance" : "Šance že aplikace selže",
     "ehi_hint_election_day_3_crash_chance_time" : "Čas do selhání",
+    "ehi_hint_four_stores" : "Úkol",
     "ehi_hint_friend_heli" : "Helikoptéra je na cestě",
     "ehi_hint_friend_heli_random" : "Helikoptéra letí k náhodnému autu",
     "ehi_hint_friend_heli_caddilac" : "Helikoptéra letí ke Caddilacu",
@@ -594,6 +595,16 @@
 
     "ehi_show_marshal_initial_time" : "Zobrazovat sledovač Maršálů",
     "ehi_show_marshal_initial_time_desc" : "Zobrazuje sledovač kdy budou povoleny spawny pro Maršály",
+
+    "ehi_show_money_tracker" : "Zobrazovat sledovač peněz",
+    "ehi_show_money_tracker_desc" : "Zobrazuje kolik peněz dostaneš po dokončení mise na Offshore a Spending účet",
+
+    "ehi_money_tracker_format" : "Formát sledovače peněz",
+    "ehi_money_tracker_format_desc" : "Mění formát sledovače peněz",
+    "ehi_money_tracker_format_1" : "Offshore / Spending",
+    "ehi_money_tracker_format_2" : "Spending / Offshore",
+    "ehi_money_tracker_format_3" : "Offshore",
+    "ehi_money_tracker_format_4" : "Spending",
     
     "ehi_waypoints_menu" : "Ukazatele",
     "ehi_waypoints_menu_desc" : "",
@@ -635,6 +646,8 @@
     "ehi_shared_menu_desc" : "",
 
     "ehi_shared_loot_counter" : "Počet lupu",
+
+    "ehi_shared_pagers" : "Pagery",
     
     "ehi_buffs_menu" : "Buffy",
     "ehi_buffs_menu_desc" : "",
@@ -1324,7 +1337,7 @@
     "ehi_experience_twh_mainframe_hacked" : "Mainframe hacknut",
     "ehi_experience_twh_pardons_stolen" : "Ukradeny milosti",
     "ehi_experience_twh_left_peoc" : "Odchod z PEOC",
-    "ehi_experience_twh_disable_aa" : "Vyřazen systém AA",
+    "ehi_experience_twh_disable_aa" : "Vyřazen systém protiletadlové obrany",
     "ehi_experience_twh_secret" : "The Secret",
     "ehi_experience_mex1_red_door_found" : "Nalezeny červené dveře",
     "ehi_experience_mex1_tunnel_found" : "Nalezen vstup do tunelu",

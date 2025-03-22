@@ -119,7 +119,7 @@ function EHITimerManager:StartTimer(params)
                     group_i = i
                     if i_sub.timer_count < self._max_timers then
                         i_sub.timer_count = i_sub.timer_count + 1
-                        self._trackers:CallFunction(i_sub.name, "AddTimer", params.time, params.id)
+                        self._trackers:CallFunction(i_sub.name, "AddTimer", params.time, params.id, params.warning, params.completion)
                         self._units_in_active_group[params.id] = i_sub.name
                         return
                     end

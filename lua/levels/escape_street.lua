@@ -32,7 +32,7 @@ local other =
     [101959] = EHI:AddAssaultDelay({ control = 10 })
 }
 if EHI:IsLootCounterVisible() then
-    other[102091] = EHI:AddLootCounter3(function(self, ...)
+    other[102091] = EHI:AddLootCounter4(function(self, ...)
         if not self._cache.CreateCounter then
             EHI:ShowLootCounterNoChecks({ skip_offset = true })
             self._cache.CreateCounter = true

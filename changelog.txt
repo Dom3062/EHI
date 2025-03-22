@@ -1,3 +1,11 @@
+r318 (22. 03. 2025):
+Added "Money" tracker
+Added support for "Classic Heisting" mod
+Fixed an issue where timed loot zone trackers are not visible (regression from r303)
+Fixed an issue where completion color animation is not playing correctly on Timer trackers
+Jewelry Store: Fixed an issue where random loot is not sometimes properly reflected in the Loot Counter
+Jewelry Store: Reworked escape waypoints to show less "Car" icon when the escape vehicle arrived
+
 r317 (17. 03. 2025):
 Green Bridge: Fixed a crash as a client on scaffolding
 

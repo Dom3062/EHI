@@ -24,7 +24,7 @@ local achievements =
 
 local other = {}
 if EHI:IsLootCounterVisible() then
-    other[104263] = EHI:AddLootCounter3(function(self, ...)
+    other[104263] = EHI:AddLootCounter4(function(self, ...)
         if not self._cache.CreateCounter then
             EHI:ShowLootCounterNoChecks({ skip_offset = true })
             self._cache.CreateCounter = true

@@ -12,7 +12,7 @@ local other =
     [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } }
 }
 if EHI:IsLootCounterVisible() then
-    local loot_trigger = EHI:AddLootCounter3(function(self, trigger, element, ...) ---@param element ElementJobValue
+    local loot_trigger = EHI:AddLootCounter4(function(self, trigger, element, ...) ---@param element ElementJobValue
         local spawned = element._values.value
         EHI:ShowLootCounterNoChecks({
             max = spawned + math.max(0, spawned - 3),

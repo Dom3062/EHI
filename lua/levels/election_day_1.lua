@@ -23,8 +23,14 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100150] = EHI:AddAssaultDelay({}) -- Another first assault delay botched by phalanx spawn group -> see ´logic_link_065´ MissionScriptElement 104924
+}
+
 EHI.Manager:ParseTriggers({
-    achievement = achievements
+    achievement = achievements,
+    other = other
 })
 
 local tbl =

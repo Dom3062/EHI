@@ -17,6 +17,7 @@ function EHIPausableTracker:SetPause(pause)
     end
 end
 
+---@param pause boolean
 function EHIPausableTracker:_set_pause(pause)
     self._paused = pause
     self:SetTextColor()

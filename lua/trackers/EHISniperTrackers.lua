@@ -153,10 +153,9 @@ end
 function EHISniperChanceTracker:post_init(params)
     EHISniperChanceTracker.super.post_init(self, params)
     self._chance_text:set_color(self._sniper_chance_color)
+    self:SniperLogicStarted()
     if params.chance_success then
         self:SniperSpawnsSuccess()
-    else
-        self:SniperLogicStarted()
     end
 end
 
@@ -191,6 +190,7 @@ end
 ---@class EHISniperTimedTracker : EHITracker, EHICountTracker, EHISniperBaseTracker
 ---@field super EHITracker
 EHISniperTimedTracker = ehi_sniper_class(EHITracker, { check_sniper_count = true })
+EHISniperTimedTracker._paused_color = EHIPausableTracker._paused_color
 EHISniperTimedTracker.SetCount = EHICountTracker.SetCountNoNegative
 EHISniperTimedTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperTimedTracker.DecreaseCount = EHICountTracker.DecreaseCount
@@ -205,10 +205,9 @@ function EHISniperTimedTracker:pre_init(params)
         self._sniper_count = self._count
         self._single_sniper = params.single_sniper
     end
+    self:SniperLogicStarted()
     if self._count > 0 then
         self:SniperSpawned()
-    else
-        self:SniperLogicStarted()
     end
 end
 
@@ -231,6 +230,19 @@ end
 function EHISniperTimedTracker:SniperSpawnsSuccess(count)
     self:SniperSpawned()
     self:SetCount(count)
+end
+
+function EHISniperTimedTracker:PauseTimer()
+    self:RemoveTrackerFromUpdate()
+    self:FitTheTime(0)
+    self:SetTextColor(self._paused_color)
+end
+
+---@param t number
+function EHISniperTimedTracker:UnpauseTimer(t)
+    self:SetTextColor()
+    self:SetTimeNoAnim(t)
+    self:AddTrackerToUpdate()
 end
 
 ---@class EHISniperTimedCountTracker : EHIWarningTracker, EHISniperTimedTracker, EHISniperBaseTracker

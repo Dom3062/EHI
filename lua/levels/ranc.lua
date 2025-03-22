@@ -97,7 +97,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 if EHI:IsLootCounterVisible() then
     local instances = { 4350, 5350, 5500, 5650, 5800, 5950, 6500, 13600, 13750, 13900, 14050, 23050, 23950, 24100, 24250, 24400, 25800, 7400, 25950, 26100, 26250, 26400, 26550, 26700, 26850, 27000, 27150, 27300, 27450, 27600 }
-    other[103097] = EHI:AddLootCounter4(function()
+    other[103097] = EHI:AddLootCounter5(function()
         local barrels, stocks, receivers = 0, 0, 0
         local wd = managers.worlddefinition
         local red = Idstring("units/pd2_dlc_ranc/equipment/ranc_int_weapon_box_2x1x1m/ranc_weapon_box_marking_red")

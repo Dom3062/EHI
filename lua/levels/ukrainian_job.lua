@@ -5,11 +5,22 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
 local zone_delay = 12
-local LootDropWaypoint = { data_from_element_and_remove_vanilla_waypoint = 104215 }
+---@param self EHIManager
+---@param trigger ElementTrigger
+local function VanDriveAwayWP(self, trigger)
+    self._loot:ReplaceWaypoint(104215, true)
+    self._waypoints:AddWaypoint(trigger.id, {
+        time = trigger.time,
+        icon = Icon.LootDrop,
+        position = self:GetElementPositionOrDefault(104215),
+        remove_vanilla_waypoint = 104215,
+        class = self.Waypoints.Warning
+    })
+end
 ---@type ParseTriggerTable
 local triggers = {
-    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint), hint = Hints.LootTimed },
-    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint = deep_clone(LootDropWaypoint), hint = Hints.LootTimed },
+    [104176] = { time = 25 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint_f = VanDriveAwayWP, hint = Hints.LootTimed },
+    [104178] = { time = 35 + zone_delay, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, waypoint_f = VanDriveAwayWP, hint = Hints.LootTimed },
 
     [103172] = { time = 2 + 830/30, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
     [103182] = { time = 600/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },

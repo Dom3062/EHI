@@ -1,5 +1,5 @@
 local EHI = rawget(_G, "EHI")
-if EHI:CheckLoadHook("ElementSpawnGageAssignment") then
+if EHI:CheckLoadHook("ElementSpawnGageAssignment") or _G.ch_settings then
     return
 end
 
@@ -22,13 +22,15 @@ local function CreateTracker()
         return
     end
     local max = tweak_data.gage_assignment:get_num_assignment_units()
-    managers.ehi_tracker:AddTracker({
-        id = "Gage",
-        icons = { "gage" },
-        max = max,
-        hint = "gage",
-        class = EHI.Trackers.Progress
-    })
+    if max > 0 then
+        managers.ehi_tracker:AddTracker({
+            id = "Gage",
+            icons = { "gage" },
+            max = max,
+            hint = "gage",
+            class = EHI.Trackers.Progress
+        })
+    end
 end
 
 function ElementSpawnGageAssignment:client_on_executed(...)

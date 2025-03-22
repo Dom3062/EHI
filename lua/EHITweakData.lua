@@ -1123,6 +1123,7 @@ function EHITweakData:new(tweak_data)
         self.icons.daily_hangover = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.chca_spiked_drink.icon) }
         tweak_data.hud_icons.daily_hangover = self.icons.daily_hangover
     end
+    self:_classic_heisting_u24_tweaks()
     return self
 end
 
@@ -1154,4 +1155,16 @@ function EHITweakData._count_loot_in_deposit(deposit_id)
     if damage and damage._variables and damage._variables.var_random == 0 then
         return true
     end
+end
+
+function EHITweakData:_classic_heisting_u24_tweaks()
+    if not _G.ch_settings then
+        return
+    end
+    -- Change buff icons to something else as the buff icon is empty
+    self.buff.MeleeCharge.y = 0
+    -- Add new buffs as they exists in U24, but not in Vanilla
+    self.buff.no_ammo_cost = deep_clone(self.buff.bullet_storm)
+    self.buff.no_ammo_cost.skills = true
+    self.buff.bullet_storm = nil -- Remove Vanilla buff as it will occupy memory for no reason
 end

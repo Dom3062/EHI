@@ -8,7 +8,7 @@
             "id": "ehi_trackers_next_menu",
             "title": "ehi_menu_next_page",
             "next_menu": "ehi_trackers_3_menu",
-            "ehi_ver" : 287
+            "ehi_ver" : 318
         },
         {
             "type": "divider",
@@ -213,22 +213,6 @@
             "default_value": true,
             "is_parent" : true,
             "ehi_ver" : 13
-        },
-        {
-            "type": "multiple_choice",
-            "id": "ehi_show_pager_callback_answered_behavior_choice",
-            "title": "ehi_show_pager_callback_answered_behavior",
-            "description" : "ehi_show_pager_callback_answered_behavior_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_pager_callback_answered_behavior",
-            "items": [
-                "ehi_show_pager_callback_answered_behavior_1",
-                "ehi_show_pager_callback_answered_behavior_2"
-            ],
-            "value": "show_pager_callback_answered_behavior",
-            "parent": "ehi_show_pager_callback_trackers_choice",
-            "default_value": 1,
-            "ehi_ver" : 240
         }
     ]
 }

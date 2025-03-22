@@ -31,7 +31,7 @@ local achievements =
                     managers.player:remove_listener("EHI_berry_4_fail")
                     EHI:Unhook("berry_4_HuskPlayerMovement_sync_bleed_out")
                     EHI:Unhook("berry_4_HuskPlayerMovement_sync_incapacitated")
-                    self._unlockable:SetAchievementFailed("berry_4")
+                    self._unlockable:SetAchievementFailed(trigger.id)
                 end
                 self._unlockable:AddAchievementStatusTracker(trigger.id, "no_down")
                 -- Player (Local)

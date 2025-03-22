@@ -100,7 +100,8 @@ local achievements =
                 self._trackers:CallFunction(trigger.id, "SetProgress", 1, "boxes")
             end) },
             [103772] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        cleanup_class = "EHIbex11Tracker"
     }
 }
 

@@ -245,7 +245,7 @@ if EHI:IsLootCounterVisible() then
         end
         self._loot:DecreaseLootCounterProgressMax(bags)
     end)
-    other[100107] = EHI:AddLootCounter3(function(self, ...)
+    other[100107] = EHI:AddLootCounter4(function(self, ...)
         EHI:ShowLootCounterNoChecks({
             max = 18, -- 16 money bags, teaset and 1 money bundle in a safe
             triggers =

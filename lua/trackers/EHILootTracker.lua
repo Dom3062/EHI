@@ -476,7 +476,7 @@ function EHILootMaxTracker:post_init(params)
     self._params = params.xp_params or {} ---@type LootCounterTable.MaxBagsForMaxLevel
     self._refresh_max = 5
     self._show_finish_after_reaching_target = true
-    local function refresh()
+    local function refresh(alive_players) ---@param alive_players number
         self:Refresh()
     end
     EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)

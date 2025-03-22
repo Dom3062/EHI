@@ -72,6 +72,11 @@ local achievements =
     }
 }
 
+local other =
+{
+    [100547] = EHI:AddAssaultDelay({})
+}
+
 local sidejob =
 {
     daily_cake =
@@ -90,6 +95,7 @@ local sidejob =
 EHI.Manager:ParseTriggers({
     mission = triggers,
     achievement = achievements,
+    other = other,
     sidejob = sidejob
 })
 EHI:AddXPBreakdown({

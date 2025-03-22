@@ -40,6 +40,7 @@ function EHIManager:init(managers)
     self._timer = managers.ehi_timer
     self._loot = managers.ehi_loot
     self._hook = managers.ehi_hook
+    self._money = managers.ehi_money
     self._t = 0
     self._TrackerToWaypoint =
     {
@@ -119,6 +120,7 @@ function EHIManager:init_finalize()
     self._trackers:init_finalize(self)
     self._assault:init_finalize(self)
     self._loot:init_finalize()
+    self._money:init_finalize(self)
     EHI:AddOnAlarmCallback(callback(self, self, "SwitchToLoudMode"))
     EHI:AddOnCustodyCallback(callback(self, self, "SetCustodyState"))
     EHI:AddOnSpawnedCallback(callback(self, self, "Spawned"))
@@ -189,6 +191,7 @@ function EHIManager:Spawned()
     self._deployable:Spawned()
     self._buff:ActivateUpdatingBuffs()
     self._loot:Spawned()
+    self._money:Spawned()
 end
 
 ---@param tweak_data string
@@ -1234,8 +1237,7 @@ function EHIManager:OverrideElements(elements_to_override)
                 if element then
                     element.__ehi_original_on_executed = element.on_executed
                     element.on_executed = tbl_f.on_executed
-                    element.__ehi_original_operation_remove = element.operation_remove
-                    element.operation_remove = tbl_f.operation_remove
+                    Hooks:PreHook(element, "operation_remove", string.format("EHI_Prehook_Element_%d", element:id()), tbl_f.operation_remove)
                 elseif client then
                     --[[
                         On client, the element was not found

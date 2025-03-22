@@ -86,7 +86,7 @@ function EHILootSharedMaster:IsRunningInOnlyLootCounterMode()
     return self._only_loot_counter
 end
 
----@param f fun(progress: number, max: number): boolean
+---@param f (fun(progress: number, max: number): boolean)?
 function EHILootSharedMaster:AddWaypointFunctionCheck(f)
     self._waypoint_function_check = f
 end
@@ -200,7 +200,7 @@ end
 
 ---@param random number?
 function EHILootSharedMaster:RandomLootSpawned(random)
-    if self._max_random <= 0 then
+    if self._max_random <= 0 or (random and random <= 0) then
         return
     elseif self._progress == self._max then
         self._manager:Call(self._id, "MaxNoLongerLimited")
@@ -212,7 +212,7 @@ end
 
 ---@param random number?
 function EHILootSharedMaster:RandomLootDeclined(random)
-    if self._max_random <= 0 then
+    if self._max_random <= 0 or (random and random <= 0) then
         return
     end
     self._max_random = self._max_random - (random or 1)
@@ -255,6 +255,17 @@ function EHILootSharedMaster:RandomLootDeclinedCheck(id)
     end
     self._loot_id[id] = true
     self:RandomLootDeclined()
+end
+
+---@param random_spawned number
+---@param random_total number
+function EHILootSharedMaster:RandomLootSpawnedAndDeclined(random_spawned, random_total)
+    local diff = random_total - random_spawned
+    if diff < 0 then
+        return
+    end
+    self:RandomLootSpawned(random_spawned)
+    self:RandomLootDeclined(diff)
 end
 
 ---@param state boolean?

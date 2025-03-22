@@ -14,7 +14,10 @@ local triggers = {
     [103181] = { time = 580/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
     [101770] = { time = 650/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape }
 }
-local other = {}
+local other =
+{
+    [100149] = EHI:AddAssaultDelay({ control = 7 + 80 })
+}
 if EHI:IsEscapeChanceEnabled() then
     other[101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
     local start_chance = EHI:GetValueBasedOnDifficulty({
@@ -28,10 +31,10 @@ if EHI:IsEscapeChanceEnabled() then
     end)
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103194 } }
-    other[103182] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103193 } }
-    other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103192 } }
-    other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101776 } }
+    other[103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103216 } }
+    other[103182] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103217 } }
+    other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103218 } }
+    other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103219 } }
 end
 if EHI:IsLootCounterVisible() then
     local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
@@ -44,19 +47,19 @@ if EHI:IsLootCounterVisible() then
         end
         EHI:ShowLootCounterNoChecks({
             max = 10 - jewelry_to_subtract,
-            max_random = EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and 2 or 0,
+            -- If a drawer is missing, then a safe is here (random on Very Hard / OVERKILL, 100% chance on Mayhem+)
+            -- 50% chance for other difficulties (also for Very Hard / OVERKILL if the first initial chance did not succeed) is in element 102029
+            max_random = managers.game_play_central:IsMissionUnitDisabled(102186) and 2 or 0,
             client_from_start = true
         })
     end, { element = { 103216, 103217, 103218, 103219, 101155 } }, nil, true)
     other[102029] = EHI:AddCustomCode(function(self)
         self._loot:SetLootCounterMaxRandom(2)
     end)
-    if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
-        other[102131] = other[102029]
-    end
+    other[102131] = other[102029]
+    other[102145] = other[102029]
     other[102182] = EHI:AddCustomCode(function(self)
-        self._loot:RandomLootSpawned(1)
-        self._loot:RandomLootDeclined(1)
+        self._loot:RandomLootSpawnedAndDeclined(1, 2)
     end)
     other[102183] = EHI:AddCustomCode(function(self)
         self._loot:RandomLootSpawned(2)

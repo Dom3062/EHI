@@ -89,6 +89,7 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
                 unknown_random = unknown_random,
                 manager = self._manager
             })
+            self:_adjust_master()
             if self._show_tracker then
                 self._trackers:AddTracker({
                     id = "LootCounter",
@@ -121,6 +122,7 @@ function EHILootManager:_create_waypoint_tracker(max)
             max = max,
             manager = self._manager
         })
+        self:_adjust_master()
         self._waypoints:AddWaypointlessWaypoint("LootCounter", {
             max = max,
             max_random = 0,
@@ -129,6 +131,17 @@ function EHILootManager:_create_waypoint_tracker(max)
         })
         self:_adjust_waypoint()
         self._master:DispatchUpdate()
+    end
+end
+
+function EHILootManager:_adjust_master()
+    if self.__master_waypoint_function_check then
+        self:WaypointFunctionCheck(self.__master_waypoint_function_check)
+        self.__master_waypoint_function_check = nil
+    end
+    if self.__master_waypoint_remove_function_check then
+        self:WaypointRemoveFunctionCheck(self.__master_waypoint_remove_function_check)
+        self.__master_waypoint_remove_function_check = nil
     end
 end
 
@@ -150,10 +163,12 @@ function EHILootManager:SetPresentTimerForWaypoints(present_timer)
     end
 end
 
----@param f fun(progress: number, max: number): boolean
+---@param f (fun(progress: number, max: number): boolean)?
 function EHILootManager:WaypointFunctionCheck(f)
     if self._master then
         self._master:AddWaypointFunctionCheck(f)
+    else
+        self.__master_waypoint_function_check = f
     end
 end
 
@@ -183,10 +198,43 @@ function EHILootManager:OverrideWaypoint(element)
     self._waypoints:CallFunction("LootCounter", "CreateWaypoint", element._id, element._values.icon, element._values.position)
 end
 
+---@param id number
+function EHILootManager:RemoveWaypoint(id)
+    if self._waypoint_overriden and self._waypoint_overriden[id] then
+        self._waypoint_overriden[id] = nil
+        self._waypoints:CallFunction("LootCounter", "RemoveWaypoint", id)
+        managers.hud:RestoreWaypoint(id, true)
+    end
+end
+
+---@param id number
+function EHILootManager:_restore_waypoint(id)
+    if self._waypoint_overriden and self._waypoint_overriden[id] then
+        self._waypoint_overriden[id] = nil
+        managers.hud:RestoreWaypoint(id)
+    end
+end
+
+---Replaces EHI Loot Waypoint with another EHI Waypoint  
+---The Loot Waypoint needs to be removed from the Loot Waypoint class otherwise it will crash as soon players secure another loot bag
+---@param id number
+---@param manual_removal boolean? By default, this function will also move the current waypoint to the cache if exists. Pass `true` to do it manually or for the first time if Loot Waypoint does not exists
+function EHILootManager:ReplaceWaypoint(id, manual_removal)
+    self._waypoints:CallFunction("LootCounter", "ReplaceWaypoint", id)
+    if self._waypoint_overriden then
+        self._waypoint_overriden[id] = nil
+        if not manual_removal then
+            managers.hud:SoftRemoveWaypoint2(id)
+        end
+    end
+end
+
 ---@param f fun(progress: number, max: number): boolean
 function EHILootManager:WaypointRemoveFunctionCheck(f)
     if self._master then
         self._master:AddWaypointRemoveFunctionCheck(f)
+    else
+        self.__master_waypoint_remove_function_check = f
     end
 end
 
@@ -226,22 +274,35 @@ function EHILootManager:SyncShowLootCounter(max, max_random, offset)
 end
 
 ---@param no_sync_load boolean?
-function EHILootManager:AddLootListener(no_sync_load)
+---@param endless_counter boolean?
+function EHILootManager:AddLootListener(no_sync_load, endless_counter)
     if not (self._listener._listeners and self._listener._listeners.LootCounter) then
         local BagsOnly = EHI.Const.LootCounter.CheckType.BagsOnly
-        self:AddListener("LootCounter", function(loot)
-            if self._master then
-                self._master:SetProgress(loot:EHIReportProgress(BagsOnly))
-            end
-        end)
+        if endless_counter then
+            self:AddListener("LootCounter", function(loot)
+                self._trackers:SetTrackerProgress("LootCounter", loot:EHIReportProgress(BagsOnly))
+            end)
+        else
+            self:AddListener("LootCounter", function(loot)
+                if self._master then
+                    self._master:SetProgress(loot:EHIReportProgress(BagsOnly))
+                end
+            end)
+        end
         -- If sync load is disabled, the counter needs to be updated via `EHIManager:AddLoadSyncFunction()` to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if EHI.IsClient and not no_sync_load then
-            self:AddSyncListener(function(loot)
-                if self._master then
-                    self._master:SetSyncData(loot:EHIReportProgress(BagsOnly))
-                end
-            end)
+            if endless_counter then
+                self:AddSyncListener(function(loot)
+                    self._trackers:SetTrackerSyncData("LootCounter", loot:EHIReportProgress(BagsOnly))
+                end)
+            else
+                self:AddSyncListener(function(loot)
+                    if self._master then
+                        self._master:SetSyncData(loot:EHIReportProgress(BagsOnly))
+                    end
+                end)
+            end
         end
     end
 end
@@ -396,6 +457,14 @@ end
 function EHILootManager:RandomLootDeclined(random)
     if self._master then
         self._master:RandomLootDeclined(random)
+    end
+end
+
+---@param random_spawned number
+---@param random_total number
+function EHILootManager:RandomLootSpawnedAndDeclined(random_spawned, random_total)
+    if self._master then
+        self._master:RandomLootSpawnedAndDeclined(random_spawned, random_total)
     end
 end
 

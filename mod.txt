@@ -3,7 +3,7 @@
     "description": "",
     "author": "Dom",
     "contact": "http://steamcommunity.com/profiles/76561198078556212/",
-    "version": "317",
+    "version": "318",
     "blt_version" : 2,
     "priority" : -100,
     "image" : "ehi.png",

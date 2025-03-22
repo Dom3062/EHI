@@ -249,6 +249,7 @@ function XPBreakdownPanel:_preparse_data()
         end
     end
     if self._needs_assets_hook then
+        self._expert_driver_asset_bought = false
         local function check(assets, ...) ---@param assets MissionAssetsManager
             local previous_value = self._expert_driver_asset_bought
             self._expert_driver_asset_bought = assets:IsEscapeDriverAssetUnlocked()
@@ -265,6 +266,28 @@ function XPBreakdownPanel:_preparse_data()
         Hooks:PostHook(MissionAssetsManager, "sync_relock_assets", self._assets_hook[1], check)
         Hooks:PostHook(MissionAssetsManager, "sync_unlock_asset", self._assets_hook[2], check)
     end
+    if _G.ch_settings then
+        if self._params.objective and type(self._params.objective.escape) == "table" then
+            local repeat_while = true
+            while repeat_while do
+                repeat_while = false
+                for i, escape in ipairs(self._params.objective.escape) do ---@diagnostic disable-line
+                    if (escape.stealth or escape.loud) and (escape.timer or escape.c4_used) then
+                        table.remove(self._params.objective.escape, i) ---@diagnostic disable-line
+                        repeat_while = true
+                        break
+                    end
+                end
+            end
+        elseif self._params.objectives and table.count(self._params.objectives, function(item, key)
+            if type(item) == "table" and (item.escape or item.escape_ghost_bonus_only or item.loud_escape or item.police_escape) then
+                return true
+            end
+            return false
+        end) > 0 then
+            self._objectives_params_contains_escape = true
+        end
+    end
 end
 
 function XPBreakdownPanel:ProcessBreakdown()
@@ -272,7 +295,45 @@ function XPBreakdownPanel:ProcessBreakdown()
         return
     end
     self:_add_xp_overview_text()
-    if self._params.wave_all then
+    if self._params.u24_mod then
+        local xp_params = self._xp._ehi_xp
+        local total_xp = managers.experience:get_stage_xp_by_stars(xp_params.job_stars)
+        if xp_params.on_last_stage then
+            total_xp = total_xp + managers.experience:get_job_xp_by_stars(math.min(xp_params.job_stars, xp_params.level_to_stars))
+        end
+        if self._params.objective and type(self._params.objective.escape) == "table" then
+            for _, value in ipairs(self._params.objective.escape) do ---@diagnostic disable-line
+                if value.stealth or value.loud then
+                    value.amount = total_xp
+                end
+            end
+            self:_process_escape(nil, self._params.objective.escape, nil, nil, nil)
+        elseif self._params.objectives and self._objectives_params_contains_escape then
+            for _, data in ipairs(self._params.objectives) do
+                if type(data) == "table" then
+                    if data.escape then
+                        local escape_type = type(data.escape)
+                        if escape_type == "number" then
+                            data.escape = total_xp
+                        elseif escape_type == "table" then
+                            for _, value in ipairs(data.escape) do ---@diagnostic disable-line
+                                value.amount = total_xp
+                            end
+                        end
+                        self:_process_escape(self:_get_translated_key("escape"), data.escape, data.ghost_bonus, data.escape_chance, nil)
+                    elseif data.escape_ghost_bonus_only then
+                        self:_process_escape(self:_get_translated_key("escape"), total_xp, data.escape_ghost_bonus_only, nil, nil)
+                    elseif data.loud_escape then
+                        self:_process_escape(self:_get_translated_key("loud_escape"), total_xp, nil, data.escape_chance, nil)
+                    elseif data.police_escape then
+                        self:_process_escape(self:_get_translated_key("police_escape"), total_xp, nil, data.escape_chance, nil)
+                    end
+                end
+            end
+        else
+            self:_add_xp_text(string.format("%s: ", self._loc:text("ehi_experience_escape")), managers.experience:cash_string(self._xp:FakeMultiplyXPWithAllBonuses(total_xp), "+"), nil)
+        end
+    elseif self._params.wave_all then
         local data = self._params.wave_all
         if type(data) == "table" then
             local xp_multiplied = self._xp:FakeMultiplyXPWithAllBonuses(data.amount)
@@ -596,7 +657,7 @@ function XPBreakdownPanel:_process_escape_add_escape_chance(text, escape_chance)
     end
 end
 
----@param str string
+---@param str string? Required when `params` is not provided as `table`
 ---@param params table|number|true?
 ---@param ghost_bonus number?
 ---@param escape_chance { start_chance: number, kill_add_chance: number? }?
@@ -635,7 +696,7 @@ function XPBreakdownPanel:_process_escape(str, params, ghost_bonus, escape_chanc
                 self:_process_escape_add_escape_chance(text, value.escape_chance)
             end
         end
-        if next(params) then
+        if next(params) and total_xp then
             total_xp.add = false
         end
     elseif type(params) == "number" then
@@ -648,7 +709,9 @@ function XPBreakdownPanel:_process_escape(str, params, ghost_bonus, escape_chanc
         local text = self:_add_xp_text(str .. ": ", xp, xp_with_gage)
         self:_process_escape_add_ghost_bonus(text, ghost_bonus)
         self:_process_escape_add_escape_chance(text, escape_chance)
-        total_xp.base = total_xp.base + params ---@diagnostic disable-line
+        if total_xp then
+            total_xp.base = total_xp.base + params
+        end
     else
         local text = self:_add_line(str .. ": ")
         self:_process_escape_add_ghost_bonus(text, ghost_bonus)
@@ -1599,7 +1662,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
             color = tweak_data.screen_colors.pro_color,
-            text = string.format("%s +%d%s", self._loc:text("ehi_experience_modifier_projob"), math.ehi_round(xp.projob_multiplier - 1) * 100, percent_format),
+            text = string.format("%s +%d%s", self._loc:text("ehi_experience_modifier_projob"), math.ehi_round_chance(xp.projob_multiplier - 1), percent_format),
             layer = 10
         })
         self:make_fine_text(pro)
@@ -1648,13 +1711,11 @@ function XPBreakdownPanel:_add_xp_overview_text()
     end
     if xp.heat and xp.heat ~= 1 then
         local text
-        local range_color
+        local range_color = managers.job:get_heat_color(xp.heat - 1)
         if xp.heat < 1 then -- Negative XP
-            range_color = tweak_data.screen_colors.heat_cold_color
             local percent = (1 - xp.heat) * 100
             text = string.format("-%d%s", percent, percent_format)
         else -- Positive XP
-            range_color = tweak_data.screen_colors.heat_warm_color
             local percent = (xp.heat - 1) * 100
             text = string.format("+%d%s", percent, percent_format)
         end
@@ -1979,12 +2040,14 @@ function MissionBriefingGui:AddXPBreakdown(params)
             return value
         end
     end
+    local redo_for_u24_mod = _G.ch_settings ~= nil
     if params.plan then
         _buttons = {}
         local plan = params.plan
         if plan.custom then
             PlanMax = table.size(plan.custom)
             for i, custom in ipairs(plan.custom) do
+                custom.plan.u24_mod = redo_for_u24_mod
                 if custom.objectives_override then
                     local new_objectives = {}
                     local override = custom.objectives_override
@@ -2095,6 +2158,12 @@ function MissionBriefingGui:AddXPBreakdown(params)
             end
         else
             -- Process stealth plan first
+            if plan.stealth then
+                plan.stealth.u24_mod = redo_for_u24_mod
+            end
+            if plan.loud then
+                plan.loud.u24_mod = redo_for_u24_mod
+            end
             if plan.stealth and plan.stealth.objectives then
                 for _, objective in ipairs(plan.stealth.objectives) do
                     if objective.escape then
@@ -2121,6 +2190,7 @@ function MissionBriefingGui:AddXPBreakdown(params)
         end
         self:HookMouseFunctions()
     else
+        params.u24_mod = redo_for_u24_mod
         _panels[1] = XPBreakdownPanel:new(self, ws_panel, panel_params, xp_params, loc, params)
     end
 end
@@ -2219,7 +2289,11 @@ end
 
 function MissionBriefingGui:FakeExperienceMultipliers()
     if EHI:IsRunningBB() or EHI:IsRunningUsefulBots() then
-        self._num_winners = 4
+        if _G.ch_settings then
+            self._num_winners = math.min(managers.network:session():amount_of_players() + 2, 4) -- Amount of players + 2 bots
+        else
+            self._num_winners = 4
+        end
     end
     if Global.block_update_outfit_information then -- Outfit update is late when "managers.player:get_skill_exp_multiplier(true)" is called, update it now to stay accurate
         local outfit_string = managers.blackmarket:outfit_string()

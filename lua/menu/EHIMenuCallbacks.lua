@@ -191,6 +191,11 @@ function EHIMenu:UpdateBuffsInvertProgress()
     self._buffs_preview_panel:UpdateBuffs("InvertProgress")
 end
 
+---@param visibility boolean
+function EHIMenu:UpdateBuffUpperTextVisibility(visibility)
+    self._buffs_preview_panel:UpdateBuffs("UpdateHintVisibility", visibility)
+end
+
 function EHIMenu:SetColor(color, option, color_type)
     local c = EHI.settings.colors[color_type][option]
     c.r = color.red
@@ -211,4 +216,8 @@ end
 function EHIMenu:SetSniperChanceColor(color, option, color_type)
     self:SetColor(color, option, color_type)
     self._preview_panel:CallFunction("show_sniper_tracker", "UpdateSniperChanceColor", Color(255, color.red, color.green, color.blue) / 255)
+end
+
+function EHIMenu:UpdateMoneyTrackerFormat(format)
+    self._preview_panel:UpdateTrackerInternalFormat("money", "show_money_tracker", format)
 end

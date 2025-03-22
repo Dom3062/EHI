@@ -43,6 +43,15 @@ _G.EHI =
         {
             file = "EHIEscapeChanceTracker",
             count = 2
+        },
+        show_money_tracker =
+        {
+            file = "EHIMoneyTracker"
+        },
+        show_trade_delay =
+        {
+            file = "EHITradeDelayTracker",
+            count = 3
         }
     },
 
@@ -835,6 +844,8 @@ local function LoadDefaultValues(self)
         show_sniper_logic_start_popup = true,
         show_sniper_logic_end_popup = true,
         show_marshal_initial_time = true,
+        show_money_tracker = true,
+        money_tracker_format = 1, -- 1 = Offshore/Spending; 2 = Spending/Offshore; 3 = Offshore; 4 = Spending
 
         -- Waypoints
         show_waypoints = true,
@@ -1111,6 +1122,7 @@ local function Load()
 end
 
 function EHI:Init()
+    self._cache.Difficulty = Global.game_settings and Global.game_settings.difficulty or "normal"
     self._cache.DifficultyIndex = table.index_of({
         "easy", -- Leftover from PD:TH
         "normal",
@@ -1120,12 +1132,14 @@ function EHI:Init()
         "easy_wish",
         "overkill_290",
         "sm_wish"
-    }, Global.game_settings and Global.game_settings.difficulty or "normal") - 2
+    }, self._cache.Difficulty) - 2
     self:AddCallback(self.CallbackMessage.InitManagers, function(managers) ---@param managers managers
         local mutator = managers.mutators
         self._cache.UnlockablesAreDisabled = mutator:can_mutators_be_active() and mutator:are_achievements_disabled()
         local level = Global.game_settings.level_id
         if level == "Enemy_Spawner" or level == "enemy_spawner2" or level == "modders_devmap" then -- These 3 maps disable achievements
+            self._cache.UnlockablesAreDisabled = true
+        elseif _G.ch_settings and not _G.ch_settings.settings.u24_progress then -- Classic Heisting disables achievements if U24 setting is disabled
             self._cache.UnlockablesAreDisabled = true
         end
     end)
@@ -1175,7 +1189,7 @@ function EHI:IsBetweenDifficulties(diff_1, diff_2)
 end
 
 function EHI:DifficultyIndex()
-    return self._cache.DifficultyIndex or 0
+    return tweak_data and tweak_data:difficulty_to_index(self._cache.Difficulty) - 2 or self._cache.DifficultyIndex
 end
 
 function EHI:IsMayhemOrAbove()
@@ -1507,7 +1521,7 @@ function EHI:IsEscapeChanceEnabled()
 end
 
 function EHI:IsTradeTrackerDisabled()
-    return not self:GetTrackerOption("show_trade_delay") or Global.game_settings.level_id == "haunted"
+    return Global.game_settings.level_id == "haunted" or not self:GetOptionAndLoadTracker("show_trade_delay")
 end
 
 ---@param params XPBreakdown
@@ -1795,12 +1809,25 @@ function EHI:AddLootCounter2(f, wp_params, load_sync, trigger_once)
     return tbl
 end
 
+---Creates a trigger as `EHI.CustomCode2` with `EHIManager` as a parameter
+---@param f fun(self: EHIManager)
+---@param wp_params WaypointLootCounterTable?
+---@param load_sync fun(self: EHIManager)? Load sync function for clients
+---@param trigger_once boolean?
+function EHI:AddLootCounter3(f, wp_params, load_sync, trigger_once)
+    self:ShowLootCounterWaypoint(wp_params)
+    if load_sync then
+        managers.ehi_manager:AddLoadSyncFunction(load_sync)
+    end
+    return self:AddCustomCode(f, trigger_once)
+end
+
 ---Creates trigger as custom trigger function in `EHIManager`
 ---@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean) Loot counter function
 ---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
-function EHI:AddLootCounter3(f, wp_params, trigger_once)
+function EHI:AddLootCounter4(f, wp_params, trigger_once)
     self:ShowLootCounterWaypoint(wp_params)
     return {
         special_function = managers.ehi_manager:RegisterCustomSF(f),
@@ -1808,25 +1835,24 @@ function EHI:AddLootCounter3(f, wp_params, trigger_once)
     }
 end
 
+---Creates trigger as `SF.CustomCodeDelayed`
 ---@param f function Loot counter function
 ---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param t number Delays the loot counter
 ---@param load_sync fun(self: EHIManager)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
-function EHI:AddLootCounter4(f, wp_params, t, load_sync, trigger_once)
-    local tbl =
-    {
+function EHI:AddLootCounter5(f, wp_params, t, load_sync, trigger_once)
+    self:ShowLootCounterWaypoint(wp_params)
+    if load_sync then
+        managers.ehi_manager:AddLoadSyncFunction(load_sync)
+    end
+    return {
         special_function = self.SpecialFunctions.CustomCodeDelayed,
         t = t,
         f = f,
         trigger_once = trigger_once
     }
-    self:ShowLootCounterWaypoint(wp_params)
-    if load_sync then
-        managers.ehi_manager:AddLoadSyncFunction(load_sync)
-    end
-    return tbl
 end
 
 ---@param f fun(self: EHIManager)
@@ -1898,17 +1924,6 @@ function EHI:DisableTimerWaypointsOnInit()
     end
 end
 
--- Used on clients when offset is required  
--- Do not call it directly!
----@param params { params: LootCounterTable, waypoint: WaypointLootCounterTable? }
----@param manager EHIManager
-function EHI:ShowLootCounterOffset(params, manager)
-    params.params.skip_offset = true
-    params.params.offset = managers.loot:GetSecuredBagsAmount()
-    params.params.hook_triggers = params.params.triggers ~= nil
-    self:ShowLootCounterNoChecks(params.params, params.waypoint)
-end
-
 ---@param params LootCounterTable?
 ---@param waypoint_params WaypointLootCounterTable?
 function EHI:ShowLootCounter(params, waypoint_params)
@@ -1935,16 +1950,21 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
         if self.IsHost or params.client_from_start then
             offset = managers.loot:GetSecuredBagsAmount()
         else
-            managers.ehi_manager:AddFullSyncFunction(callback(self, self, "ShowLootCounterOffset", { params = params, waypoint = waypoint_params }))
+            managers.ehi_manager:AddFullSyncFunction(function(manager)
+                params.skip_offset = true
+                params.offset = managers.loot:GetSecuredBagsAmount()
+                params.hook_triggers = params.triggers ~= nil
+                self:ShowLootCounterNoChecks(params, waypoint_params)
+            end)
             return
         end
     end
     if params.sequence_triggers or params.is_synced then
         managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, offset)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
-    elseif params.max_bags_for_level and self:IsXPTrackerEnabled() then
+    elseif params.max_bags_for_level and self:IsXPTrackerEnabled() and not _G.ch_settings then
         if params.max_bags_for_level.objective_triggers then
-            local xp_trigger = self:AddLootCounter3(function(manager, trigger, element, enabled) ---@cast element ElementExperience
+            local xp_trigger = self:AddLootCounter4(function(manager, trigger, element, enabled) ---@cast element ElementExperience
                 if enabled then
                     manager._trackers:CallFunction(trigger.id, "ObjectiveXPAwarded", element._values.amount or 0)
                 end
@@ -1974,11 +1994,11 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
             managers.ehi_manager:HookElements(params.triggers)
         end
     end
-    if params.max_bags_for_level and params.max_bags_for_level.custom_counter then
+    if params.max_bags_for_level and params.max_bags_for_level.custom_counter and self:IsXPTrackerEnabled() and not _G.ch_settings then
         params.max_bags_for_level.custom_counter.achievement = "LootCounter"
         managers.ehi_loot:AddAchievementListener(params.max_bags_for_level.custom_counter, true)
     else
-        managers.ehi_loot:AddLootListener(params.no_sync_load)
+        managers.ehi_loot:AddLootListener(params.no_sync_load, params.no_max)
     end
     if params.carry_data then
         if params.carry_data.loot and EHICarryData then
@@ -2025,7 +2045,6 @@ function EHI:ShowLootCounterWaypoint(waypoint_params)
                         position = element._values.position
                     })
                     managers.ehi_loot:OverrideWaypoint(element)
-                    managers.ehi_waypoint:CallFunction("LootCounter", "CreateWaypoint", element._id, element._values.icon, element._values.position)
                 else
                     managers.hud:add_waypoint(element._id, {
                         distance = true,
@@ -2043,11 +2062,9 @@ function EHI:ShowLootCounterWaypoint(waypoint_params)
         end
         ---@param element ElementWaypoint
         local function operation_remove(element)
-            if managers.ehi_loot:IsWaypointOverriden(element._id) and managers.ehi_loot:CanRemoveWaypointCheck() then
-                managers.ehi_waypoint:CallFunction("LootCounter", "RemoveWaypoint", element._id)
-                managers.hud:RestoreWaypoint(element._id, true)
+            if managers.ehi_loot:CanRemoveWaypointCheck() then
+                managers.ehi_loot:RemoveWaypoint(element._id)
             end
-            element.__ehi_original_operation_remove(element) ---@diagnostic disable-line
         end
         if type(waypoint_params.element) == "number" then
             managers.ehi_manager:AddElementToOverride(waypoint_params.element --[[@as number]], on_executed, operation_remove)
@@ -2376,6 +2393,27 @@ function EHI:CheckHook(hook)
     return false
 end
 
+---@param hook string
+function EHI:CheckHookMultiple(hook)
+    if self._hooks[hook] or Global.editor_mode then
+        local count = (self._hooks[hook] or 0) + 1
+        self._hooks[hook] = count
+        return count < 9
+    end
+    self._hooks[hook] = 1
+    return true
+end
+
+---@param hook string
+---@param condition boolean
+function EHI:CheckHookConditional(hook, condition)
+    if condition then
+        return self:CheckHookMultiple(hook)
+    else
+        return self:CheckHook(hook)
+    end
+end
+
 ---Returns default keypad time reset for the current difficulty  
 ---Default values:  
 ---`normal = 5s`  
@@ -2591,21 +2629,24 @@ end
 ---@param wp_vector Vector3
 ---@param id string?
 ---@param trigger_once boolean?
+---@param condition boolean?
 ---@return ElementTrigger?
-function EHI:AddIncomingTurret(t, wp_vector, id, trigger_once)
-    return {
-        id = id or "SWATTurretArrival",
-        time = t,
-        icons = { self.Icons.Turret, self.Icons.Goto },
-        class = self.Trackers.Warning,
-        waypoint =
-        {
-            icon = self.Icons.Turret,
-            position = wp_vector
-        },
-        hint = "turret_en_route",
-        trigger_once = trigger_once
-    }
+function EHI:AddIncomingTurret(t, wp_vector, id, trigger_once, condition)
+    if condition ~= false then
+        return {
+            id = id or "SWATTurretArrival",
+            time = t,
+            icons = { self.Icons.Turret, self.Icons.Goto },
+            class = self.Trackers.Warning,
+            waypoint =
+            {
+                icon = self.Icons.Turret,
+                position = wp_vector
+            },
+            hint = "turret_en_route",
+            trigger_once = trigger_once
+        }
+    end
 end
 
 ---@param single_sniper boolean?

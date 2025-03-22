@@ -51,8 +51,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         if element:_check_mode() then
             if self._cache.election_day_3_RefreshSniperTime then
                 self._cache.election_day_3_RefreshSniperTime = nil
-                self._trackers:SetTimeNoAnim("Snipers", t)
-                self._trackers:StartTrackerCountdown("Snipers")
+                self._trackers:CallFunction("Snipers", "UnpauseTimer", t)
             end
             if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", 2) then
                 self._trackers:AddTracker({
@@ -64,17 +63,16 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
                 })
             end
         else
-            self._trackers:_remove_tracker_from_update("Snipers")
-            self._trackers:CallFunction("Snipers", "FitTheTime", t, "0")
+            self._trackers:CallFunction("Snipers", "PauseTimer")
             self._cache.election_day_3_RefreshSniperTime = true
         end
-    end)}
+    end) }
     other[100348] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[100351] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[100446] = EHI:AddSniperSpawnedPopup(true, true)
+    --other[100446] = EHI:AddSniperSpawnedPopup(true, true)
 end
 if EHI:IsLootCounterVisible() then
-    other[103293] = EHI:AddLootCounter3(function(self, ...)
+    other[103293] = EHI:AddLootCounter4(function(self, ...)
         local count = self:CountInteractionAvailable("money_wrap")
         if count > 0 then
             EHI:ShowLootCounterNoChecks({ max = count, client_from_start = true })

@@ -956,3 +956,23 @@ function FakeEHIPhalanxChanceTracker:init(...)
     self._progress_text:set_left(0)
     self._text:set_left(self._progress_text:right())
 end
+
+---@class FakeEHIMoneyTracker : FakeEHITracker
+---@field super FakeEHITracker
+FakeEHIMoneyTracker = class(FakeEHITracker)
+FakeEHIMoneyTracker.UpdateInternalFormat = FakeEHIMoneyTracker.UpdateTimeFormat
+FakeEHIMoneyTracker._OFFSHORE_RATE = 1 - tweak_data:get_value("money_manager", "offshore_rate") -- 0.8
+FakeEHIMoneyTracker._SPENDING_RATE = 1 - FakeEHIMoneyTracker._OFFSHORE_RATE -- 0.2
+function FakeEHIMoneyTracker:Format()
+    local offshore = managers.experience:cash_string(math.round(self._time * self._OFFSHORE_RATE))
+    local spending = managers.experience:cash_string(math.round(self._time * self._SPENDING_RATE))
+    if self._format.money == 1 then
+        return string.format("%s/%s", offshore, spending)
+    elseif self._format.money == 2 then
+        return string.format("%s/%s", spending, offshore)
+    elseif self._format.money == 3 then
+        return string.format("%s", offshore)
+    else
+        return string.format("%s", spending)
+    end
+end

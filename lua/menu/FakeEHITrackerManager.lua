@@ -8,12 +8,10 @@ FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
 function FakeEHITrackerManager:new(panel, aspect_ratio)
     self._tweak_data = tweak_data.ehi.default.tracker
     dofile(EHI.LuaPath .. "menu/FakeEHITracker.lua")
-    self._hud_panel = panel:panel({ alpha = 1 })
+    self._panel = panel:panel({ alpha = 1 })
     if _G.IS_VR then
         self._scale = EHI:GetOption("vr_scale") --[[@as number]]
-        local x, y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
-        self._x = x
-        self._y = y
+        self._x, self._y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
     else
         self._scale = EHI:GetOption("scale") --[[@as number]]
         local x_offset, y_offset = EHI:GetOption("x_offset"), EHI:GetOption("y_offset")
@@ -51,7 +49,8 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
         show_alarm_enemies = EHI:GetOption("show_enemy_count_show_pagers"), ---@type boolean
         civilian_count = EHI:GetOption("civilian_count_tracker_format"), ---@type number
         hostage_count = EHI:GetOption("hostage_count_tracker_format"), ---@type number
-        minion = EHI:GetOption("show_minion_option") ---@type number
+        minion = EHI:GetOption("show_minion_option"), ---@type number
+        money = EHI:GetOption("money_tracker_format") ---@type number
     }
     self._trackers_enabled = EHI:GetOption("show_trackers") ---@type boolean
     self:AddFakeTrackers()
@@ -64,6 +63,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     if not self._trackers_enabled then
         return
     end
+    local not_u24_mod = _G.ch_settings == nil
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.rand(0.5, 9.99), icons = { Icon.Wait } })
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } })
     if EHI:GetOption("show_unlockables") then
@@ -78,7 +78,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
             self:AddFakeTracker({ ids = { "sidejob", "show_dailies" }, time = math.random(60, 180), icons = { { icon = Icon.Trophy, color = EHI:GetColorFromOption("unlockables", "sidejob") } } })
         end
     end
-    do
+    if not_u24_mod then
         local xp_panel = EHI:GetOption("xp_panel")
         if xp_panel <= 2 then
             self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, extend_half = xp_panel == 2, class = "FakeEHIXPTracker" })
@@ -88,7 +88,9 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { Icon.Drill, Icon.Wait, "silent", Icon.Loop } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack }, extend = true, class = "FakeEHITimerTracker" })
-    self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
+    if not_u24_mod then
+        self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
+    end
     self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, "reload" } })
     self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, Icon.Fix } })
     self:AddFakeTracker({ id = "show_zipline_timer", time = math.rand(1, 8) * 2, icons = { table.random({ "zipline_bag", "Other_H_Any_DidntSee" }) } })
@@ -117,7 +119,10 @@ function FakeEHITrackerManager:AddFakeTrackers()
     self:AddFakeTracker({ id = "show_bodybags_counter", count = math.random(1, 3), icons = { "equipment_body_bag" }, class = "FakeEHICountTracker" })
     self:AddFakeTracker({ id = "show_escape_chance", icons = { Icon.Car }, chance = math.random(100), class = "FakeEHIEscapeChanceTracker" })
     self:AddFakeTracker({ id = "show_sniper_tracker", icons = { "sniper" }, class = "FakeEHISniperTracker" })
-    self:AddFakeTracker({ id = "show_marshal_initial_time", time = math.random(0, 480), icons = { "equipment_sheriff_star" } })
+    if not_u24_mod then
+        self:AddFakeTracker({ id = "show_marshal_initial_time", time = math.random(0, 480), icons = { "equipment_sheriff_star" } })
+    end
+    self:AddFakeTracker({ id = "show_money_tracker", time = math.random(1000000, 10000000), icons = { Icon.Money }, class = "FakeEHIMoneyTracker" })
     self:AddPreviewText()
 end
 
@@ -142,7 +147,7 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     params.tracker_alignment = self._tracker_alignment
     params.tracker_vertical_anim = self._tracker_vertical_anim
     params.format = self._tracker_format_data
-    local tracker = _G[params.class or "FakeEHITracker"]:new(self._hud_panel, params, self) --[[@as FakeEHITracker]]
+    local tracker = _G[params.class or "FakeEHITracker"]:new(self._panel, params, self) --[[@as FakeEHITracker]]
     self._n_of_trackers = self._n_of_trackers + 1
     self._fake_trackers[self._n_of_trackers] = tracker
     if self._tracker_alignment == 4 then -- Horizontal; Right to Left
@@ -195,7 +200,7 @@ function FakeEHITrackerManager:GetOtherPeerColor()
         i = session:local_peer():id()
     end
     table.remove(colors, i)
-    return colors[math.random(#colors - 1)]
+    return colors[math.random(#colors - 1)] or Color.white
 end
 
 ---@param state boolean
@@ -217,7 +222,7 @@ function FakeEHITrackerManager:AddPreviewText()
         self:UpdatePreviewTextVisibility(false)
         return
     elseif not self._preview_text then
-        self._preview_text = self._hud_panel:text({
+        self._preview_text = self._panel:text({
             name = "preview_text",
             text = managers.localization:text("ehi_preview"),
             font_size = 23,
@@ -257,7 +262,7 @@ function FakeEHITrackerManager:GetPos(pos)
         local from_bottom = self._tracker_alignment == 2
         local new_y = self:GetY(pos, true, from_bottom)
         local h = from_bottom and (new_y - self._panel_offset - self._panel_size) or (new_y + self._panel_offset + self._panel_size)
-        if (from_bottom and h < 0) or h > self._hud_panel:h() then
+        if (from_bottom and h < 0) or h > self._panel:h() then
             self._vertical.y_offset = pos
             local new_x
             if self._tracker_vertical_anim == 2 then

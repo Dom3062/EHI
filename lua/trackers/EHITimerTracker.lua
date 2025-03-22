@@ -201,7 +201,7 @@ function EHITimerGroupTracker:post_init(params)
     self._timers = {} --[[@as table<string, EHITimerGroupTracker.Timer?>]]
     self._timers_n = 0
     if params.key and params.time then
-        self:AddTimer(params.time, params.key)
+        self:AddTimer(params.time, params.key, params.warning, params.completion)
     end
     EHITimerGroupTracker.super.post_init(self, params)
 end
@@ -209,15 +209,17 @@ end
 ---@param timer EHITimerGroupTracker.Timer
 ---@param check_progress boolean?
 ---@param color Color?
-function EHITimerGroupTracker:AnimateColor(timer, check_progress, color)
+---@param text_color Color?
+function EHITimerGroupTracker:AnimateColor(timer, check_progress, color, text_color)
     local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
-    timer.label:animate(self._anim_warning, self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
+    timer.label:animate(self._anim_warning, text_color or self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
 end
 
 ---@param t number
 ---@param id string Unit Key
 ---@param warning boolean?
-function EHITimerGroupTracker:AddTimer(t, id, warning)
+---@param completion boolean?
+function EHITimerGroupTracker:AddTimer(t, id, warning, completion)
     local label = self:CreateText({
         text = self:FormatTime(t),
         x = self._timers_n * self._default_bg_size,
@@ -228,7 +230,8 @@ function EHITimerGroupTracker:AddTimer(t, id, warning)
         label = label,
         time = t,
         not_powered = false,
-        animate_warning = warning,
+        animate_warning = warning or completion,
+        animate_completion = completion,
         pos = self._timers_n
     }
     self._timers_n = self._timers_n + 1
@@ -296,7 +299,7 @@ function EHITimerGroupTracker:RedrawPanel()
 end
 
 ---@param jammed boolean
----@param id string
+---@param id string Unit Key
 function EHITimerGroupTracker:SetJammed(jammed, id)
     local timer = self._timers[id]
     if timer then
@@ -310,7 +313,7 @@ function EHITimerGroupTracker:SetJammed(jammed, id)
 end
 
 ---@param powered boolean
----@param id string
+---@param id string Unit Key
 function EHITimerGroupTracker:SetPowered(powered, id)
     local timer = self._timers[id]
     if timer then
@@ -323,7 +326,7 @@ function EHITimerGroupTracker:SetPowered(powered, id)
     end
 end
 
----@param id string
+---@param id string Unit Key
 function EHITimerGroupTracker:SetRunning(id)
     self:SetJammed(false, id)
     self:SetPowered(true, id)
@@ -346,13 +349,13 @@ function EHITimerGroupTracker:SetTextColor(timer)
 end
 
 ---@param state boolean
----@param id string
+---@param id string Unit Key
 function EHITimerGroupTracker:SetAutorepair(state, id)
     local timer = self._timers[id]
     if timer then
         if timer.jammed or timer.not_powered then
             if state then
-                self:AnimateColor(timer, false, self._autorepair_color)
+                self:AnimateColor(timer, false, self._autorepair_color, self._paused_color)
             end
             return
         elseif not timer.anim_started then

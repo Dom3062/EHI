@@ -845,10 +845,12 @@ function EHITracker:FitTheTime(t, default_text)
     end
 end
 
----@param text string? If not provided, `Format` function will be called
-function EHITracker:SetAndFitTheText(text)
-    self._text:set_text(text or self:Format())
-    self:FitTheText()
+---@param text_string string? If not provided, `Format` function will be called
+---@param text PanelText?
+function EHITracker:SetAndFitTheText(text_string, text)
+    text = text or self._text
+    text:set_text(text_string or self:Format())
+    self:FitTheText(text)
 end
 
 ---@param time number

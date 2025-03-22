@@ -63,6 +63,7 @@ _G.TweakData = {
     }
 }
 ---@class tweak_data
+---@field difficulty_to_index fun(self: self, difficulty: "easy"|"normal"|"hard"|"overkill"|"overkill_145"|"easy_wish"|"overkill_290"|"sm_wish"|string): integer
 ---@field chat_colors Color[]
 ---@field get_raw_value fun(self: self, ...): any
 ---@field get_value fun(self: self, ...): any
@@ -675,6 +676,7 @@ _G.tweak_data.menu = {}
 ---@field omniscience PlayerTweakData.omniscience
 _G.tweak_data.player = {}
 ---@class PlayerTweakData.alarm_pager
+---@field bluff_success_chance number[]
 ---@field bluff_success_chance_w_skill number[]
 _G.tweak_data.alarm_pager = {}
 ---@class PlayerTweakData.damage
@@ -907,6 +909,9 @@ _G.TimerGui = {}
 ---@class DigitalGui
 _G.DigitalGui = {}
 ---@class ExperienceManager
+---@field get_contract_difficulty_multiplier fun(self: self, stars: number): number
+---@field get_job_xp_by_stars fun(self: self, stars: number): number
+---@field get_stage_xp_by_stars fun(self: self, stars: number): number
 _G.ExperienceManager = {}
 ---@class GamePlayCentralManager
 _G.GamePlayCentralManager = {}
@@ -1215,39 +1220,19 @@ end
 ---@class ElementLogicChanceOperator : MissionScriptElement
 ---@field _values ElementLogicChance._values
 
----@class ElementLogicChance._values : MissionScriptElement._values
----@field chance number
-
----@class ElementWaypoint._values : MissionScriptElement._values
----@field only_in_civilian boolean
----@field only_on_instigator boolean
----@field icon string
----@field text_id string
+---@class ElementMandatoryBags : MissionScriptElement
+---@field _values ElementMandatoryBags._values
 
 ---@class ElementTimer : MissionScriptElement
 ---@field super MissionScriptElement
 ---@field _timer number
 
----@class ElementSpecialObjective._values : MissionScriptElement._values
----@field so_action string
-
 ---@class ElementSpecialObjective : MissionScriptElement
 ---@field super MissionScriptElement
 ---@field _values ElementSpecialObjective._values
 
----@class ElementExperience._values : MissionScriptElement._values
----@field amount number
-
----@class ElementJobValue._values : MissionScriptElement._values
----@field value number
----@field key string
----@field save boolean
-
----@class MissionScriptElement._values
----@field amount number `ElementCounter` | `ElementCounterOperator`
----@field enabled boolean
----@field position Vector3
----@field rotation Rotation
+---@class MissionScript
+---@field element fun(self: self, id: number): MissionScriptElement?
 
 ---@class MissionScriptElement
 ---@field _id number
@@ -1265,8 +1250,34 @@ end
 ---@field _calc_element_delay fun(self: self, params: table): number
 ---@field _timer number `ElementTimerOperator`
 
----@class MissionScript
----@field element fun(self: self, id: number): MissionScriptElement?
+---@class MissionScriptElement._values
+---@field amount number `ElementCounter` | `ElementCounterOperator`
+---@field enabled boolean
+---@field position Vector3
+---@field rotation Rotation
+
+---@class ElementExperience._values : MissionScriptElement._values
+---@field amount number
+
+---@class ElementLogicChance._values : MissionScriptElement._values
+---@field chance number
+
+---@class ElementJobValue._values : MissionScriptElement._values
+---@field value number
+---@field key string
+---@field save boolean
+
+---@class ElementMandatoryBags._values : MissionScriptElement._values
+---@field amount number
+
+---@class ElementSpecialObjective._values : MissionScriptElement._values
+---@field so_action string
+
+---@class ElementWaypoint._values : MissionScriptElement._values
+---@field only_in_civilian boolean
+---@field only_on_instigator boolean
+---@field icon string
+---@field text_id string
 
 ---@param color string
 ---@param opacity number?
@@ -1379,7 +1390,20 @@ end
 ---@field value fun(self: self, id: string): number
 
 ---@class MoneyManager
+---@field get_civilian_deduction fun(self: self): number
+---@field get_money_by_job fun(self: self, job_id: string, difficulty: number): payout: number, base_payout: number, risk_payout: number
+---@field get_preplanning_total_cost fun(self: self): number
 ---@field get_secured_bonus_bag_value fun(self: self, carry_id: string, multiplier: number): number
+
+---@param job_stars number
+---@param risk_stars number
+---@param job_days nil Unused
+---@param job_id string
+---@param level_id string?
+---@param extra_params table Unused
+---@return number payout, number base_payout, number risk_payout
+function MoneyManager:get_contract_money_by_stars(job_stars, risk_stars, job_days, job_id, level_id, extra_params)
+end
 
 ---@class MousePointerManager
 ---@field convert_fullscreen_16_9_mouse_pos fun(self: self, in_x: number, in_y: number): number, number
@@ -1455,6 +1479,7 @@ end
 ---@field ehi_loot EHILootManager
 ---@field ehi_sync EHISyncManager
 ---@field ehi_hook EHIHookManager
+---@field ehi_money EHIMoneyManager
 ---@field enemy EnemyManager
 ---@field environment_controller CoreEnvironmentControllerManager
 ---@field environment_effects EnvironmentEffectsManager
@@ -1577,6 +1602,7 @@ end
 ---@field size fun(tbl: table): number Returns number of elements in the table
 ---@field count fun(v: table, func: fun(item: any, key: any): boolean): number
 ---@field contains fun(v: table, e: any): boolean Returns `true` or `false` if `e` value exists in the table
+---@field contains_any fun(v: table, e: any[]): boolean Returns `true` or `false` if any value from table `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
 ---@field get_vector_index fun(v: table, e: any): number?
 ---@field empty fun(v: table): boolean
@@ -1630,6 +1656,14 @@ end
 ---@param e T
 ---@return T[]
 function table.exclude(t, e)
+end
+
+---Returns a new copied table with filtered values from the function
+---@generic K, V
+---@param t table<K, V>
+---@param func fun(value: V, key: K): boolean
+---@return table<K, V>
+function table.filter(t, func)
 end
 
 ---@class string
@@ -1758,7 +1792,7 @@ end
 ---@class UnitBase : Unit
 ---@field add_destroy_listener fun(self: self, key: string, clbk: fun(unit: Unit))
 ---@field damage fun(): UnitDamage
----@field in_slot fun(self: self, slotmask: number): boolean
+---@field in_slot fun(self: self, slotmask: SlotMask): boolean
 ---@field remove_destroy_listener fun(self: self, key: string)
 
 ---@class UnitDamage

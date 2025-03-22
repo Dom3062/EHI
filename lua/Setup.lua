@@ -3,9 +3,11 @@ managers.ehi_experience = EHIExperienceManager
 if EHI:CheckLoadHook("Setup") then
     EHI:Hook(Setup, "init_managers", function(self, managers, ...) ---@param managers managers
         local achievements = tweak_data.achievement
-        local check_uno = callback(achievements, achievements, "_check_uno")
-        managers.savefile:add_load_done_callback(check_uno)
-        managers.savefile:add_load_sequence_done_callback_handler(check_uno)
+        if achievements and achievements._check_uno then
+            local check_uno = callback(achievements, achievements, "_check_uno")
+            managers.savefile:add_load_done_callback(check_uno)
+            managers.savefile:add_load_sequence_done_callback_handler(check_uno)
+        end
     end)
     return
 end
@@ -24,6 +26,7 @@ dofile(EHI.LuaPath .. "EHITimerManager.lua")
 dofile(EHI.LuaPath .. "EHILootManager.lua")
 dofile(EHI.LuaPath .. "EHISyncManager.lua")
 dofile(EHI.LuaPath .. "EHIHookManager.lua")
+dofile(EHI.LuaPath .. "EHIMoneyManager.lua")
 dofile(EHI.LuaPath .. "EHIManager.lua")
 
 local original =
@@ -49,6 +52,7 @@ function Setup:init_managers(managers, ...)
     managers.ehi_loot = EHILootManager:new()
     managers.ehi_sync = EHISyncManager
     managers.ehi_hook = EHIHookManager:new(managers.ehi_tracker, managers.ehi_loot)
+    managers.ehi_money = EHIMoneyManager
     managers.ehi_manager = EHIManager:new(managers)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end

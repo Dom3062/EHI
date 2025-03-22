@@ -1,4 +1,4 @@
-if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetTrackerOrWaypointOption("show_camera_loop", "show_waypoints_cameras") then
+if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetTrackerOrWaypointOption("show_camera_loop", "show_waypoints_cameras") or _G.ch_settings then
     return
 end
 

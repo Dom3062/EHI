@@ -45,8 +45,8 @@ else
 end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, Icon.ExclamationMark }, class = TT.Warning, hint = Hints.Teargas }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, Icon.ExclamationMark }, class = TT.Warning, hint = Hints.Teargas }
-triggers[104736] = EHI:AddIncomingTurret(616/30, Vector3(-420.226, -1011.89, 225.056), "SWATTurretArrival2", true)
-triggers[104737] = EHI:AddIncomingTurret(752/30, Vector3(805.013, 2253.48, 224.916), "SWATTurretArrival1", true)
+triggers[104736] = EHI:AddIncomingTurret(616/30, Vector3(-420.226, -1011.89, 225.056), "SWATTurretArrival2", true, _G.ch_settings == nil)
+triggers[104737] = EHI:AddIncomingTurret(752/30, Vector3(805.013, 2253.48, 224.916), "SWATTurretArrival1", true, _G.ch_settings == nil)
 
 achievements.voff_1 =
 {

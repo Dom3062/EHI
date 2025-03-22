@@ -175,6 +175,49 @@ else
     other[301772] = EHI:AddAssaultDelay({ control = 20 + FirstAssaultDelay })
     other[301773] = EHI:AddAssaultDelay({ control = 10 + FirstAssaultDelay })
 end
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    ---@class EHIMallcrasherSniperTracker : EHITracker, EHISniperBaseTracker
+    EHIMallcrasherSniperTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop" })
+    function EHIMallcrasherSniperTracker:OverridePanel()
+        self._single_sniper = true
+        self._refresh_on_delete = true
+        self._count_text = self:CreateText({
+            text = "1",
+            x = 0,
+            color = self._sniper_text_color,
+            FitTheText = true,
+            visible = false
+        })
+        self:SniperLogicStarted()
+    end
+    ---@param t number
+    function EHIMallcrasherSniperTracker:StartLoop(t)
+        self._time = t
+        self:AddTrackerToUpdate()
+        self._text:set_visible(true)
+        self._count_text:set_visible(false)
+        self:AnimateBG()
+    end
+    function EHIMallcrasherSniperTracker:Refresh()
+        self._text:set_visible(false)
+        self._count_text:set_visible(true)
+        self:RemoveTrackerFromUpdate()
+        self:AnimateBG()
+        self:SniperSpawned()
+    end
+    other[301804] = { id = "Snipers", time = 25, class = "EHIMallcrasherSniperTracker", special_function = SF.ExecuteIfElementIsEnabled }
+    other[301805] = { id = "Snipers", time = 21, class = "EHIMallcrasherSniperTracker", special_function = SF.ExecuteIfElementIsEnabled }
+    -- Respawn
+    local StartLoop = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+        self._trackers:CallFunction("Snipers", "StartLoop", trigger.time)
+    end)
+    other[301794] = { time = 51, special_function = StartLoop }
+    other[301795] = { time = 71, special_function = StartLoop }
+    other[301796] = { time = 91, special_function = StartLoop }
+    other[301787] = { time = 80, special_function = StartLoop }
+    other[301788] = { time = 60, special_function = StartLoop }
+    other[301789] = { time = 40, special_function = StartLoop }
+end
 
 EHI.Manager:ParseTriggers({
     mission = triggers,

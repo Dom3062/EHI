@@ -67,12 +67,12 @@ local other =
     --[100520] = EHI:AddAssaultDelay({}) -- 30s; Diff is applied earlier
 }
 if EHI:IsLootCounterVisible() then
-    local MoneyBagsInVault = 1
-    if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) then
-        MoneyBagsInVault = 2
-    elseif EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-        MoneyBagsInVault = 3
-    end
+    local MoneyBagsInVault = EHI:GetValueBasedOnDifficulty({
+        normal = 1,
+        hard = 2,
+        veryhard = 2,
+        overkill_or_above = 3
+    })
     local MoneyAroundHostage = 0
     local HostageMoneyTaken = 0
     local _HostageExploded = false
@@ -89,13 +89,13 @@ if EHI:IsLootCounterVisible() then
             managers.ehi_loot:DecreaseLootCounterProgressMax(count)
         end
     end
-    other[100043] = EHI:AddLootCounter3(function(self, ...)
+    other[100043] = EHI:AddLootCounter4(function(self, ...)
         local loot_triggers = {}
         MoneyAroundHostage = self:CountInteractionAvailable("money_small")
         for _, index in ipairs(start_index) do
             if managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
                 for i = 100003, 100006, 1 do
-                    managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceElementID(i, index), "interact", HostageMoneyInteracted )
+                    managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceElementID(i, index), "interact", HostageMoneyInteracted)
                 end
                 loot_triggers[EHI:GetInstanceElementID(100029, index)] = { special_function = SF.CustomCode, f = HostageExploded }
                 break

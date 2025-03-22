@@ -65,7 +65,7 @@ EHI.Manager:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:ShowLootCounter({ max = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) and 12 or 8 }, { element = { 101386, 101697, 101698, 101699 } })
+EHI:ShowLootCounter({ max = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) and 12 or 8 }, { element = { 101697, 101698, 101699 } })
 EHI:AddXPBreakdown({
     objectives =
     {

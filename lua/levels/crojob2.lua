@@ -71,7 +71,7 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     local Weapons = { 100857, 103374 }
-    other[101737] = EHI:AddLootCounter3(function(self, ...)
+    other[101737] = EHI:AddLootCounter4(function(self, ...)
         EHI:ShowLootCounterNoChecks({
             max = 6 + tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons), -- 4 Bomb parts; 2 Meth and Weapons
             -- Assume no collision spawned, more loot

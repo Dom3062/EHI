@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("GageAssignmentManager") then
+if EHI:CheckLoadHook("GageAssignmentManager") or _G.ch_settings then
     return
 end
 

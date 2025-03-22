@@ -24,8 +24,8 @@ local achievements =
 local other =
 {
     [100968] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } }),
-    [100969] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } }),
-    [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } })
+    [100969] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround), -- No need to copy Waypoint elements, it will just spam BLT log
+    [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100318 } }
@@ -38,7 +38,7 @@ end
 -- https://steamcommunity.com/app/218620/discussions/14/3834297051382791123/
 --[[if EHI:IsLootCounterVisible() then
     local CreateCounter = true
-    other[101419] = EHI:AddLootCounter3(function(self, ...)
+    other[101419] = EHI:AddLootCounter4(function(self, ...)
         if CreateCounter then
             EHI:ShowLootCounterNoChecks({})
             CreateCounter = false

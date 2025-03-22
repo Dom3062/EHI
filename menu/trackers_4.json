@@ -82,6 +82,39 @@
             "value": "show_marshal_initial_time",
             "default_value": true,
             "ehi_ver" : 287
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_money_tracker_choice",
+            "title": "ehi_show_money_tracker",
+            "description": "ehi_show_money_tracker_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_money_tracker",
+            "value": "show_money_tracker",
+            "default_value": true,
+            "ehi_ver" : 318
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_money_tracker_format_choice",
+            "title": "ehi_money_tracker_format",
+            "description": "ehi_money_tracker_format_desc",
+            "callback": ["SetOption", "UpdateMoneyTrackerFormat"],
+            "callback_arguments": "money_tracker_format",
+            "items": [
+                "ehi_money_tracker_format_1",
+                "ehi_money_tracker_format_2",
+                "ehi_money_tracker_format_3",
+                "ehi_money_tracker_format_4"
+            ],
+            "value": "money_tracker_format",
+            "parent": "ehi_show_money_tracker_choice",
+            "default_value": 1,
+            "ehi_ver" : 318
         }
     ]
 }

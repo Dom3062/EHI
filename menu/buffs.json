@@ -147,7 +147,7 @@
             "id": "ehi_buffs_show_upper_text_choice",
             "title": "ehi_buffs_show_upper_text",
             "description": "ehi_buffs_show_upper_text_desc",
-            "callback": "SetOption",
+            "callback": ["SetOption", "UpdateBuffUpperTextVisibility"],
             "callback_arguments": "buffs_show_upper_text",
             "value": "buffs_show_upper_text",
             "default_value": true,

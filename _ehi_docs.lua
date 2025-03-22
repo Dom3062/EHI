@@ -403,6 +403,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field [string] number|{amount: number, times: number}
 
 ---@class _XPBreakdown
+---@field u24_mod boolean
 ---@field objective XPBreakdown.objective
 ---@field objectives XPBreakdown.objectives
 ---@field loot XPBreakdown.loot
@@ -411,6 +412,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field wave_all number|{amount: number, times: number}
 
 ---@class XPBreakdown
+---@field u24_mod boolean
 ---@field objective XPBreakdown.objective
 ---@field objectives XPBreakdown.objectives
 ---@field loot XPBreakdown.loot

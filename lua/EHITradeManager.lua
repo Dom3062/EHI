@@ -30,9 +30,10 @@ end
 ---@param peer_id number
 ---@param time number
 ---@param civilians_killed number?
-function EHITradeManager:AddCustodyTimeTrackerWithPeer(peer_id, time, civilians_killed)
+---@param in_custody boolean?
+function EHITradeManager:AddCustodyTimeTrackerWithPeer(peer_id, time, civilians_killed, in_custody)
     self:AddCustodyTimeTracker()
-    self:AddPeerCustodyTime(peer_id, time, civilians_killed)
+    self:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody)
     if self._trade.normal or self._trade.ai then
         local f = self._trade.normal and "SetTrade" or "SetAITrade"
         self:CallFunction(f, true, managers.trade._trade_counter_tick, true)
@@ -42,8 +43,9 @@ end
 ---@param peer_id number
 ---@param respawn_time_penalty number
 ---@param civilians_killed number?
-function EHITradeManager:AddPeerCustodyTime(peer_id, respawn_time_penalty, civilians_killed)
-    self:CallFunction("AddPeerCustodyTime", peer_id, respawn_time_penalty, civilians_killed)
+---@param in_custody boolean?
+function EHITradeManager:AddPeerCustodyTime(peer_id, respawn_time_penalty, civilians_killed, in_custody)
+    self:CallFunction("AddPeerCustodyTime", peer_id, respawn_time_penalty, civilians_killed, in_custody)
 end
 
 ---@param peer_id number
@@ -87,14 +89,14 @@ end
 
 ---@param peer_id number
 function EHITradeManager:SetCachedPeerInCustody(peer_id)
-    if not self._trade_delay[peer_id] then
+    local data = self._trade_delay[peer_id]
+    if not data then
         return
     elseif self._trade_processed_after_alarm then
-        local data = self._trade_delay[peer_id]
         self:PostPeerCustodyTime(peer_id, data.respawn_t, data.civilians_killed, true)
         return
     end
-    self._trade_delay[peer_id].in_custody = true
+    data.in_custody = true
 end
 
 ---@param peer_id number
@@ -119,14 +121,15 @@ end
 ---@param time number
 ---@param civilians_killed number
 function EHITradeManager:SetCachedPeerCustodyTime(peer_id, time, civilians_killed)
-    if not self._trade_delay[peer_id] then
+    local data = self._trade_delay[peer_id]
+    if not data then
         return
     elseif self._trade_processed_after_alarm then
         self:PostPeerCustodyTime(peer_id, time, civilians_killed)
         return
     end
-    self._trade_delay[peer_id].respawn_t = time
-    self._trade_delay[peer_id].civilians_killed = civilians_killed or 1
+    data.respawn_t = time
+    data.civilians_killed = civilians_killed or 1
 end
 
 ---@param peer_id number
@@ -155,18 +158,15 @@ function EHITradeManager:PostPeerCustodyTime(peer_id, time, civilians_killed, in
     if tracker then
         if tracker:PeerExists(peer_id) then
             tracker:IncreasePeerCustodyTime(peer_id, time)
+            if in_custody then
+                tracker:SetPeerInCustody(peer_id)
+            end
         else
-            tracker:AddPeerCustodyTime(peer_id, time, civilians_killed)
-        end
-        if in_custody then
-            tracker:SetPeerInCustody(peer_id)
+            tracker:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody)
         end
     else
         self:AddCustodyTimeTracker()
-        self:AddPeerCustodyTime(peer_id, time, civilians_killed)
-        if in_custody then
-            self:CallFunction("SetPeerInCustody", peer_id)
-        end
+        self:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody) ---@diagnostic disable-line
     end
 end
 

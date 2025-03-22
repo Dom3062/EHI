@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("ElementExperience") or EHI:IsXPTrackerDisabled() then
+if EHI:CheckLoadHook("ElementExperience") or EHI:IsXPTrackerDisabled() or _G.ch_settings then
     return
 end
 

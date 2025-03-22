@@ -1,5 +1,3 @@
-local EHI = EHI
-
 ---@generic T: table
 ---@param super T? A base achievement class
 ---@return T

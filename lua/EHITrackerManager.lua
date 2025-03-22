@@ -30,14 +30,12 @@ function EHITrackerManager:init()
 end
 
 function EHITrackerManager:CreateWorkspace()
-    local x, y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
-    self._x = x
-    self._y = y
+    self._x, self._y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._ws = managers.gui_data:create_fullscreen_workspace()
     self._ws:hide()
     self._scale = EHI:GetOption("scale") --[[@as number]]
     self._panel = self._ws:panel():panel({ layer = -10 })
-    EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility)
+    EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility) ---@param visibility boolean
         if visibility then
             self._ws:show()
         else

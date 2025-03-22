@@ -28,6 +28,7 @@ _G.DelayedCalls = {}
 ---@class Hooks
 ---@field _function_hooks table
 ---@field Add fun(self: self, key: string, id: string, func: function)
+---@field RemovePreHook fun(self: self, id: string)
 ---@field RemovePostHook fun(self: self, id: string)
 _G.Hooks = {}
 
@@ -117,11 +118,16 @@ _G.CustomAchievement = {}
 --- End of Beardlib ---
 -----------------------
 
+------------------------
+--- Classic Heisting ---
+------------------------
+_G.ch_settings = {}
+
 -------------------------
 --- Custom Name Color ---
 -------------------------
 ---@class CustomNameColor
----@field GetOwnColor fun(): Color
+---@field GetOwnColor fun(self: self): Color
 ---@field ModID string
 _G.CustomNameColor = {}
 

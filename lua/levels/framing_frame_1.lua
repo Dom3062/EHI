@@ -104,6 +104,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103761] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
+other[100788] = EHI:AddAssaultDelay({ time = 30 + 1 + 20 + 1 }) -- Game forces endless assault and then kills it a second later
+
 EHI.Manager:ParseTriggers({ achievement = achievements, other = other, assault = { wave_move_elements_block = { 100352, 100353 } } })
 
 EHI:SetMissionDoorData({

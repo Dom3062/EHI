@@ -65,7 +65,7 @@ function HUDManager:_setup_player_info_hud_pd2(...)
         return
     elseif tweak_data.levels:IsStealthAvailable(level_id) and trackers_visible then
         if EHI:GetOption("show_pager_tracker") then
-            local base = tweak_data.player.alarm_pager.bluff_success_chance_w_skill
+            local base = tweak_data.player.alarm_pager.bluff_success_chance
             if server then
                 for _, value in ipairs(base) do
                     if value > 0 and value < 1 then
@@ -98,6 +98,13 @@ function HUDManager:_setup_player_info_hud_pd2(...)
                     remove_on_alarm = true,
                     class = EHI.Trackers.Progress
                 })
+                if _G.ch_settings then
+                    EHI:AddOnSpawnedCallback(function()
+                        if managers.player:has_category_upgrade("player", "corpse_alarm_pager_bluff") then
+                            self._ehi_tracker:IncreaseProgressMax("Pagers", 2)
+                        end
+                    end)
+                end
             end
         end
         if EHI:GetOption("show_bodybags_counter") then

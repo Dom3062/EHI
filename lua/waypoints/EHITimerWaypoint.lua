@@ -87,7 +87,7 @@ end
 function EHITimerWaypoint:SetAutorepair(state)
     if self._jammed or self._not_powered then
         if state then
-            self:AnimateColor(nil, self._autorepair_color)
+            self:AnimateColor(nil, self._autorepair_color, self._paused_color)
         end
         return
     elseif not self._anim_started then

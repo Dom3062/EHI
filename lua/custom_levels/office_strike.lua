@@ -194,7 +194,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end), trigger_once = true }
     other[200053] = { element = 200051, special_function = AddToRespawnFromDeath }
     other[200062] = { element = 200061, special_function = AddToRespawnFromDeath }
-    other[200588] = { count = 3, id = "Snipers", special_function = SF.IncreaseCounter } -- 3 additional snipers spawn; 0s delay
+    other[200588] = { count = 3, id = "Snipers", special_function = SF.IncreaseCounter } -- 3 additional snipers spawned; 0s delay
     other[200079] = { element = 200064, special_function = AddToRespawnFromDeath }
     other[200490] = { element = 200489, special_function = AddToRespawnFromDeath }
     other[200493] = { element = 200492, special_function = AddToRespawnFromDeath }

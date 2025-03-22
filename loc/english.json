@@ -124,7 +124,6 @@
     "ehi_hint_pager_chance" : "Pager Chance",
     "ehi_hint_zipline_bag" : "Zipline (Bag)",
     "ehi_hint_zipline_person" : "Zipline (Person)",
-    "ehi_hint_zipline_reset" : "Zipline Reset",
     "ehi_hint_chance" : "Chance",
     "ehi_hint_loot_counter" : "Loot Counter",
     "ehi_hint_trade_delay" : "Trade Delay",
@@ -157,6 +156,7 @@
     "ehi_hint_turret_en_route" : "Enemy Turret En Route",
     "ehi_hint_modifier_civilian_alarm" : "Counter of civilian kills to alarm",
     "ehi_hint_marshal" : "Marshal Groups",
+    "ehi_hint_payday" : "PAYDAY",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
@@ -171,6 +171,7 @@
     "ehi_hint_des_chem_set_cooking" : "Chemistry Set Cooking",
     "ehi_hint_election_day_3_crash_chance" : "Crash Chance",
     "ehi_hint_election_day_3_crash_chance_time" : "Time to Crash",
+    "ehi_hint_four_stores" : "Objective",
     "ehi_hint_friend_heli" : "Heli En Route",
     "ehi_hint_friend_heli_random" : "Heli Goes To Random Car",
     "ehi_hint_friend_heli_caddilac" : "Heli Goes To Caddilac",
@@ -594,6 +595,16 @@
 
     "ehi_show_marshal_initial_time" : "Show Marshal Initial Spawn Tracker",
     "ehi_show_marshal_initial_time_desc" : "Shows a tracker for Marshal enemies when their spawn gets enabled",
+
+    "ehi_show_money_tracker" : "Show Money Tracker",
+    "ehi_show_money_tracker_desc" : "Shows how much money will get routed to Offshore and Spending account",
+
+    "ehi_money_tracker_format" : "Money Tracker Format",
+    "ehi_money_tracker_format_desc" : "Defines how Money Tracker should be formatted",
+    "ehi_money_tracker_format_1" : "Offshore / Spending",
+    "ehi_money_tracker_format_2" : "Spending / Offshore",
+    "ehi_money_tracker_format_3" : "Offshore",
+    "ehi_money_tracker_format_4" : "Spending",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",
@@ -635,6 +646,8 @@
     "ehi_shared_menu_desc" : "",
 
     "ehi_shared_loot_counter" : "Loot Counter",
+
+    "ehi_shared_pagers" : "Pagers",
 
     "ehi_buffs_menu" : "Buffs",
     "ehi_buffs_menu_desc" : "",

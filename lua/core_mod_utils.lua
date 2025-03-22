@@ -8,7 +8,10 @@ EHI.ModUtils._restoration_vanilla_levels_bs = { -- Restoration Mod Overhaul bs
 }
 
 function EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn()
-    return EHI.IsHost and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id)
+    if EHI.IsHost and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
+        return false
+    end
+    return true -- Don't touch it!
 end
 
 ---@param pager_count number

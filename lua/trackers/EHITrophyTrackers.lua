@@ -1,4 +1,3 @@
-local EHI = EHI
 ---@class EHITrophyTracker : EHIAchievementTracker
 ---@field super EHIAchievementTracker
 EHITrophyTracker = class(EHIAchievementTracker)

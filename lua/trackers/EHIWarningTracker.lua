@@ -37,10 +37,11 @@ end
 
 ---@param check_progress boolean?
 ---@param color Color?
-function EHIWarningTracker:AnimateColor(check_progress, color)
+---@param text_color Color?
+function EHIWarningTracker:AnimateColor(check_progress, color, text_color)
     if self._text and alive(self._text) then
         local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(self._time, 0.1) - math.floor(self._time), 0.99)) or 1
-        self._text:animate(self._anim_warning, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
+        self._text:animate(self._anim_warning, text_color or self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
     end
 end
 
