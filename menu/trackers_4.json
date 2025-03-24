@@ -77,8 +77,9 @@
             "id": "ehi_show_marshal_initial_time_choice",
             "title": "ehi_show_marshal_initial_time",
             "description": "ehi_show_marshal_initial_time_desc",
-            "callback": "SetOption",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_marshal_initial_time",
+            "focus_changed_callback": "SetFocus",
             "value": "show_marshal_initial_time",
             "default_value": true,
             "ehi_ver" : 287
@@ -92,9 +93,11 @@
             "id": "ehi_show_money_tracker_choice",
             "title": "ehi_show_money_tracker",
             "description": "ehi_show_money_tracker_desc",
-            "callback": "SetOption",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
             "callback_arguments": "show_money_tracker",
+            "focus_changed_callback": "SetFocus",
             "value": "show_money_tracker",
+            "is_parent": true,
             "default_value": true,
             "ehi_ver" : 318
         },

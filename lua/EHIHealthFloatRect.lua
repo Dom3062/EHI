@@ -105,6 +105,15 @@ end
 EHIHealthFloatRect._converts_disabled = not EHI:GetOption("show_floating_health_bar_converts") -- Team AI shares the same slot mask (16) with converts, workaround
 EHIHealthFloatRect._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 EHIHealthFloatRect._team_ai_disabled = not EHI:GetOption("show_floating_health_bar_team_ai") -- Converts share the same slot mask (16) with Team AI, workaround
+EHIHealthFloatRect._regular_disabled = not EHI:GetOption("show_floating_health_bar_regular_enemies")
+EHIHealthFloatRect._special_tank_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_tank")
+EHIHealthFloatRect._special_shield_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_shield")
+EHIHealthFloatRect._special_taser_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_taser")
+EHIHealthFloatRect._special_cloaker_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_cloaker")
+EHIHealthFloatRect._special_sniper_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_sniper")
+EHIHealthFloatRect._special_medic_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_medic")
+EHIHealthFloatRect._special_other_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_other")
+EHIHealthFloatRect._special_turret_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_turret")
 ---@param hud_panel Panel
 function EHIHealthFloatRect:new(hud_panel)
     self._current_health = 0
@@ -197,6 +206,7 @@ function EHIHealthFloatRect:SetUnit(unit, t)
     self._unit = unit
     self._block_update = false
     self._current_health = 0
+    local base = unit:base()
     if self._converts_disabled and (unit:brain() and unit:brain().converted and unit:brain():converted()) then
         self._block_update = true
         self:set_visible(false)
@@ -209,8 +219,64 @@ function EHIHealthFloatRect:SetUnit(unit, t)
         self._block_update = true
         self:set_visible(false)
         return
+    elseif base then
+        if base.has_tag then
+            if base:has_tag("special") then
+                if base:has_tag("tank") then
+                    if self._special_tank_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                elseif base:has_tag("shield") then
+                    if self._special_shield_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                elseif base:has_tag("taser") then
+                    if self._special_taser_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                elseif base:has_tag("spook") then
+                    if self._special_cloaker_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                elseif base:has_tag("sniper") then
+                    if self._special_sniper_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                elseif base:has_tag("medic") then
+                    if self._special_medic_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                elseif self._special_other_disabled then
+                    if self._special_tank_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                end
+            elseif self._regular_disabled then
+                self._block_update = true
+                self:set_visible(false)
+                return
+            end
+        elseif base.get_type and base:get_type() == "swat_turret" and self._special_turret_disabled then ---@diagnostic disable-line
+            self._block_update = true
+            self:set_visible(false)
+            return
+        end
     end
-    local name = unit:base() and unit:base()._tweak_table_id or unit:base()._tweak_table
+    local name = base and base._tweak_table_id or base._tweak_table
     name = name and self._unit_name[name] or name or "Enemy"
     self._unit_health_enemy_text:set_text(name)
     local _ ,_ , ew, eh = self._unit_health_enemy_text:text_rect()

@@ -1,3 +1,11 @@
+r319 (24. 03. 2025):
+Added options "Persistent Damage Immunity", "Persistent Damage Immunity Cooldown" and "Persistent Dealing Damage - Armor Regen Cooldown"
+Added option "Show Floating Health Bars for Regular and Special Enemies and Turrets"
+Berserker Buff: Buff will stay on the screen only if you have a melee or damage boost and text format is set to one of the boosts
+Menu: Fixed visual issues with "Money" tracker
+Slaughterhouse: Fixed incorrect number of loot on Very Hard or below
+Poco Health Float Style: Improved memory and performance by preloading health floats for Converts and Turrets
+
 r318 (22. 03. 2025):
 Added "Money" tracker
 Added support for "Classic Heisting" mod

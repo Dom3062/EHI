@@ -323,6 +323,9 @@ function EHIAssaultTracker:StartAnticipation(t)
     self:StopTextAnim(Color.yellow)
     self._hostage_delay_disabled = true
     self._time = t
+    if self.update == self.update_negative then
+        self.update = self.update_break
+    end
     if not self._needs_update then
         self:AddTrackerToUpdate()
     end

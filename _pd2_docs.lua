@@ -1053,6 +1053,8 @@ _G.PlayerMovement = {}
 ---@field _unequip_weapon_expire_t number?
 ---@field _use_item_expire_t number?
 _G.PlayerStandard = {}
+---@class SentryGunMovement
+_G.SentryGunMovement = {}
 ---@class SkirmishTweakData
 _G.SkirmishTweakData = {}
 ---@class StatisticsManager
@@ -1170,7 +1172,7 @@ end
 ---@param category string
 ---@param upgrade string
 ---@return table|number
----@overload fun(self: self, category: string, upgrade: string, default: `T`): T|table|number
+---@overload fun(self: PlayerManager, category: string, upgrade: string, default: `T`): T|table|number
 function PlayerManager:upgrade_value(category, upgrade)
 end
 
@@ -1792,7 +1794,7 @@ end
 ---@class UnitBase : Unit
 ---@field add_destroy_listener fun(self: self, key: string, clbk: fun(unit: Unit))
 ---@field damage fun(): UnitDamage
----@field in_slot fun(self: self, slotmask: SlotMask): boolean
+---@field in_slot fun(self: self, slotmask: SlotMask|number): boolean
 ---@field remove_destroy_listener fun(self: self, key: string)
 
 ---@class UnitDamage

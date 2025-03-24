@@ -279,8 +279,16 @@ function EHIBerserkerBuffTracker:PreUpdate()
     elseif self._player_manager:has_category_upgrade("player", "movement_speed_damage_health_ratio_multiplier") then -- Yakuza 9/9 deck
         self._THRESHOLD = 1 - self._player_manager:_get_damage_health_ratio_threshold("movement_speed")
     end
-    self._damage_multiplier = self._player_manager:upgrade_value('player', 'damage_health_ratio_multiplier', 0) --[[@as number]]
-    self._melee_damage_multiplier = self._player_manager:upgrade_value('player', 'melee_damage_health_ratio_multiplier', 0) --[[@as number]]
+    self._damage_multiplier = self._player_manager:upgrade_value("player", "damage_health_ratio_multiplier", 0) --[[@as number]]
+    if self._text_format == "$mle;$postfix;" and self._damage_multiplier == 0 then
+        self:delete_with_class()
+        return
+    end
+    self._melee_damage_multiplier = self._player_manager:upgrade_value("player", "melee_damage_health_ratio_multiplier", 0) --[[@as number]]
+    if self._text_format == "$dmg;$postfix;" and self._melee_damage_multiplier == 0 then
+        self:delete_with_class()
+        return
+    end
     self:AddBuffToUpdate()
 end
 

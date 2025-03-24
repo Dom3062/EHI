@@ -239,6 +239,7 @@ function EHIMenu:init()
     self:_get_menu_from_json(EHI.MenuPath .. "inventory.json")
     self:_get_menu_from_json(EHI.MenuPath .. "other.json")
     self:_get_menu_from_json(EHI.MenuPath .. "other_2.json")
+    self:_get_menu_from_json(EHI.MenuPath .. "other_options/floating_health_bar.json")
     self:_get_menu_from_json(EHI.MenuPath .. "colors.json", EHI.settings.colors)
 
     self:OpenMenu("ehi_menu")
@@ -1979,7 +1980,7 @@ function EHIMenu:UpdateAssaultOptions(menu, item)
 end
 
 function EHIMenu:IsFloatingHealthBarPocoBlurVisible()
-    return EHI:GetOption("show_floating_health_bar") and EHI:GetOption("show_floating_health_bar_style") == 1
+    return EHI:GetOption("show_floating_health_bar_style") == 1
 end
 
 function EHIMenu:UpdateFloatingHealthBarPocoBlurOption(menu, item)

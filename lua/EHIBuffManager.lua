@@ -157,7 +157,7 @@ end
 
 function EHIBuffManager:_cleanup_unused_buff_classes()
     for id, buff in pairs(tweak_data.ehi.buff) do
-        if buff.class and buff.class ~= "EHIGaugeBuffTracker" then
+        if buff.class and (buff.class ~= "EHIGaugeBuffTracker" and buff.class ~= "EHIPermanentBuffTracker") then
             local class = buff.class
             if _G[class] and not self._buffs[id] then -- Tracker class exists, but the tracker is not created because it is disabled; remove the class
                 _G[class] = nil

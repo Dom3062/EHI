@@ -49,7 +49,7 @@ end
 
 function EHIECMFeedbackRefreshTracker:SetTextColor()
     if self._timers_n <= 1 then
-        local _, timer = next(self._timers)
+        local _, timer = next(self._timers) ---@cast timer -?
         EHIECMFeedbackRefreshTracker.super.SetTextColor(self, Color.white, timer.label)
     elseif self._peers_n <= 1 then
         for _, timer in ipairs(self._timers) do

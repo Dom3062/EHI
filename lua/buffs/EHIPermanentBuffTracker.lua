@@ -1,8 +1,7 @@
 ---@class EHIPermanentBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIPermanentBuffTracker = class(EHIBuffTracker)
-function EHIPermanentBuffTracker:init(panel, params, ...)
-    EHIPermanentBuffTracker.super.init(self, panel, params, ...)
+function EHIPermanentBuffTracker:post_init(params)
     self._text:set_text("0")
     self._skill_check = params.skill_check
 end

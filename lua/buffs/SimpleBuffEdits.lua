@@ -26,7 +26,7 @@ function EHIHealthRegenBuffTracker:post_init(...)
     self._health_format = "+%g"
     self._player_manager = managers.player
     self._perform_update_from_spawn = false
-    EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
+    EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id)
         if local_peer then
             self._minion_count = self._minion_count + 1
             if self._minion_count == 1 and self._character_damage and self._perform_update_from_spawn then

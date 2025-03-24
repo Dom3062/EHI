@@ -91,9 +91,9 @@ EHI.Manager:ParseTriggers({
     other = other
 })
 
-local pig = 0
+local max, pig = 8, 0
 if ovk_and_up then
-    pig = 1
+    max, pig = 10, 1
     EHI:ShowAchievementLootCounter({
         achievement = "farm_6",
         max = 1,
@@ -120,7 +120,7 @@ if ovk_and_up then
     end
 end
 
-EHI:ShowLootCounter({ max = 10 + pig }, { element = 100787 })
+EHI:ShowLootCounter({ max = max + pig }, { element = 100787 })
 EHI:UpdateUnits({
     -- Drills
     [100035] = { remove_vanilla_waypoint = 103175 },
@@ -155,7 +155,7 @@ EHI:AddXPBreakdown({
             {
                 loot =
                 {
-                    gold = { min = required_bags, max = 10 }
+                    gold = { min = required_bags, max = max }
                 }
             }
         }

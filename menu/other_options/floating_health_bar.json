@@ -1,0 +1,160 @@
+{
+    "menu_id": "ehi_other_floating_health_bar_menu",
+    "parent_menu" : "ehi_other_menu",
+    "title": "ehi_other_floating_health_bar_menu",
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_style_poco_blur_choice",
+            "title": "ehi_other_show_floating_health_bar_style_poco_blur",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_style_poco_blur",
+            "value": "show_floating_health_bar_style_poco_blur",
+            "default_value": true,
+            "parent_func" : "IsFloatingHealthBarPocoBlurVisible",
+            "ehi_ver" : 296
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_other_show_floating_health_bar_style_choice",
+            "title": "ehi_other_show_floating_health_bar_style",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_style",
+            "items": [
+                "ehi_other_show_floating_health_bar_style_1",
+                "ehi_other_show_floating_health_bar_style_2",
+                "ehi_other_show_floating_health_bar_style_3"
+            ],
+            "value": "show_floating_health_bar_style",
+            "is_parent" : true,
+            "parent_func_update" : "UpdateFloatingHealthBarPocoBlurOption",
+            "default_value": 1,
+            "ehi_ver" : 276
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_converts_choice",
+            "title": "ehi_other_show_floating_health_bar_converts",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_converts",
+            "value": "show_floating_health_bar_converts",
+            "default_value": true,
+            "ehi_ver" : 253
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_civilians_choice",
+            "title": "ehi_other_show_floating_health_bar_civilians",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_civilians",
+            "value": "show_floating_health_bar_civilians",
+            "default_value": true,
+            "ehi_ver" : 253
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_team_ai_choice",
+            "title": "ehi_other_show_floating_health_bar_team_ai",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_team_ai",
+            "value": "show_floating_health_bar_team_ai",
+            "default_value": true,
+            "ehi_ver" : 276
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_regular_enemies_choice",
+            "title": "ehi_other_show_floating_health_bar_regular_enemies",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_regular_enemies",
+            "value": "show_floating_health_bar_regular_enemies",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_tank_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_tank",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_tank",
+            "value": "show_floating_health_bar_special_enemies_tank",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_shield_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_shield",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_shield",
+            "value": "show_floating_health_bar_special_enemies_shield",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_taser_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_taser",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_taser",
+            "value": "show_floating_health_bar_special_enemies_taser",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_cloaker_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_cloaker",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_cloaker",
+            "value": "show_floating_health_bar_special_enemies_cloaker",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_sniper_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_sniper",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_sniper",
+            "value": "show_floating_health_bar_special_enemies_sniper",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_medic_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_medic",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_medic",
+            "value": "show_floating_health_bar_special_enemies_medic",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_turret_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_turret",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_turret",
+            "value": "show_floating_health_bar_special_enemies_turret",
+            "default_value": true,
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_other_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_other",
+            "description": "ehi_other_show_floating_health_bar_special_enemies_other_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_floating_health_bar_special_enemies_other",
+            "value": "show_floating_health_bar_special_enemies_other",
+            "default_value": true,
+            "ehi_ver" : 319
+        }
+    ]
+}

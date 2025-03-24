@@ -124,13 +124,13 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, h
             if tracker then
                 if tracker:PeerExists(peer_id) then
                     tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty, hostages_killed)
+                    tracker:SetPeerInCustody(peer_id)
                 else
-                    tracker:AddPeerCustodyTime(peer_id, respawn_penalty, hostages_killed)
+                    tracker:AddPeerCustodyTime(peer_id, respawn_penalty, hostages_killed, true)
                 end
             else
-                managers.ehi_trade:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty, hostages_killed)
+                managers.ehi_trade:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty, hostages_killed, true)
             end
-            managers.ehi_trade:CallFunction("SetPeerInCustody", peer_id)
         end
     end
     return crim

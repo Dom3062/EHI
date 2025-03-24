@@ -8,7 +8,7 @@ EHIHealthFloatManager = {}
 ---@param hud HUDManager
 ---@param hud_panel Panel
 function EHIHealthFloatManager:new(hud, hud_panel)
-    self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 18, 22, 24, 25, 26, 33, 34, 35)
+    self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 22, 24, 25, 26, 33, 34, 35)
     if EHI:GetOption("show_floating_health_bar_civilians") then -- +Slot mask 21
         self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
     end
@@ -61,7 +61,59 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             if not key then
                 return
             elseif self._floats[key] then
-                self._floats[key]:force_delete(true) ---@diagnostic disable-line
+                self._floats[key]:force_delete(true)
+            end
+        end)
+        ---@param base SentryGunMovement
+        local function HookEnemyTurret(base)
+            if base.__ehi_poco_float or not self._floats then
+                return
+            end
+            local key = base._unit.key and base._unit:key()
+            if not key then
+                return
+            elseif self._floats[key] then
+                self._floats[key]:destroy()
+            end
+            self._floats[key] = EHIHealthFloatPocoTurret:new(self, key, base._unit, 0)
+            base.__ehi_poco_float = true
+        end
+        ---@param base SentryGunMovement
+        local function DestroyEnemyTurret(base)
+            if not base.__ehi_poco_float or not self._floats then
+                return
+            end
+            local key = base._unit.key and base._unit:key()
+            if not key then
+                return
+            elseif self._floats[key] then
+                self._floats[key]:force_delete(true)
+            end
+            base.__ehi_poco_float = nil
+        end
+        Hooks:PostHook(SentryGunMovement, "on_activated", "EHI_SentryGunMovement_EHIHealthFloatManager_on_activated", HookEnemyTurret)
+        Hooks:PostHook(SentryGunMovement, "load", "EHI_SentryGunMovement_EHIHealthFloatManager_load", function(base, save_data)
+            if not (save_data and save_data.movement) then
+                return
+            end
+            HookEnemyTurret(base)
+        end)
+        Hooks:PostHook(SentryGunMovement, "on_death", "EHI_SentryGunMovement_EHIHealthFloatManager_on_death", DestroyEnemyTurret)
+        Hooks:PostHook(SentryGunMovement, "pre_destroy", "EHI_SentryGunMovement_EHIHealthFloatManager_pre_destroy", DestroyEnemyTurret)
+        EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id)
+            local key = unit:key()
+            if not self._floats then
+                return
+            elseif self._floats[key] then
+                self._floats[key]:force_delete(true)
+            end
+            self._floats[key] = EHIHealthFloatPocoConvert:new(self, key, unit, 0)
+        end)
+        EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
+            if not self._floats then
+                return
+            elseif self._floats[key] then
+                self._floats[key]:force_delete(true)
             end
         end)
         Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIHealthFloatManager_init", function(base, ...)
@@ -106,7 +158,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         if self._finished then
             return
         end
-        for _, float in pairs(self._floats or {}) do ---@cast float EHIHealthFloatPocoTeamAI
+        for _, float in pairs(self._floats or {}) do
             float:force_delete(finished)
         end
         if self._floats and not next(self._floats) then

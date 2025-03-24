@@ -13,9 +13,15 @@ EHIHealthFloatPoco._show_blur = EHI:GetOption("show_floating_health_bar_style_po
 EHIHealthFloatPoco._color_start = Color("FFA500"):with_alpha(1)
 EHIHealthFloatPoco._color_end = Color("FF0000"):with_alpha(1)
 EHIHealthFloatPoco._color_friendly = Color("00FF00"):with_alpha(1)
-EHIHealthFloatPoco._converts_disabled = not EHI:GetOption("show_floating_health_bar_converts") -- Team AI shares the same slot mask (16) with converts, workaround
 EHIHealthFloatPoco._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
-EHIHealthFloatPoco._team_ai_disabled = not EHI:GetOption("show_floating_health_bar_team_ai") -- Converts share the same slot mask (16) with Team AI, workaround
+EHIHealthFloatPoco._regular_disabled = not EHI:GetOption("show_floating_health_bar_regular_enemies")
+EHIHealthFloatPoco._special_tank_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_tank")
+EHIHealthFloatPoco._special_shield_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_shield")
+EHIHealthFloatPoco._special_taser_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_taser")
+EHIHealthFloatPoco._special_cloaker_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_cloaker")
+EHIHealthFloatPoco._special_sniper_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_sniper")
+EHIHealthFloatPoco._special_medic_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_medic")
+EHIHealthFloatPoco._special_other_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_other")
 ---@param owner EHIHealthFloatManager
 ---@param key string
 ---@param unit UnitObject
@@ -170,20 +176,52 @@ function EHIHealthFloatPoco:draw(t)
     self._pnl:set_visible(dot_visible)
     if dot_visible then
         local isADS = self._parent.ADS
-        local cHealth = unit:character_damage() and unit:character_damage()._health and unit:character_damage()._health * 10 or 0
-        local fHealth = cHealth > 0 and (unit:character_damage()._HEALTH_INIT and unit:character_damage()._HEALTH_INIT * 10 or unit:character_damage()._health_max and unit:character_damage()._health_max * 10) or 1
+        local base = unit:base() ---@cast base -PlayerBase|HuskPlayerBase
+        local character_damage = unit:character_damage()
+        local cHealth = character_damage and character_damage._health and character_damage._health * 10 or 0
+        local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT and character_damage._HEALTH_INIT * 10 or character_damage._health_max and character_damage._health_max * 10) or 1
         local prog = cHealth / fHealth
-        local isConverted = unit:brain() and unit:brain().converted and unit:brain():converted()
         local isEnemy = managers.enemy:is_enemy(unit)
-        if (isConverted and self._converts_disabled) or (managers.enemy:is_civilian(unit) and self._civilians_disabled) or (self._team_ai_disabled and managers.groupai:state():is_unit_team_AI(unit)) then
+        if managers.enemy:is_civilian(unit) and self._civilians_disabled then
             prog = 0
+        elseif isEnemy and base and base.has_tag then
+            if base:has_tag("special") then
+                if base:has_tag("tank") then
+                    if self._special_tank_disabled then
+                        prog = 0
+                    end
+                elseif base:has_tag("shield") then
+                    if self._special_shield_disabled then
+                        prog = 0
+                    end
+                elseif base:has_tag("taser") then
+                    if self._special_taser_disabled then
+                        prog = 0
+                    end
+                elseif base:has_tag("spook") then
+                    if self._special_cloaker_disabled then
+                        prog = 0
+                    end
+                elseif base:has_tag("sniper") then
+                    if self._special_sniper_disabled then
+                        prog = 0
+                    end
+                elseif base:has_tag("medic") then
+                    if self._special_medic_disabled then
+                        prog = 0
+                    end
+                elseif self._special_other_disabled then
+                    prog = 0
+                end
+            elseif self._regular_disabled then
+                prog = 0
+            end
         end
         if prog > 0 then
             local size = self._size
             local txts = {}
             local m = self._margin
-            local isTurret = unit:base() and unit:base().get_type and unit:base():get_type() == "swat_turret" ---@diagnostic disable-line
-            local color = ((isEnemy and not isConverted) or isTurret) and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
+            local color = isEnemy and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
             if pDist <= 100000 and cHealth > 0 then
                 txts[1] = { round(cHealth) .. '/' .. round(fHealth), color }
             end
@@ -240,7 +278,8 @@ function EHIHealthFloatPoco:delete()
     end
 end
 
-function EHIHealthFloatPoco:force_delete()
+---@param finished boolean?
+function EHIHealthFloatPoco:force_delete(finished)
     self._dead = true
     self:delete()
 end
@@ -276,22 +315,95 @@ function EHIHealthFloatPoco._fade(o, lastD, seconds, done_cb)
 end
 EHIHealthFloatPoco._destroy_callback = callback(EHIHealthFloatPoco, EHIHealthFloatPoco, "destroy")
 
----@class EHIHealthFloatPocoTeamAI : EHIHealthFloatPoco
+---@class EHIReusableHealthFloatPoco : EHIHealthFloatPoco
 ---@field super EHIHealthFloatPoco
-EHIHealthFloatPocoTeamAI = class(EHIHealthFloatPoco)
-function EHIHealthFloatPocoTeamAI:init(...)
-    self._keep_alive = false
-    EHIHealthFloatPocoTeamAI.super.init(self, ...)
-end
-
-function EHIHealthFloatPocoTeamAI:renew(...)
+EHIReusableHealthFloatPoco = class(EHIHealthFloatPoco)
+EHIReusableHealthFloatPoco._UNIT_DISABLED_CONDITION = true
+EHIReusableHealthFloatPoco._UNIT_IS_FRIENDLY = true
+function EHIReusableHealthFloatPoco:renew(...)
     self._keep_alive = true
-    EHIHealthFloatPocoTeamAI.super.renew(self, ...)
+    EHIReusableHealthFloatPoco.super.renew(self, ...)
 end
 
-function EHIHealthFloatPocoTeamAI:delete()
+---@param t number
+function EHIReusableHealthFloatPoco:draw(t)
+    if not alive(self._unit) or (t - self._lastT > 0.5) and not self._dead then
+        self._dead = true
+    end
+    if self._dead and not self._dying then
+        self:delete()
+        return
+    end
+    if not alive(self._pnl) then
+        return
+    end
+    local unit = self._unit
+    if not alive(unit) then
+        return
+    end
+    local dx, dy, d, pDist, ww, hh = 0, 0, 1, 0, self._parent._ww, self._parent._hh
+    local pos = self._parent:_pos(unit)
+    local nl_dir = pos - self._parent._camPos
+    mvector3.normalize(nl_dir)
+    local dot_visible = mvector3.dot(self._parent._nl_cam_forward, nl_dir) > 0
+    local pPos = self._parent:_v2p(pos) ---@cast pPos -false
+    dx = pPos.x - ww / 2
+    dy = pPos.y - hh / 2
+    pDist = dx * dx + dy * dy
+    self._pnl:set_visible(dot_visible)
+    if dot_visible then
+        local isADS = self._parent.ADS
+        local character_damage = unit:character_damage()
+        local cHealth = character_damage and character_damage._health and character_damage._health * 10 or 0
+        local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT and character_damage._HEALTH_INIT * 10 or character_damage._health_max and character_damage._health_max * 10) or 1
+        local prog = self._UNIT_DISABLED_CONDITION and 0 or cHealth / fHealth
+        if prog > 0 then
+            local size = self._size
+            local txts = {}
+            local m = self._margin
+            if pDist <= 100000 and cHealth > 0 then
+                local color = self._UNIT_IS_FRIENDLY and self._color_friendly or math.lerp(self._color_end, self._color_start, prog)
+                txts[1] = { round(cHealth) .. '/' .. round(fHealth), color }
+            end
+            pPos = pPos:with_y(pPos.y - size * 2)
+            self.pie:set_current(prog)
+            self.pieBg:set_visible(true)
+            local x = 2 * m + size
+            self.lbl:set_x(x)
+            self:__shadow(x)
+            if self._txts ~= self:_lbl(nil, txts) then
+                self._txts = self:_lbl(self.lbl, txts)
+                self:__shadow()
+            end
+            local _, _, w, h = self.lbl:text_rect()
+            h = math.max(h, size)
+            self._pnl:set_size(m * 2 + (w > 0 and w + m + 1 or 0) + size, h + 2 * m)
+            self.bg:set_size(self._pnl:size())
+            self._pnl:set_center(pPos.x, pPos.y)
+            d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
+            d = math.min(d, self._opacity)
+            if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then
+                d = math.min(d, self._parent:_visibility(pos))
+            end
+        else
+            self.pie:set_visible(false)
+            self.pieBg:set_visible(false)
+            self.lbl:set_visible(false)
+            self.bg:set_visible(false)
+            self.lblShadow1:set_visible(false)
+            self.lblShadow2:set_visible(false)
+            d = 0
+        end
+        if not self._dying then
+            self._pnl:set_alpha(d)
+            self.lastD = d -- d is for starting alpha
+        end
+    end
+end
+
+function EHIReusableHealthFloatPoco:delete()
     if self._death then
-        EHIHealthFloatPocoTeamAI.super.delete(self)
+        EHIReusableHealthFloatPoco.super.delete(self)
     elseif self._keep_alive then
         self._keep_alive = false
         local pnl = self._pnl
@@ -302,11 +414,23 @@ function EHIHealthFloatPocoTeamAI:delete()
     end
 end
 
----@param finished boolean?
-function EHIHealthFloatPocoTeamAI:force_delete(finished)
+function EHIReusableHealthFloatPoco:force_delete(finished)
     self.lastD = self._pnl:visible() and self._pnl:alpha() or 0
     self._death = finished
     self._keep_alive = not finished
     self._dying = self._keep_alive
-    EHIHealthFloatPocoTeamAI.super.force_delete(self)
+    EHIReusableHealthFloatPoco.super.force_delete(self)
 end
+
+---@class EHIHealthFloatPocoTeamAI : EHIReusableHealthFloatPoco
+EHIHealthFloatPocoTeamAI = class(EHIReusableHealthFloatPoco)
+EHIHealthFloatPocoTeamAI._UNIT_DISABLED_CONDITION = not EHI:GetOption("show_floating_health_bar_team_ai") -- Converts share the same slot mask (16) with Team AI, workaround
+
+---@class EHIHealthFloatPocoConvert : EHIReusableHealthFloatPoco
+EHIHealthFloatPocoConvert = class(EHIReusableHealthFloatPoco)
+EHIHealthFloatPocoConvert._UNIT_DISABLED_CONDITION = not EHI:GetOption("show_floating_health_bar_converts") -- Team AI shares the same slot mask (16) with converts, workaround
+
+---@class EHIHealthFloatPocoTurret : EHIReusableHealthFloatPoco
+EHIHealthFloatPocoTurret = class(EHIReusableHealthFloatPoco)
+EHIHealthFloatPocoTurret._UNIT_DISABLED_CONDITION = not EHI:GetOption("show_floating_health_bar_special_enemies_turret")
+EHIHealthFloatPocoTurret._UNIT_IS_FRIENDLY = false

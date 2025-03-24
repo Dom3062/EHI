@@ -119,9 +119,9 @@ _G.EHI =
         -- Provides `managers` (a global table with all managers)
         InitManagers = "InitManagers",
         InitFinalize = "InitFinalize",
-        -- Provides `key` (a unit key; a string value), `local_peer` (a boolean value) and `peer_id` (a number value)
+        -- Provides `unit` (a UnitEnemy value), `local_peer` (a boolean value) and `peer_id` (a number value)
         OnMinionAdded = "OnMinionAdded",
-        -- Provides `key` (a unit key; a string value), `local_peer` (a boolean value) and `peer_id` (a number value)
+        -- Provides `key` (a unit key; not put through `tostring`), `local_peer` (a boolean value) and `peer_id` (a number value)
         OnMinionKilled = "OnMinionKilled",
         -- Provides `skill` (a string value) and `operation` (a string value -> `add`, `remove`)
         TeamAISkillChange = "TeamAISkillChanged",
@@ -945,8 +945,11 @@ local function LoadDefaultValues(self)
                 continuous_armor_regen = true,
                 persistent_continuous_armor_regen = false,
                 immunity = true,
+                persistent_immunity = false,
                 immunity_cooldown = true,
-                kill_armor_regen_cooldown = true
+                persistent_immunity_cooldown = false,
+                kill_armor_regen_cooldown = true,
+                persistent_kill_armor_regen_cooldown = false
             }, -- +Armorer
             expresident =
             {
@@ -1044,6 +1047,15 @@ local function LoadDefaultValues(self)
         show_floating_health_bar_converts = true,
         show_floating_health_bar_civilians = true,
         show_floating_health_bar_team_ai = true,
+        show_floating_health_bar_regular_enemies = true,
+        show_floating_health_bar_special_enemies_tank = true,
+        show_floating_health_bar_special_enemies_shield = true,
+        show_floating_health_bar_special_enemies_taser = true,
+        show_floating_health_bar_special_enemies_cloaker = true,
+        show_floating_health_bar_special_enemies_sniper = true,
+        show_floating_health_bar_special_enemies_medic = true,
+        show_floating_health_bar_special_enemies_turret = true,
+        show_floating_health_bar_special_enemies_other = true,
         show_floating_damage_popup = true,
         show_floating_damage_popup_accumulate = false,
         show_floating_damage_popup_size = 22, -- 10 - 30
@@ -1631,7 +1643,7 @@ end
 
 ---@return boolean
 function EHI:ShowDramaTracker()
-    return self.IsHost and self:GetTrackerOption("show_drama_tracker") and Global.game_settings.level_id ~= "haunted"
+    return self.IsHost and self:GetTrackerOption("show_drama_tracker") and Global.game_settings.level_id ~= "haunted" and Global.game_settings.level_id ~= "hvh"
 end
 
 ---@return boolean

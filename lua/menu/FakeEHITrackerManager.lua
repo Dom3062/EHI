@@ -122,7 +122,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     if not_u24_mod then
         self:AddFakeTracker({ id = "show_marshal_initial_time", time = math.random(0, 480), icons = { "equipment_sheriff_star" } })
     end
-    self:AddFakeTracker({ id = "show_money_tracker", time = math.random(1000000, 10000000), icons = { Icon.Money }, class = "FakeEHIMoneyTracker" })
+    self:AddFakeTracker({ id = "show_money_tracker", time = math.random(1000000, 10000000), icons = { Icon.Money }, extend = true, class = "FakeEHIMoneyTracker" })
     self:AddPreviewText()
 end
 

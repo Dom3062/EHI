@@ -91,7 +91,11 @@ EHI:AddXPBreakdown({
         }
     }
 })
-if table.contains(tweak_data.achievement.complete_heist_achievements.trk_wd_0.jobs, managers.job:current_job_id()) then -- Check if we are playing the Vanilla Watchdogs job
+local jobs = deep_clone(tweak_data.achievement.complete_heist_achievements.trk_wd_0.jobs)
+if _G.ch_settings then
+    table.insert(jobs, "watchdogs_wrapper_prof")
+end
+if table.contains(jobs, managers.job:current_job_id()) then -- Check if we are playing the Vanilla Watchdogs job
     EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
         if success then
             managers.job:set_memory("ehi_watchdogs_saved_bags", managers.loot:GetSecuredBagsAmount())

@@ -169,7 +169,7 @@
             "id": "ehi_buffs_perks_menu",
             "title": "ehi_buffs_perks_menu",
             "next_menu": "ehi_buffs_perks_menu",
-            "ehi_ver" : 314
+            "ehi_ver" : 319
         },
         {
             "type": "button",

@@ -544,6 +544,20 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "anarchist",
                 option = "immunity_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "anarchist",
+                    option = "persistent_immunity_cooldown"
+                },
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "armor_break_invulnerable"
+                },
+                class = "EHIPermanentBuffTracker"
             }
         },
         damage_to_armor =
@@ -556,6 +570,20 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "anarchist",
                 option = "kill_armor_regen_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "anarchist",
+                    option = "persistent_kill_armor_regen_cooldown"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "damage_to_armor"
+                },
+                class = "EHIPermanentBuffTracker"
             }
         },
         single_shot_fast_reload =
@@ -607,6 +635,20 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "anarchist",
                 option = "immunity"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "anarchist",
+                    option = "persistent_immunity"
+                },
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "armor_break_invulnerable"
+                },
+                class = "EHIPermanentBuffTracker"
             }
         },
         UppersCooldown =

@@ -173,14 +173,14 @@ if not tweak_data.levels:IsStealthRequired() then
             end
         end
         if EHI:GetOption("show_minion_option") == 1 then -- Only you
-            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
+            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id)
                 if local_peer then
-                    UpdateTracker(key, 1, peer_id, true)
+                    UpdateTracker(unit:key(), 1, peer_id, true)
                 end
             end)
         else -- Everyone
-            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(key, local_peer, peer_id)
-                UpdateTracker(key, 1, peer_id, local_peer)
+            EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id)
+                UpdateTracker(unit:key(), 1, peer_id, local_peer)
             end)
         end
         EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
@@ -251,7 +251,7 @@ end
 ---@param params table
 ---@param unit UnitEnemy
 function GroupAIStateBase:EHIRemoveConvert(params, unit)
-    EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled, params.unit_key, params.local_peer, params.peer_id)
+    EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled, params.key, params.local_peer, params.peer_id)
     unit:character_damage():remove_listener("EHIConvertDamage")
     if params.killed_callback then
         unit:character_damage():remove_listener("EHIConvert")
@@ -275,9 +275,9 @@ function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
         EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")
         return
     end
-    local key = tostring(unit:key())
-    EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded, key, local_peer, peer_id)
-    local data = { unit_key = key, local_peer = local_peer, peer_id = peer_id, killed_callback = true, destroyed_callback = true }
+    EHI:CallCallback(EHI.CallbackMessage.OnMinionAdded, unit, local_peer, peer_id)
+    local key = unit:key()
+    local data = { key = key, local_peer = local_peer, peer_id = peer_id, killed_callback = true, destroyed_callback = true }
     unit:base():add_destroy_listener("EHIConvert", callback(self, self, "EHIConvertDestroyed", data))
     unit:character_damage():add_listener("EHIConvert", { "death" }, callback(self, self, "EHIConvertDied", data))
     if local_peer and self.__ehi_minion_health_events then
@@ -308,7 +308,7 @@ end
 
 function GroupAIStateBase:remove_minion(minion_key, ...)
     if self._converted_police[minion_key] then
-        EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled, tostring(minion_key), false, 0)
+        EHI:CallCallback(EHI.CallbackMessage.OnMinionKilled, minion_key, false, 0)
     end
     original.remove_minion(self, minion_key, ...)
 end
