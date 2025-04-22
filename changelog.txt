@@ -1,3 +1,7 @@
+r320 (22. 04. 2025):
+Menu: Increased negative X and Y offsets from 0 to -1920 and -1080 respectively
+The Bomb: Forest: Fixed an issue where Loot Counter reports additional loot bag but a loot wagon is not visible
+
 r319 (24. 03. 2025):
 Added options "Persistent Damage Immunity", "Persistent Damage Immunity Cooldown" and "Persistent Dealing Damage - Armor Regen Cooldown"
 Added option "Show Floating Health Bars for Regular and Special Enemies and Turrets"

@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
 local heli_anim = 35
-local heli_anim_full = 35 + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
+local heli_anim_full = heli_anim + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
 local HeliWaterFill = EHI:GetOption("show_one_icon") and { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } } or { Icon.Heli, Icon.Water }
 ---@type ParseTriggerTable
 local triggers = {
@@ -154,8 +154,12 @@ local other =
 if EHI:IsLootCounterVisible() then
     local Trigger = EHI:AddCustomCode(function(self)
         self._loot:IncreaseLootCounterProgressMax()
-    end) -- Money spawned
+    end) -- Money spawned / Crate spawned
     for _, index in ipairs({ 580, 830, 3120, 3370, 3620, 3870 }) do
+        other[EHI:GetInstanceElementID(100192, index)] = Trigger
+        other[EHI:GetInstanceElementID(100193, index)] = Trigger
+        other[EHI:GetInstanceElementID(100194, index)] = Trigger
+        other[EHI:GetInstanceElementID(100195, index)] = Trigger
         other[EHI:GetInstanceElementID(100197, index)] = Trigger
         other[EHI:GetInstanceElementID(100198, index)] = Trigger
         other[EHI:GetInstanceElementID(100201, index)] = Trigger
@@ -163,12 +167,12 @@ if EHI:IsLootCounterVisible() then
     end
     other[101041] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
-            -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance)
-            -- If second money bundle spawns, the maximum is increased in the Trigger above
-            max = 5, -- 4 Bomb parts + 1
+            -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance); possible to not spawn at all; if spawned maximum is increased in the Trigger above (first 4)
+            -- If second money bundle spawns, the maximum is increased in the Trigger above (last 4)
+            max = 4, -- 4 Bomb parts
             client_from_start = true
         })
-    end, { element = { 101525, 100058, 100274 } })
+    end, { element = { 101525, 101568, 100058, 101569, 100274, 101607 } })
     local RandomLootSpawnedCheck = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
         self._loot:RandomLootSpawnedCheck(trigger.crate, true)
     end)
@@ -230,7 +234,7 @@ EHI:AddXPBreakdown({
             min_max =
             {
                 -- Max = 2 money spawned instead of gold and all four train vagons have loot (very unprobable, but still...)
-                loot_all = { min = 5, max = 10 }
+                loot_all = { min = 4, max = 10 }
             }
         }
     }
