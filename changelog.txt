@@ -1,3 +1,7 @@
+r321 (23. 04. 2025):
+Converts Tracker: Fixed a very rare crash probably due to mods
+Menu: Fixed a crash on opening menu due to typo
+
 r320 (22. 04. 2025):
 Menu: Increased negative X and Y offsets from 0 to -1920 and -1080 respectively
 The Bomb: Forest: Fixed an issue where Loot Counter reports additional loot bag but a loot wagon is not visible

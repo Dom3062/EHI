@@ -87,8 +87,8 @@
                     "value": "y_offset",
                     "default_value": 150,
                     "max": 1080,
-                    "min": 0,
-                    "step": -1080
+                    "min": -1080,
+                    "step": 0
                 }
             ]
         },
