@@ -6,6 +6,17 @@ function EHIMoneyManager:init_finalize(manager)
     if not self._enabled then
         return
     end
+    local job = managers.job
+    if tweak_data.levels:IsLevelSafehouse() or EHI._cache.PlayingDevMap then
+        _G.EHIMoneyTracker = nil
+        self._enabled = false
+        return
+    elseif job:_on_last_stage() then
+        local payout, _, _ = managers.money:get_contract_money_by_stars(job:current_job_stars(), job:current_difficulty_stars(), nil, job:current_job_id(), job:current_level_id(), {})
+        self._job_payout = payout
+    else
+        self._job_payout = 0
+    end
     self._trackers = manager._trackers
     Hooks:PostHook(CivilianDamage, "_unregister_from_enemy_manager", "EHI_EHIMoneyManager_unregister_civilian", function(damage, damage_info, ...) ---@param damage_info CopDamage.AttackData
         local attacker_unit = damage_info and damage_info.attacker_unit
@@ -32,13 +43,6 @@ function EHIMoneyManager:init_finalize(manager)
             self._spend_on_preplanning = managers.money:get_preplanning_total_cost()
         end
     end)
-    local job = managers.job
-    if job:on_last_stage() then
-        local payout, _, _ = managers.money:get_contract_money_by_stars(job:current_job_stars(), job:current_difficulty_stars(), nil, job:current_job_id(), job:current_level_id(), {})
-        self._job_payout = payout
-    else
-        self._job_payout = 0
-    end
     EHI:AddCallback("ExperienceManager_RefreshPlayerCount", function(alive_players) ---@param alive_players number
         local multiplier = tweak_data:get_value("money_manager", "alive_humans_multiplier", alive_players or 1) or 1
         if self._trackers:CallFunction2("Money", "MultiplierChanged", multiplier) then

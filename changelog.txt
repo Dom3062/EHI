@@ -1,3 +1,8 @@
+r322 (26. 05. 2025):
+Buffs: Fixed an issue where Bloodthirst (Reload) Buff does not work when Bloodthirst Buff is disabled
+Menu: Fixed an issue where Equipment Tracker is visible but related options are disabled
+Money Tracker: Fixed an issue where the tracker is visible in Safehouse
+
 r321 (23. 04. 2025):
 Converts Tracker: Fixed a very rare crash probably due to mods
 Menu: Fixed a crash on opening menu due to typo

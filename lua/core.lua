@@ -1151,6 +1151,7 @@ function EHI:Init()
         local level = Global.game_settings.level_id
         if level == "Enemy_Spawner" or level == "enemy_spawner2" or level == "modders_devmap" then -- These 3 maps disable achievements
             self._cache.UnlockablesAreDisabled = true
+            self._cache.PlayingDevMap = true
         elseif _G.ch_settings and not _G.ch_settings.settings.u24_progress then -- Classic Heisting disables achievements if U24 setting is disabled
             self._cache.UnlockablesAreDisabled = true
         end

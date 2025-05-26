@@ -208,9 +208,8 @@ function PlayerManager:speed_up_grenade_cooldown(time, ...)
     original.speed_up_grenade_cooldown(self, time, ...)
 end
 
-local meele_boost_tweak = tweak_data.upgrades.values.player.melee_damage_stacking[1]
-if meele_boost_tweak then
-    local not_bloodthirst = not EHI:GetBuffOption("bloodthirst")
+if EHI:GetBuffOption("bloodthirst") then
+    local meele_boost_tweak = tweak_data.upgrades.values.player.melee_damage_stacking[1] or {}
     local bloodthirst_reload = EHI:GetBuffOption("bloodthirst_reload")
     local bloodthirst_ratio = EHI:GetBuffOption("bloodthirst_ratio") / 100
     local max_multiplier = meele_boost_tweak.max_multiplier or 16
@@ -225,8 +224,8 @@ if meele_boost_tweak then
     original.set_melee_dmg_multiplier = PlayerManager.set_melee_dmg_multiplier
     function PlayerManager:set_melee_dmg_multiplier(multiplier, ...)
         original.set_melee_dmg_multiplier(self, multiplier, ...)
-        if bloodthirst_max or not_bloodthirst then
-            return -- Avoid doing expensive call below because the multiplier is full
+        if bloodthirst_max then
+            return
         end
         local ratio = multiplier / max_multiplier
         if ratio >= bloodthirst_ratio then
@@ -243,11 +242,20 @@ if meele_boost_tweak then
             managers.ehi_buff:AddGauge("melee_damage_stacking", self._melee_dmg_mul / max_multiplier, self._melee_dmg_mul)
         end
         bloodthirst_max = false -- Reset the lock
-        if bloodthirst_reload and self:has_category_upgrade("player", "melee_kill_increase_reload_speed") then
+        if bloodthirst_reload then
             local data = self:upgrade_value("player", "melee_kill_increase_reload_speed", 0)
             if data ~= 0 then
                 managers.ehi_buff:AddBuff("melee_kill_increase_reload_speed", data[2])
             end
+        end
+    end
+elseif EHI:GetBuffOption("bloodthirst_reload") then
+    original.reset_melee_dmg_multiplier = PlayerManager.reset_melee_dmg_multiplier
+    function PlayerManager:reset_melee_dmg_multiplier(...)
+        original.reset_melee_dmg_multiplier(self, ...)
+        local data = self:upgrade_value("player", "melee_kill_increase_reload_speed", 0)
+        if data ~= 0 then
+            managers.ehi_buff:AddBuff("melee_kill_increase_reload_speed", data[2])
         end
     end
 end

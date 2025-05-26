@@ -99,7 +99,19 @@ function FakeEHITrackerManager:AddFakeTrackers()
     end
     self:AddFakeTracker({ id = "show_captain_damage_reduction", icons = { "buff_shield" }, class = "FakeEHIChanceTracker" })
     self:AddFakeTracker({ id = "show_captain_spawn_chance", time = math.random(0, 120), icons = { "buff_shield" }, extend = true, class = "FakeEHIPhalanxChanceTracker" })
-    self:AddFakeTracker({ id = "show_equipment_tracker", show_placed = true, icons = { "doctor_bag" }, class = "FakeEHIEquipmentTracker" })
+    if EHI:GetOption("show_equipment_tracker") then
+        if EHI:GetOption("show_equipment_doctorbag") then
+            self:AddFakeTracker({ ids = { "show_equipment_tracker" }, show_placed = true, icons = { "doctor_bag" }, class = "FakeEHIEquipmentTracker" })
+        elseif EHI:GetOption("show_equipment_ammobag") then
+            self:AddFakeTracker({ ids = { "show_equipment_tracker" }, show_placed = true, icons = { "ammo_bag" }, class = "FakeEHIEquipmentTracker" })
+        elseif EHI:GetOption("show_equipment_bodybags") then
+            self:AddFakeTracker({ ids = { "show_equipment_tracker" }, show_placed = true, icons = { "bodybags_bag" }, class = "FakeEHIEquipmentTracker" })
+        elseif EHI:GetOption("show_equipment_grenadecases") then
+            self:AddFakeTracker({ ids = { "show_equipment_tracker" }, show_placed = true, icons = { "frag_grenade" }, class = "FakeEHIEquipmentTracker" })
+        elseif EHI:GetOption("show_equipment_firstaidkit") then
+            self:AddFakeTracker({ ids = { "show_equipment_tracker" }, show_placed = true, icons = { "first_aid_kit" }, class = "FakeEHIEquipmentTracker" })
+        end
+    end
     self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIMinionTracker" })
     self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" })
     self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
