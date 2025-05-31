@@ -21,7 +21,7 @@ end
 ---@param tracker_type string?
 function EHIDeployableManagerVR:AddToCache(ehi_tracker, key, unit, tracker_type)
     if key and self._trackers:IsLoading() then
-        self._trackers:AddToLoadQueue(key, { ehi_tracker = ehi_tracker, unit = unit, tracker_type = tracker_type, f = "AddToDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
+        self._trackers:AddToLoadQueue(key, { ehi_tracker = ehi_tracker, unit = unit, tracker_type = tracker_type, f = "AddToCache" }, callback(self, self, "ReturnLoadCall"), true)
         return
     end
     self:old_AddToCache(ehi_tracker, key, unit, tracker_type)
@@ -31,7 +31,7 @@ end
 ---@param key string
 function EHIDeployableManagerVR:LoadFromCache(ehi_tracker, key)
     if key and self._trackers:IsLoading() then
-        self._trackers:AddToLoadQueue(key, { ehi_tracker = ehi_tracker, f = "LoadFromDeployableCache" }, callback(self, self, "ReturnLoadCall"), true)
+        self._trackers:AddToLoadQueue(key, { ehi_tracker = ehi_tracker, f = "LoadFromCache" }, callback(self, self, "ReturnLoadCall"), true)
         return
     end
     self:old_LoadFromCache(ehi_tracker, key)
@@ -58,7 +58,7 @@ end
 ---@param t_id string
 function EHIDeployableManagerVR:UpdateAmount(key, amount, id, t_id)
     if self._trackers:IsLoading() then
-        self._trackers:AddToLoadQueue(key, { amount = amount, id = id, t_id = t_id }, callback(self, self, "ReloadDeployable"))
+        self._trackers:AddToLoadQueue(key, { amount = amount, id = id, t_id = t_id }, callback(self, self, "ReloadDeployable"), true)
         return
     end
     self:old_UpdateAmount(key, amount, id, t_id)

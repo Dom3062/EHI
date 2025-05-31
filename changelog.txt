@@ -1,3 +1,6 @@
+r323 (31. 05. 2025):
+VR: Fixed a crash with deployables
+
 r322 (26. 05. 2025):
 Buffs: Fixed an issue where Bloodthirst (Reload) Buff does not work when Bloodthirst Buff is disabled
 Menu: Fixed an issue where Equipment Tracker is visible but related options are disabled
