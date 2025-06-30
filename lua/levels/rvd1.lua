@@ -89,32 +89,16 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     -- Escape (Waypoints are dynamic based on secured loot)
     local ShowWP = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled then
-            local escape = self:IsMissionElementDisabled(trigger.data.loot_area)
-            self._cache.rvd1_escape_bags = not escape and trigger.data.position_bags
-            local position_id = escape and trigger.data.position_escape or trigger.data.position_bags
-            trigger.data.position_from_element = position_id
             self:_parse_vanilla_waypoint_trigger(trigger)
-            managers.hud:add_waypoint(position_id, trigger.data)
+            managers.hud:add_waypoint("EscapeWP", trigger.data)
         end
     end)
-    other[100207] = { special_function = ShowWP, data = { icon = Icon.Car, position_bags = 100482, position_escape = 101029, loot_area = 100311 } } -- drive_in001
-    other[100208] = { special_function = ShowWP, data = { icon = Icon.Car, position_bags = 100527, position_escape = 100276, loot_area = 100322 } } -- drive_in003
-    other[100209] = { special_function = ShowWP, data = { icon = Icon.Car, position_bags = 100524, position_escape = 100532, loot_area = 100321 } } -- drive_in002
-    other[1002071] = deep_clone(other[100207]) -- A copy is needed because players can secure all bags AFTER the escape waypoint is visible
-    other[1002081] = deep_clone(other[100208])
-    other[1002091] = deep_clone(other[100209])
-    other[100467] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
-        if self._cache.rvd1_escape_bags then
-            managers.hud:remove_waypoint(self._cache.rvd1_escape_bags)
-            if self._cache.rvd1_escape_bags == 100482 then
-                self:Trigger(1002071, element, true)
-            elseif self._cache.rvd1_escape_bags == 100527 then
-                self:Trigger(1002081, element, true)
-            elseif self._cache.rvd1_escape_bags == 100524 then
-                self:Trigger(1002091, element, true)
-            end
-        end
-    end) }
+    other[100207] = { special_function = ShowWP, data = { icon = Icon.Car, position_from_element = 101029 } } -- drive_in001
+    other[100208] = { special_function = ShowWP, data = { icon = Icon.Car, position_from_element = 100276 } } -- drive_in003
+    other[100209] = { special_function = ShowWP, data = { icon = Icon.Car, position_from_element = 100532 } } -- drive_in002
+    other[101066] = { special_function = SF.CustomCode, f = function()
+        managers.hud:remove_waypoint("EscapeWP") -- Removes EHI Escape WP once the van is ready, vanilla waypoints are dynamic based on how much secured loot you have
+    end }
 end
 EHI.Manager:ParseTriggers({
     mission = triggers,

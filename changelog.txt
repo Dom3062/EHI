@@ -1,3 +1,7 @@
+r324 (30. 06. 2025):
+Brooklyn 10-10: Fixed overlapping waypoints at the end
+Reservoir Dogs Day 2: Fixed for real issues with escape waypoints
+
 r323 (31. 05. 2025):
 VR: Fixed a crash with deployables
 

@@ -14,7 +14,7 @@ local triggers = {
 
     [100549] = { time = 20, id = "ObjectiveWait", icons = { Icon.Wait }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100935, restore_on_done = true }, hint = Hints.Wait },
     [101202] = { time = 15, id = "Escape", icons = Icon.CarEscape, waypoint = { data_from_element = 100944 }, hint = Hints.LootEscape },
-    [101313] = { time = 75, id = "Escape", icons = Icon.CarEscape, waypoint = { data_from_element = 100910 }, hint = Hints.LootEscape }
+    [101313] = { time = 75, id = "Escape", icons = Icon.CarEscape, waypoint = { data_from_element = 100910, remove_vanilla_waypoint = 100935 }, hint = Hints.LootEscape }
 }
 
 ---@type ParseAchievementTable
