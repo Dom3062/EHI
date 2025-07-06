@@ -22,15 +22,14 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100045] = { class = TT.Achievement.Status, special_function = SF.ShowAchievementFromStart },
+            [100045] = { class = TT.Achievement.Status, condition_function = EHI.ConditionFunctions.PlayingFromStart },
             [100679] = { special_function = SF.SetAchievementFailed }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 EHI:PreparseBeardlibAchievements(achievements, "hunter_all")
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })

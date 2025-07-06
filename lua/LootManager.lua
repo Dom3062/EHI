@@ -27,13 +27,11 @@ function LootManager:sync_load(...)
     managers.ehi_loot:CallSyncListeners(self)
 end
 
----@return integer
 function LootManager:GetSecuredBagsAmount()
     return self:get_secured_mandatory_bags_amount() + self:get_secured_bonus_bags_amount()
 end
 
 ---@param t string|string[]?
----@return integer
 function LootManager:GetSecuredBagsTypeAmount(t)
     local secured = 0
     if type(t) == "string" then
@@ -54,7 +52,6 @@ function LootManager:GetSecuredBagsTypeAmount(t)
     return secured
 end
 
----@return number
 function LootManager:GetSecuredBagsValueAmount()
     local value = 0
     for _, data in ipairs(self._global.secured) do

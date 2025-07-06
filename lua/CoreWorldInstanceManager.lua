@@ -36,6 +36,10 @@ local instances =
     {
         [100000] = { time = 120 + 25 + 0.25 + 2 + 2, id = "jolly_C4Drop", icons = Icon.HeliDropC4, hint = Hints.C4Delivery, waypoint = { icon = Icon.C4, position_from_element = 100021 } }
     },
+    ["levels/instances/unique/hlm_methlab/world"] =
+    {
+        [100152] = { time = 5, id = "mia_1_MethPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone, waypoint = { data_from_element = 100161 } }
+    },
     ["levels/instances/unique/hlm_reader/world"] =
     {
         [100038] = { time = 90 + 1.5, id = "mia_1_Reader", icons = { Icon.PCHack }, class = TT.Pausable, waypoint = { position_from_element_and_remove_vanilla_waypoint = 100060, restore_on_done = true }, hint = Hints.Process },
@@ -69,8 +73,8 @@ local instances =
     },
     ["levels/instances/unique/kenaz/chopper_incoming/world"] =
     {
-        [100021] = { time = 60 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery },
-        [100042] = { time = 30 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery }
+        [100021] = { time = 60 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100012 } },
+        [100042] = { time = 30 + 22 + 1 + 1.5, id = "kenaz_HeliWinchDelivery", icons = Icon.HeliDropWinch, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.brb_WinchDelivery, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100012 } }
     },
     ["levels/instances/unique/kenaz/the_drill/world"] =
     {
@@ -318,7 +322,7 @@ local instances =
     ["levels/instances/unique/chas/chas_auction_room_door_hack/world"] =
     {
         [100031] = { remove_vanilla_waypoint = true }, -- Defend
-        [100056] = { remove_vanilla_waypoint = true }, -- Fix
+        [100056] = { remove_vanilla_waypoint = true } -- Fix
     },
     ["levels/instances/unique/chas/chas_gas_outside_vent/world"] =
     {
@@ -419,7 +423,7 @@ local instances =
             self._waypoints:AddWaypoint(trigger.id, {
                 time = trigger.time,
                 icon = Icon.PCHack,
-                position = self:GetElementPositionOrDefault(trigger.element)
+                position = self._mission:GetElementPositionOrDefault(trigger.element)
             })
             self:CallEvent("pent_PCHack")
         end }
@@ -437,6 +441,10 @@ local instances =
     {
         [100047] = { time = 20, id = "pent_PlatformLoweringDown", icons = { Icon.Wait }, hint = Hints.Wait }
     },
+    ["levels/instances/unique/ranc/ranc_game_thermite/world"] =
+    {
+        [100061] = { time = 0.5 + 0.5 + 0.5 + 0.5 + 1, id = "ranc_ThermiteOpenGate", icons = { Icon.Fire }, hint = Hints.Thermite }
+    },
     ["levels/instances/unique/trai/trai_crane/world"] =
     {
         [0] = { create_tracker_class = function()
@@ -445,8 +453,6 @@ local instances =
             EHICraneFixChanceTracker = class(EHITimedWarningChanceTracker)
             EHICraneFixChanceTracker._forced_icons = EHICraneFixChanceTracker._ONE_ICON and { Icon.Fix } or { Icon.Winch, Icon.Fix }
             EHICraneFixChanceTracker._warning_color = EHIWarningTracker._completion_color
-            EHICraneFixChanceTracker.SetFailed = EHIAchievementTracker.SetFailed
-            EHICraneFixChanceTracker.ShowFailedPopup = function(...) end
             function EHICraneFixChanceTracker:OverridePanel()
                 EHICraneFixChanceTracker.super.OverridePanel(self)
                 self._text:set_x(0)
@@ -469,7 +475,7 @@ local instances =
         [100060] = { id = "trai_CraneMove", special_function = SF.PauseTracker },
         [100046] = { time = 20, chance = 30, id = "trai_CraneFixChance", class = "EHICraneFixChanceTracker", trigger_once = true, start_opened = true, hint = Hints.trai_Crane },
         [100035] = { id = "trai_CraneFixChance", special_function = SF.IncreaseChanceFromElement }, -- +10%
-        [100039] = { id = "trai_CraneFixChance", special_function = SF.SetAchievementFailed }, -- Players need to fix the crane, runs once (Won't trigger "ACHIEVEMENT FAILED!" popup)
+        [100039] = { id = "trai_CraneFixChance", special_function = SF.RemoveTracker }, -- Players need to fix the crane, runs once
         [100220] = { chance = 33, id = "trai_LocomotiveStartChance", icons = { Icon.Power }, class = TT.Chance, hint = Hints.trai_LocoStart },
         [100193] = { id = "trai_LocomotiveStartChance", special_function = SF.IncreaseChanceFromElement }, -- +34%
         [100187] = { id = "trai_LocomotiveStartChance", special_function = SF.RemoveTracker }
@@ -488,6 +494,7 @@ local instances =
         [100018] = { time = 10, id = "corp_DisplayCaseThermite", icons = { Icon.Fire }, hint = Hints.Thermite, waypoint = { position_from_unit = 100095 } }
     }
 }
+instances["levels/instances/unique/crojob/meth_lab/world"] = deep_clone(instances["levels/instances/unique/hlm_methlab/world"])
 instances["levels/instances/unique/are_c4_vault_01/world"][100093] = instances["levels/instances/unique/are_c4_vault_01/world"][100067]
 instances["levels/instances/unique/are_c4_vault_01/world"][100094] = instances["levels/instances/unique/are_c4_vault_01/world"][100067]
 instances["levels/instances/unique/brb/single_door_large/world"] = instances["levels/instances/unique/brb/single_door/world"]
@@ -513,6 +520,25 @@ instances["levels/instances/unique/sand/sand_rotating_keypad/world"] = instances
 instances["levels/instances/unique/chca/chca_keypad/world"] = instances["levels/instances/unique/sah/sah_keypad_vault_new/world"]
 instances["levels/instances/unique/corp/corp_wall_hack/world"] = instances["levels/instances/unique/chas/chas_auction_room_door_hack/world"]
 instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances["levels/instances/unique/hox_breakout_road001/world"]
+
+---@type ParseInstanceTable
+local element_sync_triggers =
+{
+    ["levels/instances/unique/hlm_methlab/world"] =
+    {
+        [100120] = { id = "mia_1_MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100119, hint = Hints.Restarting },
+        [100169] = { id = "mia_1_MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100168, hint = Hints.mia_1_NextMethIngredient }
+    },
+    ["levels/instances/unique/crojob/meth_lab/world"] =
+    {
+        [100169] = { id = "crojob_2_MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, hook_element = 100168, hint = Hints.mia_1_NextMethIngredient }
+    }
+}
+element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100121] = element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100120]
+element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100122] = element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100120]
+element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100170] = element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100169]
+element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100171] = element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100169]
+element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100172] = element_sync_triggers["levels/instances/unique/hlm_methlab/world"][100169]
 EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
     --[[
         Can't check if the interaction is/was enabled because after ECM has been triggered because it will enable interaction regardless if it is visible or not -> see element 100176
@@ -521,20 +547,28 @@ EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param m
         It has to stay like this until OVK fixes it
     ]]
     instances["levels/instances/unique/tag/tag_keypad/world"][100176].element = 100012 -- "0" button
-    instances["levels/instances/unique/tag/tag_keypad/world"][100176].special_function = managers.ehi_manager:RegisterCustomSF(function(self, trigger, ...)
+    instances["levels/instances/unique/tag/tag_keypad/world"][100176].special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local button = managers.worlddefinition:get_unit(trigger.element) --[[@as UnitBase]]
-        local state = button and button:damage() and button:damage()._state and button:damage()._state.graphic_group and button:damage()._state.graphic_group.button_grp
+        local damage = button and button:damage()
+        local state = damage and damage._state and damage._state.graphic_group and damage._state.graphic_group.button_grp
         if state and state[1] == "set_visibility" and state[2] then
-            if self:Exists(trigger.id) then
-                self:SetTime(trigger.id, trigger.time)
+            if self._tracking:Exists(trigger.id) then
+                self._tracking:SetTime(trigger.id, trigger.time)
             else
-                self:CreateTracker(trigger)
+                self:CreateTracker()
             end
         end
     end)
 end)
 
 if EHI.IsClient then
+    instances["levels/instances/unique/hlm_methlab/world"][100118] = { id = "mia_1_MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 5, 25, 40 }, hint = Hints.Restarting }
+    instances["levels/instances/unique/hlm_methlab/world"][100149] = { id = "mia_1_MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
+    instances["levels/instances/unique/hlm_methlab/world"][100150] = instances["levels/instances/unique/hlm_methlab/world"][100149]
+    instances["levels/instances/unique/hlm_methlab/world"][100184] = { id = "mia_1_MethlabInteract", special_function = SF.RemoveTracker }
+    instances["levels/instances/unique/crojob/meth_lab/world"][100149] = { id = "crojob_2_MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
+    instances["levels/instances/unique/crojob/meth_lab/world"][100150] = instances["levels/instances/unique/crojob/meth_lab/world"][100149]
+    instances["levels/instances/unique/crojob/meth_lab/world"][100184] = { id = "crojob_2_MethlabInteract", special_function = SF.RemoveTracker }
     instances["levels/instances/unique/pbr/pbr_flare/world"][100025] = EHI:ClientCopyTrigger(instances["levels/instances/unique/pbr/pbr_flare/world"][100024], { time = 27 })
     instances["levels/instances/unique/mad/mad_emp/world"][100017] = EHI:CopyTrigger(instances["levels/instances/unique/mad/mad_emp/world"][100013], { time = 90 }, SF.SetTimeOrCreateTracker)
     instances["levels/instances/unique/mad/mad_emp/world"][100019] = EHI:CopyTrigger(instances["levels/instances/unique/mad/mad_emp/world"][100013], { time = 60 }, SF.SetTimeOrCreateTracker)
@@ -583,41 +617,50 @@ if not EHIConfig.show_tracker then
 end
 
 ---@param instance CoreWorldInstanceManager.Instance
-function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
-    local instance_data = original.prepare_mission_data(self, instance, ...)
+---@param force_instance boolean? Some instances have both sync triggers and normal triggers, sync triggers always have higher priority unless called with `true`
+function CoreWorldInstanceManager:_ehi_hook_mission_instance(instance, force_instance)
     local folder = instance.folder
-    if instances[folder] and not instance.ehi_cwim then -- Don't update already checked instances
+    local ehi_instance
+    if force_instance then
+        ehi_instance = instances[folder]
+    else
+        ehi_instance = element_sync_triggers[folder] or instances[folder]
+    end
+    if ehi_instance and not instance.ehi_cwim then -- Don't update already checked instances
+        local is_element_sync = not force_instance and element_sync_triggers[folder] ~= nil
         local start_index = instance.start_index
-        local continent_data = managers.worlddefinition._continents[instance.continent] or {}
+        local continent_base_id = (managers.worlddefinition._continents[instance.continent] or {}).base_id
         local triggers, waypoints, mission_waypoints = {}, {}, {}
         local defer_loading_waypoints = false
-        for id, trigger in pairs(instances[folder]) do
-            local final_index = EHI:GetInstanceElementID(id, start_index, continent_data.base_id)
+        for id, trigger in pairs(ehi_instance) do
+            local final_index = EHI:GetInstanceElementID(id, start_index, continent_base_id)
             if trigger.create_tracker_class then
                 if EHIConfig.show_tracker then -- It cannot be in the same if line because the game will crash later
                     trigger.create_tracker_class()
                 end
             elseif trigger.add_runned_unit_sequence_trigger then
-                managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
-                    local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
-                    if EHIConfig.show_tracker then
-                        managers.ehi_tracker:AddTracker({
-                            id = tostring(final_index),
-                            time = trigger.time + time_random,
-                            icons = trigger.icons,
-                            hint = trigger.hint,
-                            class = trigger.class
-                        })
-                    end
-                    if EHIConfig.show_waypoint then
-                        managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
-                            time = trigger.time + time_random,
-                            icon = trigger.icons[1],
-                            position = managers.ehi_manager:GetUnitPositionOrDefault(final_index),
-                            class = trigger.class and managers.ehi_manager._TrackerToWaypoint[trigger.class]
-                        })
-                    end
-                end)
+                if EHIConfig.show_tracker or EHIConfig.show_waypoint then
+                    managers.mission:add_runned_unit_sequence_trigger(final_index, "interact", function(unit)
+                        local time_random = trigger.time_random and math.rand(trigger.time_random) or 0
+                        if EHIConfig.show_tracker then
+                            managers.ehi_tracker:AddTracker({
+                                id = tostring(final_index),
+                                time = trigger.time + time_random,
+                                icons = trigger.icons,
+                                hint = trigger.hint,
+                                class = trigger.class
+                            })
+                        end
+                        if EHIConfig.show_waypoint then
+                            managers.ehi_waypoint:AddWaypoint(tostring(final_index), {
+                                time = trigger.time + time_random,
+                                icon = trigger.icons[1],
+                                position = EHI.Mission:GetUnitPositionOrDefault(final_index),
+                                class = trigger.class and EHI.Mission._TrackerToWaypoint[trigger.class]
+                            })
+                        end
+                    end)
+                end
             elseif trigger.remove_vanilla_waypoint then
                 if trigger.mission then
                     mission_waypoints[final_index] = true
@@ -628,43 +671,53 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
                 local new_trigger = deep_clone(trigger)
                 new_trigger.id = new_trigger.id .. start_index
                 if trigger.element then
-                    new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_data.base_id)
+                    new_trigger.element = EHI:GetInstanceElementID(trigger.element, start_index, continent_base_id)
+                end
+                if trigger.hook_element then
+                    new_trigger.hook_element = EHI:GetInstanceElementID(trigger.hook_element, start_index, continent_base_id)
                 end
                 if trigger.waypoint then
                     if trigger.waypoint.data_from_element_and_remove_vanilla_waypoint then
-                        local wp_id = EHI:GetInstanceElementID(trigger.waypoint.data_from_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
+                        local wp_id = EHI:GetInstanceElementID(trigger.waypoint.data_from_element_and_remove_vanilla_waypoint, start_index, continent_base_id)
                         new_trigger.waypoint.data_from_element = wp_id
                         new_trigger.waypoint.remove_vanilla_waypoint = wp_id
                         new_trigger.waypoint.data_from_element_and_remove_vanilla_waypoint = nil
                         defer_loading_waypoints = true
                     end
                     if trigger.waypoint.data_from_element then
-                        new_trigger.waypoint.data_from_element = EHI:GetInstanceElementID(trigger.waypoint.data_from_element, start_index, continent_data.base_id)
+                        new_trigger.waypoint.data_from_element = EHI:GetInstanceElementID(trigger.waypoint.data_from_element, start_index, continent_base_id)
                         defer_loading_waypoints = true
                     end
                     if trigger.waypoint.position_from_element_and_remove_vanilla_waypoint then
-                        local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_from_element_and_remove_vanilla_waypoint, start_index, continent_data.base_id)
+                        local wp_id = EHI:GetInstanceElementID(trigger.waypoint.position_from_element_and_remove_vanilla_waypoint, start_index, continent_base_id)
                         new_trigger.waypoint.position_from_element = wp_id
                         new_trigger.waypoint.remove_vanilla_waypoint = wp_id
                         new_trigger.waypoint.position_from_element_and_remove_vanilla_waypoint = nil
                         defer_loading_waypoints = true
                     end
                     if trigger.waypoint.position_from_element then
-                        new_trigger.waypoint.position_from_element = EHI:GetInstanceElementID(trigger.waypoint.position_from_element, start_index, continent_data.base_id)
+                        new_trigger.waypoint.position_from_element = EHI:GetInstanceElementID(trigger.waypoint.position_from_element, start_index, continent_base_id)
                         defer_loading_waypoints = true
                     end
                     if trigger.waypoint.position_from_unit then
-                        new_trigger.waypoint.position_from_unit = EHI:GetInstanceUnitID(trigger.waypoint.position_from_unit, start_index, continent_data.base_id)
+                        new_trigger.waypoint.position_from_unit = EHI:GetInstanceUnitID(trigger.waypoint.position_from_unit, start_index, continent_base_id)
                         defer_loading_waypoints = true
                     end
                     if trigger.waypoint.remove_vanilla_waypoint then
-                        new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_data.base_id)
+                        new_trigger.waypoint.remove_vanilla_waypoint = EHI:GetInstanceElementID(trigger.waypoint.remove_vanilla_waypoint, start_index, continent_base_id)
                     end
                 end
                 triggers[final_index] = new_trigger
             end
         end
-        managers.ehi_manager:ParseMissionTriggers(triggers, nil, nil, defer_loading_waypoints)
+        if is_element_sync then
+            EHI.Mission:AddMissionSyncTriggers("element", triggers)
+            if instances[folder] then
+                self:_ehi_hook_mission_instance(instance, true)
+            end
+        else
+            EHI.Mission:ParseMissionTriggers(triggers, nil, nil, defer_loading_waypoints)
+        end
         if next(waypoints) then
             EHI:DisableTimerWaypoints(waypoints)
         end
@@ -673,6 +726,12 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
         end
         instance.ehi_cwim = true
     end
+end
+
+---@param instance CoreWorldInstanceManager.Instance
+function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
+    local instance_data = original.prepare_mission_data(self, instance, ...)
+    self:_ehi_hook_mission_instance(instance)
     return instance_data
 end
 

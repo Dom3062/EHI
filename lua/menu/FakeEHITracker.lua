@@ -87,10 +87,11 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
 end
 
 ---@class FakeEHITracker : EHITracker
----@field _icons PanelBitmap[]
+---@field _icons Bitmap[]
 ---@field _text_color Color?
 ---@field _UPDATE_TIME_FORMAT_DISABLED boolean
 FakeEHITracker = class()
+FakeEHITracker._parent_class = FakeEHITrackerManager
 FakeEHITracker.pre_init = EHITracker.pre_init
 FakeEHITracker.post_init = EHITracker.post_init
 FakeEHITracker.CreateIcon = EHITracker.CreateIcon
@@ -104,8 +105,7 @@ FakeEHITracker._icon_gap_size = FakeEHITracker._icon_size + FakeEHITracker._gap
 FakeEHITracker._selected_color = Color(255, 255, 165, 0) / 255
 ---@param panel Panel
 ---@param params EHITracker.params
----@param parent_class FakeEHITrackerManager
-function FakeEHITracker:init(panel, params, parent_class)
+function FakeEHITracker:init(panel, params)
     self:pre_init(params)
     self._format = params.format
     self._scale = params.scale --[[@as number]]
@@ -116,7 +116,7 @@ function FakeEHITracker:init(panel, params, parent_class)
     self._corners_visible = params.corners
     self._icons = {}
     self._n_of_icons = 0
-    self._bg_box_w = parent_class._tweak_data.size_w * self._scale
+    self._bg_box_w = self._parent_class._tweak_data.size_w * self._scale
     self.__icon_pos_left = params.icon_pos == 1
     local gap = 0
     if params.icons then
@@ -125,12 +125,12 @@ function FakeEHITracker:init(panel, params, parent_class)
     end
     self._n = self._n_of_icons
     self._gap_scaled = self._gap * self._scale -- 5 * self._scale
-    self._icon_size_scaled = parent_class._tweak_data.size_h * self._scale -- 32 * self._scale
+    self._icon_size_scaled = self._parent_class._tweak_data.size_h * self._scale -- 32 * self._scale
     self._icon_gap_size_scaled = (self._icon_size + self._gap) * self._scale -- (32 + 5) * self._scale
     self._panel = panel:panel({
         x = params.x,
         y = params.y,
-        w = (parent_class._tweak_data.size_w + gap + (self._icon_size * self._n_of_icons)) * self._scale,
+        w = (self._parent_class._tweak_data.size_w + gap + (self._icon_size * self._n_of_icons)) * self._scale,
         h = self._icon_size_scaled,
         alpha = 1,
         visible = true
@@ -163,6 +163,9 @@ function FakeEHITracker:init(panel, params, parent_class)
     })
     self:FitTheText()
     if self._n_of_icons > 0 then
+        if params.first_icon_pos and params.icons[params.first_icon_pos] then
+            self._first_icon_pos = params.first_icon_pos
+        end
         local start = self.__icon_pos_left and 0 or self._bg_box:w()
         local icon_gap = self.__icon_pos_left and 0 or self._gap_scaled
         for i, v in ipairs(params.icons) do
@@ -185,7 +188,6 @@ function FakeEHITracker:init(panel, params, parent_class)
         end
     end
     self._id = params.ids or params.id
-    self._parent_class = parent_class
     self:post_init(params)
 end
 
@@ -195,14 +197,14 @@ function FakeEHITracker:GetBGBoxRight()
 end
 
 function FakeEHITracker:SetBGSize(w, type, dont_recalculate_panel_w, dont_move_icons)
-    if self._tracker_vertical_anim_left or self.__icon_pos_left then
+    if self._tracker_vertical_anim_left and self._tracker_alignment <= 2 then
         self._panel:set_x(self._panel:x() - (w or self._bg_box:w()))
     end
     self:_SetBGSize(w, type, dont_recalculate_panel_w, dont_move_icons)
 end
 
----@param previous_icon PanelBitmap?
----@param icon PanelBitmap? Defaults to `self._icons[1]` if not provided
+---@param previous_icon Bitmap?
+---@param icon Bitmap? Defaults to `self._icons[1]` if not provided
 function FakeEHITracker:SetIconX(previous_icon, icon)
     icon = icon or self._icons[1]
     if icon then
@@ -321,6 +323,15 @@ function FakeEHITracker:UpdateIconsVisibility(visibility)
     if self.__icon_pos_left then
         self._bg_box:set_x(self._icon_gap_size_scaled * self._n)
     end
+    if self._first_icon_pos then
+        if visibility then
+            self._icons[self._first_icon_pos]:set_x(self._icons[1]:x())
+            self._icons[self._first_icon_pos]:set_visible(true)
+            self._icons[1]:set_visible(false)
+        else
+            self:SetIconsX()
+        end
+    end
 end
 
 function FakeEHITracker:UpdateIcons()
@@ -351,7 +362,9 @@ function FakeEHITracker:UpdateTrackerVerticalAnim(anim)
         return
     end
     self._tracker_vertical_anim_left = vertical
-    if self._first then
+    if self._tracker_alignment >= 3 then
+        return
+    elseif self._first then
         self._parent_class:_update_border_color(self._bg_box)
     end
     self:UpdateCornerVisibility(self._bg_box:child("bg"):visible() and self._corners_visible)
@@ -963,6 +976,11 @@ FakeEHIMoneyTracker = class(FakeEHITracker)
 FakeEHIMoneyTracker.UpdateInternalFormat = FakeEHIMoneyTracker.UpdateTimeFormat
 FakeEHIMoneyTracker._OFFSHORE_RATE = 1 - tweak_data:get_value("money_manager", "offshore_rate") -- 0.8
 FakeEHIMoneyTracker._SPENDING_RATE = 1 - FakeEHIMoneyTracker._OFFSHORE_RATE -- 0.2
+function FakeEHIMoneyTracker:post_init(params)
+    self._text:set_w(self._bg_box:w())
+    self:FitTheText()
+end
+
 function FakeEHIMoneyTracker:Format()
     local offshore = managers.experience:cash_string(math.round(self._time * self._OFFSHORE_RATE))
     local spending = managers.experience:cash_string(math.round(self._time * self._SPENDING_RATE))

@@ -1,24 +1,6 @@
-local EHI = EHI
 if EHI:CheckHook("ExperienceManager") then
     return
 end
-
----@class ExperienceManager
----@field _cash_sign string
----@field _cash_tousand_separator string
----@field _total_levels number
----@field cash_string fun(self: self, cash: number, cash_string: string?): string
----@field experience_string fun(self: self, xp: number): string
----@field level_cap fun(self: self): number
----@field total fun(self: self): number
----@field current_level fun(self: self): number
----@field current_rank fun(self: self): number
----@field get_max_prestige_xp fun(self: self): number
----@field get_current_prestige_xp fun(self: self): number
----@field next_level_data_points fun(self: self): number
----@field next_level_data_current_points fun(self: self): number
----@field rank_icon_data fun(self: self, rank: number?): string, TextureRect
----@field reached_level_cap fun(self: self): boolean
 
 local original =
 {

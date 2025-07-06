@@ -5,20 +5,20 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local goat_pick_up = { Icon.Heli, Icon.Interact }
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param trigger ElementTrigger
 local function f_PilotComingInAgain(self, trigger, ...)
     self._trackers:RemoveTracker("PilotComingIn")
     if self._trackers:CallFunction2(trigger.id, "SetTime", trigger.time) then
-        self:CreateTracker(trigger)
+        self:CreateTracker()
     end
 end
-local PilotComingInAgain = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+local PilotComingInAgain = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
     if enabled then
         f_PilotComingInAgain(self, trigger)
     end
 end)
-local PilotComingInAgain2 = EHI.Manager:RegisterCustomSF(f_PilotComingInAgain)
+local PilotComingInAgain2 = EHI.Trigger:RegisterCustomSF(f_PilotComingInAgain)
 ---@type ParseTriggerTable
 local triggers = {
     [100581] = { time = 9 + 30 + 6.9, id = "BagsDropinAgain", icons = Icon.HeliDropBag, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.peta2_LootZoneDelivery },
@@ -91,7 +91,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101358] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "ResetCount" }
-    other[101733] = { id = "SniperHeli", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    other[101733] = { id = "SniperHeli", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:CallFunction2(id, "SniperRespawn") then
             local t = 23 + 2
@@ -108,7 +108,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100007, 8550)] = trigger
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -163,16 +163,14 @@ local min_max =
         loot_all = loot_all
     }
 }
+total_xp_override.params.custom[1] = min_max
 if OVKorAbove then
     table.insert(objectives, 4, { amount = 50000, name = "gs2_peta_5", optional = true }) -- Farmer Miserable
-    total_xp_override.params.custom[1] = min_max
     local peta_5 = deep_clone(min_max)
     peta_5.name = "gs2_peta_5"
     peta_5.type = "max_only"
     peta_5.max.objectives = true
     total_xp_override.params.custom[2] = peta_5
-else
-    total_xp_override.params.custom[1] = min_max
 end
 EHI:AddXPBreakdown({
     objectives = objectives,

@@ -1,14 +1,14 @@
 ---@class EHITradeManager
-EHITradeManager = {}
+local EHITradeManager = {}
+EHITradeManager._id = "CustodyTime"
 ---@param ehi_tracker EHITrackerManager
-function EHITradeManager:new(ehi_tracker)
+function EHITradeManager:post_init(ehi_tracker)
     self._trackers = ehi_tracker
     self._trade = {
         ai = false,
         normal = false
     }
     self._trade_delay = {} --[[@as table<number, { respawn_t: number, in_custody: boolean?, civilians_killed: number }>]]
-    return self
 end
 
 ---@param type string
@@ -20,9 +20,11 @@ function EHITradeManager:SetTrade(type, pause, t)
     self:CallFunction(f, pause, t)
 end
 
-function EHITradeManager:AddCustodyTimeTracker()
+---@param anim_flash boolean?
+function EHITradeManager:AddCustodyTimeTracker(anim_flash)
     self._trackers:AddTrackerIfDoesNotExist({
-        id = "CustodyTime",
+        id = self._id,
+        flash_bg = anim_flash ~= false,
         class = "EHITradeDelayTracker"
     })
 end
@@ -106,8 +108,7 @@ function EHITradeManager:IncreaseCachedPeerCustodyTime(peer_id, time)
         return
     end
     local data = self._trade_delay[peer_id]
-    local respawn_t = data.respawn_t
-    local new_t = respawn_t + time
+    local new_t = data.respawn_t + time
     local new_civies = data.civilians_killed + 1
     if self._trade_processed_after_alarm then
         self:PostPeerCustodyTime(peer_id, new_t, new_civies)
@@ -139,11 +140,12 @@ end
 
 function EHITradeManager:LoadFromTradeDelayCache()
     if next(self._trade_delay) then
-        -- The tracker may get created the frame before, only create it when the tracker does not exist
-        self:AddCustodyTimeTracker()
+        -- The tracker may get created a frame before, only create it when the tracker does not exist
+        self:AddCustodyTimeTracker(false)
         for peer_id, crim in pairs(self._trade_delay) do
             self:CallFunction("AddOrUpdatePeerCustodyTime", peer_id, crim.respawn_t, crim.civilians_killed, crim.in_custody)
         end
+        self:CallFunction("SetAnimFlash", true)
         self._trade_delay = {}
     end
     self._trade_processed_after_alarm = true
@@ -172,11 +174,13 @@ end
 
 ---@return EHITradeDelayTracker?
 function EHITradeManager:GetTracker()
-    return self._trackers:GetTracker("CustodyTime") --[[@as EHITradeDelayTracker?]]
+    return self._trackers:GetTracker(self._id) --[[@as EHITradeDelayTracker?]]
 end
 
 ---@param f string
 ---@param ... any
 function EHITradeManager:CallFunction(f, ...)
-    self._trackers:CallFunction("CustodyTime", f, ...)
+    self._trackers:CallFunction(self._id, f, ...)
 end
+
+return EHITradeManager

@@ -28,8 +28,7 @@ local achievements =
             -- It was 7 minutes before the change
             [101989] = { time = 360, class = TT.Achievement.Base },
             [101997] = { special_function = SF.SetAchievementComplete },
-        },
-        sync_params = { from_start = true }
+        }
     },
     spa_6 =
     {
@@ -39,8 +38,7 @@ local achievements =
             [101989] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true },
             [101999] = { special_function = SF.IncreaseProgress },
             [102002] = { special_function = SF.FinalizeAchievement },
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -56,7 +54,7 @@ if EHI.IsClient then
     other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 10 })
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

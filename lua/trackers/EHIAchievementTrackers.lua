@@ -46,23 +46,25 @@ function EHIAchievementTracker:PrepareHint(params)
     end
 end
 
-function EHIAchievementTracker:SetCompleted()
-    self._text:stop()
+---@param success boolean?
+function EHIAchievementTracker:delete_with_delay(success)
     self.update = self.update_fade
-    self._achieved_popup_showed = true
-    self:SetTextColor(Color.green)
+    self:StopAndSetTextColor(success and Color.green or Color.red)
+    self:AddTrackerToUpdate()
     self:AnimateBG()
+end
+
+function EHIAchievementTracker:SetCompleted()
+    self._achieved_popup_showed = true
+    self:delete_with_delay(true)
 end
 
 function EHIAchievementTracker:SetFailed()
-    self._text:stop()
-    self.update = self.update_fade
-    self:SetTextColor(Color.red)
-    self:AnimateBG()
+    self:delete_with_delay()
     self:ShowFailedPopup()
 end
 
-function EHIAchievementTracker:pre_delete()
+function EHIAchievementTracker:pre_destroy()
     self:ShowFailedPopup()
 end
 
@@ -131,12 +133,12 @@ EHIAchievementUnlockTracker.SetCompleted = function(...) end
 ---@class EHIAchievementProgressTracker : EHIProgressTracker, EHIAchievementTracker
 ---@field super EHIProgressTracker
 EHIAchievementProgressTracker = ehi_achievement_class(EHIProgressTracker)
-function EHIAchievementProgressTracker:init(panel, params, ...)
+function EHIAchievementProgressTracker:init(panel, params)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
     self._loot_parent = params.loot_parent --[[@as EHILootManager?]]
     self:PrepareHint(params)
-    EHIAchievementProgressTracker.super.init(self, panel, params, ...)
+    EHIAchievementProgressTracker.super.init(self, panel, params)
     self:ShowStartedPopup(params.delay_popup)
     self:ShowAchievementDescription(params.delay_popup)
 end
@@ -163,7 +165,7 @@ function EHIAchievementProgressTracker:AddLootListener(counter)
     end
 end
 
-function EHIAchievementProgressTracker:pre_delete()
+function EHIAchievementProgressTracker:pre_destroy()
     if self._loot_parent then
         self._loot_parent:RemoveListener(self._id)
     end
@@ -180,10 +182,10 @@ end
 ---@class EHIAchievementProgressGroupTracker : EHIProgressGroupTracker, EHIAchievementTracker, EHIAchievementProgressTracker
 EHIAchievementProgressGroupTracker = ehi_achievement_class(EHIProgressGroupTracker)
 EHIAchievementProgressGroupTracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
-function EHIAchievementProgressGroupTracker:init(panel, params, ...)
+function EHIAchievementProgressGroupTracker:init(panel, params)
     self._beardlib = params.beardlib
     self:PrepareHint(params)
-    EHIAchievementProgressGroupTracker.super.init(self, panel, params, ...)
+    EHIAchievementProgressGroupTracker.super.init(self, panel, params)
     self:ShowStartedPopup(params.delay_popup)
     self:ShowAchievementDescription(params.delay_popup)
 end
@@ -232,9 +234,33 @@ end
 EHIAchievementStatusTracker = class(EHIAchievementTracker)
 EHIAchievementStatusTracker.update = EHIAchievementStatusTracker.update_fade
 EHIAchievementStatusTracker._needs_update = false
-function EHIAchievementStatusTracker:init(panel, params, ...)
+EHIAchievementStatusTracker._green_status =
+{
+    ok = true,
+    done = true,
+    pass = true,
+    finish = true,
+    destroy = true,
+    defend = true,
+    no_down = true,
+    secure = true
+}
+EHIAchievementStatusTracker._yellow_status =
+{
+    alarm = true,
+    ready = true,
+    loud = true,
+    push = true,
+    hack = true,
+    land = true,
+    find = true,
+    bring = true,
+    mark = true,
+    objective = true
+}
+function EHIAchievementStatusTracker:init(panel, params)
     self._status = params.status or "ok"
-    EHIAchievementStatusTracker.super.init(self, panel, params, ...)
+    EHIAchievementStatusTracker.super.init(self, panel, params)
     self:SetTextColor()
 end
 
@@ -272,38 +298,14 @@ function EHIAchievementStatusTracker:SetFailed()
     self:ShowFailedPopup()
 end
 
-local green_status =
-{
-    ok = true,
-    done = true,
-    pass = true,
-    finish = true,
-    destroy = true,
-    defend = true,
-    no_down = true,
-    secure = true
-}
-local yellow_status =
-{
-    alarm = true,
-    ready = true,
-    loud = true,
-    push = true,
-    hack = true,
-    land = true,
-    find = true,
-    bring = true,
-    mark = true,
-    objective = true
-}
 ---@param color Color?
 function EHIAchievementStatusTracker:SetTextColor(color)
     local c
     if color then
         c = color
-    elseif green_status[self._status] then
+    elseif self._green_status[self._status] then
         c = Color.green
-    elseif yellow_status[self._status] then
+    elseif self._yellow_status[self._status] then
         c = Color.yellow
     else
         c = Color.red

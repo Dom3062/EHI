@@ -26,7 +26,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [102292] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+            [102292] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
                 local function berry_4_fail()
                     managers.player:remove_listener("EHI_berry_4_fail")
                     EHI:Unhook("berry_4_HuskPlayerMovement_sync_bleed_out")
@@ -40,12 +40,11 @@ local achievements =
                 Hooks:PostHook(HuskPlayerMovement, "_sync_movement_state_bleed_out", "EHI_berry_4_HuskPlayerMovement_sync_bleed_out", berry_4_fail)
                 Hooks:PostHook(HuskPlayerMovement, "_sync_movement_state_incapacitated", "EHI_berry_4_HuskPlayerMovement_sync_incapacitated", berry_4_fail)
             end) }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param disable boolean
 local function ToggleAssaultTracker(self, disable)
     self._assault:SetControlStateBlock(disable, 30)
@@ -63,7 +62,7 @@ local other =
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(101410, 10950)] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }
-    other[EHI:GetInstanceElementID(100019, 10950)] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    other[EHI:GetInstanceElementID(100019, 10950)] = { id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SniperSpawnsSuccess", 1) then
             self._trackers:AddTracker({
                 id = trigger.id,
@@ -77,7 +76,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100021, 10950)] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

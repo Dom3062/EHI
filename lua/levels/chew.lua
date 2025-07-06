@@ -43,7 +43,7 @@ if EHI:IsLootCounterVisible() then
     end, { element = 100337 })
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

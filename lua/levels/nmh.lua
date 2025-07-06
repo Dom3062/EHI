@@ -2,7 +2,7 @@ local EHI = EHI
 local Icon = EHI.Icons
 ---@class EHIElevatorTimerTracker : EHIPausableTracker
 ---@field super EHIPausableTracker
-EHIElevatorTimerTracker = class(EHIPausableTracker)
+local EHIElevatorTimerTracker = class(EHIPausableTracker)
 EHIElevatorTimerTracker._forced_icons = { Icon.Door }
 function EHIElevatorTimerTracker:pre_init(params)
     self._floors = params.floors or 26
@@ -29,14 +29,14 @@ end
 
 ---@class EHIElevatorTimerWaypoint : EHIPausableWaypoint, EHIElevatorTimerTracker
 ---@field super EHIPausableWaypoint
-EHIElevatorTimerWaypoint = class(EHIPausableWaypoint)
+local EHIElevatorTimerWaypoint = class(EHIPausableWaypoint)
 EHIElevatorTimerWaypoint.GetElevatorTime = EHIElevatorTimerTracker.GetElevatorTime
 EHIElevatorTimerWaypoint.SetFloors = EHIElevatorTimerTracker.SetFloors
 EHIElevatorTimerWaypoint.LowerFloor = EHIElevatorTimerTracker.LowerFloor
-function EHIElevatorTimerWaypoint:init(waypoint, params, ...) ---@cast waypoint -Panel
+function EHIElevatorTimerWaypoint:pre_init(params)
     self._floors = params.floors or 26
     params.time = self:GetElevatorTime()
-    EHIElevatorTimerWaypoint.super.init(self, waypoint, params, ...)
+    EHIElevatorTimerWaypoint.super.pre_init(self, params)
 end
 
 local SF = EHI.SpecialFunctions
@@ -44,12 +44,24 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
+    [100221] = { time = 12 + 6 + 4 + 2, id = "MaskupReady", icons = { Icon.Wait }, hint = Hints.Wait },
+
     [102460] = { time = 7, id = "Countdown", icons = { Icon.Alarm }, class = TT.Warning, hint = Hints.Alarm },
     [102606] = { id = "Countdown", special_function = SF.RemoveTracker },
 
     [102701] = { time = 13, id = "Patrol", icons = { Icon.ExclamationMark }, class = TT.Warning, hint = Hints.nmh_IncomingPolicePatrol, remove_on_alarm = true },
 
-    [103443] = { id = "EscapeElevator", class = "EHIElevatorTimerTracker", special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_from_unit = 102296, class = "EHIElevatorTimerWaypoint" }, hint = Hints.Wait },
+    [103443] = { id = "EscapeElevator", class_table = EHIElevatorTimerTracker, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_from_unit = 102296, class_table = EHIElevatorTimerWaypoint }, hint = Hints.Wait, load_sync = EHI.IsClient and function(self) ---@param self EHIMissionElementTrigger
+        local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer?]]
+        local o = elevator_counter and elevator_counter:digital_gui()
+        if o and o._timer and o._timer ~= 30 then
+            self:CreateTracker()
+            self._tracking:Call("EscapeElevator", "SetFloors", o._timer - 4)
+            if self._utils:InteractionExists("circuit_breaker") or self._utils:InteractionExists("press_call_elevator") then
+                self._tracking:Pause("EscapeElevator")
+            end
+        end
+    end },
     [102620] = { id = "EscapeElevator", special_function = SF.PauseTracker },
     [104072] = { id = "EscapeElevator", special_function = SF.UnpauseTracker },
     [103439] = { id = "EscapeElevator", special_function = SF.RemoveTracker },
@@ -71,6 +83,16 @@ local triggers = {
     [103006] = { chance = 100, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.nmh_PatientFileChance, remove_on_alarm = true },
     [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker }
 }
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
+    triggers[102470] = { count = 3, id = "Cams", icons = { "daily_secret_identity" }, class = TT.Counter, remove_on_alarm = true, hint = Hints.nmh_DestroyCameras } -- Single Player
+    triggers[102471] = { count = 6, id = "Cams", icons = { "daily_secret_identity" }, class = TT.Counter, remove_on_alarm = true, hint = Hints.nmh_DestroyCameras } -- 2 players
+    triggers[102472] = { count = 9, id = "Cams", icons = { "daily_secret_identity" }, class = TT.Counter, remove_on_alarm = true, hint = Hints.nmh_DestroyCameras } -- 3-4 players
+    triggers[102462] = { id = "Cams", special_function = SF.DecreaseCounter }
+    triggers[102464] = { id = "Cams", special_function = SF.DecreaseCounter }
+    triggers[102465] = { id = "Cams", special_function = SF.DecreaseCounter }
+    triggers[102466] = { id = "Cams", special_function = SF.DecreaseCounter }
+    triggers[102606] = { id = "Cams", special_function = SF.RemoveTracker } -- Cams taken out
+end
 
 ---@type ParseAchievementTable
 local achievements =
@@ -83,18 +105,17 @@ local achievements =
             -- Looks like a bug, OVK thinks the timer resets but the achievement is already disabled... -> you have 1 shot before mission restart
             -- Reported in:
             -- https://steamcommunity.com/app/218620/discussions/14/3048357185564293898/
-            [103456] = { time = 5, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart, trigger_once = true },
+            [103456] = { time = 5, class = TT.Achievement.Base, condition_function = EHI.ConditionFunctions.PlayingFromStart, trigger_once = true },
             [103460] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
 local other =
 {
-    [102344] = EHI:AddAssaultDelay({ special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-        if EHI:IsPlayingFromStart() and not self._assault:TrackerExists() then
-            self:CreateTracker(trigger)
+    [102344] = EHI:AddAssaultDelay({ special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
+        if EHI:IsPlayingFromStart() and not self._assault:Exists() then
+            self:CreateTracker()
         end
     end), trigger_once = true }),
     [104721] = EHI:AddCustomCode(function(self)
@@ -102,22 +123,11 @@ local other =
     end)
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
 })
-EHI.Manager:AddLoadSyncFunction(function(self)
-    local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer?]]
-    local o = elevator_counter and elevator_counter:digital_gui()
-    if o and o._timer and o._timer ~= 30 then
-        self:Trigger(103443)
-        self:Call("EscapeElevator", "SetFloors", o._timer - 4)
-        if self:InteractionExists("circuit_breaker") or self:InteractionExists("press_call_elevator") then
-            self:Pause("EscapeElevator")
-        end
-    end
-end)
 
 --units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw
 EHI:UpdateUnits({ [101387] = { remove_vanilla_waypoint = 104494 } })

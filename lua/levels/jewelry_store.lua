@@ -4,10 +4,17 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
+local VanDriveAwayIcon = EHI.TrackerUtils:GetTrackerIcons(Icon.CarWait, { { icon = Icon.Car, color = Color.red } })
+local escape_chance_start = EHI:GetValueBasedOnDifficulty({
+    normal = 25,
+    hard = 27,
+    veryhard = 32,
+    overkill_or_above = 36
+})
 local triggers = {
-    [101541] = { time = 2, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
-    [101558] = { time = 5, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
-    [101601] = { time = 7, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
+    [101541] = { time = 2, id = "VanDriveAway", icons = VanDriveAwayIcon, class = TT.Warning, hint = Hints.LootTimed },
+    [101558] = { time = 5, id = "VanDriveAway", icons = VanDriveAwayIcon, class = TT.Warning, hint = Hints.LootTimed },
+    [101601] = { time = 7, id = "VanDriveAway", icons = VanDriveAwayIcon, class = TT.Warning, hint = Hints.LootTimed },
 
     [103172] = { time = 45 + 830/30, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
     [103182] = { time = 600/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
@@ -20,14 +27,8 @@ local other =
 }
 if EHI:IsEscapeChanceEnabled() then
     other[101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
-    local start_chance = EHI:GetValueBasedOnDifficulty({
-        normal = 25,
-        hard = 27,
-        veryhard = 32,
-        overkill_or_above = 36
-    })
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_escape:AddEscapeChanceTracker(dropin, start_chance)
+        managers.ehi_escape:AddEscapeChanceTracker(dropin, escape_chance_start)
     end)
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
@@ -81,7 +82,7 @@ local achievements =
         }
     }
 }
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -93,12 +94,7 @@ EHI:AddXPBreakdown({
         {
             { amount = 2000, timer = 120, stealth = true },
             { amount = 6000, stealth = true },
-            { amount = 8000, loud = true, escape_chance = { start_chance = EHI:GetValueBasedOnDifficulty({
-                normal = 25,
-                hard = 27,
-                veryhard = 32,
-                overkill_or_above = 36
-            }), kill_add_chance = 5 } }
+            { amount = 8000, loud = true, escape_chance = { start_chance = escape_chance_start, kill_add_chance = 5 } }
         }
     }
 })

@@ -1,16 +1,18 @@
----@class EHIcorp9Tracker : EHIColoredCodesTracker, EHIAchievementTracker
+local EHI = EHI
+EHI:LoadTracker("EHICodesTracker")
+---@class corp_9 : EHIColoredCodesTracker, EHIAchievementTracker
 ---@field super EHIColoredCodesTracker
-EHIcorp9Tracker = ehi_achievement_class(EHIColoredCodesTracker)
-EHIcorp9Tracker._forced_icons = EHI:GetAchievementIcon("corp_9")
-EHIcorp9Tracker._forced_hint_text = "achievement_corp_9"
-EHIcorp9Tracker._hint_vanilla_localization = true
-function EHIcorp9Tracker:post_init(params)
+local corp_9 = ehi_achievement_class(EHIColoredCodesTracker)
+corp_9._forced_icons = EHI:GetAchievementIcon("corp_9")
+corp_9._forced_hint_text = "achievement_corp_9"
+corp_9._hint_vanilla_localization = true
+function corp_9:post_init(params)
     self:ShowStartedPopup()
     self:ShowAchievementDescription()
 end
 
-function EHIcorp9Tracker:OverridePanel()
-    EHIcorp9Tracker.super.OverridePanel(self)
+function corp_9:OverridePanel()
+    corp_9.super.OverridePanel(self)
     self._find = self:CreateText({
         status_text = "find",
         h = self._icon_size_scaled,
@@ -21,12 +23,12 @@ function EHIcorp9Tracker:OverridePanel()
     self._colors.blue:set_visible(false)
 end
 
-function EHIcorp9Tracker:LaptopInteracted()
+function corp_9:LaptopInteracted()
     self:SetStatusText("push", self._find)
     self:AnimateBG()
 end
 
-function EHIcorp9Tracker:FindCodesStarted()
+function corp_9:FindCodesStarted()
     self._colors.red:set_visible(true)
     self._colors.green:set_visible(true)
     self._colors.blue:set_visible(true)
@@ -34,7 +36,7 @@ function EHIcorp9Tracker:FindCodesStarted()
     self:AnimateBG()
 end
 
-function EHIcorp9Tracker:SetCompleted()
+function corp_9:SetCompleted()
     self.update = self.update_fade
     self._achieved_popup_showed = true
     self:AnimateBG()
@@ -44,7 +46,7 @@ function EHIcorp9Tracker:SetCompleted()
     self:DelayForcedDelete()
 end
 
-function EHIcorp9Tracker:SetFailed()
+function corp_9:SetFailed()
     if self._achieved_popup_showed then
         return
     end
@@ -59,10 +61,10 @@ function EHIcorp9Tracker:SetFailed()
     self:DelayForcedDelete()
 end
 
----@class EHIcorp12Tracker : EHIAchievementTracker
-EHIcorp12Tracker = class(EHIAchievementTracker)
-EHIcorp12Tracker._forced_icons = EHI:GetAchievementIcon("corp_12")
-function EHIcorp12Tracker:SetMPState()
+---@class corp_12 : EHIAchievementTracker
+local corp_12 = class(EHIAchievementTracker)
+corp_12._forced_icons = EHI:GetAchievementIcon("corp_12")
+function corp_12:SetMPState()
     if self._mp then
         return
     end
@@ -73,7 +75,6 @@ function EHIcorp12Tracker:SetMPState()
     self._mp = true
 end
 
-local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -96,13 +97,12 @@ local achievements =
         difficulty_pass = managers.mission:get_saved_job_value("usb_train") == 1,
         elements =
         {
-            [100107] = { class = "EHIcorp9Tracker" },
+            [100107] = { class_table = corp_9 },
             [EHI:GetInstanceElementID(100010, 14610)] = { special_function = SF.CallCustomFunction, f = "LaptopInteracted" },
             [103518] = { special_function = SF.CallCustomFunction, f = "FindCodesStarted" },
             [103045] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100021, 11090)] = { special_function = SF.SetAchievementFailed } -- Lab destroyed with C4
         },
-        cleanup_class = "EHIcorp9Tracker",
         parsed_callback = function()
             EHI:HookColorCodes({
                 red =
@@ -134,7 +134,7 @@ local achievements =
     {
         elements =
         {
-            [102728] = { class = TT.Achievement.Base, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+            [102728] = { class = TT.Achievement.Base, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
                 if self._cache.corp_11_StartDisabled then
                     return
                 end
@@ -145,7 +145,7 @@ local achievements =
                     class = trigger.class
                 })
             end) },
-            [102683] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+            [102683] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self._unlockable:SetAchievementFailed("corp_11")
                     self._cache.corp_11_StartDisabled = true
@@ -166,15 +166,15 @@ local achievements =
         elements =
         {
             -- SP (MP has 240s)
-            [100107] = { time = 420, class = "EHIcorp12Tracker", special_function = SF.AddTrackerIfDoesNotExist },
-            [102739] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
+            [100107] = { time = 420, class_table = corp_12, special_function = SF.AddTrackerIfDoesNotExist },
+            [102739] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
                 if self.ConditionFunctions.IsLoud() then
                     return
-                elseif self._trackers:TrackerDoesNotExist("corp_12") then
+                elseif self._trackers:DoesNotExist("corp_12") then
                     self._trackers:AddTracker({
                         id = "corp_12",
                         time = 420,
-                        class = "EHIcorp12Tracker"
+                        class_table = corp_12
                     })
                 end
                 self._trackers:CallFunction("corp_12", "SetMPState")
@@ -182,9 +182,7 @@ local achievements =
             [102014] = { special_function = SF.SetAchievementFailed }, -- Alarm
             [102736] = { special_function = SF.SetAchievementFailed }, -- Civilian killed
             [102740] = { special_function = SF.SetAchievementComplete }
-        },
-        cleanup_class = "EHIcorp12Tracker",
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -208,7 +206,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

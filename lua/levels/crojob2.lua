@@ -3,16 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local MethlabIndex = { 1100, 1400, 1700, 2000, 2300, 2600, 2900, 3500, 3800, 4100, 4400, 4700 }
-local interact = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.mia_1_NextMethIngredient }
-local element_sync_triggers = {}
-for _, index in ipairs(MethlabIndex) do
-    for i = 100169, 100172, 1 do
-        local element_id = EHI:GetInstanceElementID(i, index)
-        element_sync_triggers[element_id] = deep_clone(interact)
-        element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, index)
-    end
-end
 local chopper_delay = 25 + 1 + 2.5
 ---@type ParseTriggerTable
 local triggers = {
@@ -27,18 +17,6 @@ local triggers = {
     [106294] = { time = 1200/30, id = "HeliEscape", icons = Icon.HeliEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape, waypoint = { data_from_element_and_remove_vanilla_waypoint = 103045 } },
     [100339] = { time = 0.2 + 450/30, id = "BoatEscape", icons = Icon.BoatEscape, special_function = SF.ExecuteIfElementIsEnabled, hint = Hints.LootEscape, waypoint = { data_from_element_and_remove_vanilla_waypoint = 102450 } }
 }
-for _, index in ipairs(MethlabIndex) do
-    triggers[EHI:GetInstanceElementID(100118, index)] = { time = 1, id = "MethlabRestart", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.mia_1_NextMethIngredient }
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethlabPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone, waypoint = { data_from_element = EHI:GetInstanceElementID(100161, index) } }
-end
-if EHI.IsClient then
-    local random_time = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
-    for _, index in ipairs(MethlabIndex) do
-        triggers[EHI:GetInstanceElementID(100149, index)] = random_time
-        triggers[EHI:GetInstanceElementID(100150, index)] = random_time
-        triggers[EHI:GetInstanceElementID(100184, index)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }
-    end
-end
 
 ---@type ParseAchievementTable
 local achievements =
@@ -84,12 +62,12 @@ if EHI:IsLootCounterVisible() then
         end
     end, { element = { 100635, 106303, 100148, 105965 } }, true)
     -- Random loot in crates
-    local IncreaseMaximumTrigger = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
+    local IncreaseMaximumTrigger = EHI:AddCustomCode(function(self)
         self._loot:RandomLootSpawned()
-    end) }
-    local DecreaseMaximumTrigger = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
+    end)
+    local DecreaseMaximumTrigger = EHI:AddCustomCode(function(self)
         self._loot:RandomLootDeclined()
-    end) }
+    end)
     for i = 103232, 103264, 1 do -- 1 - 11 Cocaine / Money / Gold
         other[i] = IncreaseMaximumTrigger
     end
@@ -151,9 +129,9 @@ if EHI:IsLootCounterVisible() then
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101721] = { chance = 100, time = 150, on_fail_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
-    other[101773] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    other[101773] = { id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
-        if self._trackers:TrackerDoesNotExist(id) then
+        if self._trackers:DoesNotExist(id) then
             self._trackers:AddTracker({
                 id = id,
                 time = 120,
@@ -174,11 +152,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104331] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other,
-    sync_triggers = { element = element_sync_triggers }
+    other = other
 })
 EHI:ShowAchievementLootCounter({
     achievement = "voff_2",

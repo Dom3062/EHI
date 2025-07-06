@@ -11,9 +11,6 @@
     "ehi_language_desc" : "Mude o idioma do mod. Carregar um mapa é preciso para ter efeito.",
     "ehi_language_1" : "Auto detectação",
 
-    "ehi_r" : "Vermelho",
-    "ehi_g" : "Verde",
-    "ehi_b" : "Azul",
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Redefinir a cor",
 
@@ -192,5 +189,9 @@
     "ehi_show_waypoints_pager_desc" : "Mostra um Tracker de Pagers que precisam ser respondidas",
 
     "ehi_show_waypoints_cameras" : "Mostrar waypoints para câmeras afetadas pelo Loop",
-    "ehi_show_waypoints_cameras_desc" : "Mostra um waypoint em uma câmera que está sendo afetada por um Loop"
+    "ehi_show_waypoints_cameras_desc" : "Mostra um waypoint em uma câmera que está sendo afetada por um Loop",
+
+    "ehi_buffs_group_color_red" : "Vermelho",
+    "ehi_buffs_group_color_green" : "Verde",
+    "ehi_buffs_group_color_blue" : "Azul"
 }

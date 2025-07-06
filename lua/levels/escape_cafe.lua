@@ -47,7 +47,7 @@ end
     end)
 end]]
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

@@ -50,7 +50,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101287] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100784 } }
     other[101284] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100785 } }
 end
-EHI.Manager:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)
+EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)
 
 tweak_data.ehi.functions.uno_1(true)
 EHI:AddXPBreakdown({

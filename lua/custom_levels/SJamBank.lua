@@ -39,7 +39,7 @@ local other =
 
 EHI:ShowLootCounter({ max = 10 }, { element = 100443 })
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other
 })

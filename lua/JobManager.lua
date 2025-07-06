@@ -3,25 +3,6 @@ if EHI:CheckHook("JobManager") then
     return
 end
 
----@class JobManager
----@field _global { current_job: { current_stage: number, job_id: string, stages: number, job_wrapper_id: string? } }
----@field current_contact_id fun(self: self): string
----@field current_difficulty_stars fun(self: self): number
----@field current_job_id fun(self: self): string
----@field current_job_stars fun(self: self): number
----@field current_level_id fun(self: self): string
----@field current_stage fun(self: self): number
----@field get_ghost_bonus fun(self: self): number
----@field get_job_heat_multipliers fun(self: self, job_id: string): number?
----@field has_active_job fun(self: self): boolean
----@field is_current_job_professional fun(self: self): boolean
----@field is_level_christmas fun(self: self, level_id: string): boolean
----@field on_last_stage fun(self: self): boolean
----@field current_level_wave_count fun(self: self): number
----@field set_memory fun(self: self, key: string, value: any, is_shortterm: boolean?)
----@field get_memory fun(self: self, key: string, is_shortterm: boolean?): any
----@field get_heat_color fun(self: self, heat: number): Color
-
 function JobManager:IsPlayingMultidayHeist()
     if not self._global.current_job then
         return false

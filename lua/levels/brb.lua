@@ -34,18 +34,17 @@ local achievements =
                     loot_type = "gold"
                 }
             }}
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
 local other =
 {
-    [100955] = EHI:AddAssaultDelay({ control_additional_time = 45, random_time = 15, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
-        if (EHI.IsHost and element:counter_value() ~= 0) or self._trackers:TrackerExists(trigger.id) then
+    [100955] = EHI:AddAssaultDelay({ control_additional_time = 45, random_time = 15, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...)
+        if (EHI.IsHost and element:counter_value() ~= 0) or self._trackers:Exists(trigger.id) then
             return
         end
-        self:CreateTracker(trigger)
+        self:CreateTracker()
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
@@ -62,7 +61,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 EHI:ShowLootCounter({ max = 24 }, { element = { 100468, 100667 } })
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

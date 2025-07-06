@@ -3,10 +3,10 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local AddToCache = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+local AddToCache = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     self._cache[trigger.id] = trigger.data
 end)
-local GetFromCache = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+local GetFromCache = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     local data = table.remove_key(self._cache, trigger.id) --[[@as { icon: string }? ]]
     if data and data.icon then
         trigger.icons[1] = data.icon
@@ -16,7 +16,7 @@ local GetFromCache = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
     else
         trigger.waypoint = nil
     end
-    self:CreateTracker(trigger)
+    self:CreateTracker()
 end)
 local triggers = {
     [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape, waypoint = { icon = Icon.Car, position_from_element = 102141 } },
@@ -68,7 +68,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102110] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102120 } } -- Heli
     other[102130] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102138 } } -- Heli
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

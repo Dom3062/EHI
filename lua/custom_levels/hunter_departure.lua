@@ -18,23 +18,22 @@ local achievements =
         elements =
         {
             [100132] = { special_function = SF.Trigger, data = { 1001321, 1001322 } },
-            [1001321] = { max = 21, class = TT.Achievement.Progress, special_function = SF.ShowAchievementFromStart },
+            [1001321] = { max = 21, class = TT.Achievement.Progress, condition_function = EHI.ConditionFunctions.PlayingFromStart },
             [1001322] = EHI:AddCustomCode(function(self)
                 EHI:ShowLootCounter({ max = 21, client_from_start = true })
                 self:UnhookTrigger(100416)
             end),
             [100416] = { special_function = SF.IncreaseProgress }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 EHI:PreparseBeardlibAchievements(achievements, "hunter_all")
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
-EHI.Manager:AddLoadSyncFunction(function(self)
+EHI.Trigger:AddLoadSyncFunction(function(self)
     EHI:ShowLootCounter({ max = 21, client_from_start = true })
     self:UnhookTrigger(100416)
     self._loot:SyncSecuredLoot()

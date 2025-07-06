@@ -1,8 +1,9 @@
+local EHI = EHI
+
 ---@class EHITweakData
 EHITweakData = {}
 ---@param tweak_data tweak_data
 function EHITweakData:new(tweak_data)
-    local EHI = EHI
     local Icon = EHI.Icons
     self.default =
     {
@@ -27,8 +28,8 @@ function EHITweakData:new(tweak_data)
             size_h = 64,
             size_w = 32,
             gap = 6,
-            ---@return string?
-            ---@return number[]?
+            ---@return string
+            ---@return number[]
             get_icon = function(params)
                 local texture, texture_rect
                 local x = params.x or 0
@@ -96,7 +97,9 @@ function EHITweakData:new(tweak_data)
         ecm_jammer = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {64, 256, 64, 64} },
         ecm_feedback = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 128, 64, 64} },
 
-        hoxton_character = { texture = "guis/dlcs/trk/textures/pd2/old_hoxton_unlock_icon" }
+        hoxton_character = { texture = "guis/dlcs/trk/textures/pd2/old_hoxton_unlock_icon" },
+
+        daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} }
     }
     -- Broken units to be "fixed" during mission load
     self.units =
@@ -132,7 +135,7 @@ function EHITweakData:new(tweak_data)
             text = "0",
             x = 1,
             y = 0,
-            class = "EHIGaugeBuffTracker",
+            class = "EHIHealthBuffTracker",
             format = "damage",
             option = "health"
         },
@@ -150,41 +153,41 @@ function EHITweakData:new(tweak_data)
             u100skill = true,
             x = 1,
             y = 12,
-            text = "Dodge",
+            group = "dodge",
+            text_localize = "ehi_buffs_hint_dodge",
             format = "percent",
-            activate_after_spawn = true,
+            skill_check_after_spawn = true,
             option = "dodge",
             persistent = "dodge_persistent",
             class_to_load =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDodgeChanceBuffTracker"
-            },
-            enable_in_loud = true
+            }
         },
         CritChance =
         {
             u100skill = true,
             x = 0,
             y = 12,
-            text = "Crit",
+            group = "crit",
+            text_localize = "ehi_buffs_hint_crit",
             format = "percent",
-            activate_after_spawn = true,
+            skill_check_after_spawn = true,
             option = "crit",
             persistent = "crit_persistent",
             class_to_load =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHICritChanceBuffTracker"
-            },
-            enable_in_loud = true
+            }
         },
         Berserker =
         {
-            skills = true,
+            u100skill = true,
             x = 2,
             y = 2,
-            check_after_spawn = true,
+            skill_check_after_spawn = true,
             option = "berserker",
             persistent = "berserker_persistent",
             class_to_load =
@@ -193,26 +196,71 @@ function EHITweakData:new(tweak_data)
                 class = "EHIBerserkerBuffTracker"
             }
         },
+        Yakuza =
+        {
+            deck = true,
+            text = "Yakuza",
+            x = 2,
+            y = 7,
+            deck_option =
+            {
+                deck = "yakuza",
+                option = "irezumi",
+                persistent = "irezumi_refresh"
+            },
+            skill_check_after_spawn = true,
+            class_to_load =
+            {
+                prerequisite = "EHISkillRefreshBuffTracker",
+                class = "EHIYakuzaBuffTracker"
+            }
+        },
         Reload =
         {
             skills = true,
-            bad = true,
+            group = "cooldown",
             y = 9,
-            option = "reload"
+            option = "reload",
+            permanent =
+            {
+                option = "reload_persistent",
+                always_show = true
+            }
         },
         Interact =
         {
             texture = "guis/textures/pd2/pd2_waypoints",
             texture_rect = { 224, 32, 32, 32 },
-            option = "interact"
+            option = "interact",
+            permanent =
+            {
+                option = "interact_persistent",
+                always_show = true
+            }
         },
         ArmorRegenDelay =
         {
-            skills = true,
-            bad = true,
-            x = 6,
-            y = 4,
-            option = "shield_regen"
+            u100skill = true,
+            group = "cooldown",
+            text_localize = "ehi_buffs_hint_regen",
+            x = 2,
+            y = 12,
+            option = "shield_regen",
+            skill_check_after_spawn = true,
+            class = "EHIArmorRegenDelayBuffTracker",
+            permanent =
+            {
+                option = "shield_regen_persistent",
+                skill_check =
+                {
+                    skills =
+                    {
+                        { category = "player", upgrade = "armor_grinding" }, -- Anarchist
+                        { category = "player", upgrade = "armor_to_health_conversion" } -- Stoic
+                    },
+                    negate = true
+                }
+            }
         },
         MeleeCharge =
         {
@@ -224,53 +272,127 @@ function EHITweakData:new(tweak_data)
             {
                 load_class = "EHIMeleeChargeBuffTracker",
                 class = "EHIMeleeChargeBuffTracker"
+            },
+            permanent =
+            {
+                option = "melee_charge_persistent",
+                always_show = true,
+                class_to_load =
+                {
+                    load_class = "EHIMeleeChargeBuffTracker",
+                    class = "EHIPersistentMeleeChargeBuffTracker"
+                }
+            }
+        },
+        WeaponSwap =
+        {
+            skills = true,
+            text = "Swap",
+            group = "cooldown",
+            y = 9,
+            option = "weapon_swap",
+            permanent =
+            {
+                option = "weapon_swap_persistent",
+                always_show = true
             }
         },
         headshot_regen_armor_bonus =
         {
             skills = true,
-            bad = true,
+            group = "cooldown",
             x = 6,
             y = 11,
-            option = "bullseye"
+            option = "bullseye",
+            permanent =
+            {
+                option = "bullseye_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "headshot_regen_armor_bonus"
+                }
+            }
         },
-        combat_medic_damage_multiplier =
+        revive_damage_reduction =
         {
             skills = true,
+            text_localize = "ehi_buffs_hint_damage_decrease",
+            group = "player_damage_reduction",
             x = 5,
             y = 7,
-            option = "combat_medic"
+            option = "combat_medic",
+            permanent =
+            {
+                option = "combat_medic_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "revive_damage_reduction"
+                }
+            }
         },
         berserker_damage_multiplier =
         {
             skills = true,
             x = 5,
             y = 12,
-            option = "swan_song"
+            option = "swan_song",
+            permanent =
+            {
+                option = "swan_song_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "berserker_damage_multiplier"
+                }
+            }
         },
         dmg_multiplier_outnumbered =
         {
             skills = true,
-            text = "Dmg+",
+            text_localize = "ehi_buffs_hint_damage_increase",
+            group = "weapon_damage_increase",
             x = 2,
             y = 1,
-            option = "underdog"
+            option = "underdog",
+            permanent =
+            {
+                option = "underdog_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "dmg_multiplier_outnumbered"
+                }
+            }
         },
         first_aid_damage_reduction =
         {
             skills = true,
-            text = "Dmg-",
+            text_localize = "ehi_buffs_hint_damage_decrease",
+            group = "player_damage_reduction",
             x = 1,
             y = 11,
-            option = "quick_fix"
+            option = "quick_fix",
+            permanent =
+            {
+                option = "quick_fix_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "first_aid_damage_reduction"
+                }
+            }
         },
         UppersRangeGauge =
         {
             u100skill = true,
             x = 2,
             y = 11,
-            check_after_spawn = true,
+            group = "health_regen",
+            skill_check_after_spawn = true,
             option = "uppers_range",
+            persistent = "uppers_range_persistent",
             class_to_load =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
@@ -280,68 +402,149 @@ function EHITweakData:new(tweak_data)
         fast_learner =
         {
             u100skill = true,
-            text = "Dmg-",
+            text_localize = "ehi_buffs_hint_damage_decrease",
+            group = "player_damage_reduction",
             y = 10,
-            option = "painkillers"
+            option = "painkillers",
+            permanent =
+            {
+                option = "painkillers_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "revive_damage_reduction_level"
+                }
+            }
         },
         melee_life_leech =
         {
             deck = true,
-            bad = true,
+            group = "cooldown",
             x = 7,
             y = 4,
             deck_option =
             {
                 deck = "infiltrator",
                 option = "melee_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "infiltrator",
+                    option = "melee_cooldown_persistent"
+                },
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "melee_life_leech"
+                }
             }
         },
         dmg_dampener_close_contact =
         {
             deck = true,
+            group = "player_damage_reduction",
+            text_localize = "ehi_buffs_hint_damage_decrease",
             x = 5,
             y = 4,
-            option = "underdog"
+            option = "underdog",
+            permanent =
+            {
+                option = "underdog_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "dmg_multiplier_outnumbered"
+                }
+            }
         },
         loose_ammo_give_team =
         {
             deck = true,
-            bad = true,
+            group = "cooldown",
             x = 5,
             y = 5,
             deck_option =
             {
                 deck = "gambler",
                 option = "ammo_give_out_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "gambler",
+                    option = "ammo_give_out_cooldown_persistent"
+                },
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "loose_ammo_give_team"
+                }
             }
         },
         loose_ammo_restore_health =
         {
             deck = true,
-            bad = true,
+            group = "cooldown",
             x = 4,
             y = 5,
             deck_option =
             {
                 deck = "gambler",
                 option = "regain_health_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "gambler",
+                    option = "regain_health_cooldown_persistent"
+                },
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "loose_ammo_restore_health"
+                }
             }
         },
         damage_speed_multiplier =
         {
             u100skill = true,
-            text = "Mov+",
+            text_localize = "ehi_buffs_hint_movement_increase",
+            group = "player_movement_increase",
             x = 10,
             y = 9,
-            option = "second_wind"
+            option = "second_wind",
+            permanent =
+            {
+                option = "second_wind_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "damage_speed_multiplier"
+                },
+                show_on_trigger_when_synced = true
+            }
         },
         trigger_happy =
         {
             u100skill = true,
-            text = "Dmg+",
+            text_localize = "ehi_buffs_hint_damage_increase",
+            group = "weapon_damage_increase",
             x = 11,
             y = 2,
-            option = "trigger_happy"
+            option = "trigger_happy",
+            permanent =
+            {
+                option = "trigger_happy_persistent",
+                skill_check =
+                {
+                    category = "pistol",
+                    upgrade = "stacking_hit_damage_multiplier"
+                }
+            }
         },
         desperado =
         {
@@ -349,53 +552,112 @@ function EHITweakData:new(tweak_data)
             text = "Acc+",
             x = 11,
             y = 1,
-            option = "desperado"
+            option = "desperado",
+            permanent =
+            {
+                option = "desperado_persistent",
+                skill_check =
+                {
+                    category = "pistol",
+                    upgrade = "stacked_accuracy_bonus"
+                }
+            }
         },
         revived_damage_resist =
         {
             u100skill = true,
-            text = "Dmg-",
+            text_localize = "ehi_buffs_hint_damage_decrease",
+            group = "player_damage_reduction",
             x = 11,
             y = 4,
-            option = "up_you_go"
+            option = "up_you_go",
+            permanent =
+            {
+                option = "up_you_go_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "revived_damage_resist"
+                }
+            }
         },
         swap_weapon_faster =
         {
             u100skill = true,
-            text = "Spd+",
+            text = "Swap+",
             x = 11,
             y = 3,
-            option = "running_from_death_reload"
+            option = "running_from_death_swap",
+            permanent =
+            {
+                option = "running_from_death_swap_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "swap_weapon_faster"
+                }
+            }
         },
         increased_movement_speed =
         {
             u100skill = true,
-            text = "Mov+",
+            text_localize = "ehi_buffs_hint_movement_increase",
+            group = "player_movement_increase",
             x = 11,
             y = 3,
-            option = "running_from_death_movement"
+            option = "running_from_death_movement",
+            permanent =
+            {
+                option = "running_from_death_movement_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "increased_movement_speed"
+                }
+            }
         },
         unseen_strike =
         {
             u100skill = true,
-            text = "Crit+",
+            text_localize = "ehi_buffs_hint_crit_increase",
+            group = "crit",
             x = 10,
             y = 11,
             option = "unseen_strike",
+            permanent =
+            {
+                option = "unseen_strike_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "unseen_increased_crit_chance"
+                }
+            }
         },
         unseen_strike_initial =
         {
             u100skill = true,
-            bad = true,
+            group = "cooldown",
             x = 10,
             y = 11,
             option = "unseen_strike_initial",
+            permanent =
+            {
+                option = "unseen_strike_initial_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "unseen_increased_crit_chance"
+                }
+            }
         },
         melee_damage_stacking =
         {
             u100skill = true,
             x = 11,
             y = 6,
+            group = "melee_damage_increase",
+            text_localize = "ehi_buffs_hint_melee_damage_increase",
             format = "multiplier",
             class = "EHIGaugeBuffTracker",
             option = "bloodthirst"
@@ -405,42 +667,69 @@ function EHITweakData:new(tweak_data)
             u100skill = true,
             x = 11,
             y = 6,
-            text = "Rld+",
-            option = "bloodthirst_reload"
-        },
-        standstill_omniscience_initial =
-        {
-            skills = true,
-            bad = true,
-            x = 6,
-            y = 10
+            text_localize = "ehi_buffs_hint_reload_increase",
+            group = "increased_weapon_reload",
+            option = "bloodthirst_reload",
+            permanent =
+            {
+                option = "bloodthirst_reload_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "melee_kill_increase_reload_speed"
+                }
+            }
         },
         standstill_omniscience =
         {
             skills = true,
-            bad = true,
-            x = 6,
-            y = 10
-        },
-        standstill_omniscience_highlighted =
-        {
-            skills = true,
+            group = "cooldown",
             x = 6,
             y = 10,
-            class = "EHIGaugeBuffTracker"
+            option = "sixth_sense_refresh",
+            permanent =
+            {
+                option = "sixth_sense_refresh_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "standstill_omniscience"
+                }
+            }
         },
-        bullet_storm =
+        no_ammo_cost =
         {
             u100skill = true,
             x = 4,
             y = 5,
-            option = "bulletstorm"
+            option = "bulletstorm",
+            permanent =
+            {
+                option = "bulletstorm_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "no_ammo_cost"
+                }
+            }
         },
         hostage_absorption =
         {
             u100skill = true,
             x = 4,
             y = 7,
+            group = "player_damage_absorption",
+            option = "forced_friendship",
+            permanent =
+            {
+                option = "forced_friendship_persistent",
+                team_skill_check =
+                {
+                    category = "damage",
+                    upgrade = "hostage_absorption"
+                },
+                class = "EHIPermanentGaugeBuffTracker"
+            },
             class = "EHIGaugeBuffTracker"
         },
         ManiacStackTicks =
@@ -468,9 +757,10 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             folder = "coco",
+            group = "player_damage_absorption",
             x = 3,
             format = "percent",
-            check_after_spawn = true,
+            skill_check_after_spawn = true,
             deck_option =
             {
                 deck = "maniac",
@@ -482,13 +772,26 @@ function EHITweakData:new(tweak_data)
         GrinderStackCooldown =
         {
             deck = true,
-            bad = true,
+            group = "cooldown",
             x = 5,
             y = 6,
             deck_option =
             {
                 deck = "grinder",
                 option = "stack_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "grinder",
+                    option = "stack_cooldown_persistent"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "damage_to_hot"
+                }
             }
         },
         GrinderRegenPeriod =
@@ -496,16 +799,32 @@ function EHITweakData:new(tweak_data)
             deck = true,
             x = 5,
             y = 6,
+            group = "health_regen",
             deck_option =
             {
                 deck = "grinder",
                 option = "regen_duration"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "grinder",
+                    option = "regen_duration_persistent"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "damage_to_hot"
+                }
             }
         },
         SicarioTwitchGauge =
         {
             deck = true,
             folder = "max",
+            group = "dodge",
+            text_localize = "ehi_buffs_hint_dodge_increase",
             x = 1,
             class = "EHIGaugeBuffTracker",
             format = "percent",
@@ -519,7 +838,7 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             folder = "max",
-            bad = true,
+            group = "cooldown",
             x = 1,
             deck_option =
             {
@@ -532,12 +851,21 @@ function EHITweakData:new(tweak_data)
             u100skill = true,
             x = 8,
             y = 4,
-            option = "ammo_efficiency"
+            option = "ammo_efficiency",
+            permanent =
+            {
+                option = "ammo_efficiency_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "head_shot_ammo_return"
+                }
+            }
         },
         armor_break_invulnerable =
         {
             deck = true,
-            bad = true,
+            group = "cooldown",
             x = 6,
             y = 1,
             deck_option =
@@ -550,20 +878,19 @@ function EHITweakData:new(tweak_data)
                 deck_option =
                 {
                     deck = "anarchist",
-                    option = "persistent_immunity_cooldown"
+                    option = "immunity_cooldown_persistent"
                 },
                 skill_check =
                 {
                     category = "temporary",
                     upgrade = "armor_break_invulnerable"
-                },
-                class = "EHIPermanentBuffTracker"
+                }
             }
         },
         damage_to_armor =
         {
             deck = true,
-            bad = true,
+            group = "cooldown",
             folder = "opera",
             y = 1,
             deck_option =
@@ -576,47 +903,84 @@ function EHITweakData:new(tweak_data)
                 deck_option =
                 {
                     deck = "anarchist",
-                    option = "persistent_kill_armor_regen_cooldown"
+                    option = "kill_armor_regen_cooldown_persistent"
                 },
                 skill_check =
                 {
                     category = "player",
                     upgrade = "damage_to_armor"
-                },
-                class = "EHIPermanentBuffTracker"
+                }
             }
         },
         single_shot_fast_reload =
         {
             u100skill = true,
-            text = "Rld+",
+            text_localize = "ehi_buffs_hint_reload_increase",
+            group = "increased_weapon_reload",
             x = 8,
             y = 3,
-            option = "aggressive_reload"
+            option = "aggressive_reload",
+            permanent =
+            {
+                option = "aggressive_reload_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "single_shot_fast_reload"
+                }
+            }
         },
         overkill_damage_multiplier =
         {
             skills = true,
-            text = "Dmg+",
+            text_localize = "ehi_buffs_hint_damage_increase",
+            group = "weapon_damage_increase",
             x = 3,
             y = 2,
-            option = "overkill"
+            option = "overkill",
+            permanent =
+            {
+                option = "overkill_persistent",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "overkill_damage_multiplier"
+                }
+            }
         },
         morale_boost =
         {
             skills = true,
-            bad = true,
+            group = "cooldown",
             x = 4,
             y = 9,
-            option = "inspire_basic"
+            option = "inspire_basic",
+            permanent =
+            {
+                option = "inspire_basic_persistent",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "morale_boost"
+                }
+            }
         },
         long_dis_revive =
         {
             u100skill = true,
-            bad = true,
+            group = "cooldown",
             x = 4,
             y = 9,
-            option = "inspire_ace"
+            option = "inspire_ace",
+            permanent =
+            {
+                option = "inspire_ace_persistent",
+                skill_check =
+                {
+                    category = "cooldown",
+                    upgrade = "long_dis_revive"
+                }
+            }
         },
         DireNeed =
         {
@@ -625,7 +989,8 @@ function EHITweakData:new(tweak_data)
             no_progress = true,
             x = 10,
             y = 8,
-            option = "dire_need"
+            option = "dire_need",
+
         },
         Immunity =
         {
@@ -641,23 +1006,27 @@ function EHITweakData:new(tweak_data)
                 deck_option =
                 {
                     deck = "anarchist",
-                    option = "persistent_immunity"
+                    option = "immunity_persistent"
                 },
                 skill_check =
                 {
                     category = "temporary",
                     upgrade = "armor_break_invulnerable"
-                },
-                class = "EHIPermanentBuffTracker"
+                }
             }
         },
         UppersCooldown =
         {
             u100skill = true,
-            bad = true,
+            group = "cooldown",
             x = 2,
             y = 11,
-            option = "uppers"
+            option = "uppers",
+            permanent =
+            {
+                option = "uppers_persistent",
+                always_show = true
+            }
         },
         armor_grinding =
         {
@@ -673,14 +1042,13 @@ function EHITweakData:new(tweak_data)
                 deck_option =
                 {
                     deck = "anarchist",
-                    option = "persistent_continuous_armor_regen"
+                    option = "continuous_armor_regen_persistent"
                 },
                 skill_check =
                 {
                     category = "player",
                     upgrade = "armor_grinding"
-                },
-                class = "EHIPermanentBuffTracker"
+                }
             }
         },
         HealthRegen =
@@ -688,9 +1056,19 @@ function EHITweakData:new(tweak_data)
             skills = true,
             x = 2,
             y = 10,
+            group = "health_regen",
             option = "hostage_taker_muscle",
-            check_after_spawn = true,
-            class = "EHIHealthRegenBuffTracker"
+            skill_check_after_spawn = true,
+            class = "EHIHealthRegenBuffTracker",
+            permanent =
+            {
+                option = "hostage_taker_muscle_persistent",
+                class_to_load =
+                {
+                    load_class = "EHIPermanentHealthRegenBuffTracker",
+                    class = "EHIPermanentHealthRegenBuffTracker"
+                }
+            }
         },
         crew_throwable_regen =
         {
@@ -713,12 +1091,13 @@ function EHITweakData:new(tweak_data)
             deck = true,
             x = 3,
             y = 7,
+            group = "health_regen",
             deck_option =
             {
                 deck = "expresident",
                 option = "stored_health"
             },
-            check_after_spawn = true,
+            skill_check_after_spawn = true,
             format = "damage",
             class = "EHIExPresidentBuffTracker"
         },
@@ -726,7 +1105,7 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             folder = "wild",
-            check_after_spawn = true,
+            skill_check_after_spawn = true,
             deck_option =
             {
                 deck = "biker",
@@ -786,8 +1165,9 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             folder = "joy",
+            group = "dodge",
             x = 3,
-            text = "Dodge+",
+            text_localize = "ehi_buffs_hint_dodge_increase",
             class = "EHIHackerTemporaryDodgeBuffTracker",
             deck_option =
             {
@@ -831,12 +1211,25 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             folder = "mrwi",
-            bad = true,
+            group = "cooldown",
             x = 1,
             deck_option =
             {
                 deck = "copycat",
                 option = "head_games_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "copycat",
+                    option = "head_games_cooldown_persistent"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "headshot_regen_health_bonus"
+                }
             }
         },
         mrwi_health_invulnerable =
@@ -848,6 +1241,19 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "copycat",
                 option = "grace_period"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "copycat",
+                    option = "grace_period_persistent"
+                },
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "mrwi_health_invulnerable"
+                }
             }
         },
         DamageAbsorption =
@@ -855,42 +1261,73 @@ function EHITweakData:new(tweak_data)
             skills = true,
             x = 6,
             y = 4,
+            group = "player_damage_absorption",
             text = "Absorption",
-            activate_after_spawn = true,
+            skill_check_after_spawn = true,
             option = "damage_absorption",
             persistent = "damage_absorption_persistent",
             class_to_load =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDamageAbsorptionBuffTracker"
-            },
-            enable_in_loud = true
+            }
         },
         DamageReduction =
         {
             skills = true,
             x = 6,
             y = 4,
+            group = "player_damage_reduction",
             text = "Reduction",
             format = "percent",
-            activate_after_spawn = true,
+            skill_check_after_spawn = true,
             option = "damage_reduction",
             persistent = "damage_reduction_persistent",
             class_to_load =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDamageReductionBuffTracker"
-            },
-            enable_in_loud = true
+            }
         }
     }
+    self.buff.standstill_omniscience_initial = deep_clone(self.buff.standstill_omniscience)
+    self.buff.standstill_omniscience_initial.option = "sixth_sense_initial"
+    self.buff.standstill_omniscience_initial.permanent.option = "sixth_sense_initial_persistent"
+    self.buff.standstill_omniscience_highlighted = deep_clone(self.buff.standstill_omniscience)
+    self.buff.standstill_omniscience_highlighted.group = nil
+    self.buff.standstill_omniscience_highlighted.option = "sixth_sense_marked"
+    self.buff.standstill_omniscience_highlighted.permanent.option = "sixth_sense_marked_persistent"
+    self.buff.standstill_omniscience_highlighted.permanent.class = "EHIPermanentGaugeBuffTracker"
+    self.buff.standstill_omniscience_highlighted.class = "EHIGaugeBuffTracker"
+    self.buff.morale_boost_reload = deep_clone(self.buff.morale_boost)
+    self.buff.morale_boost_reload.text_localize = "ehi_buffs_hint_reload_increase"
+    self.buff.morale_boost_reload.group = "increased_weapon_reload"
+    self.buff.morale_boost_reload.option = "inspire_reload"
+    self.buff.morale_boost_reload.permanent.option = "inspire_reload_persistent"
+    self.buff.morale_boost_reload.permanent.skill_check = nil
+    self.buff.morale_boost_reload.permanent.show_on_trigger = true
+    self.buff.morale_boost_movement = deep_clone(self.buff.morale_boost_reload)
+    self.buff.morale_boost_movement.text_localize = "ehi_buffs_hint_movement_increase"
+    self.buff.morale_boost_movement.group = "player_movement_increase"
+    self.buff.morale_boost_movement.option = "inspire_movement"
+    self.buff.morale_boost_movement.permanent.option = "inspire_movement_persistent"
     self.buff.team_crew_inspire = deep_clone(self.buff.long_dis_revive)
     self.buff.team_crew_inspire.text = "AI"
     self.buff.team_crew_inspire.option = "inspire_ai"
+    self.buff.team_crew_inspire.permanent.option = "inspire_ai_persistent"
+    self.buff.team_crew_inspire.permanent.skill_check = nil
+    self.buff.team_crew_inspire.permanent.team_ai_skill_check =
+    {
+        category = "ability",
+        upgrade = "crew_inspire"
+    }
     self.buff.reload_weapon_faster = deep_clone(self.buff.swap_weapon_faster)
-    self.buff.reload_weapon_faster.text = "Rld+"
+    self.buff.reload_weapon_faster.text_localize = "ehi_buffs_hint_reload_increase"
+    self.buff.reload_weapon_faster.group = "increased_weapon_reload"
+    self.buff.reload_weapon_faster.option = "running_from_death_reload"
+    self.buff.reload_weapon_faster.permanent.option = "running_from_death_reload_persistent"
     self.buff.chico_injector_cooldown = deep_clone(self.buff.chico_injector)
-    self.buff.chico_injector_cooldown.bad = true
+    self.buff.chico_injector_cooldown.group = "cooldown"
     self.buff.chico_injector_cooldown.deck_option.option = "injector_cooldown"
     self.buff.chico_injector_cooldown.class = "EHIReplenishThrowableBuffTracker"
     self.buff.smoke_screen_grenade_cooldown = deep_clone(self.buff.chico_injector_cooldown)
@@ -898,6 +1335,7 @@ function EHITweakData:new(tweak_data)
     self.buff.smoke_screen_grenade_cooldown.deck_option.deck = "sicario"
     self.buff.smoke_screen_grenade_cooldown.deck_option.option = "smoke_bomb_cooldown"
     self.buff.TagTeamAbsorption = deep_clone(self.buff.TagTeamEffect)
+    self.buff.TagTeamAbsorption.group = "player_damage_absorption"
     self.buff.TagTeamAbsorption.deck_option.option = "absorption"
     self.buff.TagTeamAbsorption.x = 2
     self.buff.TagTeamAbsorption.y = 0
@@ -909,7 +1347,7 @@ function EHITweakData:new(tweak_data)
     self.buff.tag_team_cooldown.deck_option.deck = "tag_team"
     self.buff.tag_team_cooldown.deck_option.option = "cooldown"
     self.buff.damage_control_cooldown = deep_clone(self.buff.damage_control)
-    self.buff.damage_control_cooldown.bad = true
+    self.buff.damage_control_cooldown.group = "cooldown"
     self.buff.damage_control_cooldown.y = 1
     self.buff.damage_control_cooldown.deck_option.option = "cooldown"
     self.buff.damage_control_cooldown.class = "EHIReplenishThrowableBuffTracker"
@@ -918,12 +1356,13 @@ function EHITweakData:new(tweak_data)
     self.buff.pocket_ecm_jammer_cooldown.deck_option.deck = "hacker"
     self.buff.pocket_ecm_jammer_cooldown.deck_option.option = "pecm_cooldown"
     self.buff.copr_ability_cooldown = deep_clone(self.buff.copr_ability)
-    self.buff.copr_ability_cooldown.bad = true
+    self.buff.copr_ability_cooldown.group = "cooldown"
     self.buff.copr_ability_cooldown.deck_option.option = "ampule_cooldown"
     self.buff.copr_ability_cooldown.class = "EHIReplenishThrowableBuffTracker"
     self.buff.mrwi_health_invulnerable_cooldown = deep_clone(self.buff.mrwi_health_invulnerable)
-    self.buff.mrwi_health_invulnerable_cooldown.bad = true
+    self.buff.mrwi_health_invulnerable_cooldown.group = "cooldown"
     self.buff.mrwi_health_invulnerable_cooldown.deck_option.option = "grace_period_cooldown"
+    self.buff.mrwi_health_invulnerable_cooldown.permanent.deck_option.option = "grace_period_cooldown_persistent"
     self.functions =
     {
         ---@param check_job? boolean
@@ -943,7 +1382,7 @@ function EHITweakData:new(tweak_data)
             })
         end,
         ShowNumberOfLootbagsOnTheGround = function()
-            local max = managers.ehi_manager:CountLootbagsOnTheGround()
+            local max = EHI.Mission._utils:CountLootbagsOnTheGround()
             if max > 0 then
                 EHI:ShowLootCounterNoCheck({ max = max, client_from_start = true })
             end
@@ -1175,9 +1614,7 @@ function EHITweakData._count_weapon_loot(weapon_id)
     local weapon = managers.worlddefinition:get_unit(weapon_id) --[[@as UnitCarry?]]
     local damage = weapon and weapon:damage()
     local state = damage and damage._state and damage._state.graphic_group and damage._state.graphic_group.grp_wpn
-    if state and state[1] == "set_visibility" and state[2] then
-        return true
-    end
+    return state and state[1] == "set_visibility" and state[2]
 end
 
 ---Checks money, coke and gold and other loot which uses "var_hidden"
@@ -1185,18 +1622,70 @@ end
 function EHITweakData._count_other_loot(loot_id)
     local loot = managers.worlddefinition:get_unit(loot_id) --[[@as UnitCarry?]]
     local damage = loot and loot:damage()
-    if damage and damage._variables and damage._variables.var_hidden == 0 then
-        return true
-    end
+    return damage and damage._variables and damage._variables.var_hidden == 0
 end
 
 ---@param deposit_id number
 function EHITweakData._count_loot_in_deposit(deposit_id)
     local deposit = managers.worlddefinition:get_unit(deposit_id) --[[@as UnitCarry?]]
     local damage = deposit and deposit:damage()
-    if damage and damage._variables and damage._variables.var_random == 0 then
-        return true
+    return damage and damage._variables and damage._variables.var_random == 0
+end
+
+function EHITweakData:_populate_buff_color_table()
+    return {
+        { texture_color = "red", icon_color = Color.red },
+        { texture_color = "orange", icon_color = Color(255, 255, 106, 0) / 255 },
+        { texture_color = "green", icon_color = Color.green },
+        { texture_color = "yellow", icon_color = Color.yellow },
+        { texture_color = "blue", icon_color = Color.blue },
+        { texture_color = "cyan", icon_color = Color(255, 0, 255, 255) / 255 },
+        { texture_color = "pink", icon_color = Color(255, 255, 0, 220) / 255 },
+        { texture_color = "purple", icon_color = Color(255, 178, 0, 255) / 255 },
+        { texture_color = "violet", icon_color = Color(255, 127, 0, 255) / 255 },
+        { texture_color = "magenta", icon_color = Color(255, 255, 0, 255) / 255 },
+        { texture_color = "azure", icon_color = Color(255, 0, 128, 255) / 255 },
+        { texture_color = "brown", icon_color = Color(255, 165, 42, 42) / 255 },
+        { texture_color = "crimson", icon_color = Color(255, 220, 20, 60) / 255 },
+        { texture_color = "salmon", icon_color = Color(255, 250, 128, 114) / 255 },
+        { texture_color = "gold", icon_color = Color(255, 255, 215, 0) / 255 },
+        { texture_color = "turquoise", icon_color = Color(255, 64, 224, 208) / 255 }
+    }
+end
+
+function EHITweakData._populate_buff_group_table()
+    return { "cooldown", "weapon_damage_increase", "melee_damage_increase", "player_damage_reduction", "player_damage_absorption", "increased_weapon_reload", "player_movement_increase", "dodge", "crit", "health_regen" }
+end
+
+---@param i number
+function EHITweakData:GetBuffColorFromIndex(i)
+    self.__buffs_color = self.__buffs_color or self:_populate_buff_color_table()
+    local entry = i and self.__buffs_color[i - 1]
+    if entry then
+        return entry.icon_color, entry.texture_color
     end
+    return Color.white, "white"
+end
+
+---@param texture string
+function EHITweakData:GetIconColorFromTextureColor(texture)
+    self.__buffs_color = self.__buffs_color or self:_populate_buff_color_table()
+    for _, tbl in ipairs(self.__buffs_color) do
+        if tbl.texture_color == texture then
+            return tbl.icon_color
+        end
+    end
+    return Color.white
+end
+
+function EHITweakData:GetSelectedBuffColors()
+    local data = {} ---@type table<string, { texture_color: string, icon_color: Color }>
+    for _, group in ipairs(self._populate_buff_group_table()) do
+        local color, texture = self:GetBuffColorFromIndex(EHI:GetOption("buffs_group_color_" .. group))
+        data[group] = { texture_color = texture, icon_color = color }
+    end
+    data.default = { texture_color = "white", icon_color = Color.white }
+    return data
 end
 
 function EHITweakData:_classic_heisting_u24_tweaks()
@@ -1205,8 +1694,6 @@ function EHITweakData:_classic_heisting_u24_tweaks()
     end
     -- Change buff icons to something else as the buff icon is empty
     self.buff.MeleeCharge.y = 0
-    -- Add new buffs as they exists in U24, but not in Vanilla
-    self.buff.no_ammo_cost = deep_clone(self.buff.bullet_storm)
+    -- Change texture atlas as the U100 Atlas is not used
     self.buff.no_ammo_cost.skills = true
-    self.buff.bullet_storm = nil -- Remove Vanilla buff as it will occupy memory for no reason
 end

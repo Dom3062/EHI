@@ -39,7 +39,7 @@ function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id,
             icons = { "ecm_feedback", "restarter" },
             hint = "ecm_feedback_refresh",
             unit = true,
-            class = "EHIECMFeedbackRefreshTracker"
+            class_table = EHIECMFeedbackRefreshTracker
         })
     end
     return unit
@@ -67,7 +67,7 @@ function ECMJammerBase:set_owner(...)
             icons = { "ecm_feedback", "restarter" },
             hint = "ecm_feedback_refresh",
             unit = true,
-            class = "EHIECMFeedbackRefreshTracker"
+            class_table = EHIECMFeedbackRefreshTracker
         })
     end
 end
@@ -177,5 +177,5 @@ function ECMJammerBase:destroy(...)
     managers.ehi_tracker:CallFunction("ECMJammer", "Destroyed", self._unit)
     managers.ehi_tracker:CallFunction("ECMFeedback", "Destroyed", self._unit)
     managers.ehi_waypoint:RemoveWaypoint(key)
-    managers.ehi_manager:RemoveUnit("ECMFeedbackRetrigger", key, true)
+    managers.ehi_tracking:RemoveUnit("ECMFeedbackRetrigger", key, true)
 end

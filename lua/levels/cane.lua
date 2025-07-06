@@ -58,7 +58,7 @@ local achievements =
             end },
         },
         load_sync = function(self)
-            if #managers.assets:get_unlocked_asset_ids(true) ~= 0 or managers.player:has_deployable_been_used() then
+            if #managers.assets:get_unlocked_asset_ids(true) > 0 or managers.player:has_deployable_been_used() then
                 return
             end
             local present_amount = managers.loot:GetSecuredBagsTypeAmount("present")
@@ -89,7 +89,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         other[102369] = { id = "Snipers", class = TT.Sniper.Count, special_function = SF.AddTrackerIfDoesNotExist, trigger_once = true }
     end
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

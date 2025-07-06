@@ -4,7 +4,7 @@ local other =
 {
     [100122] = EHI:AddAssaultDelay({ control = 30, trigger_once = true })
 }
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     other = other
 })
 

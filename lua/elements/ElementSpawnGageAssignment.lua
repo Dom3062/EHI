@@ -18,7 +18,7 @@ local original =
 }
 
 local function CreateTracker()
-    if managers.ehi_tracker:TrackerExists("Gage") or (_G.IS_VR and managers.ehi_tracker:IsLoading()) then
+    if managers.ehi_tracker:Exists("Gage") or (_G.IS_VR and managers.ehi_tracker:IsLoading()) then
         return
     end
     local max = tweak_data.gage_assignment:get_num_assignment_units()

@@ -66,7 +66,7 @@ local MinBags = EHI:GetValueBasedOnDifficulty({
     veryhard = 4,
     overkill_or_above = 5
 })
-EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
+EHI.Mission:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({
     objective =
     {

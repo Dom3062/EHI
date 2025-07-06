@@ -5,6 +5,9 @@
     "ehi_save_data_corrupted" : "EHI设置存档已损坏",
     "ehi_save_data_corrupted_desc" : "EHI的模组设置的保存文件已经损毁并无法读取\nEHI已将所有设置恢复默认值以避免引起崩溃",
 
+    "ehi_wrong_game_version": "游戏版本与EHI不兼容",
+    "ehi_wrong_game_version_desc" : "你的游戏版本与EHI不兼容\n为避免游戏崩溃，本次游戏中EHI未启用\n如果仍需使用EHI，请更新游戏",
+
     "ehi_menu_reset_to_default" : "$BTN_RESET;恢复默认",
     "ehi_menu_large_steps" : "$BTN_STEP;大量调整",
 
@@ -29,6 +32,7 @@
     "ehi_popup_experience" : "经验获取",
     "ehi_popup_experience_base_gained" : "基础经验获取: ",
     "ehi_popup_experience_gained" : "已获取: ",
+    "ehi_popup_experience_lost" : "已失去: ",
     "ehi_popup_experience_total" : "总计获取: ",
     "ehi_popup_gage_packages" : "盖奇包裹",
     "ehi_popup_minion" : "变节警察",
@@ -41,7 +45,7 @@
     "ehi_popup_daily_failed" : "每日挑战失败!",
     "ehi_popup_loot_counter" : "战利品计数器",
     "ehi_popup_all_loot_secured" : "所有战利品已被你收入囊中",
-	"ehi_popup_all_xp_loot_secured" : "已获得所有来自战利品的经验",
+    "ehi_popup_all_xp_loot_secured" : "已获得所有来自战利品的经验",
     "ehi_popup_sniper" : "狙击手!",
     "ehi_popup_sniper_spawned" : "敌对狙击手入场",
     "ehi_popup_snipers" : "狙击手!",
@@ -70,6 +74,7 @@
     "ehi_status_objective" : "目标",
     "ehi_status_fail" : "失败",
     "ehi_status_endless" : "无尽",
+    "ehi_status_break" : "打破",
     "ehi_hint_drill" : "钻机",
     "ehi_hint_hack" : "黑入",
     "ehi_hint_laser" : "镭射",
@@ -79,6 +84,7 @@
     "ehi_hint_timelock" : "定时锁",
     "ehi_hint_timer" : "计时器",
     "ehi_hint_gained_xp" : "获得经验",
+    "ehi_hint_lost_xp" : "失去经验",
     "ehi_hint_total_xp" : "总计经验",
     "ehi_hint_endless_assault" : "无尽突击",
     "ehi_hint_fire" : "火焰",
@@ -140,11 +146,17 @@
     "ehi_hint_sentry_repair" : "炮塔(修理)",
     "ehi_hint_sentry_teargas" : "炮塔(催泪弹)",
     "ehi_hint_diff" : "突击难度",
-    "ehi_hint_ecm_jammer" : "ECM",
+    "ehi_hint_ecm_jammer" : "ECM干扰",
     "ehi_hint_ecm_feedback" : "ECM啸叫",
     "ehi_hint_ecm_feedback_refresh" : "ECM啸叫充能",
     "ehi_hint_phalanx_chance" : "队长入场概率",
     "ehi_hint_hostage" : "人质计数",
+    "ehi_hint_looped_camera" : "已循环的摄像头",
+    "ehi_hint_piggy" : "存钱罐",
+    "ehi_hint_turret_en_route" : "即将到场的敌方炮台",
+    "ehi_hint_modifier_civilian_alarm" : "距离触发警报的人质计数",
+    "ehi_hint_marshal" : "联邦法警单位",
+    "ehi_hint_payday" : "收获日",
 
     "ehi_hint_big_piggy" : "移动小猪",
     "ehi_hint_brb_winch_delivery" : "投送绞盘",
@@ -159,6 +171,7 @@
     "ehi_hint_des_chem_set_cooking" : "化学品混合中",
     "ehi_hint_election_day_3_crash_chance" : "抢劫概率",
     "ehi_hint_election_day_3_crash_chance_time" : "大闹一场吧",
+    "ehi_hint_four_stores" : "目标",
     "ehi_hint_friend_heli" : "在途直升机",
     "ehi_hint_friend_heli_random" : "直升机前往随机车辆",
     "ehi_hint_friend_heli_caddilac" : "直升机前往凯迪拉克",
@@ -176,6 +189,7 @@
     "ehi_hint_mad_emp" : "EMP",
     "ehi_hint_mallcrasher_destruction" : "摧毁",
     "ehi_hint_man_code" : "密码概率",
+    "ehi_hint_mia_1_location" : "定位",
     "ehi_hint_mia_1_meth_done" : "制毒完成",
     "ehi_hint_mia_1_next_meth_ingredient" : "下一轮制毒原料",
     "ehi_hint_mia_2_loot" : "可卡因销毁计时",
@@ -207,9 +221,6 @@
     "ehi_hint_trat_loco_start" : "机车启动概率",
     "ehi_hint_vit_teargas" : "催泪弹概率",
     
-    "ehi_r" : "红色",
-    "ehi_g" : "绿色",
-    "ehi_b" : "蓝色",
     "ehi_button_ok" : "确认",
     "ehi_color_reset" : "重置颜色",
 
@@ -272,6 +283,8 @@
 
     "ehi_show_tracker_hint_t" : "简介显示时间",
     "ehi_show_tracker_hint_t_desc" : "设置追踪器简介在屏幕上显示多久后隐藏\n\n若设置为0则永久显示",
+
+    "ehi_show_trackers" : "显示追踪器",
 
     "ehi_trackers_menu" : "追踪器",
     "ehi_trackers_menu_desc" : "",
@@ -362,7 +375,7 @@
     "ehi_xp_panel_4" : "获得经验时显示提示",
 
     "ehi_total_xp_difference" : "显示经验值差异",
-	"ehi_total_xp_difference_desc" : "显示你获得了多少经验",
+    "ehi_total_xp_difference_desc" : "显示你获得了多少经验",
     "ehi_total_xp_difference_1" : "不显示",
     "ehi_total_xp_difference_2" : "显示提示",
 
@@ -385,7 +398,7 @@
 
     "ehi_show_timers" : "显示计时器",
     "ehi_show_timers_desc" : "显示地图上正在进行的黑入，钻机，电锯等进程的剩余时间",
-	
+
     "ehi_show_timers_max_in_group" : "一组计时器数量上限",
     "ehi_show_timers_max_in_group_desc" : "设置追踪器中最多有几个计时器。如追踪器内计时器已达最大值则创建一个或数个追踪器以显示。\n\n若要禁用此功能则将数值设置为“1”\n\nIf the value is set to any than 1 and Horizontal alignment is selected, EHI will prefer unlimited number of timers in a group, to preserve space",
 
@@ -396,6 +409,7 @@
     "ehi_show_enemy_turret_trackers_desc" : "在敌方炮塔维修或装弹时显示追踪器",
 
     "ehi_show_zipline_timer" : "显示滑索追踪器",
+    "ehi_show_zipline_timer_desc" : "显示滑索运送包裹/玩家所需的时间和滑索复位的时间",
 
     "ehi_show_gage_tracker" : "显示盖奇包追踪器",
     "ehi_show_gage_tracker_desc" : "显示追踪地图上的盖奇包裹\n若地图上没有盖奇包裹，此追踪器会自动隐藏",
@@ -455,7 +469,7 @@
     
     "ehi_show_ecmfeedback_refresh" : "显示ECM啸叫充能追踪器",
     "ehi_show_ecmfeedback_refresh_desc" : "显示ECM啸叫充能时间的追踪器",
-	
+
     "ehi_show_equipment_aggregate_health" : "整合医疗箱与急救包追踪器",
     "ehi_show_equipment_aggregate_health_desc" : "把医疗箱与急救包追踪器整合为一个追踪器 ",
 
@@ -475,6 +489,9 @@
     "ehi_show_minion_option_1" : "仅显示自己的变节警察",
     "ehi_show_minion_option_2" : "显示地图上变节警察总数",
     "ehi_show_minion_option_3" : "分别显示每个玩家的变节警察",
+
+    "ehi_show_minion_health" : "显示变节警察血量",
+    "ehi_show_minion_health_desc" : "于追踪器中显示你的变节警察血量",
 
     "ehi_show_minion_killed_message" : "显示 '变节警察阵亡' 提示",
     "ehi_show_minion_killed_message_desc" : "在你的变节警察死亡时发出提示",
@@ -535,7 +552,10 @@
     "ehi_show_assault_time_tracker_desc" : "显示突击持续的时间\n\n若为客机中途加入游戏，此追踪器在突击难度提升后不再显示",
 
     "ehi_show_assault_diff_in_assault_trackers" : "在突击追踪器中显示突击难度",
-    "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\n\nIn other game modes, this option will show assault difficulty, in percent",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "此项在坚守模式时显示敌人血量及伤害提升\n\n在其它模式下显示本次突击的难度",
+
+    "ehi_show_assault_enemy_count" : "在突击追踪器中显示敌人数量",
+    "ehi_show_assault_enemy_count_desc" : "此项将显示地图上敌人的数量\n\n当突击追踪器显示时，敌人计数追踪器将被删除",
     
     "ehi_show_loot_counter" : "显示战利品追踪器",
     "ehi_show_loot_counter_desc" : "显示你已经劫获多少战利品",
@@ -568,7 +588,20 @@
     "ehi_show_sniper_logic_start_popup_desc" : "当地图预设狙击手刷新逻辑开始时显示黄色弹窗",
 
     "ehi_show_sniper_logic_end_popup" : "显示'狙击手结束刷新'弹出窗口",
-    "ehi_show_sniper_logic_end_popup_desc" : "当地图预设狙击手刷新逻辑结束时显示绿色弹窗",
+    "ehi_show_sniper_logic_end_popup_desc" : "当地图预设狙击手刷新逻辑结束时显示绿色弹窗", 
+
+    "ehi_show_marshal_initial_time" : "显示联邦法警首次刷新追踪器",
+    "ehi_show_marshal_initial_time_desc" : "当联邦法警单位开始刷新时显示其追踪器", 
+
+    "ehi_show_money_tracker" : "显示资金追踪器",
+    "ehi_show_money_tracker_desc" : "显示资金分配至离岸账户和现金的数额",
+
+    "ehi_money_tracker_format" : "资金追踪器显示格式",
+    "ehi_money_tracker_format_desc" : "设置资金追踪器的数值显示格式",
+    "ehi_money_tracker_format_1" : "离岸账户 / 现金",
+    "ehi_money_tracker_format_2" : "现金 / 离岸账户",
+    "ehi_money_tracker_format_3" : "仅离岸账户",
+    "ehi_money_tracker_format_4" : "仅现金",
  
     "ehi_waypoints_menu" : "路径导航",
     "ehi_waypoints_menu_desc" : "",
@@ -603,6 +636,16 @@
     "ehi_show_waypoints_ecmjammer" : "显示ECM导航点",
     "ehi_show_waypoints_ecmjammer_desc" : "在激活中的电子干扰器（ECM）上显示导航点",
 
+    "ehi_show_waypoints_loot_counter" : "显示战利品计数导航点",
+    "ehi_show_waypoints_loot_counter_desc" : "在激活的战利品劫获区域显示导航点\n\n此选项将替换原版战利品劫获区域导航点\n若战利品图标不可见，导航点可能会使用其他图标",
+
+    "ehi_shared_menu" : "追踪器与导航点通用设置",
+    "ehi_shared_menu_desc" : "",
+
+    "ehi_shared_loot_counter" : "战利品计数",
+
+    "ehi_shared_pagers" : "对讲机",
+
     "ehi_buffs_menu" : "技能/天赋效果",
     "ehi_buffs_menu_desc" : "",
 
@@ -627,11 +670,15 @@
 
     "ehi_buffs_invert_progress" : "反向进度",
     "ehi_buffs_invert_progress_desc" : "启用后进度将以逆时针方向显示\n禁用时以顺时针方向显示",
+    
+    "ehi_buffs_show_upper_text" : "显示效果文本",
+    "ehi_buffs_show_upper_text_desc" : "显示或隐藏效果上方的描述文本",
 
     "ehi_buffs_skills_cooldown" : "显示冷却",
     "ehi_buffs_skills_duration" : "显示持续时间",
     "ehi_buffs_skills_progress" : "显示进度",
     "ehi_buffs_skills_value" : "显示数值",
+    "ehi_buffs_skills_permanent" : "效果计时器为0时保持显示",
     
     "ehi_buffs_skills_menu" : "技能",
     "ehi_buffs_skills_mastermind_menu" : "黑手",
@@ -699,6 +746,12 @@
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "显示狂战士近战于远程效果的显示格式\n\n倍数: 1.4x 2.6x\n\n百分比: 140% 260%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "倍数",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "百分比",
+    "ehi_buffs_skills_fugitive_berserker_text_format" : "狂战士文本显示格式",
+    "ehi_buffs_skills_fugitive_berserker_text_format_desc" : "设置狂战士增益效果中的文本如何显示",
+    "ehi_buffs_skills_fugitive_berserker_text_format_1" : "武器伤害 | 近战武器/电锯伤害",
+    "ehi_buffs_skills_fugitive_berserker_text_format_2" : "近战武器/电锯伤害 | 武器伤害",
+    "ehi_buffs_skills_fugitive_berserker_text_format_3" : "仅武器伤害",
+    "ehi_buffs_skills_fugitive_berserker_text_format_4" : "仅近战武器/电锯伤害",
     "ehi_buffs_skills_fugitive_berserker_persistent" : "常驻狂战士显示",
     "ehi_buffs_skills_fugitive_berserker_persistent_desc" : "当血量大于狂战士触发条件时也显示狂战士效果图标",
 
@@ -725,10 +778,14 @@
     "ehi_buffs_perks_maniac_stack_decay" : "狂乱度衰减",
     "ehi_buffs_perks_anarchist" : "无政府主义者 / 军械士",
     "ehi_buffs_perks_anarchist_desc" : "显示无政府主义者 / 军械士的效果与冷却",
-    "ehi_buffs_perks_anarchist_continuous_armor_regen" : "持续护甲恢复",
+    "ehi_buffs_perks_anarchist_continuous_armor_regen" : "护甲持续恢复",
+    "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent" : "常驻显示护甲持续恢复",
     "ehi_buffs_perks_anarchist_immunity" : "伤害免疫",
+    "ehi_buffs_perks_anarchist_immunity_persistent" : "常驻显示伤害免疫状态时间",
     "ehi_buffs_perks_anarchist_immunity_cooldown" : "免伤冷却",
+    "ehi_buffs_perks_anarchist_immunity_cooldown_persistent" : "常驻显示免伤冷却时间",
     "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown" : "护甲恢复冷却-造成伤害",
+    "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent" : "常驻显示造成伤害后恢复护甲效果的冷却时间",
     "ehi_buffs_perks_expresident" : "前总统",
     "ehi_buffs_perks_expresident_desc" : "显示前总统的效果与冷却",
     "ehi_buffs_perks_expresident_stored_health" : "存储血量",
@@ -755,6 +812,7 @@
     "ehi_buffs_perks_tag_team_desc" : "显示双人组的效果与冷却",
     "ehi_buffs_perks_tag_team_cooldown" : "电子烟",
     "ehi_buffs_perks_tag_team_effect" : "双人组 - 效果",
+    "ehi_buffs_perks_tag_team_absorption" : "双人组 - 伤害吸收",
     "ehi_buffs_perks_tag_team_tagged" : "双人组 - 标记",
     "ehi_buffs_perks_hacker" : "黑客",
     "ehi_buffs_perks_hacker_desc" : "显示黑客的效果与冷却",
@@ -771,6 +829,10 @@
     "ehi_buffs_perks_copycat_head_games_cooldown" : "抢占先机冷却",
     "ehi_buffs_perks_copycat_grace_period" : "你的子弹",
     "ehi_buffs_perks_copycat_grace_period_cooldown" : "子弹反弹冷却",
+    "ehi_buffs_perks_gage_boosts" : "盖奇加成",
+    "ehi_buffs_perks_gage_boosts_desc" : "显示罪无止境中盖奇加成的效果与冷却",
+    "ehi_buffs_perks_gage_boosts_life_steal" : "自我治疗",
+    "ehi_buffs_perks_gage_boosts_melee_invulnerability" : "无敌瞬间",
 
     "ehi_buffs_other_menu" : "其他",
     "ehi_buffs_other_interact" : "互动",
@@ -778,6 +840,7 @@
     "ehi_buffs_other_melee_charge" : "近战蓄力延迟",
     "ehi_buffs_other_shield_regen" : "护甲恢复延迟",
     "ehi_buffs_other_stamina" : "耐力",
+    "ehi_buffs_other_weapon_swap" : "切换武器",
     "ehi_buffs_other_dodge" : "闪避概率",
     "ehi_buffs_other_dodge_refresh" : "闪避刷新频率",
     "ehi_buffs_other_dodge_refresh_desc" : "设置每秒内刷新多少次闪避概率显示",
@@ -803,8 +866,11 @@
     "ehi_buffs_other_health" : "你的生命值",
     "ehi_buffs_other_armor" : "你的护甲值",
 
+    "ehi_buffs_group_color_red" : "红色",
+    "ehi_buffs_group_color_green" : "绿色",
+    "ehi_buffs_group_color_blue" : "蓝色",
+
     "ehi_inventory_menu" : "库存",
-    "ehi_inventory_menu_desc" : "",
 
     "ehi_show_inventory_detailed_description" : "显示详细库存简介",
     "ehi_show_inventory_detailed_description_desc" : "显示关于投掷物和随身装备的详细介绍",
@@ -848,6 +914,7 @@
     "ehi_bm_dot" : "持续伤害",
     "ehi_bm_dot_tick_period" : "每%s秒造成一次伤害",
     "ehi_bm_dot_chance" : "触发概率",
+    "ehi_bm_dot_max_distance" : "最大范围",
     "ehi_bm_explosion" : "爆炸",
     "ehi_bm_fir_com" : "先发生爆炸，随后点燃目标",
     "ehi_bm_concussion_1" : "致盲并眩晕敌方单位",
@@ -894,6 +961,57 @@
     
     "ehi_other_show_floating_health_bar" : "显示浮动血条",
     "ehi_other_show_floating_health_bar_desc" : "在你瞄向目标时显示其生命值",
+    "ehi_other_floating_health_bar_menu" : "浮动血条",
+
+    "ehi_other_show_floating_health_bar_style" : "浮动血条显示样式",
+    "ehi_other_show_floating_health_bar_style_1" : "PocoHud",
+    "ehi_other_show_floating_health_bar_style_2" : "圆形",
+    "ehi_other_show_floating_health_bar_style_3" : "矩形",
+
+    "ehi_other_show_floating_health_bar_style_poco_blur" : "显示背景模糊效果",
+
+    "ehi_other_show_floating_health_bar_converts" : "为变节警察显示",
+    "ehi_other_show_floating_health_bar_civilians" : "为平民显示",
+    "ehi_other_show_floating_health_bar_team_ai" : "为AI队友显示",
+    "ehi_other_show_floating_health_bar_regular_enemies" : "为普通敌人显示",
+    "ehi_other_show_floating_health_bar_special_enemies_tank" : "为防爆特警显示",
+    "ehi_other_show_floating_health_bar_special_enemies_shield" : "为盾牌特警显示",
+    "ehi_other_show_floating_health_bar_special_enemies_taser" : "为泰瑟特警显示",
+    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "为幻影特工显示",
+    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "为狙击手显示",
+    "ehi_other_show_floating_health_bar_special_enemies_medic" : "为医疗兵显示",
+    "ehi_other_show_floating_health_bar_special_enemies_turret" : "为炮塔显示",
+    "ehi_other_show_floating_health_bar_special_enemies_other" : "为其他特种敌人显示",
+    "ehi_other_show_floating_health_bar_special_enemies_other_desc" : "为不属于上述分类但游戏仍标记为'特种'的敌人显示浮动血条",
+
+    "ehi_other_show_floating_damage_popup" : "显示伤害数字",
+    "ehi_other_show_floating_damage_popup_desc" : "显示你对一个单位造成的伤害数值",
+
+    "ehi_other_show_floating_damage_popup_accumulate" : "累计伤害",
+    "ehi_other_show_floating_damage_popup_accumulate_desc" : "对同一名敌人造成的伤害将累计显示",
+
+    "ehi_other_show_floating_damage_popup_size" : "大小",
+
+    "ehi_other_show_floating_damage_popup_time_on_screen" : "显示持续时间",
+    "ehi_other_show_floating_damage_popup_time_on_screen_desc" : "设置伤害数字在屏幕上停留的时间",
+
+    "ehi_other_show_floating_damage_popup_my_damage" : "显示我造成的伤害",
+    "ehi_other_show_floating_damage_popup_ai_damage" : "显示AI造成的伤害",
+    "ehi_other_show_floating_damage_popup_crew_damage" : "显示队友造成的伤害",
+
+    "ehi_other_show_use_left_ammo_bag" : "显示弹药包剩余使用次数",
+    "ehi_other_show_use_left_doctor_bag" : "显示医疗包剩余使用次数", 
+    "ehi_other_show_use_left_bodybags_bag" : "显示尸体袋剩余使用次数",
+    "ehi_other_show_use_left_grenades" : "显示手雷箱剩余使用次数",
+
+    "ehi_other_show_colored_bag_contour" : "根据重量显示战利品袋轮廓颜色",
+    "ehi_other_show_colored_bag_contour_desc" : "自定义根据战利品袋重量显示的轮廓颜色\n\n设置颜色请前往EHI设置->颜色选项卡",
+
+    "ehi_other_show_real_time_ingame" : "在游戏中显示实时时间",
+    "ehi_other_show_real_time_ingame_desc" : "在劫案时间下方显示操作系统当前时间",
+
+    "ehi_other_show_minion_colored_to_owner" : "变节警察轮廓显示其所有者颜色",
+    "ehi_other_show_minion_colored_to_owner_desc" : "将变节警察的轮廓颜色设置为使用其所有者的颜色",
 
     "ehi_colors_menu" : "颜色",
     "ehi_colors_menu_desc" : "更改颜色",
@@ -909,11 +1027,20 @@
     "ehi_colors_drill_autorepair" : "钻机/电锯自动重启",
     "ehi_colors_drill_autorepair_desc" : "当钻机/电锯可以自动修复时更改图标颜色",
 
+    "ehi_colors_drill_not_powered" : "钻机/电锯缺少供电",
+    "ehi_colors_drill_not_powered_desc" : "当钻机/电锯缺少供电时改变文本颜色",
+
     "ehi_colors_warning" : "警告",
     "ehi_colors_warning_desc" : "设定追踪器剩余时间小于10秒时的文本动画颜色",
 
     "ehi_colors_completion" : "完成",
     "ehi_colors_completion_desc" : "设定追踪器剩余时间小于10秒时的文本动画颜色",
+
+    "ehi_colors_sniper_chance" : "狙击手 (刷新几率)",
+    "ehi_colors_sniper_chance_desc" : "设定当前狙击手刷新几率的文本颜色",
+
+    "ehi_colors_sniper_count" : "狙击手 (数量)",
+    "ehi_colors_sniper_count_desc" : "设定当前狙击手数量的文本颜色",
     
     "ehi_colors_mission_briefing" : "任务简报",
 
@@ -934,6 +1061,17 @@
 
     "ehi_colors_trophy" : "安全屋奖杯",
     "ehi_colors_trophy_desc" : "设置追踪器正在追踪安全屋奖杯时图标的颜色",
+
+    "ehi_colors_bag_contour" : "战利品包轮廓",
+
+    "ehi_colors_bag_contour_light" : "轻型",
+    "ehi_colors_bag_contour_light_desc" : "设置最轻的包裹轮廓颜色\n\n其他重量的包裹颜色将随重量提升线性加深",
+
+    "ehi_colors_bag_contour_heavy" : "重型",
+    "ehi_colors_bag_contour_heavy_desc" : "设置最重的包裹轮廓颜色\n\n其他重量的包裹颜色将随重量降低线性变浅",
+
+    "ehi_colors_bag_contour_body" : "尸体",
+    "ehi_colors_bag_contour_body_desc" : "设置尸体袋包裹轮廓颜色",
 
     "ehi_experience_infamy_pool" : "距恶名池满:",
     "ehi_experience_next_level" : "距下一级还有:",
@@ -957,9 +1095,12 @@
     "ehi_experience_heli_escape" : "直升机撤离",
     "ehi_experience_loud_escape" : "强袭撤离",
     "ehi_experience_stealth_escape" : "潜入撤离",
+    "ehi_experience_alarm_escape" : "警报响起后$time;秒内撤离",
+    "ehi_experience_police_escape" : "警方到场后撤离",
     "ehi_experience_escape" : "撤离",
     "ehi_experience_each_goat_secured" : "每个劫获的山羊",
     "ehi_experience_each_loot_secured" : "每个劫获的战利品",
+    "ehi_experience_each_safe_secured" : "每个劫获的保险箱",
     "ehi_experience_loot_any" : "任意",
     "ehi_experience_loot_else" : "其它战利品",
     "ehi_experience_loot_secured" : "劫获战利品",

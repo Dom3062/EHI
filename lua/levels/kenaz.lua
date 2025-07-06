@@ -4,26 +4,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
-local refill_icon = EHI:GetOption("show_one_icon") and { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } } or { Icon.Water, Icon.Loop }
----@type EHI.ColorTable
-local keycode_units =
-{
-    red =
-    {
-        unit_id = 100000,
-        indexes = { 28250, 15020, 15120 }
-    },
-    green =
-    {
-        unit_ids = { 100125, 100113, 100224, 100225, 100007, 100290 },
-        indexes = { 21500, 25000, 31225 }
-    },
-    blue =
-    {
-        unit_ids = { 100061, 100064 },
-        index = 15370
-    }
-}
+local refill_icon = EHI.TrackerUtils:GetTrackerIcons({ Icon.Water, Icon.Loop }, { { icon = Icon.Water, color = tweak_data.ehi.colors.WaterColor } })
 local preload =
 {
     { id = "RefillLeft01", icons = refill_icon, hide_on_delete = true, hint = Hints.crojob3_Water },
@@ -33,19 +14,6 @@ local preload =
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-        if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
-            return
-        end
-        self:CreateTracker(trigger)
-    end) },
-    [100091] = { id = "ColorCodes", special_function = SF.RemoveTracker }, -- Code entered (stealth)
-    [101357] = { id = "ColorCodes", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
-        if enabled then
-            self._trackers:RemoveTracker(trigger.id)
-        end
-    end) }, -- Code entered (loud)
-
     [EHI:GetInstanceElementID(100173, 66615)] = { time = 5 + 25, id = "ArmoryKeypadReboot", icons = { Icon.Wait }, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
     [EHI:GetInstanceElementID(100193, 66615)] = { time = 30, id = "ArmoryKeypadRebootECM", icons = { Icon.Wait }, special_function = SF.TriggerIfEnabled, waypoint = { position_from_unit = EHI:GetInstanceUnitID(100000, 66615) }, hint = Hints.KeypadReset },
 
@@ -75,7 +43,102 @@ local triggers = {
 
     [EHI:GetInstanceElementID(100173, 66365)] = { time = 30, id = "VaultKeypadReset", icons = { Icon.Loop }, hint = Hints.KeypadReset }
 }
-EHI:HookColorCodes(keycode_units)
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
+    ---@type EHI.ColorTable
+    local keycode_units =
+    {
+        red =
+        {
+            unit_id = 100000,
+            indexes = { 28250, 15020, 15120 }
+        },
+        green =
+        {
+            unit_ids = { 100125, 100113, 100224, 100225, 100007, 100290 },
+            indexes = { 21500, 25000, 31225 }
+        },
+        blue =
+        {
+            unit_ids = { 100061, 100064 },
+            index = 15370
+        }
+    }
+    triggers[100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
+        if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
+            return
+        end
+        self:CreateTracker()
+    end), waypoint = { waypointless = true } }
+    triggers[100091] = { id = "ColorCodes", special_function = SF.RemoveTracker } -- Code entered (stealth)
+    triggers[101357] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
+        if enabled then
+            self._tracking:Remove("ColorCodes")
+        end
+    end) } -- Code entered (loud)
+    EHI:HookColorCodes(keycode_units)
+    if EHI.IsClient then
+        local codes = EHI.TrackerUtils:CacheColorCodesNumbers(keycode_units)
+        local color_map = EHI.TrackerUtils:GetColorCodesMap()
+        triggers[100282].load_sync = function(self) ---@param self EHIMissionElementTrigger
+            if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
+                return
+            elseif self.ConditionFunctions.IsStealth() and self._utils:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+                return
+            elseif managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
+                return
+            end
+            self:CreateTracker()
+            local wd = managers.worlddefinition
+            local bg = Idstring("g_top_opened"):key()
+            for color, data in pairs(keycode_units) do
+                if data.unit_ids then
+                    for _, unit_id in ipairs(data.unit_ids) do
+                        if data.indexes then
+                            for _, index in ipairs(data.indexes) do
+                                local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index)) --[[@as UnitBase ]]
+                                local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
+                                if code then
+                                    self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                                    self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                                    break
+                                end
+                            end
+                        else
+                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index)) --[[@as UnitBase ]]
+                            local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
+                            if code then
+                                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                                self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                                break
+                            end
+                        end
+                    end
+                else
+                    local unit_id = data.unit_id
+                    if data.indexes then
+                        for _, index in ipairs(data.indexes) do
+                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index)) --[[@as UnitBase ]]
+                            local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
+                            if code then
+                                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                                self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                                break
+                            end
+                        end
+                    else
+                        local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index)) --[[@as UnitBase ]]
+                        local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
+                        if code then
+                            self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                            self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                            break
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
 
 ---@type ParseAchievementTable
 local achievements =
@@ -116,7 +179,7 @@ local achievements =
 
 local other =
 {
-    [100228] = EHI:AddAssaultDelay({ control = 35 + 1, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    [100228] = EHI:AddAssaultDelay({ control = 35 + 1, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local t = 0
         if managers.preplanning:IsAssetBought(101858) then
             t = 10
@@ -124,7 +187,7 @@ local other =
             t = 30
         end
         trigger.time = trigger.time + t
-        self:CreateTracker(trigger)
+        self:CreateTracker()
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
@@ -147,20 +210,18 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
     preload = preload
 })
-local bags = 5 + 2 + 5 -- Normal + Hard
-if EHI:IsDifficulty(EHI.Difficulties.VeryHard) then
-    bags = 8 + 3 + 8
-elseif EHI:IsDifficulty(EHI.Difficulties.OVERKILL) then
-    bags = 10 + 4 + 10
-elseif EHI:IsMayhemOrAbove() then
-    bags = 12 + 5 + 12
-end
+local bags = EHI:GetValueBasedOnDifficulty({
+    hard_or_below = 5 + 2 + 5,
+    veryhard = 8 + 3 + 8,
+    overkill = 10 + 4 + 10,
+    mayhem_or_above = 12 + 5 + 12
+})
 EHI:ShowLootCounter({ max = 2 + bags }, {
     element = { EHI:GetInstanceElementID(100322, 37575), EHI:GetInstanceElementID(100093, 27750), EHI:GetInstanceElementID(100007, 11650), EHI:GetInstanceElementID(100044, 11650) }
 }) -- Dentist loot (mandatory) + Money + Painting
@@ -222,97 +283,3 @@ EHI:AddXPBreakdown({
         }
     }
 })
-
-if EHI.IsHost then
-    keycode_units = nil ---@diagnostic disable-line
-elseif EHI.Manager._SHOW_MISSION_TRIGGERS then
-    local bg = Idstring("g_top_opened"):key()
-    local codes = {}
-    for color, _ in pairs(keycode_units) do
-        codes[color] = {}
-        local _c = codes[color]
-        for i = 0, 9, 1 do
-            local str = "g_number_" .. color .. "_0" .. tostring(i)
-            _c[i] = Idstring(str):key()
-        end
-    end
-    local function CheckIfCodeIsVisible(unit, color)
-        if not unit then
-            return nil
-        end
-        local color_codes = codes[color]
-        local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
-        if object and object[bg] then
-            for i = 0, 9, 1 do
-                if object[color_codes[i]] then
-                    return i
-                end
-            end
-        end
-        return nil -- Has not been interacted yet
-    end
-    local function Cleanup()
-        keycode_units = nil ---@diagnostic disable-line
-        codes = nil
-        bg = nil ---@diagnostic disable-line
-    end
-    EHI.Manager:AddLoadSyncFunction(function(self)
-        if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
-            return Cleanup()
-        elseif self.ConditionFunctions.IsStealth() and self:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
-            return Cleanup()
-        elseif managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
-            return Cleanup()
-        end
-        self._trackers:AddTracker({
-            id = "ColorCodes",
-            class = TT.ColoredCodes
-        })
-        local wd = managers.worlddefinition
-        for color, data in pairs(keycode_units) do
-            if data.unit_ids then
-                for _, unit_id in ipairs(data.unit_ids) do
-                    if data.indexes then
-                        for _, index in ipairs(data.indexes) do
-                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
-                            local code = CheckIfCodeIsVisible(unit, color)
-                            if code then
-                                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                                break
-                            end
-                        end
-                    else
-                        local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
-                        local code = CheckIfCodeIsVisible(unit, color)
-                        if code then
-                            self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                            break
-                        end
-                    end
-                end
-            else
-                local unit_id = data.unit_id
-                if data.indexes then
-                    for _, index in ipairs(data.indexes) do
-                        local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
-                        local code = CheckIfCodeIsVisible(unit, color)
-                        if code then
-                            self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                            break
-                        end
-                    end
-                else
-                    local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
-                    local code = CheckIfCodeIsVisible(unit, color)
-                    if code then
-                        self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                        break
-                    end
-                end
-            end
-        end
-        Cleanup()
-    end)
-else
-    keycode_units = nil ---@diagnostic disable-line
-end

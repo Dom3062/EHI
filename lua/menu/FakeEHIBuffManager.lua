@@ -98,11 +98,11 @@ function FakeEHIBuffsManager:_create_buff_params(buff, saferect_x, saferect_y)
     params.h = self._buff_h
     params.x = self._x - saferect_x
     params.y = self._y + saferect_y
+    params.group = buff.group
     params.visible = self._buff_data.visible
     params.shape = self._buff_data.shape
     params.scale = self._scale
     params.show_progress = self._buff_data.show_progress
-    params.good = not buff.bad
     params.saferect_x = saferect_x
     params.saferect_y = saferect_y
     params.invert = self._buff_data.invert

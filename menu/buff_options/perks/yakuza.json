@@ -1,0 +1,80 @@
+{
+    "menu_id": "ehi_buffs_perks_yakuza_menu",
+    "parent_menu" : "ehi_buffs_perks_menu",
+    "title": "ehi_buffs_perks_yakuza",
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_yakuza_irezumi_choice",
+            "title": "ehi_buffs_perks_yakuza_irezumi",
+            "description": "ehi_buffs_perks_yakuza_irezumi_desc",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "yakuza", "irezumi" ],
+            "value": "irezumi",
+            "default_value": true,
+            "is_parent": true,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "slider",
+            "id": "ehi_buffs_perks_yakuza_irezumi_refresh_choice",
+            "title": "ehi_buffs_perks_yakuza_irezumi_refresh",
+            "description": "ehi_buffs_perks_yakuza_irezumi_refresh_desc",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "yakuza", "irezumi_refresh" ],
+            "value": "irezumi_refresh",
+            "parent" : "ehi_buffs_perks_yakuza_irezumi_choice",
+            "default_value": 2,
+            "max": 10,
+            "min": 1,
+            "step": 0,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_buffs_perks_yakuza_irezumi_format_choice",
+            "title": "ehi_buffs_perks_yakuza_irezumi_format",
+            "description": "ehi_buffs_perks_yakuza_irezumi_format_desc",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "yakuza", "irezumi_format" ],
+            "items": [
+                "ehi_buffs_skills_fugitive_berserker_format_1",
+                "ehi_buffs_skills_fugitive_berserker_format_2"
+            ],
+            "value": "irezumi_format",
+            "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
+            "default_value": 1,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_buffs_perks_yakuza_irezumi_text_format_choice",
+            "title": "ehi_buffs_perks_yakuza_irezumi_text_format",
+            "description": "ehi_buffs_perks_yakuza_irezumi_text_format_desc",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "yakuza", "irezumi_text_format" ],
+            "items": [
+                "ehi_buffs_perks_yakuza_irezumi_text_format_1",
+                "ehi_buffs_perks_yakuza_irezumi_text_format_2",
+                "ehi_buffs_perks_yakuza_irezumi_text_format_3",
+                "ehi_buffs_perks_yakuza_irezumi_text_format_4"
+            ],
+            "value": "irezumi_text_format",
+            "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
+            "default_value": 1,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_yakuza_irezumi_persistent_choice",
+            "title": "ehi_buffs_perks_yakuza_irezumi_persistent",
+            "description": "ehi_buffs_perks_yakuza_irezumi_persistent_desc",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "yakuza", "irezumi_persistent" ],
+            "value": "irezumi_persistent",
+            "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
+            "default_value": false,
+            "ehi_ver" : 325
+        }
+    ]
+}

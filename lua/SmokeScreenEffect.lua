@@ -31,7 +31,6 @@ function SmokeScreenEffect:init(position, normal, time, has_dodge_bonus, grenade
         key = "ThrowerUnitInCustody_" .. TimerManager:game():time()
         color_id = #tweak_data.chat_colors
     end
-    local color = tweak_data.chat_colors[color_id] or Color.white
     if show_tracker then
         managers.ehi_tracker:AddTracker({
             id = "SmokeScreenGrenade_" .. key,
@@ -39,7 +38,7 @@ function SmokeScreenEffect:init(position, normal, time, has_dodge_bonus, grenade
             icons = {
                 {
                     icon = "smoke",
-                    color = color
+                    peer_id = color_id or 0
                 }
             }
         })

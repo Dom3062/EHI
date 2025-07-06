@@ -1,11 +1,11 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
----@class EHIkosugi5Tracker : EHIAchievementProgressGroupTracker
+---@class EHIkosugi_5Tracker : EHIAchievementProgressGroupTracker
 ---@field super EHIAchievementProgressGroupTracker
-EHIkosugi5Tracker = class(EHIAchievementProgressGroupTracker)
-function EHIkosugi5Tracker:post_init(...)
-    EHIkosugi5Tracker.super.post_init(self, ...)
+EHIkosugi_5Tracker = class(EHIAchievementProgressGroupTracker)
+function EHIkosugi_5Tracker:post_init(...)
+    EHIkosugi_5Tracker.super.post_init(self, ...)
     self._loot_parent = managers.ehi_loot
     self:AddLootListener({
         counter =
@@ -38,7 +38,7 @@ if EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_missi
                 managers.ehi_waypoint:AddWaypoint(tostring(unit_id), {
                     time = 10,
                     icon = Icon.Fire,
-                    position = managers.ehi_manager:GetUnitPositionOrDefault(unit_id)
+                    position = EHI.Mission:GetUnitPositionOrDefault(unit_id)
                 })
             end
         end)
@@ -47,9 +47,9 @@ end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
-local DisableTriggerAndExecute = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+local DisableTriggerAndExecute = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     self:UnhookTrigger(trigger.data.id)
-    self:CreateTracker(trigger)
+    self:CreateTracker()
 end)
 local triggers = {
     [103492] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto }, hint = Hints.kosugi_Heli, trigger_once = true },
@@ -101,7 +101,7 @@ local achievements =
     {
         elements =
         {
-            [102700] = { class = "EHIkosugi5Tracker", counter = {
+            [102700] = { class = "EHIkosugi_5Tracker", counter = {
                 { max = 16, id = "bags" },
                 { max = 4, id = "armor" }
             } }
@@ -110,14 +110,14 @@ local achievements =
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
             local counter_loot = managers.loot:GetSecuredBagsAmount()
             if counter_loot < 16 or counter_armor < 4 then
-                self._unlockable:AddAchievementProgressTracker("kosugi_5", 0, 0, nil, "EHIkosugi5Tracker")
+                self._unlockable:AddAchievementProgressTracker("kosugi_5", 0, 0, nil, "EHIkosugi_5Tracker")
                 self._trackers:CallFunction("kosugi_5", "AddFromSync", {
                     { progress = math.min(counter_loot, 16), max = 16, id = "bags" },
                     { progress = math.min(counter_armor, 4), max = 4, id = "armor" }
                 })
             end
         end,
-        cleanup_class = "EHIkosugi5Tracker"
+        cleanup_class = "EHIkosugi_5Tracker"
     }
 }
 
@@ -140,7 +140,6 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKIL
     for i = 100539, 100555, 2 do
         elements[i] = IncreaseProgress
     end
-    tweak_data.ehi.icons.daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} }
     tweak_data.hud_icons.daily_secret_identity = tweak_data.ehi.icons.daily_secret_identity
     sidejob.daily_secret_identity = { elements = elements }
 end
@@ -192,7 +191,7 @@ if EHI:IsLootCounterVisible() then
     -- https://steamcommunity.com/app/218620/discussions/14/5710018482972011532/
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     sidejob = sidejob,

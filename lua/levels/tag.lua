@@ -20,8 +20,7 @@ local achievements =
             [100107] = { class = TT.Achievement.Status },
             [100609] = { special_function = SF.SetAchievementComplete },
             [100617] = { special_function = SF.SetAchievementFailed }
-        },
-        sync_params = { from_start = true }
+        }
     },
     tag_10 =
     {
@@ -35,12 +34,11 @@ local achievements =
                 data.elements[EHI:GetInstanceElementID(100321, i)] = { status = Status.Ok, special_function = SF.SetAchievementStatus }
                 data.elements[EHI:GetInstanceElementID(100282, i)] = { special_function = SF.SetAchievementComplete }
             end
-        end,
-        sync_params = { from_start = true }
+        end
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })

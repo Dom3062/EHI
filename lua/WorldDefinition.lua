@@ -277,8 +277,9 @@ end)
 ---@param unit_data UnitUpdateDefinition
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable
 function WorldDefinition:IgnoreDeployable(unit_id, unit_data, unit)
-    if unit:base() and unit:base().SetIgnore then
-        unit:base():SetIgnore()
+    local base = unit:base()
+    if base and base.SetIgnore then
+        base:SetIgnore()
     end
 end
 
@@ -286,8 +287,9 @@ end
 ---@param unit_data UnitUpdateDefinition
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable
 function WorldDefinition:IgnoreChildDeployable(unit_id, unit_data, unit)
-    if unit:base() and unit:base().SetIgnoreChild then
-        unit:base():SetIgnoreChild()
+    local base = unit:base()
+    if base and base.SetIgnoreChild then
+        base:SetIgnoreChild()
     end
 end
 
@@ -295,8 +297,9 @@ end
 ---@param unit_data UnitUpdateDefinition
 ---@param unit UnitAmmoDeployable|UnitDoctorDeployable
 function WorldDefinition:SetDeployableOffset(unit_id, unit_data, unit)
-    if unit:base() and unit:base().SetOffset then
-        unit:base():SetOffset(unit_data.offset or 1)
+    local base = unit:base()
+    if base and base.SetOffset then
+        base:SetOffset(unit_data.offset or 1)
     end
 end
 
@@ -304,17 +307,18 @@ end
 ---@param unit_data UnitUpdateDefinition
 ---@param unit UnitDigitalTimer
 function WorldDefinition:chasC4(unit_id, unit_data, unit)
-    if not unit:digital_gui()._ehi_key then
+    local digital = unit:digital_gui()
+    if not digital._ehi_key then
         return
     end
-    unit:digital_gui():SetHint(Hints.Explosion)
+    digital:SetHint(Hints.Explosion)
     if not unit_data.instance then
-        unit:digital_gui():SetIcons(unit_data.icons)
+        digital:SetIcons(unit_data.icons)
         return
     end
     if EHI:GetBaseUnitID(unit_id, unit_data.instance.start_index, unit_data.continent_index) == 100054 then
-        unit:digital_gui():SetIcons(unit_data.icons)
+        digital:SetIcons(unit_data.icons)
     else
-        unit:digital_gui():SetIgnore()
+        digital:SetIgnore()
     end
 end

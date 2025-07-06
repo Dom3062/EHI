@@ -19,7 +19,7 @@ do
     if format == 1 then -- Uses (Bags placed)
         function EHIEquipmentTracker:Format()
             if self._format == "percent" then
-                return string.format("%g (%d)", self._parent_class.RoundNumber(self._amount, 0.01), self._placed)
+                return string.format("%g (%d)", math.ehi_round(self._amount, 0.01), self._placed)
             elseif self._dont_show_placed then
                 return tostring(self._amount)
             end
@@ -28,7 +28,7 @@ do
     elseif format == 2 then -- (Bags placed) Uses
         function EHIEquipmentTracker:Format()
             if self._format == "percent" then
-                return string.format("(%d) %g", self._placed, self._parent_class.RoundNumber(self._amount, 0.01))
+                return string.format("(%d) %g", self._placed, math.ehi_round(self._amount, 0.01))
             elseif self._dont_show_placed then
                 return tostring(self._amount)
             end
@@ -37,7 +37,7 @@ do
     elseif format == 3 then -- (Uses) Bags placed
         function EHIEquipmentTracker:Format()
             if self._format == "percent" then
-                return string.format("(%g) %d", self._parent_class.RoundNumber(self._amount, 0.01), self._placed)
+                return string.format("(%g) %d", math.ehi_round(self._amount, 0.01), self._placed)
             elseif self._dont_show_placed then
                 return tostring(self._amount)
             end
@@ -46,7 +46,7 @@ do
     elseif format == 4 then -- Bags placed (Uses)
         function EHIEquipmentTracker:Format()
             if self._format == "percent" then
-                return string.format("(%d) %g", self._placed, self._parent_class.RoundNumber(self._amount, 0.01))
+                return string.format("(%d) %g", self._placed, math.ehi_round(self._amount, 0.01))
             elseif self._dont_show_placed then
                 return tostring(self._amount)
             end
@@ -55,7 +55,7 @@ do
     elseif format == 5 then -- Uses
         function EHIEquipmentTracker:Format()
             if self._format == "percent" then
-                return tostring(self._parent_class.RoundNumber(self._amount, 0.01))
+                return tostring(math.ehi_round(self._amount, 0.01))
             end
             return tostring(self._amount)
         end
@@ -63,7 +63,7 @@ do
         function EHIEquipmentTracker:Format()
             if self._dont_show_placed then
                 if self._format == "percent" then
-                    return tostring(self._parent_class.RoundNumber(self._amount, 0.01))
+                    return tostring(math.ehi_round(self._amount, 0.01))
                 end
                 return tostring(self._amount)
             end

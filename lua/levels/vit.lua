@@ -15,11 +15,6 @@ local triggers = {
     [102335] = { time = 60, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = EHI:GetInstanceElementID(100029, 16950) }, hint = Hints.Thermite }, -- units/pd2_dlc_vit/props/security_shutter/vit_prop_branch_security_shutter
 
     [100246] = { time = 31, id = "TearGasOffice", icons = { Icon.Teargas }, special_function = SF.ReplaceTrackerWithTracker, data = { id = "TearGasOfficeChance" }, hint = Hints.Teargas, waypoint = { position_from_element = 101263 } },
-    [101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), class = TT.Chance, hint = Hints.vit_Teargas },
-    -- Disabled in the mission script
-    --[101394] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists }, -- It will not run on Hard and below
-    [101377] = { amount = 20, id = "TearGasOfficeChance", special_function = SF.IncreaseChance },
-    [101393] = { id = "TearGasOfficeChance", special_function = SF.RemoveTracker },
 
     [102544] = { time = 8.3, id = "HumveeWestWingCrash", icons = { Icon.Car, Icon.Fire }, class = TT.Warning, hint = Hints.hox_1_Car },
 
@@ -35,12 +30,19 @@ local triggers = {
 
     [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
 }
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
+    triggers[101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, hint = Hints.vit_Teargas }
+    -- Disabled in the mission script
+    --triggers[101394] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists }, -- It will not run on Hard and below
+    triggers[101377] = { amount = 20, id = "TearGasOfficeChance", special_function = SF.IncreaseChance }
+    triggers[101393] = { id = "TearGasOfficeChance", special_function = SF.RemoveTracker }
+end
 if EHI.IsClient then
     triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
     triggers[103500] = EHI:ClientCopyTrigger(triggers[102104], { time = 26 })
 end
 
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param disable boolean
 local function ToggleAssaultTracker(self, disable)
     self._assault:SetControlStateBlock(disable, 30)
@@ -57,7 +59,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         veryhard_or_below = 1,
         overkill_or_above = 2
     })
-    other[100314] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
+    other[100314] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI.IsHost and element:counter_value() ~= 0 then
             return
         end
@@ -90,7 +92,7 @@ EHI:UpdateUnits({
     [EHI:GetInstanceUnitID(100192, 22250)] = { tracker_merge_id = "MaxHacks", destroy_tracker_merge_on_done = true }
 })
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,
     pre_parse = { filter_out_not_loaded_trackers = "show_timers" },

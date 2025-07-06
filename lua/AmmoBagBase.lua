@@ -33,6 +33,7 @@ local original =
 ---@field _unit UnitAmmoDeployable
 
 AmmoBagBase._ehi_ignored_pos = {}
+---@param unit UnitAmmoDeployable
 function AmmoBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())

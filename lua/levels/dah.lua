@@ -5,33 +5,76 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local heli_delay = 26 + 6
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
----@type EHI.ColorTable
-local dah_laptop_codes =
-{
-    red = 1900,
-    green = 2100,
-    blue = 2300
-}
 local element_sync_triggers =
 {
-    [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438, hint = Hints.Wait }
+    [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438, hint = Hints.Wait, waypoint = { data_from_element_and_remove_vanilla_waypoint = 104393 } }
 }
 ---@type ParseTriggerTable
 local triggers = {
-    [100276] = { time = 25 + 3 + 11, id = "CFOInChopper", icons = { Icon.Heli, Icon.Goto }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 102822 }, hint = Hints.Wait },
+    [100276] = { time = 25 + 3 + 11, id = "CFOToChopper", icons = { Icon.Heli, Icon.Goto }, waypoint = { data_from_element_and_remove_vanilla_waypoint = 102822 }, hint = Hints.Wait },
 
     [104875] = { time = 45 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 100475, remove_vanilla_waypoint = 104882 }, hint = Hints.Escape },
-    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_from_element_and_remove_vanilla_waypoint = 103163 }, hint = Hints.Escape },
-
-    [103969] = { id = "ColorCodes", class = TT.ColoredCodes, remove_on_alarm = true },
-    [101652] = { id = "ColorCodes", special_function = SF.RemoveTracker } -- Vault opened
+    [103159] = { time = 30 + heli_delay, id = "HeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { icon = Icon.Escape, position_from_element_and_remove_vanilla_waypoint = 103163 }, hint = Hints.Escape }
 }
-EHI:HookColorCodes(dah_laptop_codes, { unit_id_all = 100052 })
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
+    ---@type EHI.ColorTable
+    local dah_laptop_codes =
+    {
+        red = 1900,
+        green = 2100,
+        blue = 2300
+    }
+    triggers[103969] = { id = "ColorCodes", class = TT.ColoredCodes, remove_on_alarm = true, waypoint = { waypointless = true } }
+    triggers[101652] = { id = "ColorCodes", special_function = SF.RemoveTracker } -- Vault opened
+    EHI:HookColorCodes(dah_laptop_codes, { unit_id_all = 100052 })
+    if EHI.IsClient then
+        local codes = EHI.TrackerUtils:CacheColorCodesNumbers(dah_laptop_codes)
+        local color_map = EHI.TrackerUtils:GetColorCodesMap()
+        triggers[103969].load_sync = function(self) ---@param self EHIMissionElementTrigger
+            if self.ConditionFunctions.IsStealth() then
+                self:CreateTracker()
+                local bg = Idstring("g_code_screen"):key()
+                for color, data in pairs(dah_laptop_codes) do
+                    local unit_id = EHI:GetInstanceUnitID(100052, data)
+                    local unit = managers.worlddefinition:get_unit(unit_id) --[[@as UnitBase]]
+                    local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
+                    if code then
+                        self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
+                        self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                    end
+                end
+            end
+        end
+    end
+end
 
 local other =
 {
     [100479] = EHI:AddAssaultDelay({ control = 30 + 2 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[102694] = { chance = 20, recheck_t = 30, id = "SnipersBlackhawk", class = TT.Sniper.HeliTimedChance, trigger_once = true }
+    other[102698] = { id = "SnipersBlackhawk", special_function = SF.IncreaseChanceFromElement } -- +10%
+    other[102704] = { id = "SnipersBlackhawk", special_function = SF.SetChanceFromElement } -- 20%
+    local SniperKilled = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        if self._trackers:CallFunction2(trigger.id, "SnipersKilled", 23 + 10) then
+            self._trackers:AddTracker({
+                id = trigger.id,
+                time = 23 + 10,
+                chance = 20,
+                recheck_t = 30,
+                no_logic_annoucement = true,
+                class = TT.Sniper.HeliTimedChance
+            })
+        end
+    end)
+    for _, index in ipairs({ 6100, 7100, 17900, 18900 }) do
+        other[EHI:GetInstanceElementID(100020, index)] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess", arg = { 25 } }
+        other[EHI:GetInstanceElementID(100023, index)] = { id = "SnipersBlackhawk", special_function = SF.IncreaseCounter }
+        other[EHI:GetInstanceElementID(100007, index)] = { id = "SnipersBlackhawk", special_function = SF.DecreaseCounter }
+        other[EHI:GetInstanceElementID(100025, index)] = { id = "SnipersBlackhawk", special_function = SniperKilled }
+    end
+end
 
 ---@param progress number?
 local function dah_8(progress)
@@ -74,7 +117,7 @@ local achievements =
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -131,8 +174,7 @@ local xp_override =
         }
     }
 }
-local xp =
-{
+EHI:AddXPBreakdown({
     plan =
     {
         stealth =
@@ -163,53 +205,4 @@ local xp =
             total_xp_override = xp_override
         }
     }
-}
-EHI:AddXPBreakdown(xp)
-if EHI.IsHost then
-    dah_laptop_codes = nil ---@diagnostic disable-line
-elseif EHI.Manager._SHOW_MISSION_TRIGGERS then
-    local bg = Idstring("g_code_screen"):key()
-    local codes = {}
-    for color, _ in pairs(dah_laptop_codes) do
-        local c = {}
-        for i = 0, 9, 1 do
-            c[i] = Idstring(string.format("g_number_%s_0%d", color, i)):key()
-        end
-        codes[color] = c
-    end
-    local function CheckIfCodeIsVisible(unit, color)
-        if not unit then
-            return nil
-        end
-        local color_codes = codes[color]
-        local object = unit:damage() and unit:damage()._state and unit:damage()._state.object
-        if object and object[bg] then
-            for i = 0, 9, 1 do
-                if object[color_codes[i]] then
-                    return i
-                end
-            end
-        end
-        return nil -- Has not been interacted yet
-    end
-    EHI.Manager:AddLoadSyncFunction(function(self)
-        if self.ConditionFunctions.IsStealth() then
-            self:Trigger(103969)
-            local wd = managers.worlddefinition
-            for color, data in pairs(dah_laptop_codes) do
-                local unit_id = EHI:GetInstanceUnitID(100052, data)
-                local unit = wd:get_unit(unit_id)
-                local code = CheckIfCodeIsVisible(unit, color)
-                if code then
-                    self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                end
-            end
-        end
-        -- Clear memory
-        bg = nil ---@diagnostic disable-line
-        codes = nil
-        dah_laptop_codes = nil ---@diagnostic disable-line
-    end)
-else
-    dah_laptop_codes = nil ---@diagnostic disable-line
-end
+})

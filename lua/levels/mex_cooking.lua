@@ -48,7 +48,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102480] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,
     sync_triggers = { element = element_sync_triggers }

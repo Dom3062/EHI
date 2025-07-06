@@ -13,11 +13,11 @@ local original =
 ---@field _unit UnitFAKDeployable
 ---@field List { obj: UnitFAKDeployable, pos: Vector3, min_distance: number }[]
 
-FirstAidKitBase._ehi_tracker = EHI:GetOption("show_equipment_aggregate_health") and not EHI:GetOption("show_equipment_aggregate_all") and "Health" or "FirstAidKits"
+FirstAidKitBase.__ehi_tracker = EHI:GetOption("show_equipment_aggregate_health") and not EHI:GetOption("show_equipment_aggregate_all") and "Health" or "FirstAidKits"
 function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    managers.ehi_deployable:UpdateAmount(self._ehi_key, 1, "first_aid_kit", self._ehi_tracker)
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, 1, "first_aid_kit", self.__ehi_tracker)
 end
 
 function FirstAidKitBase:GetRealAmount()
@@ -25,6 +25,6 @@ function FirstAidKitBase:GetRealAmount()
 end
 
 function FirstAidKitBase:destroy(...)
-    managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, "first_aid_kit", self._ehi_tracker)
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, "first_aid_kit", self.__ehi_tracker)
     original.destroy(self, ...)
 end

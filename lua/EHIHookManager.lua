@@ -1,14 +1,13 @@
 local EHI = EHI
 
 ---@class EHIHookManager
-EHIHookManager = {}
+local EHIHookManager = {}
 EHIHookManager._element_hook_function = EHI.IsClient and "client_on_executed" or "on_executed"
 ---@param ehi_tracker EHITrackerManager
 ---@param ehi_loot EHILootManager
-function EHIHookManager:new(ehi_tracker, ehi_loot)
+function EHIHookManager:post_init(ehi_tracker, ehi_loot)
     self._trackers = ehi_tracker
     self._loot = ehi_loot
-    return self
 end
 
 ---@param element MissionScriptElement
@@ -102,3 +101,5 @@ end
 function EHIHookManager:HookChallengeAwardProgress(id, f)
     Hooks:PostHook(ChallengeManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
 end
+
+return EHIHookManager

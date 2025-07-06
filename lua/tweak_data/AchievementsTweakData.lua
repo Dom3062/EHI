@@ -32,6 +32,7 @@ local achievements = {
     "uno_2",
     "fex_10",
     "lord_of_war", "ovk_10",
+    "the_wire",
     "slakt_5", "voff_1", "uno_1",
     "fish_4", "fish_5", "fish_6",
     "flat_2", "cac_9",
@@ -152,6 +153,9 @@ function AchievementsTweakData:_init_visual(...)
 end
 
 function AchievementsTweakData:_check_uno()
+    if self.__uno_checked then
+        return
+    end
     local uno_challenge = managers.custom_safehouse:uno_achievement_challenge():challenge()
     for _, achievement_id in ipairs(uno_challenge or {}) do
         local achievement_data = self.visual[achievement_id]
@@ -159,4 +163,5 @@ function AchievementsTweakData:_check_uno()
             table.insert(achievement_data.tags, "progress_ehi_secret")
         end
     end
+    self.__uno_checked = true
 end

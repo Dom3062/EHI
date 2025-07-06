@@ -1,7 +1,7 @@
 ---@class EHIGaugeBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIGaugeBuffTracker = class(EHIBuffTracker)
----@param o PanelBitmap
+---@param o Bitmap
 ---@param ratio number
 ---@param progress Color
 EHIGaugeBuffTracker._anim = function(o, ratio, progress)
@@ -12,10 +12,10 @@ EHIGaugeBuffTracker._anim = function(o, ratio, progress)
     end)
 end
 EHIGaugeBuffTracker._inverted_progress = true
-function EHIGaugeBuffTracker:init(panel, params, ...)
+function EHIGaugeBuffTracker:init(panel, params)
     self._ratio = 0
     self._format = params.format or "standard"
-    EHIGaugeBuffTracker.super.init(self, panel, params, ...)
+    EHIGaugeBuffTracker.super.init(self, panel, params)
 end
 
 function EHIGaugeBuffTracker:post_init(params)

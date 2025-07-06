@@ -1,40 +1,44 @@
 ---@class EHITimerManager
-EHITimerManager = {}
+local EHITimerManager = {}
 ---@param ehi_tracker EHITrackerManager
-function EHITimerManager:new(ehi_tracker)
+---@param ehi_waypoint EHIWaypointManager
+function EHITimerManager:post_init(ehi_tracker, ehi_waypoint)
     self._trackers = ehi_tracker
+    self._waypoints = ehi_waypoint
     self._groups = {} --[[@as table<string, { count: number, [number]: { count: number, [number]: { name: string, timer_count: number }}}> ]]
     self._units_in_active_group = {} --[[@as table<string, string?>]]
     local max_timers = EHI:GetOption("show_timers_max_in_group") --[[@as number]]
     if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [3] = true, [4] = true }) then
-        self._max_timers = max_timers > 1 and math.huge or 1
+        self._MAX_TIMERS = max_timers > 1 and math.huge or 1
     else
-        self._max_timers = max_timers
+        self._MAX_TIMERS = max_timers
     end
-    self._grouping_is_enabled = self._max_timers > 1
-    return self
+    self._grouping_is_enabled = self._MAX_TIMERS > 1
 end
 
 ---@param id string Unit key
+---@param t number
 ---@param group string
 ---@param subgroup number
 ---@param i_subgroup number
 ---@param upgrades table?
+---@param timer_gui TimerGui
 ---@param visibility_data table
-function EHITimerManager:_add_timer_subgroup(id, group, subgroup, i_subgroup, upgrades, visibility_data)
+function EHITimerManager:_add_timer_subgroup(id, t, group, subgroup, i_subgroup, upgrades, timer_gui, visibility_data)
     local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
     self._trackers:AddTracker({
         id = tracker_id,
         icons = visibility_data.icons,
         key = id,
-        time = 100, -- Set the initial time to 100, the timer will get accurate the next frame
+        time = t,
+        timer_gui = timer_gui,
         upgrades = upgrades,
         group = group,
         subgroup = subgroup,
         i_subgroup = i_subgroup,
         hint = visibility_data.hint,
         theme = visibility_data.theme,
-        class = "EHITimerGroupTracker"
+        class = "EHITimerGuiGroupTracker"
     })
     local active_group = self._groups[group]
     active_group.count = active_group.count + 1
@@ -43,25 +47,28 @@ function EHITimerManager:_add_timer_subgroup(id, group, subgroup, i_subgroup, up
 end
 
 ---@param id string Unit key
+---@param t number
 ---@param group string
 ---@param subgroup number
 ---@param i_subgroup number
 ---@param upgrades table?
+---@param timer_gui TimerGui
 ---@param visibility_data table
-function EHITimerManager:_add_timer_isubgroup(id, group, subgroup, i_subgroup, upgrades, visibility_data)
+function EHITimerManager:_add_timer_isubgroup(id, t, group, subgroup, i_subgroup, upgrades, timer_gui, visibility_data)
     local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
     self._trackers:AddTracker({
         id = tracker_id,
         icons = visibility_data.icons,
         key = id,
-        time = 100, -- Set the initial time to 100, the timer will get accurate the next frame
+        time = t,
+        timer_gui = timer_gui,
         upgrades = upgrades,
         group = group,
         subgroup = subgroup,
         i_subgroup = i_subgroup,
         hint = visibility_data.hint,
         theme = visibility_data.theme,
-        class = "EHITimerGroupTracker"
+        class = "EHITimerGuiGroupTracker"
     })
     local active_group = self._groups[group]
     active_group.count = active_group.count + 1
@@ -117,9 +124,9 @@ function EHITimerManager:StartTimer(params)
                 local group_i = 0
                 for i, i_sub in ipairs(self._groups[group][subgroup]) do
                     group_i = i
-                    if i_sub.timer_count < self._max_timers then
+                    if i_sub.timer_count < self._MAX_TIMERS then
                         i_sub.timer_count = i_sub.timer_count + 1
-                        self._trackers:CallFunction(i_sub.name, "AddTimer", params.time, params.id, params.warning, params.completion)
+                        self._trackers:CallFunction(i_sub.name, "AddTimer", params.time, params.id, params.warning, params.completion, params.timer_gui)
                         self._units_in_active_group[params.id] = i_sub.name
                         return
                     end
@@ -133,7 +140,7 @@ function EHITimerManager:StartTimer(params)
         local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
         self._units_in_active_group[params.id] = tracker_id
         params.id = tracker_id
-        params.class = "EHITimerGroupTracker"
+        params.class = params.timer_gui and "EHITimerGuiGroupTracker" or "EHITimerGroupTracker"
         params.subgroup = subgroup
         params.i_subgroup = i_subgroup
         if add_i_subgroup then
@@ -152,7 +159,7 @@ function EHITimerManager:StartTimer(params)
 end
 
 ---@param id string Unit Key
-function EHITimerManager:StopTimer(id)
+function EHITimerManager:RemoveTimer(id)
     local active_group = table.remove_key(self._units_in_active_group, id)
     if active_group then
         local group, subgroup, i_subgroup = self._trackers:ReturnValue(active_group, "GetGroupData")
@@ -160,6 +167,7 @@ function EHITimerManager:StopTimer(id)
     else
         self._trackers:RemoveTracker(id)
     end
+    self._waypoints:RemoveWaypoint(id)
 end
 
 ---@param id string Unit Key
@@ -195,44 +203,56 @@ function EHITimerManager:SetTimerTime(id, t)
     self._trackers:CallFunction(self._units_in_active_group[id] or id, "SetTimeNoAnim", t, id) -- To keep compatibility with `EHITimerTracker`
 end
 
----@param id string Unit Key
----@param t number
----@param t_string string
-function EHITimerManager:SetTimerTimeNoFormat(id, t, t_string)
-    self._trackers:CallFunction(self._units_in_active_group[id] or id, "SetTimeNoFormat", t, t_string, id) -- To keep compatibility with `EHITimerTracker`
+if EHI:GetTrackerOption("show_timers") and EHI:GetWaypointOption("show_waypoints_timers") then
+    if EHI:GetOption("time_format") == 1 then
+        EHITimerManager.FormatTimer = tweak_data.ehi.functions.ReturnSecondsOnly
+    else
+        EHITimerManager.FormatTimer = tweak_data.ehi.functions.ReturnMinutesAndSeconds
+    end
+    ---@param id string Unit Key
+    ---@param t number
+    function EHITimerManager:UpdateTimer(id, t)
+        local t_string = self:FormatTimer(t)
+        self._trackers:CallFunction(self._units_in_active_group[id] or id, "SetTimeNoFormat", t, t_string, id) -- To keep compatibility with `EHITimerTracker`
+        self._waypoints:CallFunction(id, "SetTimeNoFormat", t, t_string)
+    end
 end
 
 ---@param id string Unit Key
 ---@param jammed boolean
-function EHITimerManager:SetTimerJammed(id, jammed)
+function EHITimerManager:SetJammed(id, jammed)
     self._trackers:CallFunction(self._units_in_active_group[id] or id, "SetJammed", jammed, id) -- To keep compatibility with `EHITimerTracker`
+    self._waypoints:CallFunction(id, "SetJammed", jammed)
 end
 
 ---@param id string Unit Key
 ---@param powered boolean
-function EHITimerManager:SetTimerPowered(id, powered)
+function EHITimerManager:SetPowered(id, powered)
     self._trackers:CallFunction(self._units_in_active_group[id] or id, "SetPowered", powered, id) -- To keep compatibility with `EHITimerTracker`
+    self._waypoints:CallFunction(id, "SetPowered", powered)
 end
 
 ---@param id string Unit Key
 ---@param state boolean
-function EHITimerManager:SetTimerAutorepair(id, state)
+function EHITimerManager:SetAutorepair(id, state)
     self._trackers:CallFunction(self._units_in_active_group[id] or id, "SetAutorepair", state, id) -- To keep compatibility with `EHITimerTracker`
+    self._waypoints:CallFunction(id, "SetAutorepair", state)
 end
 
 ---@param id string Unit Key
-function EHITimerManager:SetTimerRunning(id)
+function EHITimerManager:SetRunning(id)
     self._trackers:CallFunction(self._units_in_active_group[id] or id, "SetRunning", id) -- To keep compatibility with `EHITimerTracker`
+    self._waypoints:CallFunction(id, "SetRunning")
 end
 
 ---@param id string Unit Key
 function EHITimerManager:IsTimerMergeRunning(id)
-    return self._trackers:ReturnValue(self._units_in_active_group[id] or id, "IsTimerMergeRunning", id) -- To keep compatibility with `EHITimerTracker`
+    return self._trackers:ReturnValue(self._units_in_active_group[id] or id, "IsTimerMergeRunning", id) or self._waypoints:WaypointExists(id) -- To keep compatibility with `EHITimerTracker`
 end
 
 ---@param id string Unit Key
 function EHITimerManager:TimerExists(id)
-    return self._trackers:TrackerExists(self._units_in_active_group[id] or id)
+    return self._trackers:Exists(self._units_in_active_group[id] or id) or self._waypoints:WaypointExists(id)
 end
 
 ---@param timer_gui TimerGui
@@ -248,22 +268,22 @@ function EHITimerManager:SetTimerUpgrades(timer_gui)
                 if self._groups[group] then
                     local visibility_data = timer_gui:GetVisibilityData()
                     local g_i_subgroup = self._groups[group][new_subgroup]
+                    local t = self._trackers:ReturnValue(unit_group, "GetTimerTimeLeft", id) or 0
                     if g_i_subgroup then -- New subgroup exists, check to what tracker we can add it
                         local new_i_group = 0
                         for i, sub in ipairs(g_i_subgroup) do
                             new_i_group = i
-                            if sub.timer_count < self._max_timers then
+                            if sub.timer_count < self._MAX_TIMERS then
                                 sub.timer_count = sub.timer_count + 1
-                                -- Set the initial time to 100, the timer will get accurate next frame
-                                self._trackers:CallFunction(sub.name, "AddTimer", 100, id)
+                                self._trackers:CallFunction(sub.name, "AddTimer", t, id, false, false, timer_gui)
                                 self:_remove_timer_from_group(id, group, subgroup, i_subgroup)
                                 self._units_in_active_group[id] = sub.name
                                 return
                             end
                         end -- Unfortunately all active subgroups are full, create a new i_subgroup
-                        self:_add_timer_isubgroup(id, group, subgroup, new_i_group + 1, upgrades, visibility_data)
+                        self:_add_timer_isubgroup(id, t, group, subgroup, new_i_group + 1, upgrades, timer_gui, visibility_data)
                     else -- New subgroup does not exist, needs to be created
-                        self:_add_timer_subgroup(id, group, new_subgroup, 1, upgrades, visibility_data)
+                        self:_add_timer_subgroup(id, t, group, new_subgroup, 1, upgrades, timer_gui, visibility_data)
                     end
                     self:_remove_timer_from_group(id, group, subgroup, i_subgroup)
                 end
@@ -273,3 +293,5 @@ function EHITimerManager:SetTimerUpgrades(timer_gui)
         self._trackers:CallFunction(id, "SetUpgrades", upgrades)
     end
 end
+
+return EHITimerManager

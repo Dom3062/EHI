@@ -6,6 +6,94 @@
         {
             "type": "label",
             "id": "loot_counter",
+            "title": "ehi_colors_tracker_waypoint",
+            "center": true
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_inaccurate_choice",
+            "title": "ehi_colors_inaccurate",
+            "description": "ehi_colors_inaccurate_desc",
+            "value": "inaccurate",
+            "default_value": [255, 165, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["inaccurate", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_pause_choice",
+            "title": "ehi_colors_pause",
+            "description": "ehi_colors_pause_desc",
+            "value": "pause",
+            "default_value": [255, 0, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["pause", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_drill_autorepair_choice",
+            "title": "ehi_colors_drill_autorepair",
+            "description": "ehi_colors_drill_autorepair_desc",
+            "value": "drill_autorepair",
+            "default_value": [137, 209, 254],
+            "callback": "SetColor",
+            "callback_arguments": ["drill_autorepair", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_drill_not_powered_choice",
+            "title": "ehi_colors_drill_not_powered",
+            "description": "ehi_colors_drill_not_powered_desc",
+            "value": "drill_not_powered",
+            "default_value": [255, 95, 21],
+            "callback": "SetColor",
+            "callback_arguments": ["drill_not_powered", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 267
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_warning_choice",
+            "title": "ehi_colors_warning",
+            "description": "ehi_colors_warning_desc",
+            "value": "warning",
+            "default_value": [255, 0, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["warning", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_completion_choice",
+            "title": "ehi_colors_completion",
+            "description": "ehi_colors_completion_desc",
+            "value": "completion",
+            "default_value": [0, 255, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["completion", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "ehi_ver" : 145
+        },
+        {
+            "type" : "divider",
+            "size" : 20
+        },
+        {
+            "type": "label",
+            "id": "loot_counter",
             "title": "ehi_shared_loot_counter",
             "center": true
         },
@@ -19,6 +107,8 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_all_loot_secured_popup",
             "default_value": true,
+            "preview_func" : "PreviewNotification",
+            "preview_func_params" : { "id" : "LOOT COUNTER", "desc": "ehi_popup_all_loot_secured", "icon" : "EHI_Loot", "class" : "HudChallengeNotification" },
             "ehi_ver" : 82
         },
         {

@@ -8,7 +8,10 @@
             "id": "ehi_trackers_next_menu",
             "title": "ehi_menu_next_page",
             "next_menu": "ehi_trackers_4_menu",
-            "ehi_ver" : 318
+            "ehi_ver" : 318,
+            "load_menu" : {
+                "file_path" : "trackers_4.json"
+            }
         },
         {
             "type": "divider",

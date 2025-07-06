@@ -27,7 +27,7 @@ local original =
     custom_set_empty = CustomDoctorBagBase._set_empty
 }
 
-DoctorBagBase._ehi_tracker = EHI:GetOption("show_equipment_aggregate_health") and not EHI:GetOption("show_equipment_aggregate_all") and "Health" or "DoctorBags"
+DoctorBagBase.__ehi_tracker = EHI:GetOption("show_equipment_aggregate_health") and not EHI:GetOption("show_equipment_aggregate_all") and "Health" or "DoctorBags"
 function DoctorBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
@@ -36,7 +36,7 @@ end
 
 ---@param amount number?
 function DoctorBagBase:UpdateAmount(amount)
-    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), "doctor_bag", self._ehi_tracker)
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), "doctor_bag", self.__ehi_tracker)
 end
 
 function DoctorBagBase:_set_visual_stage(...)

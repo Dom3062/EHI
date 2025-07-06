@@ -162,6 +162,27 @@
             <extension name="ehi" class="EHIATExplosionData"/>
         </target>
     </tweak>
+    <!-- Snipers -->
+    <tweak version="2" name="units/payday2/characters/ene_sniper_1/ene_sniper_1" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/payday2/characters/ene_sniper_2/ene_sniper_2" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
     <!-- Fixes -->
     <!-- Reservoir Dogs Day 2 (Warehouse) / Buluc's Mansion -->
     <tweak version="2" name="units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam" extension="unit">
@@ -172,7 +193,7 @@
             <extension name="base" class="Drill"/>
         </search>
         <target mode="attach">
-            <var name="_disable_upgrades" value="true" />
+            <var name="_disable_upgrades" value="true"/>
         </target>
     </tweak>
 </tweaks>

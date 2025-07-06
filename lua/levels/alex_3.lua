@@ -15,11 +15,13 @@ local other =
     [100782] = EHI:AddAssaultDelay({ control = 20 + 10 })
 }
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other }, "HeliLootDrop", EHI.Icons.HeliLootDrop)
+EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "HeliLootDrop", EHI.Icons.HeliLootDrop)
 if EHI:IsLootCounterVisible() then
     local Money = 0
     local MoneyTaken = 0
     local Exploded = false
+    ---@param self EHIMissionElementTrigger
+    ---@param bag number
     local function MoneySpawned(self, bag)
         if Exploded then
             return
@@ -33,6 +35,7 @@ if EHI:IsLootCounterVisible() then
         end
         MoneyTaken = MoneyTaken + 1
     end
+    ---@param bag number
     local function DelayRejection(bag)
         if Exploded then
             return

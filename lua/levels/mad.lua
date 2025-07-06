@@ -1,12 +1,10 @@
-local EHI = EHI
-local Icon = EHI.Icons
----@class EHIdailycakeTracker : EHISideJobTracker, EHIProgressTracker
+---@class daily_cake : EHISideJobTracker, EHIProgressTracker
 ---@field super EHISideJobTracker
-EHIdailycakeTracker = class(EHISideJobTracker)
-EHIdailycakeTracker.FormatProgress = EHIProgressTracker.FormatProgress
-EHIdailycakeTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-EHIdailycakeTracker.SetProgress = EHIProgressTracker.SetProgress
-function EHIdailycakeTracker:OverridePanel()
+local daily_cake = class(EHISideJobTracker)
+daily_cake.FormatProgress = EHIProgressTracker.FormatProgress
+daily_cake.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+daily_cake.SetProgress = EHIProgressTracker.SetProgress
+function daily_cake:OverridePanel()
     self._max = 4
     self._progress = 0
     self:SetBGSize()
@@ -19,7 +17,7 @@ function EHIdailycakeTracker:OverridePanel()
     self._text:set_left(self._progress_text:right())
 end
 
-function EHIdailycakeTracker:SetCompleted(force)
+function daily_cake:SetCompleted(force)
     if not self._status then
         self._status = "completed"
         self._progress_text:set_color(Color.green)
@@ -31,11 +29,13 @@ function EHIdailycakeTracker:SetCompleted(force)
     end
 end
 
-function EHIdailycakeTracker:DelayForcedDelete()
+function daily_cake:DelayForcedDelete()
     self.update = self.update_fade
-    EHIdailycakeTracker.super.DelayForcedDelete(self)
+    daily_cake.super.DelayForcedDelete(self)
 end
 
+local EHI = EHI
+local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
@@ -56,8 +56,7 @@ local achievements =
             [100547] = { status = Status.NoDown, class = TT.Achievement.Status },
             [101400] = { special_function = SF.SetAchievementFailed },
             [101823] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     },
     cac_13 =
     {
@@ -67,8 +66,7 @@ local achievements =
             [100547] = { status = Status.Defend, class = TT.Achievement.Status },
             [101925] = { special_function = SF.SetAchievementFailed },
             [101924] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -84,15 +82,14 @@ local sidejob =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101906] = { time = 1200, class = "EHIdailycakeTracker" },
+            [101906] = { time = 1200, class_table = daily_cake },
             [101898] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100038, 3150)] = { special_function = SF.IncreaseProgress }
-        },
-        cleanup_class = "EHIdailycakeTracker"
+        }
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

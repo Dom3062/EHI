@@ -1,18 +1,18 @@
 local Color = Color
----@class EHIsand11Tracker : EHIAchievementProgressTracker, EHIChanceTracker
+---@class EHIsand_11Tracker : EHIAchievementProgressTracker, EHIChanceTracker
 ---@field super EHIAchievementProgressTracker
-EHIsand11Tracker = class(EHIAchievementProgressTracker)
-EHIsand11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
-EHIsand11Tracker.FormatChance = EHIChanceTracker.FormatChance
-function EHIsand11Tracker:pre_init(params)
+EHIsand_11Tracker = class(EHIAchievementProgressTracker)
+EHIsand_11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
+EHIsand_11Tracker.FormatChance = EHIChanceTracker.FormatChance
+function EHIsand_11Tracker:pre_init(params)
     params.max = 100
     params.show_finish_after_reaching_target = true
     params.no_failure = true
     self._chance = 0
-    EHIsand11Tracker.super.pre_init(self, params)
+    EHIsand_11Tracker.super.pre_init(self, params)
 end
 
-function EHIsand11Tracker:OverridePanel()
+function EHIsand_11Tracker:OverridePanel()
     self:SetBGSize()
     self._text_chance = self._bg_box:text({
         text = self:FormatChance(),
@@ -27,7 +27,7 @@ function EHIsand11Tracker:OverridePanel()
     self._text_chance:set_right(self._bg_box:right())
 end
 
-function EHIsand11Tracker:SetChance(amount)
+function EHIsand_11Tracker:SetChance(amount)
     self._chance = amount
     self._text_chance:set_text(self:FormatChance())
     if amount >= 100 then
@@ -83,9 +83,9 @@ local achievements =
         elements =
         {
             [EHI:GetInstanceElementID(100024, 31755)] = { special_function = SF.Trigger, data = { 1, 2 } },
-            [1] = { max = 10, show_finish_after_reaching_target = true, class = TT.Achievement.Progress, special_function = SF.ShowAchievementFromStart },
-            [2] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIManager
-                if self._trackers:TrackerDoesNotExist("sand_9") then
+            [1] = { max = 10, show_finish_after_reaching_target = true, class = TT.Achievement.Progress, condition_function = EHI.ConditionFunctions.PlayingFromStart },
+            [2] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIMissionElementTrigger
+                if self._trackers:DoesNotExist("sand_9") then
                     return
                 end
                 -- Counter is bugged. Teaset is counted too.
@@ -97,8 +97,7 @@ local achievements =
                 })
             end },
             [103208] = { special_function = SF.FinalizeAchievement }
-        },
-        sync_params = { from_start = true }
+        }
     },
     sand_10 =
     {
@@ -111,8 +110,7 @@ local achievements =
             for i = 105290, 105329, 1 do
                 data.elements[i] = trigger
             end
-        end,
-        sync_params = { from_start = true }
+        end
     }
 }
 
@@ -140,7 +138,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end)
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -149,11 +147,7 @@ EHI.Manager:ParseTriggers({
 local tbl = {}
 if EHI:GetWaypointOption("show_waypoints_mission") then
     local function f(id, unit_data, unit)
-        local trigger_id = unit_data.trigger_id
-        managers.ehi_manager:AddWaypointToTrigger(trigger_id, { unit = unit })
-        unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
-            managers.ehi_waypoint:RemoveWaypoint(triggers[trigger_id].id)
-        end)
+        EHI.Trigger:AddWaypointToTrigger(unit_data.trigger_id, { unit = unit })
     end
     --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/002
     tbl[104456] = { f = f, trigger_id = 103333 }

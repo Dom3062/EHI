@@ -19,7 +19,7 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
     self._count = {} ---@type table<string, { amount: number, placed: number, format: string }>
     self._deployables = {}
     self._ignore = self._ignore or params.ignore or {}
-    self._equipment = {} ---@type table<string, PanelText?>
+    self._equipment = {} ---@type table<string, Text?>
     self._format = self._format or params.format or {}
     for _, id in ipairs(self._ids) do
         self._count[id] = { amount = 0, placed = 0, format = self._format[id] or "charges" }
@@ -39,7 +39,7 @@ do
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             local deployable = self._count[id]
             if deployable.format == "percent" then
-                return string.format("%g (%d)", self._parent_class.RoundNumber(deployable.amount, 0.1), deployable.placed)
+                return string.format("%g (%d)", math.ehi_round(deployable.amount, 0.1), deployable.placed)
             elseif self._dont_show_placed[id] then
                 return tostring(deployable.amount)
             end
@@ -49,7 +49,7 @@ do
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             local deployable = self._count[id]
             if deployable.format == "percent" then
-                return string.format("(%d) %g", deployable.placed, self._parent_class.RoundNumber(deployable.amount, 0.1))
+                return string.format("(%d) %g", deployable.placed, math.ehi_round(deployable.amount, 0.1))
             elseif self._dont_show_placed[id] then
                 return tostring(deployable.amount)
             end
@@ -59,7 +59,7 @@ do
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             local deployable = self._count[id]
             if deployable.format == "percent" then
-                return string.format("(%g) %d", self._parent_class.RoundNumber(deployable.amount, 0.1), deployable.placed)
+                return string.format("(%g) %d", math.ehi_round(deployable.amount, 0.1), deployable.placed)
             elseif self._dont_show_placed[id] then
                 return tostring(deployable.amount)
             end
@@ -69,7 +69,7 @@ do
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             local deployable = self._count[id]
             if deployable.format == "percent" then
-                return string.format("%d (%g)", deployable.placed, self._parent_class.RoundNumber(deployable.amount, 0.1))
+                return string.format("%d (%g)", deployable.placed, math.ehi_round(deployable.amount, 0.1))
             elseif self._dont_show_placed[id] then
                 return tostring(deployable.amount)
             end
@@ -79,7 +79,7 @@ do
         function EHIAggregatedEquipmentTracker:FormatDeployable(id)
             local deployable = self._count[id]
             if deployable.format == "percent" then
-                return tostring(self._parent_class.RoundNumber(deployable.amount, 0.01))
+                return tostring(math.ehi_round(deployable.amount, 0.01))
             end
             return tostring(deployable.amount)
         end
@@ -88,7 +88,7 @@ do
             local deployable = self._count[id]
             if self._dont_show_placed[id] then
                 if deployable.format == "percent" then
-                    return tostring(self._parent_class.RoundNumber(deployable.amount, 0.01))
+                    return tostring(math.ehi_round(deployable.amount, 0.01))
                 end
                 return tostring(deployable.amount)
             end
@@ -186,7 +186,7 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
     self._bg_box:remove(_text)
     self._n_of_deployables = self._n_of_deployables - 1
     if self._n_of_deployables == 1 then
-        local _, text = next(self._equipment) ---@cast text PanelText
+        local _, text = next(self._equipment) ---@cast text Text
         text:set_x(0)
         text:set_w(self._bg_box:w())
         self:FitTheText(text)
@@ -195,7 +195,7 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
 end
 
 function EHIAggregatedEquipmentTracker:RedrawPanel()
-    for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
+    for _, text in ipairs(self._bg_box:children()) do ---@cast text Text
         if text.set_text then
             self:FitTheText(text)
         end
@@ -248,7 +248,7 @@ function EHIAggregatedEquipmentTracker:Reorganize(addition)
 end
 
 function EHIAggregatedEquipmentTracker:CleanupOnHide()
-    if self._restore_after_cleanup then -- No need to clean up again if the tracker is pending restoration
+    if self._restore_after_cleanup then -- No need to clean up again if the tracker is pending restoration; will also crash the game if cleaning is triggered while the tracker is cleaned and waiting to be activated again
         return
     end
     local _, last_text = next(self._equipment)

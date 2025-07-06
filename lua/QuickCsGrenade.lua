@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("QuickCsGrenade") or not EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission") then
     return
 end
@@ -14,6 +13,7 @@ function QuickCsGrenade:detonate(...)
             id = key,
             time = self._duration,
             icons = { Icon.Turret, Icon.Teargas },
+            first_icon_pos = 2,
             hint = "sentry_teargas"
         })
     end

@@ -1,12 +1,10 @@
 ---@class EHIEscapeChanceManager
-EHIEscapeChanceManager = {}
+local EHIEscapeChanceManager = {}
 ---@param ehi_tracker EHITrackerManager
----@return EHIEscapeChanceManager
-function EHIEscapeChanceManager:new(ehi_tracker)
+function EHIEscapeChanceManager:post_init(ehi_tracker)
     self._trackers = ehi_tracker
     self._civilians_killed = 0
     self._disabled = false
-    return self
 end
 
 ---@param dropin boolean
@@ -24,6 +22,21 @@ function EHIEscapeChanceManager:AddEscapeChanceTracker(dropin, chance, civilian_
     })
 end
 
+---@param dropin boolean
+---@param chance number 0-100
+---@param preplanning_escape_id number
+function EHIEscapeChanceManager:AddEscapeChanceTrackerAndCheckPreplanning(dropin, chance, preplanning_escape_id)
+    if managers.preplanning:IsAssetBought(preplanning_escape_id) then
+        return
+    end
+    managers.ehi_sync:AddLoadSyncFunction(function()
+        if managers.preplanning:IsAssetBought(preplanning_escape_id) then
+            self._trackers:RemoveTracker("EscapeChance")
+        end
+    end)
+    self:AddEscapeChanceTracker(dropin, chance)
+end
+
 function EHIEscapeChanceManager:IncreaseCivilianKilled()
     if self._disabled then
         return
@@ -38,9 +51,14 @@ end
 ---@param dropin boolean
 ---@param chance number 0-100
 ---@param civilian_killed_multiplier number?
-function EHIEscapeChanceManager:AddChanceWhenDoesNotExists(dropin, chance, civilian_killed_multiplier)
-    if self._trackers:TrackerDoesNotExist("EscapeChance") then
-        self:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
+---@param preplanning_escape_id number? In case Escape Driver can be bought in Preplanning
+function EHIEscapeChanceManager:AddChanceWhenDoesNotExists(dropin, chance, civilian_killed_multiplier, preplanning_escape_id)
+    if self._trackers:DoesNotExist("EscapeChance") then
+        if preplanning_escape_id then
+            self:AddEscapeChanceTrackerAndCheckPreplanning(dropin, chance, preplanning_escape_id)
+        else
+            self:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
+        end
     end
 end
 
@@ -59,3 +77,5 @@ function EHIEscapeChanceManager:save(data)
     save_data.civilians_killed = self._civilians_killed
     data.EHIEscapeChanceManager = save_data
 end
+
+return EHIEscapeChanceManager

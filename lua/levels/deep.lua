@@ -1,12 +1,12 @@
 ---@class EHIFuelCheckingTracker : EHIPausableTracker
-EHIFuelCheckingTracker = class(EHIPausableTracker)
+local EHIFuelCheckingTracker = class(EHIPausableTracker)
 ---@param delay number
 function EHIFuelCheckingTracker:AddDelay(delay)
     self:SetTime(self._time + delay)
 end
 
 ---@class EHIFuelCheckingWaypoint : EHIPausableWaypoint
-EHIFuelCheckingWaypoint = class(EHIPausableWaypoint)
+local EHIFuelCheckingWaypoint = class(EHIPausableWaypoint)
 EHIFuelCheckingWaypoint.AddDelay = EHIFuelCheckingTracker.AddDelay
 
 local EHI = EHI
@@ -15,19 +15,17 @@ local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param trigger ElementTrigger
 local function TransferWP(self, trigger)
     local index = managers.game_play_central:IsMissionUnitDisabled(EHI:GetInstanceUnitID(100087, 9340)) and 9590 or 9340
     local vanilla_wp = EHI:GetInstanceElementID(100019, index)
-    if not self._cache.TransferPosition then
-        self._cache.TransferPosition = self:GetElementPositionOrDefault(vanilla_wp)
-    end
+    self._cache.TransferPosition = self._cache.TransferPosition or self._mission:GetElementPositionOrDefault(vanilla_wp)
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = trigger.element == 102438 and Icon.Wait or Icon.Defend,
         position = self._cache.TransferPosition,
-        class = self._TrackerToWaypoint[trigger.class or ""],
+        class = self._mission._TrackerToWaypoint[trigger.class or ""],
         remove_vanilla_waypoint = vanilla_wp
     })
 end
@@ -35,12 +33,12 @@ end
 ---@type ParseTriggerTable
 local triggers =
 {
-    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class = "EHIFuelCheckingTracker", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+    [103053] = { id = "FuelChecking", icons = { Icon.Wait }, class_table = EHIFuelCheckingTracker, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
         if not enabled then
             return
         end
-        if self:Exists(trigger.id) then
-            self:Unpause(trigger.id)
+        if self._tracking:Exists(trigger.id) then
+            self._tracking:Unpause(trigger.id)
             return
         --[[elseif self:IsMissionElementDisabled(trigger.fix_wp) or self:IsMissionElementEnabled(trigger.success_sequence) then
             trigger.time = 5]] -- Broken for some reason
@@ -52,8 +50,8 @@ local triggers =
         if trigger.waypoint then
             trigger.waypoint.time = trigger.time
         end
-        self:CreateTracker(trigger)
-    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { class = "EHIFuelCheckingWaypoint", data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
+        self:CreateTracker()
+    end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { class_table = EHIFuelCheckingWaypoint, data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
     [103055] = { id = "FuelChecking", special_function = SF.PauseTracker },
     [103070] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; loud
     [103071] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; stealth
@@ -63,17 +61,17 @@ local triggers =
     [102656] = { id = "FuelTransferLoud", icons = { Icon.Oil }, class = TT.Pausable, condition_function = CF.IsLoud, special_function = SF.UnpauseTrackerIfExistsAccurate, element = 101686, waypoint_f = TransferWP, hint = Hints.FuelTransfer },
     [101684] = { id = "FuelTransferLoud", special_function = SF.PauseTracker },
 
-    [101050] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
-        self:Call("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
-        self:Remove("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
+    [101050] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
+        self._tracking:Call("FuelChecking", "AddDelay", 20) -- Add 20s because stealth trigger is now disabled
+        self._tracking:Remove("FuelTransferStealth") -- ElementTimer won't proceed because alarm has been raised, remove it from the screen
         self:UpdateWaypointTriggerIcon(103053, Icon.Defend) -- Cops can turn off the checking device, change the waypoint icon to reflect this
     end), trigger_once = true } -- Alarm
 }
 if EHI.IsClient then
     triggers[102454].client = { time = 60, random_time = 20, special_function = SF.UnpauseTrackerIfExists }
     triggers[102656].client = { time = 100, random_time = 30, special_function = SF.UnpauseTrackerIfExists }
-    triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate, hint = Hints.FuelTransfer }
-    triggers[104930] = { time = 20, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate, hint = Hints.FuelTransfer }
+    triggers[101685] = { time = 80, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate, waypoint_f = TransferWP, hint = Hints.FuelTransfer }
+    triggers[104930] = { time = 20, id = "FuelTransferLoud", icons = { Icon.Oil }, special_function = SF.SetTrackerAccurate, waypoint_f = TransferWP, hint = Hints.FuelTransfer }
 end
 
 ---@type ParseAchievementTable
@@ -146,7 +144,7 @@ EHI:ShowAchievementLootCounter({
     start_silent = true,
     load_sync = function(self)
         if managers.preplanning:IsAssetBought(102474) then
-            self:Trigger(101084)
+            self:RunTrigger(101084)
         end
         self._loot:SyncSecuredLoot("deep_11")
     end,
@@ -159,7 +157,7 @@ EHI:ShowAchievementLootCounter({
     show_loot_counter = true
 })
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

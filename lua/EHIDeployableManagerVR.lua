@@ -1,5 +1,5 @@
 ---@class EHIDeployableManager
-EHIDeployableManagerVR = EHIDeployableManager
+local EHIDeployableManagerVR = ...
 EHIDeployableManagerVR.old_AddToCache = EHIDeployableManager.AddToCache
 EHIDeployableManagerVR.old_LoadFromCache = EHIDeployableManager.LoadFromCache
 EHIDeployableManagerVR.old_RemoveFromCache = EHIDeployableManager.RemoveFromCache
@@ -63,3 +63,5 @@ function EHIDeployableManagerVR:UpdateAmount(key, amount, id, t_id)
     end
     self:old_UpdateAmount(key, amount, id, t_id)
 end
+
+return EHIDeployableManagerVR

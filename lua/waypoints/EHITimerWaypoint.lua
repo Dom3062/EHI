@@ -21,7 +21,6 @@ function EHITimerWaypoint:post_init(params)
     end
 end
 
----@param t number
 function EHITimerWaypoint:SetTime(t)
     if self._time == t then
         return
@@ -89,9 +88,55 @@ function EHITimerWaypoint:SetAutorepair(state)
         if state then
             self:AnimateColor(nil, self._autorepair_color, self._paused_color)
         end
-        return
     elseif not self._anim_started then
         self._gui:stop()
         self:SetColor()
     end
+end
+
+---Workaround for crashes in `TimerGui:update(t, dt)`
+---Class is updated in `HUDManager:add_updator()` as this is a unit
+---@class EHITimerGuiWaypoint : EHITimerWaypoint
+---@field super EHITimerWaypoint
+EHITimerGuiWaypoint = class(EHITimerWaypoint)
+function EHITimerGuiWaypoint:post_init(params)
+    EHITimerGuiWaypoint.super.post_init(self, params)
+    self._timer_gui = params.timer_gui --[[@as TimerGui]]
+    self._callback_id = "ehi_waypoint_" .. self._id
+    self._update_callback = callback(self, self, "update")
+    self:AddWaypointToUpdate()
+end
+
+---@param dt number
+function EHITimerGuiWaypoint:update(_, dt)
+    local dt_mod = self._timer_gui:get_timer_multiplier()
+    self._time = self._time - dt / dt_mod
+    local t = self._time * dt_mod
+    self._gui:set_text(self:FormatTime(t))
+    if t <= 10 and self._warning and not self._anim_started then
+        self._anim_started = true
+        self:AnimateColor()
+    end
+end
+
+function EHITimerGuiWaypoint:SetColorBasedOnStatus()
+    EHITimerGuiWaypoint.super.SetColorBasedOnStatus(self)
+    if self._jammed or self._not_powered then
+        self:RemoveWaypointFromUpdate()
+    else
+        self:AddWaypointToUpdate()
+    end
+end
+
+function EHITimerGuiWaypoint:AddWaypointToUpdate()
+    managers.hud:add_updator(self._callback_id, self._update_callback)
+end
+
+function EHITimerGuiWaypoint:RemoveWaypointFromUpdate()
+    managers.hud:remove_updator(self._callback_id)
+end
+
+function EHITimerGuiWaypoint:destroy()
+    self:RemoveWaypointFromUpdate()
+    EHITimerGuiWaypoint.super.destroy(self)
 end

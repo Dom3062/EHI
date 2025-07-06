@@ -22,3 +22,29 @@ function EHIMeleeChargeBuffTracker:Activate(...)
     EHIMeleeChargeBuffTracker.super.Activate(self, ...)
     self._hint:set_text(self:Format())
 end
+
+---@class EHIPersistentMeleeChargeBuffTracker : EHIMeleeChargeBuffTracker
+---@field super EHIMeleeChargeBuffTracker
+EHIPersistentMeleeChargeBuffTracker = class(EHIMeleeChargeBuffTracker)
+function EHIPersistentMeleeChargeBuffTracker:Extend(...)
+    EHIPersistentMeleeChargeBuffTracker.super.Extend(self, ...)
+    self._parent_class:_add_buff_to_update(self)
+end
+
+function EHIPersistentMeleeChargeBuffTracker:Deactivate()
+    self._parent_class:_remove_buff_from_update(self._id)
+end
+
+function EHIPersistentMeleeChargeBuffTracker:DeactivateAndReset()
+    self:Deactivate()
+    self._text:set_text("0%")
+    self._hint:set_text("")
+    self._progress_bar.red = 0
+    self._progress:set_color(self._progress_bar)
+end
+
+function EHIPersistentMeleeChargeBuffTracker:PreUpdate()
+    self._parent_class:AddBuffNoUpdate(self._id)
+    self._active = true
+    self._text:set_text("0%")
+end

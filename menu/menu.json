@@ -209,7 +209,10 @@
             "title": "ehi_visuals_menu",
             "description": "ehi_visuals_menu_desc",
             "next_menu": "ehi_visuals_menu",
-            "ehi_ver" : 237
+            "ehi_ver" : 237,
+            "load_menu" : {
+                "file_path": "visuals.json"
+            }
         },
         {
             "type" : "divider",
@@ -222,7 +225,10 @@
             "description": "ehi_shared_menu_desc",
             "next_menu": "ehi_shared_menu",
             "ehi_ver" : 314,
-            "parent_func" : "IsSharedMenuEnabled"
+            "parent_func" : "IsSharedMenuEnabled",
+            "load_menu" : {
+                "file_path" : "shared.json"
+            }
         },
         {
             "table" : [
@@ -244,7 +250,10 @@
                     "description": "ehi_trackers_menu_desc",
                     "next_menu": "ehi_trackers_menu",
                     "parent" : "ehi_show_trackers_choice",
-                    "ehi_ver" : 318
+                    "ehi_ver" : 325,
+                    "load_menu" : {
+                        "file_path" : "trackers.json"
+                    }
                 }
             ]
         },
@@ -269,7 +278,10 @@
                     "description": "ehi_waypoints_menu_desc",
                     "next_menu": "ehi_waypoints_menu",
                     "parent" : "ehi_show_waypoints_choice",
-                    "ehi_ver" : 231
+                    "ehi_ver" : 325,
+                    "load_menu" : {
+                        "file_path" : "waypoints.json"
+                    }
                 }
             ]
         },
@@ -294,7 +306,10 @@
                     "description": "ehi_buffs_menu_desc",
                     "next_menu": "ehi_buffs_menu",
                     "parent" : "ehi_show_buffs_choice",
-                    "ehi_ver" : 319
+                    "ehi_ver" : 325,
+                    "load_menu" : {
+                        "file_path" : "buffs.json"
+                    }
                 }
             ]
         },
@@ -302,9 +317,11 @@
             "type": "button",
             "id": "ehi_inventory_menu",
             "title": "ehi_inventory_menu",
-            "description": "ehi_inventory_menu_desc",
             "next_menu": "ehi_inventory_menu",
-            "ehi_ver" : 112
+            "ehi_ver" : 112,
+            "load_menu" : {
+                "file_path" : "inventory.json"
+            }
         },
         {
             "type": "button",
@@ -312,7 +329,10 @@
             "title": "ehi_other_menu",
             "description": "ehi_other_menu_desc",
             "next_menu": "ehi_other_menu",
-            "ehi_ver" : 319
+            "ehi_ver" : 325,
+            "load_menu" : {
+                "file_path" : "other.json"
+            }
         },
         {
             "type": "button",
@@ -320,7 +340,11 @@
             "title": "ehi_colors_menu",
             "description": "ehi_colors_menu_desc",
             "next_menu": "ehi_colors_menu",
-            "ehi_ver" : 279
+            "ehi_ver" : 279,
+            "load_menu" : {
+                "file_path" : "colors.json",
+                "settings" : "colors"
+            }
         },
         {
             "type" : "divider",

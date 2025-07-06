@@ -27,6 +27,7 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
             time = t,
             icons = { "camera_loop" },
             hint = "looped_camera",
+            remove_on_alarm = true,
             class = EHI.Trackers.Warning
         })
     end
@@ -35,6 +36,7 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
             time = t,
             icon = "camera_loop",
             unit = self._unit,
+            remove_on_alarm = true,
             class = EHI.Waypoints.Warning
         })
     end
@@ -42,10 +44,10 @@ end
 
 function SecurityCamera:_deactivate_tape_loop(...)
     original._deactivate_tape_loop(self, ...)
-    managers.ehi_manager:Remove(self._ehi_key)
+    managers.ehi_tracking:Remove(self._ehi_key)
 end
 
 function SecurityCamera:destroy(...)
-    managers.ehi_manager:Remove(self._ehi_key)
+    managers.ehi_tracking:Remove(self._ehi_key)
     original.destroy(self, ...)
 end

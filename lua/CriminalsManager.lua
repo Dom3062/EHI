@@ -11,6 +11,7 @@ end
 ---@field _characters CriminalsManager.CharacterData[]
 ---@field character_by_name fun(self: self, name: string): CriminalsManager.CharacterData?
 ---@field character_color_id_by_unit fun(self: self, unit: UnitPlayer|UnitTeamAI): number?
+---@field character_peer_id_by_name fun(self: self, name: string): number?
 ---@field character_peer_id_by_unit fun(self: self, unit: UnitPlayer|UnitTeamAI): number?
 
 if EHI:IsRunningBB() then
@@ -18,7 +19,7 @@ if EHI:IsRunningBB() then
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai then
             managers.ehi_experience:IncreaseAlivePlayers()
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount", managers.ehi_experience:CurrentAlivePlayers())
+            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
         end
     end)
     Hooks:PostHook(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit",
@@ -28,14 +29,14 @@ if EHI:IsRunningBB() then
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai and not unit:base().is_local_player then
             managers.ehi_experience:IncreaseAlivePlayers()
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount", managers.ehi_experience:CurrentAlivePlayers())
+            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
         end
     end)
     Hooks:PreHook(CriminalsManager, "_remove", "EHI_CriminalsManager_remove", function(self, id) ---@param id number
         local char_data = self._characters[id]
         if char_data.data.ai then
             managers.ehi_experience:DecreaseAlivePlayers()
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount", managers.ehi_experience:CurrentAlivePlayers())
+            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
         end
     end)
 elseif EHI:IsRunningUsefulBots() then

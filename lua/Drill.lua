@@ -26,7 +26,7 @@ local original = {}
 ---@param unit_key string
 ---@param autorepair boolean
 local function SetAutorepair(unit_key, autorepair)
-    managers.ehi_manager:SetTimerAutorepair(unit_key, autorepair)
+    managers.ehi_timer:SetAutorepair(unit_key, autorepair)
 end
 
 if EHI.IsHost then

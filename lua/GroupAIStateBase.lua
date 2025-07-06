@@ -3,29 +3,6 @@ if EHI:CheckLoadHook("GroupAIStateBase") then
     return
 end
 
----@class GroupAIStateBase
----@field _converted_police table
----@field _drama_data { amount: number }
----@field _enemy_weapons_hot number
----@field _hostage_headcount number
----@field _hunt_mode boolean
----@field _nr_successful_alarm_pager_bluffs number
----@field _police table
----@field _police_hostage_headcount number
----@field _t number
----@field _task_data table
----@field _teams table
----@field add_listener fun(self: self, key: string, events: string|string[], clbk: function)
----@field amount_of_winning_ai_criminals fun(self: self): number
----@field assault_phase_end_time fun(self: self): number?
----@field get_amount_enemies_converted_to_criminals fun(self: self): number
----@field _get_balancing_multiplier fun(self: self, balance_multipliers: number[]): number
----@field hostage_count fun(self: self): number
----@field is_unit_team_AI fun(self: self, unit: UnitObject): boolean
----@field police_hostage_count fun(self: self): number
----@field remove_listener fun(self: self, key: string)
----@field whisper_mode fun(self: self): boolean
-
 local dropin = false
 local original =
 {
@@ -46,26 +23,23 @@ function GroupAIStateBase:init(...)
     end)
     if EHI:GetOption("show_minion_health") then
         self.__ehi_minion_health_events = table.exclude(CopDamage._all_event_types, "death") -- "death" event is already handled in a different callback
-        if not next(self.__ehi_minion_health_events) then -- If, for some reason, the table is empty, disable the callback
-            self.__ehi_minion_health_events = nil
-        end
     end
     self.__ehi_color_minions_to_owner = EHI:GetOption("show_minion_colored_to_owner")
 end
 
 function GroupAIStateBase:on_successful_alarm_pager_bluff(...) -- Called by host
     original.on_successful_alarm_pager_bluff(self, ...)
-    managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi_tracker:SetProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
     managers.ehi_tracker:SetChancePercent("PagersChance", tweak_data.player.alarm_pager.bluff_success_chance_w_skill[self._nr_successful_alarm_pager_bluffs + 1] or 0)
 end
 
 function GroupAIStateBase:sync_alarm_pager_bluff(...) -- Called by client
     original.sync_alarm_pager_bluff(self, ...)
-    managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
+    managers.ehi_tracker:SetProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
 end
 
 function GroupAIStateBase:load(...)
-    dropin = managers.ehi_manager:GetDropin()
+    dropin = managers.ehi_sync:IsDropIn()
     original.load(self, ...)
     if self._enemy_weapons_hot then
         EHI:RunOnAlarmCallbacks(dropin)
@@ -77,7 +51,7 @@ function GroupAIStateBase:load(...)
             managers.ehi_assault:CallAssaultTypeChangedCallback("endless", 0)
         end
     else
-        managers.ehi_tracker:SetTrackerProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
+        managers.ehi_tracker:SetProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
 	end
 end
 
@@ -85,18 +59,18 @@ if not tweak_data.levels:IsStealthRequired() then
     if EHI:ShowDramaTracker() then
         local assault_mode = "normal"
         local function Create()
-            if managers.ehi_tracker:TrackerExists("Drama") then
+            if managers.ehi_tracker:Exists("Drama") then
                 return
             end
             managers.ehi_tracker:AddTracker({
                 id = "Drama",
+                chance = math.ehi_round_chance(managers.groupai:state()._drama_data.amount),
                 icons = { "C_Escape_H_Street_Bullet" },
                 disable_anim = true,
                 flash_bg = false,
                 hint = "drama",
                 class = EHI.Trackers.Chance
-            }, managers.ehi_assault:TrackerExists() and 1 or 0)
-            managers.ehi_tracker:SetChance("Drama", managers.groupai:state()._drama_data.amount, 2)
+            }, managers.ehi_assault:Exists() and 1 or 0)
         end
         original._add_drama = GroupAIStateBase._add_drama
         function GroupAIStateBase:_add_drama(...)
@@ -104,15 +78,15 @@ if not tweak_data.levels:IsStealthRequired() then
             managers.ehi_tracker:SetChance("Drama", self._drama_data.amount, 2)
         end
         EHI:AddOnAlarmCallback(Create)
-        EHIAssaultManager:AddAssaultTypeChangedCallback(function(mode, element_id)
+        managers.ehi_assault:AddAssaultTypeChangedCallback(function(mode, element_id)
             if mode == "endless" then
                 managers.ehi_tracker:RemoveTracker("Drama")
-            elseif managers.ehi_tracker:TrackerDoesNotExist("Drama") then
+            elseif managers.ehi_tracker:DoesNotExist("Drama") then
                 Create()
             end
             assault_mode = mode
         end)
-        EHIAssaultManager:AddAssaultModeChangedCallback(function(mode)
+        managers.ehi_assault:AddAssaultModeChangedCallback(function(mode)
             if mode == "normal" and assault_mode == "endless" then
                 assault_mode = "normal"
                 Create()
@@ -124,12 +98,12 @@ if not tweak_data.levels:IsStealthRequired() then
         if EHI:GetOption("show_minion_option") ~= 2 then
             EHI:LoadTracker("EHIMinionTracker")
             local minion_class = (EHI:GetOption("show_minion_option") == 1 and EHI:GetOption("show_minion_health")) and "EHIMinionHealthOnlyTracker" or "EHIMinionTracker"
-            ---@param key string
+            ---@param key userdata
             ---@param amount number
             ---@param peer_id number
             ---@param local_peer boolean?
             UpdateTracker = function(key, amount, peer_id, local_peer)
-                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount > 0 then
+                if managers.ehi_tracker:DoesNotExist("Converts") and amount > 0 then
                     managers.ehi_tracker:AddTracker({
                         id = "Converts",
                         class = minion_class
@@ -147,12 +121,12 @@ if not tweak_data.levels:IsStealthRequired() then
                 minion_class = "EHITotalMinionTracker"
                 EHI:LoadTracker("EHIMinionTracker")
             end
-            ---@param key string
+            ---@param key userdata
             ---@param amount number
             ---@param peer_id number
             ---@param local_peer boolean?
             UpdateTracker = function(key, amount, peer_id, local_peer)
-                if managers.ehi_tracker:TrackerDoesNotExist("Converts") and amount > 0 then
+                if managers.ehi_tracker:DoesNotExist("Converts") and amount > 0 then
                     managers.ehi_tracker:AddTracker({
                         id = "Converts",
                         dont_show_placed = true,
@@ -189,7 +163,7 @@ if not tweak_data.levels:IsStealthRequired() then
     end
     if EHI:GetTrackerOption("show_marshal_initial_time") then
         EHI:AddOnAlarmCallback(function(drop)
-            if drop then
+            if drop or EHI._cache.PlayingDevMap then
                 return
             end
             local level_data = tweak_data.levels[Global.game_settings.level_id] or {}
@@ -220,8 +194,7 @@ if EHI:GetOption("show_minion_killed_message") then
     local function GameEnd()
         game_is_running = false
     end
-    EHI:AddCallback(EHI.CallbackMessage.GameRestart, GameEnd)
-    EHI:AddCallback(EHI.CallbackMessage.GameEnd, GameEnd)
+    EHI:AddEndGameCallback(GameEnd)
     EHI:AddCallback(EHI.CallbackMessage.MissionEnd, GameEnd)
     EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
         if game_is_running and local_peer then
@@ -313,38 +286,38 @@ function GroupAIStateBase:remove_minion(minion_key, ...)
     original.remove_minion(self, minion_key, ...)
 end
 
-if EHI.IsHost and EHI:CanShowCivilianCountTracker() and EHI:GetOption("civilian_count_tracker_format") >= 2 then
+if EHI.IsHost and (EHI:CanShowCivilianCountTracker() and EHI:GetOption("civilian_count_tracker_format") >= 2) then
     original.on_civilian_tied = GroupAIStateBase.on_civilian_tied
     function GroupAIStateBase:on_civilian_tied(u_key, ...)
         original.on_civilian_tied(self, u_key, ...)
-        managers.ehi_tracker:CallFunction("CivilianCount", "CivilianTied", tostring(u_key))
+        managers.ehi_tracker:CallFunction("CivilianCount", "CivilianTied", u_key)
     end
 end
 
-if EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
+if EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") and not tweak_data.levels:IsLevelSafehouse() then
     if EHI.IsHost then
         original.on_hostage_state = GroupAIStateBase.on_hostage_state
-        function GroupAIStateBase:on_hostage_state(state, key, police, ...)
+        function GroupAIStateBase:on_hostage_state(...)
             local original_count = self._hostage_headcount
-            original.on_hostage_state(self, state, key, police, ...)
+            original.on_hostage_state(self, ...)
             if original_count ~= self._hostage_headcount then
-                managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount, self._police_hostage_headcount)
+                managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountHost", self._hostage_headcount, self._police_hostage_headcount)
             end
         end
     else
         original.sync_hostage_headcount = GroupAIStateBase.sync_hostage_headcount
         function GroupAIStateBase:sync_hostage_headcount(...)
             original.sync_hostage_headcount(self, ...)
-            managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount)
+            managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountClient", self._hostage_headcount)
         end
     end
     EHI:AddOnSpawnedCallback(function()
+        local ai_state = managers.groupai:state()
         managers.ehi_tracker:AddTracker({
             id = "HostageCount",
+            total_hostages = ai_state:hostage_count(),
+            police_hostages = EHI.IsHost and ai_state:police_hostage_count(),
             class = "EHIHostageCountTracker"
         })
-        local ai_state = managers.groupai:state()
-        local police = EHI.IsHost and ai_state:police_hostage_count()
-        managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", ai_state:hostage_count(), police)
     end)
 end

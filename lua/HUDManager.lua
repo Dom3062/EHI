@@ -11,6 +11,7 @@ local original =
 }
 
 ---@class HUDManager
+---@field new fun(): self
 ---@field _hud { waypoints: table<string|number, Waypoint>, ehi_removed_waypoints: table<string, true>, stored_waypoints: table<string|number, WaypointInitData> }
 ---@field _hud_hint table HUDHint class
 ---@field _hud_heist_timer HUDHeistTimer
@@ -24,7 +25,16 @@ local original =
 ---@field script fun(self: self, name: string): { panel: Panel }
 ---@field custom_ingame_popup_text fun(self: self, title: string?, text: string, icon_id: string?)
 ---@field show_hint fun(self: self, params: table)
----@field make_fine_text fun(self: self, text: PanelText)
+---@field make_fine_text fun(self: self, text: Text)
+---@field show_interaction_bar fun(self: self, current: number, total: number)
+---@field set_interaction_bar_width fun(self: self, current: number, total: number)
+---@field hide_interaction_bar fun(self: self, complete: boolean?)
+
+---@param id number
+---@return WaypointInitData?
+function HUDManager:GetStoredWaypointData(id)
+    return self._hud.stored_waypoints[id]
+end
 
 ---@param id number|string
 ---@param params WaypointInitData

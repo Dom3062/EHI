@@ -58,9 +58,13 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102855] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102862 } }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[101176] = { time = 24 + 9 + 2, id = "Snipers", class = TT.Sniper.Warning }
+    local class = EHI.TrackerUtils:EnableSniperClassTracking(TT.Sniper.TimedCountOnce, TT.Sniper.Warning)
+    other[101152] = { time = 5 + 24 + 10 + 2, id = "Snipers", class = class } -- Heli
+    other[101153] = { time = 40 + 24 + 10 + 2, id = "Snipers", class = class } -- Heli
+    other[101154] = { time = 25 + 24 + 10 + 2, id = "Snipers", class = class } -- Heli
+    other[101176] = { time = 24 + 9 + 2, id = "Snipers", class = class } -- Heli 2
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

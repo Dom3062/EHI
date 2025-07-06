@@ -8,7 +8,10 @@
             "id": "ehi_trackers_next_menu",
             "title": "ehi_menu_next_page",
             "next_menu": "ehi_trackers_2_menu",
-            "ehi_ver" : 318
+            "ehi_ver" : 318,
+            "load_menu" : {
+                "file_path" : "trackers_2.json"
+            }
         },
         {
             "type": "divider",
@@ -23,7 +26,20 @@
             "callback_arguments": "show_mission_trackers",
             "focus_changed_callback" : "SetFocus",
             "value": "show_mission_trackers",
-            "default_value": true
+            "default_value": true,
+            "is_parent": true
+        },
+        {
+            "type": "toggle",
+            "id": "show_mission_trackers_cheaty_choice",
+            "title": "ehi_show_mission_trackers_cheaty",
+            "description": "ehi_show_mission_trackers_cheaty_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_mission_trackers_cheaty",
+            "value": "show_mission_trackers_cheaty",
+            "default_value": true,
+            "parent": "ehi_show_mission_trackers_choice",
+            "ehi_ver" : 325
         },
         {
             "type": "divider",
@@ -49,7 +65,11 @@
             "description": "ehi_unlockables_menu_desc",
             "next_menu": "ehi_unlockables_menu",
             "parent": "ehi_show_unlockables_choice",
-            "ehi_ver" : 84
+            "ehi_ver" : 84,
+            "load_menu" : {
+                "file_path" : "unlockables.json",
+                "settings" : "unlockables"
+            }
         },
         {
             "type": "divider",

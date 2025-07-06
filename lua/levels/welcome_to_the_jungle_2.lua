@@ -18,8 +18,8 @@ local triggers = {
     [100266] = { time = 30 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Wait },
     [100271] = { time = 45 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Wait },
     [100273] = { time = 60 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Wait },
-    [103319] = { time = 75 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Wait },
-    [100265] = { time = 45 + 75 + inspect, id = "Inspect", icons = { Icon.Wait }, hint = Hints.Wait },
+    [103319] = { time = 75 + inspect, id = "Inspect", icons = { Icon.Wait }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Wait },
+    [100265] = { time = 45 + 75 + inspect, id = "Inspect", icons = { Icon.Wait }, hint = Hints.Wait, class = EHI.Trackers.TimePreSync },
 
     -- Heli escape
     [100898] = { time = 15 + escape, id = "HeliEscape", icons = Icon.HeliEscapeNoLoot, hint = Hints.Escape, waypoint = { icon = Icon.Escape, position_from_element = 100896 } },
@@ -29,11 +29,11 @@ local triggers = {
 }
 if EHI:GetWaypointOption("show_waypoints_mission") then
     if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) then -- ´disable_2nd_helicopter´ ElementFilter 104393
-        local SetWaypoints = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+        local SetWaypoints = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
             if self._cache.wttj2_flare_set then
                 return
             end
-            local element_vector = self:GetElementPositionOrDefault(trigger.element)
+            local element_vector = self._mission:GetElementPositionOrDefault(trigger.element)
             local EngineLootDropWP = { icon = Icon.LootDrop, position = element_vector }
             self:AddWaypointToTrigger(103132, EngineLootDropWP)
             self:AddWaypointToTrigger(103130, EngineLootDropWP)
@@ -58,11 +58,11 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
             triggers[104423] = { special_function = SetWaypoints, element = 100001 }
             triggers[100014] = { special_function = SetWaypoints, element = 104408 }
         end
-        EHI.Manager:AddLoadSyncFunction(function(self)
+        EHI.Trigger:AddLoadSyncFunction(function(self)
             if managers.environment_effects._mission_effects[100014] then
-                self:Trigger(100005)
+                self:RunTrigger(100005)
             elseif managers.environment_effects._mission_effects[104423] then
-                self:Trigger(104416)
+                self:RunTrigger(104416)
             end
         end)
     else
@@ -90,7 +90,7 @@ local other =
     [100531] = EHI:AddAssaultDelay({ control = 35 })
 }
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     [103320] = { remove_vanilla_waypoint = 100309 },

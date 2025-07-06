@@ -12,7 +12,20 @@
             "callback_arguments": [ "gambler", "regain_health_cooldown" ],
             "value": "regain_health_cooldown",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_gambler_regain_health_cooldown_persistent_choice",
+            "title": "ehi_buffs_perks_gambler_regain_health_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "gambler", "regain_health_cooldown_persistent" ],
+            "value": "regain_health_cooldown_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_gambler_regain_health_cooldown_choice",
+            "ehi_ver" : 325
         },
         {
             "type": "toggle",
@@ -23,7 +36,20 @@
             "callback_arguments": [ "gambler", "ammo_give_out_cooldown" ],
             "value": "ammo_give_out_cooldown",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_persistent_choice",
+            "title": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "gambler", "ammo_give_out_cooldown_persistent" ],
+            "value": "ammo_give_out_cooldown_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_choice",
+            "ehi_ver" : 325
         }
     ]
 }

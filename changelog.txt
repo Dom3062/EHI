@@ -1,3 +1,33 @@
+r325 (06. 07. 2025):
+Any related code to Buffs will load only if Buffs are enabled
+Added options:
+- Show Mission Trackers - Remember or Find Information
+- Show Waypoints For Heist Elements - Remember or Find Information
+- Show reload as interact
+- Show melee as interact
+- Show end game stats
+- (Health) Color buff based on damage from Snipers
+- (Health) Color buff based on damage from ZEAL Heavy SWAT on Death Sentence
+Added (changeable) persistent state to almost every buff
+Added buffs for Yakuza
+Code cleanup and reorganization
+Fixed logic issues with Assault Delay removing Enemy Counter
+Optimization improvements
+Assault Diff: Updated icon
+Assault trackers: Optimization in memory used and code logic
+Berserker Buff: Fixed an issue where the buff did not update correctly with Yakuza perk deck equipped
+Buffs: Added an option to change their color based on their action in the game
+Buffs: Fixed an issue where Damage Reduction buff could get stuck in other buffs
+Buffs: Various tweaks and adjustments
+Damage Reduction Buff: Made the value rounded to make it more readable
+Menu: Optimized opening the menu for the first time
+Menu: Sub-menus are loaded on-demand (saves memory)
+Menu: Added ability to preview certain features in the menu (not possible in VR)
+Reload Buff: Fixed an issue where interuptable reload is not reflected in the buff
+Brooklyn 10-10: Fixed overlapping waypoints at the end
+Firestarter Day 2: Added tracker for achievement "Guessing Game"
+Watchdogs Day 2: Fixed an issue where taking hostage at start does not increase assault break time
+
 r324 (30. 06. 2025):
 Brooklyn 10-10: Fixed overlapping waypoints at the end
 Reservoir Dogs Day 2: Fixed for real issues with escape waypoints
@@ -65,7 +95,7 @@ Fixed an issue where hidden Poco Health Floats would be briefly visible after fi
 r311 (24. 02. 2025):
 Fixed another instance of trackers or waypoints not updating correctly
 Menu: Fixed child options not correctly enabled if parent is enabled
-Menu: Fixed trackers not updating visibility when "Show Trackers" option is switched
+Menu: Fixed trackers not updating visibility when "Show Trackers" option is toggled
 
 r310 (21. 02. 2025):
 Fixed a crash in ECM Jammer

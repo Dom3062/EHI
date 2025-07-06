@@ -41,7 +41,7 @@ if EHI.IsHost then
             "spawn_loot_crap_d"
         }
     }
-    ---@param self EHIManager
+    ---@param self EHIMissionElementTrigger
     ---@param truck_id number
     local function IncreaseMax(self, truck_id)
         self._loot:SyncIncreaseLootCounterMaxRandom(9)
@@ -63,27 +63,27 @@ if EHI.IsHost then
         }
     }, { element = { EHI:GetInstanceElementID(100037, 4650), EHI:GetInstanceElementID(100037, 4850) }, present_timer = 0 })
 else
-    ---@param self EHIManager
+    ---@param self EHIMissionElementTrigger
     ---@param trigger ElementTrigger
     local function WP(self, trigger)
         if self._waypoints:WaypointDoesNotExist("LiquidNitrogen") then
             self._waypoints:AddWaypoint("LiquidNitrogen", {
                 time = trigger.time - 10,
                 icon = Icon.LiquidNitrogen,
-                position = self:GetElementPositionOrDefault(100941)
+                position = self._mission:GetElementPositionOrDefault(100941)
             })
         end
         if self._waypoints:WaypointDoesNotExist("HeliC4") then
             self._waypoints:AddWaypoint("HeliC4", {
                 time = trigger.time,
                 icon = Icon.C4,
-                position = self:GetElementPositionOrDefault(100943)
+                position = self._mission:GetElementPositionOrDefault(100943)
             })
         end
     end
     triggers[101366] = { additional_time = 5 + 40, random_time = 10, id = "VaultTeargas", icons = { Icon.Teargas }, hint = Hints.Teargas }
-    local LiquidNitrogen = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-        if self._trackers:TrackerDoesNotExist("LiquidNitrogen") then
+    local LiquidNitrogen = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        if self._trackers:DoesNotExist("LiquidNitrogen") then
             self._trackers:AddTracker({
                 id = "LiquidNitrogen",
                 time = trigger.time - 10,
@@ -91,7 +91,7 @@ else
                 hint = Hints.rvd2_LiquidNitrogen
             })
         end
-        if self._trackers:TrackerDoesNotExist("HeliC4") then
+        if self._trackers:DoesNotExist("HeliC4") then
             self._trackers:AddTracker({
                 id = "HeliC4",
                 time = trigger.time,
@@ -118,7 +118,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,
     sync_triggers = { element = element_sync_triggers }

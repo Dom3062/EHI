@@ -7,7 +7,7 @@ local infamy_pool = ""
 local next_level = ""
 local _100_in = ""
 local _xp = ""
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, lang_name)
+EHI:AddOnLocalizationLoaded(function(loc, lang_name)
     infamy_pool = loc:text("ehi_experience_infamy_pool")
     next_level = loc:text("ehi_experience_next_level")
     _100_in = loc:text("ehi_experience_100_in")
@@ -26,11 +26,11 @@ function WalletGuiObject.ehi_get_remaining_level()
         else
             s = string.format(", %s %s %s", infamy_pool, xp:experience_string(ehi_xp._xp.prestige_xp_remaining), _xp)
         end
-    elseif to_100_left then -- calculate total XP to 100
+    elseif to_100_left and ehi_xp._xp.level_xp_to_100 > 0 then -- calculate total XP to 100
         local xpToNextText = xp:experience_string(ehi_xp._xp.level_xp_to_next_level)
         local xpTo100Text = xp:experience_string(ehi_xp._xp.level_xp_to_100)
         s = string.format(", %s %s %s, %s %s %s", next_level, xpToNextText, _xp, _100_in, xpTo100Text, _xp)
-    else
+    elseif ehi_xp._xp.level_xp_to_next_level > 0 then
         s = string.format(", %s %s %s", next_level, xp:experience_string(ehi_xp._xp.level_xp_to_next_level), _xp)
     end
     return s, tostring(xp:current_level())
@@ -41,14 +41,14 @@ function WalletGuiObject.refresh(...)
     refresh(...)
     if Global.wallet_panel then
         local s, current_level = WalletGuiObject.ehi_get_remaining_level()
-        local level_text = Global.wallet_panel:child("wallet_level_text") --[[@as PanelText]]
+        local level_text = Global.wallet_panel:child("wallet_level_text") --[[@as Text]]
         level_text:set_text(current_level .. s)
         local _, _, w, h = level_text:text_rect()
         level_text:set_size(w, h)
         level_text:set_position(math.round(level_text:x()), math.round(level_text:y()))
         if not _G.ch_settings then
-            local skillpoint_icon = Global.wallet_panel:child("wallet_skillpoint_icon") --[[@as PanelBitmap]]
-            local skillpoint_text = Global.wallet_panel:child("wallet_skillpoint_text") --[[@as PanelText]]
+            local skillpoint_icon = Global.wallet_panel:child("wallet_skillpoint_icon") --[[@as Bitmap]]
+            local skillpoint_text = Global.wallet_panel:child("wallet_skillpoint_text") --[[@as Text]]
             skillpoint_icon:set_leftbottom(level_text:right() + 10, Global.wallet_panel:h() - 2)
             skillpoint_text:set_left(skillpoint_icon:right() + 2)
             WalletGuiObject.refresh_blur()

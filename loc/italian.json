@@ -11,9 +11,6 @@
     "ehi_language_desc" : "Cambia la lingua della mod. È necessario un caricamento per rendere effettive le modifiche.",
     "ehi_language_1" : "Rileva automaticamente",
  
-    "ehi_r" : "Rosso",
-    "ehi_g" : "Verde",
-    "ehi_b" : "Blu",
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Ripristina Colore",
  
@@ -203,5 +200,9 @@
     "ehi_show_waypoints_pager_desc" : "Mostra un punto di riferimento sui cercapersone a cui è necessario rispondere",
  
     "ehi_show_waypoints_cameras" : "Mostra Punto di Riferimento per le Telecamere in Loop",
-    "ehi_show_waypoints_cameras_desc" : "Mostra un punto di riferimento su una telecamera che è attualmente in loop"
+    "ehi_show_waypoints_cameras_desc" : "Mostra un punto di riferimento su una telecamera che è attualmente in loop",
+
+    "ehi_buffs_group_color_red" : "Rosso",
+    "ehi_buffs_group_color_green" : "Verde",
+    "ehi_buffs_group_color_blue" : "Blu"
 }

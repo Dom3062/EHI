@@ -1,11 +1,20 @@
-if EHI:CheckLoadHook("GageModifierMeleeInvincibility") or not (EHI:GetOption("show_buffs") and EHI:GetBuffDeckOption("gage_boosts", "melee_invulnerability")) then
+if EHI:CheckLoadHook("GageModifierMeleeInvincibility") or not EHI:GetBuffDeckAndOption("gage_boosts", "melee_invulnerability") then
     return
 end
 
 tweak_data.ehi.buff.GageModifierMeleeInvincibility =
 {
     texture = "guis/dlcs/cee/textures/pd2/crime_spree/boosts_atlas",
-    texture_rect = tweak_data.hud_icons.csb_melee.texture_rect
+    texture_rect = tweak_data.hud_icons.csb_melee.texture_rect,
+    permanent =
+    {
+        deck_option =
+        {
+            deck = "gage_boosts",
+            option = "melee_invulnerability_persistent"
+        },
+        show_on_trigger = true
+    }
 }
 
 local original = GageModifierMeleeInvincibility.OnPlayerManagerKillshot

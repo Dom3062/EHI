@@ -5,13 +5,13 @@ local TT = EHI.Trackers
 ---@type ParseAchievementTable
 local achievements = nil
 local other = {}
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 local function LootCounterSyncFunction(self)
     local max_reduction = 0
-    if self:IsMissionElementDisabled(104285) then
+    if self._utils:IsMissionElementDisabled(104285) then
         max_reduction = max_reduction + 1
     end
-    if self:IsMissionElementDisabled(104286) then
+    if self._utils:IsMissionElementDisabled(104286) then
         max_reduction = max_reduction + 1
     end
     self._loot:DecreaseLootCounterProgressMax(max_reduction)
@@ -36,14 +36,13 @@ if Global.game_settings.level_id == "gallery" then
                 [104288] = { special_function = SF.SetAchievementComplete },
                 [104290] = { special_function = SF.SetAchievementFailed }, -- Alarm
                 [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
-            },
-            sync_params = { from_start = true }
+            }
         }
     }
     if TheFixes then
         local Preventer = TheFixesPreventer or {}
         if not Preventer.achi_masterpiece then -- Fixed
-            achievements.cac_19.cleanup_callback = EHIUnlockableManager:AddTFCallback("cac_19", "EHI_ArtGallery_TheFixes")
+            achievements.cac_19.cleanup_callback = managers.ehi_unlockable:AddTFCallback("cac_19", "EHI_ArtGallery_TheFixes")
         end
     end
 
@@ -70,7 +69,7 @@ else -- Framing Frame Day 1
         load_sync = function(self)
             if self.ConditionFunctions.IsLoud() then
                 return
-            elseif self:IsMissionElementDisabled(104285) or self:IsMissionElementDisabled(104286) then
+            elseif self._utils:IsMissionElementDisabled(104285) or self._utils:IsMissionElementDisabled(104286) then
                 self._trackers:CallFunction("pink_panther", "SetFailed2")
                 return
             end
@@ -90,7 +89,7 @@ else -- Framing Frame Day 1
         other[100905] = EHI:AddEscapeChance(25, true)
         if EHI.IsClient then
             EHI:AddOnAlarmCallback(function(dropin)
-                managers.ehi_escape:AddChanceWhenDoesNotExists(dropin, 25)
+                managers.ehi_escape:AddEscapeChanceTrackerAndCheckPreplanning(dropin, 25, 104159)
             end)
         end
     end
@@ -106,7 +105,7 @@ end
 
 other[100788] = EHI:AddAssaultDelay({ time = 30 + 1 + 20 + 1 }) -- Game forces endless assault and then kills it a second later
 
-EHI.Manager:ParseTriggers({ achievement = achievements, other = other, assault = { wave_move_elements_block = { 100352, 100353 } } })
+EHI.Mission:ParseTriggers({ achievement = achievements, other = other, assault = { wave_mode_elements_block = { 100352, 100353 } } })
 
 EHI:SetMissionDoorData({
     -- Security doors
@@ -148,7 +147,7 @@ EHI:AddXPBreakdown({
         }
     }
 })
-local jobs = { "framing_frame" }
+local jobs = deep_clone(tweak_data.achievement.complete_heist_achievements.trophy_framing_frame.jobs)
 if _G.ch_settings then
     table.insert(jobs, "framing_frame_prof")
 end

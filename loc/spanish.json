@@ -55,9 +55,6 @@
     "ehi_status_objective" : "OBJETIVO",
     "ehi_status_fail" : "FALLIDO",
 
-    "ehi_r" : "Rojo",
-    "ehi_g" : "Verde",
-    "ehi_b" : "Azul",
     "ehi_button_ok" : "ACEPTAR",
     "ehi_color_reset" : "Restablecer color",
 
@@ -206,8 +203,8 @@
 
     "ehi_show_camera_loop" : "Mostrar cámaras desactivadas",
     "ehi_show_camera_loop_desc" : "Mostrar / ocultar un contador al haberse desactivado temporalmente una cámara de seguridad.",
-	
-	"ehi_show_enemy_turret_trackers" : "Mostrar contadores para torretas enemigas",
+    
+    "ehi_show_enemy_turret_trackers" : "Mostrar contadores para torretas enemigas",
     "ehi_show_enemy_turret_trackers_desc" : "Mostrar / ocultar contadores cuando las torretas enemigas estén recargando o reparándose.",
 
     "ehi_show_zipline_timer" : "Mostrar contador de tirolinas",
@@ -296,8 +293,8 @@
 
     "ehi_show_enemy_count_tracker" : "Mostrar contador de enemigos",
     "ehi_show_enemy_count_tracker_desc" : "Mostrar / ocultar un contador para la cantidad de enemigos que hay el mapa.",
-	
-	"ehi_show_enemy_count_show_pagers" : "Mostrar enemigos con localizador (Sigilo)",
+    
+    "ehi_show_enemy_count_show_pagers" : "Mostrar enemigos con localizador (Sigilo)",
     "ehi_show_enemy_count_show_pagers_desc" : "Mostrar / ocultar los enemigos que llevan un localizador a la izquierda del contador, y los que no, a la derecha.\nSi se activa la alarma, solo será visible el número de enemigos en el mapa.",
 
     "ehi_show_laser_tracker" : "Mostrar contador de láseres",
@@ -461,8 +458,8 @@
     "ehi_buffs_perks_hacker_desc" : "Mostrar / ocultar las bonificaciones y tiempos de espera del talento 'Hacker'.",
     "ehi_buffs_perks_leech" : "Sanguijuela",
     "ehi_buffs_perks_leech_desc" : "Mostrar / ocultar las bonificaciones y tiempos de espera del talento 'Sanguijuela'.",
-	"ehi_buffs_perks_copycat" : "Imitador",
-	"ehi_buffs_perks_copycat_desc" : "Mostrar / ocultar las bonificaciones y tiempos de espera del talento 'Imitador'.",
+    "ehi_buffs_perks_copycat" : "Imitador",
+    "ehi_buffs_perks_copycat_desc" : "Mostrar / ocultar las bonificaciones y tiempos de espera del talento 'Imitador'.",
 
     "ehi_buffs_other_menu" : "Otros",
     "ehi_buffs_other_interact" : "Interacción",
@@ -482,17 +479,20 @@
     "ehi_buffs_other_crit_persistent_desc" : "El indicador permanecerá en la pantalla cuando esta probabilidad sea inferior al 0%.",
     "ehi_buffs_other_inspire_ai" : "Inspiración (Bots)",
     "ehi_buffs_other_regen_throwable_ai" : "Recuperación de arrojadizas (Bots)",
-	
-	"ehi_inventory_menu" : "Inventario",
-    "ehi_inventory_menu_desc" : "",
+
+    "ehi_buffs_group_color_red" : "Rojo",
+    "ehi_buffs_group_color_green" : "Verde",
+    "ehi_buffs_group_color_blue" : "Azul",
+    
+    "ehi_inventory_menu" : "Inventario",
 
     "ehi_show_inventory_detailed_description" : "Descripción detallada del inventario",
     "ehi_show_inventory_detailed_description_desc" : "Mostrar / ocultar una descripción más detallada en las armas arrojadizas y el equipamiento desplegable.\n(Se requiere un reinicio para que los cambios surtan efecto)",
 
     "ehi_hide_original_desc" : "Ocultar la descripción original",
     "ehi_hide_original_desc_desc" : "Mostrar / ocultar la descripción original.\n(Se requiere un reinicio para que los cambios surtan efecto)",
-	
-	"ehi_bm_charges" : "%s uso(s) (%s usos en total)",
+    
+    "ehi_bm_charges" : "%s uso(s) (%s usos en total)",
     "ehi_bm_charges_no_total" : "%s uso(s)",
     "ehi_bm_doctor_bag" : "Recupera tu salud completa y tus vidas totales.",
     "ehi_bm_doctor_bag_2" : "Bonificación por URGENCIA MÉDICA (AS):\nDespués de usar el BOTIQUÍN, recibirás $multiplier menos de daño durante $duration;s.",
@@ -540,8 +540,8 @@
     "ehi_bm_kingpin_4" : "Al estar activada, y cuando tu salud está al máximo, el tiempo de enfriamiento es reducido por $duration;s por cada $heal de salud adicional.",
     "ehi_bm_sicario_1" : "Todo jugador dentro del humo puede esquivar un %s%s de las balas y ataques cuerpo a cuerpo.",
     "ehi_bm_sicario_2" : "La puntería de cualquier enemigo dentro del humo es reducida por un %s%s.",
-	"ehi_bm_sicario_3" : "Todos los efectos de estos talentos son aumentados por un %s%s al estar dentro del humo, pero solo para ti.",
-	"ehi_bm_sicario_4" : "Cuando otro jugador está dentro del humo, su probabilidad de esquivar balas es aumentada por un %s%s.",
+    "ehi_bm_sicario_3" : "Todos los efectos de estos talentos son aumentados por un %s%s al estar dentro del humo, pero solo para ti.",
+    "ehi_bm_sicario_4" : "Cuando otro jugador está dentro del humo, su probabilidad de esquivar balas es aumentada por un %s%s.",
     "ehi_bm_stoic_1" : "Al usarla, se elimina todo el daño por tiempo pendiente.",
     "ehi_bm_stoic_2" : "Cuando tu salud es menor al %s%s, el enfriamiento de la petaca es reducido por %ss por cada enemigo que mates.",
     "ehi_bm_tagteam_1" : "Al estar activado, cada enemigo matado por ti y quien hayas marcado hace que tú regeneres %s de salud y quien hayas marcado regenere %s.",

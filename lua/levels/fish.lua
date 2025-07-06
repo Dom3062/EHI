@@ -1,16 +1,21 @@
 local EHI = EHI
----@class EHIfish6Tracker : EHIAchievementProgressTracker
+---@class fish_6 : EHIAchievementProgressTracker
 ---@field super EHIAchievementProgressTracker
-EHIfish6Tracker = class(EHIAchievementProgressTracker)
-EHIfish6Tracker._forced_icons = EHI:GetAchievementIcon("fish_6")
-function EHIfish6Tracker:pre_init(params)
+local fish_6 = class(EHIAchievementProgressTracker)
+fish_6._forced_icons = EHI:GetAchievementIcon("fish_6")
+function fish_6:pre_init(params)
     params.max = managers.enemy:GetNumberOfEnemies()
     CopDamage.register_listener("EHI_fish_6_listener", { "on_damage" }, function(damage_info)
         if damage_info.result.type == "death" then
             self:IncreaseProgress()
         end
     end)
-    EHIfish6Tracker.super.pre_init(self, params)
+    fish_6.super.pre_init(self, params)
+end
+
+function fish_6:pre_destroy()
+    fish_6.super.pre_destroy(self)
+    CopDamage.unregister_listener("EHI_fish_6_listener")
 end
 
 local SF = EHI.SpecialFunctions
@@ -37,21 +42,18 @@ local achievements = {
             [100244] = { class = TT.Achievement.Status },
             [100395] = { special_function = SF.SetAchievementFailed },
             [100842] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     },
     fish_6 =
     {
         elements =
         {
-            [100244] = { class = "EHIfish6Tracker", show_finish_after_reaching_target = true } -- Maximum is set in the tracker; difficulty dependant
-        },
-        cleanup_class = "EHIfish6Tracker",
-        sync_params = { from_start = true }
+            [100244] = { class_table = fish_6, show_finish_after_reaching_target = true } -- Maximum is set in the tracker; difficulty dependant
+        }
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     achievement = achievements
 })
 EHI:ShowLootCounter({ max = 8 + 7 }) -- Mission bags + Artifacts

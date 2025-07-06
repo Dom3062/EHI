@@ -1,29 +1,36 @@
+---@class EHIArmorRegenDelayBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
+EHIArmorRegenDelayBuffTracker = class(EHIBuffTracker)
+EHIArmorRegenDelayBuffTracker.CanDeleteOnFalseSkillCheck = EHIPermanentBuffTracker.CanDeleteOnFalseSkillCheck
+function EHIArmorRegenDelayBuffTracker:SkillCheck()
+    return not managers.player:has_category_upgrade("player", "armor_to_health_conversion")
+end
+
 ---@class EHIHealthRegenBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIHealthRegenBuffTracker = class(EHIBuffTracker)
 function EHIHealthRegenBuffTracker:post_init(...)
-    local icon = self._icon -- Hostage Taker regen
+    local x, y, w, h = self._icon:shape() -- Hostage Taker regen
     self._icon2 = self._panel:bitmap({ -- Muscle regen
         texture = "guis/textures/pd2/specialization/icons_atlas",
         texture_rect = { 4 * 64, 64, 64, 64 },
         color = Color.white,
-        x = icon:x(),
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h()
+        x = x,
+        y = y,
+        w = w,
+        h = h
     })
     self._icon3 = self._panel:bitmap({
         texture = tweak_data.hud_icons.skill_5.texture,
         texture_rect = tweak_data.hud_icons.skill_5.texture_rect,
         color = Color.white,
-        x = icon:x(),
-        y = icon:y(),
-        w = icon:w(),
-        h = icon:h()
+        x = x,
+        y = y,
+        w = w,
+        h = h
     })
     self:SetIcon("hostage_taker")
     self._minion_count, self._ai_health_regen, self._max_health, self._healing_reduction = 0, 0, 0, 1
-    self._health_format = "+%g"
     self._player_manager = managers.player
     self._perform_update_from_spawn = false
     EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id)
@@ -46,30 +53,47 @@ function EHIHealthRegenBuffTracker:post_init(...)
         if boost == "crew_regen" then
             self._ai_health_regen = operation == "add" and self._player_manager:upgrade_value("team", "crew_health_regen", 0) or 0
             if self._character_damage and self._perform_update_from_spawn then
-                self:SetHintText(string.format(self._health_format, self:GetHealthRegen()))
+                self:SetHintText(string.format("+%g", self:GetHealthRegen()))
             end
         elseif boost == "crew_healthy" and self._character_damage and self._perform_update_from_spawn then
             self:AddBuffToUpdate2()
         end
     end)
-    EHI:AddCallback("PlayerSpawned", function(character_damage) ---@param character_damage PlayerDamage
+    EHI:AddCallback(EHI.CallbackMessage.Player.Spawned, function(character_damage) ---@param character_damage PlayerDamage
         self._character_damage = character_damage
         if self._perform_update_from_spawn then
             self:AddBuffToUpdate2()
         end
     end)
-    EHI:AddCallback("PlayerDespawned", function()
+    EHI:AddCallback(EHI.CallbackMessage.Player.Despawned, function()
         self:RemoveBuffFromUpdate2()
         self._character_damage = nil
         self._max_health = 0
     end)
 end
 
+function EHIHealthRegenBuffTracker:Extend(...)
+    EHIHealthRegenBuffTracker.super.Extend(self, ...)
+    if self._persistent and not self._update then
+        self:AddBuffToUpdate()
+        self._update = true
+    end
+end
+
+function EHIHealthRegenBuffTracker:Deactivate()
+    if self._persistent then
+        self:RemoveBuffFromUpdate()
+        self._update = false
+        return
+    end
+    EHIHealthRegenBuffTracker.super.Deactivate(self)
+end
+
 function EHIHealthRegenBuffTracker:update_health_regen(...)
     local new_max_health = self._character_damage:_max_health()
     if self._max_health ~= new_max_health then
         self._max_health = new_max_health
-        self:SetHintText(string.format(self._health_format, self:GetHealthRegen(new_max_health)))
+        self:SetHintText(string.format("+%g", self:GetHealthRegen(new_max_health)))
         self:RemoveBuffFromUpdate2()
     end
 end
@@ -89,7 +113,7 @@ function EHIHealthRegenBuffTracker:GetHealthRegen(max_health)
     max_health = max_health or self._character_damage:_max_health() -- Max health does not get updated immediately for some reason, update it next frame or after (see -> :update_health_regen())
     local hp_to_restore_from_regen = max_health * regen * self._healing_reduction -- Health regen is not static, it needs to be scaled down by your max hp
     local hp_to_restore_from_ai = self._ai_health_regen * self._healing_reduction -- AI Regen is static, no scaling from max hp
-    return self._parent_class:RoundHealthNumber(hp_to_restore_from_regen + hp_to_restore_from_ai)
+    return math.ehi_round_health(hp_to_restore_from_regen + hp_to_restore_from_ai)
 end
 
 ---@param buff string
@@ -112,13 +136,16 @@ function EHIHealthRegenBuffTracker:SetIcon(buff)
     self._buff = buff
 end
 
-function EHIHealthRegenBuffTracker:PreUpdateCheck()
+function EHIHealthRegenBuffTracker:PreUpdate()
     self._healing_reduction = self._player_manager:upgrade_value("player", "healing_reduction", 1)
     if self._character_damage then
         self:AddBuffToUpdate2()
     end
     self._perform_update_from_spawn = true
-    return true
+    if self._persistent then
+        self:ActivateSoft()
+        self._active = true
+    end
 end
 
 function EHIHealthRegenBuffTracker:AddBuffToUpdate2()
@@ -127,6 +154,11 @@ end
 
 function EHIHealthRegenBuffTracker:RemoveBuffFromUpdate2()
     managers.hud:remove_updator(self._id)
+end
+
+function EHIHealthRegenBuffTracker:SetPersistent()
+    self._persistent = true
+    self._text:set_text("0")
 end
 
 ---@class EHIStaminaBuffTracker : EHIGaugeBuffTracker
@@ -150,7 +182,7 @@ end
 
 function EHIStaminaBuffTracker:SetRatio(ratio)
     local value = ratio / self._max_stamina
-    local rounded = self._parent_class.RoundNumber(value, 0.01)
+    local rounded = math.ehi_round(value, 0.01)
     EHIStaminaBuffTracker.super.SetRatio(self, value, rounded)
 end
 
@@ -219,37 +251,34 @@ end
 ---@class EHIExPresidentBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
 EHIExPresidentBuffTracker = class(EHIGaugeBuffTracker)
-function EHIExPresidentBuffTracker:PreUpdateCheck()
-    if managers.player:has_category_upgrade("player", "armor_health_store_amount") then
-        local buff, original = self, {}
-        original.update_armor_stored_health = PlayerDamage.update_armor_stored_health
-        function PlayerDamage:update_armor_stored_health(...)
-            original.update_armor_stored_health(self, ...)
-            buff:SetStoredHealthMaxAndUpdateRatio(self:max_armor_stored_health(), self._armor_stored_health)
-        end
-        original.add_armor_stored_health = PlayerDamage.add_armor_stored_health
-        function PlayerDamage:add_armor_stored_health(...)
-            local previous = self._armor_stored_health
-            original.add_armor_stored_health(self, ...)
-            if previous ~= self._armor_stored_health and not self._check_berserker_done then
-                buff:SetRatio(nil, self._armor_stored_health)
-            end
-        end
-        original.clear_armor_stored_health = PlayerDamage.clear_armor_stored_health
-        function PlayerDamage:clear_armor_stored_health(...)
-            original.clear_armor_stored_health(self, ...)
-            buff:SetRatio(nil, self._armor_stored_health)
-        end
-        local player_unit = managers.player:player_unit()
-        local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
-        self:SetStoredHealthMaxAndUpdateRatio(character_damage and character_damage:max_armor_stored_health() or 0, 0)
-        return true
-    else
-        self:delete_with_class()
-    end
+EHIExPresidentBuffTracker._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK = true
+function EHIExPresidentBuffTracker:SkillCheck()
+    return managers.player:has_category_upgrade("player", "armor_health_store_amount")
 end
 
 function EHIExPresidentBuffTracker:PreUpdate()
+    local buff, original = self, {}
+    original.update_armor_stored_health = PlayerDamage.update_armor_stored_health
+    function PlayerDamage:update_armor_stored_health(...)
+        original.update_armor_stored_health(self, ...)
+        buff:SetStoredHealthMaxAndUpdateRatio(self:max_armor_stored_health(), self._armor_stored_health)
+    end
+    original.add_armor_stored_health = PlayerDamage.add_armor_stored_health
+    function PlayerDamage:add_armor_stored_health(...)
+        local previous = self._armor_stored_health
+        original.add_armor_stored_health(self, ...)
+        if previous ~= self._armor_stored_health and not self._check_berserker_done then
+            buff:SetRatio(nil, self._armor_stored_health)
+        end
+    end
+    original.clear_armor_stored_health = PlayerDamage.clear_armor_stored_health
+    function PlayerDamage:clear_armor_stored_health(...)
+        original.clear_armor_stored_health(self, ...)
+        buff:SetRatio(nil, self._armor_stored_health)
+    end
+    local player_unit = managers.player:player_unit()
+    local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
+    self:SetStoredHealthMaxAndUpdateRatio(character_damage and character_damage:max_armor_stored_health() or 0, 0)
     self._parent_class:AddBuffNoUpdate(self._id)
 end
 
@@ -270,7 +299,7 @@ end
 ---@class EHIManiacBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
 EHIManiacBuffTracker = class(EHIGaugeBuffTracker)
-function EHIManiacBuffTracker:PreUpdateCheck()
+function EHIManiacBuffTracker:SkillCheck()
     if self._persistent and managers.player:has_category_upgrade("player", "cocaine_stacking") then
         self:ActivateSoft()
     end
@@ -317,9 +346,156 @@ function EHIReplenishThrowableBuffTracker:SetCustodyState(state)
 end
 
 ---@class EHITagTeamBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
 EHITagTeamBuffTracker = class(EHIBuffTracker)
 ---@param t number
 ---@param max number
 function EHITagTeamBuffTracker:AddTimeCeil(t, max)
     self._time = math.min(self._time + t, max)
+end
+
+---@class EHIHealthBuffTracker : EHIGaugeBuffTracker
+---@field super EHIGaugeBuffTracker
+EHIHealthBuffTracker = class(EHIGaugeBuffTracker)
+EHIHealthBuffTracker._CHECK_SNIPER_DAMAGE = EHI:GetBuffOption("health_check_sniper_damage")
+EHIHealthBuffTracker._CHECK_HEAVY_SWAT_DS_DAMAGE = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and EHI:GetBuffOption("health_check_heavy_swat_ds_damage")
+EHIHealthBuffTracker._CHECK_ENEMY_DAMAGE = EHIHealthBuffTracker._CHECK_SNIPER_DAMAGE or EHIHealthBuffTracker._CHECK_HEAVY_SWAT_DS_DAMAGE
+function EHIHealthBuffTracker:post_init(params)
+    if not self._CHECK_ENEMY_DAMAGE then
+        return
+    end
+    self._icon_visible, self._armor_value = 1, 0
+    local function refresh_max_armor(character_damage) ---@param character_damage PlayerDamage
+        self._armor_value = character_damage:_max_armor()
+    end
+    EHI:AddCallback(EHI.CallbackMessage.Player.Spawned, refresh_max_armor)
+    EHI:AddOnSpawnedCallback(function()
+        local damage_reduction = managers.player:upgrade_value("player", "health_damage_reduction", 1) -- Frenzy
+        if self._HIGHEST_HEAVY_SWAT_DAMAGE then
+            self._HIGHEST_HEAVY_SWAT_DAMAGE = self._HIGHEST_HEAVY_SWAT_DAMAGE * damage_reduction
+        elseif self._HIGHEST_SNIPER_DAMAGE then
+            self._HIGHEST_SNIPER_DAMAGE = self._HIGHEST_SNIPER_DAMAGE * damage_reduction
+        end
+    end)
+    EHI:AddCallback(EHI.CallbackMessage.Player.ArmorKitUsed, refresh_max_armor)
+    local tweak = tweak_data.ehi
+    local texture_rect = self:_get_texture_rect()
+    local x, y, w, h = self._icon:shape()
+    local ix, iy, iw, ih = self._progress:shape()
+    local icon_texture, icon_text_rect = tweak.default.buff.get_icon(tweak.buff.Health)
+    self._icon_orange = self._panel:bitmap({
+        texture = icon_texture,
+        texture_rect = icon_text_rect,
+        x = x,
+        y = y,
+        w = w,
+        h = h,
+        color = tweak:GetIconColorFromTextureColor("orange"),
+        visible = false
+    })
+    self._progress_bar_orange = Color(1, 0, 1, 1)
+    self._progress_orange = self._panel:bitmap({
+        render_template = "VertexColorTexturedRadial",
+        layer = 5,
+        x = ix,
+        y = iy,
+        w = iw,
+        h = ih,
+        texture = self._get_texture("orange"),
+        texture_rect = texture_rect,
+        color = self._progress_bar_orange,
+        visible = false
+    })
+    self._icon_red = self._panel:bitmap({
+        texture = icon_texture,
+        texture_rect = icon_text_rect,
+        x = x,
+        y = y,
+        w = w,
+        h = h,
+        color = tweak:GetIconColorFromTextureColor("red"),
+        visible = false
+    })
+    self._progress_bar_red = Color(1, 0, 1, 1)
+    self._progress_red = self._panel:bitmap({
+        render_template = "VertexColorTexturedRadial",
+        layer = 5,
+        x = ix,
+        y = iy,
+        w = iw,
+        h = ih,
+        texture = self._get_texture("red"),
+        texture_rect = texture_rect,
+        color = self._progress_bar_red,
+        visible = false
+    })
+end
+
+if EHIHealthBuffTracker._CHECK_HEAVY_SWAT_DS_DAMAGE then
+    EHIHealthBuffTracker._HIGHEST_HEAVY_SWAT_DAMAGE = tweak_data:GetHighestDamageFromEnemyAndWeapon("zeal_heavy_swat", "m4_npc")
+    ---@param ratio number
+    ---@param custom_value number?
+    function EHIHealthBuffTracker:SetRatio(ratio, custom_value)
+        if self._ratio == ratio then
+            return
+        end
+        local new_icon = self._HIGHEST_HEAVY_SWAT_DAMAGE <= custom_value and 1 or 2
+        if self._icon_visible ~= new_icon then
+            self._icon_visible = new_icon
+            if new_icon == 1 then
+                self._icon:set_visible(true)
+                self._progress:set_visible(true)
+                self._icon_red:set_visible(false)
+                self._progress_red:set_visible(false)
+            else
+                self._icon_red:set_visible(true)
+                self._progress_red:set_visible(true)
+                self._icon:set_visible(false)
+                self._progress:set_visible(false)
+            end
+        end
+        self._progress_red:stop()
+        self._progress_red:animate(self._anim, ratio, self._progress_bar_red)
+        EHIHealthBuffTracker.super.SetRatio(self, ratio, custom_value)
+    end
+elseif EHIHealthBuffTracker._CHECK_SNIPER_DAMAGE then
+    EHIHealthBuffTracker._HIGHEST_SNIPER_DAMAGE = tweak_data:GetHighestDamageFromEnemyAndWeapon("sniper", "m14_sniper_npc")
+    ---@param ratio number
+    ---@param custom_value number?
+    function EHIHealthBuffTracker:SetRatio(ratio, custom_value)
+        if self._ratio == ratio then
+            return
+        end
+        local new_icon = self._HIGHEST_SNIPER_DAMAGE <= custom_value and 1 or (self._HIGHEST_SNIPER_DAMAGE <= custom_value + self._armor_value) and 2 or 3
+        if self._icon_visible ~= new_icon then
+            self._icon_visible = new_icon
+            if new_icon == 1 then
+                self._icon:set_visible(true)
+                self._progress:set_visible(true)
+                self._icon_orange:set_visible(false)
+                self._progress_orange:set_visible(false)
+                self._icon_red:set_visible(false)
+                self._progress_red:set_visible(false)
+            elseif new_icon == 2 then
+                self._icon_orange:set_visible(true)
+                self._progress_orange:set_visible(true)
+                self._icon:set_visible(false)
+                self._progress:set_visible(false)
+                self._icon_red:set_visible(false)
+                self._progress_red:set_visible(false)
+            else
+                self._icon_red:set_visible(true)
+                self._progress_red:set_visible(true)
+                self._icon:set_visible(false)
+                self._progress:set_visible(false)
+                self._icon_orange:set_visible(false)
+                self._progress_orange:set_visible(false)
+            end
+        end
+        self._progress_orange:stop()
+        self._progress_orange:animate(self._anim, ratio, self._progress_bar_orange)
+        self._progress_red:stop()
+        self._progress_red:animate(self._anim, ratio, self._progress_bar_red)
+        EHIHealthBuffTracker.super.SetRatio(self, ratio, custom_value)
+    end
 end

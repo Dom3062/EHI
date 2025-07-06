@@ -15,7 +15,7 @@ local other =
 }
 
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local SetRespawnTime = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local SetRespawnTime = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SetRespawnTime", trigger.time) then
             self._trackers:AddTracker({
                 id = trigger.id,
@@ -32,7 +32,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104468] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other }, "Escape", Icon.HeliEscapeNoLoot)
+EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "Escape", Icon.HeliEscapeNoLoot)
 EHI:AddXPBreakdown({
     plan =
     {

@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local OVKOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
-local CrashIcons = EHI:GetOption("show_one_icon") and { Icon.Fix } or { Icon.PCHack, Icon.Fix, "pd2_question" }
+local CrashIcons = EHI.TrackerUtils:GetTrackerIcons({ Icon.PCHack, Icon.Fix, "pd2_question" }, { Icon.Fix })
 
 ---@type ParseTriggerTable
 local triggers =
@@ -24,8 +24,7 @@ local achievements =
         {
             [303036] = { time = 720, class = TT.Achievement.Base },
             [303024] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     },
     window =
     {
@@ -34,8 +33,7 @@ local achievements =
         {
             [303036] = { class = TT.Achievement.Status },
             [303039] = { special_function = SF.SetAchievementFailed, trigger_once = true }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 EHI:PreparseBeardlibAchievements(achievements, "Mallbank")
@@ -81,7 +79,7 @@ end
 EHI:DisableTimerWaypoints(DisableWaypoints)
 EHI:UpdateUnits(units)
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

@@ -21,9 +21,6 @@ if EHI:IsLootCounterVisible() then
     end)
 end
 
-EHI.Manager:ParseTriggers({
-    other = other
-})
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
     other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 3 })
@@ -35,6 +32,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+EHI.Mission:ParseTriggers({
+    other = other
+})
 
 EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b

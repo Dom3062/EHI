@@ -42,18 +42,16 @@ local achievements =
             [100107] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status },
             [100839] = { special_function = SF.SetAchievementFailed },
             [100869] = { special_function = SF.SetAchievementComplete },
-        },
-        sync_params = { from_start = true }
+        }
     },
     rvd_10 =
     {
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
         elements =
         {
-            [100057] = { time = 60, class = TT.Achievement.Base, special_function = SF.ShowAchievementFromStart },
+            [100057] = { time = 60, class = TT.Achievement.Base, condition_function = EHI.ConditionFunctions.PlayingFromStart },
             [100247] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -86,8 +84,8 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101104] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101196 } }
     other[101106] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101201 } }
     other[101102] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101138 } }
-    -- Escape (Waypoints are dynamic based on secured loot)
-    local ShowWP = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+    -- Escape
+    local ShowWP = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled then
             self:_parse_vanilla_waypoint_trigger(trigger)
             managers.hud:add_waypoint("EscapeWP", trigger.data)
@@ -100,7 +98,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         managers.hud:remove_waypoint("EscapeWP") -- Removes EHI Escape WP once the van is ready, vanilla waypoints are dynamic based on how much secured loot you have
     end }
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

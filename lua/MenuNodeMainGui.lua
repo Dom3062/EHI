@@ -1,7 +1,5 @@
 local EHI = EHI
-local old = MenuNodeMainGui._setup_item_rows
-function MenuNodeMainGui:_setup_item_rows(...)
-    old(self, ...)
+Hooks:PostHook(MenuNodeMainGui, "_setup_item_rows", "EHI_MenuNodeMainGui_setup_item_rows", function(...)
     if EHI._cache.SaveFileCorrupted then -- Should always show, because it is important
         QuickMenu:new(
             managers.localization:text("ehi_save_data_corrupted"),
@@ -34,4 +32,4 @@ function MenuNodeMainGui:_setup_item_rows(...)
             MenuCallbackHandler:perform_blt_save()
         end
     end
-end
+end)

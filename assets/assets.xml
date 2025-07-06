@@ -7,12 +7,44 @@
         <!-- Custom tracker icons -->
         <file :name="icons_atlas.texture" :path="icons_atlas.texture"/>
 
-        <!-- Square -->
-        <file :name="buff_sframe.texture" :path="buff_sframe.texture"/>
-        <file :name="buff_sframe_debuff.texture" :path="buff_sframe_debuff.texture"/>
-        <!-- Circle -->
-        <file :name="buff_cframe_bg.texture" :path="buff_cframe_bg.texture"/>
-        <file :name="buff_cframe.texture" :path="buff_cframe.texture"/>
-        <file :name="buff_cframe_debuff.texture" :path="buff_cframe_debuff.texture"/>
+        <group :name="buffs/" :path="buffs/">
+            <!-- Square -->
+            <file :name="buff_sframe_white.texture" :path="buff_sframe_white.texture"/>
+            <file :name="buff_sframe_red.texture" :path="buff_sframe_red.texture"/>
+            <file :name="buff_sframe_orange.texture" :path="buff_sframe_orange.texture"/>
+            <file :name="buff_sframe_green.texture" :path="buff_sframe_green.texture"/>
+            <file :name="buff_sframe_yellow.texture" :path="buff_sframe_yellow.texture"/>
+            <file :name="buff_sframe_blue.texture" :path="buff_sframe_blue.texture"/>
+            <file :name="buff_sframe_cyan.texture" :path="buff_sframe_cyan.texture"/>
+            <file :name="buff_sframe_pink.texture" :path="buff_sframe_pink.texture"/>
+            <file :name="buff_sframe_purple.texture" :path="buff_sframe_purple.texture"/>
+            <file :name="buff_sframe_violet.texture" :path="buff_sframe_violet.texture"/>
+            <file :name="buff_sframe_magenta.texture" :path="buff_sframe_magenta.texture"/>
+            <file :name="buff_sframe_azure.texture" :path="buff_sframe_azure.texture"/>
+            <file :name="buff_sframe_brown.texture" :path="buff_sframe_brown.texture"/>
+            <file :name="buff_sframe_crimson.texture" :path="buff_sframe_crimson.texture"/>
+            <file :name="buff_sframe_salmon.texture" :path="buff_sframe_salmon.texture"/>
+            <file :name="buff_sframe_gold.texture" :path="buff_sframe_gold.texture"/>
+            <file :name="buff_sframe_turquoise.texture" :path="buff_sframe_turquoise.texture"/>
+            <!-- Circle -->
+            <file :name="buff_cframe_bg.texture" :path="buff_cframe_bg.texture"/>
+            <file :name="buff_cframe_white.texture" :path="buff_cframe_white.texture"/>
+            <file :name="buff_cframe_red.texture" :path="buff_cframe_red.texture"/>
+            <file :name="buff_cframe_orange.texture" :path="buff_cframe_orange.texture"/>
+            <file :name="buff_cframe_green.texture" :path="buff_cframe_green.texture"/>
+            <file :name="buff_cframe_yellow.texture" :path="buff_cframe_yellow.texture"/>
+            <file :name="buff_cframe_blue.texture" :path="buff_cframe_blue.texture"/>
+            <file :name="buff_cframe_cyan.texture" :path="buff_cframe_cyan.texture"/>
+            <file :name="buff_cframe_pink.texture" :path="buff_cframe_pink.texture"/>
+            <file :name="buff_cframe_purple.texture" :path="buff_cframe_purple.texture"/>
+            <file :name="buff_cframe_violet.texture" :path="buff_cframe_violet.texture"/>
+            <file :name="buff_cframe_magenta.texture" :path="buff_cframe_magenta.texture"/>
+            <file :name="buff_cframe_azure.texture" :path="buff_cframe_azure.texture"/>
+            <file :name="buff_cframe_brown.texture" :path="buff_cframe_brown.texture"/>
+            <file :name="buff_cframe_crimson.texture" :path="buff_cframe_crimson.texture"/>
+            <file :name="buff_cframe_salmon.texture" :path="buff_cframe_salmon.texture"/>
+            <file :name="buff_cframe_gold.texture" :path="buff_cframe_gold.texture"/>
+            <file :name="buff_cframe_turquoise.texture" :path="buff_cframe_turquoise.texture"/>
+        </group>
     </group>
 </assets>

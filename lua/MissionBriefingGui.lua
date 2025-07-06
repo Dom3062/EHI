@@ -22,9 +22,9 @@ local colors =
 }
 
 local percent_format, localization = "%", "english"
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
-    localization = loc_loaded
-    if loc_loaded == "czech" then
+EHI:AddOnLocalizationLoaded(function(loc, lang_name)
+    localization = lang_name
+    if lang_name == "czech" then
         percent_format = " %"
     end
 end)
@@ -91,8 +91,7 @@ function XPBreakdownButton:SetPosByPreviousItem(item)
     local button = item._tab_text
     self._tab_text:set_bottom(button:bottom())
     self._tab_text:set_left(button:right() + 10)
-    self._tab_select_rect:set_bottom(self._tab_text:bottom())
-    self._tab_select_rect:set_left(self._tab_text:left())
+    self._tab_select_rect:set_position(self._tab_text:position())
 end
 
 ---@param offset number
@@ -164,7 +163,7 @@ XPBreakdownButtonSwitch.make_fine_text = BlackMarketGui.make_fine_text
 ---@param ws_panel Panel
 ---@param max_plans number
 ---@param loc LocalizationManager
----@param button PanelText
+---@param button Text
 function XPBreakdownButtonSwitch:new(ws_panel, max_plans, loc, button)
     local text = max_plans > 2 and "ehi_mission_briefing_next_plan_text" or "ehi_mission_briefing_toggle_plan_text"
     self._text = ws_panel:text({
@@ -572,7 +571,7 @@ function XPBreakdownPanel:_add_total_xp(total, total_with_gage)
     self:_add_line(txt, colors.total_xp)
 end
 
----@param text PanelText
+---@param text Text
 ---@param ghost_bonus number?
 function XPBreakdownPanel:_process_escape_add_ghost_bonus(text, ghost_bonus)
     if ghost_bonus and ghost_bonus > 0 then
@@ -592,7 +591,7 @@ function XPBreakdownPanel:_process_escape_add_ghost_bonus(text, ghost_bonus)
     end
 end
 
----@param text PanelText
+---@param text Text
 ---@param escape_chance { start_chance: number, kill_add_chance: number? }?
 function XPBreakdownPanel:_process_escape_add_escape_chance(text, escape_chance)
     if escape_chance and not self._expert_driver_asset_bought then

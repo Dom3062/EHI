@@ -75,7 +75,7 @@ EHI:ShowAchievementLootCounter({
     waypoint_loot_counter = { element = { 100233, 100008, 100020, 102655, 103791, 103792 }, present_timer = { [102655] = 0 } }
 })
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

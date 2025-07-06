@@ -6,7 +6,6 @@ local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
 local heli_anim = 35
 local heli_anim_full = heli_anim + 10 -- 10 seconds is hose lifting up animation when chopper goes refilling
-local HeliWaterFill = EHI:GetOption("show_one_icon") and { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } } or { Icon.Heli, Icon.Water }
 ---@type ParseTriggerTable
 local triggers = {
     [101499] = { time = 155 + 25, id = "HeliEscape", icons = Icon.HeliEscape, waypoint = { data_from_element = 101525 }, hint = Hints.LootEscape },
@@ -36,7 +35,7 @@ local triggers = {
     [102905] = { id = "WaterFill", special_function = SF.PauseTracker },
     [102920] = { id = "WaterFill", special_function = SF.UnpauseTracker },
 
-    [1] = { id = "HeliWaterFill", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    [1] = { id = "HeliWaterFill", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._waypoints:RemoveWaypoint(trigger.id)
         self._trackers:SetPaused(trigger.id, true)
     end) },
@@ -68,11 +67,11 @@ local triggers = {
     [100558] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100655 }, hint = Hints.Thermite },
     [100559] = { time = 90, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 100656 }, hint = Hints.Thermite }
 }
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param trigger ElementTrigger
 local function HeliWaterRefillWPAdd(self, trigger)
     local element = trigger.element
-    local pos = self:GetElementPositionOrDefault(element)
+    local pos = self._mission:GetElementPositionOrDefault(element)
     self._waypoints:AddWaypoint(trigger.id, {
         time = trigger.time,
         icon = Icon.Water,
@@ -84,7 +83,7 @@ local function HeliWaterRefillWPAdd(self, trigger)
     self._cache.HeliWaterFillPos = pos
     self._cache.HeliWaterRestoreWP = element
 end
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param id string
 local function HeliWaterRefillWPRestore(self, id)
     if self._cache.HeliWaterFillPos then
@@ -100,6 +99,7 @@ local function HeliWaterRefillWPRestore(self, id)
         self._cache.HeliWaterRestoreWP = nil
     end
 end
+local HeliWaterFill = EHI.TrackerUtils:GetTrackerIcons({ Icon.Heli, Icon.Water }, { { icon = Icon.Heli, color = tweak_data.ehi.colors.WaterColor } })
 for index, element in pairs({
     [100] = 101341,
     [150] = 100589,
@@ -127,9 +127,9 @@ local achievements =
     {
         elements =
         {
-            [101031] = { status = Status.Defend, class = TT.Achievement.Status, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+            [101031] = { status = Status.Defend, class = TT.Achievement.Status, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
-                    self:CreateTracker(trigger)
+                    self:CreateTracker()
                 end
             end) },
             [103468] = { special_function = SF.SetAchievementFailed, trigger_once = true },
@@ -173,12 +173,12 @@ if EHI:IsLootCounterVisible() then
             client_from_start = true
         })
     end, { element = { 101525, 101568, 100058, 101569, 100274, 101607 } })
-    local RandomLootSpawnedCheck = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local RandomLootSpawnedCheck = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._loot:RandomLootSpawnedCheck(trigger.crate, true)
     end)
     -- 1 random loot in train wagon, 35% chance to spawn
     -- Wagons are selected randomly; sometimes 2 with possible loot spawns, sometimes 1
-    local IncreaseMaxRandomLoot = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local IncreaseMaxRandomLoot = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local index = trigger.index
         local crate = EHI:GetInstanceUnitID(100000, index)
         local loot_trigger = { special_function = RandomLootSpawnedCheck, crate = crate }
@@ -189,8 +189,8 @@ if EHI:IsLootCounterVisible() then
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
             self._loot:AddDelayedLootDeclinedCheck(crate)
         end)
-        self:AddTriggers(LootTrigger, "LootCounter")
-        self:HookElements(LootTrigger)
+        self:__AddTriggers(LootTrigger, self._loot._id)
+        self:__FindAndHookElements(LootTrigger)
         self._loot:IncreaseLootCounterMaxRandom()
     end)
     other[104274] = { special_function = IncreaseMaxRandomLoot, index = 500 }
@@ -213,7 +213,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100521] = { id = "Snipers", special_function = SF.IncreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

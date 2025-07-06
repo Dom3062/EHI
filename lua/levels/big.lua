@@ -3,10 +3,9 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local ThermiteWP = { position_from_element = 104326 }
 ---@type ParseTriggerTable
 local triggers = {
-    [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire }, waypoint = deep_clone(ThermiteWP), hint = Hints.Thermite },
+    [105842] = { time = 16.7 * 18, id = "Thermite", icons = { Icon.Fire }, waypoint = { position_from_element = 104326 }, hint = Hints.Thermite },
 
     [105197] = { time = 45, id = "PickUpAPhone", icons = { Icon.Phone, Icon.Interact }, class = TT.Warning, hint = Hints.PickUpPhone, remove_on_alarm = true },
     [105219] = { id = "PickUpAPhone", special_function = SF.RemoveTracker },
@@ -16,7 +15,27 @@ local triggers = {
 
     [101377] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion },
 
-    [104532] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, hint = Hints.Hack },
+    [104532] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint_f = function(self, trigger)
+        if managers.game_play_central:IsMissionUnitDisabled(101289) then
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.PCHack,
+                position = self._mission:GetUnitPositionOrDefault(104586)
+            })
+        elseif managers.game_play_central:IsMissionUnitDisabled(106835) then
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.PCHack,
+                position = self._mission:GetUnitPositionOrDefault(103158)
+            })
+        else
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.time,
+                icon = Icon.PCHack,
+                position = self._mission:GetUnitPositionOrDefault(105258)
+            })
+        end
+    end, hint = Hints.Hack },
     [103179] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103198 }, hint = Hints.Hack },
     [103259] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103177 }, hint = Hints.Hack },
     [103590] = { time = 20, id = "PCHack", icons = { Icon.PCHack }, waypoint = { position_from_unit = 103196 }, hint = Hints.Hack },
@@ -45,7 +64,7 @@ local triggers = {
     [104783] = { time = 8, id = "Bus", icons = { Icon.Wait }, hint = Hints.Wait }
 }
 if EHI.IsClient then
-    triggers[101605] = { time = 16.7 * 17, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(ThermiteWP), hint = Hints.Thermite }
+    triggers[101605] = EHI:ClientCopyTrigger(triggers[105842], { time = 16.7 * 17 })
     local doesnotexists = {
         [101817] = true,
         [101819] = true,
@@ -57,7 +76,7 @@ if EHI.IsClient then
     local multiplier = 16
     for i = 101812, 101833, 1 do
         if not doesnotexists[i] then
-            triggers[i] = { time = 16.7 * multiplier, id = "Thermite", icons = { Icon.Fire }, special_function = SF.AddTrackerIfDoesNotExist, waypoint = deep_clone(ThermiteWP), hint = Hints.Thermite }
+            triggers[i] = EHI:ClientCopyTrigger(triggers[105842], { time = 16.7 * multiplier })
             multiplier = multiplier - 1
         end
     end
@@ -97,14 +116,13 @@ local achievements =
                 return
             end
             managers.ehi_unlockable:AddAchievementStatusTracker("cac_22")
-        end,
-        sync_params = { from_start = true }
+        end
     }
 }
 if TheFixes then
     local Preventer = TheFixesPreventer or {}
     if not Preventer.achi_matrix_with_lasers and achievements.cac_22.difficulty_pass then -- Fixed
-        achievements.cac_22.cleanup_callback = EHIUnlockableManager:AddTFCallback("cac_22", "EHI_BigBank_TheFixes")
+        achievements.cac_22.cleanup_callback = managers.ehi_unlockable:AddTFCallback("cac_22", "EHI_BigBank_TheFixes")
     end
 end
 
@@ -125,7 +143,7 @@ local sidejob =
                     check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
                     f = function(loot)
                         local secured = loot:GetSecuredBagsAmount() - offset
-                        managers.ehi_tracker:SetTrackerProgress("daily_helicopter", secured)
+                        managers.ehi_tracker:SetProgress("daily_helicopter", secured)
                         if secured >= 16 then
                             managers.ehi_loot:RemoveListener("daily_helicopter")
                         end
@@ -153,7 +171,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -181,14 +199,9 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
     --units/payday2/props/gen_prop_construction_crane/gen_prop_construction_crane_arm
     tbl[105111] = { f = function(id, unit_data, unit)
         local t = { unit = unit }
-        managers.ehi_manager:AddWaypointToTrigger(104091, t)
-        managers.ehi_manager:AddWaypointToTrigger(104261, t)
-        managers.ehi_manager:AddWaypointToTrigger(104069, t)
-        unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
-            managers.ehi_waypoint:RemoveWaypoint("CraneLiftUp")
-            managers.ehi_waypoint:RemoveWaypoint("CraneMoveLeft")
-            managers.ehi_waypoint:RemoveWaypoint("CraneMoveRight")
-        end)
+        EHI.Trigger:AddWaypointToTrigger(104091, t)
+        EHI.Trigger:AddWaypointToTrigger(104261, t)
+        EHI.Trigger:AddWaypointToTrigger(104069, t)
     end }
 end
 EHI:UpdateUnits(tbl)

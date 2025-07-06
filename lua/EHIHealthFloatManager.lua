@@ -32,8 +32,8 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         self._ww = self._pnl:w()
         self._hh = self._pnl:h()
         self._resolution_changed_clbk = managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
-        self._floats = {} ---@type table<string, EHIHealthFloatPoco>
-        self._smokes = {} ---@type table<string, Vector3>
+        self._floats = {} ---@type table<userdata, EHIHealthFloatPoco>
+        self._smokes = {} ---@type table<userdata, Vector3>
         Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
             local unit = base._unit
             self._smokes[unit:key()] = unit:position()
@@ -51,7 +51,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             elseif self._floats[key] then
                 self._floats[key]:destroy()
             end
-            self._floats[key] = EHIHealthFloatPocoTeamAI:new(self, key, base._unit, 0)
+            self._floats[key] = EHIHealthFloatPocoTeamAI:new(key, base._unit, 0)
         end)
         Hooks:PreHook(TeamAIBase, "unregister", "EHI_TeamAIBase_unregister", function(base, ...)
             if not base._registered or not self._floats then
@@ -75,7 +75,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             elseif self._floats[key] then
                 self._floats[key]:destroy()
             end
-            self._floats[key] = EHIHealthFloatPocoTurret:new(self, key, base._unit, 0)
+            self._floats[key] = EHIHealthFloatPocoTurret:new(key, base._unit, 0)
             base.__ehi_poco_float = true
         end
         ---@param base SentryGunMovement
@@ -100,14 +100,14 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         end)
         Hooks:PostHook(SentryGunMovement, "on_death", "EHI_SentryGunMovement_EHIHealthFloatManager_on_death", DestroyEnemyTurret)
         Hooks:PostHook(SentryGunMovement, "pre_destroy", "EHI_SentryGunMovement_EHIHealthFloatManager_pre_destroy", DestroyEnemyTurret)
-        EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id)
+        EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id) ---@param unit UnitEnemy
             local key = unit:key()
             if not self._floats then
                 return
             elseif self._floats[key] then
                 self._floats[key]:force_delete(true)
             end
-            self._floats[key] = EHIHealthFloatPocoConvert:new(self, key, unit, 0)
+            self._floats[key] = EHIHealthFloatPocoConvert:new(key, unit, 0)
         end)
         EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
             if not self._floats then
@@ -149,7 +149,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         if float then
             float:renew(t)
         else
-            self._floats[key] = EHIHealthFloatPoco:new(self, key, unit, t)
+            self._floats[key] = EHIHealthFloatPoco:new(key, unit, t)
         end
     end
 
@@ -239,10 +239,10 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             local to = from + self._player_movement:m_head_rot():y() * 30000
             r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
         end
-        local unit = r and r.unit
+        local unit = r and r.unit ---@cast unit -UnitPlayer
         if unit then
             if unit:in_slot(8) and alive(unit:parent()) then
-                unit = unit:parent()
+                unit = unit:parent() --[[@as UnitObject ]]
             end
             if unit and unit:movement() then
                 local cHealth = unit:character_damage() and unit:character_damage()._health
@@ -298,7 +298,7 @@ else
         local from = self._player_movement:m_head_pos()
         if from then
             local to = from + self._player_movement:m_head_rot():y() * 30000
-            r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitEnemy? }]]
+            r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
         end
         local unit = r and r.unit
         if unit then

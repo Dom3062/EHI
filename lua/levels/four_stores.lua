@@ -24,7 +24,7 @@ local triggers = {
     [103593] = { run = { time = 180 + van_anim_delay } },
     [103594] = { run = { time = 200 + van_anim_delay } },
 
-    [101443] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
+    [101443] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
         self._trackers:AddTracker({
             id = "ObjectiveSteal",
             max = 15000,
@@ -35,23 +35,22 @@ local triggers = {
         })
         self._loot:AddListener("four_stores", function(loot)
             local progress = loot:get_real_total_small_loot_value()
-            self._trackers:SetTrackerProgress("ObjectiveSteal", progress)
+            self._trackers:SetProgress("ObjectiveSteal", progress)
             if progress >= 15000 then
                 self._loot:RemoveListener("four_stores")
             end
         end)
-    end), trigger_once = true },
+    end), trigger_once = true, load_sync = EHI.IsClient and function(self) ---@param self EHIMissionElementTrigger
+        local objective = managers.loot:get_real_total_small_loot_value()
+        if objective >= 15000 then
+            return
+        end
+        self:Trigger()
+        self._trackers:SetProgress("ObjectiveSteal", objective)
+    end },
 
     [103629] = EHI:AddIncomingTurret(540/30, Vector3(0.425327, -3362.29, 254.634), nil, nil, _G.ch_settings == nil)
 }
-EHI.Manager:AddLoadSyncFunction(function(self)
-    local objective = managers.loot:get_real_total_small_loot_value()
-    if objective >= 15000 then
-        return
-    end
-    self:Trigger(101443)
-    self._trackers:SetTrackerProgress("ObjectiveSteal", objective)
-end)
 
 local CopArrivalDelay = EHI:GetValueBasedOnDifficulty({
     normal = 30,
@@ -82,8 +81,8 @@ if EHI:IsLootCounterVisible() then
     end, { element = { 101006, 103234 }, check_function = function(progress, max)
         return false -- Return false because the loot bag is random => to not show Loot Waypoint once escape is available (default behavior)
     end }, function(self)
-        if self:IsMissionElementDisabled(101804) and managers.loot:GetSecuredBagsAmount() == 0 then
-            self:Trigger(101479)
+        if self._utils:IsMissionElementDisabled(101804) and managers.loot:GetSecuredBagsAmount() == 0 then
+            self:CreateTracker()
         end
     end)
 end
@@ -91,7 +90,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102505] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101006 } }
     other[103200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103234 } }
 end
-EHI.Manager:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
+EHI.Mission:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 EHI:AddXPBreakdown({
     objective =
     {

@@ -2,18 +2,24 @@ local progress = EHI:GetOption("buffs_show_progress") --[[@as boolean]]
 local circle_shape = EHI:GetOption("buffs_shape") == 2
 local invert = EHI:GetOption("buffs_invert_progress") --[[@as boolean]]
 local show_hint = EHI:GetOption("buffs_show_upper_text") --[[@as boolean]]
+local color_buff_text = EHI:GetOption("buffs_group_text_color") --[[@as boolean]]
 local rect = { 32, 0, -32, 32 }
-local prefix = "s"
+local frame = "sframe"
 if circle_shape then
     rect = { 128, 0, -128, 128 }
-    prefix = "c"
+    frame = "cframe"
 end
 if invert then
     rect[1] = 0
     rect[3] = -rect[3]
 end
-local texture_good = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame"
-local texture_bad = "guis/textures/pd2_mod_ehi/buff_" .. prefix .. "frame_debuff"
+local textures = {}
+for group, entry in pairs(tweak_data.ehi:GetSelectedBuffColors()) do
+    textures[group] = {
+        path = string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", frame, entry.texture_color),
+        color = entry.icon_color
+    }
+end
 local Color = Color
 ---@param o Panel
 ---@param target_x number
@@ -41,7 +47,10 @@ local function set_right(o, x)
     o:set_right(target_right)
 end
 ---@class EHIBuffTracker
+---@field _parent_class EHIBuffManager Added when `EHIBuffManager` class is created
 ---@field _inverted_progress boolean
+---@field _DELETE_BUFF_ON_FALSE_SKILL_CHECK boolean
+---@field _DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK boolean
 EHIBuffTracker = class()
 ---@param o Panel
 EHIBuffTracker._show = function(o)
@@ -63,25 +72,23 @@ EHIBuffTracker._hide = function(o)
 end
 ---@param panel Panel
 ---@param params table
----@param parent_class EHIBuffManager
-function EHIBuffTracker:init(panel, params, parent_class)
+function EHIBuffTracker:init(panel, params)
     local w_half = params.w / 2
     local progress_visible = progress and not params.no_progress
+    local texture = textures[params.group or "default"]
     self._id = params.id --[[@as string]]
-    self._parent_class = parent_class
-    self._enable_in_loud = params.enable_in_loud
     self._panel = panel:panel({
-        w = params.w,
-        h = params.h,
         x = params.x,
         y = panel:bottom() - params.h - params.y,
+        w = params.w,
+        h = params.h,
         alpha = 0,
         visible = true
     })
     self._icon = self._panel:bitmap({
         texture = params.texture,
         texture_rect = params.texture_rect,
-        color = params.icon_color or params.good and Color.white or Color.red,
+        color = params.icon_color or texture.color,
         x = 0,
         y = w_half,
         w = params.w,
@@ -94,7 +101,7 @@ function EHIBuffTracker:init(panel, params, parent_class)
             y = w_half,
             w = params.w,
             h = params.w,
-            texture = "guis/textures/pd2_mod_ehi/buff_cframe_bg",
+            texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_bg",
             color = Color.black:with_alpha(0.2)
         })
     else
@@ -113,28 +120,28 @@ function EHIBuffTracker:init(panel, params, parent_class)
         })
     end
     self._hint = self._panel:text({
-        text = params.text or "",
+        text = params.text_localize and managers.localization:text(params.text_localize) or params.text or "",
+        x = 0,
+        y = 0,
         w = params.w,
         h = w_half,
         font = tweak_data.menu.pd2_large_font,
-		font_size = w_half,
-        color = Color.white,
+        font_size = w_half,
+        color = color_buff_text and texture.color or Color.white,
         align = "center",
-        x = 0,
-        y = 0,
         alpha = show_hint and 1 or 0
     })
     self:FitTheText(self._hint)
     self._text = self._panel:text({
         text = "100s",
+        y = self._panel:w() + w_half,
         w = params.w,
         h = params.h - params.w - w_half,
         font = tweak_data.menu.pd2_large_font,
-		font_size = w_half,
-        color = Color.white,
+        font_size = w_half,
+        color = color_buff_text and texture.color or Color.white,
         align = "center",
         vertical = "center",
-        y = self._panel:w() + w_half,
         visible = not params.no_progress
     })
     self._progress_bar = Color(1, 0, 1, 1)
@@ -144,7 +151,7 @@ function EHIBuffTracker:init(panel, params, parent_class)
         y = w_half,
         w = params.w,
         h = params.w,
-        texture = params.good and texture_good or texture_bad,
+        texture = texture.path,
         texture_rect = rect,
         color = self._progress_bar,
         visible = progress_visible
@@ -153,15 +160,13 @@ function EHIBuffTracker:init(panel, params, parent_class)
         local size = 24 * params.scale
         local move = 4 * params.scale
         self._icon:set_size(size, size)
-        self._icon:set_x(self._icon:x() + move)
-        self._icon:set_y(self._icon:y() + move)
+        self._icon:move(move, move)
     end
     self._panel:set_center_x(panel:center_x())
     self._active = false
     self._time = 0
     if self._inverted_progress then
-        local size = invert and rect[4] or 0
-        self._progress:set_texture_rect(size, rect[2], -rect[3], rect[4])
+        self._progress:set_texture_rect(invert and rect[4] or 0, rect[2], -rect[3], rect[4])
     end
     local panel_w = self._panel:w()
     self._panel_w_gap = panel_w + 6
@@ -173,7 +178,7 @@ end
 function EHIBuffTracker:post_init(params)
 end
 
----@param text PanelText
+---@param text Text
 function EHIBuffTracker:FitTheText(text)
     text:set_font_size(self._panel:w() / 2)
     local w = select(3, text:text_rect())
@@ -204,13 +209,8 @@ function EHIBuffTracker:SetCenterDefaultX(center_x)
 end
 
 ---@param x number
-function EHIBuffTracker:MovePanelLeft(x)
-    self._panel:set_x(self._panel:x() - x)
-end
-
----@param x number
 function EHIBuffTracker:MovePanelRight(x)
-    self._panel:set_x(self._panel:x() + x)
+    self._panel:move(x, 0)
 end
 
 ---@param x number
@@ -275,6 +275,7 @@ function EHIBuffTracker:Deactivate()
     self._panel:stop()
     self._panel:animate(self._hide)
     self._active = false
+    self._pos = nil
 end
 
 function EHIBuffTracker:DeactivateSoft()
@@ -292,8 +293,9 @@ function EHIBuffTracker:Shorten(t)
     self._time = self._time - t
 end
 
-function EHIBuffTracker:SetHintText(text)
-    self._hint:set_text(tostring(text))
+---@param localize boolean?
+function EHIBuffTracker:SetHintText(text, localize)
+    self._hint:set_text(localize and managers.localization:text(text) or tostring(text))
     self:FitTheText(self._hint)
 end
 
@@ -320,17 +322,17 @@ function EHIBuffTracker:SetCenterXByPos(center_x, pos, center_pos, even)
         local final_x = self._panel_move_gap + (self._panel_w_gap * n)
         if self._pos < center_pos then -- Left side
             final_x = final_x - self._panel_w_gap
-            self:MovePanelLeft(final_x)
+            self._panel:move(-final_x, 0)
         else -- Right side
-            self:MovePanelRight(final_x)
+            self._panel:move(final_x, 0)
         end
     elseif self._pos ~= center_pos then -- Not center
         local n = math.abs(center_pos - self._pos)
         local final_x = self._panel_w_gap * n
         if self._pos < center_pos then -- Left side
-            self:MovePanelLeft(final_x)
+            self._panel:move(-final_x, 0)
         else -- Right side
-            self:MovePanelRight(final_x)
+            self._panel:move(final_x, 0)
         end
     end
 end
@@ -363,8 +365,15 @@ end
 function EHIBuffTracker:PreUpdate()
 end
 
-function EHIBuffTracker:PreUpdateCheck()
+function EHIBuffTracker:SkillCheck()
     return true
+end
+
+function EHIBuffTracker:CanDeleteOnFalseSkillCheck()
+    if self._DELETE_BUFF_ON_FALSE_SKILL_CHECK or self._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK then
+        return true
+    end
+    return false
 end
 
 ---@param state boolean
@@ -391,15 +400,58 @@ else
     EHIBuffTracker.Format = tweak_data.ehi.functions.FormatMinutesAndSeconds
 end
 
+---@param color string
+function EHIBuffTracker._get_texture(color)
+    return string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", frame, color)
+end
+
+function EHIBuffTracker:_get_texture_rect()
+    local new_rect = deep_clone(rect)
+    if self._inverted_progress then
+        new_rect[1] = invert and rect[4] or 0
+        new_rect[3] = -rect[3]
+    end
+    return new_rect
+end
+
+---@param id string
+function EHIBuffTracker:SetGroup(id)
+    local group = textures[id]
+    if group then
+        local clr = color_buff_text and group.color or Color.white
+        self._progress:set_image(group.path, unpack(rect))
+        self._icon:set_color(group.color)
+        self._text:set_color(clr)
+        self._hint:set_color(clr)
+    end
+end
+
+---@param id1 string
+---@param id2 string
+function EHIBuffTracker:SetMultiGroup(id1, id2)
+    local first = math.random() > 0.5 and id2 or id1
+    local group = textures[first]
+    local group2 = textures[first == id2 and id1 or id2]
+    if group and group2 then
+        self._icon:set_color(group.color)
+        self._progress:set_image(group2.path, unpack(rect))
+        local clr = color_buff_text and group.color or Color.white
+        self._text:set_color(clr)
+        self._hint:set_color(clr)
+    end
+end
+
 function EHIBuffTracker:Remove()
     self:RemoveBuffFromUpdate()
     self._panel:stop()
-    self._panel:animate(function(o) ---@param o Panel
-        if self._active or o:alpha() > 0 then
+    if self._active or self._panel:alpha() > 0 then
+        self._panel:animate(function(o) ---@param o Panel
             self._hide(o)
-        end
+            self:delete()
+        end)
+    else
         self:delete()
-    end)
+    end
 end
 
 function EHIBuffTracker:delete()

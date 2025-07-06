@@ -8,7 +8,7 @@ EHITradeDelayTracker._init_create_text = false
 function EHITradeDelayTracker:post_init(params)
     self._pause_t = 0
     self._n_of_peers = 0
-    self._peers = {} ---@type table<number, { t: number, in_custody: boolean?, civilians_killed: number, label: PanelText }>
+    self._peers = {} ---@type table<number, { t: number, in_custody: boolean?, civilians_killed: number, label: Text }>
     self._tick = 0
     if self._SIZE_INCREASE_NEEDED then
         self:SetBGSize(self._bg_box:w() / 2)
@@ -49,6 +49,11 @@ function EHITradeDelayTracker:SetIconColor()
     end
 end
 
+---@param state boolean
+function EHITradeDelayTracker:SetAnimFlash(state)
+    self._anim_flash = state
+end
+
 ---@param peer_id number
 ---@param time number
 ---@param civilians_killed number? Defaults to `1` if not provided
@@ -77,7 +82,7 @@ function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed
 end
 
 function EHITradeDelayTracker:RedrawPanel()
-    for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
+    for _, text in ipairs(self._bg_box:children()) do ---@cast text Text
         if text.set_text then
             self:FitTheText(text)
         end

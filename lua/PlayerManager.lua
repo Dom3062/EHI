@@ -14,7 +14,8 @@
 ---@field _cached_detection_risk number?
 ---@field body_armor_value fun(self: self, category: string, override_value: number?, default: any?): number|any
 ---@field has_category_upgrade fun(self: self, category: string, upgrade: string): boolean
----@field _get_damage_health_ratio_threshold fun(self: self, category: string): number
+---@field get_damage_health_ratio fun(self: self, health_ratio: number, category: string?): number
+---@field _get_damage_health_ratio_threshold fun(self: self, category: string?): number
 ---@field has_activate_temporary_upgrade fun(self: self, category: string, upgrade: string): boolean
 ---@field register_message fun(self: self, message: number|string, uid: string|number, func: function)
 ---@field unregister_message fun(self: self, message: number|string, uid: string|number)
@@ -54,7 +55,7 @@ if EHI:GetTrackerOption("show_bodybags_counter") then
     original._set_body_bags_amount = PlayerManager._set_body_bags_amount
     function PlayerManager:_set_body_bags_amount(...)
         original._set_body_bags_amount(self, ...)
-        managers.ehi_tracker:SetTrackerCount("BodybagsCounter", self._local_player_body_bags)
+        managers.ehi_tracker:SetCount("BodybagsCounter", self._local_player_body_bags)
     end
 end
 
@@ -102,7 +103,7 @@ if EHI:GetBuffOption("forced_friendship") then
                 local ratio = value / max_absorption
                 managers.ehi_buff:AddGauge("hostage_absorption", ratio, value * 10)
             else
-                managers.ehi_buff:RemoveBuff("hostage_absorption")
+                managers.ehi_buff:RemoveAndResetBuff("hostage_absorption")
             end
         end
         original.set_damage_absorption(self, key, value, ...)
@@ -305,7 +306,7 @@ end
 --////////////////--
 --//  Tag Team  //--
 --////////////////--
-if EHI:GetBuffDeckOption("tag_team", "effect") or EHI:GetBuffDeckOption("tag_team", "absorption") then
+if EHI:GetBuffDeckSelectedOptions("tag_team", "effect", "absorption") then
     local Effect =
     {
         Priority = 1,
@@ -317,7 +318,7 @@ if EHI:GetBuffDeckOption("tag_team", "effect") or EHI:GetBuffDeckOption("tag_tea
             local duration = base_values.duration
             local absorption = 0
             local end_time = timer:time() + base_values.duration
-            local function on_damage(damage_info)
+            local function on_damage(damage_info) ---@param damage_info CopDamage.AttackData
                 local was_killed = damage_info.result.type == "death"
                 local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
                 if was_killed and valid_player then
@@ -368,7 +369,7 @@ if EHI:GetBuffDeckOption("tag_team", "tagged") then
             local duration = base_values.duration
             local end_time = timer:time() + duration
             local on_damage_key = "on_damage_" .. BuffKey .. "_EHI"
-            local function on_damage(damage_info)
+            local function on_damage(damage_info) ---@param damage_info CopDamage.AttackData
                 local was_killed = damage_info.result.type == "death"
                 local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
                 if was_killed and valid_player then
@@ -429,82 +430,26 @@ end
 --//////////////////////////////////--
 --//  Bullseye / Ammo Efficiency  //--
 --//////////////////////////////////--
---[[local TrackBullseye = O:get("buff", "showBullseyeCooldown")
-local TrackAmmoEfficiencyDuration = O:get("buff", "showAmmoEfficiencyDuration")
-local TrackAmmoEfficiencyStack = O:get("buff", "showAmmoEfficiencyStack")
-local ammo_efficiency_counter = 0
-local ammo_efficiency_text_tbl = {{}, {}}
-local function ResetAmmoEfficiencyStack()
-    ammo_efficiency_counter = 0
-    me:RemoveBuff("AmmoEfficiencyStack")
-end]]
 if EHI:GetBuffOption("bullseye") or EHI:GetBuffDeckOption("copycat", "head_games_cooldown") then
     original.on_headshot_dealt = PlayerManager.on_headshot_dealt
     function PlayerManager:on_headshot_dealt(...)
         local previouscooldown = self._on_headshot_dealt_t or 0
-        --local isgametracking = self._coroutine_mgr:is_running("ammo_efficiency")
 
         original.on_headshot_dealt(self, ...)
 
+        local t = Application:time()
+
         if self:has_category_upgrade("player", "headshot_regen_armor_bonus") then
-            local t = Application:time()
             if t >= previouscooldown then
                 managers.ehi_buff:AddBuff("headshot_regen_armor_bonus", self._on_headshot_dealt_t - t)
             end
         end
 
         if self:has_category_upgrade("player", "headshot_regen_health_bonus") then
-            local t = Application:time()
             if t >= previouscooldown then
                 managers.ehi_buff:AddBuff("headshot_regen_health_bonus", self._on_headshot_dealt_t - t)
             end
         end
-
-        -- Derived from PlayerManager:_on_enter_ammo_efficiency_event()
-        --[[if self._ammo_efficiency ~= nil and (TrackAmmoEfficiencyDuration or TrackAmmoEfficiencyStack) then
-            local weaponunit = self:equipped_weapon_unit()
-            if weaponunit then
-                local weaponunitbase = weaponunit:base()
-                if weaponunitbase and weaponunitbase:fire_mode() == "single" and weaponunitbase:is_category("smg", "assault_rifle", "snp") then
-                    ammo_efficiency_counter = (ammo_efficiency_counter or 0) + 1
-
-                    if TrackAmmoEfficiencyStack then
-                        local text = nil
-                        -- The buff title must not be specified for the 'Vanilla' style when et is 1
-                        if buff_style ~= 2 then
-                            -- Recycling tables to prevent memory wastage since this code runs frequently
-                            text = ammo_efficiency_text_tbl
-                            text[1][1] = L("_buff_ammo_efficiency_stack")
-                            text[2][1] = string_format(" %s", tostring(ammo_efficiency_counter))
-                            text[2][2] = clGood
-                        else
-                            text = tostring(ammo_efficiency_counter)
-                        end
-                        local maxheadshots = (self._ammo_efficiency.headshots or 3)
-                        local ratio = ammo_efficiency_counter / maxheadshots
-                        if ratio > 1 then
-                            -- Probably never, but just in case
-                            ratio = 1
-                        end
-                        me:GaugeBuff3({
-                            key = "AmmoEfficiencyStack",
-                            good = true,
-                            icon = U100SkillIcons,
-                            iconRect = {(8 * 80) + 8, (4 * 80) + 12, 64, 64},
-                            text = text,
-                            st = buff_style == 2 and ratio or 1 - ratio
-                        })
-                        -- Add only one delayed callback, not two or three
-                        if not isgametracking then
-                            DC:Add("ResetAmmoEfficiencyStack", (self._ammo_efficiency.time or 6), ResetAmmoEfficiencyStack)
-                        end
-                    end
-                else
-                    me:RemoveBuff("AmmoEfficiencyDuration")
-                    ResetAmmoEfficiencyStack()
-                end
-            end
-        end]]
     end
 end
 
@@ -514,7 +459,7 @@ end
 original.on_ammo_increase = PlayerManager.on_ammo_increase
 function PlayerManager:on_ammo_increase(...)
     original.on_ammo_increase(self, ...)
-    managers.ehi_buff:RemoveBuff("ammo_efficiency")
+    managers.ehi_buff:RemoveAndResetBuff("ammo_efficiency")
 end
 
 --///////////////////--
@@ -525,7 +470,7 @@ if EHI:GetBuffOption("bulletstorm") then
     function PlayerManager:add_to_temporary_property(name, time, ...)
         original.add_to_temporary_property(self, name, time, ...)
         if name == "bullet_storm" then
-            managers.ehi_buff:AddBuff("bullet_storm", time)
+            managers.ehi_buff:AddBuff("no_ammo_cost", time)
         end
     end
 end
@@ -540,11 +485,11 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_conve
     local NextStackPoll = EHI:GetBuffDeckOption("maniac", "stack_refresh")
     local maxstacks = tweak_data.upgrades.max_cocaine_stacks_per_tick or 20
     original._update_damage_dealt = PlayerManager._update_damage_dealt
-    function PlayerManager:_update_damage_dealt(t, dt, ...)
+    function PlayerManager:_update_damage_dealt(t, ...)
         local previousstack = self._damage_dealt_to_cops_t or 0
         local previousdecay = self._damage_dealt_to_cops_decay_t or 0
 
-        original._update_damage_dealt(self, t, dt, ...)
+        original._update_damage_dealt(self, t, ...)
 
         if not self:has_category_upgrade("player", "cocaine_stacking") or self:local_player() == nil or self._damage_dealt_to_cops_t == nil or self._damage_dealt_to_cops_decay_t == nil then
             return
@@ -561,10 +506,7 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_conve
 
         -- Poll accumulated hysteria stacks, but not every frame
         if t >= next_maniac_stack_poll then
-            local newstacks = (self._damage_dealt_to_cops or 0) * tweak_data.gui.stats_present_multiplier * self:upgrade_value("player", "cocaine_stacking", 0)
-            if newstacks > maxstacks then
-                newstacks = maxstacks
-            end
+            local newstacks = math.min((self._damage_dealt_to_cops or 0) * tweak_data.gui.stats_present_multiplier * self:upgrade_value("player", "cocaine_stacking", 0), maxstacks)
             local ratio = newstacks / maxstacks
             if ratio > 0 then
                 managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", math.ehi_round(ratio, 0.01))
@@ -604,7 +546,7 @@ if EHI:GetBuffDeckSelectedOptions("sicario", "twitch", "twitch_cooldown") then
             if dodge_value > 0 then
                 managers.ehi_buff:AddGauge("SicarioTwitchGauge", dodge_value)
             else
-                managers.ehi_buff:RemoveBuff("SicarioTwitchGauge")
+                managers.ehi_buff:RemoveAndResetBuff("SicarioTwitchGauge")
             end
         end
         if dodge_value > 0 and dodge_value ~= self._dodge_shot_gain_value then

@@ -17,13 +17,15 @@ local triggers = {
 
     [102675] = { additional_time = 5 + 10 + 14, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.GetElementTimerAccurate, element = 102674, hint = Hints.Wait, waypoint = deep_clone(vault_pickup_wp) },
 
-    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape },
-
-    [101073] = EHI:AddCustomCode(function(self)
+    [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape }
+}
+if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
+    EHI:LoadTracker("EHICodesTracker")
+    triggers[101073] = EHI:AddCustomCode(function(self)
         if self._cache.chca_C4Route or self._cache.chca_CodeUsed or self._cache.chca_CodeSeen then
             return
         end
-        local paper_unit = managers.worlddefinition:get_unit(EHI:GetInstanceElementID(100000, 14470)) ---@cast paper_unit UnitBase?
+        local paper_unit = managers.worlddefinition:get_unit(EHI:GetInstanceElementID(100000, 14470)) --[[@as UnitBase?]]
         if not paper_unit then
             return
         end
@@ -55,17 +57,17 @@ local triggers = {
             end
         end
         self._cache.chca_CodeSeen = true
-    end, true), -- Spa first; Handprint second
-    [103761] = EHI:AddCustomCode(function(self)
+    end, true) -- Spa first; Handprint second
+    triggers[103761] = EHI:AddCustomCode(function(self)
         self._cache.chca_C4Route = true
         self._trackers:RemoveTracker("VaultCode")
-    end),
-    [EHI:GetInstanceElementID(100023, 15470)] = EHI:AddCustomCode(function(self)
+    end)
+    triggers[EHI:GetInstanceElementID(100023, 15470)] = EHI:AddCustomCode(function(self)
         self._cache.chca_CodeUsed = true
         self._trackers:RemoveTracker("VaultCode")
     end)
-}
-triggers[100688] = triggers[101073] -- Handprint first; Spa second
+    triggers[100688] = triggers[101073] -- Handprint first; Spa second
+end
 if EHI.IsClient then
     local escape_wait_time = 90 -- Very Hard and below
     local vault_pickup_wait_time = 25 -- Normal and Hard
@@ -91,13 +93,13 @@ if EHI.IsClient then
     triggers[102679] = { time = 15, id = "HeliPickUpSafe", icons = { Icon.Heli, Icon.Winch }, special_function = SF.SetTrackerAccurate, hint = Hints.Wait, waypoint = deep_clone(vault_pickup_wp) }
 end
 EHI:AddEventListener("chca_Winch",
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param waypoint_id string
 function(self, waypoint_id)
     local wp_defend = EHI:GetInstanceElementID(100070, 21220)
-    self._waypoints:SetWaypointPosition(waypoint_id, self:GetElementPositionOrDefault(wp_defend))
+    self._waypoints:SetWaypointPosition(waypoint_id, self._mission:GetElementPositionOrDefault(wp_defend))
     managers.hud:SoftRemoveWaypoint2(wp_defend)
-    managers.hud:SoftRemoveWaypoint2(EHI:GetInstanceElementID(100046, 21220)) -- Interact
+    managers.hud:SoftRemoveWaypoint2(wp_defend - 24) -- Interact (100046)
     self:RemoveEventListener("chca_Winch")
 end)
 
@@ -140,18 +142,7 @@ local achievements =
             [102944] = { special_function = SF.IncreaseProgress }, -- Bodybag thrown
             [103371] = { special_function = SF.SetAchievementFailed } -- Civie killed
         },
-        failed_on_alarm = true,
-        sync_params = { from_start = true }
-    },
-    chca_12 =
-    {
-        difficulty_pass = ovk_and_up,
-        elements =
-        {
-            [EHI:GetInstanceElementID(100041, 11770)] = { special_function = SF.ShowAchievementFromStart, class = TT.Achievement.Status },
-            [103584] = { status = EHI.Const.Trackers.Achievement.Status.Finish, special_function = SF.SetAchievementStatus }
-        },
-        sync_params = { from_start = true }
+        failed_on_alarm = true
     }
 }
 
@@ -160,6 +151,14 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 45 })
 }
 if EHI:CanShowAchievement("chca_12") and ovk_and_up then
+    achievements.chca_12 =
+    {
+        elements =
+        {
+            [EHI:GetInstanceElementID(100041, 11770)] = { condition_function = EHI.ConditionFunctions.PlayingFromStart, class = TT.Achievement.Status },
+            [103584] = { status = EHI.Const.Trackers.Achievement.Status.Finish, special_function = SF.SetAchievementStatus }
+        }
+    }
     local active_saws = 0
     local function chca_12(unit_id, unit_data, unit)
         unit:timer_gui():chca_12()
@@ -174,12 +173,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
         active_saws = active_saws - 1
     end
     function TimerGui:chca_12()
-        local hook_key = string.format("EHI_saw_start_%s", self._ehi_key or tostring(self._unit:key()))
-        if self.PostStartTimer then
-            Hooks:PostHook(self, "PostStartTimer", hook_key, check)
-        else
-            Hooks:PostHook(self, "_start", hook_key, check)
-        end
+        Hooks:PostHook(self, "_start", string.format("EHI_saw_start_%s", self._ehi_key or self._unit:key()), check)
     end
     local tbl =
     {
@@ -225,17 +219,17 @@ if EHI:IsLootCounterVisible() then
     for i = 100034, 100041, 1 do
         units[EHI:GetInstanceUnitID(i, 15470)] = true
     end
-    local LootLeftInVault = EHI.Manager:RegisterCustomSF(function(self, ...)
+    local LootLeftInVault = EHI.Trigger:RegisterCustomSF(function(self, ...)
         local destroyed = 0
         for unit_id, _ in pairs(units) do
-            local unit = managers.worlddefinition:get_unit(unit_id) ---@cast unit UnitBase?
-            if unit and unit.alive and unit:alive() then -- If the unit is alive, then players left it unbagged
+            local unit = managers.worlddefinition:get_unit(unit_id) --[[@as UnitBase?]]
+            if unit and unit.alive and unit:alive() then ---@diagnostic disable-line -- If the unit is alive, then players left it unbagged
                 destroyed = destroyed + 1
             end
         end
         self._loot:DecreaseLootCounterProgressMax(destroyed)
     end)
-    local C4Plan = EHI.Manager:RegisterCustomSF(function(self, ...)
+    local C4Plan = EHI.Trigger:RegisterCustomSF(function(self, ...)
         local bags = 16
         if self._cache.chca_TeasetInMeetingRoom and not self._cache.chca_GlassDestroyed then
             bags = bags + 1
@@ -270,7 +264,7 @@ if EHI:IsLootCounterVisible() then
     other[101413] = MiniSafeMoneyBagFound
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

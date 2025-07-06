@@ -14,12 +14,11 @@ local achievements =
         {
             [101282] = { time = 60, class = TT.Achievement.Base },
             [101285] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other
 })
@@ -33,7 +32,7 @@ EHI:AddXPBreakdown({
             { amount = 6000, loud = true },
         }}
     },
-    total_xp_override =
+    total_xp_override =z
     {
         params =
         {

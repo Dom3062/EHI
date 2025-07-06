@@ -1,8 +1,7 @@
 local EHI = EHI
 
----@class EHIBuffManager : EHIBaseManager
----@field new fun(self: self): self
-EHIBuffManager = class(EHIBaseManager)
+---@class EHIBuffManager
+local EHIBuffManager = {}
 EHIBuffManager._sync_add_buff = "EHISyncAddBuff"
 ---@param hud HUDManager
 ---@param panel Panel
@@ -16,9 +15,10 @@ function EHIBuffManager:init_finalize(hud, panel)
     self._x = EHI:GetOption(_G.IS_VR and "buffs_vr_x_offset" or "buffs_x_offset") --[[@as number]]
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
-    dofile(path .. "EHIPermanentBuffTracker.lua")
     dofile(path .. "EHIGaugeBuffTracker.lua")
+    dofile(path .. "EHIPermanentBuffTracker.lua")
     dofile(path .. "SimpleBuffEdits.lua")
+    EHIBuffTracker._parent_class = self
     hud:AddEHIUpdator("EHI_Buff_Update", self)
     self._panel = panel
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
@@ -28,13 +28,27 @@ function EHIBuffManager:init_finalize(hud, panel)
     self:_init_buffs(buff_y, buff_w, buff_h, scale)
     self:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     self:_cleanup_unused_buff_classes()
-    local function destroy()
+    table.sort(self._skill_check_after_spawn or {}, function(a, b)
+        return a._id:lower() < b._id:lower()
+    end)
+    EHI:AddOnSpawnedCallback(function()
+        self:ActivateUpdatingBuffs()
+    end)
+    EHI:AddEndGameCallback(function()
         self._update_buffs = {}
-    end
-    EHI:AddCallback(EHI.CallbackMessage.GameEnd, destroy)
-    EHI:AddCallback(EHI.CallbackMessage.GameRestart, destroy)
+    end)
+    EHI:AddOnCustodyCallback(function(custody_state)
+        for _, buff in pairs(self._buffs) do
+            buff:SetCustodyState(custody_state)
+        end
+    end)
+    EHI:AddOnAlarmCallback(function(dropin)
+        for _, buff in pairs(self._buffs) do
+            buff:SwitchToLoudMode()
+        end
+    end)
     if EHI.IsClient then
-        self:AddReceiveHook(self._sync_add_buff, function(data, sender)
+        managers.ehi_sync:AddReceiveHook(self._sync_add_buff, function(data, sender)
             local tbl = json.decode(data)
             self:AddBuff(tbl.id, tbl.t)
         end)
@@ -57,24 +71,42 @@ function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
             params.y = buff_y
             params.w = buff_w
             params.h = buff_h
+            params.group = buff.group
             params.text = buff.text
+            params.text_localize = buff.text_localize
             params.texture, params.texture_rect = get_icon(buff)
             params.format = buff.format
-            params.good = not buff.bad
             params.no_progress = buff.no_progress
             params.max = buff.max
-            params.class_to_load = buff.class_to_load
             params.scale = scale
-            params.enable_in_loud = buff.enable_in_loud
+            params.skill_check_after_spawn = buff.skill_check_after_spawn
             if buff.permanent then
-                if buff.permanent.deck_option and EHI:GetBuffDeckOption(buff.permanent.deck_option.deck, buff.permanent.deck_option.option) then
-                    params.class = buff.permanent.class
+                if buff.permanent.option and EHI:GetBuffOption(buff.permanent.option) then
+                    params.class = buff.permanent.class or "EHIPermanentBuffTracker"
                     params.skill_check = buff.permanent.skill_check
+                    params.team_skill_check = buff.permanent.team_skill_check
+                    params.team_ai_skill_check = buff.permanent.team_ai_skill_check
+                    params.always_show = buff.permanent.always_show
+                    params.show_on_trigger = buff.permanent.show_on_trigger
+                    params.show_on_trigger_when_synced = buff.permanent.show_on_trigger_when_synced
+                    params.class_to_load = buff.permanent.class_to_load
+                    params.skill_check_after_spawn = true
+                    params.check_buff_on_spawn = true
+                elseif buff.permanent.deck_option and EHI:GetBuffDeckOption(buff.permanent.deck_option.deck, buff.permanent.deck_option.option) then
+                    params.class = buff.permanent.class or "EHIPermanentBuffTracker"
+                    params.skill_check = buff.permanent.skill_check
+                    params.team_skill_check = buff.permanent.team_skill_check
+                    params.always_show = buff.permanent.always_show
+                    params.show_on_trigger = buff.permanent.show_on_trigger
+                    params.skill_check_after_spawn = true
+                    params.check_buff_on_spawn = true
                 else
                     params.class = buff.class
+                    params.class_to_load = buff.class_to_load
                 end
             else
                 params.class = buff.class
+                params.class_to_load = buff.class_to_load
             end
             self:_create_buff(params, buff.persistent, buff.deck_option)
         end
@@ -108,15 +140,14 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             params.h = buff_h
             params.texture = texture
             params.texture_rect = texture_rect
-            params.good = true
-            params.icon_color = self:GetPeerColorByPeerID(i)
+            params.icon_color = tweak_data.chat_colors[i] or Color.white
             params.scale = scale
             params.class = "EHITagTeamBuffTracker"
             self:_create_buff(params)
         end
     end
-    if CustomNameColor and CustomNameColor.ModID then
-        self:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
+    if CustomNameColor and CustomNameColor.ModID and not Global.game_settings.single_player then
+        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
             if data and data ~= "" then
                 local buff = self._buffs["TagTeamTagged_" .. sender .. local_peer_id]
                 if buff then
@@ -140,14 +171,16 @@ function EHIBuffManager:_create_buff(params, persistent, deck_option)
         if params.class_to_load.load_class then
             EHI:LoadBuff(params.class_to_load.load_class)
         end
-        buff = _G[params.class_to_load.class]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
+        buff = _G[params.class_to_load.class]:new(self._panel, params) --[[@as EHIBuffTracker]]
     else
-        buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params, self) --[[@as EHIBuffTracker]]
+        buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params) --[[@as EHIBuffTracker]]
     end
     self._buffs[params.id] = buff
-    if params.skill_check then
-        self._check_buff_on_spawn = self._check_buff_on_spawn or {} ---@type table<string, EHIBuffTracker>
-        self._check_buff_on_spawn[params.id] = buff
+    if params.skill_check_after_spawn then
+        self._skill_check_after_spawn = self._skill_check_after_spawn or {} ---@type EHIBuffTracker[]
+        table.insert(self._skill_check_after_spawn, buff)
+    end
+    if params.check_buff_on_spawn then -- queued
     elseif persistent and EHI:GetBuffOption(persistent) then
         buff:SetPersistent()
     elseif deck_option and EHI:GetBuffDeckOption(deck_option.deck, deck_option.persistent) then
@@ -157,7 +190,7 @@ end
 
 function EHIBuffManager:_cleanup_unused_buff_classes()
     for id, buff in pairs(tweak_data.ehi.buff) do
-        if buff.class and (buff.class ~= "EHIGaugeBuffTracker" and buff.class ~= "EHIPermanentBuffTracker") then
+        if buff.class and buff.class ~= "EHIGaugeBuffTracker" then
             local class = buff.class
             if _G[class] and not self._buffs[id] then -- Tracker class exists, but the tracker is not created because it is disabled; remove the class
                 _G[class] = nil
@@ -183,7 +216,6 @@ end
 
 ---@param id string
 ---@param f string
----@param ... unknown
 function EHIBuffManager:CallFunction(id, f, ...)
     local buff = self._buffs[id]
     if buff and buff[f] then
@@ -194,49 +226,26 @@ end
 ---@param id string
 ---@param t number
 function EHIBuffManager:SyncAndAddBuff(id, t)
-    self:SyncTable(self._sync_add_buff, { id = id, t = t })
+    managers.ehi_sync:SyncTable(self._sync_add_buff, { id = id, t = t })
     self:AddBuff(id, t)
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()
-    if not self._buffs or table.empty(self._buffs) then
+    if table.ehi_empty(self._skill_check_after_spawn) then
         return
     end
-    for id, buff in pairs(tweak_data.ehi.buff) do
-        if buff.activate_after_spawn then
-            local b = self._buffs[id]
-            if b and b:PreUpdateCheck() then
-                b:PreUpdate()
-                if not b._enable_in_loud then
-                    self:_add_buff_to_update(b)
-                end
-            end
-        elseif buff.check_after_spawn then
-            local b = self._buffs[id]
-            if b and b:PreUpdateCheck() then
-                b:PreUpdate()
-            end
-        end
-    end
-    for _, buff in pairs(self._check_buff_on_spawn or {}) do
-        if buff:PreUpdateCheck() then
+    for _, buff in ipairs(self._skill_check_after_spawn) do
+        if buff:SkillCheck() then
             buff:PreUpdate()
+        elseif buff:CanDeleteOnFalseSkillCheck() then
+            if buff._DELETE_BUFF_ON_FALSE_SKILL_CHECK then
+                buff:delete()
+            else
+                buff:delete_with_class()
+            end
         end
     end
-    self._check_buff_on_spawn = nil
-end
-
----@param state boolean
-function EHIBuffManager:SetCustodyState(state)
-    for _, buff in pairs(self._buffs or {}) do
-        buff:SetCustodyState(state)
-    end
-end
-
-function EHIBuffManager:SwitchToLoudMode()
-    for _, buff in pairs(self._buffs or {}) do
-        buff:SwitchToLoudMode()
-    end
+    self._skill_check_after_spawn = nil
 end
 
 ---@param id string
@@ -308,7 +317,7 @@ end
 
 ---@param id string
 function EHIBuffManager:DeleteBuff(id)
-    local buff = self._buffs and self._buffs[id]
+    local buff = self._buffs[id]
     if buff then
         buff:Remove()
     end
@@ -420,3 +429,5 @@ else -- Right
         buff:SetRightXByPos(self._x, pos)
     end
 end
+
+return EHIBuffManager

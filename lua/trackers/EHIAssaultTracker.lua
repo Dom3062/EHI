@@ -42,7 +42,7 @@ if EHI:GetOption("show_assault_diff_in_assault_trackers") then
         EHIAssaultTracker._anim_chance = EHIChanceTracker._anim_chance
     end
 end
-if EHI:GetOption("show_assault_enemy_count") then
+if EHI:GetOption("show_assault_enemy_count") and (EHI:CombineAssaultDelayAndAssaultTime() or EHI:GetOption("show_assault_time_tracker")) then
     EHIAssaultTracker._SHOW_AMOUNT_OF_ENEMIES = true
     EHIAssaultTracker.SetCount = EHICountTracker.SetCount
     EHIAssaultTracker.AlarmEnemyRegistered = EHICountTracker.IncreaseCount
@@ -53,14 +53,9 @@ if EHI:GetOption("show_assault_enemy_count") then
 end
 if type(tweak_values) == "table" then
     local first_value = tweak_values[1] or 0
-    local match = true
-    for _, value in pairs(tweak_values) do
-        if first_value ~= value then
-            match = false
-            break
-        end
-    end
-    if match then -- All numbers the same, use it and avoid computation because it is expensive
+    if table.true_for_all(tweak_values, function(value, key)
+        return value == first_value
+    end) then -- All numbers the same, use it and avoid computation because it is expensive
         EHIAssaultTracker._ASSAULT_DELAY = first_value
     end
 else -- If for some reason the assault delay is not a table, use the value directly
@@ -68,14 +63,9 @@ else -- If for some reason the assault delay is not a table, use the value direc
 end
 if type(hostage_values) == "table"  then
     local first_value = hostage_values[1] or 0
-    local match = true
-    for _, value in pairs(hostage_values) do
-        if first_value ~= value then
-            match = false
-            break
-        end
-    end
-    if match then -- All numbers the same, use it and avoid computation because it is expensive
+    if table.true_for_all(hostage_values, function(value, key)
+        return value == first_value
+    end) then -- All numbers the same, use it and avoid computation because it is expensive
         EHIAssaultTracker._PRECOMPUTED_HOSTAGE_DELAY = true
         EHIAssaultTracker._HOSTAGE_DELAY = first_value
     end
@@ -87,20 +77,19 @@ EHIAssaultTracker._ANTICIPATION_DELAY = tweak_data.levels:IsLevelSkirmish() and 
 if EHI.IsHost and EHI:IsModInstalled("Hostages Extend Break Time", "Pat") then
     EHIAssaultTracker._ANTICIPATION_DELAY_PER_HOSTAGE = 5
 end
-function EHIAssaultTracker:init(panel, params, parent_class)
+EHIAssaultTracker._SHOW_ASSAULT_DELAY = EHI:GetOption("show_assault_delay_tracker")
+function EHIAssaultTracker:init(panel, params)
     self._refresh_on_delete = true
     self:CalculateDifficultyRamp(params.diff or 0)
     self.update_break = self.update
     if params.assault then
         self._assault = true
-        params.time = self:CalculateAssaultTime(parent_class)
+        params.time = self:CalculateAssaultTime()
         self._forced_icons[1].color = Build
         self.update = self.update_assault
     else
         self._forced_icons[1].color = Control
-        if not params.time then
-            params.time = self:CalculateBreakTime() + (2 * math.random())
-        end
+        params.time = params.time or self:CalculateBreakTime() + (2 * math.random())
         self:ComputeHostageDelay()
         self:CheckIfHostageIsPresent()
         if self._t_diff then
@@ -113,7 +102,7 @@ function EHIAssaultTracker:init(panel, params, parent_class)
         self.SyncAnticipationColor = self.SyncAnticipationColorInaccurate
         self._text_color = self._inaccurate_text_color
     end
-    EHIAssaultTracker.super.init(self, panel, params, parent_class)
+    EHIAssaultTracker.super.init(self, panel, params)
     self._needs_update = not params.endless_assault
     if params.endless_assault then
         self:SetEndlessAssault(true)
@@ -122,7 +111,7 @@ end
 
 function EHIAssaultTracker:post_init(params)
     if self._SHOW_ASSAULT_DIFF then
-        local corrected_diff = self._parent_class:RoundChanceNumber(params.diff_visual or managers.ehi_assault._diff or self._diff)
+        local corrected_diff = math.ehi_round_chance(params.diff_visual or managers.ehi_assault._diff or self._diff)
         self._anim_flash_set_chance = 0
         self._chance = corrected_diff
         self._anim_static_chance = corrected_diff
@@ -334,7 +323,9 @@ end
 ---@param block boolean
 ---@param t number
 function EHIAssaultTracker:SetControlStateBlock(block, t)
-    if block then
+    if not self._SHOW_ASSAULT_DELAY then
+        return
+    elseif block then
         if self._state == State.control and not self._hostage_delay_disabled then
             self:RemoveTrackerFromUpdate()
             self:SetStatusText("break")
@@ -355,6 +346,13 @@ function EHIAssaultTracker:SetTime(time)
     self._hostages_found = false
     EHIAssaultTracker.super.SetTime(self, time)
     self:CheckIfHostageIsPresent()
+end
+
+---@param time number
+function EHIAssaultTracker:SetTimeIfLower(time)
+    if self._time >= time then
+        self:SetTime(time)
+    end
 end
 
 ---@param diff number
@@ -405,9 +403,8 @@ function EHIAssaultTracker:CalculateDifficultyDependentValue(values)
     return math.lerp(values[self._difficulty_point_index], values[self._difficulty_point_index + 1], self._difficulty_ramp) --[[@as number]]
 end
 
----@param parent_class EHITrackerManager?
 ---@return number
-function EHIAssaultTracker:CalculateAssaultTime(parent_class)
+function EHIAssaultTracker:CalculateAssaultTime()
     local build = assault_values.build_duration
     local sustain = math.lerp(self:CalculateDifficultyDependentValue(assault_values.sustain_duration_min), self:CalculateDifficultyDependentValue(assault_values.sustain_duration_max), math.random()) * managers.groupai:state():_get_balancing_multiplier(assault_values.sustain_duration_balance_mul)
     local fade = assault_values.fade_duration
@@ -420,9 +417,8 @@ function EHIAssaultTracker:CalculateAssaultTime(parent_class)
         self._to_next_state_t = build
         self._next_state = State.sustain
         self._next_state_t = sustain
-        local parent = parent_class or self._parent_class
-        parent:SaveInternalData("assault", "sustain_t", self._assault_t)
-        parent:SaveInternalData("assault", "sustain_app_t", managers.game_play_central:get_heist_timer())
+        managers.ehi_assault._internal.sustain_t = self._assault_t
+        managers.ehi_assault._internal.sustain_app_t = managers.game_play_central:get_heist_timer()
     else
         self._to_next_state_t = build + sustain
         self._next_state = State.fade
@@ -503,13 +499,19 @@ function EHIAssaultTracker:AssaultEnd(diff)
     self:AnimateBG()
     self:StopTextAnim()
     self._hostage_delay_disabled = nil
-    self._time = self:CalculateBreakTime() + (2 * math.random())
-    self:ComputeHostageDelay()
-    self:CheckIfHostageIsPresent()
-    self:SetState(State.control)
     self._assault = nil
-    self.update = self.update_break
+    self:SetState(State.control)
     EHI:Unhook("Assault_set_control_info")
+    if self._SHOW_ASSAULT_DELAY then
+        self._time = self:CalculateBreakTime() + (2 * math.random())
+        self:ComputeHostageDelay()
+        self:CheckIfHostageIsPresent()
+        self.update = self.update_break
+    else
+        self._text:set_text("")
+        self._control_state_block = true
+        self:RemoveTrackerFromUpdate()
+    end
 end
 
 ---@param diff number
@@ -645,5 +647,21 @@ function EHIAssaultTracker:Refresh()
     if not self._assault then
         self:StopTextAnim()
         self:AnimateColor(true)
+    end
+end
+
+function EHIAssaultTracker:Hide()
+    self:StopPanelAnims()
+    self:SetPanelAlpha(0)
+    self._parent_class:HideTracker(self._id)
+    self:CleanupOnHide()
+end
+
+function EHIAssaultTracker:Run(params)
+    if params.control_block then
+        self:AssaultEndWithBlock(params.diff)
+    else
+        self:AssaultEnd(params.diff)
+        self:AddTrackerToUpdate()
     end
 end

@@ -18,11 +18,21 @@
 
 ---@class MenuItem
 ---@field id string
+---@field blocked_by { check: string, hint: string }
+---@field callback string|string[]
+---@field callback_arguments string|string[]
+---@field desc string
 ---@field default_value any
 ---@field enabled boolean
+---@field focus_changed_callback string?
+---@field load_menu { file_path: string, settings: (string|string[])? }
+---@field next_menu string?
+---@field num number
 ---@field panel Panel
 ---@field parent (string|string[])?
 ---@field parent_func_update string?
+---@field preview_func string
+---@field preview_func_params any|any[]
 ---@field size number?
 ---@field type string
 ---@field value any
@@ -30,7 +40,12 @@
 ---@class MenuMultipleChoicesItem : MenuItem
 ---@field items string[]
 
+---@class MenuMultipleChoiceSliderItem : MenuMultipleChoicesItem
+---@field max number
+
 local EHI = EHI
+---@param TOTAL_T number
+---@param clbk fun(p: number, t: number)
 local function do_animation(TOTAL_T, clbk)
     local t = 0
     while t < TOTAL_T do
@@ -40,7 +55,6 @@ local function do_animation(TOTAL_T, clbk)
     end
     clbk(1, TOTAL_T)
 end
-
 ---@param o PanelBaseObject
 ---@param target_alpha number
 local function animate_alpha(o, target_alpha)
@@ -68,7 +82,7 @@ EHIMenu._item_offset =
     multiple_choice = 215,
     color_select = 64
 }
----@param text PanelText
+---@param text Text
 EHIMenu._adjust_font_size = function(text)
     local w = select(3, text:text_rect()) ---@type number
     if w > text:w() then
@@ -102,7 +116,6 @@ function EHIMenu:init()
     })
     local background_size = managers.gui_data:full_scaled_size()
     local bg = self._panel:bitmap({
-        name = "bg",
         color = Color.black,
         alpha = 0.5,
         layer = -1,
@@ -121,7 +134,7 @@ function EHIMenu:init()
     blur_bg:set_center_x(self._panel:w() / 2)
     self._tooltip = self._panel:text({
         font_size = 18,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         y = 10,
         w = 500,
         align = "right",
@@ -165,17 +178,36 @@ function EHIMenu:init()
             alpha = 0,
         })
         self._back_button = { type = "button", panel = back_button, callback = "Cancel", num = 0 }
+        if not _G.IS_VR then -- Preview does not work in VR (panel is not visible)
+            self._preview_button = self._panel:panel({
+                w = 100,
+                h = 25,
+                layer = 2,
+                visible = false
+            })
+            local preview_title = self._preview_button:text({
+                name = "title",
+                font_size = 28,
+                font = tweak_data.menu.pd2_large_font,
+                align = "center",
+                text = managers.localization:to_upper_text("ehi_menu_preview", { BTN_PREVIEW = managers.localization:btn_macro("run", true) })
+            })
+            self:make_fine_text(preview_title)
+            self._preview_button:set_size(preview_title:w() + 16, preview_title:h() + 2)
+            preview_title:set_center(self._preview_button:w() / 2, self._preview_button:h() / 2)
+            self._preview_button:set_righttop(back_button:left(), self._options_panel:bottom() + 2)
+        end
     else
         self._button_legends = self._panel:text({
             layer = 2,
             w = options_bg:w() - 20,
             h = 25,
             font_size = 23,
-            font = tweak_data.menu.pd2_medium_font,
+            font = tweak_data.menu.pd2_large_font,
             align = "right",
             text = ""
         })
-        self:SetLegends(true, true, false)
+        self:SetLegends(true, true, false, false)
         self._button_legends:set_right(self._options_panel:right() - 5)
         self._button_legends:set_top(self._options_panel:bottom())
     end
@@ -184,6 +216,12 @@ function EHIMenu:init()
 
     self._menu_ver = tonumber(EHI.ModInstance:GetVersion()) or 1
 
+    ---@param dt number
+    local function Update(t, dt)
+        if self._enabled then
+            self:update(dt)
+        end
+    end
     local update_loop = "MenuUpdate"
     local update_class = MenuManager
     if Utils:IsInGameState() then
@@ -201,70 +239,24 @@ function EHIMenu:init()
         restart:set_top(self._options_panel:bottom())
         update_loop = "GameSetupUpdate"
         update_class = GameSetup
+        Hooks:Add("GameSetupPausedUpdate", "MenuUpdatePaused_EHIMenu", Update) -- Single-Player pauses the update loop above, another loop is needed (down below)
     end
 
     self:_get_menu_from_json(EHI.MenuPath .. "menu.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "visuals.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "trackers.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "trackers_2.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "trackers_3.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "trackers_4.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "unlockables.json", EHI.settings.unlockables)
-    self:_get_menu_from_json(EHI.MenuPath .. "equipment.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "waypoints.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "shared.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "buffs.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/mastermind.json", EHI.settings.buff_option)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/enforcer.json", EHI.settings.buff_option)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/ghost.json", EHI.settings.buff_option)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/skills/fugitive.json", EHI.settings.buff_option)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks.json", EHI.settings.buff_option)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/infiltrator.json", EHI.settings.buff_option.infiltrator)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/gambler.json", EHI.settings.buff_option.gambler)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/grinder.json", EHI.settings.buff_option.grinder)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/maniac.json", EHI.settings.buff_option.maniac)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/anarchist.json", EHI.settings.buff_option.anarchist)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/expresident.json", EHI.settings.buff_option.expresident)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/biker.json", EHI.settings.buff_option.biker)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/kingpin.json", EHI.settings.buff_option.kingpin)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/sicario.json", EHI.settings.buff_option.sicario)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/stoic.json", EHI.settings.buff_option.stoic)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/tag_team.json", EHI.settings.buff_option.tag_team)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/hacker.json", EHI.settings.buff_option.hacker)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/leech.json", EHI.settings.buff_option.leech)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/copycat.json", EHI.settings.buff_option.copycat)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/perks/gage_boosts.json", EHI.settings.buff_option.gage_boosts)
-    self:_get_menu_from_json(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
-    self:_get_menu_from_json(EHI.MenuPath .. "inventory.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "other.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "other_2.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "other_options/floating_health_bar.json")
-    self:_get_menu_from_json(EHI.MenuPath .. "colors.json", EHI.settings.colors)
 
     self:OpenMenu("ehi_menu")
 
-    Hooks:Add(update_loop, "MenuUpdate_EHIMenu", function(t, dt)
-        if self._enabled then
-            self:update(t, dt)
-        end
-    end)
-    if update_loop == "GameSetupUpdate" then -- Single-Player pauses the update loop above, another loop is needed (down below)
-        Hooks:Add("GameSetupPausedUpdate", "MenuUpdatePaused_EHIMenu", function(t, dt)
-            if self._enabled then
-                self:update(t, dt)
-            end
-        end)
-    end
+    Hooks:Add(update_loop, "MenuUpdate_EHIMenu", Update)
     Hooks:PostHook(update_class, "destroy", "destroy_menu_EHIMenu", function(...)
         self._enabled = false
         EHI.Menu = nil
     end)
 end
 
+---@param item MenuItem
 function EHIMenu:CallCallback(item, params)
     params = params or {}
-    if item.callback and not params.no_call then
+    if item.callback and not params.skip_call then
         local value = item.value
         if params.to_n then
             value = tonumber(value)
@@ -278,22 +270,23 @@ function EHIMenu:CallCallback(item, params)
         end
         local var = type(item.callback_arguments) == "table"
         if type(item.callback) == "table" then
-            for _, clbk in ipairs(item.callback) do
+            for _, clbk in ipairs(item.callback --[[@as string[] ]]) do
                 if var then
-                    self[clbk](self, value, unpack(item.callback_arguments))
+                    self[clbk](self, value, unpack(item.callback_arguments --[[@as string[] ]]))
                 else
                     self[clbk](self, value, item.callback_arguments)
                 end
             end
         elseif var then
-            self[item.callback](self, value, unpack(item.callback_arguments))
+            self[item.callback](self, value, unpack(item.callback_arguments --[[@as string[] ]]))
         else
             self[item.callback](self, value, item.callback_arguments)
         end
     end
 end
 
-function EHIMenu:update(t, dt)
+---@param dt number
+function EHIMenu:update(dt)
     if self._axis_timer.y <= 0 then
         if 0.5 < self._controller:get_input_axis("menu_move").y or self._controller:get_input_bool("menu_up") then
             self:MenuUp()
@@ -303,7 +296,7 @@ function EHIMenu:update(t, dt)
             self:SetAxisTimer("y", 0.18, 0.3, "menu_down")
         end
     end
-    if self._controller and self._axis_timer.x <= 0 then
+    if self._axis_timer.x <= 0 then
         if 0.5 < self._controller:get_input_axis("menu_move").x or self._controller:get_input_bool("menu_right") then
             self:MenuLeftRight(1)
             self:SetAxisTimer("x", 0.12, 0.22, "menu_right")
@@ -312,12 +305,14 @@ function EHIMenu:update(t, dt)
             self:SetAxisTimer("x", 0.12, 0.22, "menu_left")
         end
 
-        if not managers.menu:is_pc_controller() and self._controller:get_input_bool("next_page") then
-            self:MenuLeftRight(10)
-            self:SetAxisTimer("x", 0.12, 0.22, "next_page")
-        elseif not managers.menu:is_pc_controller() and self._controller:get_input_bool("previous_page") then
-            self:MenuLeftRight(-10)
-            self:SetAxisTimer("x", 0.12, 0.22, "previous_page")
+        if not managers.menu:is_pc_controller() then
+            if self._controller:get_input_bool("next_page") then
+                self:MenuLeftRight(10, 1)
+                self:SetAxisTimer("x", 0.12, 0.22, "next_page")
+            elseif self._controller:get_input_bool("previous_page") then
+                self:MenuLeftRight(-10, -1)
+                self:SetAxisTimer("x", 0.12, 0.22, "previous_page")
+            end
         end
     end
 
@@ -330,10 +325,7 @@ end
 ---@param input_delay number
 ---@param input string
 function EHIMenu:SetAxisTimer(axis, delay, input_delay, input)
-    self._axis_timer[axis] = delay
-    if self._controller:get_input_pressed(input) then
-        self._axis_timer[axis] = input_delay
-    end
+    self._axis_timer[axis] = self._controller:get_input_pressed(input) and input_delay or delay
 end
 
 function EHIMenu:Open()
@@ -351,13 +343,18 @@ function EHIMenu:Open()
         self._controller:add_trigger("cancel", callback(self, self, "Cancel"))
         self._controller:add_trigger("confirm", callback(self, self, "Confirm"))
         self._controller:add_trigger("menu_toggle_voice_message", callback(self, self, "SetItem"))
+        local Y_button = "menu_modify_item"
         if managers.menu:is_pc_controller() then
+            Y_button = "run"
             managers.mouse_pointer:use_mouse({
                 mouse_move = callback(self, self, "mouse_move"),
                 mouse_press = callback(self, self, "mouse_press"),
                 mouse_release = callback(self, self, "mouse_release"),
                 id = self._mouse_id
             })
+        end
+        if not _G.IS_VR then
+            self._controller:add_trigger(Y_button, callback(self, self, "Preview"))
         end
     end
 
@@ -426,7 +423,7 @@ function EHIMenu:mouse_move(o, x, y)
             for i, item in ipairs(self._open_choice_dialog.items) do
                 if alive(item) and item:inside(x, y) and not selected then
                     if self._open_choice_dialog.selected > 0 and self._open_choice_dialog.selected ~= i then
-                        self._open_choice_dialog.items[self._open_choice_dialog.selected]:set_color(Color(0.6,0.6,0.6))
+                        self._open_choice_dialog.items[self._open_choice_dialog.selected]:set_color(Color(0.6, 0.6, 0.6))
                     end
                     item:set_color(Color.white)
                     self._open_choice_dialog.selected = i
@@ -436,7 +433,7 @@ function EHIMenu:mouse_move(o, x, y)
             end
         elseif self._open_color_dialog and self._open_color_dialog.panel then
             if self._slider then
-                self:SetColorSlider(self._slider.slider, x, self._slider.type)
+                self:SetColorSlider(self._slider.slider, x, self._slider.type) ---@diagnostic disable-line
                 managers.mouse_pointer:set_pointer_image("grab")
             else
                 for i, item in ipairs(self._open_color_dialog.items) do
@@ -504,8 +501,18 @@ function EHIMenu:mouse_press(o, button, x, y)
             else
                 self:CloseColorMenu()
             end
-        elseif self._highlighted_item and self._highlighted_item.panel:inside(x, y) then
-            self:ActivateItem(self._highlighted_item, x)
+        elseif self._highlighted_item then
+            if self._highlighted_item.type == "multiple_choice_slider" then
+                if self._highlighted_item.panel:child("left_arrow"):inside(x, y) then
+                    self:SetMultipleChoiceSlider(self._highlighted_item, -1) ---@diagnostic disable-line
+                elseif self._highlighted_item.panel:child("right_arrow"):inside(x, y) then
+                    self:SetMultipleChoiceSlider(self._highlighted_item, 1) ---@diagnostic disable-line
+                else
+                    self:ActivateItem(self._highlighted_item, x)
+                end
+            elseif self._highlighted_item.panel:inside(x, y) then
+                self:ActivateItem(self._highlighted_item, x)
+            end
         end
     end
 end
@@ -522,8 +529,7 @@ end
 function EHIMenu:Confirm()
     if not self._enabled then
         return
-    end
-    if self._open_choice_dialog then
+    elseif self._open_choice_dialog then
         for i, item in ipairs(self._open_choice_dialog.items) do
             if alive(item) and self._open_choice_dialog.selected == i then
                 local parent_item = self._open_choice_dialog.parent_item
@@ -546,11 +552,10 @@ end
 function EHIMenu:MenuDown()
     if not self._enabled then
         return
-    end
-    if self._open_choice_dialog then
+    elseif self._open_choice_dialog then
         if self._open_choice_dialog.selected < #self._open_choice_dialog.items then
             if self._open_choice_dialog.selected > 0 then
-                self._open_choice_dialog.items[self._open_choice_dialog.selected]:set_color(Color(0.6,0.6,0.6))
+                self._open_choice_dialog.items[self._open_choice_dialog.selected]:set_color(Color(0.6, 0.6, 0.6))
             end
             self._open_choice_dialog.items[self._open_choice_dialog.selected + 1]:set_color(Color.white)
             self._open_choice_dialog.selected = self._open_choice_dialog.selected + 1
@@ -562,29 +567,31 @@ function EHIMenu:MenuDown()
             end
             self._open_color_dialog.items[self._open_color_dialog.selected + 1]:child("bg"):set_alpha(0.1)
             self._open_color_dialog.selected = self._open_color_dialog.selected + 1
-            self:SetLegends(math.within(self._open_color_dialog.selected, 4, 5), false, self._open_color_dialog.selected < 4)
+            self:SetLegends(math.within(self._open_color_dialog.selected, 4, 5), false, self._open_color_dialog.selected < 4, false)
         end
-    elseif self._open_menu and not self._highlighted_item then
-        for i, item in ipairs(self._open_menu.items) do
-            if item.enabled and item.panel:child("bg") then
-                self:HighlightItem(item)
-                return
+    elseif self._open_menu then
+        if self._highlighted_item then
+            local current_num = self._highlighted_item.num + 1 > #self._open_menu.items - 1 and 0 or self._highlighted_item.num + 1
+            for i = current_num, (#self._open_menu.items - current_num) + current_num do
+                local item = self._open_menu.items[i + 1]
+                if item and item.enabled and item.panel:child("bg") then
+                    self:HighlightItem(item)
+                    return
+                end
             end
-        end
-    elseif self._open_menu and self._highlighted_item then
-        local current_num = self._highlighted_item.num + 1 > #self._open_menu.items - 1 and 0 or self._highlighted_item.num + 1
-        for i = current_num, (#self._open_menu.items - current_num) + current_num do
-            local item = self._open_menu.items[i + 1]
-            if item and item.enabled and item.panel:child("bg") then
-                self:HighlightItem(item)
-                return
+            for i = 0, #self._open_menu.items do
+                local item = self._open_menu.items[i]
+                if item and item.enabled and item.panel:child("bg") then
+                    self:HighlightItem(item)
+                    return
+                end
             end
-        end
-        for i = 0, #self._open_menu.items do
-            local item = self._open_menu.items[i]
-            if item and item.enabled and item.panel:child("bg") then
-                self:HighlightItem(item)
-                return
+        else
+            for _, item in ipairs(self._open_menu.items) do
+                if item.enabled and item.panel:child("bg") then
+                    self:HighlightItem(item)
+                    return
+                end
             end
         end
     end
@@ -593,10 +600,9 @@ end
 function EHIMenu:MenuUp()
     if not self._enabled then
         return
-    end
-    if self._open_choice_dialog then
+    elseif self._open_choice_dialog then
         if self._open_choice_dialog.selected > 1 then
-            self._open_choice_dialog.items[self._open_choice_dialog.selected]:set_color(Color(0.7,0.7,0.7))
+            self._open_choice_dialog.items[self._open_choice_dialog.selected]:set_color(Color(0.7, 0.7, 0.7))
             self._open_choice_dialog.items[self._open_choice_dialog.selected - 1]:set_color(Color.white)
             self._open_choice_dialog.selected = self._open_choice_dialog.selected - 1
         end
@@ -605,7 +611,7 @@ function EHIMenu:MenuUp()
             self._open_color_dialog.items[self._open_color_dialog.selected]:child("bg"):set_alpha(0)
             self._open_color_dialog.items[self._open_color_dialog.selected - 1]:child("bg"):set_alpha(0.1)
             self._open_color_dialog.selected = self._open_color_dialog.selected - 1
-            self:SetLegends(math.within(self._open_color_dialog.selected, 4, 5), false, self._open_color_dialog.selected < 4)
+            self:SetLegends(math.within(self._open_color_dialog.selected, 4, 5), false, self._open_color_dialog.selected < 4, false)
         end
     elseif self._open_menu and self._highlighted_item then
         local current_num = self._highlighted_item.num + 1
@@ -626,34 +632,94 @@ function EHIMenu:MenuUp()
     end
 end
 
-function EHIMenu:MenuLeftRight(change)
+---@param change number
+---@param change_no_skip number?
+function EHIMenu:MenuLeftRight(change, change_no_skip)
     if not self._enabled then
         return
-    end
-    if self._open_color_dialog and self._open_color_dialog.selected < 4 then
+    elseif self._open_color_dialog and self._open_color_dialog.selected < 4 then
         self:SetColorSlider(self._open_color_dialog.items[self._open_color_dialog.selected], nil, self._open_color_dialog.selected, change)
-    elseif self._open_menu and self._highlighted_item and self._highlighted_item.type == "slider" then
-        self:SetSlider(self._highlighted_item, nil, change)
-        self:CallCallback(self._highlighted_item, { to_n = true })
+    elseif self._open_menu then
+        if self._highlighted_item then
+            if self._highlighted_item.type == "slider" then
+                self:SetSlider(self._highlighted_item, nil, change)
+                self:CallCallback(self._highlighted_item, { to_n = true })
+            elseif self._highlighted_item.type == "multiple_choice_slider" then
+                self:SetMultipleChoiceSlider(self._highlighted_item, change_no_skip or change) ---@diagnostic disable-line
+            end
+        end
     end
 end
 
+---@param item MenuItem
+---@param x number?
 function EHIMenu:ActivateItem(item, x)
-    if not self._highlighted_item then
+    if not item then
         return
-    end
-
-    if item.type == "button" then
+    elseif item.type == "button" then
+        if item.load_menu and item.next_menu and not self._menus[item.next_menu] then
+            local settings_table = EHI.settings
+            if type(item.load_menu.settings) == "string" then
+                settings_table = settings_table[item.load_menu.settings]
+            elseif type(item.load_menu.settings) == "table" then
+                for _, setting in ipairs(item.load_menu.settings --[[@as string[] ]]) do
+                    settings_table = settings_table[setting]
+                end
+            end
+            self:_get_menu_from_json(EHI.MenuPath .. item.load_menu.file_path, settings_table)
+        end
         if item.next_menu and self._menus[item.next_menu] then
             self:OpenMenu(item.next_menu)
         elseif item.callback then
             self:CallCallback(item)
         end
     elseif item.type == "toggle" then
-        local value = not item.value
-        self:SetItem(item, value, self._open_menu)
-    elseif item.type == "multiple_choice" and not self._open_choice_dialog then
+        self:SetItem(item, not item.value, self._open_menu)
+    elseif item.type == "multiple_choice" and not self._open_choice_dialog then ---@cast item MenuMultipleChoicesItem 
         self:OpenMultipleChoicePanel(item)
+    elseif item.type == "multiple_choice_slider" then ---@cast item MenuMultipleChoiceSliderItem
+        local dialog_data = {
+            title = managers.localization:text("ehi_colors_menu"),
+            text = "",
+            button_list = {}
+        }
+        for i, option in ipairs(item.items) do
+            table.insert(dialog_data.button_list, {
+                text = option,
+                callback_func = function()
+                    self:SetMultipleChoiceSlider(item, nil, i)
+                end
+            })
+        end
+        local divider = {
+            no_text = true,
+            no_selection = true
+        }
+        table.insert(dialog_data.button_list, divider)
+        local no_button = {
+            text = managers.localization:text("dialog_cancel"),
+            cancel_button = true
+        }
+        table.insert(dialog_data.button_list, no_button)
+        dialog_data.image_blend_mode = "normal"
+        dialog_data.text_blend_mode = "add"
+        dialog_data.use_text_formating = true
+        dialog_data.w = 480
+        dialog_data.h = 532
+        dialog_data.title_font = tweak_data.menu.pd2_medium_font
+        dialog_data.title_font_size = tweak_data.menu.pd2_medium_font_size
+        dialog_data.font = tweak_data.menu.pd2_small_font
+        dialog_data.font_size = tweak_data.menu.pd2_small_font_size
+        dialog_data.text_formating_color = Color.white
+        dialog_data.text_formating_color_table = {}
+        dialog_data.clamp_to_screen = true
+        self.__dialog_open = true
+        managers.system_menu:show_buttons(dialog_data)
+        local function close()
+            self.__dialog_open = false
+            managers.system_menu:remove_dialog_closed_callback(close) --- Needs to be removed as the callback handler is not cleared after calling
+        end
+        managers.system_menu:add_dialog_closed_callback(close)
     elseif item.type == "slider" and x then
         self._slider = item
         self:SetSlider(item, x)
@@ -695,6 +761,8 @@ function EHIMenu:GetMenu(menu)
     return self._menus[menu]
 end
 
+---@param item MenuItem
+---@param enabled boolean
 function EHIMenu:AnimateItemEnabled(item, enabled)
     if item.panel and enabled ~= nil and enabled ~= item.enabled then
         item.enabled = enabled
@@ -703,42 +771,69 @@ function EHIMenu:AnimateItemEnabled(item, enabled)
     end
 end
 
+---@param item MenuItem
 function EHIMenu:HighlightItem(item)
     if self._highlighted_item and self._highlighted_item == item then
         return
     end
+    local previous_had_preview_func = false
     if self._highlighted_item then
+        previous_had_preview_func = self._highlighted_item.preview_func ~= nil
         self:UnhighlightItem(self._highlighted_item)
     end
     item.panel:child("bg"):stop()
     item.panel:child("bg"):animate(animate_alpha, 0.3)
     self._highlighted_item = item
+    local item_has_preview_func = item.preview_func ~= nil
 
     self._tooltip:set_text(self._highlighted_item.desc or "")
+    if item.blocked_by and self[item.blocked_by.check] and self[item.blocked_by.check](self) then
+        local hint_block = self[item.blocked_by.hint](self)
+        local blocked_by = managers.localization:text("ehi_item_blocked_by")
+        self._tooltip:set_text(string.format("%s\n\n%s\n%s",
+            self._highlighted_item.desc or "",
+            blocked_by,
+            hint_block
+        ))
+        local text_range = utf8.len(self._tooltip:text())
+        self._tooltip:set_range_color(text_range - utf8.len(blocked_by) - utf8.len(hint_block) - 1, text_range, Color(255, 255, 106, 0) / 255)
+    end
     if item.focus_changed_callback then
         self[item.focus_changed_callback](self, true, item.callback_arguments)
     end
+    if previous_had_preview_func ~= item_has_preview_func then
+        self:SetLegends(true, true, false, item_has_preview_func)
+        if self._preview_button then
+            self._preview_button:set_visible(item_has_preview_func)
+        end
+    end
 end
 
+---@param item MenuItem
 function EHIMenu:UnhighlightItem(item)
     if item.focus_changed_callback then
         self[item.focus_changed_callback](self, false, "")
     end
     item.panel:child("bg"):stop()
     item.panel:child("bg"):animate(animate_alpha, 0)
+    if item.blocked_by then
+        self._tooltip:clear_range_color(0, math.huge)
+    end
     self._highlighted_item = nil
 end
 
 ---@param accept boolean
 ---@param reset boolean
 ---@param step boolean
-function EHIMenu:SetLegends(accept, reset, step)
+---@param preview boolean
+function EHIMenu:SetLegends(accept, reset, step, preview)
     if self._button_legends then
         local text = managers.localization:text("menu_legend_back", {BTN_BACK = managers.localization:btn_macro("back")})
         local separator = "    "
         if accept then text = managers.localization:text("menu_legend_select", {BTN_UPDATE = managers.localization:btn_macro("menu_update")}) .. separator .. text end
         if reset then text = managers.localization:to_upper_text("ehi_menu_reset_to_default", {BTN_RESET = managers.localization:btn_macro("menu_toggle_voice_message")}) .. separator .. text end
         if step then text = managers.localization:to_upper_text("ehi_menu_large_steps", {BTN_STEP = managers.localization:btn_macro("previous_page") .. managers.localization:btn_macro("next_page")}) .. separator .. text end
+        if preview then text = managers.localization:to_upper_text("ehi_menu_preview", {BTN_PREVIEW = managers.localization:get_default_macro("BTN_Y")}) .. separator .. text end
         self._button_legends:set_text(text)
     end
 end
@@ -748,6 +843,8 @@ function EHIMenu:Cancel()
         self:CloseMultipleChoicePanel()
     elseif self._open_color_dialog then
         self:CloseColorMenu()
+    elseif self.__dialog_open then
+        return
     elseif self._open_menu and self._open_menu.parent_menu then
         self:OpenMenu(self._open_menu.parent_menu, true)
     else
@@ -764,12 +861,11 @@ function EHIMenu:SetItem(item, value, menu)
     if item and type(item) == "table" and item.default_value ~= nil then
         if item.type == "toggle" then
             item.value = value
-
             item.panel:child("check"):stop()
             item.panel:child("check"):animate(function(o)
                 local alpha = o:alpha()
                 local w, h = o:size()
-                local check = item.panel:child("check_bg")
+                local check = item.panel:child("check_bg") ---@cast check -?
                 do_animation(0.1, function(p)
                     o:set_alpha(math.lerp(alpha, value and 1 or 0, p))
                     o:set_size(math.lerp(w, value and check:w() or check:w() * 2, p), math.lerp(h, value and check:h() or check:h() * 2, p))
@@ -781,11 +877,11 @@ function EHIMenu:SetItem(item, value, menu)
             value = string.format("%." .. (item.step or 0) .. "f", value)
             local percentage = (value - item.min) / (item.max - item.min)
             item.panel:child("value_bar"):set_w(math.max(1,item.panel:w() * percentage))
-            item.panel:child("value_text"):set_text(item.percentage and math.floor(value * 100).."%" or value .. (item.suffix or ""))
+            item.panel:child("value_text"):set_text(item.percentage and math.floor(value * 100).."%" or value .. (item.suffix or "")) ---@diagnostic disable-line
             value = tonumber(value)
             item.value = value
         elseif item.type == "multiple_choice" then
-            item.panel:child("title_selected"):set_text(item.items[value])
+            item.panel:child("title_selected"):set_text(item.items[value]) ---@diagnostic disable-line
             item.value = value
         elseif item.type == "color_select" then
             self:CallCallback(item, { color_raw = value })
@@ -793,10 +889,17 @@ function EHIMenu:SetItem(item, value, menu)
             item.panel:child("color"):set_color(value)
             item.value = value
         end
-        self:CallCallback(item, { to_n = item.type == "slider", no_call = item.type == "color_select" })
+        self:CallCallback(item, { to_n = item.type == "slider", skip_call = item.type == "color_select" })
         if item.is_parent then
             self:SetMenuItemsEnabled(menu, item.id, value)
         end
+    end
+end
+
+function EHIMenu:Preview()
+    local item = self._highlighted_item
+    if type(item) == "table" and item.preview_func and self[item.preview_func] then
+        self[item.preview_func](self, item.preview_func_params)
     end
 end
 
@@ -833,7 +936,7 @@ function EHIMenu:_get_menu_from_json(path, settings_table)
         end
         menu.panel:set_h(content.h or menu.items[#menu.items].panel:bottom())
         if content.created_menu_callback then
-            self[content.created_menu_callback](self)
+            self[content.created_menu_callback](self, menu)
         end
     end
 end
@@ -918,7 +1021,8 @@ function EHIMenu:_create_item(item, menu, settings_table)
             enabled = enabled,
             parent = item.parent,
             focus_changed_callback = item.focus_changed_callback,
-            new = new
+            new = new,
+            load_menu = item.load_menu
         })
     elseif item_type == "toggle" then
         itm = self:CreateToggle(menu, {
@@ -934,6 +1038,9 @@ function EHIMenu:_create_item(item, menu, settings_table)
             callback_arguments = item.callback_arguments,
             focus_changed_callback = item.focus_changed_callback,
             parent_func_update = item.parent_func_update,
+            preview_func = item.preview_func,
+            preview_func_params = item.preview_func_params,
+            blocked_by = item.blocked_by,
             new = new
         })
     elseif item_type == "slider" then
@@ -972,6 +1079,25 @@ function EHIMenu:_create_item(item, menu, settings_table)
             callback = item.callback,
             callback_arguments = item.callback_arguments,
             focus_changed_callback = item.focus_changed_callback,
+            parent_func_update = item.parent_func_update,
+            new = new
+        })
+    elseif item_type == "multiple_choice_slider" then
+        for k = 1, #item.items do
+            item.items[k] = managers.localization:text(item.items[k])
+        end
+
+        itm = self:CreateMultipleChoiceSlider(menu, {
+            id = id,
+            title = managers.localization:text(title),
+            description = desc,
+            value = value,
+            items = item.items,
+            default_value = default_value,
+            enabled = enabled,
+            parent = item.parent,
+            callback = item.callback,
+            callback_arguments = item.callback_arguments,
             new = new
         })
     elseif item_type == "color_select" then
@@ -1012,7 +1138,7 @@ function EHIMenu:_create_one_line_items(item_table, menu, settings_table)
         local item = self:_create_item(v, menu, settings_table)
         if item then
             item.panel:set_w(item.panel:w() / n)
-            local item_title = item.panel:child("title") --[[@as PanelText?]]
+            local item_title = item.panel:child("title") --[[@as Text?]]
             if item_title then
                 item_title:set_w(item.panel:w() - (self._item_offset[item.type] or 0))
                 self._adjust_font_size(item_title)
@@ -1035,7 +1161,6 @@ function EHIMenu:_create_menu(params)
     end
 
     local menu_panel = self._options_panel:panel({
-        name = "menu_"..tostring(params.menu_id),
         x = self._options_panel:w(),
         w = self._options_panel:w(),
         h = self._options_panel:h(),
@@ -1088,7 +1213,7 @@ function EHIMenu:OpenMenu(menu, close)
         end
         next_menu.panel:set_visible(true)
 
-        do_animation(0.1, function (p)
+        do_animation(0.1, function(p)
             next_menu.panel:set_x(math.lerp(x, 0, p))
             if prev_menu then
                 prev_menu.panel:set_x(math.lerp(prev_x, close and prev_menu.panel:w() or -prev_menu.panel:w(), p))
@@ -1144,9 +1269,7 @@ end
 ---@param params table
 ---@return MenuItem
 function EHIMenu:CreateLabel(menu, params)
-    local label_name = params.id or tostring(#menu.items)
     local label_panel = menu.panel:panel({
-        name = "label_"..label_name,
         y = self:GetLastPosInMenu(menu),
         h = 25,
         layer = 2,
@@ -1166,7 +1289,7 @@ function EHIMenu:CreateLabel(menu, params)
     self._adjust_font_size(title)
     local label = {
         panel = label_panel,
-        id = "label_"..label_name,
+        id = params.id or tostring(#menu.items),
         enabled = params.enabled,
         parent = params.parent,
         type = "label",
@@ -1181,11 +1304,10 @@ end
 ---@param params table
 ---@return MenuItem
 function EHIMenu:CreateDivider(menu, params)
-    local num = #menu.items
     local div = {
-        id = "divider_"..tostring(num),
+        id = "",
         type = "divider",
-        num = num,
+        num = #menu.items,
         size = params.size
     }
     self:AddItemToMenu(menu, div)
@@ -1198,7 +1320,6 @@ end
 ---@return MenuItem
 function EHIMenu:CreateButton(menu, params)
     local button_panel = menu.panel:panel({
-        name = "button_"..tostring(params.id),
         y = self:GetLastPosInMenu(menu),
         h = 25,
         layer = 2,
@@ -1211,7 +1332,7 @@ function EHIMenu:CreateButton(menu, params)
     local title = button_panel:text({
         name = "title",
         font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         text = params.title or "",
         x = 5,
         w = button_panel:w() - 10,
@@ -1232,7 +1353,8 @@ function EHIMenu:CreateButton(menu, params)
         callback = params.next_menu and nil or params.callback,
         callback_arguments = params.callback_arguments,
         num = #menu.items,
-        focus_changed_callback = params.focus_changed_callback
+        focus_changed_callback = params.focus_changed_callback,
+        load_menu = params.load_menu
     }
     self:AddItemToMenu(menu, button)
     return button
@@ -1245,7 +1367,6 @@ end
 function EHIMenu:CreateToggle(menu, params)
     local color = params.new and Color.yellow or Color.white
     local toggle_panel = menu.panel:panel({
-        name = "toggle_"..tostring(params.id),
         y = self:GetLastPosInMenu(menu),
         h = 25,
         layer = 2,
@@ -1258,7 +1379,7 @@ function EHIMenu:CreateToggle(menu, params)
     local title = toggle_panel:text({
         name = "title",
         font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         text = params.title or "",
         x = 29,
         w = toggle_panel:w() - 34,
@@ -1306,7 +1427,10 @@ function EHIMenu:CreateToggle(menu, params)
         callback = params.callback,
         callback_arguments = params.callback_arguments,
         focus_changed_callback = params.focus_changed_callback,
-        parent_func_update = params.parent_func_update
+        parent_func_update = params.parent_func_update,
+        preview_func = params.preview_func,
+        preview_func_params = params.preview_func_params,
+        blocked_by = params.blocked_by
     }
     self:AddItemToMenu(menu, toggle)
     return toggle
@@ -1320,7 +1444,6 @@ function EHIMenu:CreateSlider(menu, params)
     local color = params.new and Color.yellow or Color.white
     local percentage = (params.value - params.min) / (params.max - params.min)
     local slider_panel = menu.panel:panel({
-        name = "slider_"..tostring(params.id),
         y = self:GetLastPosInMenu(menu),
         h = 25,
         layer = 2,
@@ -1351,7 +1474,7 @@ function EHIMenu:CreateSlider(menu, params)
     local value_text = slider_panel:text({
         name = "value_text",
         font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         text = t,
         x = 5,
         w = 100,
@@ -1363,7 +1486,7 @@ function EHIMenu:CreateSlider(menu, params)
     local title = slider_panel:text({
         name = "title",
         font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         text = params.title or "",
         x = 105,
         w = slider_panel:w() - 110,
@@ -1409,7 +1532,6 @@ function EHIMenu:SetSlider(item, x, add)
     else
         percentage = (x - panel_min) / (panel_max - panel_min)
     end
-
     if percentage then
         local value = string.format("%." .. (item.step or 0) .. "f", item.min + (item.max - item.min) * percentage)
         value_bar:set_w(math.max(1,item.panel:w() * percentage))
@@ -1424,7 +1546,6 @@ end
 ---@return MenuMultipleChoicesItem
 function EHIMenu:CreateMultipleChoice(menu, params)
     local multiple_panel = menu.panel:panel({
-        name = "multiple_choice_"..tostring(params.id),
         y = self:GetLastPosInMenu(menu),
         h = 25,
         layer = 2,
@@ -1437,7 +1558,7 @@ function EHIMenu:CreateMultipleChoice(menu, params)
     local title = multiple_panel:text({
         name = "title",
         font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         text = params.title or "",
         x = 210,
         w = multiple_panel:w() - 215,
@@ -1450,7 +1571,7 @@ function EHIMenu:CreateMultipleChoice(menu, params)
     local title_selected = multiple_panel:text({
         name = "title_selected",
         font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         text = params.items[params.value],
         x = 5,
         w = 200,
@@ -1471,7 +1592,8 @@ function EHIMenu:CreateMultipleChoice(menu, params)
         num = #menu.items,
         callback = params.callback,
         callback_arguments = params.callback_arguments,
-        focus_changed_callback = params.focus_changed_callback
+        focus_changed_callback = params.focus_changed_callback,
+        parent_func_update = params.parent_func_update,
     }
     self:AddItemToMenu(menu, multiple_choice)
     return multiple_choice
@@ -1480,7 +1602,6 @@ end
 ---@param item MenuMultipleChoicesItem
 function EHIMenu:OpenMultipleChoicePanel(item)
     local choice_dialog = item.panel:parent():panel({
-        name = "choice_panel_"..tostring(item.id),
         x = item.panel:x(),
         y = item.panel:bottom(),
         w = item.panel:w(),
@@ -1525,23 +1646,23 @@ function EHIMenu:OpenMultipleChoicePanel(item)
         local title = choice_dialog:text({
             name = "title",
             font_size = 18,
-            font = tweak_data.menu.pd2_small_font,
-            text = item.items[i] or "",
+            font = tweak_data.menu.pd2_large_font,
+            text = choice,
             x = 10,
-            y = 2 + (i-1) * 25,
+            y = 2 + (i - 1) * 25,
             w = choice_dialog:w() - 10,
             h = 25,
-            color = item.value == i and Color.white or Color(0.6,0.6,0.6),
+            color = item.value == i and Color.white or Color(0.6, 0.6, 0.6),
             vertical = "center",
             layer = 3,
             rotation = 360
         })
         self._adjust_font_size(title)
-        table.insert(self._open_choice_dialog.items, title)
+        self._open_choice_dialog.items[i] = title
     end
     choice_dialog:animate(function(o)
         local h = o:h()
-        do_animation(0.1, function (p)
+        do_animation(0.1, function(p)
             o:set_alpha(math.lerp(0, 1, p))
             border:set_h(math.lerp(0, h, p))
             bg:set_h(border:h() - 4)
@@ -1550,7 +1671,7 @@ function EHIMenu:OpenMultipleChoicePanel(item)
         border:set_h(h)
         bg:set_h(border:h() - 4)
     end)
-    self:SetLegends(true, false, false)
+    self:SetLegends(true, false, false, false)
 end
 
 function EHIMenu:CloseMultipleChoicePanel()
@@ -1569,10 +1690,138 @@ function EHIMenu:CloseMultipleChoicePanel()
         o:set_alpha(0)
         border:set_h(h)
         bg:set_h(border:h() - 4)
-        self._open_choice_dialog.parent_item.panel:parent():remove(self._open_choice_dialog.panel)
+        self._open_choice_dialog.parent_item.panel:parent():remove(o)
         self._open_choice_dialog = nil
     end)
-    self:SetLegends(true, true, false)
+    self:SetLegends(true, true, false, false)
+end
+
+---@param menu Menu
+---@param params table
+---@return MenuMultipleChoiceSliderItem
+function EHIMenu:CreateMultipleChoiceSlider(menu, params)
+    local value = params.value
+    local max = #params.items
+    local multiple_panel = menu.panel:panel({
+        y = self:GetLastPosInMenu(menu),
+        h = 25,
+        layer = 2,
+        alpha = params.enabled and 1 or 0.5
+    })
+    local multiple_bg = multiple_panel:bitmap({
+        name = "bg",
+        alpha = 0,
+    })
+    local title = multiple_panel:text({
+        name = "title",
+        font_size = 20,
+        font = tweak_data.menu.pd2_large_font,
+        text = params.title or "",
+        x = 210,
+        w = multiple_panel:w() - 215,
+        align = "right",
+        vertical = "center",
+        layer = 1,
+        color = params.new and Color.yellow or Color.white
+    })
+    self._adjust_font_size(title)
+    local left_arrow = multiple_panel:bitmap({
+        name = "left_arrow",
+        texture = "guis/textures/menu_arrows",
+        y = 1,
+		x = 5,
+        layer = 3,
+        texture_rect = { value == 1 and 0 or 24, 0, 24, 24 },
+        color = value == 1 and tweak_data.screen_colors.button_stage_3 or tweak_data.screen_colors.button_stage_2
+    })
+    local right_arrow = multiple_panel:bitmap({
+        name = "right_arrow",
+        texture = "guis/textures/menu_arrows",
+        y = 1,
+		x = 172,
+        layer = 3,
+        rotation = 180,
+        texture_rect = { value == max and 0 or 24, 0, 24, 24 },
+        color = value == max and tweak_data.screen_colors.button_stage_3 or tweak_data.screen_colors.button_stage_2
+    })
+    multiple_panel:text({
+        name = "title_selected",
+        font_size = 20,
+        font = tweak_data.menu.pd2_large_font,
+        text = params.items[value],
+        x = left_arrow:right(),
+        w = right_arrow:x() - left_arrow:x() - left_arrow:w(),
+        align = "center",
+        vertical = "center",
+        layer = 1
+    })
+    local multiple_choice = {
+        panel = multiple_panel,
+        id = params.id,
+        type = "multiple_choice_slider",
+        enabled = params.enabled,
+        items = params.items,
+        value = value,
+        default_value = params.default_value,
+        max = max,
+        parent = params.parent,
+        desc = params.description,
+        num = #menu.items,
+        callback = params.callback,
+        callback_arguments = params.callback_arguments,
+        focus_changed_callback = params.focus_changed_callback
+    }
+    self:AddItemToMenu(menu, multiple_choice)
+    return multiple_choice
+end
+
+---@param item MenuMultipleChoiceSliderItem
+---@param change number
+---@param set_value number?
+---@overload fun(self: EHIMenu, item: MenuMultipleChoiceSliderItem, change: nil, set_value: number)
+function EHIMenu:SetMultipleChoiceSlider(item, change, set_value)
+    if set_value then
+        item.value = set_value
+        self:UpdateBuffColor(set_value, nil, item.id)
+        self:CallCallback(item)
+    elseif change > 0 then
+        local value = item.value + 1
+        if value > item.max then -- Do not allow saving value higher than max; will result in a crash
+            return
+        end
+        item.value = value
+        self:UpdateBuffColor(value, nil, item.id)
+        self:CallCallback(item)
+    elseif change < 0 then
+        local value = item.value - 1
+        if value < 1 then -- Do not allow saving value lower than 1 (our minimum); will result in a crash
+            return
+        end
+        item.value = value
+        self:UpdateBuffColor(value, nil, item.id)
+        self:CallCallback(item)
+    end
+    self:UpdateArrorsInMultiChoiceSlider(item)
+end
+
+---@param item MenuMultipleChoiceSliderItem
+function EHIMenu:UpdateArrorsInMultiChoiceSlider(item)
+    if item.value == 1 then
+        item.panel:child("left_arrow"):set_image("guis/textures/menu_arrows", 0, 0, 24, 24) ---@diagnostic disable-line
+        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_3)
+        item.panel:child("right_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
+        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+    elseif item.value == item.max then
+        item.panel:child("left_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
+        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+        item.panel:child("right_arrow"):set_image("guis/textures/menu_arrows", 0, 0, 24, 24) ---@diagnostic disable-line
+        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_3)
+    else
+        item.panel:child("left_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
+        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+        item.panel:child("right_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
+        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+    end
 end
 
 -- Custom Color Items
@@ -1581,7 +1830,6 @@ end
 ---@return MenuItem
 function EHIMenu:CreateColorSelect(menu, params)
     local color_panel = menu.panel:panel({
-        name = "color_select_"..tostring(params.id),
         y = self:GetLastPosInMenu(menu),
         h = 25,
         layer = 2,
@@ -1594,7 +1842,7 @@ function EHIMenu:CreateColorSelect(menu, params)
     local title = color_panel:text({
         name = "title",
         font_size = 20,
-        font = tweak_data.menu.pd2_medium_font,
+        font = tweak_data.menu.pd2_large_font,
         text = params.title or "",
         x = 59,
         w = color_panel:w() - 64,
@@ -1641,17 +1889,17 @@ end
 
 ---@param item MenuItem
 function EHIMenu:OpenColorMenu(item)
-    local dialog = item.panel:parent():panel({
-        name = "color_panel_"..tostring(item.id),
-        x = item.panel:x(),
-        y = item.panel:bottom(),
-        w = item.panel:w(),
+    local item_panel = item.panel
+    local dialog = item_panel:parent():panel({
+        x = item_panel:x(),
+        y = item_panel:bottom(),
+        w = item_panel:w(),
         h = 141,
         layer = 20,
         alpha = 0
     })
-    if dialog:bottom() > item.panel:parent():h() then
-        dialog:set_bottom(item.panel:top())
+    if dialog:bottom() > item_panel:parent():h() then
+        dialog:set_bottom(item_panel:top())
     end
     local border = dialog:bitmap({
         name = "border",
@@ -1692,7 +1940,7 @@ function EHIMenu:OpenColorMenu(item)
         alpha = 0.3,
         layer = 2,
         w = math.max(1, red_panel:w() * (color.red / 1)),
-        color = Color(color.red,0,0)
+        color = Color(color.red, 0, 0)
     })
     red_panel:bitmap({
         name = "bg",
@@ -1701,8 +1949,8 @@ function EHIMenu:OpenColorMenu(item)
     red_panel:text({
         name = "title",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("ehi_r"),
+        font = tweak_data.menu.pd2_large_font,
+        text = managers.localization:text("ehi_buffs_group_color_red"),
         x = 85,
         w = red_panel:w() - 90,
         h = 25,
@@ -1713,7 +1961,7 @@ function EHIMenu:OpenColorMenu(item)
     red_panel:text({
         name = "value",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
+        font = tweak_data.menu.pd2_large_font,
         text = string.format("%.0f", color.red * 255),
         x = 5,
         w = 80,
@@ -1734,7 +1982,7 @@ function EHIMenu:OpenColorMenu(item)
         alpha = 0.3,
         layer = 2,
         w =  math.max(1, green_panel:w() * (color.green / 1)),
-        color = Color(0,color.green,0)
+        color = Color(0, color.green, 0)
     })
     green_panel:bitmap({
         name = "bg",
@@ -1743,8 +1991,8 @@ function EHIMenu:OpenColorMenu(item)
     green_panel:text({
         name = "title",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("ehi_g"),
+        font = tweak_data.menu.pd2_large_font,
+        text = managers.localization:text("ehi_buffs_group_color_green"),
         x = 85,
         w = red_panel:w() - 90,
         h = 25,
@@ -1755,7 +2003,7 @@ function EHIMenu:OpenColorMenu(item)
     green_panel:text({
         name = "value",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
+        font = tweak_data.menu.pd2_large_font,
         text = string.format("%.0f", color.green * 255),
         x = 5,
         w = 80,
@@ -1776,7 +2024,7 @@ function EHIMenu:OpenColorMenu(item)
         alpha = 0.3,
         layer = 2,
         w = math.max(1, blue_panel:w() * (color.blue / 1)),
-        color = Color(0,0,color.blue)
+        color = Color(0, 0, color.blue)
     })
     blue_panel:bitmap({
         name = "bg",
@@ -1785,8 +2033,8 @@ function EHIMenu:OpenColorMenu(item)
     blue_panel:text({
         name = "title",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
-        text = managers.localization:text("ehi_b"),
+        font = tweak_data.menu.pd2_large_font,
+        text = managers.localization:text("ehi_buffs_group_color_blue"),
         x = 85,
         w = red_panel:w() - 90,
         h = 25,
@@ -1797,7 +2045,7 @@ function EHIMenu:OpenColorMenu(item)
     blue_panel:text({
         name = "value",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
+        font = tweak_data.menu.pd2_large_font,
         text = string.format("%.0f", color.blue * 255),
         x = 5,
         w = 80,
@@ -1820,7 +2068,7 @@ function EHIMenu:OpenColorMenu(item)
     accept_panel:text({
         name = "title",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
+        font = tweak_data.menu.pd2_large_font,
         text = managers.localization:text("ehi_button_ok"),
         x = 5,
         w = red_panel:w() - 10,
@@ -1844,7 +2092,7 @@ function EHIMenu:OpenColorMenu(item)
     reset_panel:text({
         name = "title",
         font_size = 18,
-        font = tweak_data.menu.pd2_small_font,
+        font = tweak_data.menu.pd2_large_font,
         text = managers.localization:text("ehi_color_reset"),
         x = 5,
         w = red_panel:w() - 10,
@@ -1870,7 +2118,7 @@ function EHIMenu:OpenColorMenu(item)
 
     dialog:animate(function(o)
         local h = o:h()
-        do_animation(0.1, function (p)
+        do_animation(0.1, function(p)
             o:set_alpha(math.lerp(0, 1, p))
             border:set_h(math.lerp(0, h, p))
             bg:set_h(border:h() - 4)
@@ -1879,14 +2127,18 @@ function EHIMenu:OpenColorMenu(item)
         border:set_h(h)
         bg:set_h(border:h() - 4)
     end)
-    self:SetLegends(false, false, true)
+    self:SetLegends(false, false, true, false)
 end
 
+---@param item Panel
+---@param x number?
+---@param type number
+---@param add number?
 function EHIMenu:SetColorSlider(item, x, type, add)
     local panel_min, panel_max = item:world_x(), item:world_x() + item:w()
     x = math.clamp(x, panel_min, panel_max)
-    local value_bar = item:child("slider")
-    local value_text = item:child("value")
+    local value_bar = item:child("slider") --[[@as Bitmap]]
+    local value_text = item:child("value") --[[@as Text]]
     local percentage = (math.clamp(value_text:text() + (add or 0), 0, 255) - 0) / 255
     if not add then
         percentage = (x - panel_min) / (panel_max - panel_min)
@@ -1894,7 +2146,7 @@ function EHIMenu:SetColorSlider(item, x, type, add)
     local value = string.format("%.0f", 0 + (255 - 0) * percentage) --[[@as number]]
     value_bar:set_w(math.max(1, item:w() * percentage))
     value_bar:set_color(Color(255, type == 1 and value or 0, type == 2 and value or 0, type == 3 and value or 0) / 255)
-    value_text:set_text(value)
+    value_text:set_text(value) ---@diagnostic disable-line
     local color = self._open_color_dialog.color
     self._open_color_dialog.color = Color(type == 1 and value / 255 or color.red, type == 2 and value / 255 or color.green, type == 3 and value / 255 or color.blue)
     self._open_color_dialog.parent_item.panel:child("color"):set_color(self._open_color_dialog.color)
@@ -1916,13 +2168,13 @@ function EHIMenu:CloseColorMenu()
         border:set_h(h)
         bg:set_h(border:h() - 4)
         self:CallCallback(self._open_color_dialog.parent_item, { color = true, color_panels = self._open_color_dialog.items })
-        self._open_color_dialog.parent_item.panel:parent():remove(self._open_color_dialog.panel)
+        self._open_color_dialog.parent_item.panel:parent():remove(o)
         local c = self._open_color_dialog.color
         self._open_color_dialog.parent_item.value = c
         self._open_color_dialog.parent_item.panel:child("color"):set_color(c)
         self._open_color_dialog = nil
     end)
-    self:SetLegends(true, true, false)
+    self:SetLegends(true, true, false, false)
 end
 
 function EHIMenu:ResetColorMenu()
@@ -1983,10 +2235,10 @@ function EHIMenu:IsFloatingHealthBarPocoBlurVisible()
     return EHI:GetOption("show_floating_health_bar_style") == 1
 end
 
-function EHIMenu:UpdateFloatingHealthBarPocoBlurOption(menu, item)
-    for _, m_item in ipairs(menu.items) do
+function EHIMenu:UpdateFloatingHealthBarPocoBlurOption(value, option)
+    for _, m_item in ipairs(self:GetMenu("ehi_other_floating_health_bar_menu").items) do
         if m_item.id == "ehi_other_show_floating_health_bar_style_poco_blur_choice" then
-            self:AnimateItemEnabled(m_item, self:IsFloatingHealthBarPocoBlurVisible())
+            self:AnimateItemEnabled(m_item, value == 1)
             break
         end
     end
@@ -1994,4 +2246,286 @@ end
 
 function EHIMenu:IsXOffsetAvailable()
     return EHI:GetOption("buffs_alignment") ~= 2 -- Not Center alignment
+end
+
+------------------------------------------------------------------
+function EHIMenu:UpdatePreviewTextVisibility(value)
+    self._preview_panel:UpdatePreviewTextVisibility(value)
+end
+
+function EHIMenu:SetOption(value, option)
+    EHI.settings[option] = value
+end
+
+function EHIMenu:SetUnlockableOption(value, option)
+    EHI.settings.unlockables[option] = value
+end
+
+function EHIMenu:SetBuffOption(value, option)
+    EHI.settings.buff_option[option] = value
+end
+
+function EHIMenu:SetBuffDeckOption(value, deck, option)
+    EHI.settings.buff_option[deck][option] = value
+end
+
+function EHIMenu:UpdateTrackerState(value, option)
+    self._preview_panel:UpdateTrackerState(value)
+end
+
+function EHIMenu:SetXPPanelOption(value, option)
+    self._preview_panel:UpdateTracker("show_gained_xp", value <= 2)
+end
+
+function EHIMenu:UpdateTradeDelayFormat(value)
+    self._preview_panel:UpdateTrackerInternalFormat("killed_civilians", "show_trade_delay", value)
+end
+
+function EHIMenu:SetGagePanelOption(value, option)
+    self._preview_panel:UpdateTracker("show_gage_tracker", value == 1)
+end
+
+function EHIMenu:UpdateCivilianPanelOption(value)
+    self._preview_panel:UpdateTrackerInternalFormat("civilian_count", "show_civilian_count_tracker", value)
+end
+
+function EHIMenu:UpdateHostagePanelOption(value)
+    self._preview_panel:UpdateTrackerInternalFormat("hostage_count", "show_hostage_count_tracker", value)
+end
+
+function EHIMenu:UpdateAssaultTracker(value)
+    self._preview_panel:CallFunction("assault", "UpdateInternalFormat", value, true)
+    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateInternalFormat", value, true)
+    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateInternalFormat", value, true)
+end
+
+function EHIMenu:UpdateAssaultTracker2(value)
+    self._preview_panel:CallFunction("assault", "UpdateInternalFormat2", value, true)
+    self._preview_panel:CallFunction("show_assault_delay_tracker", "UpdateInternalFormat2", value, true)
+    self._preview_panel:CallFunction("show_assault_time_tracker", "UpdateInternalFormat2", value, true)
+end
+
+function EHIMenu:UpdateEnemyCountTracker(value)
+    self._preview_panel:UpdateTrackerInternalFormat("show_alarm_enemies", "show_enemy_count_tracker", value)
+end
+
+function EHIMenu:SetFocus2(focus, value)
+    self:SetFocus(focus, "show_enemy_count_tracker")
+end
+
+function EHIMenu:UpdateXOffset(x)
+    self._preview_panel:UpdateXOffset(x)
+end
+
+function EHIMenu:UpdateYOffset(y)
+    self._preview_panel:UpdateYOffset(y)
+end
+
+function EHIMenu:UpdateTextScale(scale)
+    self._preview_panel:UpdateTextScale(scale)
+end
+
+function EHIMenu:UpdateScale(scale)
+    self._preview_panel:UpdateScale(scale)
+end
+
+function EHIMenu:UpdateTimeFormat(format)
+    self._preview_panel:UpdateTimeFormat(format)
+end
+
+function EHIMenu:UpdateEquipmentFormat(format)
+    self._preview_panel:UpdateEquipmentFormat(format)
+end
+
+function EHIMenu:UpdateTrackerVisibility(value, option)
+    self._preview_panel:Redraw()
+    self:SetFocus(value, option)
+end
+
+function EHIMenu:UpdateTrackerVisibility_Assault(value, option)
+    self:UpdateTrackerVisibility(value, option)
+    self:SetFocus(value, "assault")
+end
+
+function EHIMenu:UpdateBGVisibility(visibility)
+    self._preview_panel:UpdateBGVisibility(visibility)
+end
+
+function EHIMenu:UpdateCornerVisibility(visibility)
+    self._preview_panel:UpdateCornerVisibility(visibility)
+end
+
+function EHIMenu:UpdateIconsVisibility(visibility)
+    self._preview_panel:UpdateIconsVisibility(visibility)
+end
+
+function EHIMenu:UpdateIconsPosition(pos)
+    self._preview_panel:UpdateIconsPosition(pos)
+end
+
+function EHIMenu:UpdateTrackerAlignment(alignment)
+    self._preview_panel:UpdateTrackerAlignment(alignment)
+end
+
+function EHIMenu:UpdateTrackerVerticalAnim(anim)
+    self._preview_panel:UpdateTrackerVerticalAnim(anim)
+end
+
+function EHIMenu:SetFocus(focus, value)
+    self._preview_panel:SetSelected(value)
+end
+
+function EHIMenu:SetFocus_Assault(focus, value)
+    self:SetFocus(focus, value)
+    self:SetFocus(focus, "assault")
+end
+
+function EHIMenu:fcc_equipment_tracker(focus, ...)
+    self:SetFocus(focus, focus and "show_equipment_tracker" or "")
+end
+
+function EHIMenu:fcc_equipment_tracker_menu(focus, ...)
+    DelayedCalls:Add("HighlightDelay", 0.5, function()
+        self:SetFocus(focus, focus and "show_equipment_tracker" or "")
+    end)
+end
+
+function EHIMenu:UpdateMinionTracker(value)
+    self._preview_panel:UpdateTrackerInternalFormat("minion", "show_minion_tracker", value)
+end
+
+function EHIMenu:UpdateMinionHealthTracker(value)
+    self._preview_panel:CallFunction("show_minion_tracker", "SetMinionHealth", value)
+end
+
+function EHIMenu:fcc_show_minion_option(focus, ...)
+    self:SetFocus(focus, focus and "show_minion_tracker" or "")
+end
+
+---@param menu Menu
+function EHIMenu:buffs_menu_created_callback(menu)
+    local color_items = {}
+    for _, item in ipairs(tweak_data.ehi._populate_buff_group_table()) do
+        local option = string.format("buffs_group_color_%s", item)
+        color_items[string.format("ehi_%s_choice", option)] = option
+    end
+    for _, item in ipairs(menu.items) do ---@cast item MenuMultipleChoiceSliderItem
+        if color_items[item.id] then
+            local value = EHI:GetOption(color_items[item.id])
+            local color, _ = tweak_data.ehi:GetBuffColorFromIndex(value)
+            item.value = value
+            item.panel:child("title_selected"):set_text(item.items[value]) ---@diagnostic disable-line
+            item.panel:child("title_selected"):set_color(color)
+            self:UpdateArrorsInMultiChoiceSlider(item)
+        end
+    end
+end
+
+function EHIMenu:UpdateBuffsVisibility(visibility)
+    self._buffs_preview_panel:UpdateBuffs("SetVisibility", visibility)
+end
+
+function EHIMenu:UpdateBuffsXOffset(x)
+    self._buffs_preview_panel:UpdateXOffset(x)
+end
+
+function EHIMenu:UpdateBuffsYOffset(y)
+    self._buffs_preview_panel:UpdateYOffset(y)
+end
+
+function EHIMenu:UpdateBuffsScale(scale)
+    self._buffs_preview_panel:UpdateScale(scale)
+end
+
+function EHIMenu:UpdateBuffsAlignment(alignment)
+    self._buffs_preview_panel:UpdateAlignment(alignment)
+    for _, item in ipairs(self:GetMenu("ehi_buffs_menu").items) do
+        if item.id == "ehi_x_offset" then -- ID is the same for both VR and non-VR option
+            self:AnimateItemEnabled(item, alignment ~= 2)
+            break
+        end
+    end
+end
+
+function EHIMenu:UpdateBuffsShape(value)
+    self._buffs_preview_panel:UpdateBuffs("UpdateBuffShape", value)
+end
+
+---@param visibility boolean
+function EHIMenu:UpdateBuffsProgressVisibility(visibility)
+    self._buffs_preview_panel:UpdateBuffs("UpdateProgressVisibility", visibility)
+end
+
+function EHIMenu:UpdateBuffsInvertProgress()
+    self._buffs_preview_panel:UpdateBuffs("InvertProgress")
+end
+
+---@param visibility boolean
+function EHIMenu:UpdateBuffUpperTextVisibility(visibility)
+    self._buffs_preview_panel:UpdateBuffs("UpdateHintVisibility", visibility)
+end
+
+function EHIMenu:UpdateBuffTextColor(value)
+end
+
+function EHIMenu:UpdateBuffColor(value, option, item_id)
+    for _, item in ipairs(self:GetMenu("ehi_buffs_2_menu").items) do
+        if item.id == item_id then
+            local color, _ = tweak_data.ehi:GetBuffColorFromIndex(value)
+            item.panel:child("title_selected"):set_color(color)
+            item.panel:child("title_selected"):set_text(item.items[value]) ---@diagnostic disable-line
+            break
+        end
+    end
+end
+
+function EHIMenu:SetColor(color, option, color_type)
+    local c = EHI.settings.colors[color_type][option]
+    c.r = color.red
+    c.g = color.green
+    c.b = color.blue
+end
+
+function EHIMenu:SetUnlockableColor(color, option, color_type)
+    self:SetColor(color, option, color_type)
+    self._preview_panel:CallFunction(option, "UpdateIconColor", Color(255, color.red, color.green, color.blue) / 255)
+end
+
+function EHIMenu:SetSniperCountColor(color, option, color_type)
+    self:SetColor(color, option, color_type)
+    self._preview_panel:CallFunction("show_sniper_tracker", "UpdateSniperCountColor", Color(255, color.red, color.green, color.blue) / 255)
+end
+
+function EHIMenu:SetSniperChanceColor(color, option, color_type)
+    self:SetColor(color, option, color_type)
+    self._preview_panel:CallFunction("show_sniper_tracker", "UpdateSniperChanceColor", Color(255, color.red, color.green, color.blue) / 255)
+end
+
+function EHIMenu:UpdateMoneyTrackerFormat(format)
+    self._preview_panel:UpdateTrackerInternalFormat("money", "show_money_tracker", format)
+end
+
+function EHIMenu:PreviewNotification(params)
+    if params.class == "HudChallengeNotification" then
+        if not HudChallengeNotification then
+            require("lib/managers/hud/HudChallengeNotification")
+        end
+        HudChallengeNotification.queue(params.id, managers.localization:text(params.desc), params.icon) --- HUDManager does not exist in Menu, needs to be called directly
+    end
+end
+
+function EHIMenu:CheckBlockForAssaultDiffTracker()
+    return EHI:IsAssaultTrackerEnabledAndOption("show_assault_diff_in_assault_trackers")
+end
+
+function EHIMenu:HintBlockForAssaultDiffTracker()
+    local s, loc = "", managers.localization
+    if EHI:CombineAssaultDelayAndAssaultTime() then
+        s = string.format("%s\n%s\n%s", loc:text("ehi_show_assault_delay_tracker"), loc:text("ehi_experience_or"), loc:text("ehi_show_assault_time_tracker"))
+    elseif EHI:GetOption("show_assault_delay_tracker") then
+        s = loc:text("ehi_show_assault_delay_tracker")
+    else
+        s = loc:text("ehi_show_assault_time_tracker")
+    end
+    return string.format("%s\n+\n%s", s, loc:text("ehi_show_assault_diff_in_assault_trackers"))
 end

@@ -1,36 +1,36 @@
----@class EHIdark5Tracker : EHIProgressTracker
+---@class dark_5 : EHIProgressTracker
 ---@field super EHIProgressTracker
-EHIdark5Tracker = class(EHIProgressTracker)
-function EHIdark5Tracker:pre_init(...)
+local dark_5 = class(EHIProgressTracker)
+function dark_5:pre_init(...)
     self._bodies = {}
-    EHIdark5Tracker.super.pre_init(self, ...)
+    dark_5.super.pre_init(self, ...)
 end
 
-function EHIdark5Tracker:SetProgress(...)
+function dark_5:SetProgress(...)
     self:SetTextColor(Color.white)
-    EHIdark5Tracker.super.SetProgress(self, ...)
+    dark_5.super.SetProgress(self, ...)
 end
 
 ---@param value number
 ---@param key any Unused
-function EHIdark5Tracker.is_in_dumpster(value, key)
+function dark_5.is_in_dumpster(value, key)
     return value == 1 -- Mission Script expects exactly 1 body bag in dumpster
 end
 
 ---@param element number
-function EHIdark5Tracker:IncreaseProgress(element)
+function dark_5:IncreaseProgress(element)
     self._bodies[element] = (self._bodies[element] or 0) + 1
     self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
 end
 
 ---@param element number
-function EHIdark5Tracker:DecreaseProgress(element)
+function dark_5:DecreaseProgress(element)
     self._bodies[element] = (self._bodies[element] or 1) - 1
     self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
 end
 
-function EHIdark5Tracker:SetCompleted(...)
-    EHIdark5Tracker.super.SetCompleted(self, ...)
+function dark_5:SetCompleted(...)
+    dark_5.super.SetCompleted(self, ...)
     self._disable_counting = false
     self._status = nil
 end
@@ -72,13 +72,13 @@ local achievements =
     {
         elements =
         {
-            [100296] = { max = 4, class = "EHIdark5Tracker", show_finish_after_reaching_target = true },
+            [100296] = { max = 4, class_table = dark_5, show_finish_after_reaching_target = true },
         },
         preparse_callback = function(data)
-            local AddBodyBag = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+            local AddBodyBag = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
                 self._trackers:CallFunction(trigger.id, "IncreaseProgress", trigger.element)
             end)
-            local RemoveBodyBag = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+            local RemoveBodyBag = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
                 self._trackers:CallFunction(trigger.id, "DecreaseProgress", trigger.element)
             end)
             for i = 12850, 13600, 250 do
@@ -99,7 +99,7 @@ local achievements =
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })

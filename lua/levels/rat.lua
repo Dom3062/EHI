@@ -9,16 +9,16 @@ local heli_delay = 19
 local anim_delay = 743/30 -- 743/30 is a animation duration; 3s is zone activation delay (never used when van is coming back)
 local heli_delay_full = 13 + 19 -- 13 = Base Delay; 19 = anim delay
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param trigger ElementTrigger
 local function ShowFlareWP(self, trigger)
-    if self.SyncedSFF.rat_flare_pos then
+    if self._SyncedSFF.rat_flare_pos then
         self._waypoints:AddWaypoint(trigger.id, {
             time = trigger.run.time,
             icon = Icon.Methlab,
-            position = self.SyncedSFF.rat_flare_pos
+            position = self._SyncedSFF.rat_flare_pos
         })
-        self.SyncedSFF.rat_flare_pos = nil
+        self._SyncedSFF.rat_flare_pos = nil
         return
     end
     self._trackers:RunTrackerIfDoesNotExist(trigger.id, trigger.run)
@@ -31,7 +31,7 @@ local preload =
 {
     { id = "Van", icons = Icon.CarEscape, hide_on_delete = true, hint = Hints.LootEscape },
     { id = "HeliMeth", icons = { Icon.Heli, Icon.Methlab, Icon.Goto }, hide_on_delete = true, hint = Hints.nail_ChemicalsEnRoute },
-    { id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, hide_on_delete = true, hint = Hints.mia_1_MethDone }
+    { id = "CookingDone", icons = EHI.TrackerUtils:GetTrackerIcons({ Icon.Methlab, Icon.Interact }, { Icon.Interact }), hide_on_delete = true, hint = Hints.mia_1_MethDone }
 }
 ---@type ParseTriggerTable
 local triggers = {
@@ -53,12 +53,12 @@ local triggers = {
     [101974] = { id = "Van", run = { time = 60 + 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
     [101975] = { id = "Van", run = { time = 30 + 15 + anim_delay }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1 } },
 
-    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = { Icon.Heli, "heavy", Icon.Goto }, class = TT.Warning, hint = Hints.ScriptedBulldozer },
+    [100954] = { time = 24 + 5 + 3, id = "HeliBulldozerSpawn", icons = EHI.TrackerUtils:GetTrackerIcons({ Icon.Heli, "heavy", Icon.Goto }, { "heavy" }), class = TT.Warning, hint = Hints.ScriptedBulldozer },
 
     [101982] = { id = "Van", special_function = SF.SetTimeOrCreateTracker, run = { time = 589/30 } }
 }
 if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
-    table.insert(preload, { id = "VanStayDelay", icons = Icon.CarWait, class = TT.Warning, hide_on_delete = true, hint = Hints.LootTimed })
+    table.insert(preload, { id = "VanStayDelay", icons = EHI.TrackerUtils:GetTrackerIcons(Icon.CarWait, { { icon = Icon.Car, color = Color.red } }), class = TT.Warning, hide_on_delete = true, hint = Hints.LootTimed })
     triggers[102220] = { id = "VanStayDelay", run = { time = 60 + van_delay_ovk } }
     triggers[102219] = { id = "VanStayDelay", run = { time = 45 + van_delay } }
     triggers[102229] = { id = "VanStayDelay", run = { time = 90 + van_delay_ovk } }
@@ -90,7 +90,7 @@ if EHI:IsMayhemOrAbove() then
         end
         triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
         triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }
-        ---@param self EHIManager
+        ---@param self EHIMissionElementTrigger
         ---@param trigger ElementTrigger
         local function ShowWaypoint(self, trigger)
             local pos = VanPos == 101454 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
@@ -98,7 +98,7 @@ if EHI:IsMayhemOrAbove() then
                 time = trigger.run.time,
                 icon = Icon.LootDrop,
                 position = pos,
-                class = EHI.Waypoints.Warning
+                class = self._mission.Waypoints.Warning
             })
         end
         triggers[102219].waypoint_f = ShowWaypoint
@@ -116,14 +116,14 @@ end
 if EHI.IsClient then
     ---@class EHICookingChanceTracker : EHITimedChanceTracker
     ---@field super EHITimedChanceTracker
-    EHICookingChanceTracker = class(EHITimedChanceTracker)
+    local EHICookingChanceTracker = class(EHITimedChanceTracker)
     EHICookingChanceTracker._tracker_type = "inaccurate"
     ---@param inaccurate boolean?
     function EHICookingChanceTracker:SetTimeNoAnim(time, inaccurate)
         EHICookingChanceTracker.super.SetTimeNoAnim(self, time)
         self._tracker_type = inaccurate and "inaccurate" or "accurate"
     end
-    local SetTimeNoAnimOrCreateTrackerClient = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local SetTimeNoAnimOrCreateTrackerClient = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local tracker = self._trackers:GetTracker(id) ---@cast tracker EHICookingChanceTracker
         if tracker then
@@ -131,11 +131,11 @@ if EHI.IsClient then
                 tracker:SetTimeNoAnim(self:GetRandomTime(trigger), true)
             end
         else
-            self:CreateTracker(trigger)
+            self:CreateTracker()
         end
     end)
-    triggers[102383].class = "EHICookingChanceTracker"
-    triggers[100721].class = "EHICookingChanceTracker"
+    triggers[102383].class_table = EHICookingChanceTracker
+    triggers[100721].class_table = EHICookingChanceTracker
     triggers[100724] = { additional_time = 20, random_time = 5, id = "CookChance", icons = { Icon.Methlab, Icon.Loop }, special_function = SetTimeNoAnimOrCreateTrackerClient, delay_only = true }
 end
 
@@ -160,7 +160,7 @@ local sidejob =
     {
         elements =
         {
-            [101780] = { special_function = EHI.Manager:RegisterCustomSF(function(self, ...)
+            [101780] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
                 local progress, max = EHI:GetSHSideJobProgressAndMax("daily_tasty")
                 self._unlockable:AddSHDailyProgressTracker("daily_tasty", max, progress)
             end) },
@@ -169,8 +169,8 @@ local sidejob =
     }
 }
 
-local SetFlarePos = EHI.Manager:RegisterCustomSyncedSF(function(self, trigger, ...)
-    self.SyncedSFF.rat_flare_pos = self:GetElementPosition(trigger.arg)
+local SetFlarePos = EHI.Trigger:RegisterCustomSyncedSF(function(self, trigger, ...)
+    self._SyncedSFF.rat_flare_pos = self._mission:GetElementPosition(trigger.arg)
 end)
 local other =
 {
@@ -181,7 +181,7 @@ local other =
     [102203] = { special_function = SetFlarePos, arg = 102152 },
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local SetRespawnTime = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local SetRespawnTime = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local t = trigger.time
         if self._trackers:CallFunction2(id, "SetRespawnTime", t) then
@@ -203,7 +203,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101982] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101281 } }
     other[101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101454 } }
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

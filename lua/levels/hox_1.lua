@@ -22,25 +22,16 @@ local other =
     [100332] = EHI:AddSniperSpawnedPopup(true, true)
 }
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 
 local tbl = {}
 if EHI:GetWaypointOption("show_waypoints_mission") then
     --units/payday2/vehicles/anim_vehicle_pickup_sportcab_armored/anim_vehicle_pickup_sportcab_armored/the_car
     tbl[102482] = { f = function(id, unit_data, unit)
         local t = { unit = unit }
-        local trigger_index = { 102626, 102627, 102628, 101383, 101397, 101595 }
-        for _, index in ipairs(trigger_index) do
-            managers.ehi_manager:AddWaypointToTrigger(index, t)
+        for _, index in ipairs({ 102626, 102627, 102628, 101383, 101397, 101595 }) do
+            EHI.Trigger:AddWaypointToTrigger(index, t)
         end
-        unit:unit_data():add_destroy_listener("EHIDestroy", function(...)
-            for _, index in ipairs(trigger_index) do
-                local trigger = triggers[index]
-                if trigger then
-                    managers.ehi_waypoint:RemoveWaypoint(trigger.id)
-                end
-            end
-        end)
     end}
 end
 EHI:UpdateUnits(tbl)

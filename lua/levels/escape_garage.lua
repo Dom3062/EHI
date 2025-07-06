@@ -1,6 +1,5 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
-EHI.Manager._cache.bilbo_baggin_bags = 8
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -9,8 +8,8 @@ local achievements =
         elements =
         {
             [104263] = { special_function = SF.CustomCode2, f = function(self)
-                self._cache.bilbo_baggin_bags = self._cache.bilbo_baggin_bags - 1
-                if self._cache.bilbo_baggin_bags == 0 then
+                self._cache.bilbo_baggin_bags = (self._cache.bilbo_baggin_bags or 0) + 1
+                if self._cache.bilbo_baggin_bags == 8 then
                     self._unlockable:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
                     self._loot:AddAchievementListener({
                         achievement = "bilbo_baggin",
@@ -33,7 +32,7 @@ if EHI:IsLootCounterVisible() then
     end, { element = { 101999, 102000, 101442 } })
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other
 })

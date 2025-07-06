@@ -23,3 +23,6 @@ EHIInaccuratePausableWaypoint.SetAccurate = EHIInaccurateWaypoint.SetAccurate
 EHIInaccurateWarningWaypoint = class(EHIWarningWaypoint)
 EHIInaccurateWarningWaypoint._default_color = color
 EHIInaccurateWarningWaypoint.SetAccurate = EHIInaccurateWaypoint.SetAccurate
+function EHIInaccurateWarningWaypoint:post_init(params)
+    self:SetColor()
+end

@@ -58,24 +58,23 @@ function ZipLine:HookUpdateLoop()
     if self.__ehi_update_hooked then
         return
     end
-    self.update = function(self, ...)
-        original.update(self, ...)
-        if self.__ehi_bag_attached and not self._attached_bag then
-            self.__ehi_bag_attached = nil
-            local t = self:total_time() * self._current_time
-            managers.ehi_tracker:CallFunction("ZipLineBag", "SetTimeNoAnim", t, self._ehi_key)
-            managers.ehi_waypoint:SetTime(self._ehi_key, t)
+    self.update = function(line, ...) ---@param line ZipLine
+        original.update(line, ...)
+        if line.__ehi_bag_attached and not line._attached_bag then
+            line.__ehi_bag_attached = nil
+            local t = line:total_time() * line._current_time
+            managers.ehi_tracker:CallFunction("ZipLineBag", "SetTimeNoAnim", t, line._ehi_key)
+            managers.ehi_waypoint:SetTime(line._ehi_key, t)
         end
     end
     self.__ehi_update_hooked = true
 end
 
 function ZipLine:UnhookUpdateLoop()
-    if not self.__ehi_update_hooked then
-        return
+    if self.__ehi_update_hooked then
+        self.update = original.update
+        self.__ehi_update_hooked = nil
     end
-    self.update = original.update
-    self.__ehi_update_hooked = nil
 end
 
 function ZipLine:set_usage_type(...)
@@ -111,7 +110,7 @@ function ZipLine:attach_bag(...)
 end
 
 ---@param self ZipLine
----@param unit Unit?
+---@param unit C_Unit?
 local function AddUserZipline(self, unit)
     if not unit then
         return
@@ -141,7 +140,7 @@ function ZipLine:sync_set_user(unit, ...)
 end
 
 function ZipLine:destroy(...)
-    managers.ehi_manager:RemoveUnit("ZipLineUser", self._ehi_key, true)
-    managers.ehi_manager:RemoveUnit("ZipLineBag", self._ehi_key, true)
+    managers.ehi_tracking:RemoveUnit("ZipLineUser", self._ehi_key, true)
+    managers.ehi_tracking:RemoveUnit("ZipLineBag", self._ehi_key, true)
     original.destroy(self, ...)
 end

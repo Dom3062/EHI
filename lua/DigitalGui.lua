@@ -41,8 +41,8 @@ end
 function DigitalGui:TimerStartCountDown()
     if (self._ignore or not self._visible) and not self._ignore_visibility or self._timer <= 0 then
         return
-    elseif managers.ehi_manager:TimerExists(self._ehi_key) then
-        managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
+    elseif managers.ehi_timer:TimerExists(self._ehi_key) then
+        managers.ehi_timer:SetJammed(self._ehi_key, false)
         return
     end
     if show_tracker then
@@ -107,12 +107,12 @@ if level_id == "shoutout_raid" then
             end
         end
         old_time = timer
-        managers.ehi_manager:Call(self._ehi_key, "CheckTime", math.ehi_round(timer, 0.1))
+        managers.ehi_tracking:Call(self._ehi_key, "CheckTime", math.ehi_round(timer, 0.1))
     end
 else
     if show_tracker and show_waypoint then
         function DigitalGui:_update_timer_text(...)
-            managers.ehi_manager:UpdateTimer(self._ehi_key, self._timer)
+            managers.ehi_timer:UpdateTimer(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     elseif show_waypoint then
@@ -158,9 +158,9 @@ else
         if self._remove_on_pause then
             self:RemoveTracker()
         else
-            managers.ehi_manager:SetTimerJammed(self._ehi_key, true)
+            managers.ehi_timer:SetJammed(self._ehi_key, true)
             if self._icon_on_pause then
-                managers.ehi_manager:SetIcon(self._ehi_key, self._icon_on_pause)
+                managers.ehi_tracking:SetIcon(self._ehi_key, self._icon_on_pause)
             end
         end
     end
@@ -168,7 +168,7 @@ end
 
 function DigitalGui:timer_resume(...)
     original.timer_resume(self, ...)
-    managers.ehi_manager:SetTimerJammed(self._ehi_key, false)
+    managers.ehi_timer:SetJammed(self._ehi_key, false)
 end
 
 function DigitalGui:_timer_stop(...)
@@ -187,7 +187,7 @@ function DigitalGui:set_visible(visible, ...)
 end
 
 function DigitalGui:RemoveTracker()
-    managers.ehi_manager:RemoveTimer(self._ehi_key)
+    managers.ehi_timer:RemoveTimer(self._ehi_key)
 end
 
 ---@param data table
@@ -196,7 +196,7 @@ function DigitalGui:load(data, ...)
     if self:is_timer() and state.timer_count_down then
         self:TimerStartCountDown()
         if state.timer_paused then
-            managers.ehi_manager:SetTimerJammed(self._ehi_key, true)
+            managers.ehi_timer:SetJammed(self._ehi_key, true)
         end
     end
     original.load(self, data, ...) -- Timer's time is updated in the Vanilla function
@@ -283,8 +283,8 @@ function DigitalGui:Finalize()
     if self._ignore or (self._remove_on_pause and self._timer_paused) then
         self:RemoveTracker()
     elseif self._icon_on_pause and self._timer_paused then
-        managers.ehi_manager:SetIcon(self._ehi_key, self._icon_on_pause)
+        managers.ehi_tracking:SetIcon(self._ehi_key, self._icon_on_pause)
     elseif self._icons then
-        managers.ehi_manager:SetIcon(self._ehi_key, self._icons[1])
+        managers.ehi_tracking:SetIcon(self._ehi_key, self._icons[1])
     end
 end

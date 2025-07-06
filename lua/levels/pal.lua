@@ -33,10 +33,10 @@ if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
     sync_triggers[EHI:GetInstanceElementID(100013, 4850)] = heli
 end
 if EHI.IsClient then
-    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.data.id)
-        if self._trackers:TrackerDoesNotExist(trigger.id) then
-            self:CreateTracker(trigger)
+        if self._trackers:DoesNotExist(trigger.id) then
+            self:CreateTracker()
         end
     end)
     triggers[102892] = { additional_time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = Icon.HeliLootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
@@ -74,14 +74,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102941] = { chance = 20, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }
     other[102956] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[102957] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[102960] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
+    other[102960] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
         if EHI.IsHost and not element:_values_ok() then
             return
         end
         self._trackers:CallFunction("Snipers", "SnipersKilled")
     end)}
     other[102963] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
-    other[102964] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+    other[102964] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", element._values.chance) then -- 20%
             self._trackers:AddTracker({
                 id = "Snipers",
@@ -94,7 +94,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end) }
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

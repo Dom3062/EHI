@@ -52,8 +52,8 @@ end
 
 local other =
 {
-    [100109] = EHI:AddAssaultDelay({ control = 50, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-        local time_for_prefereds = self:IsMissionElementEnabled(104439) and 5 or 0
+    [100109] = EHI:AddAssaultDelay({ control = 50, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        local time_for_prefereds = self._utils:IsMissionElementEnabled(104439) and 5 or 0
         self._trackers:AddTracker({
             id = trigger.id,
             time = trigger.time + time_for_prefereds,
@@ -77,7 +77,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 local loot_triggers = {}
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     if EHI:CanShowAchievement("pent_12") then

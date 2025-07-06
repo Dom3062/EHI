@@ -61,8 +61,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
-EHI:ShowLootCounter({ max = 9 }, { element = EHI:GetInstanceElementID(100268, 1350), present_timer = 0 })
+EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
+EHI:ShowLootCounter({ max = 9 }, { element = EHI:GetInstanceElementID(100268, 1350), present_timer = 0 }) -- 4 weapons + 5 cocaine
 EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small/001 (Bunker)
     [101086] = { remove_vanilla_waypoint = 101562, child_units = { 100776, 101226, 101469, 101472, 101473 } },

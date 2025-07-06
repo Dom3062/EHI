@@ -56,10 +56,10 @@ end
 
 if EHI:GetOption("gage_tracker_panel") == 1 then
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, function(picked_up, max_units, client_sync_load)
-        managers.ehi_tracker:SetTrackerProgress("Gage", picked_up)
+        managers.ehi_tracker:SetProgress("Gage", picked_up)
     end)
     EHI:AddOnSpawnedCallback(function()
-        if managers.ehi_tracker:TrackerDoesNotExist("Gage") and EHI.GagePackagesSpawned then
+        if managers.ehi_tracker:DoesNotExist("Gage") and EHI.GagePackagesSpawned then
             local progress = math.max(managers.gage_assignment:GetCountOfRemainingPackages() - 1, 0)
             local max = tweak_data.gage_assignment:get_num_assignment_units()
             if progress < max then

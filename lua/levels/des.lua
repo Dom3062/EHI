@@ -1,94 +1,5 @@
 local EHI = EHI
 local Icon = EHI.Icons
----@class EHIChemSetTracker : EHITracker
----@field super EHITracker
-EHIChemSetTracker = class(EHITracker)
-EHIChemSetTracker._forced_icons = { Icon.Methlab }
-EHIChemSetTracker._needs_update = false
-EHIChemSetTracker._init_create_text = false
-function EHIChemSetTracker:post_init(params)
-    self:SetBGSize(self._bg_box:w() / 2)
-    local third = self._bg_box:w() / 3
-    self._ingredients = { {}, {}, {} } ---@type table<number, { text: PanelText, ingredient: string }>
-    self._ingredients[1].text = self:CreateText({
-        text = "0.69",
-        w = third,
-        FitTheText = true
-    })
-    local font_size = self._ingredients[1].text:font_size()
-    self._ingredients[1].text:set_text("")
-    self._ingredients[1].text:set_left(0)
-    self._ingredients[2].text = self:CreateText({
-        w = third,
-        left = self._ingredients[1].text:right(),
-        FitTheText = true,
-        FitTheText_FontSize = font_size
-    })
-    self._ingredients[3].text = self:CreateText({
-        w = third,
-        left = self._ingredients[2].text:right(),
-        FitTheText = true,
-        FitTheText_FontSize = font_size
-    })
-    self._progress = 0
-    self._refresh_on_delete = true
-    self._state = "idle"
-end
-
-function EHIChemSetTracker:IncreaseProgress()
-    self._progress = self._progress + 1
-    self._text = self._ingredients[math.clamp(self._progress, 1, 3)].text
-end
-
----@param t number
-function EHIChemSetTracker:SetCooking(t)
-    self._time = t
-    self:IncreaseProgress()
-    self:SetTextColor(Color.yellow)
-    self._state = "cooking"
-    self:AddTrackerToUpdate()
-    self:AnimateBG(1)
-end
-
----@param t number
-function EHIChemSetTracker:SetReset(t)
-    self._time = t
-    self:IncreaseProgress()
-    self:SetTextColor(Color.red)
-    self._state = "reset"
-    self:AddTrackerToUpdate()
-    self:AnimateBG(1)
-end
-
----@param t number
-function EHIChemSetTracker:SetInterrupted(t)
-    self._time = t
-    self:SetTextColor(Color.red)
-    self._state = "interrupted"
-    self:AnimateBG(1)
-end
-
----@param pos number
----@param ingredient string
-function EHIChemSetTracker:SetIngredient(pos, ingredient)
-    local tbl = self._ingredients[math.clamp(pos, 1, 3)]
-    tbl.ingredient = tbl.ingredient or ingredient
-    tbl.text:set_text(tbl.ingredient)
-end
-
-function EHIChemSetTracker:Refresh()
-    self:RemoveTrackerFromUpdate()
-    self:SetIngredient(self._progress, "?")
-    if self._state == "cooking" then
-        self:SetTextColor(Color.green)
-    else
-        self:SetTextColor(Color.white)
-        self._progress = self._progress - 1
-    end
-    self._state = "idle"
-    self:AnimateBG(1)
-end
-
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
@@ -119,12 +30,94 @@ if EHI.IsClient then
     triggers[100564] = EHI:ClientCopyTrigger(triggers[100423], { time = 25 + 3 })
     -- Not worth adding the 3s delay here
 end
-if EHI.Manager._SHOW_MISSION_TRIGGERS then
-    local SetIngredient = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
+    ---@class EHIChemSetTracker : EHITracker
+    ---@field super EHITracker
+    local EHIChemSetTracker = class(EHITracker)
+    EHIChemSetTracker._forced_icons = { Icon.Methlab }
+    EHIChemSetTracker._needs_update = false
+    EHIChemSetTracker._init_create_text = false
+    function EHIChemSetTracker:post_init(params)
+        self:SetBGSize(self._bg_box:w() / 2)
+        local third = self._bg_box:w() / 3
+        self._ingredients = { {}, {}, {} } ---@type { text: Text, ingredient: string }[]
+        self._ingredients[1].text = self:CreateText({
+            text = "0.69",
+            w = third,
+            FitTheText = true
+        })
+        local font_size = self._ingredients[1].text:font_size()
+        self._ingredients[1].text:set_text("")
+        self._ingredients[1].text:set_left(0)
+        self._ingredients[2].text = self:CreateText({
+            w = third,
+            left = self._ingredients[1].text:right(),
+            FitTheText = true,
+            FitTheText_FontSize = font_size
+        })
+        self._ingredients[3].text = self:CreateText({
+            w = third,
+            left = self._ingredients[2].text:right(),
+            FitTheText = true,
+            FitTheText_FontSize = font_size
+        })
+        self._progress = 0
+        self._refresh_on_delete = true
+        self._state = "idle"
+    end
+    function EHIChemSetTracker:IncreaseProgress()
+        self._progress = self._progress + 1
+        self._text = self._ingredients[math.clamp(self._progress, 1, 3)].text
+    end
+    ---@param t number
+    function EHIChemSetTracker:SetCooking(t)
+        self._time = t
+        self:IncreaseProgress()
+        self:SetTextColor(Color.yellow)
+        self._state = "cooking"
+        self:AddTrackerToUpdate()
+        self:AnimateBG(1)
+    end
+    ---@param t number
+    function EHIChemSetTracker:SetReset(t)
+        self._time = t
+        self:IncreaseProgress()
+        self:SetTextColor(Color.red)
+        self._state = "reset"
+        self:AddTrackerToUpdate()
+        self:AnimateBG(1)
+    end
+    ---@param t number
+    function EHIChemSetTracker:SetInterrupted(t)
+        self._time = t
+        self:SetTextColor(Color.red)
+        self._state = "interrupted"
+        self:AnimateBG(1)
+    end
+    ---@param pos number
+    ---@param ingredient string
+    function EHIChemSetTracker:SetIngredient(pos, ingredient)
+        local tbl = self._ingredients[math.clamp(pos, 1, 3)]
+        tbl.ingredient = tbl.ingredient or ingredient
+        tbl.text:set_text(tbl.ingredient)
+    end
+    function EHIChemSetTracker:Refresh()
+        self:RemoveTrackerFromUpdate()
+        self:SetIngredient(self._progress, "?")
+        if self._state == "cooking" then
+            self:SetTextColor(Color.green)
+        else
+            self:SetTextColor(Color.white)
+            self._progress = self._progress - 1
+        end
+        self._state = "idle"
+        self:AnimateBG(1)
+    end
+    local SetIngredient = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("ChemSet", "SetIngredient", trigger.pos or 1, trigger.id)
     end)
-    local ChemSet = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-        if self._trackers:TrackerExists("ChemSet") then
+    local ChemSet = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        if self._trackers:Exists("ChemSet") then
             if trigger.waypoint then
                 self._waypoints:RemoveWaypoint("ChemSetCooking")
                 self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
@@ -138,14 +131,14 @@ if EHI.Manager._SHOW_MISSION_TRIGGERS then
             end
             return
         elseif trigger.id == "ChemSetInterrupted" then
-            self:ForceRemove(trigger.data.id)
+            self._tracking:ForceRemove(trigger.data.id)
         end
-        self:CreateTracker(trigger)
+        self:CreateTracker()
     end)
     triggers[102593].special_function = ChemSet
     triggers[101217].special_function = ChemSet
     triggers[102595].special_function = ChemSet
-    triggers[EHI:GetInstanceElementID(100046, 15000)] = { id = "ChemSet", class = "EHIChemSetTracker", hint = Hints.des_ChemSet }
+    triggers[EHI:GetInstanceElementID(100046, 15000)] = { id = "ChemSet", class_table = EHIChemSetTracker, hint = Hints.des_ChemSet }
     triggers[EHI:GetInstanceElementID(100048, 15000)] = { special_function = SetIngredient, id = "A" }
     triggers[EHI:GetInstanceElementID(100049, 15000)] = { special_function = SetIngredient, id = "B" }
     triggers[EHI:GetInstanceElementID(100050, 15000)] = { special_function = SetIngredient, id = "C" }
@@ -159,6 +152,35 @@ if EHI.Manager._SHOW_MISSION_TRIGGERS then
     triggers[EHI:GetInstanceElementID(100078, 15000)] = { special_function = SetIngredient, id = "C", pos = 3 }
     triggers[EHI:GetInstanceElementID(100080, 15000)] = { special_function = SetIngredient, id = "D", pos = 3 }
     triggers[100715] = { id = "ChemSet", special_function = SF.RemoveTracker }
+end
+if EHI.Mission._SHOW_MISSION_WAYPOINTS then
+    triggers[102473].waypoint_f = function(self, trigger) ---@param self EHIMissionElementTrigger
+        self._waypoints:AddWaypointlessWaypoint("HackChanceWaypoint", {
+            chance = trigger.chance,
+            class = self.Waypoints.Less.Chance
+        })
+    end
+    triggers[101485].special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        self._trackers:RemoveTracker(trigger.id)
+        self._waypoints:RemoveWaypoint("HackChanceWaypoint")
+    end)
+    triggers[108694].special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+        self._trackers:IncreaseChance(trigger.id, element._values.chance)
+        self._waypoints:IncreaseChance("HackChanceWaypoint", element._values.chance)
+    end)
+    -- levels/instances/unique/des/des_computer/001-004
+    for i = 3000, 4500, 500 do
+        EHI.Element:AddWaypointToOverride(EHI:GetInstanceElementID(100000, i), "HackChanceWaypoint")
+    end
+    -- levels/instances/unique/des/des_computer/012
+    EHI.Element:AddWaypointToOverride(EHI:GetInstanceElementID(100000, 8500), "HackChanceWaypoint")
+    -- levels/instances/unique/des/des_computer_001/001
+    -- levels/instances/unique/des/des_computer_002/001
+    for i = 6000, 6500, 500 do
+        EHI.Element:AddWaypointToOverride(EHI:GetInstanceElementID(i == 6000 and 100051 or 100000, i), "HackChanceWaypoint")
+    end
+    -- levels/instances/unique/des/des_computer_002/002
+    EHI.Element:AddWaypointToOverride(EHI:GetInstanceElementID(100000, 29550), "HackChanceWaypoint")
 end
 
 ---@type ParseAchievementTable
@@ -175,8 +197,7 @@ local achievements =
             [1024802] = { id = 102486, special_function = SF.RemoveTrigger }, ---@diagnostic disable-line
             [102710] = { special_function = SF.SetAchievementComplete },
             [102486] = { special_function = SF.SetAchievementFailed }
-        },
-        sync_params = { from_start = true }
+        }
     },
     des_11 =
     {
@@ -222,7 +243,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100025, 8000)] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SnipersKilled", arg = { 23 } }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -280,12 +301,12 @@ EHI:ShowLootCounter({
         end) -- Archaeology, one more bag next to the objective
     },
     load_sync = function(self)
-        if self:IsMissionElementDisabled(101506) then
+        if self._utils:IsMissionElementDisabled(101506) then
             self._loot:IncreaseLootCounterProgressMax()
         end
         self._loot:SyncSecuredLoot()
     end
-}, { element = 100451, disable_waypoint_removal = true })
+}, { element = { 100451, 100557 } })
 EHI:AddXPBreakdown({
     objectives =
     {

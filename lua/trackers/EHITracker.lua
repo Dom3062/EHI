@@ -1,6 +1,6 @@
 local Color = Color
----@param o PanelBaseObject
----@param hint PanelText
+---@param o Object
+---@param hint Text
 ---@param end_a number End alpha
 local function visibility_hint(o, hint, end_a)
     local t, TOTAL_T = 0, 0.18
@@ -14,7 +14,7 @@ local function visibility_hint(o, hint, end_a)
         hint:set_alpha(math.lerp(hint_start_a, end_a, lerp))
     end
 end
----@param o PanelBaseObject
+---@param o Object
 ---@param end_a number End alpha
 local function visibility(o, end_a) -- This is actually faster than manually re-typing optimized "over" function
     local t, TOTAL_T = 0, 0.18
@@ -26,7 +26,7 @@ local function visibility(o, end_a) -- This is actually faster than manually re-
         o:set_alpha(math.lerp(start_a, end_a, lerp))
     end
 end
----@param o PanelBaseObject
+---@param o Object
 ---@param t number
 ---@param self EHITracker
 local function hint_wait(o, t, self)
@@ -38,7 +38,7 @@ local function hint_wait(o, t, self)
         self._hint_pos = nil
     end
 end
----@param o PanelBaseObject
+---@param o Object
 ---@param target_y number
 local function top(o, target_y)
     local t, total = 0, 0.18
@@ -49,7 +49,7 @@ local function top(o, target_y)
     end
     o:set_y(target_y)
 end
----@param o PanelBaseObject
+---@param o Object
 ---@param target_x number
 local function left(o, target_x)
     local t, total = 0, 0.18
@@ -63,7 +63,7 @@ end
 local panel_w
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or EHI:IsVerticalAlignmentAndOption("tracker_vertical_w_anim") == 2 then -- Horizontal; Right to Left or Panel W anim is Right to Left and Vertical alignment
     if EHI:GetOption("show_tracker_bg") then
-        ---@param o PanelBaseObject
+        ---@param o Object
         ---@param target_w number
         ---@param from_w number?
         ---@param self EHITracker?
@@ -86,7 +86,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or 
             end
         end
     else -- No need to animate as the background is not visible
-        ---@param o PanelBaseObject
+        ---@param o Object
         ---@param target_w number
         ---@param from_w number?
         ---@param self EHITracker?
@@ -100,7 +100,7 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or 
         end
     end
 elseif EHI:GetOption("show_tracker_bg") then
-    ---@param o PanelBaseObject
+    ---@param o Object
     ---@param target_w number
     ---@param from_w number?
     ---@param self EHITracker?
@@ -120,7 +120,7 @@ elseif EHI:GetOption("show_tracker_bg") then
         end
     end
 else -- No need to animate as the background is not visible
-    ---@param o PanelBaseObject
+    ---@param o Object
     ---@param target_w number
     ---@param from_w number?
     ---@param self EHITracker?
@@ -131,7 +131,7 @@ else -- No need to animate as the background is not visible
         end
     end
 end
----@param o PanelBaseObject
+---@param o Object
 ---@param target_x number
 local function icon_x(o, target_x)
     local TOTAL_T = 0.18
@@ -144,7 +144,7 @@ local function icon_x(o, target_x)
         o:set_x(math.lerp(from_x, target_x, lerp))
     end
 end
----@param o PanelBaseObject
+---@param o Object
 ---@param skip_anim boolean
 ---@param self EHITracker
 local function destroy(o, skip_anim, self)
@@ -232,12 +232,12 @@ local function CreateHUDBGBox(panel, params)
 end
 
 ---@class EHITracker
----@field new fun(self: self, panel: Panel, params: ElementTrigger, parent_class: EHITrackerManager): self
+---@field new fun(self: self, panel: Panel, params: ElementTrigger): self
+---@field _parent_class EHITrackerManager Added when `EHITrackerManager` class is created
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
 ---@field _forced_icon_color Color[]? Forces specific icon color in the tracker
----@field _icons PanelBitmap[]
 ---@field _panel_from_w number? Used in Panel Width animation
 ---@field _panel_override_w number?
 ---@field _hint_no_localization boolean?
@@ -270,12 +270,10 @@ end
 EHITracker.make_fine_text = BlackMarketGui.make_fine_text
 ---@param panel Panel Main panel provided by `EHITrackerManager`
 ---@param params EHITracker.params
----@param parent_class EHITrackerManager
-function EHITracker:init(panel, params, parent_class)
+function EHITracker:init(panel, params)
     self:pre_init(params)
     self._id = params.id
-    self._icons = {}
-    self._parent_class = parent_class
+    self._icons = {} ---@type Bitmap[]
     self._n_of_icons = 0
     local gap = 0
     local tracker_icons = self._forced_icons or params.icons
@@ -318,7 +316,7 @@ function EHITracker:init(panel, params, parent_class)
         self:FitTheText()
     end
     if self._n_of_icons > 0 then
-        self:CreateIcons(tracker_icons) ---@diagnostic disable-line
+        self:CreateIcons(tracker_icons, params.first_icon_pos) ---@diagnostic disable-line
     end
     self:OverridePanel()
     self._hide_on_delete = params.hide_on_delete
@@ -421,8 +419,8 @@ function EHITracker:AnimatePanelWAndRefresh(target_w)
     self._anim_set_w = self._panel:animate(panel_w, target_w, self._panel_from_w, self)
 end
 
----@param previous_icon PanelBitmap?
----@param icon PanelBitmap? Defaults to `self._icons[1]` if not provided
+---@param previous_icon Bitmap?
+---@param icon Bitmap? Defaults to `self._icons[1]` if not provided
 function EHITracker:SetIconX(previous_icon, icon)
     icon = icon or self._icons[1]
     if icon then
@@ -433,7 +431,7 @@ function EHITracker:SetIconX(previous_icon, icon)
 end
 
 function EHITracker:SetIconsX()
-    local previous_icon ---@type PanelBitmap?
+    local previous_icon ---@type Bitmap?
     for _, icon in ipairs(self._icons) do
         self:SetIconX(previous_icon, icon)
         previous_icon = icon
@@ -473,9 +471,10 @@ end
 if EHI:GetOption("show_one_icon") then
     EHITracker._ONE_ICON = true
     ---@param tracker_icons table
-    function EHITracker:CreateIcons(tracker_icons)
+    ---@param first_icon_pos number?
+    function EHITracker:CreateIcons(tracker_icons, first_icon_pos)
         local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
-        local first_icon = tracker_icons[1]
+        local first_icon = tracker_icons[first_icon_pos or 1]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
             self:CreateIcon(1, texture, rect, icon_pos)
@@ -487,7 +486,8 @@ if EHI:GetOption("show_one_icon") then
     end
 else
     ---@param tracker_icons table
-    function EHITracker:CreateIcons(tracker_icons)
+    ---@param first_icon_pos number?
+    function EHITracker:CreateIcons(tracker_icons, first_icon_pos)
         local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
         for i, v in ipairs(tracker_icons) do
             if type(v) == "string" then
@@ -504,7 +504,7 @@ end
 
 ---@param i number
 ---@param texture string
----@param texture_rect number[]?
+---@param texture_rect number[]
 ---@param x number
 ---@param visible boolean?
 ---@param color Color?
@@ -524,7 +524,7 @@ end
 
 ---@param i number
 function EHITracker:RemoveIcon(i)
-    local icon = table.remove(self._icons, i) ---@cast icon PanelBitmap?
+    local icon = table.remove(self._icons, i) ---@cast icon Bitmap?
     if icon then
         self._panel:remove(icon)
         table.remove(self._icon_anims or {}, i)
@@ -808,7 +808,7 @@ function EHITracker:update_fade(dt)
     end
 end
 
----@param text PanelText?
+---@param text Text?
 ---@param font_size number?
 function EHITracker:FitTheText(text, font_size)
     text = text or self._text
@@ -846,7 +846,7 @@ function EHITracker:FitTheTime(t, default_text)
 end
 
 ---@param text_string string? If not provided, `Format` function will be called
----@param text PanelText?
+---@param text Text?
 function EHITracker:SetAndFitTheText(text_string, text)
     text = text or self._text
     text:set_text(text_string or self:Format())
@@ -865,13 +865,6 @@ function EHITracker:SetTimeNoAnim(time)
     self:SetAndFitTheText()
 end
 
----@param time number
-function EHITracker:SetTimeIfLower(time)
-    if self._time >= time then
-        self:SetTime(time)
-    end
-end
-
 ---@param params ElementTrigger?
 function EHITracker:Run(params)
     if not params then
@@ -881,27 +874,29 @@ function EHITracker:Run(params)
     self:SetTextColor()
 end
 
-if EHI:GetOption("show_tracker_bg") then
-    ---@param bg PanelRectangle
+if bg_visibility then
+    EHITracker._BG_START_COLOR = Color(1, 0, 0, 0)
+    ---@param bg Rect
     ---@param total_t number
-    EHITracker._anim_bg_attention = function(bg, total_t)
+    ---@param start_color Color
+    EHITracker._anim_bg_attention = function(bg, total_t, start_color)
         local color = Color.white
         local t = total_t or 3
         while t > 0 do
             t = t - coroutine.yield()
             local cv = math.abs(math.sin(t * 180 * 1))
-            bg:set_color(Color(1, color.red * cv, color.green * cv, color.blue * cv))
+            bg:set_color(Color(1, color.r * cv, color.g * cv, color.b * cv))
         end
-        bg:set_color(Color(1, 0, 0, 0))
+        bg:set_color(start_color)
     end
     ---@param t number?
     function EHITracker:AnimateBG(t)
         t = t or self._flash_times
         if self._anim_flash and t > 0 then
-            local bg = self._bg_box:child("bg") --[[@as PanelBitmap]]
+            local bg = self._bg_box:child("bg") --[[@as Rect]]
             bg:stop()
-            bg:set_color(Color(1, 0, 0, 0))
-            bg:animate(self._anim_bg_attention, t)
+            bg:set_color(self._BG_START_COLOR)
+            bg:animate(self._anim_bg_attention, t, self._BG_START_COLOR)
         end
     end
 else
@@ -911,14 +906,14 @@ else
 end
 
 ---@param color Color? Color is set to `White` or tracker default color if not provided
----@param text PanelText? Defaults to `self._text` if not provided
+---@param text Text? Defaults to `self._text` if not provided
 function EHITracker:SetTextColor(color, text)
     text = text or self._text
     text:set_color(color or self._text_color)
 end
 
 ---@param color Color? Color is set to `White` or tracker default color if not provided
----@param text PanelText? Defaults to `self._text` if not provided
+---@param text Text? Defaults to `self._text` if not provided
 function EHITracker:StopAndSetTextColor(color, text)
     text = text or self._text
     text:stop()
@@ -926,7 +921,7 @@ function EHITracker:StopAndSetTextColor(color, text)
 end
 
 ---@param new_icon string
----@param icon PanelBitmap?
+---@param icon Bitmap?
 function EHITracker:SetIcon(new_icon, icon)
     icon = icon or self._icons[1]
     if icon then
@@ -940,7 +935,7 @@ function EHITracker:SetIcon(new_icon, icon)
 end
 
 ---@param color Color
----@param icon PanelBitmap?
+---@param icon Bitmap?
 function EHITracker:SetIconColor(color, icon)
     icon = icon or self._icons[1]
     if icon then
@@ -949,7 +944,7 @@ function EHITracker:SetIconColor(color, icon)
 end
 
 ---@param status string
----@param text PanelText?
+---@param text Text?
 function EHITracker:SetStatusText(status, text)
     text = text or self._text
     local txt = "ehi_status_" .. status
@@ -995,11 +990,12 @@ function EHITracker:StopPanelAnims()
     end
 end
 
-function EHITracker:pre_delete()
+function EHITracker:pre_destroy()
 end
 
 ---@param skip_anim boolean?
 function EHITracker:destroy(skip_anim)
+    self:pre_destroy()
     if alive(self._panel) then
         for _, icon in ipairs(self._icons) do
             icon:stop()
@@ -1020,7 +1016,6 @@ function EHITracker:delete()
         self:Refresh()
         return
     end
-    self:pre_delete()
     self:destroy()
     self._parent_class:_destroy_tracker(self._id)
 end
@@ -1050,10 +1045,6 @@ end
 function EHITracker:OnAlarm()
 end
 
----@param state boolean
-function EHITracker:OnPlayerCustody(state)
-end
-
 function EHITracker:RedrawPanel()
 end
 
@@ -1066,7 +1057,7 @@ function EHITracker:GetTrackerSize(n_of_icons)
 end
 
 ---@param create_f fun(panel: Panel, params: table): Panel
----@param animate_f fun(bg: PanelRectangle, total_t: number)
+---@param animate_f fun(bg: Rect, total_t: number, start_color: Color)
 function EHITracker.SetCustomBGFunctions(create_f, animate_f)
     CreateHUDBGBox = create_f
     if EHITracker._anim_bg_attention then

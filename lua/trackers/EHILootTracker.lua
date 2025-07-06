@@ -113,64 +113,10 @@ function EHILootTracker:post_init(params)
     EHILootTracker.super.post_init(self, params)
     self._show_finish_after_reaching_target = self._stay_on_screen
     self._loot_id = {}
-    self._loot_check_delay = {} ---@type table<number, { t: number, callback: function? }>
-    self._loot_check_n = 0
     if self._max_xp_bags > 0 then
         self:SetTextColor(Color.yellow)
     elseif self._progress == self._max and self._max_random > 0 then
         self:SetTextColor(Color.green)
-    end
-end
-
-function EHILootTracker:OverridePanel()
-    if self._max_random > 0 and self._unknown_random then
-        self:IncreaseTrackerSize()
-    end
-end
-
----@param animate boolean?
-function EHILootTracker:IncreaseTrackerSize(animate)
-    if self.__tracker_size_increased then
-        return
-    end
-    self.__tracker_size_increased = true
-    if animate then
-        self:SetBGSize(self._bg_box:w() / 2, "add", true)
-        local new_w = self._bg_box:w()
-        local new_panel_w = self:GetTrackerSize()
-        self._text:set_w(new_w)
-        self:AnimIconsX()
-        self:AnimatePanelWAndRefresh(new_panel_w)
-        self:ChangeTrackerWidth(new_panel_w)
-        self:AnimateAdjustHintX(self._default_bg_size_half)
-    else
-        self:SetBGSize(self._bg_box:w() / 2, "add")
-        self._text:set_w(self._bg_box:w())
-        self:SetAndFitTheText()
-        self:AdjustHintX(self._default_bg_size_half)
-    end
-end
-
----@param animate boolean?
-function EHILootTracker:DecreaseTrackerSize(animate)
-    if not self.__tracker_size_increased then
-        return
-    end
-    self.__tracker_size_increased = nil
-    if animate then
-        self:SetBGSize(self._default_bg_size, "set", true)
-        local new_w = self._bg_box:w()
-        local new_panel_w = self:GetTrackerSize()
-        self._text:set_w(new_w)
-        self:AnimIconsX()
-        self:AnimatePanelWAndRefresh(new_panel_w)
-        self:ChangeTrackerWidth(new_panel_w)
-        self:AnimateAdjustHintX(-self._default_bg_size_half)
-    else
-        self:SetBGSize(self._default_bg_size, "set")
-        self._text:set_w(self._bg_box:w())
-        self:SetAndFitTheText()
-        self:AdjustHintX(-self._default_bg_size_half)
     end
 end
 
@@ -224,37 +170,6 @@ else
         end
         return EHILootTracker.super.Format(self)
     end
-end
-
-function EHILootTracker:update(dt)
-    for id, data in pairs(self._loot_check_delay) do
-        data.t = data.t - dt
-        if data.t <= 0 then
-            self._loot_check_delay[id] = nil
-            self._loot_check_n = self._loot_check_n - 1
-            if self:CanDisableUpdate() then
-                self:RemoveTrackerFromUpdate()
-            end
-            self:RandomLootDeclinedCheck(id)
-            if data.callback then
-                data.callback(id)
-            end
-        end
-    end
-end
-
-function EHILootTracker:CanDisableUpdate()
-    return self._loot_check_n <= 0
-end
-
----@param id number
----@param callback function?
-function EHILootTracker:AddDelayedLootDeclinedCheck(id, callback)
-    self._loot_check_delay[id] = { t = 2, callback = callback }
-    if self._loot_check_n == 0 then
-        self:AddTrackerToUpdate()
-    end
-    self._loot_check_n = self._loot_check_n + 1
 end
 
 function EHILootTracker:SetProgress(progress)
@@ -317,140 +232,13 @@ function EHILootTracker:VerifyStatus()
     end
 end
 
----@param random number?
-function EHILootTracker:RandomLootSpawned(random)
-    if self._max_random <= 0 then
-        return
-    elseif self._progress == self._max then
-        self:SetTextColor(Color.white)
-    end
-    local n = random or 1
-    self._max_random = self._max_random - n
-    self:CheckUnknownRandomAndMaxRandom()
-    self:IncreaseProgressMax(n)
-end
-
----@param random number?
-function EHILootTracker:RandomLootDeclined(random)
-    if self._max_random <= 0 then
-        return
-    end
-    self._max_random = self._max_random - (random or 1)
-    self:CheckUnknownRandomAndMaxRandom()
-    self:SetProgressMax(self._max)
-end
-
----@param max number?
-function EHILootTracker:SetMaxRandom(max)
-    self._max_random = max or 0
-    self:CheckUnknownRandomAndMaxRandom()
-    self:SetProgressMax(self._max)
-end
-
----@param progress number?
-function EHILootTracker:IncreaseMaxRandom(progress)
-    self:SetMaxRandom(self._max_random + (progress or 1))
-end
-
----@param progress number?
-function EHILootTracker:DecreaseMaxRandom(progress)
-    self:SetMaxRandom(self._max_random - (progress or 1))
-end
-
-function EHILootTracker:CheckUnknownRandomAndMaxRandom()
-    local random_check = self._max_random > 0 and self._unknown_random
-    if self.__tracker_size_increased then
-        if random_check then
-            return
-        end
-        self:DecreaseTrackerSize(true)
-    elseif random_check then
-        self:IncreaseTrackerSize(true)
-    end
-end
-
----@param id number
----@param force boolean? This is here to combat desync, use it if element does not have `fail` state
-function EHILootTracker:RandomLootSpawnedCheck(id, force)
-    if self._loot_id[id] then
-        if force then
-            self:IncreaseProgressMax()
-        end
-        return
-    end
-    self._loot_id[id] = true
-    self:RandomLootSpawned()
-end
-
----@param id number
-function EHILootTracker:RandomLootDeclinedCheck(id)
-    if self._loot_id[id] then
-        return
-    end
-    self._loot_id[id] = true
-    self:RandomLootDeclined()
-end
-
----@param state boolean
-function EHILootTracker:SetUnknownRandomLoot(state)
-    if state == self._unknown_random then
-        return
-    elseif state and not self._unknown_random then
-        self:IncreaseTrackerSize(true)
-    elseif self._unknown_random and not state then
-        self:DecreaseTrackerSize(true)
-    end
-    self._unknown_random = state
-    self:SetAndFitTheText()
-end
-
 function EHILootTracker:SecuredMissionLoot()
     local progress = self._progress - self._mission_loot + self._offset
     self._mission_loot = self._mission_loot + 1
     self:SetProgress(progress)
 end
 
----@param count number
-function EHILootTracker:SetCountOfArmoredTransports(count)
-    self._n_of_loot_in_transports = count * 9
-    self._n_of_loot_in_one_transport = 9
-end
-
-function EHILootTracker:RandomLootSpawnedInTransport()
-    if self._n_of_loot_in_transports <= 0 then
-        return
-    end
-    self:RandomLootSpawned()
-    self._n_of_loot_in_transports = self._n_of_loot_in_transports - 1
-    self._n_of_loot_in_one_transport = self._n_of_loot_in_one_transport - 1
-    if self._n_of_loot_in_one_transport == 0 and self._n_of_loot_in_transports > 0 then
-        self._n_of_loot_in_one_transport = 9
-    end
-end
-
-function EHILootTracker:RandomLootDeclinedInTransport()
-    if self._n_of_loot_in_transports <= 0 then
-        return
-    end
-    self:RandomLootDeclined()
-    self._n_of_loot_in_transports = self._n_of_loot_in_transports - 1
-    self._n_of_loot_in_one_transport = self._n_of_loot_in_one_transport - 1
-    if self._n_of_loot_in_one_transport == 0 and self._n_of_loot_in_transports > 0 then
-        self._n_of_loot_in_one_transport = 9
-    end
-end
-
-function EHILootTracker:ExplosionInTransport()
-    while self._n_of_loot_in_one_transport ~= 9 and self._n_of_loot_in_transports > 0 do
-        self:RandomLootDeclinedInTransport()
-    end
-    if self._n_of_loot_in_transports <= 0 and self._n_of_loot_in_one_transport > 0 then
-        self:RandomLootDeclined(self._n_of_loot_in_one_transport)
-        self._n_of_loot_in_one_transport = 0
-    end
-end
-
-function EHILootTracker:pre_delete()
+function EHILootTracker:pre_destroy()
     self._loot_parent:RemoveListener(self._id)
 end
 EHILootTracker.FormatProgress = EHILootTracker.Format
@@ -479,8 +267,9 @@ function EHILootMaxTracker:post_init(params)
     local function refresh(alive_players) ---@param alive_players number
         self:Refresh()
     end
-    EHI:AddCallback("ExperienceManager_RefreshPlayerCount", refresh)
+    EHI:AddCallback(EHI.CallbackMessage.RefreshPlayerCount, refresh)
     EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
+    EHI:AddOnCustodyCallback(refresh)
     if EHI.IsClient then
         self._loot_parent:AddSyncListener(function(loot)
             self._offset = loot:GetSecuredBagsAmount()
@@ -493,34 +282,22 @@ function EHILootMaxTracker:PlayerSpawned()
     self:AddTrackerToUpdate()
 end
 
-function EHILootMaxTracker:OnPlayerCustody(state)
-    self:Refresh()
-end
-
 function EHILootMaxTracker:update(dt)
     if self._refresh_max then
         self._refresh_max = self._refresh_max - dt
         if self._refresh_max <= 0 then
             self._refresh_max = nil
-            self:CacheVariables()
+            self._xp_player_limit = managers.ehi_experience:GetPlayerXPLimit(true)
             self:Refresh()
-            if self:CanDisableUpdate() then
-                self:RemoveTrackerFromUpdate()
-                return
-            end
+            self:RemoveTrackerFromUpdate()
         end
     end
-    EHILootMaxTracker.super.update(self, dt)
 end
 
 function EHILootMaxTracker:VerifyStatus()
     if self._progress == self._max then
         self:SetCompleted()
     end
-end
-
-function EHILootMaxTracker:CacheVariables()
-    self._xp_player_limit = managers.ehi_experience:GetPlayerXPLimit(true)
 end
 
 function EHILootMaxTracker:Refresh()
@@ -568,7 +345,7 @@ end
 EHIAchievementLootCounterTracker = ehi_achievement_class(EHILootTracker)
 EHIAchievementLootCounterTracker._PrepareHint = EHIAchievementTracker.PrepareHint
 EHIAchievementLootCounterTracker._PlayerSpawned = EHIAchievementTracker.PlayerSpawned
-function EHIAchievementLootCounterTracker:init(panel, params, ...)
+function EHIAchievementLootCounterTracker:init(panel, params)
     self._no_failure = params.no_failure
     self._beardlib = params.beardlib
     self._loot_counter_on_fail = params.loot_counter_on_fail
@@ -577,7 +354,7 @@ function EHIAchievementLootCounterTracker:init(panel, params, ...)
     if not params.start_silent then
         self:PrepareHint(params)
     end
-    EHIAchievementLootCounterTracker.super.init(self, panel, params, ...)
+    EHIAchievementLootCounterTracker.super.init(self, panel, params)
     if params.start_silent then
         self._silent_start = true
         if self._icons[2] then

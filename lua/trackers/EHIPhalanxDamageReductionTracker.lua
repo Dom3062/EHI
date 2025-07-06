@@ -20,9 +20,9 @@ function EHIPhalanxDamageReductionTracker:SetChance(amount)
     elseif amount == (self._tweak_data.max * 100) then
         self:StopTimer()
     elseif self._started then
-        self:SetTimeNoAnim(self._tweak_data.increase_intervall + math.rand(2))
+        self:SetTimeNoAnim(self._tweak_data.increase_intervall + 0.4)
     else
-        self:StartTimer(self._tweak_data.increase_intervall + math.rand(2))
+        self:StartTimer(self._tweak_data.increase_intervall + 0.4)
     end
     self:_SetChance(amount)
 end

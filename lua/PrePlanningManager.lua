@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("PrePlanningManager") then
     return
 end
@@ -12,9 +11,7 @@ end
 
 local preplan_reserved = nil
 local preplan_voted = nil
-
-local original = PrePlanningManager.on_execute_preplanning
-function PrePlanningManager:on_execute_preplanning(...)
+Hooks:PreHook(PrePlanningManager, "on_execute_preplanning", "EHI_PrePlanningManager_on_execute_preplanning", function(self, ...)
     if self:has_current_level_preplanning() then
         preplan_reserved = deep_clone(self._reserved_mission_elements)
         local winners = self:get_current_majority_votes()
@@ -31,12 +28,13 @@ function PrePlanningManager:on_execute_preplanning(...)
             end
         end
     end
-    original(self, ...)
-end
+end)
 
----@param asset_id number
+---@param asset_id number?
 function PrePlanningManager:IsAssetBought(asset_id)
-    if self._finished_preplan then
+    if not asset_id then
+        return false
+    elseif self._finished_preplan then
         local voted = self._finished_preplan[1]
         for _, assets in pairs(voted or {}) do
             if assets[asset_id] then

@@ -14,6 +14,7 @@ function FakeEHIBuffTracker:init(panel, params)
     local buff_w = params.w
     local buff_w_half = buff_w / 2
     local buff_h = params.h
+    local is_cooldown = params.group == "cooldown"
     self._show_progress = params.show_progress
     self._shape = params.shape
     self._scale = params.scale
@@ -26,7 +27,7 @@ function FakeEHIBuffTracker:init(panel, params)
     self._icon = self._panel:bitmap({
         texture = params.texture,
         texture_rect = params.texture_rect,
-        color = params.good and Color.white or Color.red,
+        color = is_cooldown and Color.red or Color.white,
         x = 0,
         y = buff_w_half,
         w = buff_w,
@@ -53,7 +54,7 @@ function FakeEHIBuffTracker:init(panel, params)
         y = buff_w_half,
         w = buff_w,
         h = buff_w,
-        texture = "guis/textures/pd2_mod_ehi/buff_cframe_bg",
+        texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_bg",
         color = Color.black:with_alpha(0.2),
         visible = self._shape == 2
     })
@@ -64,7 +65,7 @@ function FakeEHIBuffTracker:init(panel, params)
         y = self._icon:y(),
         w = self._icon:w(),
         h = self._icon:h(),
-        texture = params.good and "guis/textures/pd2_mod_ehi/buff_cframe" or "guis/textures/pd2_mod_ehi/buff_cframe_debuff",
+        texture = is_cooldown and "guis/textures/pd2_mod_ehi/buffs/buff_cframe_red" or "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
         texture_rect = self._rect_circle,
         visible = self._shape == 2 and self._show_progress
     })
@@ -75,12 +76,12 @@ function FakeEHIBuffTracker:init(panel, params)
         y = self._icon:y(),
         w = self._icon:w(),
         h = self._icon:h(),
-        texture = params.good and "guis/textures/pd2_mod_ehi/buff_sframe" or "guis/textures/pd2_mod_ehi/buff_sframe_debuff",
+        texture = is_cooldown and "guis/textures/pd2_mod_ehi/buffs/buff_sframe_red" or "guis/textures/pd2_mod_ehi/buffs/buff_sframe_white",
         texture_rect = self._rect_square,
         visible = self._shape == 1 and self._show_progress
     })
     self._hint = self._panel:text({
-        text = params.text or "",
+        text = params.text_localize and managers.localization:text(params.text_localize) or params.text or "",
         w = self._panel:w(),
         h = buff_w_half,
         font = tweak_data.menu.pd2_large_font,
@@ -226,7 +227,7 @@ function FakeEHIBuffTracker:UpdateProgressVisibility(visibility, dont_force)
 end
 
 ---@param rect number[]
----@param shape PanelBitmap
+---@param shape Bitmap
 function FakeEHIBuffTracker:_invert(rect, shape)
     local size = self._inverted and 0 or rect[4]
     local size_3 = self._inverted and rect[4] or rect[3]
@@ -235,8 +236,8 @@ end
 
 function FakeEHIBuffTracker:InvertProgress()
     self._inverted = not self._inverted
-    self:_invert(self._rect_square, self._panel:child("progress_square") --[[@as PanelBitmap]])
-    self:_invert(self._rect_circle, self._panel:child("progress_circle") --[[@as PanelBitmap]])
+    self:_invert(self._rect_square, self._panel:child("progress_square") --[[@as Bitmap]])
+    self:_invert(self._rect_circle, self._panel:child("progress_circle") --[[@as Bitmap]])
 end
 
 ---@param visibility boolean

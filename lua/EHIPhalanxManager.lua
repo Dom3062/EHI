@@ -6,20 +6,26 @@
 
 local EHI = EHI
 ---@class EHIPhalanxManager
-EHIPhalanxManager = {}
+local EHIPhalanxManager = {}
 EHIPhalanxManager._no_endless_assault_check = table.set("pbr2")
 EHIPhalanxManager._requires_manual_on_exec = table.set("dinner", "slaughter_house_new")
 EHIPhalanxManager._disabled_in_levels = table.set("born")
 EHIPhalanxManager._counter_trigger = EHI.IsClient and 3 or 2
 EHIPhalanxManager._first_assault = true
----@param manager EHIManager
-function EHIPhalanxManager:init_finalize(manager)
-    self._manager = manager
-    self._trackers = manager._trackers
+---@param trackers EHITrackerManager
+---@param hook EHIHookManager
+---@param assault EHIAssaultManager
+function EHIPhalanxManager:init_finalize(trackers, hook, assault)
+    self._trackers = trackers
+    self._hook = hook
+    self._assault = assault
     self._phalanx_spawn_chance = tweak_data.group_ai.phalanx.spawn_chance or {}
     self._phalanx_spawn_time_check = tweak_data.group_ai.phalanx.check_spawn_intervall or 120
     if EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
         self._tracker_enabled = true
+        EHI:AddOnAlarmCallback(function(dropin)
+            self:SwitchToLoudMode(dropin)
+        end)
     end
 end
 
@@ -29,7 +35,7 @@ function EHIPhalanxManager:OnSOPhalanxCreated(element_so)
     if self._disabled_in_levels[level_id] then
         return
     elseif self._requires_manual_on_exec[level_id] then
-        self._manager._hook:HookElement(element_so, function(element, ...)
+        self._hook:HookElement(element_so, function(element, ...)
             if EHI.IsHost and not element._values.enabled then
                 return
             end
@@ -57,12 +63,12 @@ function EHIPhalanxManager:OnPhalanxAdded(manual)
             local phase = state._task_data.assault.phase
             if phase and phase ~= "anticipation" and assault_state ~= phase then
                 if phase == "fade" then
-                    self._manager:SyncData("EHI_EHIPhalanxChanceTracker_sync_fade_state", "true")
+                    managers.ehi_sync:SyncData("EHI_EHIPhalanxChanceTracker_sync_fade_state", "true")
                 end
                 assault_state = phase
             end
         end)
-        self._manager._assault:AddAssaultModeChangedCallback(function(mode)
+        self._assault:AddAssaultModeChangedCallback(function(mode)
             if mode == "phalanx" then
                 Hooks:RemovePostHook("EHI_EHIPhalanxManager_upd_assault_task")
                 assault_state = nil ---@diagnostic disable-line
@@ -106,24 +112,25 @@ function EHIPhalanxManager:AddTracker()
         assault_extender = assault_extender,
         class = "EHIPhalanxChanceTracker"
     })
-    self._manager._assault:AddAssaultModeChangedCallback(function(mode)
+    self._assault:AddAssaultModeChangedCallback(function(mode)
         if mode == "phalanx" then
             self._trackers:ForceRemoveTracker("CaptainChance")
+            self._assault:RemoveOnSustainListener("EHIPhalanxManager")
         end
     end)
     if not assault_extender then
-        self._manager:AddEventListener("EHIPhalanxManager", "AssaultOnSustain", function(duration)
+        self._assault:AddOnSustainListener("EHIPhalanxManager", function(duration)
             self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
         end)
     end
-    self._manager._assault:AddAssaultStartCallback(function()
+    self._assault:AddAssaultStartCallback(function()
         self._trackers:CallFunction("CaptainChance", "AssaultStart")
     end)
-    self._manager._assault:AddAssaultEndCallback(function()
+    self._assault:AddAssaultEndCallback(function()
         self._trackers:CallFunction("CaptainChance", "AssaultEnd")
     end)
     if not self._no_endless_assault_check[Global.game_settings.level_id] then
-        self._manager._assault:AddAssaultTypeChangedCallback(function(mode, element_id)
+        self._assault:AddAssaultTypeChangedCallback(function(mode, element_id)
             self._trackers:CallFunction("CaptainChance", "SetEndlessAssault", mode == "endless")
         end)
     end
@@ -163,3 +170,5 @@ function EHIPhalanxManager:load(data)
         self:ReduceCounter()
     end
 end
+
+return EHIPhalanxManager

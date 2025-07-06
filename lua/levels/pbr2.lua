@@ -1,11 +1,11 @@
----@class EHIcac33Tracker : EHIAchievementStatusTracker, EHIProgressTracker
+---@class cac_33 : EHIAchievementStatusTracker, EHIProgressTracker
 ---@field super EHIAchievementStatusTracker
-EHIcac33Tracker = class(EHIAchievementStatusTracker)
-EHIcac33Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-EHIcac33Tracker.FormatProgress = EHIProgressTracker.FormatProgress
-EHIcac33Tracker.SetProgress = EHIProgressTracker.SetProgress
-function EHIcac33Tracker:post_init(params)
-    EHIcac33Tracker.super.post_init(self, params)
+local cac_33 = class(EHIAchievementStatusTracker)
+cac_33.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+cac_33.FormatProgress = EHIProgressTracker.FormatProgress
+cac_33.SetProgress = EHIProgressTracker.SetProgress
+function cac_33:post_init(params)
+    cac_33.super.post_init(self, params)
     self._progress = 0
     self._max = 200
     self._progress_text = self:CreateText({
@@ -15,19 +15,19 @@ function EHIcac33Tracker:post_init(params)
     })
 end
 
-function EHIcac33Tracker:Activate()
+function cac_33:Activate()
     self._progress_text:set_visible(true)
     self._text:set_visible(false)
 end
 
-function EHIcac33Tracker:SetCompleted()
-    EHIcac33Tracker.super.SetCompleted(self)
+function cac_33:SetCompleted()
+    cac_33.super.SetCompleted(self)
     self._disable_counting = true
     self._progress_text:set_color(Color.green)
 end
 
-function EHIcac33Tracker:SetFailed()
-    EHIcac33Tracker.super.SetFailed(self)
+function cac_33:SetFailed()
+    cac_33.super.SetFailed(self)
     self._disable_counting = true
     self._progress_text:set_color(Color.red)
 end
@@ -53,7 +53,7 @@ if EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_missi
                 managers.ehi_waypoint:AddWaypoint(tostring(id), {
                     time = t,
                     icon = Icon.Fire,
-                    position = managers.ehi_manager:GetUnitPositionOrDefault(id)
+                    position = EHI.Mission:GetUnitPositionOrDefault(id)
                 })
             end
         end)
@@ -80,7 +80,7 @@ local achievements =
         elements =
         {
             [102453] = { time = 83, class = TT.Achievement.Base },
-            [102452] = { special_function = SF.SetAchievementComplete },
+            [102452] = { special_function = SF.SetAchievementComplete }
         }
     },
     cac_33 =
@@ -88,14 +88,12 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
         elements =
         {
-            [102504] = { status = "land", class = "EHIcac33Tracker", flash_times = 1 },
+            [102504] = { status = "land", class_table = cac_33, flash_times = 1 },
             [103479] = { special_function = SF.SetAchievementComplete },
             [103475] = { special_function = SF.SetAchievementFailed },
             [103487] = { special_function = SF.CallCustomFunction, f = "Activate" },
-            [103477] = { special_function = SF.IncreaseProgress },
-        },
-        sync_params = { from_start = true },
-        cleanup_class = "EHIcac33Tracker"
+            [103477] = { special_function = SF.IncreaseProgress }
+        }
     }
 }
 
@@ -119,7 +117,7 @@ if EHI:GetOption("show_captain_spawn_chance") then
     end)
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other
 })
@@ -136,7 +134,7 @@ EHI:ShowAchievementLootCounter({
     max = 9,
     triggers = voff_4_triggers,
     load_sync = function(self)
-        self._trackers:SetTrackerProgressRemaining("voff_4", self:CountInteractionAvailable("ring_band"))
+        self._trackers:SetProgressRemaining("voff_4", self._utils:CountInteractionAvailable("ring_band"))
     end
 })
 EHI:AddXPBreakdown({

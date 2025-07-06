@@ -6,6 +6,7 @@
         <!-- Main code -->
         <pre hook_id="core/lib/utils/coreapp" :script_path="core.lua"/>
         <pre hook_id="core/lib/utils/coreapp" :script_path="core_mod_utils.lua"/>
+        <pre hook_id="core/lib/utils/coreapp" :script_path="core_tracker_utils.lua"/>
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 
@@ -52,7 +53,6 @@
             <post :hook_id="menumanager" :script_path="menu/FakeEHITrackerManager.lua" />
             <post :hook_id="menumanager" :script_path="menu/FakeEHIBuffManager.lua" />
             <post :hook_id="menumanager" :script_path="menu/EHIMenu.lua" />
-            <post :hook_id="menumanager" :script_path="menu/EHIMenuCallbacks.lua" />
             <post :hook_id="menumanager" :script_path="MenuManager.lua" />
             <group :hook_id="menu/">
                 <post :hook_id="blackmarketgui" :script_path="BlackMarketGui.lua" />
@@ -84,6 +84,8 @@
         <group hook_id="lib/setups/">
             <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />
             <post :hook_id="setup" :script_path="Setup.lua" />
+            <post :hook_id="gamesetup" :script_path="units/EHICarryData.lua" />
+            <post :hook_id="gamesetup" :script_path="units/EHISniperData.lua" />
             <post :hook_id="gamesetup" :script_path="GameSetup.lua" />
         </group>
 
@@ -137,7 +139,7 @@
 
         <post hook_id="lib/utils/dev/editor/worlddefinition" :script_path="WorldDefinition.lua" />
 
-        <group hook_id="lib/tweak_data/">
+        <group hook_id="lib/tweak_data/" :script_path="tweak_data/">
             <post :hook_id="tweakdata" :script_path="tweak_data.lua"/>
             <post :hook_id="achievementstweakdata" :script_path="AchievementsTweakData.lua"/>
             <post :hook_id="carrytweakdata" :script_path="CarryTweakData.lua"/>

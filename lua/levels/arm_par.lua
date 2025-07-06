@@ -53,7 +53,7 @@ end
 if EHI.IsClient then
     triggers[102379] = { run = { time = 30 + van_delay }, special_function = SF.AddTrackerIfDoesNotExist }
 end
-EHI.Manager:ParseTriggers({ mission = triggers, preload = preload, other = other }, "Escape", Icon.CarEscape)
+EHI.Mission:ParseTriggers({ mission = triggers, preload = preload, other = other }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

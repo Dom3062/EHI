@@ -34,6 +34,7 @@ function SentryGunMovement:Preload()
             managers.ehi_tracker:PreloadTracker({
                 id = "EnemySentryGunReload",
                 icons = { Icon.Turret, "reload" },
+                first_icon_pos = 2,
                 unit = true,
                 hint = "sentry_reload",
                 class = EHI.Trackers.Group.Warning
@@ -43,6 +44,7 @@ function SentryGunMovement:Preload()
             managers.ehi_tracker:PreloadTracker({
                 id = "EnemySentryGunRepair",
                 icons = { Icon.Turret, Icon.Fix },
+                first_icon_pos = 2,
                 unit = true,
                 hint = "sentry_repair",
                 class = EHI.Trackers.Group.Warning
@@ -65,7 +67,7 @@ function SentryGunMovement:rearm(...)
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_reload, {
             time = t,
             texture = "guis/textures/pd2/skilltree/icons_atlas",
-            text_rect = {0, 576, 64, 64},
+            texture_rect = {0, 576, 64, 64},
             unit = self._unit,
             class = WWarning
         })
@@ -74,13 +76,13 @@ end
 
 function SentryGunMovement:repair(...)
     original.repair(self, ...)
-    managers.ehi_manager:RemoveUnit("EnemySentryGunReload", self._ehi_key_reload)
+    managers.ehi_tracking:RemoveUnit("EnemySentryGunReload", self._ehi_key_reload)
     local t = self._tweak.AUTO_REPAIR_DURATION -- 30s
     managers.ehi_tracker:RunTracker("EnemySentryGunRepair", { id = self._ehi_key_repair, time = t })
     if show_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key_repair, {
             time = t,
-            icon = "pd2_fix",
+            icon = Icon.Fix,
             unit = self._unit,
             class = WWarning
         })
@@ -99,8 +101,8 @@ end
 
 function SentryGunMovement:on_death(...)
     original.on_death(self, ...)
-    managers.ehi_manager:RemoveUnit("EnemySentryGunReload", self._ehi_key_reload, true)
-    managers.ehi_manager:RemoveUnit("EnemySentryGunRepair", self._ehi_key_repair, true)
+    managers.ehi_tracking:RemoveUnit("EnemySentryGunReload", self._ehi_key_reload, true)
+    managers.ehi_tracking:RemoveUnit("EnemySentryGunRepair", self._ehi_key_repair, true)
 end
 
 function SentryGunMovement:pre_destroy(...)

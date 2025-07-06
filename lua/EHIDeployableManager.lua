@@ -1,5 +1,5 @@
 ---@class EHIDeployableManager
-EHIDeployableManager = {}
+local EHIDeployableManager = {}
 EHIDeployableManager._all_deployables_tracker = EHI:GetOption("show_equipment_aggregate_all") and "Deployables"
 EHIDeployableManager._block_abilities_or_no_throwable = EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") --[[@as boolean]]
 EHIDeployableManager._equipment_map =
@@ -11,21 +11,18 @@ EHIDeployableManager._equipment_map =
     bodybag = "bodybags_bag"
 }
 ---@param ehi_tracker EHITrackerManager
-function EHIDeployableManager:new(ehi_tracker)
+function EHIDeployableManager:post_init(ehi_tracker)
     self._trackers = ehi_tracker
     self._deployables = {} ---@type table<string, { unit: UnitDeployable, tracker_type: string? }>
-    return self
-end
-
-function EHIDeployableManager:SwitchToLoudMode()
-    self:AddEquipmentToIgnore(self._equipment_map.bodybag)
-end
-
-function EHIDeployableManager:Spawned()
-    if self._block_abilities_or_no_throwable and not managers.blackmarket:equipped_grenade_allows_pickups() then
-        self:AddEquipmentToIgnore(self._equipment_map.grenade)
-        self._trackers:RemoveTracker("GrenadeCases")
-    end
+    EHI:AddOnAlarmCallback(function(dropin)
+        self:AddEquipmentToIgnore(self._equipment_map.bodybag)
+    end)
+    EHI:AddOnSpawnedCallback(function()
+        if self._block_abilities_or_no_throwable and not managers.blackmarket:equipped_grenade_allows_pickups() then
+            self:AddEquipmentToIgnore(self._equipment_map.grenade)
+            self._trackers:ForceRemoveTracker("GrenadeCases")
+        end
+    end)
 end
 
 ---@param type string
@@ -141,12 +138,13 @@ end
 ---@param t_id string Tracker ID
 function EHIDeployableManager:UpdateAmount(key, amount, id, t_id)
     local tracker = self._all_deployables_tracker or t_id
-    if self._trackers:TrackerDoesNotExist(tracker) and amount > 0 then
+    if self._trackers:DoesNotExist(tracker) and amount > 0 then
         self:CreateDeployableTracker(tracker, id)
     end
     self._trackers:CallFunction(tracker, "UpdateAmount", key, amount, id)
 end
 
 if _G.IS_VR then
-    dofile(EHI.LuaPath .. "EHIDeployableManagerVR.lua")
+    return blt.vm.loadfile(EHI.LuaPath .. "EHIDeployableManagerVR.lua")(EHIDeployableManager)
 end
+return EHIDeployableManager

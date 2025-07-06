@@ -5,9 +5,7 @@ EHITrackerManagerVR.old_PreloadTracker = EHITrackerManager.PreloadTracker
 EHITrackerManagerVR.old_AddLaserTracker = EHITrackerManager.AddLaserTracker
 EHITrackerManagerVR.old_RemoveLaserTracker = EHITrackerManager.RemoveLaserTracker
 function EHITrackerManagerVR:CreateWorkspace()
-    local x, y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
-    self._x = x
-    self._y = y
+    self._x, self._y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
     self._scale = EHI:GetOption("vr_scale") --[[@as number]]
     self._is_loading = true
     self._load_callback = {}
@@ -30,21 +28,6 @@ end
 
 function EHITrackerManagerVR:IsLoading()
     return self._is_loading
-end
-
----@param params ElementTrigger
-function EHITrackerManagerVR:PreloadTracker(params)
-    if self:IsLoading() then
-        self:AddToLoadQueue(params.id, params, callback(self, self, "_PreloadTracker"))
-        return
-    end
-    self:old_PreloadTracker(params)
-end
-
----@param key string
----@param data ElementTrigger
-function EHITrackerManagerVR:_PreloadTracker(key, data)
-    self:old_PreloadTracker(data)
 end
 
 ---@param key string
@@ -73,6 +56,21 @@ function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
     else
         self._load_callback[key] = new_cbk
     end
+end
+
+---@param params ElementTrigger
+function EHITrackerManagerVR:PreloadTracker(params)
+    if self:IsLoading() then
+        self:AddToLoadQueue(params.id, params, callback(self, self, "_PreloadTracker"))
+        return
+    end
+    self:old_PreloadTracker(params)
+end
+
+---@param key string
+---@param data ElementTrigger
+function EHITrackerManagerVR:_PreloadTracker(key, data)
+    self:old_PreloadTracker(data)
 end
 
 ---@param params ElementTrigger

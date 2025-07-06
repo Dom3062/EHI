@@ -1,13 +1,13 @@
----@class EHIuno7Tracker : EHIAchievementTracker
+---@class uno_7 : EHIAchievementTracker
 ---@field super EHIAchievementTracker
-EHIuno7Tracker = class(EHIAchievementTracker)
-function EHIuno7Tracker:post_init(...)
+local uno_7 = class(EHIAchievementTracker)
+function uno_7:post_init(...)
     self._blocked_warning = true
     self._text:set_color(Color.red)
     self:PrepareHint(...)
 end
 
-function EHIuno7Tracker:OnAlarm()
+function uno_7:OnAlarm()
     self._blocked_warning = nil
     self._text:set_color(Color.white)
     if self._time <= 10 then
@@ -15,11 +15,11 @@ function EHIuno7Tracker:OnAlarm()
     end
 end
 
-function EHIuno7Tracker:AnimateColor(...)
+function uno_7:AnimateColor(...)
     if self._blocked_warning then
         return
     end
-    EHIuno7Tracker.super.AnimateColor(self, ...)
+    uno_7.super.AnimateColor(self, ...)
 end
 
 local EHI = EHI
@@ -81,18 +81,15 @@ local achievements =
         {
             [102430] = { time = 780, class = TT.Achievement.Base },
             [100801] = { special_function = SF.SetAchievementFailed }
-        },
-        sync_params = { from_start = true }
+        }
     },
     uno_7 =
     {
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [100107] = { time = 901, class = "EHIuno7Tracker", update_on_alarm = true }
-        },
-        cleanup_class = "EHIuno7Tracker",
-        sync_params = { from_start = true }
+            [100107] = { time = 901, class_table = uno_7, update_on_alarm = true }
+        }
     }
 }
 
@@ -101,7 +98,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 30 + 1, trigger_once = true })
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

@@ -9,7 +9,8 @@ _G.EHI =
         achievements = false,
         mission_door = false,
         all_instances = false,
-        gained_experience = { enabled = false, log = true }
+        gained_experience = { enabled = false, log = true },
+        created_waypoints = false
     },
     settings = {},
 
@@ -93,6 +94,13 @@ _G.EHI =
                 CustomCheck = 5,
                 Debug = 6
             }
+        },
+        ---@enum GameEnd
+        GameEnd =
+        {
+            Abort = 1,
+            End = 2,
+            Restart = 3
         }
     },
 
@@ -110,11 +118,13 @@ _G.EHI =
     _callback = {}, ---@type table<string|number, CallbackEventHandler>
     CallbackMessage =
     {
-        -- Provides `loc` (a LocalizationManager class) and `lang_name` (string)
-        LocLoaded = "LocLoaded",
-        -- Provides `success` (a boolean value)
+        -- Provides `success` (a boolean value) -> MissionEndState
         MissionEnd = "MissionEnd",
+        -- -> GamePlayCentralManager
         GameRestart = "GameRestart",
+        -- -> MenuCallbackHandler:_dialog_end_game_yes() (quit game)
+        GameAborted = "GameAborted",
+        -- -> All network activity stopped (managers.network:session())
         GameEnd = "GameEnd",
         -- Provides `managers` (a global table with all managers)
         InitManagers = "InitManagers",
@@ -126,13 +136,24 @@ _G.EHI =
         -- Provides `skill` (a string value) and `operation` (a string value -> `add`, `remove`)
         TeamAISkillChange = "TeamAISkillChanged",
         -- Provides `ability` (a string value) and `operation` (a string value -> `add`, `remove`)
-        TeamAIAbilityBoostChange = "TeamAIAbilityBoostChanged",
+        TeamAIAbilityChange = "TeamAIAbilityChanged",
         -- Provides `visibility` (a boolean value)
         HUDVisibilityChanged = "HUDVisibilityChanged",
         -- Provides `picked_up` (a number value), `max_units` (a number value) and `client_sync_load` (a boolean value)
         SyncGagePackagesCount = "SyncGagePackagesCount",
         -- Provides `diff` (a number value between 0-1)
-        SyncAssaultDiff = "SyncAssaultDiff"
+        SyncAssaultDiff = "SyncAssaultDiff",
+        -- Provides `alive_players` (a number value)
+        RefreshPlayerCount = "RefreshPlayerCount",
+        -- Callbacks related to anything related to UnitPlayer
+        Player =
+        {
+            -- Provides `character_damage` (a PlayerDamage class)
+            Spawned = "PlayerDamageInit",
+            Despawned = "PlayerDamageDestroy", -- Called everytime local player goes to custody or is deleted after mission end
+            -- Provides `character_damage` (a PlayerDamage class)
+            ArmorKitUsed = "PlayerDamageArmorKitUsed"
+        }
     },
 
     SpecialFunctions =
@@ -149,7 +170,6 @@ _G.EHI =
         AddTrackerIfDoesNotExist = 5,
         -- Requires `id` and `data.id (string)`
         ReplaceTrackerWithTracker = 6,
-        ShowAchievementFromStart = 7,
         -- Requires `id`
         SetAchievementComplete = 8,
         -- Requires `id`  
@@ -174,10 +194,10 @@ _G.EHI =
         -- Requires `id (number)` or `data (table of numbers)`
         RemoveTrigger = 18,
         -- Requires `id` and `time`
-        SetTimeOrCreateTracker = 19,
+        SetTimeOrCreateTracker = 20,
         -- Requires `id` and `time`
-        SetTimeOrCreateTrackerIfEnabled = 20,
-        ExecuteIfElementIsEnabled = 21,
+        SetTimeOrCreateTrackerIfEnabled = 21,
+        ExecuteIfElementIsEnabled = 22,
         -- Requires `id` and `data.id (preplanning id)`  
         -- See: `ElementPreplanning` in Mission Script
         SetTimeByPreplanning = 24,
@@ -221,7 +241,7 @@ _G.EHI =
         -- See: `ElementPreplanning` in Mission Script
         AddTimeByPreplanning = 50,
         -- Autosets Vanilla settings for Waypoints  
-        ---@see EHIManager.ParseOtherTriggers
+        ---@see EHIMissionElementTrigger.init
         ShowWaypoint = 51,
         -- Requires `id` and `max`
         DecreaseProgressMax = 52,
@@ -251,7 +271,7 @@ _G.EHI =
         -- Requires `f (function)`  
         -- Optional `arg (1 argument to pass to the function)`
         CustomCode = 1001,
-        -- Requires `f (function that accepts EHIManager)`  
+        -- Requires `f (function that accepts EHIMissionElementTrigger)`  
         -- Optional `arg (1 argument to pass to the function as a second argument)`
         CustomCode2 = 1002,
         -- Requires `f (function)`  
@@ -275,6 +295,10 @@ _G.EHI =
         ---Checks if stealth is active
         IsStealth = function()
             return managers.groupai:state():whisper_mode()
+        end,
+        ---Checks if playing from the start
+        PlayingFromStart = function()
+            return not managers.statistics:is_dropin()
         end
     },
 
@@ -349,6 +373,7 @@ _G.EHI =
         mia_1_NextMethIngredient = "mia_1_next_meth_ingredient",
         mia_2_Loot = "mia_2_loot",
         nail_ChemicalsEnRoute = "nail_chemicals_en_route",
+        nmh_DestroyCameras = "nmh_destroy_cameras",
         nmh_IncomingPolicePatrol = "nmh_incoming_police_patrol",
         nmh_IncomingCivilian = "nmh_incoming_civilian",
         nmh_PatientFileChance = "nmh_patient_file_chance",
@@ -444,6 +469,8 @@ _G.EHI =
     Trackers =
     {
         Base = "EHITracker",
+        -- Loaded on demand; load it manually if created in registered custom function or other trackers need it
+        TimePreSync = "EHITimePreSyncTracker",
         Warning = "EHIWarningTracker",
         -- Optional `paused (boolean)`
         Pausable = "EHIPausableTracker",
@@ -483,6 +510,9 @@ _G.EHI =
             -- Requires `time`  
             -- Optional `count_on_refresh`
             TimedCount = "EHISniperTimedCountTracker",
+            -- Requires `time`  
+            -- Optional `count_on_refresh`
+            TimedCountOnce = "EHISniperTimedCountOnceTracker",
             -- Requires `chance`, `time` and `recheck_t`   
             -- Optional `no_logic_annoucement`, `single_sniper`
             TimedChance = "EHISniperTimedChanceTracker",
@@ -495,6 +525,8 @@ _G.EHI =
             -- Requires `chance`, `time`, `on_fail_refresh_t` and `on_success_refresh_t`  
             -- Optional `initial_spawn`, `initial_spawn_chance_set` (defaults to 0 if not provided), `reset_t`, `chance_success`, `single_sniper` and `sniper_count`
             LoopRestart = "EHISniperLoopRestartTracker",
+            -- Optional `count`
+            LoopBuffer = "EHISniperLoopBufferTracker",
             -- Requires `time` and `refresh_t`
             Heli = "EHISniperHeliTracker",
             -- Requires `chance`, `time` and `recheck_t`
@@ -511,7 +543,9 @@ _G.EHI =
             LootCounter = "EHIAchievementLootCounterTracker"
         },
         Assault = "EHIAssaultTracker",
+        -- Loaded on demand; load it manually if created in registered custom function or other trackers need it
         Code = "EHICodeTracker",
+        -- Loaded on demand; load it manually if created in registered custom function or other trackers need it
         ColoredCodes = "EHIColoredCodesTracker",
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker",
@@ -533,13 +567,26 @@ _G.EHI =
     Waypoints =
     {
         Base = "EHIWaypoint",
+        TimePreSync = "EHITimePreSyncWaypoint",
         Warning = "EHIWarningWaypoint",
         Progress = "EHIProgressWaypoint",
         Pausable = "EHIPausableWaypoint",
         Chance = "EHIChanceWaypoint",
         Inaccurate = "EHIInaccurateWaypoint",
         InaccuratePausable = "EHIInaccuratePausableWaypoint",
-        InaccurateWarning = "EHIInaccurateWarningWaypoint"
+        InaccurateWarning = "EHIInaccurateWarningWaypoint",
+        LootCounter =
+        {
+            Base = "EHILootWaypoint",
+            Timed = "EHITimedLootWaypoint"
+        },
+        Code = "EHICodeWaypoint",
+        ColoredCodes = "EHIColoredCodesWaypoint",
+        Less =
+        {
+            Base = "EHIWaypointLessWaypoint",
+            Chance = "EHIWaypointLessChanceWaypoint"
+        }
     },
 
     Difficulties =
@@ -751,6 +798,7 @@ local function LoadDefaultValues(self)
         -- Trackers
         show_trackers = true,
         show_mission_trackers = true,
+        show_mission_trackers_cheaty = true,
         show_unlockables = true,
         unlockables =
         {
@@ -844,13 +892,14 @@ local function LoadDefaultValues(self)
         show_sniper_logic_start_popup = true,
         show_sniper_logic_end_popup = true,
         show_marshal_initial_time = true,
-        show_money_tracker = true,
+        show_money_tracker = false,
         money_tracker_format = 1, -- 1 = Offshore/Spending; 2 = Spending/Offshore; 3 = Offshore; 4 = Spending
 
         -- Waypoints
         show_waypoints = true,
         show_waypoints_present_timer = 2,
         show_waypoints_mission = true,
+        show_waypoints_mission_cheaty = true,
         show_waypoints_escape = true,
         show_waypoints_enemy_turret = true,
         show_waypoints_timers = true,
@@ -872,65 +921,132 @@ local function LoadDefaultValues(self)
         buffs_show_progress = true,
         buffs_invert_progress = false,
         buffs_show_upper_text = true,
+        buffs_group_text_color = false,
+        -- Colors
+        -- 1 = White
+        -- 2 = Red
+        -- 3 = Orange
+        -- 4 = Green
+        -- 5 = Yellow
+        -- 6 = Blue
+        -- 7 = Cyan
+        -- 8 = Pink
+        -- 9 = Purple
+        -- 10 = Violet
+        -- 11 = Magenta
+        -- 12 = Azure
+        -- 13 = Brown
+        -- 14 = Crimson
+        -- 15 = Salmon
+        -- 16 = Gold
+        -- 17 = Turquoise
+        buffs_group_color_cooldown = 2,
+        buffs_group_color_weapon_damage_increase = 1,
+        buffs_group_color_melee_damage_increase = 1,
+        buffs_group_color_player_damage_reduction = 1,
+        buffs_group_color_player_damage_absorption = 1,
+        buffs_group_color_increased_weapon_reload = 1,
+        buffs_group_color_player_movement_increase = 1,
+        buffs_group_color_dodge = 1,
+        buffs_group_color_crit = 1,
+        buffs_group_color_health_regen = 1,
         buff_option =
         {
             -- Skills
             -- Mastermind
             inspire_basic = true,
+            inspire_basic_persistent = false,
             inspire_ace = true,
+            inspire_ace_persistent = false,
+            inspire_reload = true,
+            inspire_reload_persistent = false,
             uppers = true,
+            uppers_persistent = false,
             uppers_range = true,
             uppers_range_refresh = 2, -- 1 / value
+            uppers_range_persistent = false,
             quick_fix = true,
+            quick_fix_persistent = false,
             painkillers = true,
+            painkillers_persistent = false,
             combat_medic = true,
+            combat_medic_persistent = false,
             hostage_taker_muscle = true,
+            hostage_taker_muscle_persistent = false,
             forced_friendship = true,
+            forced_friendship_persistent = false,
             ammo_efficiency = true,
+            ammo_efficiency_persistent = false,
             aggressive_reload = true,
+            aggressive_reload_persistent = false,
             -- Enforcer
             overkill = true,
+            overkill_persistent = false,
             underdog = true,
+            underdog_persistent = false,
             bullseye = true,
+            bullseye_persistent = false,
             bulletstorm = true,
+            bulletstorm_persistent = false,
             -- Ghost
             sixth_sense_initial = true,
+            sixth_sense_initial_persistent = false,
             sixth_sense_marked = true,
+            sixth_sense_marked_persistent = false,
             sixth_sense_refresh = true,
+            sixth_sense_refresh_persistent = false,
             dire_need = true,
+            dire_need_persistent = false,
             second_wind = true,
+            second_wind_persistent = false,
             unseen_strike = true,
+            unseen_strike_persistent = false,
             unseen_strike_initial = true,
+            unseen_strike_initial_persistent = false,
             -- Fugitive
             trigger_happy = true,
+            trigger_happy_persistent = false,
             desperado = true,
+            desperado_persistent = false,
             running_from_death_reload = true,
+            running_from_death_reload_persistent = false,
+            running_from_death_swap = true,
+            running_from_death_swap_persistent = false,
             running_from_death_movement = true,
+            running_from_death_movement_persistent = false,
             up_you_go = true,
+            up_you_go_persistent = false,
             swan_song = true,
+            swan_song_persistent = false,
             bloodthirst = true,
             bloodthirst_reload = true,
+            bloodthirst_reload_persistent = false,
             bloodthirst_ratio = 34, -- value / 100
             berserker = true,
             berserker_refresh = 4, -- 1 / value
             berserker_format = 1, -- 1 = Multiplier; 2 = Percent
             berserker_text_format = 1, -- 1 = Weapon Damage | Melee / Saw Damage; 2 = Melee / Saw Damage | Weapon Damage; 3 = Weapon Damage; 4 = Melee / Saw Damage 
-            berserker_persistent = true,
+            berserker_persistent = false,
 
             -- Perks
             infiltrator =
             {
-                melee_cooldown = true
+                melee_cooldown = true,
+                melee_cooldown_persistent = false
             },
             gambler =
             {
                 regain_health_cooldown = true,
-                ammo_give_out_cooldown = true
+                regain_health_cooldown_persistent = false,
+                ammo_give_out_cooldown = true,
+                ammo_give_out_cooldown_persistent = false
             },
             grinder =
             {
                 regen_duration = true,
-                stack_cooldown = true
+                regen_duration_persistent = false,
+                stack_cooldown = true,
+                stack_cooldown_persistent = false
             },
             maniac =
             {
@@ -943,14 +1059,22 @@ local function LoadDefaultValues(self)
             anarchist =
             {
                 continuous_armor_regen = true,
-                persistent_continuous_armor_regen = false,
+                continuous_armor_regen_persistent = false,
                 immunity = true,
-                persistent_immunity = false,
+                immunity_persistent = false,
                 immunity_cooldown = true,
-                persistent_immunity_cooldown = false,
+                immunity_cooldown_persistent = false,
                 kill_armor_regen_cooldown = true,
-                persistent_kill_armor_regen_cooldown = false
+                kill_armor_regen_cooldown_persistent = false
             }, -- +Armorer
+            yakuza =
+            {
+                irezumi = true,
+                irezumi_refresh = 2, -- 1 / value
+                irezumi_format = 1, -- 1 = Multiplier; 2 = Percent
+                irezumi_text_format = 1, -- 1 = Weapon Damage | Melee / Saw Damage; 2 = Melee / Saw Damage | Weapon Damage; 3 = Weapon Damage; 4 = Melee / Saw Damage 
+                irezumi_persistent = false,
+            },
             expresident =
             {
                 stored_health = true
@@ -999,22 +1123,32 @@ local function LoadDefaultValues(self)
             copycat =
             {
                 head_games_cooldown = true,
+                head_games_cooldown_persistent = false,
                 grace_period = true,
-                grace_period_cooldown = true
+                grace_period_persistent = false,
+                grace_period_cooldown = true,
+                grace_period_cooldown_persistent = false
             },
             gage_boosts =
             {
                 life_steal = true,
-                melee_invulnerability = true
+                life_steal_persistent = false,
+                melee_invulnerability = true,
+                melee_invulnerability_persistent = false
             },
 
             -- Other
             interact = true,
+            interact_persistent = false,
             reload = true,
+            reload_persistent = false,
             melee_charge = true,
+            melee_charge_persistent = false,
             shield_regen = true,
+            shield_regen_persistent = false,
             stamina = true,
             weapon_swap = true,
+            weapon_swap_persistent = false,
             dodge = true,
             dodge_refresh = 1, -- 1 / value
             dodge_persistent = false,
@@ -1028,8 +1162,11 @@ local function LoadDefaultValues(self)
             damage_reduction_refresh = 1, -- 1 / value
             damage_reduction_persistent = false,
             inspire_ai = true,
+            inspire_ai_persistent = false,
             regen_throwable_ai = true,
             health = false,
+            health_check_sniper_damage = true,
+            health_check_heavy_swat_ds_damage = true,
             armor = false
         },
 
@@ -1069,7 +1206,16 @@ local function LoadDefaultValues(self)
         show_use_left_grenades = true,
         show_colored_bag_contour = true,
         show_real_time_ingame = false,
-        show_minion_colored_to_owner = true
+        show_minion_colored_to_owner = true,
+        show_progress_reload = false,
+        show_progress_melee = false,
+        show_end_game_stats = false,
+        show_end_game_stats_kills = 4, -- 1 = No kills; 2 = Total kills only; 3 = Special kills only; 4 = Total kills + Special kills; 5 = Special kills + Total kills
+        show_end_game_stats_headshots = true,
+        show_end_game_stats_dps = true,
+        show_end_game_stats_kpm = true,
+        show_end_game_stats_acc = true,
+        show_end_game_stats_downs = true
     }
 end
 
@@ -1114,23 +1260,6 @@ local function Load()
     end
     self._cache.__loaded = true
     self._cache.AchievementsDisabled = not self:ShowMissionAchievements()
-    if not Global.load_level then
-        if SystemInfo and SystemInfo.is_vr and SystemInfo:is_vr() then -- Don't do any version check in VR -> different game version
-            return
-        elseif Application.version then
-            local min_version, index = { 1, 143, 240 }, 1
-            for ver in string.gmatch(Application:version(), "([^.]+)") do
-                if tonumber(ver) >= min_version[index] then
-                    index = index + 1
-                else
-                    self._cache.GameVersionNotCompatible = true
-                    break
-                end
-            end
-        else
-            self._cache.GameVersionNotCompatible = true
-        end
-    end
 end
 
 function EHI:Init()
@@ -1195,10 +1324,7 @@ end
 ---@param diff_1 number
 ---@param diff_2 number
 function EHI:IsBetweenDifficulties(diff_1, diff_2)
-    if diff_1 > diff_2 then -- Swap the numbers
-        diff_1, diff_2 = diff_2, diff_1
-    end
-    return math.within(self._cache.DifficultyIndex, diff_1, diff_2)
+    return math.within(self._cache.DifficultyIndex, math.min_max(diff_1, diff_2))
 end
 
 function EHI:DifficultyIndex()
@@ -1269,6 +1395,27 @@ function EHI:LogWithCurrentLine(s)
         file = "unknown"
     end
     self:Log2(string.format("%s:%s", file, tostring(info.currentline or "???")), s)
+end
+
+---Logs provided string from the line and function in the file it was called from
+---@param s AnyExceptNil
+function EHI:LogWithCurrentLineAndFunction(s)
+    local info = debug.getinfo(2, "Sln")
+    local last_pos, file
+    while true do
+        local st, _ = string.find(info.source, "/", last_pos)
+        if st then
+            last_pos = st + 1
+        else
+            break
+        end
+    end
+    if last_pos then
+        file = string.gsub(info.source, string.sub(info.source, 0, last_pos - 1), "")
+    else
+        file = "unknown"
+    end
+    self:Log2(string.format("%s:%s %s()", file, tostring(info.currentline or "???"), info.name), s)
 end
 
 ---Works the same way as EHI:Log(), but the string is not saved on HDD
@@ -1343,6 +1490,11 @@ end
 ---@param filename string
 function EHI:LoadTracker(filename)
     dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", filename))
+end
+
+---@param filename string
+function EHI:LoadWaypoint(filename)
+    dofile(string.format("%s%s%s.lua", self.LuaPath, "waypoints/", filename))
 end
 
 ---@param filename string
@@ -1455,6 +1607,12 @@ end
 ---@param option string?
 function EHI:GetBuffAndOption(option)
     return self:GetOption("show_buffs") and self:GetBuffOption(option)
+end
+
+---@param deck string?
+---@param option string?
+function EHI:GetBuffDeckAndOption(deck, option)
+    return self:GetOption("show_buffs") and self:GetBuffDeckOption(deck, option)
 end
 
 ---@param deck string?
@@ -1599,6 +1757,45 @@ function EHI:AddOnSpawnedCallback(f)
     self:AddCallback("Spawned", f)
 end
 
+---@param f fun(loc: LocalizationManager, lang_name: string)
+function EHI:AddOnLocalizationLoaded(f)
+    if self._cache.LocLoaded then
+        return
+    end
+    self:AddCallback("LocLoaded", f)
+end
+
+---@param loc LocalizationManager
+---@param lang_name string
+function EHI:RunOnLocalizationLoaded(loc, lang_name)
+    self._cache.LocLoaded = true
+    self:CallCallbackOnce("LocLoaded", loc, lang_name)
+end
+
+---@param f function
+function EHI:AddEndGameCallback(f)
+    self:AddCallback(self.CallbackMessage.GameAborted, f)
+    self:AddCallback(self.CallbackMessage.GameEnd, f)
+    self:AddCallback(self.CallbackMessage.GameRestart, f)
+end
+
+---@param type GameEnd
+function EHI:RunEndGameCallback(type)
+    if type == 1 then
+        self:CallCallbackOnce(self.CallbackMessage.GameAborted)
+        self._callback[self.CallbackMessage.GameEnd] = nil
+        self._callback[self.CallbackMessage.GameRestart] = nil
+    elseif type == 2 then
+        self:CallCallbackOnce(self.CallbackMessage.GameEnd)
+        self._callback[self.CallbackMessage.GameAborted] = nil
+        self._callback[self.CallbackMessage.GameRestart] = nil
+    elseif type == 3 then
+        self:CallCallbackOnce(self.CallbackMessage.GameRestart)
+        self._callback[self.CallbackMessage.GameAborted] = nil
+        self._callback[self.CallbackMessage.GameEnd] = nil
+    end
+end
+
 ---@generic T
 ---@param object T
 ---@param func string
@@ -1705,9 +1902,9 @@ end
 function EHI:AddEventListener(id, events, f)
     if self:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission") then
         if f then
-            managers.ehi_manager:AddEventListener(id, events, f)
+            self.Trigger:AddEventListener(id, events, f)
         else
-            managers.ehi_manager:AddEventListener(id, id, events --[[@as function]])
+            self.Trigger:AddEventListener(id, id, events --[[@as function]])
         end
     end
 end
@@ -1715,7 +1912,7 @@ end
 ---@param trigger ElementTrigger
 function EHI:CleanupCustomSFTrigger(trigger)
     if trigger.special_function and trigger.special_function > self.SpecialFunctions.CustomSF then
-        managers.ehi_manager:UnregisterCustomSF(trigger.special_function)
+        self.Trigger:UnregisterCustomSF(trigger.special_function)
     end
 end
 
@@ -1723,7 +1920,7 @@ end
 function EHI:CleanupCustomSFTriggers(triggers)
     for _, trigger in pairs(triggers) do
         if trigger.special_function and trigger.special_function > self.SpecialFunctions.CustomSF then
-            managers.ehi_manager:UnregisterCustomSF(trigger.special_function)
+            self.Trigger:UnregisterCustomSF(trigger.special_function)
         end
     end
 end
@@ -1736,10 +1933,8 @@ function EHI:AddEscapeChance(chance, check_if_does_not_exist)
     {
         id = "EscapeChance",
         chance = chance,
-        icons = { { icon = self.Icons.Car, color = Color.red } },
-        hint = "van_crash_chance",
         special_function = check_if_does_not_exist and self.SpecialFunctions.AddTrackerIfDoesNotExist,
-        class = self.Trackers.Chance
+        class = "EHIEscapeChanceTracker"
     }
 end
 
@@ -1779,7 +1974,7 @@ end
 ---@param f function Loot counter function
 ---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param check boolean? Boolean value of options 'show_loot_counter' and 'show_waypoints_loot_counter'
----@param load_sync fun(self: EHIManager)? Load sync function for clients
+---@param load_sync fun(self: EHIMissionElementTrigger)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger?
 function EHI:AddLootCounter(f, wp_params, check, load_sync, trigger_once)
@@ -1794,56 +1989,51 @@ function EHI:AddLootCounter(f, wp_params, check, load_sync, trigger_once)
     {
         special_function = self.SpecialFunctions.CustomCode,
         f = f,
-        trigger_once = trigger_once
+        trigger_once = trigger_once,
+        load_sync = self.IsClient and load_sync
     }
     self:ShowLootCounterWaypoint(wp_params)
-    if load_sync then
-        managers.ehi_manager:AddLoadSyncFunction(load_sync)
-    end
     return tbl
 end
 
 ---Creates trigger as `SF.CustomCode`
 ---@param f function Loot counter function
 ---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
----@param load_sync fun(self: EHIManager)? Load sync function for clients
+---@param load_sync fun(self: EHIMissionElementTrigger)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 function EHI:AddLootCounter2(f, wp_params, load_sync, trigger_once)
     local tbl = ---@type ElementTrigger
     {
         special_function = self.SpecialFunctions.CustomCode,
         f = f,
-        trigger_once = trigger_once
+        trigger_once = trigger_once,
+        load_sync = self.IsClient and load_sync
     }
     self:ShowLootCounterWaypoint(wp_params)
-    if load_sync then
-        managers.ehi_manager:AddLoadSyncFunction(load_sync)
-    end
     return tbl
 end
 
----Creates a trigger as `EHI.CustomCode2` with `EHIManager` as a parameter
----@param f fun(self: EHIManager)
+---Creates a trigger as `EHI.CustomCode2` with `EHIMissionElementTrigger` as a parameter
+---@param f fun(self: EHIMissionElementTrigger)
 ---@param wp_params WaypointLootCounterTable?
----@param load_sync fun(self: EHIManager)? Load sync function for clients
+---@param load_sync fun(self: EHIMissionElementTrigger)? Load sync function for clients
 ---@param trigger_once boolean?
 function EHI:AddLootCounter3(f, wp_params, load_sync, trigger_once)
     self:ShowLootCounterWaypoint(wp_params)
-    if load_sync then
-        managers.ehi_manager:AddLoadSyncFunction(load_sync)
-    end
-    return self:AddCustomCode(f, trigger_once)
+    local trigger = self:AddCustomCode(f, trigger_once)
+    trigger.load_sync = self.IsClient and load_sync
+    return trigger
 end
 
 ---Creates trigger as custom trigger function in `EHIManager`
----@param f fun(self: EHIManager, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean) Loot counter function
+---@param f fun(self: EHIMissionElementTrigger, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean) Loot counter function
 ---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
 function EHI:AddLootCounter4(f, wp_params, trigger_once)
     self:ShowLootCounterWaypoint(wp_params)
     return {
-        special_function = managers.ehi_manager:RegisterCustomSF(f),
+        special_function = self.Trigger:RegisterCustomSF(f),
         trigger_once = trigger_once
     }
 end
@@ -1852,23 +2042,21 @@ end
 ---@param f function Loot counter function
 ---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param t number Delays the loot counter
----@param load_sync fun(self: EHIManager)? Load sync function for clients
+---@param load_sync fun(self: EHIMissionElementTrigger)? Load sync function for clients
 ---@param trigger_once boolean? Should the trigger run once?
 ---@return ElementTrigger
 function EHI:AddLootCounter5(f, wp_params, t, load_sync, trigger_once)
     self:ShowLootCounterWaypoint(wp_params)
-    if load_sync then
-        managers.ehi_manager:AddLoadSyncFunction(load_sync)
-    end
     return {
         special_function = self.SpecialFunctions.CustomCodeDelayed,
         t = t,
         f = f,
-        trigger_once = trigger_once
+        trigger_once = trigger_once,
+        load_sync = self.IsClient and load_sync
     }
 end
 
----@param f fun(self: EHIManager)
+---@param f fun(self: EHIMissionElementTrigger)
 ---@param trigger_once boolean?
 ---@return ElementTrigger
 function EHI:AddCustomCode(f, trigger_once)
@@ -1963,7 +2151,7 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
         if self.IsHost or params.client_from_start then
             offset = managers.loot:GetSecuredBagsAmount()
         else
-            managers.ehi_manager:AddFullSyncFunction(function(manager)
+            managers.ehi_sync:AddFullSyncFunction(function()
                 params.skip_offset = true
                 params.offset = managers.loot:GetSecuredBagsAmount()
                 params.hook_triggers = params.triggers ~= nil
@@ -1986,29 +2174,29 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
             for _, id in ipairs(params.max_bags_for_level.objective_triggers) do
                 triggers[id] = xp_trigger
             end
-            managers.ehi_manager:AddTriggers(triggers, "LootCounter")
+            self.Trigger:__AddTriggers(triggers, managers.ehi_loot._id)
             params.max_bags_for_level.objective_triggers = nil
         end
         params.no_sync_load = true
         managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level)
     else
-        if not self:GetOption("show_loot_max_xp_bags") then
+        if not self:GetOption("show_loot_max_xp_bags") or _G.ch_settings then
             params.max_xp_bags = 0
         end
-        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max)
+        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max, nil, waypoint_params and waypoint_params.class)
     end
     if params.load_sync then
-        managers.ehi_manager:AddLoadSyncFunction(params.load_sync)
+        self.Trigger:AddLoadSyncFunction(params.load_sync)
         params.no_sync_load = true
     end
     if params.triggers and (not params.no_triggers_if_max_xp_bags_gt_max or (params.max_xp_bags or 0) >= (params.max or 0)) then
-        managers.ehi_manager:AddTriggers(params.triggers, "LootCounter")
+        self.Trigger:__AddTriggers(params.triggers, managers.ehi_loot._id)
         if params.hook_triggers then
-            managers.ehi_manager:HookElements(params.triggers)
+            self.Trigger:__FindAndHookElements(params.triggers)
         end
     end
     if params.max_bags_for_level and params.max_bags_for_level.custom_counter and self:IsXPTrackerEnabled() and not _G.ch_settings then
-        params.max_bags_for_level.custom_counter.achievement = "LootCounter"
+        params.max_bags_for_level.custom_counter.achievement = managers.ehi_loot._id
         managers.ehi_loot:AddAchievementListener(params.max_bags_for_level.custom_counter, true)
     else
         managers.ehi_loot:AddLootListener(params.no_sync_load, params.no_max)
@@ -2037,7 +2225,7 @@ end
 ---If the Loot Counter is created during spawn, this function needs to be called before Loot Counter has a chance to initialize
 ---@param waypoint_params WaypointLootCounterTable?
 function EHI:ShowLootCounterWaypoint(waypoint_params)
-    if waypoint_params and self:GetWaypointOption("show_waypoints_loot_counter") and not self:IsPlayingCrimeSpree() then
+    if waypoint_params and waypoint_params.element and self:GetWaypointOption("show_waypoints_loot_counter") and not self:IsPlayingCrimeSpree() then
         ---@param element ElementWaypoint
         ---@param instigator UnitPlayer
         local function on_executed(element, instigator, ...)
@@ -2080,11 +2268,11 @@ function EHI:ShowLootCounterWaypoint(waypoint_params)
             end
         end
         if type(waypoint_params.element) == "number" then
-            managers.ehi_manager:AddElementToOverride(waypoint_params.element --[[@as number]], on_executed, operation_remove)
+            self.Element:AddElementToOverride(waypoint_params.element --[[@as number]], on_executed, operation_remove)
             managers.ehi_loot:AddWaypointElement(waypoint_params.element --[[@as number]])
         else
             for _, element in ipairs(waypoint_params.element --[[@as number[] ]]) do
-                managers.ehi_manager:AddElementToOverride(element, on_executed, operation_remove)
+                self.Element:AddElementToOverride(element, on_executed, operation_remove)
                 managers.ehi_loot:AddWaypointElement(element)
             end
         end
@@ -2106,7 +2294,7 @@ function EHI:ShowLootCounterSynced(params, waypoint_params)
     if self:IsPlayingCrimeSpree() then
         return
     elseif not self:GetTrackerOrWaypointOption("show_loot_counter", "show_waypoints_loot_counter") then
-        managers.ehi_manager:AddTriggers(params.triggers or {}, "LootCounter")
+        self.Trigger:__AddTriggers(params.triggers or {}, managers.ehi_loot._id)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
         managers.ehi_loot:SetSyncData({
             max = params.max or 0,
@@ -2136,13 +2324,13 @@ end
 function EHI:ShowAchievementLootCounterNoCheck(params)
     if params.show_loot_counter and self:GetTrackerOption("show_loot_counter") and not self:IsPlayingCrimeSpree() then
         managers.ehi_unlockable:AddAchievementLootCounter(params.achievement, params.max, params.loot_counter_on_fail, params.start_silent)
-        managers.ehi_loot:_create_waypoint_tracker(params.max)
+        managers.ehi_loot:_create_waypoint_tracker(params.achievement, params.max)
         self:ShowLootCounterWaypoint(params.waypoint_loot_counter)
     else
         managers.ehi_unlockable:AddAchievementProgressTracker(params.achievement, params.max, params.progress, params.show_finish_after_reaching_target)
     end
     if params.load_sync then
-        managers.ehi_manager:AddLoadSyncFunction(params.load_sync)
+        self.Trigger:AddLoadSyncFunction(params.load_sync)
     end
     if params.alarm_callback then
         self:AddOnAlarmCallback(params.alarm_callback)
@@ -2153,14 +2341,14 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
         end)
     end
     if params.silent_failed_on_alarm then
-        self:AddOnAlarmCallback(function(dropin)
-            managers.ehi_unlockable:SetAchievementFailed(params.achievement, managers.ehi_manager:GetInSyncState())
+        self:AddOnAlarmCallback(function()
+            managers.ehi_unlockable:SetAchievementFailed(params.achievement, managers.ehi_sync:IsSyncing())
         end)
     end
     if params.triggers then
-        managers.ehi_manager:AddTriggers(params.triggers, params.achievement)
+        self.Trigger:__AddTriggers(params.triggers, params.achievement)
         if params.hook_triggers then
-            managers.ehi_manager:HookElements(params.triggers)
+            self.Trigger:__FindAndHookElements(params.triggers)
         end
         if params.add_to_counter then
             managers.ehi_loot:AddAchievementListener(params)
@@ -2230,7 +2418,6 @@ function EHI:FinalizeUnits(tbl)
                 end
             else
                 local timer_gui = unit:timer_gui()
-                local digital_gui = unit:digital_gui()
                 if timer_gui and timer_gui._ehi_key then
                     if unit_data.child_units then
                         timer_gui:SetChildUnits(unit_data.child_units, wd)
@@ -2242,6 +2429,9 @@ function EHI:FinalizeUnits(tbl)
                     end
                     if unit_data.remove_vanilla_waypoint then
                         timer_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint, unit_data.restore_waypoint_on_done)
+                    end
+                    if unit_data.remove_vanilla_waypoint_overriden then
+                        timer_gui:RemoveVanillaWaypointOverriden(unit_data.remove_vanilla_waypoint_overriden, unit_data.restore_waypoint_on_done)
                     end
                     if unit_data.ignore_visibility then
                         timer_gui:SetIgnoreVisibility()
@@ -2264,6 +2454,7 @@ function EHI:FinalizeUnits(tbl)
                     timer_gui:SetWaypointPosition(unit_data.position)
                     timer_gui:Finalize()
                 end
+                local digital_gui = unit:digital_gui()
                 if digital_gui and digital_gui._ehi_key then
                     if unit_data.ignore then
                         digital_gui:SetIgnore()
@@ -2551,7 +2742,8 @@ function EHI:CanShowCivilianCountTracker()
         alex_1 = true, -- Rats Day 1
         haunted = true, -- Safehouse Nightmare
         man = true, -- Undercover
-        bph = true -- Hell's Island
+        bph = true, -- Hell's Island
+        chill_combat = true -- Safehouse Raid
     }, Global.game_settings.level_id)
 end
 
@@ -2571,6 +2763,7 @@ function EHI:HookColorCodes(color_table, params)
         end
         color_sequence_hash[color] = sequences
     end
+    local color_map = self.TrackerUtils:GetColorCodesMap()
     ---@param unit_id number
     ---@param color string
     local function hook(unit_id, color)
@@ -2578,6 +2771,7 @@ function EHI:HookColorCodes(color_table, params)
         for i = 0, 9, 1 do
             managers.mission:add_runned_unit_sequence_trigger(unit_id, sequences[i], function(...)
                 managers.ehi_tracker:CallFunction(tracker_name, "SetCode", color, i)
+                managers.ehi_waypoint:CallFunction(tracker_name, "CreateWaypoint", unit_id, nil, nil, color_map[color], i)
             end)
         end
     end
@@ -2873,13 +3067,12 @@ if EHI.debug.all_instances then -- For testing purposes
             if instance.name == instance_name then
                 self:PrintTable(instance)
                 local start = self:GetInstanceElementID(100000, instance.start_index)
-                local _end = start + instance.index_size - 1
-                local f = function(e, ...) ---@param e MissionScriptElement
+                local function f(e, ...) ---@param e MissionScriptElement
                     managers.chat:_receive_message(1, "[EHI]", string.format("Base ID: %d; ID: %d; Element: %s; Instance: %s", EHI:GetBaseUnitID(e._id, instance.start_index, 100000), e._id, e:editor_name(), instance_name), Color.white)
                 end
                 self:Log(string.format("Hooking elements in instance '%s'", instance_name))
                 for _, script in pairs(scripts) do
-                    for i = start, _end, 1 do
+                    for i = start, start + instance.index_size - 1, 1 do
                         local element = script:element(i)
                         if element then
                             Hooks:PostHook(element, element_f, "EHI_Debug_Element_" .. tostring(i), f)
@@ -2893,28 +3086,9 @@ if EHI.debug.all_instances then -- For testing purposes
 end
 
 ---@param tbl table
+---@param tables_to_ignore string|string[]?
 ---@param ... any
-function EHI:PrintTable(tbl, ...)
-    local s = ""
-    if ... then
-        for _, _s in ipairs({ ... }) do
-            s = s .. " " .. tostring(_s)
-        end
-    end
-    if _G.PrintTableDeep then
-        _G.PrintTableDeep(tbl, 5000, true, "[EHI]" .. s, {}, false)
-    else
-        if s ~= "" then
-            self:Log(s)
-        end
-        Utils.PrintTable(tbl)
-    end
-end
-
----@param tbl table
----@param tables_to_ignore string|table
----@param ... any
-function EHI:PrintTable2(tbl, tables_to_ignore, ...)
+function EHI:PrintTable(tbl, tables_to_ignore, ...)
     local s = ""
     if ... then
         for _, _s in ipairs({ ... }) do
@@ -2960,6 +3134,8 @@ local paths = {
     "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box",
     "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box_intel",
     "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_gensec_doors/spawn_gensec_doors",
+    "units/payday2/characters/ene_sniper_1/ene_sniper_1",
+    "units/payday2/characters/ene_sniper_2/ene_sniper_2",
     "units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam"
 }
 Hooks:Add("BeardLibPostInit", "EHI_BeardLib_Crash_Fix", function()

@@ -4,7 +4,7 @@ if EHI:CheckHook("BlackMarketGui") or not EHI:GetOption("show_inventory_detailed
 end
 
 ---@class BlackMarketGui
----@field make_fine_text fun(self: self|any, text: PanelText)
+---@field make_fine_text fun(self: self|any, text: Text)
 
 if not Global.load_level then
     local classes =
@@ -34,9 +34,7 @@ local original =
 
 local strs = {}
 local percent_format = "%"
----@param loc LocalizationManager
----@param loc_loaded string
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
+EHI:AddOnLocalizationLoaded(function(loc, lang_name)
     strs.poison = loc:text("ehi_bm_poison")
     strs.fire = loc:text("ehi_bm_fire")
     strs.explosion = loc:text("ehi_bm_explosion")
@@ -53,7 +51,8 @@ EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(loc, loc_loaded)
     strs.dot_max_distance = loc:text("ehi_bm_dot_max_distance")
     strs.charges = loc:text("ehi_bm_charges")
     strs.charges_no_total = loc:text("ehi_bm_charges_no_total")
-    if loc_loaded == "czech" then
+    strs.no_impact_detonation = loc:text("ehi_bm_no_impact_detonation")
+    if lang_name == "czech" then
         percent_format = " %"
     end
 end)
@@ -512,6 +511,9 @@ function BlackMarketGui:populate_grenades(data, ...)
                 local str = string.format("> %s: %d", (tweak.curve_pow and damage > 0) and strs.max_dmg or strs.dmg, (damage * 10))
                 if tweak.range then
                     str = string.format("%s\n> %s: %sm", str, strs.range, tostring(tweak.range * 0.01))
+                end
+                if projectile.is_a_grenade and not projectile.impact_detonation then
+                    str = string.format("%s\n> %s", str, strs.no_impact_detonation)
                 end
                 if GrenadeFormattingFunction[grenade] then
                     str = str .. GrenadeFormattingFunction[grenade]()

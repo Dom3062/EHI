@@ -12,7 +12,20 @@
             "callback_arguments": [ "infiltrator", "melee_cooldown" ],
             "value": "melee_cooldown",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent_choice",
+            "title": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "infiltrator", "melee_cooldown_persistent" ],
+            "value": "melee_cooldown_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_infiltrator_melee_cooldown_choice",
+            "ehi_ver" : 325
         }
     ]
 }

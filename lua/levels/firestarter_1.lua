@@ -16,7 +16,7 @@ end
 
 local other =
 {
-    -- This needs to be delayed because the number of required weapons are decided upon spawn
+    -- This needs to be delayed because the number of required weapons is decided upon spawn
     [103240] = { special_function = SF.CustomCodeDelayed, t = 5, f = function()
         local n_of_weapons = tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons)
         EHI:ShowAchievementLootCounter({
@@ -65,7 +65,7 @@ if EHI:IsLootCounterVisible() then
     EHI:ShowLootCounterWaypoint({ element = 103215 })
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     other = other
 })
 EHI:AddXPBreakdown({

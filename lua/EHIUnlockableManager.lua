@@ -1,72 +1,10 @@
 local EHI = EHI
 ---@class EHIUnlockableManager
-EHIUnlockableManager = {}
+local EHIUnlockableManager = {}
 EHIUnlockableManager.GetAchievementIcon = EHI.GetAchievementIcon
-EHIUnlockableManager.IsHost = EHI.IsHost
-EHIUnlockableManager._achievement_data_sync =
-{
-    [EHI.Trackers.Achievement.Base] =
-    {
-        time = 0
-    },
-    [EHI.Trackers.Achievement.Progress] =
-    {
-        progress = 0
-    },
-    [EHI.Trackers.Achievement.Status] =
-    {
-        status = "ok"
-    }
-}
 ---@param ehi_tracker EHITrackerManager
-function EHIUnlockableManager:new(ehi_tracker)
+function EHIUnlockableManager:post_init(ehi_tracker)
     self._trackers = ehi_tracker
-    self._mission_achievements = {} --[[@as table<string, {class: string, started: boolean, sync_params: ParseAchievementDefinitionTable.sync_params, data: table, app_t: number }> ]]
-    return self
-end
-
-function EHIUnlockableManager:load(data)
-    local load_data = data.EHIAchievementManager
-    if load_data and EHI:ShowMissionAchievements() then
-        for key, save_data in pairs(load_data) do
-            local achievement = self._mission_achievements[key]
-            if achievement and self._trackers:TrackerDoesNotExist(key) then
-                achievement.started = true
-                self._trackers:AddTracker({
-                    id = key,
-                    time = 1,
-                    icons = self:GetAchievementIcon(key),
-                    class = save_data.class or EHI.Trackers.Achievement.Base
-                })
-                self._trackers:CallFunction(key, "load", save_data.data)
-            end
-        end
-    end
-end
-
-function EHIUnlockableManager:save(data)
-    local save_data = {}
-    local all_trackers = self._trackers._trackers --[[@as table<string, { tracker: EHIAchievementTracker }>]]
-    for key, def in pairs(all_trackers) do
-        if def.tracker.save then
-            local tracker_save_data = { data = {} }
-            def.tracker:save(tracker_save_data.data)
-            tracker_save_data.class = self._mission_achievements[key].class
-            save_data[key] = tracker_save_data
-        end
-    end
-    for key, value in pairs(self._mission_achievements) do
-        if not save_data[key] and value.started then
-            local achievement_save_data = { data = {} }
-            for var_name, achievement_data in pairs(value.data) do
-                achievement_save_data.data[var_name] = achievement_data
-            end
-            achievement_save_data.class = value.class
-            achievement_save_data.app_t = value.app_t
-            save_data[key] = achievement_save_data
-        end
-    end
-    data.EHIAchievementManager = save_data
 end
 
 ---@param achievement_id string
@@ -84,83 +22,18 @@ function EHIUnlockableManager:AddTFCallback(achievement_id, id)
     return cleanup_callback
 end
 
----@param def table<string, ParseAchievementDefinitionTable>
-function EHIUnlockableManager:ParseAchievementDefinition(def)
-    for key, value in pairs(def) do
-        if value.difficulty_pass ~= false and not ((value.sync_params and value.sync_params.from_start) or value.load_sync) then -- Don't sync achievements that requires playing from start or clients have defined syncing function
-            local achievement = { data = {} }
-            for _, trigger in pairs(value.elements or {}) do
-                if trigger.class then
-                    achievement.class = trigger.class
-                    local data_sync = value.data_sync or self._achievement_data_sync[trigger.class or ""] or self._achievement_data_sync[EHI.Trackers.Achievement.Base]
-                    if data_sync then
-                        for sync_key, default_value in pairs(data_sync) do
-                            achievement.data[sync_key] = trigger[sync_key] or default_value
-                        end
-                    else
-                        EHI:Log("[EHIAchievementManager:ParseAchievementDefinition()] data_sync does not exist! Nothing will get synced to clients! Game may also crash due to nil value!")
-                    end
-                    break
-                end
-            end
-            if not achievement.class then
-                EHI:Log("[EHIAchievementManager:ParseAchievementDefinition()] class does not exist! Using base achievement class to not crash")
-                achievement.class = EHI.Trackers.Achievement.Base
-            end
-            achievement.sync_params = value.sync_params or {}
-            self._mission_achievements[key] = achievement
-        end
-    end
-end
-
----@param id string
-function EHIUnlockableManager:SetAchievementStarted(id)
-    local achievement = self._mission_achievements[id]
-    if achievement then
-        achievement.started = true
-        achievement.app_t = managers.game_play_central:get_heist_timer()
-    end
-end
-
----@param id string
----@param key string
----@param value any
-function EHIUnlockableManager:SetAchievementData(id, key, value)
-    local achievement = self._mission_achievements[id]
-    if achievement and achievement.data then
-        achievement.data[key] = value
-    end
-end
-
----@param id string
-function EHIUnlockableManager:SetAchievementDone(id)
-    local achievement = self._mission_achievements[id]
-    if achievement then
-        achievement.started = nil
-    end
-end
-
----@param trigger ElementTrigger
-function EHIUnlockableManager:StartAchievement(trigger)
-    self:SetAchievementStarted(trigger.id)
-    self._trackers:AddTracker(trigger)
-end
-
 ---@param id string
 ---@param time_max number
 function EHIUnlockableManager:AddTimedAchievementTracker(id, time_max)
-    local t = time_max - math.max(managers.ehi_manager._t, self._trackers._t)
-    if t <= 0 then
-        return
+    local t = time_max - math.max(managers.ehi_tracking._t, self._trackers._t)
+    if t > 0 then
+        self._trackers:AddTracker({
+            id = id,
+            time = t,
+            icons = self:GetAchievementIcon(id),
+            class = EHI.Trackers.Achievement.Base
+        })
     end
-    self:SetAchievementStarted(id)
-    self:SetAchievementData(id, "time", t)
-    self._trackers:AddTracker({
-        id = id,
-        time = t,
-        icons = self:GetAchievementIcon(id),
-        class = EHI.Trackers.Achievement.Base
-    })
 end
 
 ---@param id string
@@ -169,8 +42,6 @@ end
 ---@param show_finish_after_reaching_target boolean?
 ---@param class string?
 function EHIUnlockableManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class)
-    self:SetAchievementStarted(id)
-    self:SetAchievementData(id, "progress", progress or 0)
     self._trackers:AddTracker({
         id = id,
         progress = progress,
@@ -185,8 +56,6 @@ end
 ---@param id string
 ---@param status string?
 function EHIUnlockableManager:AddAchievementStatusTracker(id, status)
-    self:SetAchievementStarted(id)
-    self:SetAchievementData(id, "status", status or "ok")
     self._trackers:AddTracker({
         id = id,
         status = status,
@@ -240,21 +109,18 @@ end
 ---@param id string
 ---@param force boolean?
 function EHIUnlockableManager:SetAchievementComplete(id, force)
-    self:SetAchievementDone(id)
     self._trackers:CallFunction(id, "SetCompleted", force)
 end
 
 ---@param id string
 ---@param silent_fail boolean?
 function EHIUnlockableManager:SetAchievementFailed(id, silent_fail)
-    self:SetAchievementDone(id)
     self._trackers:CallFunction(id, silent_fail and "SetFailedSilent" or "SetFailed")
 end
 
 ---@param id string
 ---@param status string
 function EHIUnlockableManager:SetAchievementStatus(id, status)
-    self:SetAchievementData(id, "status", status or "ok")
     self._trackers:CallFunction(id, "SetStatus", status)
 end
 
@@ -270,3 +136,5 @@ function EHIUnlockableManager:AddSHDailyProgressTracker(id, max, progress)
         class = EHI.Trackers.SideJob.Progress
     })
 end
+
+return EHIUnlockableManager

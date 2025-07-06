@@ -42,6 +42,8 @@
             "value": "show_sniper_spawned_popup",
             "default_value": true,
             "parent" : "ehi_show_sniper_tracker_choice",
+            "preview_func" : "PreviewNotification",
+            "preview_func_params" : { "id" : "SNIPERS!", "desc": "ehi_popup_snipers_spawned", "icon" : "EHI_Sniper", "class" : "HudChallengeNotification" },
             "ehi_ver" : 206
         },
         {
@@ -54,6 +56,8 @@
             "value": "show_sniper_logic_start_popup",
             "default_value": true,
             "parent" : "ehi_show_sniper_tracker_choice",
+            "preview_func" : "PreviewNotification",
+            "preview_func_params" : { "id" : "SNIPER_LOGIC_START", "desc": "ehi_popup_sniper_logic_started", "icon" : "EHI_Sniper", "class" : "HudChallengeNotification" },
             "ehi_ver" : 239
         },
         {
@@ -66,7 +70,37 @@
             "value": "show_sniper_logic_end_popup",
             "default_value": true,
             "parent" : "ehi_show_sniper_tracker_choice",
+            "preview_func" : "PreviewNotification",
+            "preview_func_params" : { "id" : "SNIPER_LOGIC_END", "desc": "ehi_popup_sniper_logic_ended", "icon" : "EHI_Sniper", "class" : "HudChallengeNotification" },
             "ehi_ver" : 239
+        },
+                {
+            "type": "color_select",
+            "id": "ehi_colors_sniper_chance_choice",
+            "title": "ehi_colors_sniper_chance",
+            "description": "ehi_colors_sniper_chance_desc",
+            "value": "sniper_chance",
+            "default_value": [0, 255, 255],
+            "callback": "SetSniperChanceColor",
+            "callback_arguments": ["sniper_chance", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "parent" : "ehi_show_sniper_tracker_choice",
+            "ehi_ver" : 258
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_sniper_count_choice",
+            "title": "ehi_colors_sniper_count",
+            "description": "ehi_colors_sniper_count_desc",
+            "value": "sniper_count",
+            "default_value": [255, 165, 0],
+            "callback": "SetSniperCountColor",
+            "callback_arguments": ["sniper_count", "tracker_waypoint"],
+            "color_type" : "tracker_waypoint",
+            "setting_value": "colors",
+            "parent" : "ehi_show_sniper_tracker_choice",
+            "ehi_ver" : 258
         },
         {
             "type": "divider",
@@ -98,7 +132,7 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_money_tracker",
             "is_parent": true,
-            "default_value": true,
+            "default_value": false,
             "ehi_ver" : 318
         },
         {

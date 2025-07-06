@@ -15,7 +15,7 @@ local achievements =
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     achievement = achievements
 })
 

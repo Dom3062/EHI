@@ -37,7 +37,7 @@ end
 
 function MutatorPiggyRevenge:sync_feed_piggybank(...)
     original.sync_feed_piggybank(self, ...)
-    managers.ehi_tracker:SetTrackerProgress("pda10_event", self._pig_fed_count)
+    managers.ehi_tracker:SetProgress("pda10_event", self._pig_fed_count)
 end
 
 function MutatorPiggyRevenge:sync_explode_piggybank(...)

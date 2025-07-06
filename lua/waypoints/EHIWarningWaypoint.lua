@@ -4,12 +4,12 @@ local Color = Color
 EHIWarningWaypoint = class(EHIWaypoint)
 EHIWarningWaypoint._check_anim_progress = false
 EHIWarningWaypoint._warning_color = EHI:GetColorFromOption("tracker_waypoint", "warning")
----@param o PanelText
+---@param o Text
 ---@param old_color Color
 ---@param color Color
----@param icon PanelBitmap
----@param arrow PanelBitmap
----@param bitmap_world PanelBitmap?
+---@param icon Bitmap
+---@param arrow Bitmap
+---@param bitmap_world Bitmap?
 ---@param start_t number
 EHIWarningWaypoint._anim_warning = function(o, old_color, color, icon, arrow, bitmap_world, start_t)
     local c = Color(old_color.r, old_color.g, old_color.b)

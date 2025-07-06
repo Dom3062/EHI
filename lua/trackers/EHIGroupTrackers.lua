@@ -1,5 +1,5 @@
----@alias EHIWarningGroupTracker.Timer { label: PanelText, time: number, pos: number, warning: boolean, id: string, check_timer_progress: boolean }
----@alias EHIProgressGroupTracker.Counter { label: PanelText, progress: number, max: number, disable_counter: boolean, set_color_bad_when_reached: boolean }
+---@alias EHIWarningGroupTracker.Timer { label: Text, time: number, pos: number, warning: boolean, id: string, check_timer_progress: boolean }
+---@alias EHIProgressGroupTracker.Counter { label: Text, progress: number, max: number, disable_counter: boolean, set_color_bad_when_reached: boolean }
 
 ---@class EHIGroupTracker : EHITracker
 ---@field super EHITracker
@@ -187,7 +187,7 @@ end
 ---@param check_progress boolean?
 ---@param color Color?
 function EHIWarningGroupTracker:AnimateColor(timer, check_progress, color)
-    local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
+    local start_t = check_progress and (1 - math.min(math.ehi_round(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
     timer.label:animate(self._anim_warning, self._text_color, color or (self._show_completion_color and self._completion_color or self._warning_color), start_t, self)
 end
 
@@ -364,7 +364,7 @@ function EHIProgressGroupTracker:SetCompleted(id, force)
     end
 end
 
----@param label PanelText
+---@param label Text
 ---@param force boolean?
 function EHIProgressGroupTracker:_SetCompleted(label, force)
     self._completed_counters = self._completed_counters + 1
@@ -384,7 +384,7 @@ end
 function EHIProgressGroupTracker:CountersDone()
 end
 
----@param label PanelText
+---@param label Text
 function EHIProgressGroupTracker:SetBad(label)
     self:SetTextColor(self._progress_bad, label)
 end

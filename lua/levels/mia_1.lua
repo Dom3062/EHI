@@ -1,18 +1,9 @@
 ---@class EHIThugsProgress : EHIProgressTracker
 ---@field super EHIProgressTracker
-EHIThugsProgress = class(EHIProgressTracker)
+local EHIThugsProgress = class(EHIProgressTracker)
 function EHIThugsProgress:pre_init(params)
     params.max = managers.enemy:GetNumberOfEnemies()
     EHIThugsProgress.super.pre_init(self, params)
-end
-
----@class EHIDistrictTracker : EHICodeTracker
----@field super EHICodeTracker
-EHIDistrictTracker = class(EHICodeTracker)
-EHIDistrictTracker._forced_hint_text = "mia_1_location"
-EHIDistrictTracker._forced_icons = { "sidebar_question" } -- Map with question mark icon (unused in-game)
-function EHIDistrictTracker:post_init(params)
-    self:SetCode(params.area)
 end
 
 local EHI = EHI
@@ -20,31 +11,11 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local Methlab = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop } }
-local element_sync_triggers = {}
-local MethlabIndex = { 7800, 8200, 8600 }
 local Heli = 30 + 23 + 5
 local Truck = 40
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
     Heli = 3 + 60 + 23 + 5
     Truck = 60
-end
-local client = EHI.IsClient
-for _, index in ipairs(MethlabIndex) do
-    -- Cooking restart
-    for i = 100120, 100122, 1 do
-        local element_id = EHI:GetInstanceElementID(i, index)
-        element_sync_triggers[element_id] = deep_clone(Methlab)
-        element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100119, index)
-        element_sync_triggers[element_id].hint = Hints.Restarting
-    end
-    -- Cooking continuation
-    for i = 100169, 100172, 1 do
-        local element_id = EHI:GetInstanceElementID(i, index)
-        element_sync_triggers[element_id] = deep_clone(Methlab)
-        element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, index)
-        element_sync_triggers[element_id].hint = Hints.mia_1_NextMethIngredient
-    end
 end
 local triggers = {
     [102177] = { time = Heli, id = "Heli", icons = Icon.HeliDropBag, hint = Hints.Winch }, -- Time before Bile arrives
@@ -59,36 +30,38 @@ local triggers = {
     [101389] = { time = 10.5 + 8, id = "SecondCall", icons = { Icon.Phone }, hint = Hints.Wait },
     [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone }, hint = Hints.Wait },
 
-    [101218] = { id = "ThugsKill", icons = { Icon.Kill }, class = "EHIThugsProgress", hint = Hints.Kills },
+    [101218] = { id = "ThugsKill", icons = { Icon.Kill }, class_table = EHIThugsProgress, hint = Hints.Kills },
     [105158] = { id = "ThugsKill", special_function = SF.IncreaseProgressMax },
-    [105206] = { id = "ThugsKill", special_function = SF.IncreaseProgress },
-
-    -- After third call
-    [100396] = { id = "District", area = "Downtown", class = "EHIDistrictTracker" },
-    [100551] = { id = "District", area = "Georgetown", class = "EHIDistrictTracker" },
-    [100558] = { id = "District", area = "West End", class = "EHIDistrictTracker" },
-    [100559] = { id = "District", area = "Foggy Bottom", class = "EHIDistrictTracker" },
-    [100642] = { id = "District", area = "Shaw", class = "EHIDistrictTracker" },
-    [105065] = { id = "District", special_function = SF.RemoveTracker }
+    [105206] = { id = "ThugsKill", special_function = SF.IncreaseProgress }
 }
-local random_time = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 25, 35, 45, 65 }, hint = Hints.mia_1_NextMethIngredient }
-for _, index in ipairs(MethlabIndex) do
-    triggers[EHI:GetInstanceElementID(100152, index)] = { time = 5, id = "MethPickUp", icons = { Icon.Methlab, Icon.Interact }, hint = Hints.mia_1_MethDone, waypoint = { data_from_element = EHI:GetInstanceElementID(100161, index) } }
-    if client then
-        triggers[EHI:GetInstanceElementID(100118, index)] = { id = Methlab.id, icons = Methlab.icons, special_function = SF.SetRandomTime, data = { 5, 25, 40 }, hint = Hints.Restarting }
-        triggers[EHI:GetInstanceElementID(100149, index)] = random_time
-        triggers[EHI:GetInstanceElementID(100150, index)] = random_time
-        triggers[EHI:GetInstanceElementID(100184, index)] = { id = Methlab.id, special_function = SF.RemoveTracker }
+if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
+    EHI:LoadTracker("EHICodesTracker")
+    ---@class EHIDistrictTracker : EHICodeTracker
+    ---@field super EHICodeTracker
+    local EHIDistrictTracker = class(EHICodeTracker)
+    EHIDistrictTracker._forced_hint_text = "mia_1_location"
+    EHIDistrictTracker._forced_icons = { "sidebar_question" } -- Map with question mark icon (unused in-game)
+    function EHIDistrictTracker:post_init(params)
+        self:SetCode(params.area)
+    end
+    -- After third call
+    triggers[100396] = { id = "District", area = "Downtown", class_table = EHIDistrictTracker }
+    triggers[100551] = { id = "District", area = "Georgetown", class_table = EHIDistrictTracker }
+    triggers[100558] = { id = "District", area = "West End", class_table = EHIDistrictTracker }
+    triggers[100559] = { id = "District", area = "Foggy Bottom", class_table = EHIDistrictTracker }
+    triggers[100642] = { id = "District", area = "Shaw", class_table = EHIDistrictTracker }
+    triggers[105065] = { id = "District", special_function = SF.RemoveTracker }
+    if EHI.IsClient then
+        -- Reminder
+        triggers[101779] = { id = "District", area = "Downtown", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
+        triggers[101780] = { id = "District", area = "Georgetown", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
+        triggers[101781] = { id = "District", area = "West End", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
+        triggers[101782] = { id = "District", area = "Foggy Bottom", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
+        triggers[101783] = { id = "District", area = "Shaw", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
     end
 end
-if client then
+if EHI.IsClient then
     triggers[104955] = EHI:ClientCopyTrigger(triggers[106013], { time = 30 })
-    -- Reminder
-    triggers[101779] = { id = "District", area = "Downtown", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101780] = { id = "District", area = "Georgetown", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101781] = { id = "District", area = "West End", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101782] = { id = "District", area = "Foggy Bottom", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
-    triggers[101783] = { id = "District", area = "Shaw", class = "EHIDistrictTracker", special_function = SF.AddTrackerIfDoesNotExist }
 end
 
 local other =
@@ -96,6 +69,7 @@ local other =
     [101937] = EHI:AddAssaultDelay({ control = 10 + 1 + 40, special_function = SF.AddTimeByPreplanning, data = { id = 100191, yes = 75, no = 45 } })
 }
 if EHI:IsLootCounterVisible() then
+    local MethlabIndex = { 7800, 8200, 8600 }
     local money = EHI:GetValueBasedOnDifficulty({
         normal = 5,
         hard = 4,
@@ -150,14 +124,15 @@ if EHI:IsLootCounterVisible() then
         self._loot:SetUnknownRandomLoot()
     end)
     -- Meth
+    ---@param self EHIMissionElementTrigger
     ---@param id number
-    local function PossibleMethbagSpawned(id)
+    local function PossibleMethbagSpawned(self, id)
         if MethlabExploded then
             return
         end
         Methbags = Methbags + 1
         MethbagsPossibleToSpawn = MethbagsPossibleToSpawn - 1
-        managers.ehi_loot:RandomLootSpawnedCheck(id, true)
+        self._loot:RandomLootSpawnedCheck(id, true)
     end
     ---@param id number
     local function NoMethBagSpawned(id)
@@ -179,38 +154,38 @@ if EHI:IsLootCounterVisible() then
         managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceUnitID(100008, i), "interact", function()
             DelayedRejection(i)
         end)
-        other[EHI:GetInstanceElementID(100015, i)] = { special_function = SF.CustomCode, f = PossibleMethbagSpawned, arg = i } -- Chemicals for meth
+        other[EHI:GetInstanceElementID(100015, i)] = { special_function = SF.CustomCode2, f = PossibleMethbagSpawned, arg = i } -- Chemicals for meth
     end
     -- Methlab exploded
-    local function BlockMeth()
+    local BlockMeth = EHI:AddCustomCode(function(self)
         if Methbags == 0 then -- Dropin; impossible to tell how many bags were cooked
             return
         end
-        managers.ehi_loot:DecreaseLootCounterProgressMax(Methbags - MethbagsCooked)
-        managers.ehi_loot:DecreaseLootCounterMaxRandom(MethbagsPossibleToSpawn)
+        self._loot:DecreaseLootCounterProgressMax(Methbags - MethbagsCooked)
+        self._loot:DecreaseLootCounterMaxRandom(MethbagsPossibleToSpawn)
         MethlabExploded = true
-    end
+    end)
     local function CookingDone()
         MethbagsCooked = MethbagsCooked + 1
     end
     for _, index in ipairs(MethlabIndex) do
-        other[EHI:GetInstanceElementID(100158, index)] = { special_function = SF.CustomCode, f = BlockMeth }
+        other[EHI:GetInstanceElementID(100158, index)] = BlockMeth
         other[EHI:GetInstanceElementID(100159, index)] = { special_function = SF.CustomCode, f = CookingDone }
     end
     -- Cars
     local CarLootBlocked = false
     local CarLootNumber = 2
-    other[100724] = { special_function = SF.CustomCode, f = function()
+    other[100724] = EHI:AddCustomCode(function(self)
         CarLootBlocked = true
-        managers.ehi_loot:DecreaseLootCounterMaxRandom(CarLootNumber)
-    end }
-    local CarLootBlockedTrigger = { special_function = SF.CustomCode, f = function()
+        self._loot:DecreaseLootCounterMaxRandom(CarLootNumber)
+    end)
+    local CarLootBlockedTrigger = EHI:AddCustomCode(function(self)
         if CarLootBlocked then
             return
         end
         CarLootNumber = CarLootNumber - 1
-        managers.ehi_loot:RandomLootDeclined()
-    end }
+        self._loot:RandomLootDeclined()
+    end)
     -- All cars; does not get triggered when maximum has been reached
     other[100721] = EHI:AddCustomCode(function(self)
         self._loot:RandomLootSpawned()
@@ -229,10 +204,10 @@ end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100159] = { chance = 100, time = 30 + 20, recheck_t = 20 + 20, id = "Snipers", class = TT.Sniper.TimedChance }
     other[104026] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[105008] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+    other[105008] = { id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         local chance = element._values.chance
-        if self._trackers:TrackerExists(id) then
+        if self._trackers:Exists(id) then
             self._trackers:SetChance(id, chance)
             self._trackers:CallFunction(id, "SnipersKilled")
         else
@@ -251,10 +226,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104303] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,
-    sync_triggers = { element = element_sync_triggers },
     loot_removal_triggers = { 104475, 106825, 106826, 106827 } -- Loot removal (Fire); coke, meth, money, weapon
 })
 local money = EHI:GetValueBasedOnDifficulty({

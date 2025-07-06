@@ -13,8 +13,7 @@ local achievements =
             [100979] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status },
             [102831] = { special_function = SF.SetAchievementComplete },
             [102829] = { special_function = SF.SetAchievementFailed }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -28,7 +27,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102452] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[102453] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[102460] = { id = "Snipers", special_function = SF.RemoveTracker } -- Failed chance does not TRIGGER sniper_spawn again, it only increases chance
-    other[102461] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+    other[102461] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local chance = element._values.chance -- 30%
         if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", chance) then
             self._trackers:AddTracker({
@@ -42,7 +41,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end) }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other,
     assault = { diff = 1 }

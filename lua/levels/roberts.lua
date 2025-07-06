@@ -9,7 +9,8 @@ local delay = 20 + math.rand(6.2, 7.5)
 local triggers = {
     [101931] = { time = 90 + delay, id = "CageDrop", icons = Icon.HeliDropBag, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
     [101932] = { time = 120 + delay, id = "CageDrop", icons = Icon.HeliDropBag, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
-    [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = Icon.HeliDropBag, hint = Hints.peta2_LootZoneDelivery },
+    [101933] = { time = 150 + delay, id = "CageDrop", icons = Icon.HeliDropBag, special_function = SF.SetTimeOrCreateTracker, hint = Hints.peta2_LootZoneDelivery },
+    [101929] = { time = 30 + 150 + delay, id = "CageDrop", icons = Icon.HeliDropBag, class = TT.TimePreSync, hint = Hints.peta2_LootZoneDelivery },
 
     [102921] = { id = 101929, special_function = SF.RemoveTrigger }, ---@diagnostic disable-line
 
@@ -56,7 +57,7 @@ if EHI:IsLootCounterVisible() then
     other[103610] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({ max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot(103625, 103684), client_from_start = true })
     end, nil, function(self)
-        self:Trigger(103610)
+        self:Trigger()
         self._loot:SyncSecuredLoot()
     end, true)
 end
@@ -75,7 +76,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103438 } }
     other[104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103443 } }
 end
-EHI.Manager:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
 
 EHI:UpdateUnits({
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large

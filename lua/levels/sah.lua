@@ -10,11 +10,11 @@ local triggers = {
 
     -- Heli Escape is in CoreWorldInstanceManager
 }
-if EHI.Manager._SHOW_MISSION_TRIGGERS then
-    triggers[EHI:GetInstanceElementID(100088, 18200)] = { id = "VaultCode", class = TT.Code }
-    ---@param self EHIManager
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
+    triggers[EHI:GetInstanceElementID(100088, 18200)] = { id = "VaultCode", class = TT.Code, waypoint = { icon = "code", position_from_element = EHI:GetInstanceElementID(100084, 18200) } }
+    ---@param self EHIMissionElementTrigger
     local function ShowCodePart(self, arg)
-        self._trackers:CallFunction("VaultCode", "SetCodePart", arg[1] + 1, arg[2], 4)
+        self._tracking:Call("VaultCode", "SetCodePart", arg[1] + 1, arg[2], 4)
     end
     local num, pos = 0, 0
     for i = 100169, 100208, 1 do
@@ -41,8 +41,7 @@ local achievements =
             [100107] = { time = 300, class = TT.Achievement.Base },
             [101878] = { special_function = SF.SetAchievementComplete },
             [101400] = { special_function = SF.SetAchievementFailed, trigger_once = true }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -51,7 +50,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 1 }) -- Diff 0.5 is applied at start -> ´delay´ MissionScriptElement 100018
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

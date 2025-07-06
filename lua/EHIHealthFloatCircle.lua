@@ -78,7 +78,7 @@ function EHIHealthFloatCircle:new(hud_panel)
         font = tweak_data.menu.pd2_large_font
     })
 
-    self._health_num_bg = {} ---@type PanelText[]
+    self._health_num_bg = {} ---@type Text[]
     self._health_num_bg[1] = enemy_health_circle_panel:text({
         text = "",
         layer = 4,
@@ -134,7 +134,7 @@ function EHIHealthFloatCircle:new(hud_panel)
     return self
 end
 
----@param unit UnitEnemy
+---@param unit UnitEnemy|UnitEnemyTurret
 ---@param t number
 function EHIHealthFloatCircle:SetUnit(unit, t)
     if self._unit == unit then
@@ -145,7 +145,7 @@ function EHIHealthFloatCircle:SetUnit(unit, t)
     self._unit = unit
     self._block_update = false
     self._current_health = 0
-    local base = unit:base()
+    local base = unit:base() ---@cast base -SentryGunBase
     if self._converts_disabled and (unit:brain() and unit:brain().converted and unit:brain():converted()) then
         self._block_update = true
         self:set_visible(false)
@@ -323,7 +323,7 @@ function EHIHealthFloatCircle._animate_hide_decay(o, self)
     o:set_alpha(1)
 end
 
----@param o PanelBitmap
+---@param o Bitmap
 ---@param killershot boolean
 function EHIHealthFloatCircle._animate_damage_taken(o, killershot)
     o:set_alpha(1)
@@ -337,7 +337,7 @@ function EHIHealthFloatCircle._animate_damage_taken(o, killershot)
         local dt = coroutine.yield()
         t = t - dt
         red_t = math.clamp(red_t - dt, 0, 1)
-        local c = red_t/st_red_t
+        local c = red_t / st_red_t
         local setcolor = killershot and Color(c + killcolor.r, c + killcolor.g, c + killcolor.b) or Color(c + hurtcolor.r, c + hurtcolor.g, c + hurtcolor.b)
         o:set_color(setcolor)
         o:set_alpha(t / st)

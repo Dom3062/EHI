@@ -9,9 +9,6 @@
     "ehi_language_desc" : "Change le langage du mod. Pour que cela prenne effet, un redémarrage du niveau est nécessaire.",
     "ehi_language_1" : "Détecte automatiquement",
 
-    "ehi_r" : "Rouge",
-    "ehi_g" : "Vert",
-    "ehi_b" : "Bleu",
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Réinitialiser la couleur",
 
@@ -250,5 +247,9 @@
     "ehi_buffs_perks_copycat_grace_period" : "Occasion en or",
     "ehi_buffs_perks_gage_boosts" : "Boosts Gage",
     "ehi_buffs_perks_gage_boosts_life_steal" : "Vampirisme",
-    "ehi_buffs_perks_gage_boosts_melee_invulnerability" : "Invulnérabilité partielle"
+    "ehi_buffs_perks_gage_boosts_melee_invulnerability" : "Invulnérabilité partielle",
+
+    "ehi_buffs_group_color_red" : "Rouge",
+    "ehi_buffs_group_color_green" : "Vert",
+    "ehi_buffs_group_color_blue" : "Bleu"
 }

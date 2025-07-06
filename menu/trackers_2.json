@@ -8,7 +8,10 @@
             "id": "ehi_trackers_next_menu",
             "title": "ehi_menu_next_page",
             "next_menu": "ehi_trackers_3_menu",
-            "ehi_ver" : 318
+            "ehi_ver" : 318,
+            "load_menu" : {
+                "file_path" : "trackers_3.json"
+            }
         },
         {
             "type": "divider",
@@ -107,7 +110,10 @@
             "description": "ehi_equipment_menu_desc",
             "next_menu": "ehi_equipment_menu",
             "parent": "ehi_show_equipment_tracker_choice",
-            "focus_changed_callback" : "fcc_equipment_tracker"
+            "focus_changed_callback" : "fcc_equipment_tracker",
+            "load_menu" : {
+                "file_path" : "equipment.json"
+            }
         },
         {
             "type": "divider",
@@ -168,6 +174,10 @@
             "callback_arguments": "show_difficulty_tracker",
             "focus_changed_callback": "SetFocus",
             "value": "show_difficulty_tracker",
+            "blocked_by" : {
+                "check" : "CheckBlockForAssaultDiffTracker",
+                "hint" : "HintBlockForAssaultDiffTracker"
+            },
             "default_value": true
         },
         {

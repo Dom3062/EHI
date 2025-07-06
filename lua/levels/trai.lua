@@ -18,13 +18,13 @@ local triggers =
 }
 
 EHI:AddEventListener("trai_CraneMove",
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param waypoint_id string
 function(self, waypoint_id)
     local wp_defend = EHI:GetInstanceElementID(100074, 23450)
-    self._waypoints:SetWaypointPosition(waypoint_id, self:GetElementPositionOrDefault(wp_defend))
+    self._waypoints:SetWaypointPosition(waypoint_id, self._mission:GetElementPositionOrDefault(wp_defend))
     managers.hud:SoftRemoveWaypoint2(wp_defend)
-    managers.hud:SoftRemoveWaypoint2(EHI:GetInstanceElementID(100086, 23450)) -- Interact
+    managers.hud:SoftRemoveWaypoint2(wp_defend + 12) -- Interact (100086)
     self:RemoveEventListener("trai_CraneMove")
 end)
 
@@ -48,7 +48,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other
 })

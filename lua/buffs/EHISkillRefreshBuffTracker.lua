@@ -1,12 +1,23 @@
 ---@class EHISkillRefreshBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
 ---@field _refresh_option string?
+---@field _deck_refresh_option { deck: string, option: string }?
 EHISkillRefreshBuffTracker = class(EHIGaugeBuffTracker)
 function EHISkillRefreshBuffTracker:post_init(...)
     self._skill_value = 0
-    self._refresh_time = self._refresh_option and (1 / EHI:GetBuffOption(self._refresh_option)) or 1
+    if self._deck_refresh_option then
+        self._refresh_time = 1 / EHI:GetBuffDeckOption(self._deck_refresh_option.deck, self._deck_refresh_option.option)
+    elseif self._refresh_option then
+        self._refresh_time = 1 / EHI:GetBuffOption(self._refresh_option)
+    else
+        self._refresh_time = 1
+    end
     self._time = self._refresh_time
     EHISkillRefreshBuffTracker.super.post_init(self, ...)
+end
+
+function EHISkillRefreshBuffTracker:EnableInLoud()
+    self._enable_in_loud = true
 end
 
 function EHISkillRefreshBuffTracker:PreUpdate()
@@ -46,6 +57,16 @@ function EHISkillRefreshBuffTracker:PreUpdate2()
 end
 
 function EHISkillRefreshBuffTracker:update(dt)
+    if self._next_frame_visibility_update then
+        self._next_frame_visibility_update = false
+        if self._next_frame_visibility_active then
+            self._next_frame_visibility_active = false
+            self:Activate()
+        else
+            self._next_frame_visibility_not_active = false
+            self:Deactivate()
+        end
+    end
     self._time = self._time - dt
     if self._time <= 0 then
         self:UpdateValue()
@@ -66,6 +87,15 @@ function EHISkillRefreshBuffTracker:Activate()
     self:AddVisibleBuff()
 end
 
+function EHISkillRefreshBuffTracker:ActivateNextFrame()
+    if self._active then
+        return
+    end
+    self._next_frame_visibility_update = true
+    self._next_frame_visibility_active = true
+    self._next_frame_visibility_not_active = false
+end
+
 function EHISkillRefreshBuffTracker:Deactivate()
     if not self._active then
         return
@@ -76,6 +106,15 @@ function EHISkillRefreshBuffTracker:Deactivate()
     self._active = false
 end
 
+function EHISkillRefreshBuffTracker:DeactivateNextFrame()
+    if not self._active then
+        return
+    end
+    self._next_frame_visibility_update = true
+    self._next_frame_visibility_not_active = true
+    self._next_frame_visibility_active = false
+end
+
 ---@class EHIDodgeChanceBuffTracker : EHISkillRefreshBuffTracker
 ---@field super EHISkillRefreshBuffTracker
 EHIDodgeChanceBuffTracker = class(EHISkillRefreshBuffTracker)
@@ -84,6 +123,7 @@ EHIDodgeChanceBuffTracker._refresh_option = "dodge_refresh"
 function EHIDodgeChanceBuffTracker:init(...)
     EHIDodgeChanceBuffTracker.super.init(self, ...)
     self._update_disabled = true
+    self:EnableInLoud()
 end
 
 function EHIDodgeChanceBuffTracker:UpdateValue()
@@ -151,6 +191,7 @@ EHICritChanceBuffTracker._refresh_option = "crit_refresh"
 function EHICritChanceBuffTracker:init(...)
     EHICritChanceBuffTracker.super.init(self, ...)
     self._update_disabled = true
+    self:EnableInLoud()
 end
 
 function EHICritChanceBuffTracker:UpdateValue()
@@ -159,9 +200,9 @@ function EHICritChanceBuffTracker:UpdateValue()
         return
     elseif self._persistent or total > 0 then
         self:SetRatio(total)
-        self:Activate()
+        self:ActivateNextFrame()
     else
-        self:Deactivate()
+        self:DeactivateNextFrame()
     end
     self._skill_value = total
 end
@@ -201,8 +242,14 @@ function EHICritChanceBuffTracker:SwitchToLoudMode()
 end
 
 ---@class EHIDamageAbsorptionBuffTracker : EHISkillRefreshBuffTracker
+---@field super EHISkillRefreshBuffTracker
 EHIDamageAbsorptionBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIDamageAbsorptionBuffTracker._refresh_option = "damage_absorption_refresh"
+function EHIDamageAbsorptionBuffTracker:post_init(...)
+    self:EnableInLoud()
+    EHIDamageAbsorptionBuffTracker.super.post_init(self, ...)
+end
+
 function EHIDamageAbsorptionBuffTracker:UpdateValue()
     local absorption = self._player_manager:damage_absorption()
     if self._skill_value == absorption then
@@ -226,8 +273,14 @@ function EHIDamageAbsorptionBuffTracker:UpdateValue()
 end
 
 ---@class EHIDamageReductionBuffTracker : EHISkillRefreshBuffTracker
+---@field super EHISkillRefreshBuffTracker
 EHIDamageReductionBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIDamageReductionBuffTracker._refresh_option = "damage_reduction_refresh"
+function EHIDamageReductionBuffTracker:post_init(...)
+    self:EnableInLoud()
+    EHIDamageReductionBuffTracker.super.post_init(self, ...)
+end
+
 function EHIDamageReductionBuffTracker:UpdateValue()
     if not self._player_manager:player_unit() then
         return
@@ -237,17 +290,22 @@ function EHIDamageReductionBuffTracker:UpdateValue()
         return
     elseif self._persistent or reduction > 0 then
         self:SetRatio(reduction)
-        self:Activate()
+        self:ActivateNextFrame()
     else
-        self:Deactivate()
+        self:DeactivateNextFrame()
     end
     self._skill_value = reduction
+end
+
+function EHIDamageReductionBuffTracker:Format(value)
+    return string.format("%d%%", math.floor(self._ratio * 100))
 end
 
 ---@class EHIBerserkerBuffTracker : EHISkillRefreshBuffTracker
 ---@field super EHISkillRefreshBuffTracker
 EHIBerserkerBuffTracker = class(EHISkillRefreshBuffTracker)
 EHIBerserkerBuffTracker._refresh_option = "berserker_refresh"
+EHIBerserkerBuffTracker._THRESHOLD = tweak_data.upgrades.player_damage_health_ratio_threshold or 0.5
 function EHIBerserkerBuffTracker:post_init(...)
     self._damage_multiplier = 0
     self._melee_damage_multiplier = 0
@@ -256,12 +314,18 @@ function EHIBerserkerBuffTracker:post_init(...)
     local text_format = EHI:GetBuffOption("berserker_text_format")
     if text_format == 1 then
         self._text_format = "$dmg;$postfix; $mle;$postfix;"
+        self:SetMultiGroup("weapon_damage_increase", "melee_damage_increase")
     elseif text_format == 2 then
         self._text_format = "$mle;$postfix; $dmg;$postfix;"
+        self:SetMultiGroup("melee_damage_increase", "weapon_damage_increase")
     elseif text_format == 3 then
         self._text_format = "$dmg;$postfix;"
+        self:SetHintText("ehi_buffs_hint_damage_increase", true)
+        self:SetGroup("weapon_damage_increase")
     else -- 4
         self._text_format = "$mle;$postfix;"
+        self:SetHintText("ehi_buffs_hint_melee_damage_increase", true)
+        self:SetGroup("melee_damage_increase")
     end
     self._text_format_macros = { postfix = EHI:GetBuffOption("berserker_format") == 1 and "x" or "%" }
     EHIBerserkerBuffTracker.super.post_init(self, ...)
@@ -269,15 +333,9 @@ end
 
 function EHIBerserkerBuffTracker:PreUpdate()
     EHIBerserkerBuffTracker.super.PreUpdate(self)
-    if not self._player_manager:is_damage_health_ratio_active(0) then
+    if not ((self._player_manager:has_category_upgrade("player", "melee_damage_health_ratio_multiplier") or self._player_manager:has_category_upgrade("player", "damage_health_ratio_multiplier")) and self._player_manager:get_damage_health_ratio(0) > 0) then
         self:delete_with_class()
         return
-    end
-    self._THRESHOLD = tweak_data.upgrades.player_damage_health_ratio_threshold or 0.5
-    if self._player_manager:has_category_upgrade("player", "armor_regen_damage_health_ratio_multiplier") then -- Yakuza 9/9 deck
-        self._THRESHOLD = 1 - self._player_manager:_get_damage_health_ratio_threshold("armor_regen")
-    elseif self._player_manager:has_category_upgrade("player", "movement_speed_damage_health_ratio_multiplier") then -- Yakuza 9/9 deck
-        self._THRESHOLD = 1 - self._player_manager:_get_damage_health_ratio_threshold("movement_speed")
     end
     self._damage_multiplier = self._player_manager:upgrade_value("player", "damage_health_ratio_multiplier", 0) --[[@as number]]
     if self._text_format == "$mle;$postfix;" and self._damage_multiplier == 0 then
@@ -345,14 +403,130 @@ end
 
 if EHI:GetBuffOption("berserker_format") == 1 then
     function EHIBerserkerBuffTracker:Format()
-        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_damage_multiplier, 0.01) or 1
-        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and self._parent_class.RoundNumber(self._current_melee_damage_multiplier, 0.01) or 1
+        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and math.ehi_round(self._current_damage_multiplier, 0.01) or 1
+        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and math.ehi_round(self._current_melee_damage_multiplier, 0.01) or 1
         return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
     end
 else
     function EHIBerserkerBuffTracker:Format()
-        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and self._parent_class:RoundChanceNumber(self._current_damage_multiplier - 1) or 0
-        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and self._parent_class:RoundChanceNumber(self._current_melee_damage_multiplier - 1) or 0
+        self._text_format_macros.dmg = self._current_damage_multiplier > 1 and math.ehi_round_chance(self._current_damage_multiplier - 1) or 0
+        self._text_format_macros.mle = self._current_melee_damage_multiplier > 1 and math.ehi_round_chance(self._current_melee_damage_multiplier - 1) or 0
+        return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
+    end
+end
+
+---@class EHIYakuzaBuffTracker : EHISkillRefreshBuffTracker
+---@field super EHISkillRefreshBuffTracker
+EHIYakuzaBuffTracker = class(EHISkillRefreshBuffTracker)
+EHIYakuzaBuffTracker._deck_refresh_option = { deck = "yakuza", option = "irezumi_refresh" }
+function EHIYakuzaBuffTracker:post_init(...)
+    self._armor_regen_multiplier = 0
+    self._movement_multiplier = 0
+    self._current_armor_regen_multiplier = 1
+    self._current_movement_multiplier = 1
+    local text_format = EHI:GetBuffDeckOption("yakuza", "irezumi_text_format")
+    if text_format == 1 then
+        self._text_format = "$arm;$postfix; $mov;$postfix;"
+        self:SetMultiGroup("default", "player_movement_increase")
+    elseif text_format == 2 then
+        self._text_format = "$mov;$postfix; $arm;$postfix;"
+        self:SetMultiGroup("player_movement_increase", "default")
+    elseif text_format == 3 then
+        self._text_format = "$arm;$postfix;"
+    else -- 4
+        self._text_format = "$mov;$postfix;"
+        self:SetHintText("ehi_buffs_hint_movement_increase", true)
+        self:SetGroup("player_movement_increase")
+    end
+    self._text_format_macros = { postfix = EHI:GetBuffDeckOption("yakuza", "irezumi_format") == 1 and "x" or "%" }
+    EHIYakuzaBuffTracker.super.post_init(self, ...)
+end
+
+function EHIYakuzaBuffTracker:PreUpdate()
+    EHIYakuzaBuffTracker.super.PreUpdate(self)
+    if not (self._player_manager:has_category_upgrade("player", "armor_regen_damage_health_ratio_multiplier") or self._player_manager:has_category_upgrade("player", "movement_speed_damage_health_ratio_multiplier")) then
+        self:delete_with_class()
+        return
+    end
+    if self._player_manager:has_category_upgrade("player", "armor_regen_damage_health_ratio_threshold_multiplier") or self._player_manager:has_category_upgrade("player", "movement_speed_damage_health_ratio_threshold_multiplier") then -- Yakuza 9/9 deck
+        self._THRESHOLD = 0.5
+    else
+        self._THRESHOLD = 0.25
+    end
+    self._armor_regen_multiplier = self._player_manager:upgrade_value("player", "armor_regen_damage_health_ratio_multiplier", 0) --[[@as number]]
+    if self._text_format == "$arm;$postfix;" and self._armor_regen_multiplier == 0 then
+        self:delete_with_class()
+        return
+    end
+    self._movement_multiplier = self._player_manager:upgrade_value("player", "movement_speed_damage_health_ratio_multiplier", 0) --[[@as number]]
+    if self._text_format == "$mov;$postfix;" and self._movement_multiplier == 0 then
+        self:delete_with_class()
+        return
+    end
+    self:AddBuffToUpdate()
+end
+
+function EHIYakuzaBuffTracker:SetCustodyState(state)
+    if state then
+        self:RemoveBuffFromUpdate()
+        self:Deactivate()
+    else
+        self:Activate()
+        self._time = self._refresh_time
+        self:AddBuffToUpdate()
+    end
+end
+
+function EHIYakuzaBuffTracker:UpdateValue()
+    local player_unit = self._player_manager:player_unit()
+    local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
+    if not character_damage then
+        return
+    end
+    local health_ratio = character_damage:health_ratio()
+    if self._persistent or health_ratio <= self._THRESHOLD then
+        local damage_ratio = 1 - (health_ratio / math.max(0.01, self._THRESHOLD))
+        self._current_movement_multiplier = 1 + self._movement_multiplier * damage_ratio
+        self._current_armor_regen_multiplier = 1 + self._armor_regen_multiplier * damage_ratio
+        if self._persistent or (self._current_armor_regen_multiplier > 1 or self._current_movement_multiplier > 1) then
+            self:ActivateSoft()
+            self:SetRatio(damage_ratio)
+        else
+            self:DeactivateSoft()
+        end
+    else
+        self:DeactivateSoft()
+    end
+end
+
+function EHIYakuzaBuffTracker:Activate()
+    self._active = true
+end
+
+function EHIYakuzaBuffTracker:Deactivate()
+    if not self._active then
+        return
+    end
+    self:DeactivateSoft()
+    self._active = false
+    self._progress_bar.red = 0 -- No need to animate this because the panel is no longer visible
+    self._progress:set_color(self._progress_bar)
+end
+
+function EHIYakuzaBuffTracker:SetPersistent()
+    self._persistent = true
+end
+
+if EHI:GetBuffDeckOption("yakuza", "irezumi_format") == 1 then
+    function EHIYakuzaBuffTracker:Format()
+        self._text_format_macros.arm = string.format("%.2f", self._current_armor_regen_multiplier > 1 and math.ehi_round(self._current_armor_regen_multiplier, 0.01) or 1)
+        self._text_format_macros.mov = string.format("%.2f", self._current_movement_multiplier > 1 and math.ehi_round(self._current_movement_multiplier, 0.01) or 1)
+        return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
+    end
+else
+    function EHIYakuzaBuffTracker:Format()
+        self._text_format_macros.arm = self._current_armor_regen_multiplier > 1 and math.ehi_round_chance(self._current_armor_regen_multiplier - 1) or 0
+        self._text_format_macros.mov = self._current_movement_multiplier > 1 and math.ehi_round_chance(self._current_movement_multiplier - 1) or 0
         return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
     end
 end
@@ -373,6 +547,8 @@ function EHIUppersRangeBuffTracker:PreUpdate()
             return
         elseif next(FirstAidKitBase.List) then
             self:Activate()
+        elseif self._persistent then
+            self:DeactivateUpdate()
         else
             self:Deactivate()
         end
@@ -380,6 +556,9 @@ function EHIUppersRangeBuffTracker:PreUpdate()
     Hooks:PostHook(FirstAidKitBase, "Add", "EHI_UppersRangeBuff_Add", Check)
     Hooks:PostHook(FirstAidKitBase, "Remove", "EHI_UppersRangeBuff_Remove", Check)
     self:SetCustodyState(false)
+    if self._persistent then
+        self:ActivateSoft()
+    end
 end
 
 function EHIUppersRangeBuffTracker:Activate()
@@ -392,7 +571,11 @@ end
 
 function EHIUppersRangeBuffTracker:SetCustodyState(state)
     if state then
-        self:Deactivate()
+        if self._persistent then
+            self:DeactivateUpdate()
+        else
+            self:Deactivate()
+        end
     elseif next(FirstAidKitBase.List) then
         self:Activate()
     end
@@ -408,6 +591,14 @@ function EHIUppersRangeBuffTracker:Deactivate()
     self._active = false
 end
 
+function EHIUppersRangeBuffTracker:DeactivateUpdate()
+    if not self._active then
+        return
+    end
+    self:RemoveBuffFromUpdate()
+    self._active = false
+end
+
 function EHIUppersRangeBuffTracker:UpdateValue()
     local player_unit = self._player_manager:player_unit()
     if alive(player_unit) then
@@ -417,7 +608,7 @@ function EHIUppersRangeBuffTracker:UpdateValue()
             self._skill_value = distance / 100
             self:ActivateSoft()
             self:SetRatio(ratio)
-        else
+        elseif not self._persistent then
             self:DeactivateSoft()
         end
     end
@@ -437,4 +628,8 @@ end
 
 function EHIUppersRangeBuffTracker:Format()
     return string.format("%dm", math.floor(self._skill_value))
+end
+
+function EHIUppersRangeBuffTracker:SetPersistent()
+    self._persistent = true
 end

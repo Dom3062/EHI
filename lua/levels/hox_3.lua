@@ -43,7 +43,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowLootCounter({ max = 8 }, { element = { 100233, EHI:GetInstanceElementID(100009, 2910) } })
 
 local required_bags = EHI:GetValueBasedOnDifficulty({

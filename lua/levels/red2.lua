@@ -1,11 +1,12 @@
----@class EHIcac10Tracker : EHIAchievementTracker, EHIProgressTracker
-EHIcac10Tracker = class(EHIAchievementTracker)
-EHIcac10Tracker._needs_update = false
-EHIcac10Tracker.FormatProgress = EHIProgressTracker.FormatProgress
-EHIcac10Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-EHIcac10Tracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
----@param class EHIcac10Tracker
-EHIcac10Tracker._anim_warning = function(o, old_color, color, start_t, class)
+---@class cac_10 : EHIAchievementTracker, EHIProgressTracker
+---@field super EHIAchievementTracker
+local cac_10 = class(EHIAchievementTracker)
+cac_10._needs_update = false
+cac_10.FormatProgress = EHIProgressTracker.FormatProgress
+cac_10.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+cac_10.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
+---@param class cac_10
+cac_10._anim_warning = function(o, old_color, color, start_t, class)
     local c = Color(old_color.r, old_color.g, old_color.b)
     local progress = class._progress_text
     local t = 1
@@ -22,7 +23,7 @@ EHIcac10Tracker._anim_warning = function(o, old_color, color, start_t, class)
         t = 1
     end
 end
-function EHIcac10Tracker:OverridePanel()
+function cac_10:OverridePanel()
     self._max = 0
     self._progress = 0
     self:SetBGSize()
@@ -35,12 +36,12 @@ function EHIcac10Tracker:OverridePanel()
     self._text:set_left(self._progress_text:right())
 end
 
-function EHIcac10Tracker:SetProgressMax(max)
+function cac_10:SetProgressMax(max)
     self._max = max
     self._progress_text:set_text(self:FormatProgress())
 end
 
-function EHIcac10Tracker:SetProgress(progress)
+function cac_10:SetProgress(progress)
     if self._progress ~= progress then
         self._progress = progress
         self._progress_text:set_text(self:FormatProgress())
@@ -49,7 +50,7 @@ function EHIcac10Tracker:SetProgress(progress)
     end
 end
 
-function EHIcac10Tracker:SetCompleted(force)
+function cac_10:SetCompleted(force)
     self._status = "completed"
     self._text:stop()
     self:SetTextColor(Color.green)
@@ -57,8 +58,8 @@ function EHIcac10Tracker:SetCompleted(force)
     self._achieved_popup_showed = true
 end
 
-function EHIcac10Tracker:SetTextColor(color)
-    EHIcac10Tracker.super.SetTextColor(self, color)
+function cac_10:SetTextColor(color)
+    cac_10.super.SetTextColor(self, color)
     self._progress_text:set_color(color)
 end
 
@@ -103,13 +104,12 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101341] = { time = 30, class = "EHIcac10Tracker", condition_function = CF.IsLoud },
+            [101341] = { time = 30, class_table = cac_10, condition_function = CF.IsLoud },
             [107072] = { special_function = SF.SetAchievementComplete },
-            [101544] = { special_function = SF.CallTrackerManagerFunction, f = "StartTrackerCountdown", arg = { "cac_10" }, trigger_once = true },
+            [101544] = { special_function = SF.CallCustomFunction, f = "AddTrackerToUpdate", trigger_once = true },
             [107066] = { special_function = SF.IncreaseProgressMax },
             [107067] = { special_function = SF.IncreaseProgress },
-        },
-        cleanup_class = "EHIcac10Tracker"
+        }
     }
 }
 
@@ -124,7 +124,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103088] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[101840] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101841] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[102082] = { id = "Snipers", time = 30 + 10, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
+    other[102082] = { id = "Snipers", time = 30 + 10, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
         if EHI.IsHost and not element:_values_ok() then
             return
         elseif self._trackers:CallFunction2(trigger.id, "SnipersKilled", trigger.time) then
@@ -140,7 +140,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end) }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

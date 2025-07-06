@@ -18,6 +18,7 @@ local original =
     destroy = SecurityLockGui.destroy
 }
 
+---@param unit UnitDigitalTimer
 function SecurityLockGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
@@ -64,7 +65,7 @@ end
 
 if show_tracker and show_waypoint then
     function SecurityLockGui:update(...)
-        managers.ehi_manager:UpdateTimer(self._ehi_key, self._current_timer)
+        managers.ehi_timer:UpdateTimer(self._ehi_key, self._current_timer)
         original.update(self, ...)
     end
 elseif show_waypoint then
@@ -81,7 +82,7 @@ end
 
 function SecurityLockGui:_set_powered(powered, ...)
     original._set_powered(self, powered, ...)
-    managers.ehi_manager:SetTimerPowered(self._ehi_key, powered)
+    managers.ehi_timer:SetPowered(self._ehi_key, powered)
 end
 
 function SecurityLockGui:_set_done(...)
@@ -95,6 +96,6 @@ function SecurityLockGui:_set_done(...)
 end
 
 function SecurityLockGui:destroy(...)
-    managers.ehi_manager:Remove(self._ehi_key)
+    managers.ehi_tracking:Remove(self._ehi_key)
     original.destroy(self, ...)
 end

@@ -57,7 +57,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_from_element = 102650 } }
     other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100233 } }
 end
-EHI.Manager:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

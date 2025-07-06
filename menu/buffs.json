@@ -4,6 +4,20 @@
     "title": "ehi_buffs_menu",
     "items": [
         {
+            "type": "button",
+            "id": "ehi_other_next_menu",
+            "title": "ehi_menu_next_page",
+            "next_menu": "ehi_buffs_2_menu",
+            "ehi_ver" : 325,
+            "load_menu" : {
+                "file_path" : "buffs_2.json"
+            }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
             "vr" : [
                 {
                     "type": "slider",
@@ -162,21 +176,31 @@
             "id": "ehi_buffs_skills_menu",
             "title": "ehi_buffs_skills_menu",
             "next_menu": "ehi_buffs_skills_menu",
-            "ehi_ver" : 314
+            "ehi_ver" : 325,
+            "load_menu" : {
+                "file_path" : "buff_options/skills.json"
+            }
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_menu",
             "title": "ehi_buffs_perks_menu",
             "next_menu": "ehi_buffs_perks_menu",
-            "ehi_ver" : 319
+            "ehi_ver" : 325,
+            "load_menu" : {
+                "file_path" : "buff_options/perks.json"
+            }
         },
         {
             "type": "button",
             "id": "ehi_buffs_other_menu",
             "title": "ehi_buffs_other_menu",
             "next_menu": "ehi_buffs_other_menu",
-            "ehi_ver" : 298
+            "ehi_ver" : 325,
+            "load_menu" : {
+                "file_path" : "buff_options/other.json",
+                "settings" : "buff_option"
+            }
         }
     ]
 }

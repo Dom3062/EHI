@@ -11,7 +11,7 @@ local EscapeWP = { data_from_element = EHI:GetInstanceElementID(100029, 21250) }
 --
 -- Reported in:  
 -- https://steamcommunity.com/app/218620/discussions/14/3182362958583578588/
-local HeliTimer = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+local HeliTimer = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     local t_correction =
     {
         [1] = 5 + 8,
@@ -24,10 +24,10 @@ local HeliTimer = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
             trigger.waypoint.time = trigger.time
         end
     end
-    if self:Exists(trigger.id) then
-        self:SetTimeNoAnim(trigger.id, trigger.time)
+    if self._tracking:Exists(trigger.id) then
+        self._tracking:SetTimeNoAnim(trigger.id, trigger.time)
     else
-        self:CreateTracker(trigger)
+        self:CreateTracker()
     end
 end)
 local triggers = {
@@ -48,7 +48,7 @@ local other =
     [100217] = EHI:AddAssaultDelay({ control = 30, trigger_once = true }) -- Starting the saw early forces the assault to start
 }
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 
 EHI:AddXPBreakdown({
     objectives =

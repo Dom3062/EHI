@@ -4,7 +4,6 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
-EHI.Manager._cache.CurrentHackNumber = 0
 local SecurityTearGasRandomElement = EHI:GetInstanceElementID(100061, 6690)
 local element_sync_triggers =
 {
@@ -13,19 +12,19 @@ local element_sync_triggers =
     [EHI:GetInstanceElementID(100064, 6690)] = { id = "SecurityOfficeTeargas", icons = { Icon.Teargas }, hook_element = SecurityTearGasRandomElement, hint = Hints.Teargas } -- 65s
 }
 local CheckOkValueHostCheckOnly
-if EHI.Manager._SHOW_MISSION_TRACKERS then
-    CheckOkValueHostCheckOnly = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
+if EHI.Mission._SHOW_MISSION_TRACKERS then
+    CheckOkValueHostCheckOnly = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
         if EHI.IsHost and not element:_values_ok() then
             return
-        elseif self._trackers:TrackerExists(trigger.id) then
-            self._trackers:SetTrackerProgress(trigger.id, trigger.progress)
+        elseif self._trackers:Exists(trigger.id) then
+            self._trackers:SetProgress(trigger.id, trigger.progress)
         elseif not trigger.dont_create then
-            self:CreateTracker(trigger)
+            self:CreateTracker()
         end
         self._cache.CurrentHackNumber = trigger.progress
     end)
 else
-    CheckOkValueHostCheckOnly = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
+    CheckOkValueHostCheckOnly = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
         if EHI.IsHost and not element:_values_ok() then
             return
         end
@@ -40,11 +39,21 @@ local PCVectors = {}
 local triggers = {
     [102016] = EHI:AddEndlessAssault(7),
 
-    [104509] = { time = 30, id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, waypoint_f = function(self, trigger)
-        local vector = PCVectors[self._cache.CurrentHackNumber]
+    [104509] = { id = "HackRestartWait", icons = { Icon.PCHack, Icon.Loop }, hide_on_delete = true, run = { time = 30 }, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        if self._mission._SHOW_MISSION_TRACKERS then
+            if self._trackers:DoesNotExist(trigger.id) then
+                self._trackers:PreloadTracker(trigger)
+            end
+            self._trackers:RunTracker(trigger.id, trigger.run)
+        end
+        if trigger.waypoint_f then
+            trigger.waypoint_f(self, trigger)
+        end
+    end), waypoint_f = function(self, trigger)
+        local vector = PCVectors[self._cache.CurrentHackNumber or 0]
         if vector then
             self._waypoints:AddWaypoint(trigger.id, {
-                time = trigger.time,
+                time = trigger.run.time,
                 icon = Icon.Loop,
                 position = vector
             })
@@ -52,8 +61,12 @@ local triggers = {
             self._waypoints:RemoveWaypoint("HoxtonMaxHacks") -- In case the timer is merged with the progress
             return
         end
-        self._trackers:AddTrackerIfDoesNotExist(trigger)
+        if self._trackers:DoesNotExist(trigger.id) then
+            self._trackers:PreloadTracker(trigger)
+        end
+        self._trackers:RunTrackerIfDoesNotExist(trigger.id, trigger.run)
     end, hint = Hints.Restarting },
+    [101935] = { id = "HackRestartWait", special_function = SF.RemoveTracker }, -- Cleanup hidden tracker (if it is created)
     [102189] = EHI:AddCustomCode(function(self)
         self:CallEvent("hox_2_restore_waypoint_hack")
     end),
@@ -66,11 +79,21 @@ local triggers = {
     [105113] = { chances = 4, id = "ForensicsMatchChance", icons = { "equipment_evidence" }, class = TT.Timer.Chance, hint = Hints.hox_2_Evidence },
     [102257] = EHI:AddCustomCode(function(self)
         self._trackers:CallFunction("ForensicsMatchChance", "IncreaseChanceIndex")
+        self._waypoints:CallFunction("ForensicsMatchChanceWaypoint", "IncreaseChanceIndex") -- If the waypoint has the same ID, it will break the hack in TimerGui
     end),
-    [105137] = { id = "ForensicsMatchChance", special_function = SF.RemoveTracker }
+    [105137] = { special_function = SF.RemoveTracker, data = { "ForensicsMatchChance", "ForensicsMatchChanceWaypoint" } }
 }
-if EHI.Manager._SHOW_MISSION_TRACKERS then
+if EHI.Mission._SHOW_MISSION_TRACKERS then
     triggers[104472] = { id = "HoxtonMaxHacks", max = 4, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack }
+end
+if EHI.Mission._SHOW_MISSION_WAYPOINTS then
+    triggers[105113].waypoint_f = function(self, trigger) ---@param self EHIMissionElementTrigger
+        self._waypoints:AddWaypointlessWaypoint("ForensicsMatchChanceWaypoint", {
+            chances = trigger.chances,
+            class = self.Waypoints.Less.Chance
+        })
+    end
+    EHI.Element:AddWaypointToOverride(101559, "ForensicsMatchChanceWaypoint")
 end
 
 local PCHackWaypoint = { icon = Icon.Wait, position = Vector3(9, 4680, -2.2694) }
@@ -109,7 +132,7 @@ local achievements =
             [100258] = { special_function = SF.SetAchievementComplete }
         },
         load_sync = function(self)
-            if self:IsMissionElementEnabled(100270) then -- No keycard achievement
+            if self._utils:IsMissionElementEnabled(100270) then -- No keycard achievement
                 self._unlockable:AddAchievementStatusTracker("slakt_3")
             end
         end
@@ -125,8 +148,7 @@ local achievements =
             [101884] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
             [100320] = { special_function = SF.SetAchievementComplete },
             [100322] = { special_function = SF.SetAchievementFailed }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -146,7 +168,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -154,7 +176,7 @@ EHI.Manager:ParseTriggers({
     sync_triggers = { element = element_sync_triggers },
     tracker_merge = tracker_merge
 })
-EHI.Manager:AddLoadSyncFunction(function(self)
+EHI.Trigger:AddLoadSyncFunction(function(self)
     local pc = managers.worlddefinition:get_unit(104418) --[[@as UnitTimer?]]
     local pc2 = managers.worlddefinition:get_unit(102413) --[[@as UnitTimer?]]
     local pc3 = managers.worlddefinition:get_unit(102414) --[[@as UnitTimer?]]
@@ -165,13 +187,13 @@ EHI.Manager:AddLoadSyncFunction(function(self)
         local timer3 = pc3:timer_gui()
         local timer4 = pc4:timer_gui()
         if not timer._started then
-            self:Trigger(104472)
+            self:RunTrigger(104472)
         elseif (timer._started or timer._done) and not (timer2._started or timer2._done) then
-            self:Trigger(104478)
+            self:RunTrigger(104478)
         elseif (timer2._started or timer2._done) and not (timer3._started or timer3._done) then
-            self:Trigger(104480)
+            self:RunTrigger(104480)
         elseif (timer3._started or timer3._done) and not (timer4._started or timer4._done) then
-            self:Trigger(104481)
+            self:RunTrigger(104481)
         else
             self._cache.CurrentHackNumber = 4
         end -- Pointless to query the last PC
@@ -201,7 +223,7 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
-    [EHI:GetInstanceUnitID(100018, 2650)] = { remove_vanilla_waypoint = 101559, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance" },
+    [EHI:GetInstanceUnitID(100018, 2650)] = { remove_vanilla_waypoint_overriden = { id = 101559, waypoint = "ForensicsMatchChanceWaypoint" }, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance" },
 
     --levels/instances/unique/hox_fbi_armory
     --units/pd2_dlc2/architecture/gov_d_int/gov_d_int_door_b/001

@@ -8,7 +8,10 @@
             "id": "ehi_other_next_menu",
             "title": "ehi_menu_next_page",
             "next_menu": "ehi_other_2_menu",
-            "ehi_ver" : 306
+            "ehi_ver" : 325,
+            "load_menu" : {
+                "file_path" : "other_2.json"
+            }
         },
         {
             "type": "divider",
@@ -51,7 +54,50 @@
             "callback_arguments": "show_mission_xp_overview",
             "value": "show_mission_xp_overview",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 129
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_loot_secured_choice",
+            "title": "ehi_colors_loot_secured",
+            "description": "ehi_colors_loot_secured_desc",
+            "value": "loot_secured",
+            "default_value": [255, 188, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["loot_secured", "mission_briefing"],
+            "color_type" : "mission_briefing",
+            "setting_value": "colors",
+            "parent": "ehi_other_show_mission_xp_overview_choice",
+            "ehi_ver" : 155
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_total_xp_choice",
+            "title": "ehi_colors_total_xp",
+            "description": "ehi_colors_total_xp_desc",
+            "value": "total_xp",
+            "default_value": [0, 255, 0],
+            "callback": "SetColor",
+            "callback_arguments": ["total_xp", "mission_briefing"],
+            "color_type" : "mission_briefing",
+            "setting_value": "colors",
+            "parent": "ehi_other_show_mission_xp_overview_choice",
+            "ehi_ver" : 155
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_optional_choice",
+            "title": "ehi_colors_optional",
+            "description": "ehi_colors_optional_desc",
+            "value": "optional",
+            "default_value": [137, 209, 254],
+            "callback": "SetColor",
+            "callback_arguments": ["optional", "mission_briefing"],
+            "color_type" : "mission_briefing",
+            "setting_value": "colors",
+            "parent": "ehi_other_show_mission_xp_overview_choice",
+            "ehi_ver" : 155
         },
         {
             "type": "divider",
@@ -106,7 +152,10 @@
             "title": "ehi_other_floating_health_bar_menu",
             "next_menu": "ehi_other_floating_health_bar_menu",
             "parent": "ehi_other_show_floating_health_bar_choice",
-            "ehi_ver": 319
+            "ehi_ver": 319,
+            "load_menu" : {
+                "file_path" : "other_options/floating_health_bar.json"
+            }
         },
         {
             "type": "divider",

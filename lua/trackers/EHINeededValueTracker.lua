@@ -54,4 +54,11 @@ function EHINeededValueTracker:SetProgress(progress)
         end
     end
 end
+
+function EHINeededValueTracker:RemoveTrackerIfProgressNotMet()
+    if self._progress < self._max then
+        self:delete()
+        return true
+    end
+end
 EHINeededValueTracker.FormatProgress = EHINeededValueTracker.Format

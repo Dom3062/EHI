@@ -3,6 +3,22 @@
 EHIXPTracker = class(EHITracker)
 EHIXPTracker._forced_icons = { "xp" }
 EHIXPTracker.update = EHIXPTracker.update_fade
+---@param o Text
+---@param previous_xp number
+---@param xp number
+---@param self EHITotalXPTracker
+EHIXPTracker._anim_xp = function(o, previous_xp, xp, self)
+    local t = 0
+    while t < 1 do
+        t = t + coroutine.yield()
+        local n = math.lerp(previous_xp, xp, t)
+        o:set_text(self:Format(n))
+        self._xp = n
+    end
+    self._xp = xp
+    o:set_text(self:Format())
+    self:FitTheText(o)
+end
 function EHIXPTracker:pre_init(params)
     self._xp = params.amount or 0
 end
@@ -21,15 +37,17 @@ function EHIXPTracker:post_init(params)
     params.hint = self._xp > 0 and "gained_xp" or "lost_xp"
 end
 
-function EHIXPTracker:Format()
-    return managers.experience:cash_string(self._xp, self._xp >= 0 and "+" or "")
+---@param amount number?
+function EHIXPTracker:Format(amount)
+    local xp = amount or self._xp
+    return managers.experience:cash_string(xp, xp >= 0 and "+" or "")
 end
 
 ---@param amount number
 function EHIXPTracker:AddXP(amount)
-    self._fade_time = 5
-    self._xp = self._xp + amount
-    if self._xp >= 1000000 and not self._size_increased then
+    self._fade_time = 6
+    local new_xp = self._xp + amount
+    if new_xp >= 1000000 and not self._size_increased then
         self._size_increased = true
         local w = self._bg_box:w() / 2
         self:SetBGSize(w, "add", true)
@@ -40,7 +58,8 @@ function EHIXPTracker:AddXP(amount)
         self:AnimIconsX()
         self:AnimateAdjustHintX(w)
     end
-    self:SetAndFitTheText()
+    self._text:stop()
+    self._text:animate(self._anim_xp, self._xp, new_xp, self)
     self:AnimateBG()
 end
 
@@ -120,7 +139,7 @@ EHITotalXPTracker = class(EHIXPTracker)
 EHITotalXPTracker.post_init = EHITotalXPTracker.super.super.post_init
 EHITotalXPTracker._forced_hint_text = "total_xp"
 EHITotalXPTracker._needs_update = false
----@param o PanelText
+---@param o Text
 ---@param self EHITotalXPTracker
 EHITotalXPTracker._anim_xp = function(o, self)
     local xp = self._player_xp_limit > 0 and math.min(self._xp, self._player_xp_limit) or self._xp

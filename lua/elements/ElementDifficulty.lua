@@ -4,11 +4,11 @@ if EHI:CheckLoadHook("ElementDifficulty") then
 end
 
 if tweak_data.levels:IsLevelSkirmish() then
-    if EHI:GetTrackerOption("show_difficulty_tracker") and not EHI:IsAssaultTrackerEnabledAndOption("show_assault_diff_in_assault_trackers") then
+    if EHI:GetTrackerOption("show_difficulty_tracker") and not ((EHI:CombineAssaultDelayAndAssaultTime() or EHI:GetTrackerOption("show_assault_time_tracker")) and EHI:GetOption("show_assault_diff_in_assault_trackers")) then
         ---@class EHIWaveDifficultyTracker : EHIProgressTracker
         ---@field super EHIProgressTracker
         EHIWaveDifficultyTracker = class(EHIProgressTracker)
-        EHIWaveDifficultyTracker._forced_icons = { "enemy" }
+        EHIWaveDifficultyTracker._forced_icons = { "crime_spree_assault_extender" }
         EHIWaveDifficultyTracker._forced_hint_text = "diff"
         EHIWaveDifficultyTracker._SKIRMISH_WAVE_DATA = tweak_data.skirmish:GetWaveData()
         function EHIWaveDifficultyTracker:post_init(params)
@@ -32,13 +32,14 @@ if tweak_data.levels:IsLevelSkirmish() then
             else
                 wave = self._SKIRMISH_WAVE_DATA[math.min(self._progress, managers.job:current_level_wave_count())]
             end
-            if wave and wave.damage and wave.health then
-                return string.format("%gx|%gx", wave.damage, wave.health)
-            elseif wave then
-                if wave.damage then
+            if wave then
+                if wave.damage and wave.health then
+                    return string.format("%gx|%gx", wave.damage, wave.health)
+                elseif wave.damage then
                     return string.format("%gx|?x", wave.damage)
+                elseif wave.health then
+                    return string.format("?x|%gx", wave.health)
                 end
-                return string.format("?x|%gx", wave.health)
             end
             return "?x|?x"
         end
@@ -76,13 +77,13 @@ local original =
     on_executed = ElementDifficulty.on_executed
 }
 
-if EHI:GetTrackerOption("show_difficulty_tracker") and not EHI:IsAssaultTrackerEnabledAndOption("show_assault_diff_in_assault_trackers") then
+if EHI:GetTrackerOption("show_difficulty_tracker") and not ((EHI:CombineAssaultDelayAndAssaultTime() or EHI:GetTrackerOption("show_assault_time_tracker")) and EHI:GetOption("show_assault_diff_in_assault_trackers")) then
     EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, function(diff) ---@param diff number
         local chance = math.ehi_round_chance(diff)
         if managers.ehi_tracker:CallFunction2("AssaultDiff", "SetChance", chance) then
             managers.ehi_tracker:AddTracker({
                 id = "AssaultDiff",
-                icons = { "enemy" },
+                icons = { "crime_spree_assault_extender" },
                 chance = chance,
                 hint = "diff",
                 class = EHI.Trackers.Chance

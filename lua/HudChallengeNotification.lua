@@ -26,9 +26,9 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
                 end
                 _f_init(self, title, ...)
                 if color then
-                    for i, d in ipairs(self._hud:children()) do
+                    for _, d in ipairs(self._hud:children()) do ---@diagnostic disable-line
                         if d.panel then
-                            for ii, dd in ipairs(d:children()) do
+                           for _, dd in ipairs(d:children()) do
                                 if dd.set_image then
                                     dd:set_color(color)
                                 end
@@ -47,7 +47,7 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
                 end
                 _f_init(self, title, ...)
                 if color and self._box then
-                    for i, d in ipairs(self._box:children()) do
+                    for _, d in ipairs(self._box:children()) do ---@cast d Bitmap
                         if d.set_image then
                             d:set_color(color)
                         end
@@ -59,9 +59,9 @@ function EHI:SetNotificationAlert(ehi_title, localization, c)
     end
 end
 
-EHI:AddCallback(EHI.CallbackMessage.LocLoaded, function(l, loc_loaded) ---@param l LocalizationManager
-    for title, loc in pairs(to_localize or {}) do
-        titles[title] = { localization = l:text(loc.localization), color = loc.color }
+EHI:AddOnLocalizationLoaded(function(loc, lang_name)
+    for title, alert in pairs(to_localize or {}) do
+        titles[title] = { localization = loc:text(alert.localization), color = alert.color }
     end
     to_localize = nil
 end)

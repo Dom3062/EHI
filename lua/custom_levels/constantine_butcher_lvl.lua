@@ -15,7 +15,7 @@ local other =
     [100032] = EHI:AddAssaultDelay({ control = 30 }),
     [100442] = EHI:AddSniperSpawnedPopup()
 }
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other
 })
@@ -25,7 +25,7 @@ EHI:ShowLootCounter({ max = 8 }, { element = EHI:GetInstanceElementID(100007, 95
 local tbl =
 {
     [EHI:GetInstanceUnitID(100037, 3750)] = { f = function(unit_id, unit_data, unit) ---@param unit UnitTimer
-        Hooks:PostHook(unit:timer_gui(), "set_jammed", "EHI_100037_3750_unjammed", function(self, jammed, ...)
+        Hooks:PostHook(unit:timer_gui(), "_set_jammed", "EHI_100037_3750_unjammed", function(self, jammed, ...)
             if jammed == false then
                 managers.hud:RemoveTimerWaypoint(EHI:GetInstanceElementID(100017, 3750)) -- Interact (Computer Icon)
             end

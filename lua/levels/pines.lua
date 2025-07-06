@@ -1,6 +1,6 @@
 ---@class EHIPresentChance : EHITimedWarningChanceTracker
 ---@field super EHITimedWarningChanceTracker
-EHIPresentChance = class(EHITimedWarningChanceTracker)
+local EHIPresentChance = class(EHITimedWarningChanceTracker)
 function EHIPresentChance:SetChance(amount)
     EHIPresentChance.super.SetChance(self, amount)
     if amount <= 20 then
@@ -12,14 +12,14 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local SetChanceWhenTrackerExists = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
-    if self._trackers:TrackerExists(trigger.merge_id) then
+local SetChanceWhenTrackerExists = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+    if self._trackers:Exists(trigger.merge_id) then
         self._trackers:SetChance(trigger.merge_id, element._values.chance)
-    elseif self._trackers:TrackerExists(trigger.id) then
+    elseif self._trackers:Exists(trigger.id) then
         self._trackers:SetChance(trigger.id, element._values.chance)
     else
         trigger.chance = element._values.chance
-        self:CreateTracker(trigger)
+        self:CreateTracker()
     end
 end)
 local chance = { id = "PresentDropChance", merge_id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SetChanceWhenTrackerExists, hint = Hints.pines_Chance }
@@ -29,8 +29,7 @@ local preload = {}
 local triggers = {
     [100109] = EHI:AddEndlessAssault(25),
     [100021] = EHI:AddEndlessAssault(180, "EndlessAssault2"),
-    [103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, condition = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard), special_function = SF.SetTimeOrCreateTracker, hint = Hints.ScriptedBulldozer },
-    [101001] = { time = 1200, chance = 100, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = "EHIPresentChance", start_opened = true, hint = Hints.pines_ChanceReduction },
+    [101001] = { time = 1200, chance = 100, id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class_table = EHIPresentChance, start_opened = true, hint = Hints.pines_ChanceReduction },
     [101002] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
     [101003] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
     [101004] = { time = 600, id = "PresentDrop", icons = PresentDropTimer, class = TT.Warning, hint = Hints.pines_ChanceReduction, special_function = SF.SetTimeOrCreateTracker, tracker_merge = {} },
@@ -43,6 +42,9 @@ local triggers = {
     [101007] = chance,
     [101008] = chance
 }
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
+    triggers[103707] = { time = 1800, id = "BulldozerSpawn", icons = { "heavy" }, class = TT.Warning, special_function = SF.SetTimeOrCreateTracker, hint = Hints.ScriptedBulldozer }
+end
 ---@type ParseAchievementTable
 local achievements =
 {
@@ -75,7 +77,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

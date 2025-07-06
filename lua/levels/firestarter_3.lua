@@ -11,7 +11,7 @@ local other = {}
 local escape_chance
 local EscapeXP = 16000
 if Global.game_settings.level_id == "firestarter_3" then
-    triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire }, hint = Hints.Fire }
+    triggers[102144] = { time = 90, id = "MoneyBurn", icons = { Icon.Fire }, hint = Hints.Fire, waypoint = { data_from_element = 104465 } }
     achievements.slakt_5 =
     {
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
@@ -26,22 +26,40 @@ if Global.game_settings.level_id == "firestarter_3" then
 else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
     tweak_data.ehi.functions.uno_1()
-    if EHI:IsEscapeChanceEnabled() then
-        other[103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
-        EHI:AddOnAlarmCallback(function(dropin)
-            local start_chance = 5
-            if managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3) then -- Cash or Gold
-                start_chance = 15 -- 5 (start_chance) + 10
-            end
-            managers.ehi_escape:AddEscapeChanceTracker(dropin, start_chance)
-        end)
-    end
     EscapeXP = 12000
     escape_chance =
     {
-        start_chance = (managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3)) and 15 or 5,
+        start_chance = (managers.mission:check_mission_filter(2) or managers.mission:check_mission_filter(3)) and 15 or 5, -- Cash or Gold starts at 15% (10% + 5%), others at 5%
         kill_add_chance = 5
     }
+    if EHI:IsEscapeChanceEnabled() then
+        other[103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+        EHI:AddOnAlarmCallback(function(dropin)
+            managers.ehi_escape:AddEscapeChanceTrackerAndCheckPreplanning(dropin, escape_chance.start_chance, 104825)
+        end)
+    end
+    triggers[104637] = EHI:AddCustomCode(function(self)
+        self._trackers:AddTracker({
+            id = "ObjectiveSteal",
+            max = 25000,
+            icons = { Icon.Escape },
+            flash_times = 1,
+            hint = "loot_escape",
+            class = self.Trackers.NeededValue
+        })
+        self._loot:AddListener("branchbank_deposit", function(loot)
+            local progress = loot:get_real_total_small_loot_value()
+            self._trackers:SetProgress("ObjectiveSteal", progress)
+            if progress >= 25000 then
+                self._loot:RemoveListener("branchbank_deposit")
+            end
+        end)
+    end)
+    triggers[105426] = EHI:AddCustomCode(function(self)
+        if self._trackers:ReturnValue("ObjectiveSteal", "RemoveTrackerIfProgressNotMet") then
+            self._loot:RemoveListener("branchbank_deposit")
+        end
+    end)
 end
 triggers[101425] = { time = 24 + 7, id = "TeargasIncoming1", icons = { Icon.Teargas, Icon.ExclamationMark }, class = TT.Warning, hint = Hints.Teargas }
 triggers[105611] = { time = 24 + 7, id = "TeargasIncoming2", icons = { Icon.Teargas, Icon.ExclamationMark }, class = TT.Warning, hint = Hints.Teargas }
@@ -66,7 +84,7 @@ other[105364] = EHI:AddAssaultDelay({ control = 10 + 60, special_function = SF.A
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop, single_sniper = true }
     other[105327] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[101481] = { id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+    other[101481] = { id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         self._trackers:SetChance(id, element._values.chance) -- 20%
         self._trackers:SetTimeNoAnim(id, 60)
@@ -113,13 +131,16 @@ if EHI:IsLootCounterVisible() then
             unknown_random = has_random_bags
         })
     end, { element = { 101060, 100510, 101065 } })
-    other[103372] = EHI:AddCustomCode(function(self)
-        if not self._trackers:TrackerExists("LootCounter") then
-            self:Trigger(105762) --- You had your last chance here, son.
+    other[101129] = EHI:AddCustomCode(function(self)
+        if not self._loot:IsMasterActive() then
+            self:RunTrigger(105762) --- You had your last chance here, son.
         end
+    end)
+    other[103372] = EHI:AddCustomCode(function(self) -- Money
         self._loot:SetUnknownRandomLoot()
     end)
-    other[104647] = other[103372] -- Second vault position
+    other[104647] = other[103372] -- Gold
+    other[104651] = other[103372] -- Deposit
     if has_random_bags then
         local LootVisible = EHI:AddCustomCode(function(self)
             self._loot:IncreaseLootCounterProgressMax()
@@ -134,7 +155,7 @@ if EHI:IsLootCounterVisible() then
     end
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -161,7 +182,10 @@ EHI:AddXPBreakdown({
         {
             min_max =
             {
-                loot_all = { min = EscapeXP == 12000 and 1 or 0, max = 5 + (EscapeXP == 12000 and 8 or 0) },
+                loot_all = {
+                    min = Global.game_settings.level_id ~= "firestarter_3" and not managers.mission:check_mission_filter(1) and 1 or 0,
+                    max = 5 + (EscapeXP == 12000 and 8 or 0)
+                },
                 bonus_xp = { min_max = EscapeXP }
             }
         }
@@ -176,7 +200,7 @@ local dog_haters =
     [Idstring("units/payday2/characters/civ_male_dog_abuser_1/civ_male_dog_abuser_1"):key()] = true,
     [Idstring("units/payday2/characters/civ_male_dog_abuser_2/civ_male_dog_abuser_2"):key()] = true
 }
-EHI.Manager:AddLoadSyncFunction(function(self)
+EHI.Trigger:AddLoadSyncFunction(function(self)
     local dog_haters_unit = {} ---@type UnitCivilian[]
     local count = 0
     for _, data in pairs(managers.enemy:all_civilians()) do
@@ -205,10 +229,9 @@ EHI.Manager:AddLoadSyncFunction(function(self)
         managers.ehi_unlockable:SetAchievementFailed("voff_1")
     end
     for _, dog_hater in ipairs(dog_haters_unit) do
-        local name_key = dog_hater:name():key()
-        dog_hater:base():add_destroy_listener("EHI_" .. tostring(name_key), fail)
+        dog_hater:base():add_destroy_listener("EHIDestroy", fail)
     end
-    self:Trigger(105665)
+    self:RunTrigger(105665)
     local pos_1 = dog_haters_unit[1]:position()
     local pos_2 = dog_haters_unit[2]:position()
     if (secure_area_1:_is_inside(pos_1) and secure_area_1:_is_inside(pos_2)) or
@@ -226,7 +249,7 @@ EHI:AddOnSpawnedCallback(function()
         for _, data in pairs(managers.enemy:all_civilians()) do
             local name_key = data.unit:name():key()
             if dog_haters[name_key] then
-                data.unit:base():add_destroy_listener("EHI_" .. tostring(name_key), fail)
+                data.unit:base():add_destroy_listener("EHIDestroy", fail)
                 count = count + 1
                 if count == 2 then
                     break
@@ -234,9 +257,9 @@ EHI:AddOnSpawnedCallback(function()
             end
         end
         dog_haters = nil
-        if count ~= 2 or EHI.IsHost or managers.ehi_tracker:TrackerExists("voff_1") then
+        if count ~= 2 or EHI.IsHost or managers.ehi_tracker:Exists("voff_1") then
             return
         end
-        managers.ehi_manager:Trigger(105665)
+        EHI.Trigger:RunTrigger(105665)
     end
 end)

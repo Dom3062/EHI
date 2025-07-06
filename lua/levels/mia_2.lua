@@ -82,22 +82,22 @@ if EHI:IsLootCounterVisible() then
         end
         HostageMoneyTaken = HostageMoneyTaken + 1
     end
-    local function HostageExploded()
+    local HostageExploded = EHI:AddCustomCode(function(self)
         _HostageExploded = true
         local count = MoneyAroundHostage - HostageMoneyTaken
         if count > 0 then
-            managers.ehi_loot:DecreaseLootCounterProgressMax(count)
+            self._loot:DecreaseLootCounterProgressMax(count)
         end
-    end
-    other[100043] = EHI:AddLootCounter4(function(self, ...)
+    end)
+    other[100043] = EHI:AddLootCounter3(function(self)
         local loot_triggers = {}
-        MoneyAroundHostage = self:CountInteractionAvailable("money_small")
+        MoneyAroundHostage = self._utils:CountInteractionAvailable("money_small")
         for _, index in ipairs(start_index) do
             if managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceElementID(100000, index)) then -- Bomb guy is here
                 for i = 100003, 100006, 1 do
                     managers.mission:add_runned_unit_sequence_trigger(EHI:GetInstanceElementID(i, index), "interact", HostageMoneyInteracted)
                 end
-                loot_triggers[EHI:GetInstanceElementID(100029, index)] = { special_function = SF.CustomCode, f = HostageExploded }
+                loot_triggers[EHI:GetInstanceElementID(100029, index)] = HostageExploded
                 break
             end
         end
@@ -123,7 +123,7 @@ if EHI:IsLootCounterVisible() then
     other[101281] = CokeDestroyedTrigger
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local ChanceSuccess = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+    local ChanceSuccess = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         local chance = element._values.chance
         if self._trackers:CallFunction2(id, "OnChanceSuccess", chance) then -- 10%/15%
@@ -150,7 +150,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101266] = { id = "Snipers2", special_function = SF.DecreaseCounter }
     other[101267] = { id = "Snipers2", special_function = SF.IncreaseCounter }
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

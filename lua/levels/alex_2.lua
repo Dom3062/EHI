@@ -1,11 +1,11 @@
-local EHI, EM = EHI, managers.ehi_manager
+local EHI = EHI
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local other =
 {
-    [104488] = EHI:AddAssaultDelay({ control = 16, special_function = SF.SetTimeOrCreateTracker }),
-    [104489] = EHI:AddAssaultDelay({ control = 16, special_function = SF.AddTrackerIfDoesNotExist }),
+    [104488] = EHI:AddAssaultDelay({ control = 15, special_function = SF.SetTimeOrCreateTracker }),
+    [104489] = EHI:AddAssaultDelay({ control = 15, special_function = SF.AddTrackerIfDoesNotExist }),
     -- Police ambush
     [104535] = { special_function = SF.Trigger, data = { 1045351, 1045352 } },
     [1045351] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }), -- 30s
@@ -34,7 +34,7 @@ if EHI:IsEscapeChanceEnabled() then
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount }
-    other[100063] = { time = 90, id = "Snipers", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    other[100063] = { time = 90, id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         if self._trackers:CallFunction2(id, "SetRespawnTime", trigger.time) then
             self._trackers:AddTracker({
@@ -48,12 +48,12 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end)}
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     other = other
 })
 EHI:AddOnAlarmCallback(function(dropin)
     if dropin then
-        EM:Trigger(100342)
+        EHI.Trigger:RunTrigger(100342)
         return
     end
     managers.ehi_assault:StartAssaultCountdown(75 + 15 + 30, true)

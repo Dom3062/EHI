@@ -11,7 +11,7 @@ function HUDMissionBriefing:MoveJobName(panel_w)
     if self.__ehi_moved then
         return
     end
-    local job = self._foreground_layer_one and self._foreground_layer_one:child("job_text") --[[@as PanelText?]]
+    local job = self._foreground_layer_one and self._foreground_layer_one:child("job_text") --[[@as Text?]]
     if job then
         job:set_x(job:x() + panel_w) -- +351 | +365 (with controller)
         self.__ehi_moved = true

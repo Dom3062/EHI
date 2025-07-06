@@ -4,7 +4,7 @@
 ---@field _custom_chance_anim function?
 EHIChanceTracker = class(EHITracker)
 EHIChanceTracker._needs_update = false
----@param o PanelText
+---@param o Text
 ---@param self EHIChanceTracker
 EHIChanceTracker._anim_chance = function(o, self)
     local chance_to_anim = self._anim_static_chance
@@ -77,6 +77,6 @@ end
 
 ---@param amount number Chance between 0 and 1
 function EHIChanceTracker:SetChancePercent(amount)
-    self:SetChance(self._parent_class:RoundChanceNumber(amount))
+    self:SetChance(math.ehi_round_chance(amount))
 end
 EHIChanceTracker.FormatChance = EHIChanceTracker.Format

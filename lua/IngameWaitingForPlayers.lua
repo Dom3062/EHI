@@ -158,7 +158,7 @@ end
 local function HasViperGrenadesOnLauncherEquipped()
     local function HasViperAmmo(factory_id, blueprint)
         local t = managers.weapon_factory:get_ammo_data_from_weapon(factory_id, blueprint)
-        if t and next(t) then
+        if ehi_next(t) then ---@cast t -?
             return table.contains(t, "launcher_poison") or table.contains(t, "launcher_poison_ms3gl_conversion")
         end
         return false
@@ -523,7 +523,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 managers.ehi_hook:HookKillFunction("turtles_1", "wa2000", true)
                 EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
                     if self:get_name_id() == "wa2000" then
-                        managers.ehi_tracker:SetTrackerProgress("turtles_1", 0)
+                        managers.ehi_tracker:SetProgress("turtles_1", 0)
                     end
                 end)
             end
@@ -543,7 +543,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 managers.ehi_hook:HookKillFunction("grv_2", "coal", true)
                 EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
                     if self:get_name_id() == "coal" then
-                        managers.ehi_tracker:SetTrackerProgress("grv_2", 0)
+                        managers.ehi_tracker:SetProgress("grv_2", 0)
                     end
                 end)
             end
@@ -563,7 +563,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         managers.ehi_tracker:IncreaseProgress("cac_2")
                     end
                     managers.player:register_message("player_state_changed", "EHI_cac_2_state_changed_key", function(state_name)
-                        managers.ehi_tracker:SetTrackerProgress("cac_2", 0)
+                        managers.ehi_tracker:SetProgress("cac_2", 0)
                         if state_name == "bipod" then
                             managers.player:register_message(Message.OnEnemyKilled, enemy_killed_key, on_enemy_killed)
                         else
@@ -679,7 +679,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     managers.ehi_tracker:AddTracker({
                         id = "sand_11",
                         flash_times = 1,
-                        class = "EHIsand11Tracker"
+                        class = "EHIsand_11Tracker"
                     })
                     Hooks:PostHook(StatisticsManager, "killed", "EHI_sand_11_killed", function(_, data)
                         if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
@@ -797,7 +797,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 EHI:Hook(AchievmentManager, "add_heist_success_award_progress", function(am, id)
                     if id == "pim_2_stats" then
                         progress = progress + 1
-                        managers.ehi_tracker:SetTrackerProgress("pim_2", progress)
+                        managers.ehi_tracker:SetProgress("pim_2", progress)
                     end
                 end)
                 EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
@@ -900,7 +900,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if EHI:IsAchievementLocked2("gmod_6") then -- "There and Back Again" achievement
                 Hooks:PostHook(GageAssignmentManager, "_give_rewards", "EHI_gmod_6_achievement", function(gam, assignment, ...)
                     local progress = 0
-                    for i, dvalue in pairs(gam._global.completed_assignments) do
+                    for _, dvalue in pairs(gam._global.completed_assignments) do
                         if Application:digest_value(dvalue, false) >= tweak_data.achievement.gonna_find_them_all then
                             progress = progress + 1
                         end
@@ -914,7 +914,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 -- Only tracked in Safehouse to prevent tracker spam in heists
                 ---@class EHIovk3Tracker : EHIAchievementUnlockTracker
                 ---@field super EHIAchievementUnlockTracker
-                EHIovk3Tracker = class(EHIAchievementUnlockTracker)
+                local EHIovk3Tracker = class(EHIAchievementUnlockTracker)
                 EHIovk3Tracker._forced_icons = EHI:GetAchievementIcon("ovk_3")
                 function EHIovk3Tracker:Reset()
                     self:SetTime(25)
@@ -928,7 +928,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                             id = "ovk_3",
                             time = 25,
                             status_is_overridable = false,
-                            class = "EHIovk3Tracker"
+                            class_table = EHIovk3Tracker
                         })
                     end
                 end)

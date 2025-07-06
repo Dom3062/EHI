@@ -66,7 +66,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
     local not_u24_mod = _G.ch_settings == nil
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.rand(0.5, 9.99), icons = { Icon.Wait } })
     self:AddFakeTracker({ id = "show_mission_trackers", time = math.random(60, 180), icons = { Icon.Car, Icon.Escape } })
-    if EHI:GetOption("show_unlockables") then
+    if EHI:GetOption("show_unlockables") and not_u24_mod then
         if EHI:GetUnlockableOption("show_achievements") then
             local icon = table.random_key(tweak_data.achievement.visual)
             self:AddFakeTracker({ ids = { "achievement", "show_achievements" }, time = math.random(60, 180), icons = { { icon = EHI:GetAchievementIconString(icon), color = EHI:GetColorFromOption("unlockables", "achievement") } } })
@@ -91,10 +91,10 @@ function FakeEHITrackerManager:AddFakeTrackers()
     if not_u24_mod then
         self:AddFakeTracker({ id = "show_camera_loop", time = math.random(10, 25), icons = { "camera_loop" } })
     end
-    self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, "reload" } })
-    self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, Icon.Fix } })
+    self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, "reload" }, first_icon_pos = 2 })
+    self:AddFakeTracker({ id = "show_enemy_turret_trackers", time = math.random(10, 30), icons = { Icon.Turret, Icon.Fix }, first_icon_pos = 2 })
     self:AddFakeTracker({ id = "show_zipline_timer", time = math.rand(1, 8) * 2, icons = { table.random({ "zipline_bag", "Other_H_Any_DidntSee" }) } })
-    if EHI:GetOption("gage_tracker_panel") == 1 then
+    if EHI:GetOption("gage_tracker_panel") == 1 and not_u24_mod then
         self:AddFakeTracker({ id = "show_gage_tracker", icons = { "gage" }, class = "FakeEHIProgressTracker" })
     end
     self:AddFakeTracker({ id = "show_captain_damage_reduction", icons = { "buff_shield" }, class = "FakeEHIChanceTracker" })
@@ -113,7 +113,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
         end
     end
     self:AddFakeTracker({ id = "show_minion_tracker", min = 1, charges = 4, icons = { "minion" }, class = "FakeEHIMinionTracker" })
-    self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "enemy" }, class = "FakeEHIChanceTracker" })
+    self:AddFakeTracker({ id = "show_difficulty_tracker", icons = { "crime_spree_assault_extender" }, class = "FakeEHIChanceTracker" })
     self:AddFakeTracker({ id = "show_drama_tracker", chance = math.random(100), icons = { "C_Escape_H_Street_Bullet" }, class = "FakeEHIChanceTracker" })
     self:AddFakeTracker({ id = "show_pager_tracker", progress = 3, max = 4, icons = { Icon.Pager }, class = "FakeEHIProgressTracker" })
     self:AddFakeTracker({ id = "show_pager_callback", time = math.rand(0.5, 12), icons = { "pager_icon" } })
@@ -142,7 +142,9 @@ function FakeEHITrackerManager:AddFakeTracker(params)
     if params.id and not EHI:GetOption(params.id) then
         return
     elseif self._n_of_trackers == 0 then
-        self:CreateFirstFakeTracker(params)
+        params.first = true
+        self:CreateFakeTracker(params)
+        self:_update_border_color(self._fake_trackers[1]._bg_box)
     else
         self:CreateFakeTracker(params)
     end
@@ -159,7 +161,7 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     params.tracker_alignment = self._tracker_alignment
     params.tracker_vertical_anim = self._tracker_vertical_anim
     params.format = self._tracker_format_data
-    local tracker = _G[params.class or "FakeEHITracker"]:new(self._panel, params, self) --[[@as FakeEHITracker]]
+    local tracker = _G[params.class or "FakeEHITracker"]:new(self._panel, params) --[[@as FakeEHITracker]]
     self._n_of_trackers = self._n_of_trackers + 1
     self._fake_trackers[self._n_of_trackers] = tracker
     if self._tracker_alignment == 4 then -- Horizontal; Right to Left
@@ -167,12 +169,7 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     end
 end
 
-function FakeEHITrackerManager:CreateFirstFakeTracker(params)
-    params.first = true
-    self:CreateFakeTracker(params)
-    self:_update_border_color(self._fake_trackers[1]._bg_box)
-end
-
+---@diagnostic disable
 ---@param bg_box Panel
 function FakeEHITrackerManager:_update_border_color(bg_box)
     bg_box:child("right_bottom"):set_color(Color.white)
@@ -191,6 +188,7 @@ function FakeEHITrackerManager:_update_border_color(bg_box)
         bg_box:child("left_top"):set_color(Color.red)
     end
 end
+---@diagnostic enable
 
 function FakeEHITrackerManager:GetLocalPeerColor()
     if CustomNameColor and CustomNameColor.GetOwnColor then
@@ -484,7 +482,9 @@ function FakeEHITrackerManager:UpdateTrackerVerticalAnim(anim)
     for _, tracker in ipairs(self._fake_trackers) do
         tracker:UpdateTrackerVerticalAnim(anim)
     end
-    self:_update_tracker_x()
+    if self._tracker_alignment <= 2 then
+        self:_update_tracker_x()
+    end
 end
 
 function FakeEHITrackerManager:Redraw()

@@ -1,4 +1,4 @@
----@alias EHITimerGroupTracker.Timer { label: PanelText, time: number, jammed: boolean, not_powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number }
+---@alias EHITimerGroupTracker.Timer { label: Text, time: number, jammed: boolean, not_powered: boolean, autorepair: boolean, animate_warning: boolean?, animate_completion: boolean?, anim_started: boolean, pos: number, timer_gui: TimerGui, is_running: boolean }
 
 local EHI = EHI
 local Color = Color
@@ -164,7 +164,7 @@ function EHITimerTracker:SetRunning()
 end
 
 ---@param color Color? Color is set to `White` or tracker default color if not provided
----@param text PanelText? Defaults to `self._text` if not provided
+---@param text Text? Defaults to `self._text` if not provided
 function EHITimerTracker:SetTextColor(color, text)
     if color then
         EHITimerTracker.super.SetTextColor(self, color, text)
@@ -190,6 +190,60 @@ function EHITimerTracker:IsTimerRunning()
     return self._bg_box:w() == self._bg_box_double
 end
 
+---Workaround for crashes in `TimerGui:update(t, dt)`  
+---Class is updated in `HUDManager:add_updator()` as this is a unit
+---@class EHITimerGuiTracker : EHITimerTracker
+---@field super EHITimerTracker
+EHITimerGuiTracker = class(EHITimerTracker)
+function EHITimerGuiTracker:post_init(params)
+    EHITimerGuiTracker.super.post_init(self, params)
+    self._timer_gui = params.timer_gui --[[@as TimerGui]]
+    self._callback_id = "ehi_tracker_" .. self._id
+    self._update_callback = callback(self, self, "update")
+    self:AddTrackerToUpdate()
+end
+
+---@param dt number
+function EHITimerGuiTracker:update(_, dt)
+    local dt_mod = self._timer_gui:get_timer_multiplier()
+    self._time = self._time - dt / dt_mod
+    local t = self._time * dt_mod
+    self._text:set_text(self:FormatTime(t))
+    if t <= 10 and self._animate_warning and not self._anim_started then
+        self._anim_started = true
+        self:AnimateColor()
+    end
+end
+
+function EHITimerGuiTracker:SetJammed(jammed)
+    EHITimerGuiTracker.super.SetJammed(self, jammed)
+    self:SetPause()
+end
+
+function EHITimerGuiTracker:SetPowered(powered)
+    EHITimerGuiTracker.super.SetPowered(self, powered)
+    self:SetPause()
+end
+
+function EHITimerGuiTracker:SetPause()
+    if not self._timer_gui then -- For SecurityLockGui, class is using EHIProgressTimerTracker and is not providing `timer_gui`
+        return
+    elseif self._jammed or self._not_powered then
+        self:RemoveTrackerFromUpdate()
+    else
+        self:AddTrackerToUpdate()
+    end
+end
+
+function EHITimerGuiTracker:AddTrackerToUpdate()
+    managers.hud:add_updator(self._callback_id, self._update_callback)
+end
+
+function EHITimerGuiTracker:RemoveTrackerFromUpdate()
+    managers.hud:remove_updator(self._callback_id)
+end
+EHITimerGuiTracker.pre_destroy = EHITimerGuiTracker.RemoveTrackerFromUpdate
+
 ---@class EHITimerGroupTracker : EHITimerTracker
 ---@field super EHITimerTracker
 EHITimerGroupTracker = class(EHITimerTracker)
@@ -201,7 +255,7 @@ function EHITimerGroupTracker:post_init(params)
     self._timers = {} --[[@as table<string, EHITimerGroupTracker.Timer?>]]
     self._timers_n = 0
     if params.key and params.time then
-        self:AddTimer(params.time, params.key, params.warning, params.completion)
+        self:AddTimer(params.time, params.key, params.warning, params.completion, params.timer_gui)
     end
     EHITimerGroupTracker.super.post_init(self, params)
 end
@@ -211,7 +265,7 @@ end
 ---@param color Color?
 ---@param text_color Color?
 function EHITimerGroupTracker:AnimateColor(timer, check_progress, color, text_color)
-    local start_t = check_progress and (1 - math.min(self._parent_class.RoundNumber(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
+    local start_t = check_progress and (1 - math.min(math.ehi_round(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
     timer.label:animate(self._anim_warning, text_color or self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
 end
 
@@ -219,7 +273,8 @@ end
 ---@param id string Unit Key
 ---@param warning boolean?
 ---@param completion boolean?
-function EHITimerGroupTracker:AddTimer(t, id, warning, completion)
+---@param timer_gui TimerGui
+function EHITimerGroupTracker:AddTimer(t, id, warning, completion, timer_gui)
     local label = self:CreateText({
         text = self:FormatTime(t),
         x = self._timers_n * self._default_bg_size,
@@ -229,14 +284,25 @@ function EHITimerGroupTracker:AddTimer(t, id, warning, completion)
     {
         label = label,
         time = t,
+        timer_gui = timer_gui,
         not_powered = false,
         animate_warning = warning or completion,
         animate_completion = completion,
-        pos = self._timers_n
+        pos = self._timers_n,
+        is_running = true
     }
     self._timers_n = self._timers_n + 1
     if self._timers_n >= 2 then
         self:AnimateMovement(self._timers_n)
+        -- Subtract a tiny bit of the timer so it looks more smooth in the tracker when BG is disabled, jumping from 1:00 to 59 is not smooth at all
+        -- This is a visual change and does not affect the calculation
+        if not self._BG_START_COLOR then
+            if t <= 10 then
+                label:set_text(self:FormatTime(t - 0.1))
+            else
+                label:set_text(self:FormatTime(t - 1))
+            end
+        end
     end
 end
 
@@ -271,14 +337,12 @@ end
 
 ---@param id string Unit Key
 function EHITimerGroupTracker:StopTimer(id)
-    local timer = self._timers[id]
+    local timer = table.remove_key(self._timers, id)
     if not timer or self._timers_n <= 1 then -- If the amount of timers in this tracker is 1, the manager will delete the tracker
         return
     end
-    timer.label:stop()
     timer.label:parent():remove(timer.label)
     local pos = timer.pos
-    self._timers[id] = nil
     for _, t in pairs(self._timers) do
         if t.pos > pos then
             local new_pos = t.pos - 1
@@ -357,7 +421,6 @@ function EHITimerGroupTracker:SetAutorepair(state, id)
             if state then
                 self:AnimateColor(timer, false, self._autorepair_color, self._paused_color)
             end
-            return
         elseif not timer.anim_started then
             timer.label:stop()
             timer.label:set_color(Color.white)
@@ -388,12 +451,63 @@ function EHITimerGroupTracker:IsTimerRunning(id)
     return self._timers[id] ~= nil
 end
 
----@class EHIProgressTimerTracker : EHITimerTracker, EHIProgressTracker, EHITimedChanceTracker
----@field super EHITimerTracker
-EHIProgressTimerTracker = class(EHITimerTracker)
+---Workaround for crashes in `TimerGui:update(t, dt)`
+---Class is updated in `HUDManager:add_updator()` as this is a unit
+---@class EHITimerGuiGroupTracker : EHITimerGroupTracker
+---@field super EHITimerGroupTracker
+EHITimerGuiGroupTracker = class(EHITimerGroupTracker)
+EHITimerGuiGroupTracker.RemoveTrackerFromUpdate = EHITimerGuiTracker.RemoveTrackerFromUpdate
+EHITimerGuiGroupTracker.pre_destroy = EHITimerGuiTracker.pre_destroy
+function EHITimerGuiGroupTracker:post_init(params)
+    EHITimerGuiGroupTracker.super.post_init(self, params)
+    self._callback_id = "ehi_" .. self._id
+    managers.hud:add_updator(self._callback_id, callback(self, self, "update"))
+end
+
+---@param dt number
+function EHITimerGuiGroupTracker:update(_, dt)
+    for _, timer in pairs(self._timers) do
+        if timer.is_running then
+            local dt_mod = timer.timer_gui:get_timer_multiplier()
+            timer.time = timer.time - dt / dt_mod
+            local t = timer.time * dt_mod
+            timer.label:set_text(self:FormatTime(t))
+            if t <= 10 and timer.animate_warning and not timer.anim_started then
+                timer.anim_started = true
+                self:AnimateColor(timer)
+            end
+        end
+    end
+end
+
+function EHITimerGuiGroupTracker:SetJammed(jammed, id)
+    EHITimerGuiGroupTracker.super.SetJammed(self, jammed, id)
+    self:SetPause(id)
+end
+
+function EHITimerGuiGroupTracker:SetPowered(powered, id)
+    EHITimerGuiGroupTracker.super.SetPowered(self, powered, id)
+    self:SetPause(id)
+end
+
+---@param id string Unit Key
+function EHITimerGuiGroupTracker:SetPause(id)
+    local timer = self._timers[id]
+    if timer then
+        timer.is_running = not (timer.jammed or timer.not_powered)
+    end
+end
+
+---@param id string Unit Key
+function EHITimerGuiGroupTracker:GetTimerTimeLeft(id)
+    return self._timers[id] and self._timers[id].time or 0
+end
+
+---@class EHIProgressTimerTracker : EHITimerGuiTracker, EHIProgressTracker, EHITimedChanceTracker
+---@field super EHITimerGuiTracker
+EHIProgressTimerTracker = class(EHITimerGuiTracker)
 EHIProgressTimerTracker._progress_bad = EHIProgressTracker._progress_bad
 EHIProgressTimerTracker.pre_init = EHIProgressTracker.pre_init
-EHIProgressTimerTracker.update = EHIProgressTimerTracker.update_fade
 EHIProgressTimerTracker.FormatProgress = EHIProgressTracker.FormatProgress
 EHIProgressTimerTracker.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
 EHIProgressTimerTracker.DecreaseProgressMax = EHIProgressTracker.DecreaseProgressMax
@@ -405,14 +519,21 @@ EHIProgressTimerTracker.SetProgressRemaining = EHIProgressTracker.SetProgressRem
 EHIProgressTimerTracker.SetCompleted = EHIProgressTracker.SetCompleted
 EHIProgressTimerTracker.SetBad = EHIProgressTracker.SetBad
 function EHIProgressTimerTracker:post_init(params)
+    self._callback_id = "ehi_tracker_" .. self._id
+    self._update_callback = callback(self, self, "update")
     self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
         text = self:FormatProgress()
     })
     self._text:set_left(self._progress_text:right())
-    if not managers.ehi_manager:GetInSyncState() then
+    if not managers.ehi_sync:IsSyncing() then
         self:SetBad()
     end
+end
+
+---@param timer_gui TimerGui
+function EHIProgressTimerTracker:SetTimerGui(timer_gui)
+    self._timer_gui = timer_gui
 end
 
 function EHIProgressTimerTracker:StartTimer(...)
@@ -427,9 +548,10 @@ function EHIProgressTimerTracker:StopTimer()
     self:SetBad()
 end
 
----@class EHIChanceTimerTracker : EHITimerTracker, EHIChanceTracker
+---@class EHIChanceTimerTracker : EHITimerGuiTracker, EHIChanceTracker
 ---@field super EHIChanceTracker
-EHIChanceTimerTracker = class(EHITimerTracker)
+EHIChanceTimerTracker = class(EHITimerGuiTracker)
+EHIChanceTimerTracker.SetTimerGui = EHIProgressTimerTracker.SetTimerGui
 EHIChanceTimerTracker.pre_init = EHIChanceTracker.pre_init
 EHIChanceTimerTracker.FormatChance = EHIChanceTracker.FormatChance
 EHIChanceTimerTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
@@ -438,6 +560,8 @@ EHIChanceTimerTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHIChanceTimerTracker.SetChance = EHIChanceTracker.SetChance
 EHIChanceTimerTracker._anim_chance = EHIChanceTracker._anim_chance
 function EHIChanceTimerTracker:post_init(params)
+    self._callback_id = "ehi_tracker_" .. self._id
+    self._update_callback = callback(self, self, "update")
     self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({
         text = self:FormatChance()

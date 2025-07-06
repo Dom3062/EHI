@@ -9,9 +9,9 @@
 ---
 --- Aliases
 ---
----@alias UnitObject UnitPlayer|UnitEnemy|UnitTeamAI|UnitCivilian|UnitBase
+---@alias UnitObject UnitPlayer|UnitEnemy|UnitTeamAI|UnitCivilian|UnitEnemyTurret|Unit
 ---@alias TextureRect { number: x, number: y, number: w, number: h }
----@param obj (Unit|Workspace|PanelBaseObject)?
+---@param obj (Unit|Workspace|Object)?
 ---@return boolean
 function alive(obj)
 end
@@ -35,9 +35,11 @@ _G.World = {}
 ---@field gui GuiTweakData
 ---@field group_ai GroupAITweakData
 ---@field hud_icons HudIconsTweakData
+---@field interaction InteractionTweakData
 ---@field levels LevelsTweakData
 ---@field menu MenuTweakData
----@field mutators table
+---@field mission_door MissionDoorTweakData
+---@field mutators MutatorsTweakData
 ---@field player PlayerTweakData
 ---@field preplanning PrePlanningTweakData
 ---@field skirmish SkirmishTweakData
@@ -67,7 +69,61 @@ _G.TweakData = {
 ---@field chat_colors Color[]
 ---@field get_raw_value fun(self: self, ...): any
 ---@field get_value fun(self: self, ...): any
-_G.tweak_data = {}
+_G.tweak_data = {
+    contour = {
+		character = {
+            standard_color = Vector3(0.1, 1, 0.5),
+            friendly_color = Vector3(0.2, 0.8, 1),
+            friendly_minion_color = Vector3(0.1, 0.4, 1),
+            downed_color = Vector3(1, 0.5, 0),
+            dead_color = Vector3(1, 0.1, 0.1),
+            dangerous_color = Vector3(0.6, 0.2, 0.2),
+            more_dangerous_color = Vector3(1, 0.1, 0.1),
+            standard_opacity = 0,
+            heal_color = Vector3(0, 1, 0),
+            tmp_invulnerable_color = Vector3(0.8, 0.3, 0),
+            vulnerable_color = Vector3(0.6, 0.2, 0.2)
+        },
+        character_interactable = {
+            standard_color = Vector3(1, 0.5, 0),
+            selected_color = Vector3(1, 1, 1)
+        },
+        interactable = {
+            standard_color = Vector3(1, 0.5, 0),
+            selected_color = Vector3(1, 1, 1)
+        },
+	    contour_off = {
+            standard_color = Vector3(0, 0, 0),
+            selected_color = Vector3(0, 0, 0),
+            standard_opacity = 0
+        },
+	    deployable = {
+            standard_color = Vector3(0.1, 1, 0.5),
+            selected_color = Vector3(1, 1, 1),
+            active_color = Vector3(0.1, 0.4, 1),
+            interact_color = Vector3(0.1, 1, 0.1),
+            disabled_color = Vector3(1, 0.1, 0.1)
+        },
+	    upgradable = {
+            standard_color = Vector3(0.1, 0.5, 1),
+            selected_color = Vector3(1, 1, 1)
+        },
+	    pickup = {
+            standard_color = Vector3(0.1, 1, 0.5),
+            selected_color = Vector3(1, 1, 1),
+            standard_opacity = 1
+        },
+	    interactable_icon = {
+            standard_color = Vector3(0, 0, 0),
+            selected_color = Vector3(0, 1, 0),
+            standard_opacity = 0
+        },
+	    interactable_look_at = {
+            standard_color = Vector3(0, 0, 0),
+            selected_color = Vector3(1, 1, 1)
+        }
+    }
+}
 ---@class AchievementsTweakData
 _G.AchievementsTweakData = {}
 ---@class AchievementsTweakData
@@ -185,6 +241,15 @@ _G.tweak_data.achievement.complete_heist_achievements = {
             "watchdogs"
         }
     },
+    trophy_framing_frame = {
+        need_full_stealth = true,
+        trophy_stat = "trophy_framing_frame",
+        need_full_job = true,
+        difficulty = overkill_and_above,
+        jobs = {
+            "framing_frame"
+        }
+    }
 }
 ---@class AchievementsTweakData.enemy_kill_achievements
 _G.tweak_data.achievement.enemy_kill_achievements = {
@@ -665,10 +730,178 @@ _G.tweak_data.lootdrop.global_values = {}
 ---@field pd2_small_font string
 ---@field pd2_small_font_size number
 ---@field pd2_medium_font string
+---@field pd2_medium_font_size number
 ---@field pd2_large_font string
 ---@field pd2_large_font_id Idstring
 ---@field pd2_large_font_size number
 _G.tweak_data.menu = {}
+---@class MissionDoorTweakData
+---@field [string] { devices: table<string, MissionDoorTweakData.device[]> }
+_G.tweak_data.mission_door = {}
+---@class MutatorsTweakData
+_G.tweak_data.mutators = {
+    piggybank = {
+		pig_levels = {
+			{
+				range = 200,
+				sequre_zone_index = 1,
+				piggy_unit_index = 1,
+				bag_requirement = 0,
+				dialogs = {},
+				sequences = {
+					grow = "anim_pig_idle"
+				}
+			},
+			{
+				range = 200,
+				sequre_zone_index = 1,
+				piggy_unit_index = 1,
+				bag_requirement = 1,
+				dialogs = {
+					explode = "Play_alm_pda9_12",
+					show = "Play_alm_pda9_05"
+				},
+				sequences = {
+					explode = "anim_pig_explode",
+					grow = "anim_pig_grow",
+					show = "anim_pig_idle"
+				}
+			},
+			{
+				range = 300,
+				sequre_zone_index = 2,
+				piggy_unit_index = 2,
+				bag_requirement = 20,
+				dialogs = {
+					explode = "Play_alm_pda9_13",
+					show = "Play_alm_pda9_07"
+				},
+				sequences = {
+					explode = "anim_pig_explode",
+					grow = "anim_pig_grow",
+					show = "show"
+				}
+			},
+			{
+				range = 400,
+				sequre_zone_index = 3,
+				piggy_unit_index = 3,
+				bag_requirement = 80,
+				dialogs = {
+					explode = "Play_alm_pda9_14",
+					show = "Play_alm_pda9_08"
+				},
+				sequences = {
+					explode = "anim_pig_explode",
+					grow = "anim_pig_grow",
+					show = "show"
+				}
+			},
+			{
+				range = 500,
+				sequre_zone_index = 4,
+				piggy_unit_index = 4,
+				bag_requirement = 240,
+				dialogs = {
+					explode = "Play_alm_pda9_15",
+					show = "Play_alm_pda9_09"
+				},
+				sequences = {
+					explode = "anim_pig_explode",
+					grow = "anim_pig_grow",
+					show = "show"
+				}
+			},
+			{
+				range = 0,
+				piggy_unit_index = 4,
+				bag_requirement = 560,
+				dialogs = {
+					explode = "Play_alm_pda9_16",
+					show = "Play_alm_pda9_10"
+				},
+				sequences = {
+					explode = "anim_pig_explode",
+					show = "show_eyes"
+				}
+			}
+		}
+	},
+    piggyrevenge = {
+        pig_levels = {
+            {
+                secure_zone_index = 1,
+                range = 200,
+                piggy_unit_index = 1,
+                bag_requirement = 0,
+                rewards = reward_1,
+                dialogs = dialog_1,
+                sequences = sequence_1
+            },
+            {
+                secure_zone_index = 1,
+                range = 200,
+                piggy_unit_index = 1,
+                bag_requirement = 1,
+                rewards = reward_2,
+                dialogs = dialog_2,
+                sequences = sequence_2,
+                buff_pool = {
+                    "utility"
+                }
+            },
+            {
+                secure_zone_index = 2,
+                range = 300,
+                piggy_unit_index = 2,
+                bag_requirement = 20,
+                rewards = reward_3,
+                dialogs = dialog_3,
+                sequences = sequence_3,
+                buff_pool = {
+                    "utility",
+                    "offensive"
+                }
+            },
+            {
+                secure_zone_index = 3,
+                range = 400,
+                piggy_unit_index = 3,
+                bag_requirement = 80,
+                rewards = reward_4,
+                dialogs = dialog_4,
+                sequences = sequence_4,
+                buff_pool = {
+                    "utility",
+                    "defensive"
+                }
+            },
+            {
+                secure_zone_index = 4,
+                range = 500,
+                piggy_unit_index = 4,
+                bag_requirement = 240,
+                rewards = reward_5,
+                dialogs = dialog_5,
+                sequences = sequence_5,
+                buff_pool = {
+                    "offensive"
+                }
+            },
+            {
+                range = 0,
+                piggy_unit_index = 4,
+                bag_requirement = 560,
+                rewards = reward_6,
+                dialogs = dialog_6,
+                sequences = sequence_6,
+                buff_pool = {
+                    "defensive"
+                }
+            }
+        }
+    }
+}
 ---@class PlayerTweakData
 ---@field SUSPICION_OFFSET_LERP number
 ---@field alarm_pager PlayerTweakData.alarm_pager
@@ -711,6 +944,7 @@ _G.tweak_data.upgrades = {
         first_aid_kit_auto_recovery = { 500 }
     },
     max_cocaine_stacks_per_tick = 240,
+    morale_boost_time = 10,
     sentry_gun_base_ammo = 100,
     sentry_gun_base_armor = 10,
     player_damage_health_ratio_threshold = 0.5,
@@ -810,14 +1044,76 @@ _G.tweak_data.upgrades.values.temporary = {
     }
 }
 ---@class WeaponTweakData
----@field [string] { categories: string[], fire_mode_data: WeaponTweakData.fire_mode_data }
+---@field [string] WeaponTweakData._string_.Weapon
 ---@field trip_mines { delay: 0.3, damage: 100, player_damage: 6, damage_size: 300, alert_radius: 5000 }
 _G.tweak_data.weapon = {}
 ---@class WeaponTweakData.fire_mode_data
 ---@field fire_rate number
 ---@field toggable string[]
 ---@field [string] {}
----@class managers
+---@class GameStateMachine : CoreGameStateMachine
+---@field current_state fun(self: self): GameState
+---@field verify_game_state fun(self: self, filters: table, state: string): boolean
+_G.game_state_machine = {}
+---@class managers Global table of all managers in the game
+---@field assets MissionAssetsManager
+---@field blackmarket BlackMarketManager
+---@field controller ControllerManager
+---@field criminals CriminalsManager
+---@field crime_spree CrimeSpreeManager
+---@field custom_safehouse CustomSafehouseManager
+---@field ehi_tracker EHITrackerManager
+---@field ehi_waypoint EHIWaypointManager
+---@field ehi_tracking EHITrackingManager
+---@field ehi_buff EHIBuffManager
+---@field ehi_trade EHITradeManager
+---@field ehi_escape EHIEscapeChanceManager
+---@field ehi_deployable EHIDeployableManager
+---@field ehi_assault EHIAssaultManager
+---@field ehi_experience EHIExperienceManager
+---@field ehi_unlockable EHIUnlockableManager
+---@field ehi_phalanx EHIPhalanxManager
+---@field ehi_timer EHITimerManager
+---@field ehi_loot EHILootManager
+---@field ehi_sync EHISyncManager
+---@field ehi_hook EHIHookManager
+---@field ehi_money EHIMoneyManager
+---@field enemy EnemyManager
+---@field environment_controller CoreEnvironmentControllerManager
+---@field environment_effects EnvironmentEffectsManager
+---@field experience ExperienceManager
+---@field gage_assignment GageAssignmentManager
+---@field game_play_central GamePlayCentralManager
+---@field groupai GroupAIManager
+---@field gui_data GuiDataManager
+---@field hud HUDManager
+---@field challenge ChallengeManager
+---@field chat ChatManager
+---@field interaction ObjectInteractionManager
+---@field job JobManager
+---@field menu MenuManager
+---@field menu_component MenuComponentManager
+---@field mission MissionManager
+---@field modifiers ModifiersManager
+---@field money MoneyManager
+---@field mouse_pointer MousePointerManager
+---@field mutators MutatorsManager
+---@field network NetworkManager
+---@field localization LocalizationManager
+---@field loot LootManager
+---@field perpetual_event PerpetualEventManager
+---@field player PlayerManager
+---@field preplanning PrePlanningManager
+---@field savefile SavefileManager
+---@field skirmish SkirmishManager
+---@field slot SlotManager
+---@field statistics StatisticsManager
+---@field system_menu SystemMenuManager
+---@field trade TradeManager
+---@field viewport ViewportManager
+---@field weapon_factory WeaponFactoryManager
+---@field worlddefinition WorldDefinition
+---@field world_instance CoreWorldInstanceManager
 _G.managers = {}
 ---@type boolean
 _G.IS_VR = ...
@@ -858,6 +1154,13 @@ _G.CallbackEventHandler = {}
 _G.CarryTweakData = {}
 ---@class CoreWorldInstanceManager
 _G.CoreWorldInstanceManager = {}
+---@class CircleBitmapGuiObject
+---@field _circle Bitmap
+---@field new fun(self: self, panel: Panel, config: CircleBitmapGuiObject_params): self
+---@field init fun(self: self, panel: Panel, config: CircleBitmapGuiObject_params)
+---@field set_current fun(self: self, current: number)
+---@field set_visible fun(self: self, visible: boolean)
+_G.CircleBitmapGuiObject = {}
 ---@class CivilianDamage
 _G.CivilianDamage = {}
 ---@class CopDamage
@@ -874,7 +1177,7 @@ _G.CivilianDamage = {}
 ---@field health_ratio fun(self: self): number
 ---@field immortal boolean
 ---@field is_civilian fun(type: string): boolean
----@field register_listener fun(key: string, event_types: string|string[], clbk: function) Adds listener to all units
+---@field register_listener fun(key: string, event_types: string|string[], clbk: fun(damage_info: CopDamage.AttackData)) Adds listener to all units
 ---@field remove_listener fun(self: self, key: string) Removes listener from the unit itself
 ---@field unregister_listener fun(key: string) Removes listener from all units
 _G.CopDamage = {}
@@ -909,11 +1212,29 @@ _G.TimerGui = {}
 ---@class DigitalGui
 _G.DigitalGui = {}
 ---@class ExperienceManager
+---@field _cash_sign string
+---@field _cash_tousand_separator string
+---@field _total_levels number
+---@field cash_string fun(self: self, cash: number, cash_string: string?): string
+---@field experience_string fun(self: self, xp: number): string
+---@field level_cap fun(self: self): number
+---@field total fun(self: self): number
+---@field current_level fun(self: self): number
+---@field current_rank fun(self: self): number
+---@field get_max_prestige_xp fun(self: self): number
+---@field get_current_prestige_xp fun(self: self): number
+---@field next_level_data_points fun(self: self): number
+---@field next_level_data_current_points fun(self: self): number
+---@field rank_icon_data fun(self: self, rank: number?): string, TextureRect
+---@field reached_level_cap fun(self: self): boolean
 ---@field get_contract_difficulty_multiplier fun(self: self, stars: number): number
 ---@field get_job_xp_by_stars fun(self: self, stars: number): number
 ---@field get_stage_xp_by_stars fun(self: self, stars: number): number
 _G.ExperienceManager = {}
 ---@class GamePlayCentralManager
+---@field _heist_timer { offset_time: number?, start_time: number? }
+---@field _mission_disabled_units table<number, boolean>
+---@field get_heist_timer fun(self: self): number
 _G.GamePlayCentralManager = {}
 ---@class GroupAITweakData
 _G.GroupAITweakData = {
@@ -953,11 +1274,53 @@ _G.GroupAITweakData = {
     }
 }
 ---@class GroupAIStateBase
+---@field _converted_police table
+---@field _drama_data { amount: number }
+---@field _enemy_weapons_hot number
+---@field _hostage_headcount number
+---@field _hunt_mode boolean
+---@field _nr_successful_alarm_pager_bluffs number
+---@field _police table
+---@field _police_hostage_headcount number
+---@field _t number
+---@field _task_data table
+---@field _teams table
+---@field add_listener fun(self: self, key: string, events: string|string[], clbk: function)
+---@field amount_of_winning_ai_criminals fun(self: self): number
+---@field assault_phase_end_time fun(self: self): number?
+---@field get_amount_enemies_converted_to_criminals fun(self: self): number
+---@field _get_balancing_multiplier fun(self: self, balance_multipliers: number[]): number
+---@field hostage_count fun(self: self): number
+---@field is_unit_team_AI fun(self: self, unit: UnitObject): boolean
+---@field police_hostage_count fun(self: self): number
+---@field remove_listener fun(self: self, key: string)
+---@field whisper_mode fun(self: self): boolean
 _G.GroupAIStateBase = {}
+---@class GroupAIStateBesiege : GroupAIStateBase
+---@field terminate_assaults function
+_G.GroupAIStateBesiege = {}
 ---@class IngameWaitingForPlayersState : GameState
 ---@field check_is_dropin fun(self: self): boolean
 _G.IngameWaitingForPlayersState = {}
 ---@class JobManager
+---@field _global { current_job: { current_stage: number, job_id: string, stages: number, job_wrapper_id: string? } }
+---@field _on_last_stage fun(self: self): boolean
+---@field current_contact_id fun(self: self): string
+---@field current_difficulty_stars fun(self: self): number
+---@field current_job_id fun(self: self): string
+---@field current_job_stars fun(self: self): number
+---@field current_level_id fun(self: self): string
+---@field current_stage fun(self: self): number
+---@field get_ghost_bonus fun(self: self): number
+---@field get_job_heat_multipliers fun(self: self, job_id: string): number?
+---@field has_active_job fun(self: self): boolean
+---@field is_current_job_professional fun(self: self): boolean
+---@field is_level_christmas fun(self: self, level_id: string): boolean
+---@field on_last_stage fun(self: self): boolean
+---@field current_level_wave_count fun(self: self): number
+---@field set_memory fun(self: self, key: string, value: any, is_shortterm: boolean?)
+---@field get_memory fun(self: self, key: string, is_shortterm: boolean?): any
+---@field get_heat_color fun(self: self, heat: number): Color
 _G.JobManager = {}
 ---@class LevelsTweakData
 ---@field get_default_team_ID fun(self: self, type: string): string
@@ -986,6 +1349,10 @@ _G.PlayerDamage = {}
 _G.PrePlanningManager = {}
 ---@class GageAssignmentManager
 _G.GageAssignmentManager = {}
+---@class HudChallengeNotification
+---@field _box GrowPanel
+---@field queue fun(title: string?, text: string, icon: string?, rewards: { texture: string, name_id: string, amount: number? }[]?, queue: table?)
+_G.HudChallengeNotification = {}
 ---@class HUDManager
 _G.HUDManager = {}
 ---@class HUDMissionBriefing
@@ -993,9 +1360,21 @@ _G.HUDMissionBriefing = {}
 ---@class HUDHeistTimer
 ---@field _enabled boolean
 ---@field _last_time number
----@field _timer_text PanelText
+---@field _timer_text Text
 ---@field _heist_timer_panel Panel
 _G.HUDHeistTimer = {}
+---@class HuskPlayerMovement
+---@field _unit UnitPlayer
+---@field current_state fun(self: self): self
+---@field m_head_pos fun(self: self): Vector3
+---@field m_head_rot fun(self: self): Rotation
+_G.HuskPlayerMovement = {}
+---@class ChatManager
+---@field GAME 1
+---@field CREW 2
+---@field GLOBAL 3
+---@field _receive_message fun(self: self, channel_id: number, name: string, message: string, color: Color, icon: string?)
+_G.ChatManager = {}
 ---@class ObjectInteractionManager
 ---@field _interactive_units UnitWithInteraction[]
 _G.ObjectInteractionManager = {}
@@ -1015,6 +1394,10 @@ _G.MissionBriefingGui = {}
 ---@class MissionBriefingTabItem
 ---@field deselect fun()
 _G.MissionBriefingTabItem = {}
+---@class MissionDoor
+---@field tweak_data string
+---@field _unit Unit
+_G.MissionDoor = {}
 ---@class ModifiersManager
 _G.ModifiersManager = {}
 ---@class MoneyManager
@@ -1022,11 +1405,15 @@ _G.MoneyManager = {}
 ---@class mvector3
 ---@field distance fun(vec1: Vector3, vec2: Vector3): number
 ---@field dot fun(cam_fwd: number|Vector3, test_vec: Vector3): number
+---@field equal fun(vec1: Vector3, vec2: Vector3): boolean
 ---@field normalize fun(vec: Vector3)
 ---@field set fun(vec1: Vector3, vec2: Vector3) Sets `vec2` into `vec1`
 ---@field set_y fun(vec: Vector3, y: number) Sets `y` in `vec`
 ---@field set_z fun(vec: Vector3, z: number) Sets `z` in `vec`
 _G.mvector3 = {}
+---@class NetworkBaseExtension
+---@field peer fun(self: self): NetworkPeer?
+_G.NetworkBaseExtension = {}
 ---@class NetworkPeer
 _G.NetworkPeer = {}
 ---@class PlayerCamera
@@ -1047,13 +1434,18 @@ _G.PlayerMovement = {}
 ---@field _equipped_unit UnitWeapon
 ---@field _equip_weapon_expire_t number?
 ---@field _ext_inventory PlayerInventory
+---@field _get_melee_charge_lerp_value fun(self: self, t: number, offset: number?): number
 ---@field _get_swap_speed_multiplier fun(self: self): number
 ---@field _interact_expire_t number?
 ---@field _state_data PlayerStandard._state_data
+---@field _queue_reload_interupt boolean
 ---@field _unequip_weapon_expire_t number?
 ---@field _use_item_expire_t number?
 _G.PlayerStandard = {}
 ---@class SentryGunMovement
+---@field _unit UnitEnemyTurret
+---@field _tweak WeaponTweakData._string_.SentryGun
+---@field m_head_pos fun(self: self): Vector3
 _G.SentryGunMovement = {}
 ---@class SkirmishTweakData
 _G.SkirmishTweakData = {}
@@ -1065,6 +1457,11 @@ _G.SkirmishTweakData = {}
 ---@field special_unit_ids string[]
 ---@field started_session_from_beginning fun(self: self): boolean
 _G.StatisticsManager = {}
+---@class SystemMenuManager
+---@field add_dialog_closed_callback fun(self: self, func: function)
+---@field remove_dialog_closed_callback fun(self: self, func: function)
+---@field show_buttons fun(self: self, data: table)
+_G.SystemMenuManager = {}
 ---@class SmokeScreenEffect
 ---@field _mine boolean
 ---@field is_in_smoke fun(self: self, unit: UnitPlayer): boolean, string?
@@ -1086,6 +1483,10 @@ _G.VehicleDrivingExt = {}
 _G.WorldDefinition = {}
 ---@class ZipLine
 _G.ZipLine = {}
+---@param func function
+---@param optional_key any
+_G.call_on_next_update = function(func, optional_key)
+end
 ---@param o table? Can be used to provide `self` to the callback function
 ---@param base_callback_class table
 ---@param base_callback_func_name string
@@ -1107,7 +1508,7 @@ end
 ---Has to be called in an animation
 ---@param seconds number
 ---@param f fun(lerp: number, t: number)
----@param fixed_dt number?
+---@param fixed_dt boolean?
 _G.over = function(seconds, f, fixed_dt)
 end
 
@@ -1117,36 +1518,12 @@ end
 _G.wait = function(seconds, fixed_dt)
 end
 
----@class _G.Color
----@overload fun(): Color
----@overload fun(r: number, g: number, b: number): Color
----@overload fun(a: number, r: number, g: number, b: number): Color
----@overload fun(hex: string): Color
----@operator div(number): Color
----@operator div(integer): Color
----@field black Color
----@field red Color
----@field white Color
----@field green Color
----@field yellow Color
-_G.Color = {}
-
 ---@class _G.Idstring
 ---@overload fun(path_or_name: string): Idstring
 _G.Idstring = {}
 
----@class Vector3
----@operator sub(self): Vector3
----@field length fun(self: self): number
----@field with_y fun(self: self, y: number): Vector3
-
 ---@class Rotation
 ---@field y fun(self: self): number
-
----@class Camera
----@field anim_state_machine fun(): UnitAnimStateMachine
----@field position fun(self: self): Vector3
----@field rotation fun(self: self): Rotation
 
 ---@class SyncData
 ---@field EHIAssaultManager EHIAssaultManagerSyncData
@@ -1154,6 +1531,7 @@ _G.Idstring = {}
 ---@field EHIManager EHIManagerSyncData
 ---@field EHISyncManager EHISyncManagerSyncData
 ---@field EHIPhalanxManager EHIPhalanxManagerSyncData
+---@field EHIMissionElementTrigger EHIManagerSyncData
 
 ---@generic T
 ---@param TC T
@@ -1182,24 +1560,6 @@ end
 ---@overload fun(self: self, category: string, upgrade: string, default: number): number
 function PlayerManager:upgrade_level(category, upgrade)
 end
-
----@class Vector3
----@field x number
----@field y number
----@field z number
-
----@class Color
----@operator div(integer): Color
----@operator div(number): Color
----@field r number
----@field red number
----@field g number
----@field green number
----@field b number
----@field blue number
----@field unpack fun(self: self): r: number, g: number, b: number
----@field with_alpha fun(self: self, alpha: number): self Returns a new `Color` object with modified `alpha` value
----@field with_red fun(self: self, red: number): self Returns a new `Color` object with modified `red` value
 
 ---@class Idstring
 ---@field key fun(self: self): string
@@ -1244,7 +1604,7 @@ end
 ---@field value fun(self: self, value: string): any
 ---@field id fun(self: self): number
 ---@field editor_name fun(self: self): string
----@field on_executed fun(self: self, instigator: Unit?, alternative: string?, skip_execute_on_executed: boolean?, sync_id_from: number?)
+---@field on_executed fun(self: self, instigator: UnitPlayer|UnitEnemy?, alternative: string?, skip_execute_on_executed: boolean?, sync_id_from: number?)
 ---@field _is_inside fun(self: self, position: Vector3): boolean `ElementAreaReportTrigger `
 ---@field _values_ok fun(self: self): boolean `ElementStopwatchFilter`
 ---@field _values MissionScriptElement._values
@@ -1298,12 +1658,28 @@ end
 ---@field get_suspicion_offset_of_local fun(self: self, lerp: number, ignore_armor_kit: boolean?): number
 ---@field outfit_string fun(self: self): table
 
+---@class CoreAccessObjectBase
+
 ---@class CoreEnvironmentControllerManager
 ---@field _current_flashbang number
 
----@class ControllerWrapper
+---@class CoreMenuInput
+---@field _controller ControllerWrapper
+
+---@class CoreMenuManager
+---@field _input_enabled boolean
+---@field _open_menus CoreMenuManager._open_menus[]
+
+---@class CoreMenuManager._open_menus
+---@field name string
+---@field input MenuInput
+
+---@class CoreGameStateMachine
+
+---@class ControllerWrapper : CoreAccessObjectBase
 ---@field add_trigger fun(self: self, connection_name: string, func: function)
 ---@field enable fun(self: self)
+---@field disable fun(self: self)
 ---@field destroy fun(self: self)
 ---@field get_input_axis fun(self: self, connection_name: string): Vector3
 ---@field get_input_bool fun(self: self, connection_name: string): boolean
@@ -1348,7 +1724,7 @@ end
 ---@field _unit UnitGrenadeDeployable
 
 ---@class GroupAIManager
----@field state fun(self: self): GroupAIStateBase
+---@field state fun(self: self): GroupAIStateBase|GroupAIStateBesiege
 
 ---@class ChallengeManager
 ---@field can_progress_challenges fun(self: self): boolean
@@ -1361,26 +1737,30 @@ end
 ---@field completed boolean
 ---@field id string
 
----@class ChatManager
----@field _receive_message fun(self: self, channel_id: number, name: string, message: string, color: Color, icon: string?)
-
 ---@class GameState
 ---@field at_enter fun(self: self, previous_state: self)
 ---@field at_exit fun(self: self, next_state: self)
+---@field blackscreen_started (fun(self: self): boolean)?
 ---@field name fun(self: self): string
+
+---@class InteractionTweakData
+---@field CULLING_DISTANCE 2000
+---@field INTERACT_DISTANCE 200
+---@field MAX_INTERACT_DISTANCE 0
+---@field [string] { text_id: string }
 
 ---@class MissionManager
 ---@field _scripts table<string, MissionScript> All running scripts in a mission
 ---@field add_global_event_listener fun(self: self, key: string, event_types: string[], clbk: function)
----@field add_runned_unit_sequence_trigger fun(self: self, unit_id: number, sequence: string, callback: function)
+---@field add_runned_unit_sequence_trigger fun(self: self, unit_id: number, sequence: string, callback: fun(unit: Unit))
 ---@field check_mission_filter fun(self: self, value: number): boolean
 ---@field get_element_by_id fun(self: self, id: number): MissionScriptElement?
 ---@field get_saved_job_value fun(self: self, key: string): number
 ---@field remove_global_event_listener fun(self: self, key: string)
 
----@class MenuManager
----@field _input_enabled boolean
----@field _open_menus table
+---@class MenuInput : CoreMenuInput
+
+---@class MenuManager : CoreMenuManager
 ---@field is_pc_controller fun(self: self): boolean Returns `true` if the game was started by mouse or keyboard
 
 ---@class MenuComponentManager
@@ -1459,70 +1839,22 @@ end
 ---@class WeaponFactoryManager
 ---@field get_ammo_data_from_weapon fun(self: self, factory_id: string, blueprint: table): table?
 
----@class managers Global table of all managers in the game
----@field assets MissionAssetsManager
----@field blackmarket BlackMarketManager
----@field controller ControllerManager
----@field criminals CriminalsManager
----@field crime_spree CrimeSpreeManager
----@field custom_safehouse CustomSafehouseManager
----@field ehi_manager EHIManager
----@field ehi_tracker EHITrackerManager
----@field ehi_waypoint EHIWaypointManager
----@field ehi_buff EHIBuffManager
----@field ehi_trade EHITradeManager
----@field ehi_escape EHIEscapeChanceManager
----@field ehi_deployable EHIDeployableManager
----@field ehi_assault EHIAssaultManager
----@field ehi_experience EHIExperienceManager
----@field ehi_unlockable EHIUnlockableManager
----@field ehi_phalanx EHIPhalanxManager
----@field ehi_timer EHITimerManager
----@field ehi_loot EHILootManager
----@field ehi_sync EHISyncManager
----@field ehi_hook EHIHookManager
----@field ehi_money EHIMoneyManager
----@field enemy EnemyManager
----@field environment_controller CoreEnvironmentControllerManager
----@field environment_effects EnvironmentEffectsManager
----@field experience ExperienceManager
----@field gage_assignment GageAssignmentManager
----@field game_play_central GamePlayCentralManager
----@field groupai GroupAIManager
----@field gui_data GuiDataManager
----@field hud HUDManager
----@field challenge ChallengeManager
----@field chat ChatManager
----@field interaction ObjectInteractionManager
----@field job JobManager
----@field menu MenuManager
----@field menu_component MenuComponentManager
----@field mission MissionManager
----@field modifiers ModifiersManager
----@field money MoneyManager
----@field mouse_pointer MousePointerManager
----@field mutators MutatorsManager
----@field network NetworkManager
----@field localization LocalizationManager
----@field loot LootManager
----@field perpetual_event PerpetualEventManager
----@field player PlayerManager
----@field preplanning PrePlanningManager
----@field savefile SavefileManager
----@field skirmish SkirmishManager
----@field slot SlotManager
----@field statistics StatisticsManager
----@field trade TradeManager
----@field viewport ViewportManager
----@field weapon_factory WeaponFactoryManager
----@field worlddefinition WorldDefinition
----@field world_instance CoreWorldInstanceManager
-
 ---@class BlackMarketTweakData
 ---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
 
 ---@class CharacterTweakData._string_.Enemy : table
 ---@field has_alarm_pager boolean
+---@field weapon CharacterTweakData._string_.Enemy.weapon
+
+---@class CharacterTweakData._string_.Enemy.weapon
+---@field [string] { FALLOFF : CharacterTweakData._string_.Enemy.weapon.FALLOFF[] }
+
+---@class CharacterTweakData._string_.Enemy.weapon.FALLOFF
+---@field r number
+---@field acc number[]
+---@field dmg_mul number
+---@field recoil number[]
+---@field mode number[]
 
 ---@class CharacterTweakData._string_.Civilian : table
 ---@field intimidateable boolean
@@ -1541,6 +1873,10 @@ end
 ---@field order number
 ---@field static_data { voice: string, ai_mask_id: string, ai_character_id: string, ssuffix: string }
 ---@field body_g_object Idstring
+
+---@class MissionDoorTweakData.device
+---@field align string
+---@field unit Idstring
 
 ---@class tweak_data.projectiles
 ---@field [string] table?
@@ -1573,21 +1909,19 @@ end
 ---@field create_world_workspace fun(self: self, w: number, h: number, x: Vector3, y: Vector3, z: Vector3): Workspace
 ---@field destroy_workspace fun(self: self, ws: Workspace)
 
----@class World
----@field newgui fun(self: self): Gui
-
 ---@class _G Global
 ---@field Global Global
 ---@field World World
 ---@field managers managers Global table of all managers in the game
 ---@field tweak_data tweak_data Global table of all configuration data
----@field PrintTableDeep fun(tbl: table, maxDepth: integer?, allowLogHeavyTables: boolean?, customNameForInitialLog: string?, tablesToIgnore: table|string?, skipFunctions: boolean?) Recursively prints tables; depends on mod: https://modworkshop.net/mod/34161
+---@field PrintTableDeep fun(tbl: table, maxDepth: integer?, allowLogHeavyTables: boolean?, customNameForInitialLog: string?, tablesToIgnore: string[]|string?, skipFunctions: boolean?) Recursively prints tables; depends on mod: https://modworkshop.net/mod/34161
 ---@field PrintTable fun(tbl: table) Prints tables, provided by SuperBLT
 
 ---@class mathlib
 ---@field round fun(n: number, precision: number?): number Rounds number with precision
----@field clamp fun(number: number, min: number, max: number): number Returns `number` clamped to the inclusive range of `min` and `max`
+---@field clamp fun(number: number?, min: number, max: number): number Returns `number` clamped to the inclusive range of `min` and `max`. If `number` is `nil`, returns `min`
 ---@field rand fun(a: number, b: number?): number If `b` is provided, returns random number between `a` and `b`. Otherwise returns number between `0` and `a`
+---@field min_max fun(a: number, b: number): number, number
 ---@field mod fun(n: number, div: number): number Returns remainder of a division
 ---@field within fun(x: number, min: number, max: number): boolean Returns `true` or `false` if `x` is within (inclusive) `min` and `max`
 
@@ -1668,6 +2002,21 @@ end
 function table.filter(t, func)
 end
 
+---Returns ´true´ or ´false´ if ´e´ contains values in ´v´ and not nothing else
+---@generic K, V
+---@param v V[]
+---@param e table<K, V>
+---@return boolean
+function table.contains_only(v, e)
+end
+
+---@generic K, V
+---@param t table<K, V>
+---@param predicate fun(value: V, key: K):boolean
+---@return boolean
+function table.true_for_all(t, predicate)
+end
+
 ---@class string
 ---@field key fun(self: self): string Returns Idstring
 
@@ -1694,15 +2043,13 @@ end
 
 ---@class HuskPlayerInventory : PlayerInventory
 
----@class HuskPlayerMovement
----@field current_state fun(self: self): self
----@field m_head_pos fun(self: self): Vector3
----@field m_head_rot fun(self: self): Rotation
-
 ---@class PlayerStandard._state_data
 ---@field in_steelsight boolean
+---@field meleeing boolean
+---@field melee_attack_allowed_t number?
 ---@field melee_expire_t number?
 ---@field omniscience_t number?
+---@field omniscience_units_detected table<userdata, number>?
 ---@field reload_expire_t number?
 
 ---@class CopBase : UnitBase
@@ -1723,6 +2070,9 @@ end
 ---@field is_hostage fun(self: self): boolean
 ---@field sync_converted fun(self: self): boolean
 
+---@class CivilianBrain : CopBrain
+---@field is_tied fun(self: self): boolean
+
 ---@class CopDamage.AttackData
 ---@field attacker_unit UnitPlayer|UnitTeamAI
 ---@field col_ray CopDamage.AttackData.CollisionRay?
@@ -1732,7 +2082,7 @@ end
 ---@field is_synced boolean
 ---@field pos Vector3
 ---@field result CopDamage.AttackData.Result
----@field variant "explosion"|"stun"|"fire"|"healed"|"graze"|"bullet"|"poison"
+---@field variant "explosion"|"stun"|"fire"|"healed"|"graze"|"bullet"|"poison"|"melee"
 
 ---@class CopDamage.AttackData.CollisionRay
 ---@field hit_position Vector3?
@@ -1770,6 +2120,7 @@ end
 
 ---@class RaycastWeaponBase
 ---@field selection_index fun(self: self): number
+---@field weapon_tweak_data fun(self: self): WeaponTweakData._string_.Weapon
 
 ---@class C_UnitOOBB
 ---@field center fun(self: self): number
@@ -1778,75 +2129,82 @@ end
 ---@field y fun(self: self): number
 ---@field z fun(self: self): number
 
----@class Unit
----@field alive fun(): boolean
----@field editor_id fun(): number
----@field get_object fun(self: self, name: Idstring): U_Object
----@field key fun(): string
----@field material_config fun(): Idstring
----@field name fun(): Idstring Returns name as a path to the unit; Example: `units/payday2/equipment/gen_equipment_grenade_crate/gen_equipment_explosives_case`
----@field parent fun(): UnitBase?
----@field position fun(self: self): Vector3
----@field rotation fun(self: self): Rotation
----@field oobb fun(self: self): C_UnitOOBB Object Oriented Bounding Box
----@field set_extension_update_enabled fun(self: self, class_name: Idstring, state: boolean)
-
----@class UnitBase : Unit
+---@class UnitBase
 ---@field add_destroy_listener fun(self: self, key: string, clbk: fun(unit: Unit))
 ---@field damage fun(): UnitDamage
----@field in_slot fun(self: self, slotmask: SlotMask|number): boolean
+---@field unit_data fun(): ScriptUnitData
 ---@field remove_destroy_listener fun(self: self, key: string)
 
 ---@class UnitDamage
 ---@field _variables table
 ---@field _state table
 
----@class UnitCarry : UnitBase
+---@class UnitCarry : Unit
 ---@field carry_data fun(): CarryData
+---@field damage fun(): UnitDamage
 ---@field interaction fun(): UseInteractionExt
 
----@class UnitTimer : UnitBase
+---@class UnitTimer : Unit
 ---@field base fun(): Drill
 ---@field timer_gui fun(): TimerGui
 ---@field interaction fun(): InteractionExt
 ---@field mission_door_device fun(): MissionDoorDevice?
 
----@class UnitDigitalTimer : UnitBase
+---@class UnitDigitalTimer : Unit
 ---@field digital_gui fun(): DigitalGui
 
----@class UnitPlayer : UnitBase
+---@class UnitPlayer : Unit
 ---@field base fun(): PlayerBase|HuskPlayerBase
 ---@field character_damage fun(): PlayerDamage|HuskPlayerDamage
 ---@field inventory fun(): PlayerInventory|HuskPlayerInventory
 ---@field movement fun(): PlayerMovement|HuskPlayerMovement
+---@field network fun(): NetworkBaseExtension_Player
 
----@class UnitTeamAI : UnitBase
+---@class UnitTeamAI : Unit
 ---@field base fun(): TeamAIBase|HuskTeamAIBase
+---@field network fun(): NetworkBaseExtension_TeamAI
 
----@class UnitEnemy : UnitBase
+---@class UnitEnemy : Unit
 ---@field base fun(): CopBase|HuskCopBase
 ---@field brain fun(): CopBrain|HuskCopBrain
 ---@field contour fun(): ContourExt
 ---@field character_damage fun(): CopDamage|HuskCopDamage
 ---@field movement fun(): CopMovement|HuskCopMovement
+---@field network fun(): NetworkBaseExtension_Enemy
 
 ---@class UnitCivilian : UnitEnemy
 ---@field base fun(): CivilianBase|HuskCivilianBase
+---@field brain fun(): CivilianBrain|HuskCopBrain
 ---@field character_damage fun(): CivilianDamage|HuskCivilianDamage
 
----@class UnitVehicle : UnitBase
+---@class SentryGunDamage
+---@field health_ratio fun(self: self): number
+
+---@class UnitEnemyTurret : Unit
+---@field base fun(): SentryGunBase
+---@field brain fun(): SentryGunBrain
+---@field contour fun(): ContourExt
+---@field damage fun(): UnitDamage
+---@field event_listener fun(): EventListenerHolder
+---@field character_damage fun(): SentryGunDamage
+---@field movement fun(): SentryGunMovement
+---@field network fun(): NetworkBaseExtension_EnemyTurret
+---@field unit_data fun(): ScriptUnitData
+---@field weapon fun(): SentryGunWeapon
+
+---@class UnitVehicle : Unit
 ---@field vehicle fun(): C_Vehicle C++ method
 
----@class UnitWithInteraction : UnitBase
+---@class UnitWithInteraction : Unit
 ---@field interaction fun(): InteractionExt
 
----@class UnitWeapon : UnitBase
+---@class UnitWeapon : Unit
 ---@field base fun(): RaycastWeaponBase
 
----@class UnitZipline : UnitBase
+---@class UnitZipline : Unit
 ---@field zipline fun(): ZipLine
 
----@class UnitDeployable : UnitBase
+---@class UnitDeployable : Unit
 ---@field SetCountThisUnit fun(self: self) EHI added function
 ---@field SetIgnoreChild fun(self: self) EHI added function
 
@@ -1858,13 +2216,13 @@ end
 ---@field base fun(): GrenadeCrateBase
 ---@field interaction fun(): GrenadeCrateInteractionExt
 
----@class UnitECM : UnitBase
+---@class UnitECM : Unit
 ---@field base fun(): ECMJammerBase
 
 ---@class UnitFAKDeployable : UnitDeployable
 ---@field base fun(): FirstAidKitBase
 
----@class U_Object : UnitBase
+---@class U_Object : Unit
 
 ---@class U_Material
 ---@field set_variable fun(self: self, material_name: Idstring, value: any)
@@ -1878,6 +2236,22 @@ end
 ---@field panel fun(self: self): Panel
 ---@field connect_keyboard fun(self: self, keyboard: userdata)
 ---@field world_to_screen fun(self: self, cam: Camera, pos: Vector3): Vector3
+
+---@class NetworkBaseExtension_Player : NetworkBaseExtension
+---@field _unit UnitPlayer
+
+---@class NetworkBaseExtension_Enemy : NetworkBaseExtension
+---@field _unit UnitEnemy
+
+---@class NetworkBaseExtension_EnemyTurret : NetworkBaseExtension
+---@field _unit UnitEnemyTurret
+
+---@class NetworkBaseExtension_TeamAI : NetworkBaseExtension
+---@field _unit UnitTeamAI
+
+---@class ScriptUnitData
+---@field add_destroy_listener fun(self: self, key: string, clbk: function)
+---@field remove_destroy_listener fun(self: self, key: string)
 
 ---@class PanelBaseObject
 ---@field x fun(self: self): number
@@ -1902,6 +2276,7 @@ end
 ---@field set_center_x fun(self: self, center_x: number)
 ---@field center_y fun(self: self): number
 ---@field set_center_y fun(self: self, center_y: number)
+---@field position fun(self: self): x: number, y: number
 ---@field set_position fun(self: self, x: number, y: number)
 ---@field set_leftbottom fun(self: self, left: number, bottom: number)
 ---@field set_righttop fun(self: self, right: number, top: number)
@@ -1922,11 +2297,12 @@ end
 ---@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the object
 ---@field shape fun(self: self): x: number, y: number, w: number, h: number
 ---@field set_shape fun(self: self, x: number, y: number, w: number, h: number)
----@field set_blend_mode fun(self: self, mode: "add"|"normal")
+---@field set_blend_mode fun(self: self, mode: "add"|"normal"|"sub")
 ---@field show fun(self: self)
 ---@field hide fun(self: self)
 ---@field name fun(self: self): string
----@field world_x fun(self: self) Returns X where object really is
+---@field move fun(self: self, x: number, y: number) Moves the object based on provided `x` and `y`
+---@field world_x fun(self: self): number Returns X where object really is
 
 ---@class PanelBaseObject_Params
 ---@field name string
@@ -1937,7 +2313,7 @@ end
 ---@field h number
 ---@field visible boolean
 
----@class PanelText_Params : PanelBaseObject_Params
+---@class Text_Params : PanelBaseObject_Params
 ---@field align "center"|"right"|"left"
 ---@field blend_mode "normal"|"add"
 ---@field text string
@@ -1948,14 +2324,14 @@ end
 ---@field wrap boolean
 ---@field word_wrap boolean
 
----@class PanelBitmap_Params : PanelBaseObject_Params
+---@class Bitmap_Params : PanelBaseObject_Params
 ---@field texture string
----@field text_rect TextureRect
+---@field texture_rect TextureRect
 ---@field render_template "VertexColorTexturedRadial"|"VertexColorTexturedBlur3D"
 ---@field color Color
 ---@field rotation number In degrees
 ---@field alpha number
----@field blend_mode "add"|"normal"
+---@field blend_mode "add"|"normal"|"sub"
 
 ---@class PanelRectangle_Params : PanelBaseObject_Params
 ---@field alpha number
@@ -1968,42 +2344,41 @@ end
 ---@field alpha number
 ---@field rotation number In degrees
 
----@class Panel : PanelBaseObject
----@field color nil Does not exist in Panel
----@field set_color nil Does not exist in Panel
----@field child fun(self: self, child_name: string): PanelBaseObject?
----@field remove fun(self: self, child_name: PanelBaseObject)
----@field text fun(self: self, params: PanelText_Params): PanelText
----@field bitmap fun(self: self, params: PanelBitmap_Params): PanelBitmap
----@field rect fun(self: self, params: PanelRectangle_Params): PanelRectangle
+---@class Panel
+---@field text fun(self: self, params: Text_Params): Text
+---@field bitmap fun(self: self, params: Bitmap_Params): Bitmap
+---@field rect fun(self: self, params: PanelRectangle_Params): Rect
 ---@field panel fun(self: self, params: Panel_Params): self
----@field children fun(self: self): PanelBaseObject[] Returns an ipairs table of all items created on the panel
----@field clear fun(self: self) Removes all children in the panel
 
----@class PanelText : PanelBaseObject
----@field set_text fun(self: self, text: string)
----@field text_rect fun(self: self): x: number, y: number, w: number, h: number Returns rectangle of the text
----@field font_size fun(self: self): number
----@field set_font fun(self: self, font: Idstring)
----@field set_font_size fun(self: self, font_size: number)
+---@class Text
 ---@field text fun(self: self): string
 
----@class PanelBitmap : PanelBaseObject
----@field rotate fun(self: self, angle: number)
----@field set_image fun(self: self, texture_path: string, texture_rect_x: number?, texture_rect_y: number?, texture_rect_w: number?, texture_rect_h: number?)
----@field set_texture_rect fun(self: self, x: number, y: number, w: number, h: number)
+---ExtendedPanel is a Lua class and extends engine class Panel
+---@class ExtendedPanel : Panel
 
----@class PanelRectangle : PanelBaseObject
+---@class GrowPanel : ExtendedPanel
+---@field new fun(self: self, parent: table, config: Panel_Params): self
+
+---@class CircleBitmapGuiObject_params : Bitmap_Params
+---@field bg string Depends on `use_bg`
+---@field image string
+---@field radius number?
+---@field sides number?
+---@field use_bg boolean
+---@field total number?
 
 ---@class Waypoint
 ---@field init_data WaypointInitData
----@field bitmap PanelBitmap
----@field bitmap_world PanelBitmap VR only
----@field timer_gui PanelText
----@field distance PanelText
----@field arrow PanelBitmap
+---@field bitmap Bitmap
+---@field bitmap_world Bitmap VR only
+---@field timer_gui Text
+---@field distance Text
+---@field arrow Bitmap
 ---@field position Vector3
 ---@field size Vector3
+---@field slot_x number
+---@field state "dirty"|"sneak_present"|"present_ended"|"present"|"offscreen"|"onscreen"
+---@field present_timer number
 
 ---@class WaypointInitData
 ---@field distance boolean
@@ -2017,3 +2392,16 @@ end
 ---@field blueprint table
 ---@field factory_id string
 ---@field weapon_id string
+
+---@class WeaponTweakData._string_.Weapon
+---@field categories string[]
+---@field DAMAGE number
+---@field fire_mode_data WeaponTweakData.fire_mode_data
+---@field timers { reload_not_empty: number, reload_empty: number, unequip: number, equip: number }
+---@field usage string
+
+---@class WeaponTweakData._string_.SentryGun
+---@field AUTO_RELOAD boolean
+---@field AUTO_RELOAD_DURATION number
+---@field AUTO_REPAIR boolean
+---@field AUTO_REPAIR_DURATION number

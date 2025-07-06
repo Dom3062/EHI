@@ -1,9 +1,9 @@
 local EHI = EHI
----@class EHIbex11Tracker : EHIAchievementProgressGroupTracker
+---@class bex_11 : EHIAchievementProgressGroupTracker
 ---@field super EHIAchievementProgressGroupTracker
-EHIbex11Tracker = class(EHIAchievementProgressGroupTracker)
-function EHIbex11Tracker:post_init(...)
-    EHIbex11Tracker.super.post_init(self, ...)
+local bex_11 = class(EHIAchievementProgressGroupTracker)
+function bex_11:post_init(...)
+    bex_11.super.post_init(self, ...)
     self._loot_parent = managers.ehi_loot
     self:AddLootListener({
         counter =
@@ -20,11 +20,11 @@ function EHIbex11Tracker:post_init(...)
     })
 end
 
-function EHIbex11Tracker:pre_delete()
+function bex_11:pre_destroy()
     self._loot_parent:RemoveListener(self._id)
 end
 
-function EHIbex11Tracker:CountersDone()
+function bex_11:CountersDone()
     self:SetStatusText("finish", self._counters_table.bags.label)
     self:SetBGSize(self._default_bg_size, "set", true)
     local panel_w = self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
@@ -75,7 +75,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [103701] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+            [103701] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self._unlockable:SetAchievementStatus(trigger.id, Status.Defend)
                     self:UnhookTrigger(103704)
@@ -92,16 +92,15 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { class = "EHIbex11Tracker", counter = {
+            [100107] = { class_table = bex_11, counter = {
                 { max = 11, id = "bags" },
                 { max = 240, id = "boxes" }
             }, call_done_function = true, status_is_overridable = true },
-            [103677] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+            [103677] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
                 self._trackers:CallFunction(trigger.id, "SetProgress", 1, "boxes")
             end) },
             [103772] = { special_function = SF.SetAchievementFailed }
-        },
-        cleanup_class = "EHIbex11Tracker"
+        }
     }
 }
 
@@ -128,7 +127,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,

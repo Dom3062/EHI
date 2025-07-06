@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("GroupAIStateBesiege") then
     return
 end
@@ -14,7 +13,7 @@ if EHI:GetOptionAndLoadTracker("show_captain_damage_reduction") then
         original.set_phalanx_damage_reduction_buff(self, damage_reduction, ...)
         managers.ehi_tracker:SetChancePercent("PhalanxDamageReduction", damage_reduction or 0)
     end
-    EHIAssaultManager:AddAssaultModeChangedCallback(function(mode)
+    managers.ehi_assault:AddAssaultModeChangedCallback(function(mode)
         if mode == "phalanx" then
             managers.ehi_tracker:AddTracker({
                 id = "PhalanxDamageReduction",
@@ -30,7 +29,7 @@ if EHI:GetOption("show_assault_delay_tracker") then
     function GroupAIStateBesiege:_begin_assault_task(...)
         original._begin_assault_task(self, ...)
         local end_t = self._task_data.assault.phase_end_t
-        if end_t ~= 0 then
+        if end_t > 0 then
             local t = end_t - self._t
             managers.ehi_assault:AnticipationStartHost(t)
             managers.ehi_assault:SyncAnticipationStartHost(t)
@@ -40,7 +39,7 @@ else
     function GroupAIStateBesiege:_begin_assault_task(...)
         original._begin_assault_task(self, ...)
         local end_t = self._task_data.assault.phase_end_t
-        if end_t ~= 0 then
+        if end_t > 0 then
             managers.ehi_assault:SyncAnticipationStartHost(end_t - self._t)
         end
     end

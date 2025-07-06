@@ -29,6 +29,7 @@ if not tweak_data.levels:IsLevelSafehouse() then
         local tracker_name = "EnemyCount"
         local enemy_count_blocked = false
         local show_enemy_count_in_assault_tracker = EHI:IsAssaultTrackerEnabledAndOption("show_assault_enemy_count")
+        local no_loud_update = EHI:CombineAssaultDelayAndAssaultTime() and show_enemy_count_in_assault_tracker
         original.on_enemy_registered = EnemyManager.on_enemy_registered
         original.on_enemy_unregistered = EnemyManager.on_enemy_unregistered
         if EHI:GetOption("show_enemy_count_show_pagers") then
@@ -61,7 +62,7 @@ if not tweak_data.levels:IsLevelSafehouse() then
                 managers.ehi_tracker:AddTracker({
                     id = "EnemyCount",
                     alarm_sounded = EHI.ConditionFunctions.IsLoud(),
-                    no_loud_update = show_enemy_count_in_assault_tracker,
+                    no_loud_update = no_loud_update,
                     flash_bg = false,
                     class = "EHIEnemyCountTracker"
                 })
@@ -77,11 +78,11 @@ if not tweak_data.levels:IsLevelSafehouse() then
         else
             function EnemyManager:on_enemy_registered(...)
                 original.on_enemy_registered(self, ...)
-                managers.ehi_tracker:SetTrackerCount(tracker_name, self._enemy_data.nr_units)
+                managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
             end
             function EnemyManager:on_enemy_unregistered(...)
                 original.on_enemy_unregistered(self, ...)
-                managers.ehi_tracker:SetTrackerCount(tracker_name, self._enemy_data.nr_units)
+                managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
             end
             EHI:AddOnSpawnedCallback(function()
                 if enemy_count_blocked then
@@ -95,8 +96,8 @@ if not tweak_data.levels:IsLevelSafehouse() then
                 })
             end)
         end
-        if show_enemy_count_in_assault_tracker then
-            local new_tracker_name = EHIAssaultManager.GetTrackerName()
+        if no_loud_update then
+            local new_tracker_name = managers.ehi_assault.GetTrackerName()
             EHI:AddCallback("AssaultTracker_Enemies", function()
                 enemy_count_blocked = true
                 tracker_name = new_tracker_name
@@ -104,16 +105,16 @@ if not tweak_data.levels:IsLevelSafehouse() then
             end)
         end
     elseif EHI:IsAssaultTrackerEnabledAndOption("show_assault_enemy_count") then
-        local tracker_name = EHIAssaultManager.GetTrackerName()
+        local tracker_name = managers.ehi_assault.GetTrackerName()
         original.on_enemy_registered = EnemyManager.on_enemy_registered
         original.on_enemy_unregistered = EnemyManager.on_enemy_unregistered
         function EnemyManager:on_enemy_registered(...)
             original.on_enemy_registered(self, ...)
-            managers.ehi_tracker:SetTrackerCount(tracker_name, self._enemy_data.nr_units)
+            managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
         end
         function EnemyManager:on_enemy_unregistered(...)
             original.on_enemy_unregistered(self, ...)
-            managers.ehi_tracker:SetTrackerCount(tracker_name, self._enemy_data.nr_units)
+            managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
         end
     end
 end
@@ -152,33 +153,27 @@ if EHI:CanShowCivilianCountTracker() then
             })
         end
     end
-    original.register_civilian = EnemyManager.register_civilian
-    function EnemyManager:register_civilian(unit, ...)
-        original.register_civilian(self, unit, ...)
+    Hooks:PostHook(EnemyManager, "register_civilian", "EHI_EnemyManager_register_civilian", function(self, unit, ...) ---@param unit UnitCivilian
         local unit_data = self._civilian_data.unit_data
         if CountCivilian(unit_data[unit:key()]) and managers.ehi_tracker:CallFunction2("CivilianCount", "IncreaseCount") then
             CreateTracker(1)
         end
-    end
-    original.on_civilian_died = EnemyManager.on_civilian_died
-    function EnemyManager:on_civilian_died(dead_unit, ...)
+    end)
+    Hooks:PreHook(EnemyManager, "on_civilian_died", "EHI_EnemyManager_on_civilian_died", function(self, dead_unit, ...) ---@param dead_unit UnitCivilian
         local unit_data = self._civilian_data.unit_data
         local civilian_key = dead_unit:key()
         if CountCivilian(unit_data[civilian_key]) then
-            managers.ehi_tracker:DecreaseTrackerCount("CivilianCount", tostring(civilian_key)) ---@diagnostic disable-line
+            managers.ehi_tracker:DecreaseCount("CivilianCount", civilian_key) ---@diagnostic disable-line
         end
-        original.on_civilian_died(self, dead_unit, ...)
-    end
-    original.on_civilian_destroyed = EnemyManager.on_civilian_destroyed
-    function EnemyManager:on_civilian_destroyed(civilian, ...)
+    end)
+    Hooks:PreHook(EnemyManager, "on_civilian_destroyed", "EHI_EnemyManager_on_civilian_died", function(self, civilian, ...) ---@param civilian UnitCivilian
         local civilian_data = self._civilian_data.unit_data
         local civilian_key = civilian:key()
         local unit_data = civilian_data[civilian_key]
         if unit_data and CountCivilian(unit_data) then
-            managers.ehi_tracker:DecreaseTrackerCount("CivilianCount", tostring(civilian_key)) ---@diagnostic disable-line
+            managers.ehi_tracker:DecreaseCount("CivilianCount", civilian_key) ---@diagnostic disable-line
         end
-        original.on_civilian_destroyed(self, civilian, ...)
-    end
+    end)
     EHI:AddOnSpawnedCallback(function()
         spawned = true
         local civilian_count = table.count(managers.enemy._civilian_data.unit_data, CountCivilian)

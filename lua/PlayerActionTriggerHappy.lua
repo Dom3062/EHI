@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("PlayerActionTriggerHappy") or not EHI:GetBuffAndOption("trigger_happy") then
     return
 end
@@ -7,5 +6,5 @@ local original = PlayerAction.TriggerHappy.Function
 PlayerAction.TriggerHappy.Function = function(player_manager, accuracy_bonus, max_stacks, max_time, ...)
     managers.ehi_buff:AddBuff("trigger_happy", max_time - Application:time())
     original(player_manager, accuracy_bonus, max_stacks, max_time, ...)
-    managers.ehi_buff:RemoveBuff("trigger_happy")
+    managers.ehi_buff:RemoveAndResetBuff("trigger_happy")
 end

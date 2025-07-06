@@ -11,10 +11,10 @@ if EHI:GetOption("show_enemy_count_show_pagers") then
 else
     EHIEnemyCountTracker._forced_icons = { "enemy" }
 end
-function EHIEnemyCountTracker:init(panel, params, ...)
+function EHIEnemyCountTracker:init(panel, params)
     self._alarm_count = 0
     self._alarm_count_answered = 0
-    EHIEnemyCountTracker.super.init(self, panel, params, ...)
+    EHIEnemyCountTracker.super.init(self, panel, params)
     if params.no_loud_update then -- Do nothing, will get removed once assault tracker is visible
     elseif params.alarm_sounded then
         self:OnAlarm(true)

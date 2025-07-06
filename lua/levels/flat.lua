@@ -1,15 +1,9 @@
 local EHI = EHI
 local Icon = EHI.Icons
 ---@class EHIHeliTracker : EHIWarningTracker
-EHIHeliTracker = class(EHIWarningTracker)
+local EHIHeliTracker = class(EHIWarningTracker)
 EHIHeliTracker._forced_icons = { Icon.Heli }
 EHIHeliTracker._show_completion_color = true
-function EHIHeliTracker:SetDelayedRemoval()
-    self._fade_time = 10
-    self.update = self.update_fade
-    self._text:stop()
-    self:SetTextColor(Color.green)
-end
 
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -35,18 +29,18 @@ local triggers = {
     [100082] = { time = 30 + 10, id = "HeliComesWithMagnet", icons = { Icon.Heli, Icon.Winch }, hint = Hints.Winch },
 
     --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
-    [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, enabled)
+    [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled and self._trackers:CallFunction2(trigger.id, "SetTimeNoAnim", trigger.time) then
-            self:CreateTracker(trigger)
+            self:CreateTracker()
         end
     end), hint = Hints.Wait },
     [102181] = { id = "HeliMagnetLoop", special_function = SF.RemoveTracker },
 
     [100206] = { time = 30, id = "LoweringTheMagnet", icons = Icon.HeliDropWinch, waypoint = { data_from_element = 101016 }, hint = Hints.Winch },
 
-    [103869] = { time = 600, id = "PanicRoomTakeoff", class = "EHIHeliTracker", hint = Hints.Defend },
+    [103869] = { time = 600, id = "PanicRoomTakeoff", class_table = EHIHeliTracker, hint = Hints.Defend },
     [100405] = { time = 15, id = "HeliTakeoff", icons = { Icon.Heli, Icon.Wait }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1004051 }, hint = Hints.Wait },
-    [1004051] = { id = "PanicRoomTakeoff", special_function = SF.CallCustomFunction, f = "SetDelayedRemoval" }
+    [1004051] = { id = "PanicRoomTakeoff", special_function = SF.RemoveTracker }
 }
 
 ---@type ParseAchievementTable
@@ -65,10 +59,9 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100809] = { time = 60, class = TT.Achievement.Base, trigger_once = true, special_function = SF.ShowAchievementFromStart },
+            [100809] = { time = 60, class = TT.Achievement.Base, trigger_once = true, condition_function = EHI.ConditionFunctions.PlayingFromStart },
             [100805] = { special_function = SF.SetAchievementComplete },
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -78,7 +71,7 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[102741] = EHI:AddLootCounter4(function(self, ...)
-        local max = self:CountInteractionAvailable("gen_pku_cocaine")
+        local max = self._utils:CountInteractionAvailable("gen_pku_cocaine")
         EHI:ShowLootCounterNoChecks({ max = max + 1, client_from_start = true })
     end, { element = { 104303, 104306 }, present_timer = 0 })
 end
@@ -86,7 +79,7 @@ end
 --´drill defend waypoint001´ ElementWaypoint 101734
 EHI:DisableTimerWaypoints({ [101734] = true })
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

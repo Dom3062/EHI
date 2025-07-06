@@ -36,7 +36,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({ mission = triggers, other = other })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowAchievementLootCounter({ -- Loot
     achievement = "pex_10",
     max = 6,
@@ -68,7 +68,7 @@ EHI:ShowAchievementLootCounter({ -- Medals
             This is more accurate and reliable
             This sets remaining from the maximum
         ]]
-        self._trackers:SetTrackerSyncData("pex_11", self:CountUnitsAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5, true)
+        self._trackers:SetSyncData("pex_11", self._utils:CountUnitsAvailable("units/pd2_dlc_pex/props/pex_props_federali_chief_medal/pex_props_federali_chief_medal", 1) - 5, true)
     end
 })
 local xp_override =

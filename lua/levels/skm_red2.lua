@@ -11,7 +11,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102423] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10% (Loop restart)
     other[101840] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101841] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[102082] = { time = 30 + 10, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
+    other[102082] = { time = 30 + 10, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
         if EHI.IsHost and not element:_values_ok() then
             return
         elseif self._trackers:CallFunction2("Snipers", "SnipersKilled", trigger.time) then
@@ -28,6 +28,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end) }
     other[101322] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     other = other
 })

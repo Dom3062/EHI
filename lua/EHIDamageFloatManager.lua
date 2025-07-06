@@ -99,7 +99,7 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
         end
     end
 
-    ---@param c_dmg CopDamage
+    ---@param c_dmg CopDamage|HuskCopDamage
     ---@param damage_info CopDamage.AttackData
     function EHIDamageFloatManager:damage_callback(c_dmg, damage_info)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
@@ -140,8 +140,8 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
                 local key
                 local isCrit = damage_info.critical_hit
                 local rDamage = damage >= 0 and damage or -damage
-                if damage < 0 and unit and unit:character_damage() and unit:character_damage()._HEALTH_INIT then
-                    rDamage = math.min(unit:character_damage()._HEALTH_INIT * rDamage / 100, unit:character_damage()._health)
+                if damage < 0 and c_dmg._HEALTH_INIT then
+                    rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
                 end
                 local isSpecial = false ---@type boolean|string
                 if unit then
@@ -171,7 +171,7 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
                     n = n + 1
                 end
 
-                local pop_list = self.pops[pid or 0]
+                local pop_list = self.pops[pid]
                 if pop_list and key then
                     local healed = damage_info.result.type == "healed"
                     local t = isCrit and self._damage_crit_decay or self._damage_decay
@@ -179,8 +179,8 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
                     if pop then
                         pop:update_damage(texts, healed, isCrit, t, hitPos, rDamage)
                     else
-                        pop_list[key] = EHIDamageFloat:new(self, { pos = hitPos, text = texts,
-                            pid = pid or 0,
+                        pop_list[key] = EHIDamageFloat:new({ pos = hitPos, text = texts,
+                            pid = pid,
                             t = t,
                             damage = healed and 0 or rDamage
                         })
@@ -222,7 +222,7 @@ else
         end
     end
 
-    ---@param c_dmg CopDamage
+    ---@param c_dmg CopDamage|HuskCopDamage
     ---@param damage_info CopDamage.AttackData
     function EHIDamageFloatManager:damage_callback(c_dmg, damage_info)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
@@ -262,14 +262,15 @@ else
                 local unit = c_dmg._unit
                 local isCrit = damage_info.critical_hit
                 local rDamage = damage >= 0 and damage or -damage
-                if damage < 0 and unit and unit:character_damage() and unit:character_damage()._HEALTH_INIT then
-                    rDamage = math.min(unit:character_damage()._HEALTH_INIT * rDamage / 100, unit:character_damage()._health)
+                if damage < 0 and c_dmg._HEALTH_INIT then
+                    rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
                 end
                 local isSpecial = false ---@type boolean|string
                 if unit then
-                    local unitTweak = alive(unit) and unit:base() and unit:base()._tweak_table
-                    local statsTweak = unitTweak and unit:base()._stats_name or ""
-                    isSpecial = unitTweak and unit:base().has_tag and unit:base():has_tag("special") or self._special_units_id[statsTweak]
+                    local base = alive(unit) and unit:base() ---@cast base -false
+                    local unitTweak = base and base._tweak_table
+                    local statsTweak = unitTweak and base._stats_name or ""
+                    isSpecial = unitTweak and base.has_tag and base:has_tag("special") or self._special_units_id[statsTweak]
                 end
                 local death = c_dmg._dead
                 local color = (tweak_data.chat_colors[pid] or Color.white):with_alpha(death and 1 or 0.5)
@@ -292,7 +293,7 @@ else
                     n = n + 1
                 end
 
-                table.insert(self.pops, EHIDamageFloat:new(self, { pos = hitPos, text = texts,
+                table.insert(self.pops, EHIDamageFloat:new({ pos = hitPos, text = texts,
                     crit = isCrit,
                     t = isCrit and self._damage_crit_decay or self._damage_decay
                 }))
@@ -330,8 +331,10 @@ function EHIDamageFloatManager:_pos(something)
     return pos
 end
 
+---@param something UnitPlayer|UnitEnemy|UnitTeamAI
 function EHIDamageFloatManager:_pid(something)
-    local peer = alive(something) and something:network() and something:network():peer()
+    local network = alive(something) and something:network()
+    local peer = network and network:peer()
     return peer and peer:id() or 0
 end
 
@@ -341,20 +344,19 @@ function EHIDamageFloatManager:_v2p(pos)
 end
 
 ---@class EHIDamageFloat
----@field new fun(self: self, owner: EHIDamageFloatManager, data: table): self
+---@field new fun(self: self, data: table): self
 EHIDamageFloat = class()
+EHIDamageFloat.owner = EHIDamageFloatManager
 EHIDamageFloat._size = EHI:GetOption("show_floating_damage_popup_size") --[[@as number]]
 EHIDamageFloat._text_color = Color(1, 43/51, 0)
 EHIDamageFloat._bg_color = Color(0, 0, 0)
----@param owner EHIDamageFloatManager
 ---@param data table
-function EHIDamageFloat:init(owner, data)
-    self.owner = owner
+function EHIDamageFloat:init(data)
     self.data = data
     self.data.et = data.t
-    self.ppnl = owner._panel
+    self.ppnl = self.owner._panel
     local size = self._size
-    local pnl = self.ppnl:panel({ x = 0, y = 0, w=200, h=100 })
+    local pnl = self.ppnl:panel({ x = 0, y = 0, w = 200, h = 100 })
     if data.crit then
         size = size * 1.2
     end
@@ -362,8 +364,8 @@ function EHIDamageFloat:init(owner, data)
     self.lbl = pnl:text{text = '', font = 'fonts/font_medium_mf', font_size = size, color = self._text_color, x=0,y=0, layer=3, blend_mode = "normal"}
     local _txt = self:_lbl(self.lbl,data.text)
     self.lblBg = pnl:text{text=_txt, font = 'fonts/font_medium_mf', font_size = size, color = self._bg_color, x=1,y=1, layer=2, blend_mode = 'normal'}
-    local x,y,w,h = self.lblBg:text_rect()
-    pnl:set_shape(-100,-100,w,h)
+    local _, _, w, h = self.lblBg:text_rect()
+    pnl:set_shape(-100, -100, w, h)
 end
 
 ---@param text table
@@ -382,8 +384,8 @@ function EHIDamageFloat:update_damage(text, healed, crit, t, pos, rDamage)
     end
     local txt = self:_lbl(self.lbl, text)
     self.lblBg:set_text(txt)
-    local x,y,w,h = self.lblBg:text_rect()
-    self.pnl:set_shape(-100,-100,w,h)
+    local _, _, w, h = self.lblBg:text_rect()
+    self.pnl:set_shape(-100, -100, w, h)
 end
 
 ---@param dt number

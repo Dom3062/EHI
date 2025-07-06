@@ -3,7 +3,6 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local AssetLootDropOff = EHI:GetOption("show_one_icon") and { Icon.LootDrop } or Icon.CarLootDrop
 local preload =
 {
     { hint = Hints.LootEscape } -- Escape
@@ -23,7 +22,7 @@ local triggers = {
     [101453] = { time = 300, id = "Fire", timer_id = "Fire2", icons = { Icon.Fire }, class = TT.Group.Warning, waypoint = { position_from_unit = 101759 }, hint = Hints.Fire },
 
     -- Asset
-    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = AssetLootDropOff, waypoint = { data_from_element = 103152 }, hint = Hints.Loot }
+    [103094] = { time = 20 + (40/3), id = "AssetLootDropOff", icons = EHI.TrackerUtils:GetTrackerIcons(Icon.CarLootDrop, { Icon.LootDrop }), waypoint = { data_from_element = 103152 }, hint = Hints.Loot }
     -- 20: Base Delay
     -- 40/3: Animation finish delay
     -- Total 33.33 s
@@ -43,7 +42,7 @@ if EHI:IsLootCounterVisible() then
         overkill_or_above = 9
     })
     local random_money = EHI:IsDifficultyOrBelow(EHI.Difficulties.Hard) and 2 or 4
-    other[100544] = EHI:AddLootCounter3(function(self)
+    other[100544] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = 0,
             max_random = random_money
@@ -73,16 +72,16 @@ if EHI:IsLootCounterVisible() then
     end)
     -- Money
     -- It is much easier to hook into ElementMandatoryBags and reuse the value from the element itself
-    -- instead of to hook to every ElementUnitSequence with money in it and then calculate how much money spawned and sub the difference in random bags  
+    -- instead of hook to every ElementUnitSequence with money in it and then calculate how much money spawned and sub the difference in random bags  
     -- This way I can use max_random for coke only  
     -- However, money still has to be included in the max_random as players may open coke first instead of money  
-    local MoneySpawned = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementMandatoryBags
+    local MoneySpawned = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementMandatoryBags
         self._loot:RandomLootSpawnedAndDeclined(element._values.amount, random_money)
-    end)
-    other[101877] = { special_function = MoneySpawned }
-    other[101878] = { special_function = MoneySpawned }
-    other[101882] = { special_function = MoneySpawned }
-    other[101883] = { special_function = MoneySpawned }
+    end) }
+    other[101877] = MoneySpawned
+    other[101878] = MoneySpawned
+    other[101882] = MoneySpawned
+    other[101883] = MoneySpawned
     -- Coke
     other[101641] = EHI:AddCustomCode(function(self)
         self._loot:RandomLootSpawnedAndDeclined(self._cache.nightclub_coke_spawned or 0, random_coke)
@@ -140,11 +139,11 @@ if EHI:IsEscapeChanceEnabled() then
         -- Reported in: https://steamcommunity.com/app/218620/discussions/14/5487063042655462839/
         managers.ehi_escape:AddEscapeChanceTracker(false, 25, 0)
     end)
-    other[104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    --other[104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@class EHIMultipleSniperLoopsTracker : EHITracker, EHISniperBaseTracker
-    EHIMultipleSniperLoopsTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop" })
+    local EHIMultipleSniperLoopsTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop" })
     function EHIMultipleSniperLoopsTracker:OverridePanel()
         self._single_sniper = true
         self._loops_running = 0
@@ -159,8 +158,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             FitTheText = true
         })
         self._loops = { { t = 0, text = self._text, count = self._count_text, running = false } }
-        self:SniperLogicStarted()
-        self:SniperSpawned()
+        self:LogicStartedAndSniperSpawned()
     end
     function EHIMultipleSniperLoopsTracker:AddAnotherLoop()
         self._text:set_w(self._bg_box:w() / 2)
@@ -181,8 +179,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             FitTheText = true
         })
         self._loops[2] = { t = 0, text = self._text2, count = self._count_text2, running = false }
-        self:SniperLogicStarted()
-        self:SniperSpawned()
+        self:LogicStartedAndSniperSpawned()
     end
     function EHIMultipleSniperLoopsTracker:update(dt)
         for _, data in ipairs(self._loops) do
@@ -219,9 +216,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
         self:AnimateBG(1)
     end
-    other[101832] = { id = "Snipers", class = "EHIMultipleSniperLoopsTracker" }
+    other[101832] = { id = "Snipers", class_table = EHIMultipleSniperLoopsTracker }
     other[101845] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "AddAnotherLoop" }
-    local SniperLootRestart = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local SniperLootRestart = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction(trigger.id, "RestartLoop", trigger.time, trigger.loop or 1)
     end)
     other[101775] = { id = "Snipers", time = 85, special_function = SniperLootRestart }
@@ -236,7 +233,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101784] = { id = "Snipers", time = 55, loop = 2, special_function = SniperLootRestart }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,
     preload = preload

@@ -1,4 +1,4 @@
----@alias EHIMinionTracker.PeerData { label: PanelText, minions: table<userdata, boolean> }
+---@alias EHIMinionTracker.PeerData { label: Text, minions: table<userdata, boolean> }
 
 ---@class EHIMinionTracker : EHITracker
 ---@field super EHITracker
@@ -34,7 +34,7 @@ function EHIMinionTracker:SetIconColor()
 end
 
 function EHIMinionTracker:RedrawPanel()
-    for _, text in ipairs(self._bg_box:children()) do ---@cast text PanelText
+    for _, text in ipairs(self._bg_box:children()) do ---@cast text Text
         if text.set_text then
             self:FitTheText(text)
         end
@@ -66,8 +66,8 @@ function EHIMinionTracker:AlignTextOnHalfPos()
     end
 end
 
----@param first_minion PanelText
----@param second_minion PanelText?
+---@param first_minion Text
+---@param second_minion Text?
 function EHIMinionTracker:AlignMinionTextOnHalfPos(first_minion, second_minion)
     if not first_minion then
         return
@@ -145,7 +145,7 @@ end
 
 ---@param key userdata
 function EHIMinionTracker:AddFirstLocalMinion(key)
-    self._minion_health = {} ---@type table<userdata, PanelText>
+    self._minion_health = {} ---@type table<userdata, Text>
     self._minion_health_first = key
     self._default_panel_w = self._default_panel_w + self._default_bg_size
     self._panel_w = self._panel_w + self._default_bg_size
@@ -226,7 +226,7 @@ function EHIMinionTracker:MinionDamaged(key, unit)
     local minion_text = self._minion_health and self._minion_health[key]
     if minion_text then
         local percent = unit:character_damage():health_ratio()
-        minion_text:set_text(string.format("%d%%", self._parent_class:RoundChanceNumber(percent)))
+        minion_text:set_text(string.format("%d%%", math.ehi_round_chance(percent)))
         self:FitTheText(minion_text)
     end
 end
@@ -305,7 +305,7 @@ function EHIMinionHealthOnlyTracker:AddMinion(key, peer_id, local_peer)
     {
         minions = { [key] = true }
     }
-    self._minion_health = {} ---@type table<userdata, PanelText>
+    self._minion_health = {} ---@type table<userdata, Text>
     self._minion_health_first = key
     local minion_text = self:CreateText({ text = "100%" })
     self:AlignMinionTextOnHalfPos(minion_text)

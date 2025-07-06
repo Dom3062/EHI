@@ -20,7 +20,7 @@ if EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_missi
                 managers.ehi_waypoint:AddWaypoint(tostring(pc_id), {
                     time = 13,
                     icon = Icon.PCHack,
-                    position = managers.ehi_manager:GetUnitPositionOrDefault(pc_id),
+                    position = EHI.Mission:GetUnitPositionOrDefault(pc_id),
                     remove_on_alarm = true
                 })
             end
@@ -35,6 +35,21 @@ EHI:SetMissionDoorData({
     [Vector3(-2830.08, 341.886, 492.443)] = 101783 --102199
 })
 
+---@type ParseAchievementTable
+local achievement =
+{
+    the_wire =
+    {
+        elements =
+        {
+            [107124] = { max = 2, class = TT.Achievement.Progress, show_finish_after_reaching_target = true, status_is_overridable = true },
+            [104392] = { special_function = SF.IncreaseProgress },
+            [107411] = { special_function = SF.SetAchievementFailed },
+            [102355] = { special_function = SF.SetAchievementComplete }
+        }
+    }
+}
+
 local other =
 {
     [104618] = EHI:AddAssaultDelay({ control = 30 + 1 + 5 + 30 })
@@ -42,11 +57,11 @@ local other =
 if EHI:IsLootCounterVisible() then
     local Weapons = { 101473, 102717, 102718, 102720 }
     local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
-    local FilterIsOk = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
+    local FilterIsOk = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
         if element:_check_difficulty() then
             self._loot:SecuredMissionLoot() -- Server secured
         end
-    end)
+    end) }
     other[107124] = EHI:AddLootCounter2(function()
         local ef = tweak_data.ehi.functions
         local max = EHI:IsMayhemOrAbove() and 2 or 1
@@ -56,8 +71,8 @@ if EHI:IsLootCounterVisible() then
             max = max + random_loot + goat,
             triggers =
             {
-                [100249] = { special_function = FilterIsOk }, -- N-OVK
-                [100251] = { special_function = FilterIsOk } -- MH+
+                [100249] = FilterIsOk, -- N-OVK
+                [100251] = FilterIsOk -- MH+
             },
             hook_triggers = true,
             client_from_start = true
@@ -65,10 +80,11 @@ if EHI:IsLootCounterVisible() then
     end, { element = 105191 })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[102321] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", class = TT.Sniper.Warning }
-    other[105713] = { time = 60, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
-    other[105716] = { time = 90, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
-    other[105717] = { time = 30, id = "Snipers", class = TT.Sniper.Warning, special_function = SF.SetTimeOrCreateTracker }
+    local class = EHI.TrackerUtils:EnableSniperClassTracking(TT.Sniper.TimedCountOnce, TT.Sniper.Warning)
+    other[102321] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", class = class }
+    other[105713] = { time = 60, id = "Snipers", class = class, special_function = SF.SetTimeOrCreateTracker }
+    other[105716] = { time = 90, id = "Snipers", class = class, special_function = SF.SetTimeOrCreateTracker }
+    other[105717] = { time = 30, id = "Snipers", class = class, special_function = SF.SetTimeOrCreateTracker }
     if EHI.IsClient then
         other[102177] = EHI:ClientCopyTrigger(other[102321], { time = 1 + 5 + 30 + 45 + 45 + 120, trigger_once = true })
         other[100973] = EHI:ClientCopyTrigger(other[102321], { time = 5 + 30 + 45 + 45 + 120 })
@@ -79,7 +95,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
+    achievement = achievement,
     other = other
 })
 EHI:AddXPBreakdown({

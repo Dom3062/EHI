@@ -4,7 +4,7 @@ local Color = Color
 EHIPiggyBankMutatorTracker = class(EHIProgressTracker)
 EHIPiggyBankMutatorTracker._forced_icons = { { icon = "piggy", color = Color.yellow } }
 EHIPiggyBankMutatorTracker._forced_hint_text = "piggy"
-function EHIPiggyBankMutatorTracker:init(panel, params, ...)
+function EHIPiggyBankMutatorTracker:init(panel, params)
     self._current_level = 1
     self._max_levels = 7
     params.flash_times = 1
@@ -13,7 +13,7 @@ function EHIPiggyBankMutatorTracker:init(panel, params, ...)
     else
         self._piggy_tweak_data = tweak_data.mutators.piggybank.pig_levels
     end
-    EHIPiggyBankMutatorTracker.super.init(self, panel, params, ...)
+    EHIPiggyBankMutatorTracker.super.init(self, panel, params)
     self:SetNewMax()
 end
 

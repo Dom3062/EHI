@@ -3,9 +3,28 @@ local function round(num)
     return res:find('e') and tostring(math.floor(num)) or res
 end
 
+---Optimized version of CircleBitmapGuiObject
+---@class EHICircleBitmapGuiObject : CircleBitmapGuiObject
+---@field super CircleBitmapGuiObject
+---@field new fun(self: self, panel: Panel, config: CircleBitmapGuiObject_params): self
+local EHICircleBitmapGuiObject = class(CircleBitmapGuiObject)
+---@param panel Panel
+---@param config CircleBitmapGuiObject_params
+function EHICircleBitmapGuiObject:init(panel, config)
+    EHICircleBitmapGuiObject.super.init(self, panel, config)
+    self._color = self._circle:color()
+end
+
+---@param current number
+function EHICircleBitmapGuiObject:set_current(current)
+    self._color.red = current
+    self._circle:set_color(self._color)
+end
+
 ---@class EHIHealthFloatPoco
----@field new fun(self: self, owner: EHIHealthFloatManager, key: string, unit: UnitObject, t: number): self
+---@field new fun(self: self, key: userdata, unit: UnitObject, t: number): self
 EHIHealthFloatPoco = class()
+EHIHealthFloatPoco._parent = EHIHealthFloatManager
 EHIHealthFloatPoco._size = 16
 EHIHealthFloatPoco._margin = 2
 EHIHealthFloatPoco._opacity = 0.9
@@ -22,18 +41,16 @@ EHIHealthFloatPoco._special_cloaker_disabled = not EHI:GetOption("show_floating_
 EHIHealthFloatPoco._special_sniper_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_sniper")
 EHIHealthFloatPoco._special_medic_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_medic")
 EHIHealthFloatPoco._special_other_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_other")
----@param owner EHIHealthFloatManager
----@param key string
+---@param key userdata
 ---@param unit UnitObject
 ---@param t number
-function EHIHealthFloatPoco:init(owner, key, unit, t)
-    self._parent = owner
+function EHIHealthFloatPoco:init(key, unit, t)
     self._unit = unit
     self._key = key
     self._lastT = t
     local size = self._size
     local m = self._margin
-    local pnl = owner._pnl:panel({
+    local pnl = self._parent._pnl:panel({
         x = 0,
         y = -size,
         w = 300,
@@ -49,8 +66,7 @@ function EHIHealthFloatPoco:init(owner, key, unit, t)
         y = 0,
         visible = self._show_blur
     })
-    self.pie = CircleBitmapGuiObject:new(pnl, {
-        use_bg = false,
+    self.pie = EHICircleBitmapGuiObject:new(pnl, {
         x = m,
         y = m,
         image = "guis/textures/pd2/hud_health",
@@ -176,7 +192,7 @@ function EHIHealthFloatPoco:draw(t)
     self._pnl:set_visible(dot_visible)
     if dot_visible then
         local isADS = self._parent.ADS
-        local base = unit:base() ---@cast base -PlayerBase|HuskPlayerBase
+        local base = unit:base() ---@cast base -PlayerBase|HuskPlayerBase|SentryGunBase
         local character_damage = unit:character_damage()
         local cHealth = character_damage and character_damage._health and character_damage._health * 10 or 0
         local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT and character_damage._HEALTH_INIT * 10 or character_damage._health_max and character_damage._health_max * 10) or 1

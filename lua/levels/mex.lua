@@ -3,7 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
----@param self EHIManager
+---@param self EHIMissionElementTrigger
 ---@param block boolean
 local function SetAssaultTrackerBlock(self, block)
     self._assault:SetAssaultBlock(block)
@@ -54,7 +54,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102480] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

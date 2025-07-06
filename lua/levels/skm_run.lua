@@ -8,6 +8,6 @@ local other =
     [100954] = EHI:AddSniperSpawnedPopup(true),
     [100956] = EHI:AddSniperSpawnedPopup(true)
 }
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     other = other
 })

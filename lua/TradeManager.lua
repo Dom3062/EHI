@@ -16,7 +16,7 @@ if EHI:IsXPTrackerEnabled() then
     if not Global.game_settings.single_player then
         Hooks:PostHook(TradeManager, "on_player_criminal_death", "EHI_ExperienceManager_PlayerCriminalDeath", function(...)
             managers.ehi_experience:DecreaseAlivePlayers(true)
-            EHI:CallCallback("ExperienceManager_RefreshPlayerCount", managers.ehi_experience:CurrentAlivePlayers())
+            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
         end)
     end
 end
@@ -94,31 +94,19 @@ end
 ---@param criminal_name string
 ---@param respawn_penalty number
 ---@param hostages_killed number
----@param ... unknown
----@return table?
+---@return { peer_id: number }?
 function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, hostages_killed, ...)
-    local crim = original.on_player_criminal_death(self, criminal_name, respawn_penalty, hostages_killed, ...)
-    if type(crim) == "table" then -- A nil criminal can be returned (because it is already in custody)
-        local peer_id = crim.peer_id
-        if not peer_id then
-            for _, peer in pairs(managers.network:session():peers()) do
-                if peer:character() == criminal_name then
-                    peer_id = peer:id()
-                    break
-                end
-            end
-            if not peer_id then -- If peer_id is still nil, return the value and GTFO
-                return crim
-            end
-        end
+    local criminal = original.on_player_criminal_death(self, criminal_name, respawn_penalty, hostages_killed, ...)
+    if criminal and criminal.peer_id then -- A nil criminal can be returned (because it is already in custody)
+        local peer_id = criminal.peer_id
         if on_death_show then
             CreateTracker(peer_id, respawn_penalty, hostages_killed)
         elseif respawn_penalty > tweak_data.player.damage.base_respawn_time_penalty then
             if show_trade_for_other_players and peer_id == managers.network:session():local_peer():id() then
-                return crim
+                return criminal
             elseif suppress_in_stealth and managers.groupai:state():whisper_mode() then
                 managers.ehi_trade:AddToTradeDelayCache(peer_id, respawn_penalty, hostages_killed, true)
-                return crim
+                return criminal
             end
             local tracker = managers.ehi_trade:GetTracker()
             if tracker then
@@ -133,11 +121,10 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, h
             end
         end
     end
-    return crim
+    return criminal
 end
 
 ---@param character_name string?
----@param ... unknown
 function TradeManager:_set_auto_assault_ai_trade(character_name, ...)
     if self._auto_assault_ai_trade_criminal_name ~= character_name then
         SetTrackerPause(character_name, self._trade_counter_tick)
@@ -177,6 +164,6 @@ function TradeManager:load(load_data, ...)
     original.load(self, load_data, ...)
 end
 
-Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHI", function(peer, peer_id, reason)
+Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHITradeManager", function(peer, peer_id, reason)
     managers.ehi_trade:CallFunction("RemovePeerFromCustody", peer_id)
 end)

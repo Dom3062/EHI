@@ -31,7 +31,7 @@ local tbl =
 }
 EHI:UpdateUnits(tbl)
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other
 })

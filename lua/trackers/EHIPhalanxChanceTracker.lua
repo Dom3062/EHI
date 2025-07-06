@@ -16,7 +16,7 @@ end
 
 function EHIPhalanxChanceTracker:post_init(params)
     if not self._first_assault then
-        if self._parent_class:GetInternalData("assault", "is_assault") then
+        if managers.ehi_assault._internal.is_assault then
             if self.IsHost then
                 local ai_state = managers.groupai:state()
                 if ai_state._task_data and ai_state._task_data.assault and ai_state._task_data.assault.phase == "fade" then -- Captain got activated during Fade state, pretend it is the first assault
@@ -44,7 +44,7 @@ function EHIPhalanxChanceTracker:post_init(params)
                         self._color_lock = true
                         self._chance_increase_enabled = false
                         self:SetTextColor(self._paused_color, self._chance_text)
-                        self._parent_class:SyncData(self._sync_fade_state, "true")
+                        managers.ehi_sync:SyncData(self._sync_fade_state, "true")
                     end
                     self._assault_state = phase
                 end
@@ -55,13 +55,13 @@ function EHIPhalanxChanceTracker:post_init(params)
                 self:SetTextColor(self._paused_color, self._chance_text)
             end
         else
-            self._parent_class:AddReceiveHook(self._sync_fade_state, function(data, sender)
+            managers.ehi_sync:AddReceiveHook(self._sync_fade_state, function(data, sender)
                 self._color_lock = true
                 self._chance_increase_enabled = false
                 self:SetTextColor(self._paused_color, self._chance_text)
             end)
         end
-    elseif self._parent_class:GetInternalData("assault", "is_assault") then
+    elseif managers.ehi_assault._internal.is_assault then
         self:ComputeAssaultTime(true)
     else
         self._assault_t = 0
@@ -92,9 +92,9 @@ function EHIPhalanxChanceTracker:ComputeAssaultTime(from_create)
     if self._assault_time_blocked then
         return
     elseif self.IsHost then
-        local sustain_t = self._parent_class:GetInternalData("assault", "sustain_t")
+        local sustain_t = managers.ehi_assault._internal.sustain_t
         if from_create and sustain_t then
-            local sustain_app_t = self._parent_class:GetInternalData("assault", "sustain_app_t")
+            local sustain_app_t = managers.ehi_assault._internal.sustain_app_t
             local current_app_t = managers.game_play_central:get_heist_timer()
             local t = current_app_t - sustain_app_t
             self._assault_t = sustain_t - t
@@ -160,7 +160,7 @@ function EHIPhalanxChanceTracker:Refresh()
     end
 end
 
-function EHIPhalanxChanceTracker:pre_delete()
+function EHIPhalanxChanceTracker:pre_destroy()
     Hooks:RemovePostHook("EHI_EHIPhalanxChanceTracker_upd_assault_task")
-    self._parent_class:RemoveReceiveHook(self._sync_fade_state)
+    managers.ehi_sync:RemoveReceiveHook(self._sync_fade_state)
 end

@@ -9,7 +9,7 @@ EHIChanceWaypoint.FormatChance = EHIChanceTracker.FormatChance
 EHIChanceWaypoint.DecreaseChance = EHIChanceTracker.DecreaseChance
 EHIChanceWaypoint.IncreaseChance = EHIChanceTracker.IncreaseChance
 EHIChanceWaypoint.IncreaseChanceIndex = EHIChanceTracker.IncreaseChanceIndex
----@param o PanelText
+---@param o Text
 ---@param self EHIChanceTracker
 EHIChanceWaypoint._anim_chance = function(o, self)
     local chance_to_anim = self._anim_static_chance
@@ -33,4 +33,24 @@ function EHIChanceWaypoint:SetChance(amount)
     else
         self._gui:set_text(self:FormatChance())
     end
+end
+
+---@class EHIWaypointLessChanceWaypoint : EHIWaypointLessWaypoint, EHIChanceWaypoint
+---@field super EHIWaypointLessWaypoint
+EHIWaypointLessChanceWaypoint = class(EHIWaypointLessWaypoint)
+EHIWaypointLessChanceWaypoint._needs_update = false
+EHIWaypointLessChanceWaypoint._anim_chance = EHIChanceWaypoint._anim_chance
+EHIWaypointLessChanceWaypoint.pre_init = EHIChanceWaypoint.pre_init
+EHIWaypointLessChanceWaypoint.Format = EHIChanceWaypoint.Format
+EHIWaypointLessChanceWaypoint.FormatChance = EHIChanceWaypoint.FormatChance
+EHIWaypointLessChanceWaypoint.DecreaseChance = EHIChanceWaypoint.DecreaseChance
+EHIWaypointLessChanceWaypoint.IncreaseChance = EHIChanceWaypoint.IncreaseChance
+EHIWaypointLessChanceWaypoint.IncreaseChanceIndex = EHIChanceWaypoint.IncreaseChanceIndex
+EHIWaypointLessChanceWaypoint._SetChance = EHIChanceWaypoint.SetChance
+function EHIWaypointLessChanceWaypoint:SetChance(amount)
+    if not self._gui then
+        self._chance = math.max(0, amount)
+        return
+    end
+    self:_SetChance(amount)
 end

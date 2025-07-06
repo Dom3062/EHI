@@ -14,7 +14,7 @@ if EHI:GetOption("show_sniper_tracker") then
         local function ShowSniperPopup()
             managers.hud:ShowSnipersSpawned(true)
         end
-        local Trigger = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+        local Trigger = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
             DelayedCalls:Add(trigger.id, trigger.time, ShowSniperPopup)
         end)
         other[302098] = { id = "EHI_302098_20s", time = 20, special_function = Trigger }
@@ -27,6 +27,6 @@ if EHI:GetOption("show_sniper_tracker") then
         other[302105] = { id = "EHI_302105_40s", time = 40, special_function = Trigger }
     end
 end
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     other = other
 })

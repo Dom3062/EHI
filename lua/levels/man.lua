@@ -12,14 +12,12 @@ if EHI:IsBetweenDifficulties(EHI.Difficulties.Hard, EHI.Difficulties.VeryHard) t
 elseif ovk_and_up then
     start_chance = 5
 end
-local CodeChance = { chance = start_chance, id = "CodeChance", icons = { Icon.Hostage, Icon.PCHack }, flash_times = 1, class = TT.Chance, hint = Hints.man_Code, waypoint_f =
----@param self EHIManager
----@param trigger ElementTrigger
-function(self, trigger)
+---@type ElementTrigger
+local CodeChance = { chance = start_chance, id = "CodeChance", icons = { "pd2_talk" }, flash_times = 1, class = TT.Chance, hint = Hints.man_Code, waypoint_f = function(self, trigger)
     local remove_vanilla_waypoint
-    if self:IsMissionElementEnabled(102049) then
+    if self._utils:IsMissionElementEnabled(102049) then
         remove_vanilla_waypoint = 102049
-    elseif self:IsMissionElementEnabled(102336) then
+    elseif self._utils:IsMissionElementEnabled(102336) then
         remove_vanilla_waypoint = 102336
     else
         remove_vanilla_waypoint = 103681
@@ -27,7 +25,7 @@ function(self, trigger)
     self._waypoints:AddWaypoint(trigger.id, {
         chance = trigger.chance,
         icon = "pd2_talk",
-        position = self:GetElementPositionOrDefault(remove_vanilla_waypoint),
+        position = self._mission:GetElementPositionOrDefault(remove_vanilla_waypoint),
         remove_vanilla_waypoint = remove_vanilla_waypoint,
         restore_on_done = true,
         class = self.Waypoints.Chance
@@ -91,7 +89,7 @@ local achievements =
         load_sync = function(self)
             -- Achievement count used planks on windows, vents, ...
             -- There are total 49 positions and 10 planks
-            local progress = 49 - self:CountInteractionAvailable("stash_planks")
+            local progress = 49 - self._utils:CountInteractionAvailable("stash_planks")
             if progress >= 10 then
                 return
             end
@@ -107,7 +105,7 @@ local other =
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102161] = { chance = 20, time = 30 + 20, recheck_t = 20, id = "Snipers", class = TT.Sniper.TimedChance, trigger_once = true }
     other[103169] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[101756] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
+    other[101756] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI.IsHost and not element:_values_ok() then
             return
         elseif self._trackers:CallFunction2("Snipers", "SnipersKilled", 40) then -- 20 + 20
@@ -128,7 +126,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102180] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

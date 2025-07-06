@@ -5,9 +5,9 @@ local Hints = EHI.Hints
 local interact = { id = "MethlabInteract", icons = { Icon.Methlab, Icon.Loop }, hint = Hints.mia_1_NextMethIngredient }
 local element_sync_triggers = {}
 for i = 100169, 100172, 1 do
-    local element_id = EHI:GetInstanceElementID(i, 7750)
-    element_sync_triggers[element_id] = deep_clone(interact)
-    element_sync_triggers[element_id].hook_element = EHI:GetInstanceElementID(100168, 7750)
+    local copy = deep_clone(interact)
+    copy.hook_element = EHI:GetInstanceElementID(100168, 7750)
+    element_sync_triggers[EHI:GetInstanceElementID(i, 7750)] = copy
 end
 local escape_delay = 24 + 1
 local triggers = {
@@ -23,7 +23,7 @@ if EHI.IsClient then
     triggers[EHI:GetInstanceElementID(100184, 7750)] = { id = "MethlabInteract", special_function = SF.RemoveTracker }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     sync_triggers = { element = element_sync_triggers }
 })

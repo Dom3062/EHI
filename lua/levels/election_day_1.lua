@@ -27,8 +27,26 @@ local other =
 {
     [100150] = EHI:AddAssaultDelay({}) -- Another first assault delay botched by phalanx spawn group -> see ´logic_link_065´ MissionScriptElement 104924
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    other[104287] = { id = "Snipers", count = 2, class = TT.Sniper.LoopBuffer } -- Set count 2 so no negative number in the tracker
+    local AddToRespawnFromDeath = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        self._trackers:CallFunction("Snipers", "AddToRespawnFromDeath", trigger.element, trigger.time)
+    end)
+    other[104258] = { special_function = AddToRespawnFromDeath, element = 103995, time = 45 }
+    other[104259] = { special_function = AddToRespawnFromDeath, element = 103995, time = 60 }
+    other[104260] = { special_function = AddToRespawnFromDeath, element = 103995, time = 75 }
+    other[104267] = { special_function = AddToRespawnFromDeath, element = 103996, time = 45 }
+    other[104268] = { special_function = AddToRespawnFromDeath, element = 103996, time = 60 }
+    other[104269] = { special_function = AddToRespawnFromDeath, element = 103996, time = 75 }
+    other[104275] = { special_function = AddToRespawnFromDeath, element = 104290, time = 45 }
+    other[104276] = { special_function = AddToRespawnFromDeath, element = 104290, time = 60 }
+    other[104277] = { special_function = AddToRespawnFromDeath, element = 104290, time = 75 }
+    other[104283] = { special_function = AddToRespawnFromDeath, element = 104295, time = 45 }
+    other[104284] = { special_function = AddToRespawnFromDeath, element = 104295, time = 60 }
+    other[104285] = { special_function = AddToRespawnFromDeath, element = 104295, time = 75 }
+end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other
 })

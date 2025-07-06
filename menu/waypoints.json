@@ -29,8 +29,25 @@
             "callback": "SetOption",
             "callback_arguments": "show_waypoints_mission",
             "value": "show_waypoints_mission",
-            "default_value": true,
+            "default_value" : true,
+            "is_parent" : true,
             "ehi_ver" : 153
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_waypoints_mission_cheaty_choice",
+            "title": "ehi_show_waypoints_mission_cheaty",
+            "description": "ehi_show_waypoints_mission_cheaty_desc",
+            "callback": "SetOption",
+            "callback_arguments": "show_waypoints_mission_cheaty",
+            "value": "show_waypoints_mission_cheaty",
+            "default_value": true,
+            "parent" : "ehi_show_waypoints_mission_choice",
+            "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",

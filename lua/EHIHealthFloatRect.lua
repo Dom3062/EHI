@@ -195,7 +195,7 @@ function EHIHealthFloatRect:new(hud_panel)
     return self
 end
 
----@param unit UnitEnemy
+---@param unit UnitEnemy|UnitEnemyTurret
 ---@param t number
 function EHIHealthFloatRect:SetUnit(unit, t)
     if self._unit == unit then
@@ -206,7 +206,7 @@ function EHIHealthFloatRect:SetUnit(unit, t)
     self._unit = unit
     self._block_update = false
     self._current_health = 0
-    local base = unit:base()
+    local base = unit:base() ---@cast base -SentryGunBase
     if self._converts_disabled and (unit:brain() and unit:brain().converted and unit:brain():converted()) then
         self._block_update = true
         self:set_visible(false)
@@ -365,7 +365,7 @@ function EHIHealthFloatRect._anim_hidden(o)
     o:set_visible(false)
 end
 
----@param o PanelBitmap
+---@param o Bitmap
 ---@param bar_text_rect number[]
 ---@param ratio number
 ---@param rn number

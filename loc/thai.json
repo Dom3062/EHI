@@ -191,9 +191,6 @@
     "ehi_hint_trat_loco_start" : "โอกาสเริ่มหัวรถไฟ",
     "ehi_hint_vit_teargas" : "โอกาสแก๊สน้ำตา",
 
-    "ehi_r": "แดง",
-    "ehi_g": "เขียว",
-    "ehi_b": "น้ำเงิน",
     "ehi_button_ok" : "โอเค",
     "ehi_color_reset": "รีเซ็ตสี",
 
@@ -676,8 +673,11 @@
     "ehi_buffs_other_health" : "ค่าเลือด",    
     "ehi_buffs_other_armor" : "ค่าเกราะ",
 
+    "ehi_buffs_group_color_red": "แดง",
+    "ehi_buffs_group_color_green": "เขียว",
+    "ehi_buffs_group_color_blue": "น้ำเงิน",
+
     "ehi_inventory_menu" : "กล่องเครื่องมือ",
-    "ehi_inventory_menu_desc" : "",
     
     "ehi_show_inventory_detailed_description" : "รายละเอียดกล่องเครื่องมือ",
     "ehi_show_inventory_detailed_description_desc" : "แสดงรายละเอียดกล่องเครื่องมือสำหรับอาวุธปาและอุปกรณ์\nจำเป็นต้องเริ่มด่านใหม่เพื่อให้เกิดผลลัพธ์",

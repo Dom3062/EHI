@@ -1,13 +1,15 @@
 ---@class EHILootSharedMaster
 ---@field new fun(self: self, params: EHITracker.params): self
 EHILootSharedMaster = class()
-EHILootSharedMaster._id = "LootCounter"
+EHILootSharedMaster._id = EHILootManager._id
 EHILootSharedMaster._SHOW_POPUP = EHI:GetOption("show_all_loot_secured_popup")
 EHILootSharedMaster._SHOW_TRACKERS = EHI:GetOption("show_trackers") --[[@as boolean]]
 EHILootSharedMaster._SHOW_WAYPOINTS = EHI:GetOption("show_waypoints") --[[@as boolean]]
 ---@param params EHITracker.params
 function EHILootSharedMaster:init(params)
-    self._manager = params.manager --[[@as EHIManager]]
+    self._achievement_id = params.achievement_id
+    self._tracking = params.tracking --[[@as EHITrackingManager]]
+    self._loot = params.loot --[[@as EHILootManager]]
     self._max = params.max or 0
     self._progress = params.progress or 0
     self._mission_loot = 0
@@ -17,8 +19,12 @@ function EHILootSharedMaster:init(params)
     self._max_xp_bags = params.max_xp_bags or 0
     self._unknown_random = params.unknown_random
     self._loot_id = {}
-    self._loot_check_delay = {} ---@type table<number, { t: number, callback: function? }>
+    self._loot_check_delay = {} ---@type table<number, { t: number, callback: fun(id: number)? }>
     self._loot_check_n = 0
+end
+
+function EHILootSharedMaster:GetListenerID()
+    return self._achievement_id or self._id
 end
 
 if EHI:GetOption("variable_random_loot_format") == 1 then
@@ -75,7 +81,7 @@ end
 
 ---@param silent_update boolean?
 function EHILootSharedMaster:DispatchUpdate(silent_update)
-    self._manager:Call(self._id, "SetText", self:Format(), silent_update)
+    self._tracking:Call(self._id, "SetText", self:Format(), silent_update)
 end
 
 function EHILootSharedMaster:SetOnlyLootCounterMode()
@@ -129,7 +135,7 @@ function EHILootSharedMaster:update(dt)
 end
 
 ---@param id number
----@param callback function?
+---@param callback fun(id: number)?
 function EHILootSharedMaster:AddDelayedLootDeclinedCheck(id, callback)
     self._loot_check_delay[id] = { t = 2, callback = callback }
     if self._loot_check_n == 0 then
@@ -159,9 +165,9 @@ end
 function EHILootSharedMaster:SetCompleted()
     self._disable_counting = true
     if self._stay_on_screen then
-        self._manager:Call(self._id, "SetCompleted", true)
+        self._tracking:Call(self._id, "SetCompleted", true)
         return
-    elseif self._SHOW_POPUP and not self._popup_showed then
+    elseif self._SHOW_POPUP and not self._popup_showed and not self._achievement_id then
         self._popup_showed = true
         local xp_text = self._max_xp_bags > 0 and "ehi_popup_all_xp_loot_secured" or "ehi_popup_all_loot_secured"
         managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text(xp_text), "EHI_Loot")
@@ -173,7 +179,7 @@ end
 function EHILootSharedMaster:SetProgressMax(max)
     if self._max_xp_bags > 0 and self._max_xp_bags >= max then
         self._max_xp_bags = 0
-        self._manager:Call(self._id, "MaxNoLongerLimited")
+        self._tracking:Call(self._id, "MaxNoLongerLimited")
     end
     self._max = max
     self:DispatchUpdate()
@@ -203,7 +209,7 @@ function EHILootSharedMaster:RandomLootSpawned(random)
     if self._max_random <= 0 or (random and random <= 0) then
         return
     elseif self._progress == self._max then
-        self._manager:Call(self._id, "MaxNoLongerLimited")
+        self._tracking:Call(self._id, "MaxNoLongerLimited")
     end
     local n = random or 1
     self._max_random = self._max_random - n
@@ -274,7 +280,7 @@ function EHILootSharedMaster:SetUnknownRandomLoot(state)
         return
     end
     self._unknown_random = state
-    self._manager._trackers:CallFunction(self._id, "UpdateUnknownLoot", state)
+    self._tracking._trackers:CallFunction(self._id, "UpdateUnknownLoot", state)
     self:DispatchUpdate()
 end
 
@@ -341,26 +347,26 @@ end
 ---@param silent_removal boolean?
 function EHILootSharedMaster:delete_listener(silent_removal)
     if silent_removal then
-        self._manager:Remove(self._id)
-        self._manager._loot._waypoint_element = nil
+        self._tracking:Remove(self._id)
+        self._loot._waypoint_element = nil
     else
-        self._manager:Call(self._id, "SetCompleted")
+        self._tracking:Call(self._id, "SetCompleted")
     end
-    self._manager._loot:RemoveListener(self._id)
+    self._loot:RemoveLootMaster(self._id)
 end
 
 function EHILootSharedMaster:AddToUpdate()
     if self._SHOW_TRACKERS then
-        self._manager._trackers:_add_tracker_to_update(self) ---@diagnostic disable-line
+        self._tracking._trackers:_add_tracker_to_update(self) ---@diagnostic disable-line
     elseif self._SHOW_WAYPOINTS then
-        self._manager._waypoints:_add_waypoint_to_update(self) ---@diagnostic disable-line
+        self._tracking._waypoints:_add_waypoint_to_update(self) ---@diagnostic disable-line
     end
 end
 
 function EHILootSharedMaster:RemoveFromUpdate()
     if self._SHOW_TRACKERS then
-        self._manager._trackers:_remove_tracker_from_update(self._id)
+        self._tracking._trackers:_remove_tracker_from_update(self._id)
     elseif self._SHOW_WAYPOINTS then
-        self._manager._waypoints:_remove_waypoint_from_update(self._id)
+        self._tracking._waypoints:_remove_waypoint_from_update(self._id)
     end
 end

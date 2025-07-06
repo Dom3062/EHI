@@ -35,7 +35,8 @@ end
 local original =
 {
     init = PlayerDamage.init,
-    pre_destroy = PlayerDamage.pre_destroy
+    pre_destroy = PlayerDamage.pre_destroy,
+    _on_use_armor_bag_event = PlayerDamage._on_use_armor_bag_event
 }
 
 PlayerDamage.__ehi_dire_need = EHI:GetBuffOption("dire_need") --[[@as boolean]]
@@ -53,7 +54,7 @@ function PlayerDamage:init(...)
     end
     if self._damage_to_armor and self.__ehi_anarchist_kill_armor_regen then
         self._damage_to_armor.ehi_cached_elapsed_t = 0
-        local function on_damage(damage_info)
+        local function on_damage(damage_info) ---@param damage_info CopDamage.AttackData
             local t = self._damage_to_armor.elapsed
             if t > self._damage_to_armor.ehi_cached_elapsed_t then
                 self._damage_to_armor.ehi_cached_elapsed_t = t
@@ -62,15 +63,20 @@ function PlayerDamage:init(...)
         end
         CopDamage.register_listener("EHI_anarchist_on_damage", { "on_damage" }, on_damage)
     end
-    EHI:CallCallback("PlayerSpawned", self)
+    EHI:CallCallback(EHI.CallbackMessage.Player.Spawned, self)
 end
 
 function PlayerDamage:pre_destroy(...)
-    EHI:CallCallback("PlayerDespawned")
+    EHI:CallCallback(EHI.CallbackMessage.Player.Despawned)
     CopDamage.unregister_listener("EHI_anarchist_on_damage")
     managers.player:unregister_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed")
     managers.ehi_buff:RemoveBuff("DireNeed")
     original.pre_destroy(self, ...)
+end
+
+function PlayerDamage:_on_use_armor_bag_event(...)
+    original._on_use_armor_bag_event(self, ...)
+    EHI:CallCallbackOnce(EHI.CallbackMessage.Player.ArmorKitUsed, self)
 end
 
 --//////////////////////////////--
@@ -242,9 +248,8 @@ if EHI:GetBuffOption("shield_regen") then
     original.on_copr_ability_activated = PlayerDamage.on_copr_ability_activated
     function PlayerDamage:on_copr_ability_activated(...)
         original.on_copr_ability_activated(self, ...)
-        managers.ehi_buff:RemoveBuff("ArmorRegenDelay")
+        managers.ehi_buff:RemoveAndResetBuff("ArmorRegenDelay")
     end
-
     original.set_regenerate_timer_to_max = PlayerDamage.set_regenerate_timer_to_max
     function PlayerDamage:set_regenerate_timer_to_max(...)
         original.set_regenerate_timer_to_max(self, ...)
@@ -257,6 +262,11 @@ if EHI:GetBuffOption("shield_regen") then
         end
         managers.ehi_buff:AddBuff("ArmorRegenDelay", final_time)
     end
+    original.on_downed = PlayerDamage.on_downed
+    function PlayerDamage:on_downed(...)
+        original.on_downed(self, ...)
+        managers.ehi_buff:RemoveAndResetBuff("ArmorRegenDelay")
+    end
 end
 
 --//////////////--
@@ -266,17 +276,15 @@ if EHI:GetBuffOption("health") then
     original._send_set_health = PlayerDamage._send_set_health
     function PlayerDamage:_send_set_health(...)
         original._send_set_health(self, ...)
-        local max_health = self:_max_health()
         local current_health = self:get_real_health()
-        local ratio = current_health / max_health
+        local ratio = current_health / self:_max_health()
         managers.ehi_buff:AddGauge("Health", ratio, current_health)
     end
-
     original._send_set_revives = PlayerDamage._send_set_revives
     function PlayerDamage:_send_set_revives(...)
         original._send_set_revives(self, ...)
         local revives = math.max(Application:digest_value(self._revives, false) - 1, 0)
-        managers.ehi_buff:CallFunction("Health", "SetHintText", tostring(revives))
+        managers.ehi_buff:CallFunction("Health", "SetHintText", revives)
     end
 end
 
@@ -287,21 +295,18 @@ if EHI:GetBuffOption("armor") then
     original._send_set_armor = PlayerDamage._send_set_armor
     function PlayerDamage:_send_set_armor(...)
         original._send_set_armor(self, ...)
-        local max_armor = self:_max_armor()
         local current_armor = self:get_real_armor()
-        local ratio = current_armor / max_armor
+        local ratio = current_armor / self:_max_armor()
         managers.ehi_buff:AddGauge("Armor", ratio, current_armor)
     end
-    if not FullSpeedSwarm then
-        -- https://steamcommunity.com/app/218620/discussions/14/2579854400739478371/
-        -- Code shamelessly stolen from FullSpeedSwarm, by TdlQ
-        function PlayerDamage:_update_armor_grinding(t, dt)
-            self._armor_grinding.elapsed = self._armor_grinding.elapsed + dt
-            if self._armor_grinding.target_tick <= self._armor_grinding.elapsed then
-                self._armor_grinding.elapsed = 0
-                self:change_armor(self._armor_grinding.armor_value)
-                self:_send_set_armor()
-            end
+    -- https://steamcommunity.com/app/218620/discussions/14/2579854400739478371/
+    -- Code shamelessly stolen from FullSpeedSwarm, by TdlQ
+    function PlayerDamage:_update_armor_grinding(t, dt)
+        self._armor_grinding.elapsed = self._armor_grinding.elapsed + dt
+        if self._armor_grinding.target_tick <= self._armor_grinding.elapsed then
+            self._armor_grinding.elapsed = 0
+            self:change_armor(self._armor_grinding.armor_value)
+            self:_send_set_armor()
         end
     end
 end

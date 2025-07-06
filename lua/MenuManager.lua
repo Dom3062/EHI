@@ -16,12 +16,8 @@ local Languages =
     [10] = "spanish",
     [11] = "japanese"
 }
-local LocLoaded = false
 
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc)
-    if LocLoaded then
-        return
-    end
     local language_filename = nil
     local lang = EHI:GetOption("mod_language")
     if lang == 1 then -- Autodetect
@@ -56,8 +52,7 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
         loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
     end
     loc:load_localization_file(EHI.ModPath .. "loc/languages.json")
-    EHI:CallCallbackOnce(EHI.CallbackMessage.LocLoaded, loc, Languages[lang] or language_filename or "english")
-    LocLoaded = true
+    EHI:RunOnLocalizationLoaded(loc, Languages[lang] or language_filename or "english")
 end)
 
 Hooks:Add("MenuManagerBuildCustomMenus", "MenuManagerBuildCustomMenus_EHI", function(menu_manager, nodes)
@@ -92,3 +87,9 @@ local function IncreaseRank(self, ...)
 end
 EHI:PreHookAndHookWithID(MenuCallbackHandler, "_increase_infamous", "EHI_MenuCallbackHandler_increase_infamous", CacheRank, IncreaseRank)
 EHI:PreHookAndHookWithID(MenuCallbackHandler, "_increase_infamous_with_prestige", "EHI_MenuCallbackHandler_increase_infamous_with_prestige", CacheRank, IncreaseRank)
+
+if Global.load_level then
+    Hooks:PreHook(MenuCallbackHandler, "_dialog_end_game_yes", "EHI_MenuCallbackHandler_dialog_end_game_yes", function(...)
+        EHI:RunEndGameCallback(EHI.Const.GameEnd.Abort)
+    end)
+end

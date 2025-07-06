@@ -56,13 +56,13 @@ end
 -- 101399 units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer/001 (2050, -10250, 639.67)
 EHI:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" }, hint = Hints.Wait } })
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
     assault = {
         force_assault_start = true,
-        wave_move_elements_block = { 101325, 100115 },
+        wave_mode_elements_block = { 101325, 100115 },
         fake_assault_block = true
     }
 })

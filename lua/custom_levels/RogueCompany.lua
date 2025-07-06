@@ -20,7 +20,7 @@ local achievements =
             [100824] = { time = 360, class = TT.Achievement.Unlock }
         },
         load_sync = function(self)
-            local t = 360 - math.max(self._trackers._t, self._t)
+            local t = 360 - math.max(self._trackers._t, self._tracking._t)
             if t <= 0 then
                 return
             end
@@ -35,7 +35,7 @@ local achievements =
 }
 EHI:PreparseBeardlibAchievements(achievements, "Rogue_Company")
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })

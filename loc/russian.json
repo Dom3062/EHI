@@ -55,9 +55,6 @@
     "ehi_status_objective" : "ЦЕЛЬ",											  
     "ehi_status_fail" : "ПРОВАЛЕНО",
 
-    "ehi_r" : "Красный",
-    "ehi_g" : "Зеленый",
-    "ehi_b" : "Синий",
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Сбросить цвет",
 
@@ -498,8 +495,11 @@
     "ehi_buffs_other_inspire_ai" : "Вдохновение (ИИ)",
     "ehi_buffs_other_regen_throwable_ai" : "Регенерация (ИИ)",
 
+    "ehi_buffs_group_color_red" : "Красный",
+    "ehi_buffs_group_color_green" : "Зеленый",
+    "ehi_buffs_group_color_blue" : "Синий",
+
     "ehi_inventory_menu" : "Инвентарь",
-    "ehi_inventory_menu_desc" : "",
 
     "ehi_show_inventory_detailed_description" : "Показывать подробное описание инвентаря",
     "ehi_show_inventory_detailed_description_desc" : "Показывает подробное описание метательных предметов и снаряжения.",

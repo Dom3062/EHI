@@ -1,4 +1,3 @@
-local EHI = EHI
 if EHI:CheckLoadHook("PlayerMovement") or not EHI:GetOption("show_buffs") then
     return
 end
@@ -13,7 +12,6 @@ function PlayerMovement:init(...)
     managers.ehi_buff:CallFunction("Stamina", "Spawned", self._stamina)
     if self.__ehi_inspire_basic and self._rally_skill_data and self._rally_skill_data.morale_boost_delay_t then
         local _t = self._rally_skill_data
-        self._rally_skill_data = {}
         local _mt = {
             __index = function(table, key)
                 return _t[key]
@@ -26,6 +24,16 @@ function PlayerMovement:init(...)
                 end
             end
         }
-        setmetatable(self._rally_skill_data, _mt)
+        self._rally_skill_data = setmetatable({}, _mt)
+    end
+end
+
+if (EHI:GetBuffOption("inspire_reload") or EHI:GetBuffOption("inspire_movement")) and not Global.game_settings.single_player then
+    original.on_morale_boost = PlayerMovement.on_morale_boost
+    function PlayerMovement:on_morale_boost(...)
+        original.on_morale_boost(self, ...)
+        local t = tweak_data.upgrades.morale_boost_time
+        managers.ehi_buff:AddBuff("inspire_reload", t)
+        managers.ehi_buff:AddBuff("inspire_movement", t)
     end
 end

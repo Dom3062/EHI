@@ -1,5 +1,5 @@
-EHIorange5Tracker = class(EHIAchievementProgressTracker)
-function EHIorange5Tracker:Finalize()
+local orange_5 = class(EHIAchievementProgressTracker)
+function orange_5:Finalize()
     if self._progress < self._max then
         self:SetFailed()
     end
@@ -25,28 +25,25 @@ local achievements =
         {
             [EHI:GetInstanceElementID(100459, 21700)] = { time = 284, class = TT.Achievement.Base },
             [EHI:GetInstanceElementID(100461, 21700)] = { special_function = SF.SetAchievementComplete },
-        },
-        sync_params = { from_start = true }
+        }
     },
     orange_5 =
     {
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [100279] = { max = 15, class = "EHIorange5Tracker", status_is_overridable = true, show_finish_after_reaching_target = true },
+            [100279] = { max = 15, class_table = orange_5, status_is_overridable = true, show_finish_after_reaching_target = true },
             [EHI:GetInstanceElementID(100471, 21700)] = { special_function = SF.SetAchievementFailed },
             [EHI:GetInstanceElementID(100474, 21700)] = { special_function = SF.IncreaseProgress },
             [EHI:GetInstanceElementID(100005, 12200)] = { special_function = SF.FinalizeAchievement }
-        },
-        cleanup_class = "EHIorange5Tracker",
-        sync_params = { from_start = true }
+        }
     }
 }
 local other =
 {
     [101315] = EHI:AddAssaultDelay({}) -- 30s
 }
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

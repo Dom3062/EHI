@@ -12,6 +12,7 @@
 ---@field SniperLogicEnded fun(self: self) `self._popup_icon` (string)
 ---@field SniperSpawned fun(self: self) `self._single_sniper` (boolean), `self._popup_icon` (string)
 ---@field SniperSpawnedCheckCount fun(self: self) `self._single_sniper` (boolean), `self._popup_icon` (string), `self._sniper_count` (number), `self._count` (number)
+---@field LogicStartedAndSniperSpawned fun(self: self)
 
 ---@param self EHISniperBaseTracker
 local function SniperLogicStarted(self)
@@ -41,6 +42,12 @@ local function SniperSpawnedCheckCount(self)
     end
 end
 
+---@param self EHISniperBaseTracker
+local function LogicStartedAndSniperSpawned(self)
+    self:SniperLogicStarted()
+    self:SniperSpawned()
+end
+
 ---@generic T: table
 ---@param super T? A base class which `class` will derive from
 ---@param params { hint: string, icons: table, override_text_color: boolean, check_sniper_count: boolean }?
@@ -56,6 +63,7 @@ function _G.ehi_sniper_class(super, params)
     klass._snipers_logic_ended = EHI:GetOption("show_sniper_logic_end_popup") --[[@as boolean]]
     klass.SniperLogicEnded = SniperLogicEnded
     klass.SniperSpawned = params.check_sniper_count and SniperSpawnedCheckCount or SniperSpawned
+    klass.LogicStartedAndSniperSpawned = LogicStartedAndSniperSpawned
     if params.override_text_color then
         klass._text_color = EHI:GetColorFromOption("tracker_waypoint", "sniper_count")
     else
@@ -72,7 +80,7 @@ function EHISniperWarningTracker:pre_init(params)
     self._single_sniper = params.single_sniper
 end
 
-function EHISniperWarningTracker:pre_delete()
+function EHISniperWarningTracker:pre_destroy()
     self:SniperSpawned()
 end
 
@@ -108,7 +116,7 @@ EHISniperCountTracker.FormatCount = EHISniperCountTracker.Format
 function EHISniperCountTracker:SniperSpawnsSuccess(count)
     if self._snipers_spawned_popup and self._sniper_count ~= self._current_sniper_count and self._snipers_enabled then
         if self._remaining_snipers > 0 then
-            self._snipers_enabled = false -- To prevent popup flooding when snipers are already disabled
+            self._snipers_enabled = self._remaining_snipers - self._count > 0 -- To prevent popup flooding when snipers are already disabled
             self._current_sniper_count = math.min(self._remaining_snipers, self._count)
         else
             self._current_sniper_count = self._count
@@ -124,7 +132,7 @@ function EHISniperCountTracker:DecreaseCount(count)
     local n = count or 1
     if self._remaining_snipers > 0 then
         self._remaining_snipers = self._remaining_snipers - n
-        if self._remaining_snipers == 0 then -- No more snipers will spawn, delete the tracker
+        if self._remaining_snipers <= 0 then -- No more snipers will spawn, delete the tracker
             self:SniperLogicEnded()
             self:delete()
             return
@@ -189,7 +197,7 @@ end
 
 ---@class EHISniperTimedTracker : EHITracker, EHICountTracker, EHISniperBaseTracker
 ---@field super EHITracker
-EHISniperTimedTracker = ehi_sniper_class(EHITracker, { check_sniper_count = true })
+EHISniperTimedTracker = ehi_sniper_class(EHITracker, { check_sniper_count = true, hint = "enemy_snipers_loop" })
 EHISniperTimedTracker._paused_color = EHIPausableTracker._paused_color
 EHISniperTimedTracker.SetCount = EHICountTracker.SetCountNoNegative
 EHISniperTimedTracker.IncreaseCount = EHICountTracker.IncreaseCount
@@ -234,7 +242,7 @@ end
 
 function EHISniperTimedTracker:PauseTimer()
     self:RemoveTrackerFromUpdate()
-    self:FitTheTime(0)
+    self:FitTheTime(0, "0")
     self:SetTextColor(self._paused_color)
 end
 
@@ -297,6 +305,17 @@ function EHISniperTimedCountTracker:Refresh()
         self:SetCount(self._count_on_refresh)
     end
     self:SniperSpawned()
+end
+
+---@class EHISniperTimedCountOnceTracker : EHISniperTimedCountTracker
+---@field super EHISniperTimedCountTracker
+EHISniperTimedCountOnceTracker = class(EHISniperTimedCountTracker)
+function EHISniperTimedCountOnceTracker:SetCount(count)
+    if count <= 0 then
+        self:ForceDelete()
+    else
+        EHISniperTimedCountOnceTracker.super.SetCount(self, count)
+    end
 end
 
 ---@class EHISniperTimedChanceTracker : EHITracker, EHIChanceTracker, EHICountTracker, EHISniperBaseTracker
@@ -405,7 +424,7 @@ function EHISniperTimedChanceTracker:SetChance(amount)
     self:AnimateBG(1)
 end
 
-function EHISniperTimedChanceTracker:pre_delete()
+function EHISniperTimedChanceTracker:pre_destroy()
     self:SniperLogicEnded()
 end
 
@@ -537,15 +556,15 @@ function EHISniperLoopTracker:RequestRemoval()
     self:AnimateAdjustHintX(-self._default_bg_size_half)
 end
 
-function EHISniperLoopTracker:pre_delete()
+function EHISniperLoopTracker:pre_destroy()
     self:SniperLogicEnded()
 end
 
 ---@class EHISniperLoopRestartTracker : EHISniperLoopTracker
 ---@field super EHISniperLoopTracker
 EHISniperLoopRestartTracker = class(EHISniperLoopTracker)
+EHISniperLoopRestartTracker.SniperSpawned = SniperSpawned
 function EHISniperLoopRestartTracker:post_init(params)
-    EHISniperLoopRestartTracker.super.post_init(self, params)
     self._sniper_respawn = true
     self._initial_spawn = params.initial_spawn or self._chance >= 100
     self._initial_spawn_chance_set = params.initial_spawn_chance_set
@@ -593,6 +612,104 @@ function EHISniperLoopRestartTracker:RequestRemoval()
     self._sniper_respawn = true
     self._removal_requested = true
     EHISniperLoopRestartTracker.super.RequestRemoval(self)
+end
+
+---@class EHISniperLoopBufferTracker : EHICountTracker, EHISniperBaseTracker
+---@field super EHICountTracker
+EHISniperLoopBufferTracker = ehi_sniper_class(EHICountTracker, { hint = "enemy_snipers_loop" })
+EHISniperLoopBufferTracker._single_sniper = true
+function EHISniperLoopBufferTracker:post_init(...)
+    EHISniperLoopBufferTracker.super.post_init(self, ...)
+    self._sniper_respawn_buffer = {}
+    self._sniper_respawn_buffer_size = 0
+    self:SetBGSize(self._bg_box:w() / 2)
+    local half = self._bg_box:w() / 2
+    self._count_text:set_color(self._sniper_text_color)
+    self._count_text:set_w(half)
+    self._text = self:CreateText({
+        w = half,
+        left = 0,
+        FitTheText = true
+    })
+    self._count_text:set_left(self._text:right())
+    self:SniperLogicStarted()
+end
+
+function EHISniperLoopBufferTracker:update(dt)
+    self._time = self._time - dt
+    self._text:set_text(EHISniperLoopBufferTracker.super.super.Format(self))
+    if self._time <= 0 then
+        if self:RemoveFromRespawn() then
+            self:RemoveTrackerFromUpdate()
+            return
+        end
+        self._time = self:GetNextSniperTime()
+    end
+end
+
+function EHISniperLoopBufferTracker:RemoveFromRespawn()
+    self:IncreaseCount()
+    self._sniper_respawn_buffer[self._sniper_respawn_element] = nil
+    self._sniper_respawn_buffer_size = self._sniper_respawn_buffer_size - 1
+    for element, t in pairs(self._sniper_respawn_buffer) do
+        self._sniper_respawn_buffer[element] = t - self._sniper_respawn_t
+    end
+    return self._sniper_respawn_buffer_size == 0
+end
+
+---@param element_id number
+---@param t number
+function EHISniperLoopBufferTracker:AddToRespawnInitial(element_id, t)
+    self._sniper_respawn_buffer[element_id] = t
+    self._sniper_respawn_buffer_size = self._sniper_respawn_buffer_size + 1
+    if self._sniper_respawn_buffer_size >= 2 then -- Another respawn will happen while one is happening, update needed
+        local diff = self._sniper_respawn_t - self._time -- First compute how much time passed since last addition
+        if diff > 0 then -- If script adds more than one respawn in the same frame, do nothing
+            -- Reduce delay in the buffer to correctly represent current time for the elements, but not for our new element
+            for element, element_t in pairs(self._sniper_respawn_buffer) do
+                if element ~= element_id then
+                    self._sniper_respawn_buffer[element] = element_t - diff
+                end
+            end
+            if self._time > t then
+                -- Next respawn will happen sooner than current spawn, update variables
+                self._sniper_respawn_element = element_id
+                self._sniper_respawn_t = t
+                self._time = t
+            else
+                self._sniper_respawn_t = self._time
+            end
+        end
+        return
+    end
+    self._sniper_respawn_element = element_id
+    self._sniper_respawn_t = t
+    self._time = t
+    self:AddTrackerToUpdate()
+end
+
+---@param element_id number
+---@param t number
+function EHISniperLoopBufferTracker:AddToRespawnFromDeath(element_id, t)
+    self:DecreaseCount()
+    self:AddToRespawnInitial(element_id, t)
+end
+
+function EHISniperLoopBufferTracker:GetNextSniperTime()
+    local t = math.huge
+    for element_id, t_respawn in pairs(self._sniper_respawn_buffer) do
+        if t_respawn < t then
+            t = t_respawn
+            self._sniper_respawn_t = t_respawn
+            self._sniper_respawn_element = element_id
+        end
+    end
+    return t
+end
+
+function EHISniperLoopBufferTracker:IncreaseCount(...)
+    self:SniperSpawned()
+    EHISniperLoopBufferTracker.super.IncreaseCount(self, ...)
 end
 
 ---@class EHISniperTimedChanceOnceTracker : EHISniperTimedChanceTracker
@@ -675,7 +792,7 @@ function EHISniperHeliTracker:RequestRemoval()
     self:ForceDelete()
 end
 
-function EHISniperHeliTracker:pre_delete()
+function EHISniperHeliTracker:pre_destroy()
     self:SniperLogicEnded()
 end
 

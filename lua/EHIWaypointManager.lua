@@ -1,5 +1,4 @@
 local EHI = EHI
-local icons = tweak_data.ehi.icons
 ---@class EHIWaypointManager
 EHIWaypointManager = {}
 EHIWaypointManager._font = tweak_data.menu.pd2_large_font_id -- Large font
@@ -8,6 +7,7 @@ EHIWaypointManager._distance_font_size = tweak_data.hud.default_font_size
 EHIWaypointManager._bitmap_w = 32
 EHIWaypointManager._bitmap_h = 32
 function EHIWaypointManager:new()
+    EHIWaypoint._parent_class = self
     self._t = 0
     self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
     self._present_timer = EHI:GetOption("show_waypoints_present_timer") --[[@as number]]
@@ -15,19 +15,22 @@ function EHIWaypointManager:new()
     self._waypoints = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
     self._waypoints_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
     self._base_waypoint_class = EHI.Waypoints.Base
+    self._get_icon = tweak_data.ehi.default.tracker.get_icon
     return self
 end
 
----@param t number
-function EHIWaypointManager:LoadTime(t)
-    self._t = t
+function EHIWaypointManager:init_finalize()
+    if self._enabled then
+        EHI:AddOnAlarmCallback(function(dropin)
+            for _, waypoint in pairs(self._waypoints) do
+                waypoint:SwitchToLoudMode()
+            end
+        end)
+    end
 end
 
 ---@param hud HUDManager
 function EHIWaypointManager:SetPlayerHUD(hud)
-    --[[Hooks:PostHook(hud, "add_waypoint", "EHI_Test_add_waypoint", function(_self, id, ...) ---@param id string|number
-        EHI:LogWithCurrentFile("Created waypoint with ID: " .. tostring(id))
-    end)]]
     self._hud = hud
     for id, params in pairs(self._stored_waypoints) do
         self:AddWaypoint(id, params)
@@ -66,7 +69,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
     end
     waypoint.timer_gui:set_font(self._font)
     waypoint.timer_gui:set_font_size(self._timer_font_size)
-    local w = _G[params.class or self._base_waypoint_class]:new(waypoint, params, self) --[[@as EHIWaypoint]]
+    local w = (params.class_table or _G[params.class or self._base_waypoint_class]):new(waypoint, params)
     if w._needs_update then
         self._waypoints_to_update[id] = w
     end
@@ -86,7 +89,7 @@ function EHIWaypointManager:AddWaypointlessWaypoint(id, params)
     end
     params.id = id
     params.no_sync = true
-    self._waypoints[id] = _G[params.class or self._base_waypoint_class]:new(nil, params, self) --[[@as EHIWaypoint]]
+    self._waypoints[id] = (params.class_table or _G[params.class or self._base_waypoint_class]):new(nil, params)
 end
 
 ---Only Waypoints should call this. This function creates the waypoint on the HUD
@@ -96,7 +99,7 @@ end
 ---@param present_timer number?
 ---@return Waypoint?
 function EHIWaypointManager:_create_waypoint(id, icon, position, present_timer)
-    if not self._enabled then
+    if not (self._enabled and self._hud) then
         return
     end
     local params = {} ---@type WaypointInitData
@@ -121,19 +124,17 @@ function EHIWaypointManager:_create_waypoint(id, icon, position, present_timer)
     end
     waypoint.timer_gui:set_font(self._font)
     waypoint.timer_gui:set_font_size(self._timer_font_size)
-    --[[if params.remove_vanilla_waypoint then
-        self._hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
-    end]]
     return waypoint
 end
 
 ---@param id string
-function EHIWaypointManager:RemoveWaypoint(id)
+---@param waypoint_id number?
+function EHIWaypointManager:RemoveWaypoint(id, waypoint_id)
     local wp = table.remove_key(self._waypoints, id)
     if wp then
         wp:destroy()
         self._waypoints_to_update[id] = nil
-        self._hud:remove_waypoint(id)
+        self._hud:remove_waypoint(waypoint_id or id)
     end
 end
 
@@ -152,12 +153,8 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
         return
     end
     wp._id = new_id
-    self._waypoints[id] = nil
-    self._waypoints[new_id] = wp
-    if self._waypoints_to_update[id] then
-        self._waypoints_to_update[id] = nil
-        self._waypoints_to_update[new_id] = wp
-    end
+    self._waypoints[new_id] = table.remove_key(self._waypoints, id)
+    self._waypoints_to_update[new_id] = table.remove_key(self._waypoints_to_update, id)
 end
 
 ---@param wp Waypoint
@@ -167,16 +164,9 @@ function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
     local bitmap_world = wp.bitmap_world -- VR
     local icon, texture_rect
     if params.texture then
-        icon = params.texture
-        texture_rect = params.text_rect
+        icon, texture_rect = params.texture, params.texture_rect
     else
-        local _icon = type(params.icon) == "table" and params.icon[1] or params.icon --[[@as string]]
-        if icons[_icon] then
-            icon = icons[_icon].texture
-            texture_rect = icons[_icon].texture_rect
-        else
-            icon, texture_rect = tweak_data.hud_icons:get_icon_or(_icon, icons.default.texture, icons.default.texture_rect)
-        end
+        icon, texture_rect = self._get_icon(type(params.icon) == "table" and params.icon[1] or params.icon --[[@as string]])
     end
     if texture_rect then
         bitmap:set_image(icon, unpack(texture_rect))
@@ -234,32 +224,6 @@ function EHIWaypointManager:SetTime(id, time)
     local wp = self._waypoints[id]
     if wp then
         wp:SetTime(time)
-    end
-end
-
----@param id string
----@param jammed boolean
-function EHIWaypointManager:SetTimerWaypointJammed(id, jammed)
-    local wp = self._waypoints[id] --[[@as EHITimerWaypoint]]
-    if wp and wp.SetJammed then
-        wp:SetJammed(jammed)
-    end
-end
-
----@param id string
----@param powered boolean
-function EHIWaypointManager:SetTimerWaypointPowered(id, powered)
-    local wp = self._waypoints[id] --[[@as EHITimerWaypoint]]
-    if wp and wp.SetPowered then
-        wp:SetPowered(powered)
-    end
-end
-
----@param id string
-function EHIWaypointManager:SetTimerWaypointRunning(id)
-    local wp = self._waypoints[id] --[[@as EHITimerWaypoint]]
-    if wp and wp.SetRunning then
-        wp:SetRunning()
     end
 end
 
@@ -389,6 +353,14 @@ function EHIWaypointManager:CallFunction2(id, f, ...)
     elseif wp[f] then
         wp[f](wp, ...)
     end
+end
+
+function EHIWaypointManager:ReturnValue2(id, f, ...)
+    local wp = id and self._waypoints[id]
+    if not (wp and wp[f]) then
+        return true
+    end
+    return wp[f](wp, ...)
 end
 
 do

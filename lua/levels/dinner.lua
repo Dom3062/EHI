@@ -10,7 +10,7 @@ local triggers = {
         self._waypoints:AddWaypoint(trigger.id, {
             time = trigger.time,
             icon = Icon.Interact,
-            position = self.SyncedSFF.dinner_EscapePos or self:GetElementPositionOrDefault(100836)
+            position = self._SyncedSFF.dinner_EscapePos or self._mission:GetElementPositionOrDefault(100836)
         })
     end, hint = Hints.Escape },
     -- C4 (Doors)
@@ -60,14 +60,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101179] = { chance = 15, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1 }
     other[101227] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101228] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[101233] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
+    other[101233] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...)
         if EHI.IsHost and not element:_values_ok() then
             return
         end
         self._trackers:CallFunction("Snipers", "SnipersKilled")
     end) }
     other[101956] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[101957] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
+    other[101957] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         if self._trackers:CallFunction2("Snipers", "SniperSpawnsSuccess", element._values.chance) then -- 0%
             self._trackers:AddTracker({
                 id = "Snipers",
@@ -78,14 +78,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end) }
 end
-local CacheEscapePos = EHI.Manager:RegisterCustomSyncedSF(function(self, trigger, ...)
-    self.SyncedSFF.dinner_EscapePos = self:GetElementPosition(EHI:GetInstanceElementID(100034, trigger.index))
+local CacheEscapePos = EHI.Trigger:RegisterCustomSyncedSF(function(self, trigger, ...)
+    self._SyncedSFF.dinner_EscapePos = self._mission:GetElementPosition(EHI:GetInstanceElementID(100034, trigger.index))
 end)
 for i = 2850, 3050, 100 do
     other[EHI:GetInstanceElementID(100028, i)] = { special_function = CacheEscapePos, index = i }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other
@@ -105,7 +105,7 @@ if ovk_and_up then
         }
     })
     if EHI:CanShowAchievement("farm_1") then
-        EHI.Manager._assault:AddAssaultModeChangedCallback(function(mode)
+        managers.ehi_assault:AddAssaultModeChangedCallback(function(mode)
             if mode == "phalanx" then
                 managers.ehi_unlockable:AddAchievementStatusTracker("farm_1", "finish")
             else

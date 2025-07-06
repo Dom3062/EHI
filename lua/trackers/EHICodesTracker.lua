@@ -41,7 +41,7 @@ EHIColoredCodesTracker._forced_hint_text = "color_codes"
 EHIColoredCodesTracker._init_create_text = false
 function EHIColoredCodesTracker:OverridePanel()
     local third = self._bg_box:w() / 3
-    self._colors = {} ---@type table<string, PanelText?>
+    self._colors = {} ---@type table<string, Text?>
     self._colors.red = self:CreateText({
         text = "?",
         w = third,
@@ -68,7 +68,7 @@ end
 ---@param color string
 ---@param code string
 function EHIColoredCodesTracker:SetCode(color, code)
-    local text = self._colors[color] ---@type PanelText
+    local text = self._colors[color] ---@type Text
     text:set_text(self:Format(code))
     self:FitTheText(text)
     self:AnimateBG()

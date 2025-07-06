@@ -2,13 +2,10 @@
 ---@field super EHIBuffTracker
 EHIBikerBuffTracker = class(EHIBuffTracker)
 EHIBikerBuffTracker._max_kills = tweak_data.upgrades.wild_max_triggers_per_time or 4
-function EHIBikerBuffTracker:PreUpdateCheck()
+EHIBikerBuffTracker._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK = true
+function EHIBikerBuffTracker:SkillCheck()
     self._player_manager = managers.player
-    if self._player_manager:has_category_upgrade("player", "wild_health_amount") or self._player_manager:has_category_upgrade("player", "wild_armor_amount") then
-        return true
-    else
-        self:delete_with_class()
-    end
+    return self._player_manager:has_category_upgrade("player", "wild_health_amount") or self._player_manager:has_category_upgrade("player", "wild_armor_amount")
 end
 
 function EHIBikerBuffTracker:PreUpdate()

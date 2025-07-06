@@ -8,6 +8,7 @@ end
 ---@field _unit UnitPlayer
 ---@field id fun(self: self): number
 ---@field character fun(self: self): string
+---@field name fun(self: self): string
 ---@field set_outfit_string fun(self: self, outfit_string: table)
 ---@field unit fun(self: self): UnitPlayer
 

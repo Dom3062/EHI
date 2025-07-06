@@ -7,19 +7,27 @@ _G.EHI._cache.LocalPeerID = math.random()
 _G.EHI._cache.Beardlib = {} ---@type table<string, { name: string, objective: string }>
 _G.EHI.HeistTimerIsInverted = math.random() == math.random()
 _G.EHI.GagePackagesSpawned = math.random() == math.random()
-_G.EHI.Manager = managers.ehi_manager
+_G.EHI.Sync = managers.ehi_sync
+_G.EHI.Trigger = EHIMissionElementTrigger
+---@type EHIMissionElementOverride
+_G.EHI.Element = EHIMissionElementOverride
+---@type EHIMissionHolder
+_G.EHI.Mission = EHIMissionHolder
 
----@class AnyExceptNil : table, string, boolean, number, userdata
+---@alias AnyExceptNil table|string|boolean|number|userdata
 
 ---@class ElementWaypointTrigger : WaypointInitData
+---@field waypointless boolean Creates Waypoint class without any waypoint in the game world
 ---@field id number|string? ID of the waypoint, if not provided, `id` is then copied from the trigger
 ---@field icon string? 
 ---@field time number? Time to run down. If not provided, `time` is then copied from the trigger
 ---@field class string? Class of the waypoint. If not provided, `class` is then copied from the trigger and converted to Waypoint class
+---@field class_table EHIWaypoint?
 ---@field position Vector3
 ---@field position_from_element number?
 ---@field position_from_unit number?
 ---@field remove_vanilla_waypoint number? Removes waypoint in the game
+---@field remove_vanilla_waypoint_overriden number? Removes already overriden waypoint in the game
 ---@field position_from_element_and_remove_vanilla_waypoint number?
 ---@field data_from_element number?
 ---@field data_from_element_and_remove_vanilla_waypoint number?
@@ -27,6 +35,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field present_timer number?
 ---@field remove_on_alarm boolean Removes the waypoint on alarm
 ---@field skip_if_not_found boolean Skips error message if the instance is not placed on the map
+---@field unit Unit
 
 ---@class ElementClientTriggerData
 ---@field time number Maps to `additional_time`. If the field already exists, it is added to the field (+)
@@ -49,13 +58,14 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field condition_function fun(): boolean
 ---@field icons table? Icons to show in the tracker
 ---@field class string? Class of tracker. If not provided it defaults to `EHITracker` in `EHITrackerManager`
+---@field class_table EHITracker? Direct reference of tracker the class that should create and hold a tracker
 ---@field special_function number? Special function the trigger should do
 ---@field waypoint ElementWaypointTrigger? Waypoint definition
----@field waypoint_f fun(self: EHIManager, trigger: self)? In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
+---@field waypoint_f fun(self: EHIMissionElementTrigger, trigger: self)? In case waypoint needs to be dynamic (different position each call or it depends on a trigger itself)
 ---@field trigger_once boolean? If the trigger should run once. After execution it is unhooked from the Element and removed from memory
 ---@field client ElementClientTriggerData? Table for clients only to prepopulate fields for tracker syncing. Only applicable to `SF.GetElementTimerAccurate` and `SF.UnpauseTrackerIfExistsAccurate`
 ---@field pos number? Tracker position
----@field f string|fun(arg: any?)|fun(self: EHIManager, arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`; `EHIManager` is for `SF.CustomCode2`
+---@field f string|fun(arg: any?)|fun(self: EHIMissionElementTrigger, arg: any?)? Arguments are unsupported in `SF.CustomCodeDelayed`; `EHIMissionElementTrigger` is for `SF.CustomCode2`
 ---@field flash_times number?
 ---@field flash_bg boolean?
 ---@field hint string?
@@ -63,6 +73,8 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field tracker_group boolean
 ---@field remove_on_alarm boolean? Removes the tracker on alarm; calls `EHITracker:ForceDelete()`
 ---@field update_on_alarm boolean? Updates the tracker on alarm; calls `EHITracker:OnAlarm()`
+---@field first_icon_pos number? Forces specific icon from provided list of icons to be visible if `show_one_icon` option is enabled; Has no effect if all icons are visible
+---@field load_sync fun(self: EHIMissionElementTrigger)|false|nil
 ---@field [any] any
 
 ---@class AssaultElementTrigger : ElementTrigger
@@ -72,23 +84,18 @@ _G.EHI.Manager = managers.ehi_manager
 ---@class ParseTriggerTable
 ---@field [number] ElementTrigger
 
----@class ParseAchievementDefinitionTable.sync_params
----@field from_start boolean
----@field x boolean
-
 ---@class ParseAchievementDefinitionTable
 ---@field beardlib boolean If the achievement is from Beardlib
 ---@field difficulty_pass boolean Difficulty check, setting this to `false` will disable the achievement to show on the screen
 ---@field elements table<number, ElementTrigger> Elements to hook
 ---@field failed_on_alarm boolean Fails the achievement on alarm
----@field load_sync fun(self: EHIManager) Function to run if client drops-in to the game
+---@field load_sync fun(self: EHIMissionElementTrigger) Function to run if client drops-in to the game
 ---@field alarm_callback fun(dropin: boolean) Function to run after alarm has sounded
 ---@field parsed_callback fun() Function runs after the achievement is parsed
 ---@field preparse_callback fun(data: self) Function runs before the achievement is parsed and achievement is enabled
 ---@field cleanup_callback fun() Function runs during achievement traversal when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field cleanup_class string EHI class name to delete when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field mission_end_callback boolean Achieves or fails achievement on mission end
----@field sync_params ParseAchievementDefinitionTable.sync_params Params to adjust syncing between host and clients
 ---@field data_sync table<string, any> Params to sync to other players
 
 ---@class ParseAchievementTable
@@ -111,7 +118,8 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field diff number?
 ---@field fake_assault_block boolean
 ---@field force_assault_start boolean
----@field wave_move_elements_block number[]
+---@field wave_mode_elements_block number[]
+---@field ignore_assault_start_count number?
 
 ---@class ParseTriggersTable.pre_parse
 ---@field filter_out_not_loaded_trackers "show_timers"|string[] Only in mission triggers
@@ -141,7 +149,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field max integer Maximum number of loot
 ---@field max_random integer Defines a variable number of loot
 ---@field unknown_random boolean Defines if heist will spawn additional random loot during gameplay
----@field load_sync fun(self: EHIManager)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `self._loot:SyncSecuredLoot()`
+---@field load_sync fun(self: EHIMissionElementTrigger)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `self._loot:SyncSecuredLoot()`
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
 ---@field skip_offset boolean Skip offset calculation if mission resets all secured bags
 ---@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
@@ -162,6 +170,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field check_function fun(progress: number, max: number): boolean
 ---@field remove_check fun(progress: number, max: number): boolean
 ---@field disable_waypoint_removal boolean Disables waypoint removal, useful if the mission script is killing the waypoint in the middle of securing loot. This will also remove vanilla waypoint from syncing (as per mission script design)
+---@field class string
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.Const.LootCounter.CheckType`, defaults to `EHI.Const.LootCounter.CheckType.BagsOnly` if not provided
@@ -176,8 +185,8 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field progress integer Start with progress if provided, otherwise 0
 ---@field show_finish_after_reaching_target boolean Setting this to `true` will show `FINISH` in the tracker
 ---@field class string Achievement tracker class
----@field load_sync fun(self: EHIManager) Synchronizes secured bags in the achievement
----@field loot_counter_load_sync fun(self: EHIManager) Synchronizes secured bags in the loot counter if achievement is not visible
+---@field load_sync fun(self: EHIMissionElementTrigger) Synchronizes secured bags in the achievement
+---@field loot_counter_load_sync fun(self: EHIMissionElementTrigger) Synchronizes secured bags in the loot counter if achievement is not visible
 ---@field alarm_callback fun(dropin: boolean) Do some action when alarm is sounded
 ---@field failed_on_alarm boolean Fails achievement in tracker on alarm
 ---@field triggers table<number, ElementTrigger> Adds triggers when counter is manipulated via Mission Script, prevents counting
@@ -212,7 +221,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field restore_on_done boolean? Depends on `remove_vanilla_waypoint`
 ---@field icon string|table
 ---@field texture string
----@field text_rect TextureRect
+---@field texture_rect TextureRect
 ---@field timer 0
 ---@field pause_timer 1
 ---@field no_sync true
@@ -261,6 +270,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field disable_set_visible boolean
 ---@field remove_on_alarm boolean
 ---@field remove_vanilla_waypoint number
+---@field remove_vanilla_waypoint_overriden { id: number, waypoint: string } Removes already overriden waypoint in the game
 ---@field restore_waypoint_on_done boolean Depends on `remove_vanilla_waypoint`
 ---@field ignore_visibility boolean
 ---@field set_custom_id string
@@ -307,6 +317,7 @@ _G.EHI.Manager = managers.ehi_manager
 ---@field remove_on_alarm boolean?
 ---@field update_on_alarm boolean?
 ---@field delay_popup boolean Provided by `EHITrackerManager`
+---@field first_icon_pos number?
 ---@field [any] any
 
 ---@class EHITracker.CreateText

@@ -17,7 +17,7 @@ local triggers = {
 
     [103535] = { time = 5, id = "C4Explosion", icons = { Icon.C4 }, hint = Hints.Explosion }
 }
-local CrashIcons = EHI:GetOption("show_one_icon") and { Icon.Fix } or { Icon.PCHack, Icon.Fix, "pd2_question" }
+local CrashIcons = EHI.TrackerUtils:GetTrackerIcons({ Icon.PCHack, Icon.Fix, "pd2_question" }, { Icon.Fix })
 local tracker_merge =
 {
     CrashChance =
@@ -46,7 +46,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         hard = 50,
         veryhard_or_above = 40
     })
-    other[100356] = { time = refresh_t, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
+    other[100356] = { time = refresh_t, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
         local t = trigger.time ---@cast t -?
         if element:_check_mode() then
             if self._cache.election_day_3_RefreshSniperTime then
@@ -73,7 +73,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 if EHI:IsLootCounterVisible() then
     other[103293] = EHI:AddLootCounter4(function(self, ...)
-        local count = self:CountInteractionAvailable("money_wrap")
+        local count = self._utils:CountInteractionAvailable("money_wrap")
         if count > 0 then
             EHI:ShowLootCounterNoChecks({ max = count, client_from_start = true })
         end
@@ -87,7 +87,7 @@ EHI:SetMissionDoorData({
     -- Gate inside the vault
     [Vector3(2493.96, -2793.65, 84.8657)] = { w_id = 104645, restore = true, unit_id = 101581 }
 })
-EHI.Manager:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
 EHI:AddXPBreakdown({
     objective =
     {

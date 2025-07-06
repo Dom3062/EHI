@@ -1,14 +1,14 @@
 local EHI = EHI
 local Color = Color
----@class EHIameno3Tracker : EHIAchievementTracker, EHINeededValueTracker, EHIAchievementProgressTracker
+---@class ameno_3 : EHIAchievementTracker, EHINeededValueTracker, EHIAchievementProgressTracker
 ---@field super EHIAchievementTracker
-EHIameno3Tracker = class(EHIAchievementTracker)
-EHIameno3Tracker.FormatNumber = EHINeededValueTracker.Format
-EHIameno3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
-EHIameno3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-EHIameno3Tracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
----@param class EHIameno3Tracker
-EHIameno3Tracker._anim_warning = function(o, old_color, color, start_t, class)
+local ameno_3 = class(EHIAchievementTracker)
+ameno_3.FormatNumber = EHINeededValueTracker.Format
+ameno_3.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
+ameno_3.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+ameno_3.AddLootListener = EHIAchievementProgressTracker.AddLootListener
+---@param class ameno_3
+ameno_3._anim_warning = function(o, old_color, color, start_t, class)
     local c = Color(old_color.r, old_color.g, old_color.b)
     local money = class._money_text
     while true do
@@ -25,15 +25,15 @@ EHIameno3Tracker._anim_warning = function(o, old_color, color, start_t, class)
         t = 1
     end
 end
-function EHIameno3Tracker:pre_init(params)
+function ameno_3:pre_init(params)
     self._cash_sign = managers.localization:text("cash_sign")
-    self._max = params.max or 0
+    self._max = 1800000
     self._progress = params.progress or 0
     self._progress_formatted = self:FormatNumber2(self._progress)
     self._max_formatted = self:FormatNumber2(self._max)
 end
 
-function EHIameno3Tracker:OverridePanel()
+function ameno_3:OverridePanel()
     self:SetBGSize()
     self._money_text = self:CreateText({
         text = self:FormatNumber(),
@@ -52,7 +52,7 @@ function EHIameno3Tracker:OverridePanel()
     })
 end
 
-function EHIameno3Tracker:SetProgress(progress)
+function ameno_3:SetProgress(progress)
     if self._progress ~= progress and not self._disable_counting then
         self._progress = progress
         self._progress_formatted = self:FormatNumber2(progress)
@@ -63,23 +63,21 @@ function EHIameno3Tracker:SetProgress(progress)
     end
 end
 
-function EHIameno3Tracker:SetCompleted()
+function ameno_3:SetCompleted()
     if self._progress >= self._max and not self._status then
         self._status = "completed"
-        self._text:stop()
-        self:SetTextColor(Color.green)
-        self.update = self.update_fade
         self._disable_counting = true
         self._achieved_popup_showed = true
+        self:delete_with_delay(true)
     end
 end
 
-function EHIameno3Tracker:SetTextColor(color)
+function ameno_3:SetTextColor(color)
     EHINeededValueTracker.super.SetTextColor(self, color)
     self._money_text:set_color(color)
 end
 
-function EHIameno3Tracker:pre_delete()
+function ameno_3:pre_destroy()
     self._loot_parent:RemoveListener("ameno_3")
 end
 
@@ -87,7 +85,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
-local MoneyTrigger = { id = "MallDestruction", special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, element, ...)
+local MoneyTrigger = { id = "MallDestruction", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...)
     self._trackers:IncreaseProgress(trigger.id, element._values.amount)
 end) }
 local OverkillOrBelow = EHI:IsDifficultyOrBelow(EHI.Difficulties.OVERKILL)
@@ -135,22 +133,21 @@ local achievements =
         difficulty_pass = EHI:IsDifficulty(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [301148] = { time = 50, max = 1800000, class = "EHIameno3Tracker" },
+            [301148] = { time = 50, class_table = ameno_3 },
         },
         load_sync = function(self)
-            local t = 50 - math.max(self._trackers._t, self._t)
-            if t > 0 then
+            local t = 50 - math.max(self._trackers._t, self._tracking._t)
+            local progress = managers.loot:get_real_total_small_loot_value()
+            if t > 0 and progress < 1800000 then
                 self._trackers:AddTracker({
                     time = t,
                     id = "ameno_3",
-                    progress = managers.loot:get_real_total_small_loot_value(),
-                    max = 1800000,
+                    progress = progress,
                     icons = EHI:GetAchievementIcon("ameno_3"),
-                    class = "EHIameno3Tracker"
+                    class_table = ameno_3
                 })
             end
-        end,
-        cleanup_class = "EHIameno3Tracker"
+        end
     },
     uno_3 =
     {
@@ -159,8 +156,7 @@ local achievements =
         {
             [301148] = { time = 180, class = TT.Achievement.Base },
             [300241] = { special_function = SF.SetAchievementComplete }
-        },
-        sync_params = { from_start = true }
+        }
     }
 }
 
@@ -177,7 +173,7 @@ else
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@class EHIMallcrasherSniperTracker : EHITracker, EHISniperBaseTracker
-    EHIMallcrasherSniperTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop" })
+    local EHIMallcrasherSniperTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop" })
     function EHIMallcrasherSniperTracker:OverridePanel()
         self._single_sniper = true
         self._refresh_on_delete = true
@@ -205,10 +201,10 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         self:AnimateBG()
         self:SniperSpawned()
     end
-    other[301804] = { id = "Snipers", time = 25, class = "EHIMallcrasherSniperTracker", special_function = SF.ExecuteIfElementIsEnabled }
-    other[301805] = { id = "Snipers", time = 21, class = "EHIMallcrasherSniperTracker", special_function = SF.ExecuteIfElementIsEnabled }
+    other[301804] = { id = "Snipers", time = 25, class_table = EHIMallcrasherSniperTracker, special_function = SF.ExecuteIfElementIsEnabled }
+    other[301805] = { id = "Snipers", time = 21, class_table = EHIMallcrasherSniperTracker, special_function = SF.ExecuteIfElementIsEnabled }
     -- Respawn
-    local StartLoop = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local StartLoop = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("Snipers", "StartLoop", trigger.time)
     end)
     other[301794] = { time = 51, special_function = StartLoop }
@@ -219,7 +215,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[301789] = { time = 40, special_function = StartLoop }
 end
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other

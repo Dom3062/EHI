@@ -9,8 +9,8 @@ local assault_delay = 4 + 3 + 3 + 3 + 5 + 1
 local assault_delay_methlab = 20 + assault_delay
 local triggers = {
     [101970] = { time = (240 + 12) - 3, waypoint = { position_from_element = 101454 }, hint = Hints.LootEscape },
-    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { data_from_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
-        self:CreateTracker(trigger)
+    [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { data_from_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
+        self:CreateTracker()
         self._cache.BagsCooked = (self._cache.BagsCooked or 0) + 1
         if self._cache.BagsCooked >= 7 then
             self._trackers:ForceRemoveTracker("CookingChance")
@@ -47,14 +47,14 @@ local other =
 {
     [100378] = EHI:AddAssaultDelay({ control = 42 + 50 + assault_delay }),
     [100380] = EHI:AddAssaultDelay({ control = 45 + 40 + assault_delay }),
-    [100707] = EHI:AddAssaultDelay({ control = assault_delay_methlab, special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    [100707] = EHI:AddAssaultDelay({ control = assault_delay_methlab, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SetTimeIfLower", trigger.time) then
-            self:CreateTracker(trigger)
+            self:CreateTracker()
         end
     end), trigger_once = true })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local SetRespawnTime = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+    local SetRespawnTime = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local t = trigger.time
         if self._trackers:CallFunction2(id, "SetRespawnTime", t) then
@@ -74,19 +74,18 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
 end
 
 if EHI.IsClient then
-    local EM = managers.ehi_manager
     ---@param self LootManager
     local function SyncBagsCooked(self)
-        EM._cache.BagsCooked = math.max(self:GetSecuredBagsAmount(), EM._cache.BagsCooked or 0)
-        if EM._cache.BagsCooked >= 7 then
-            EM._trackers:ForceRemoveTracker("CookChance")
-            EM:UnhookTrigger(100721)
-            EM:UnhookTrigger(100724)
-            EM._loot:RemoveListener("alex_1")
+        EHI.Trigger._cache.BagsCooked = math.max(self:GetSecuredBagsAmount(), EHI.Trigger._cache.BagsCooked or 0)
+        if EHI.Trigger._cache.BagsCooked >= 7 then
+            EHI.Trigger._trackers:ForceRemoveTracker("CookChance")
+            EHI.Trigger:UnhookTrigger(100721)
+            EHI.Trigger:UnhookTrigger(100724)
+            EHI.Trigger._loot:RemoveListener("alex_1")
         end
     end
-    EM._loot:AddListener("alex_1", SyncBagsCooked)
-    EM._loot:AddSyncListener(SyncBagsCooked)
+    EHI.Trigger._loot:AddListener("alex_1", SyncBagsCooked)
+    EHI.Trigger._loot:AddSyncListener(SyncBagsCooked)
 end
 
 local tracker_merge =
@@ -103,7 +102,7 @@ local tracker_merge =
     }
 }
 
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
@@ -127,15 +126,15 @@ if EHI:IsEscapeChanceEnabled() then
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
     end)
-    EHI.Manager:AddLoadSyncFunction(function(self)
+    EHI.Trigger:AddLoadSyncFunction(function(self)
         if managers.environment_effects._mission_effects[101437] then
-            self._escape:AddEscapeChanceTracker(false, 105)
+            managers.ehi_escape:AddEscapeChanceTracker(false, 105)
             self:UnhookTrigger(101863)
         else
-            self._escape:AddEscapeChanceTracker(false, 35)
+            managers.ehi_escape:AddEscapeChanceTracker(false, 35)
             -- Disable increase when the cooks got killed by gangster in case the player dropins
             -- after Escape Chance is shown on screen and before they get killed by mission script
-            self._escape:DisableIncreaseCivilianKilled()
+            managers.ehi_escape:DisableIncreaseCivilianKilled()
         end
     end)
 end

@@ -16,9 +16,10 @@ local function CreateHUDBGBox(panel, params)
 	return box_panel
 end
 
----@param background PanelRectangle
+---@param background Rect
 ---@param times number
-local function AnimateBG(background, times)
+---@param start_color Color
+local function AnimateBG(background, times, start_color)
     local TOTAL_T = 0.4
     local t = 0
     local color = 1
@@ -31,7 +32,10 @@ local function AnimateBG(background, times)
         end
         t = 0
     end
-    background:set_color(Color.black:with_alpha(0.6))
+    background:set_color(start_color)
 end
 
+if EHITracker._BG_START_COLOR then
+    EHITracker._BG_START_COLOR = Color.black:with_alpha(0.6)
+end
 EHITracker.SetCustomBGFunctions(CreateHUDBGBox, AnimateBG)

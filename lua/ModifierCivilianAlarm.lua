@@ -31,6 +31,6 @@ function ModifierCivilianAlarm:OnPlayerSpawned()
 end
 
 function ModifierCivilianAlarm:OnCivilianKilled(...)
-    managers.ehi_tracker:DecreaseTrackerCount("ModifierCivilianAlarm")
+    managers.ehi_tracker:DecreaseCount("ModifierCivilianAlarm")
     original.OnCivilianKilled(self, ...)
 end

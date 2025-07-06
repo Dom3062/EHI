@@ -49,7 +49,7 @@ if EHI.debug.mission_door and EHI.IsHost then
             if not drill_data then
                 return
             end
-            local unit_key = tostring(self._unit:key())
+            local unit_key = self._unit:key()
             local tbl = { unit = self._unit, positions = {} }
             for i, data in ipairs(drill_data) do
                 local a_obj = self._unit:get_object(Idstring(data.align))
@@ -65,9 +65,9 @@ if EHI.debug.mission_door and EHI.IsHost then
     local continent_definitions = {}
     local continents = {}
     Hooks:PostHook(IngameWaitingForPlayersState, "at_enter", "EHI_MissionDoorDebug", function(...)
-        local world_instance = managers.world_instance
-        local instance_data = world_instance:instance_data()
-        if door and next(door) then
+        if ehi_next(door) then
+            local world_instance = managers.world_instance
+            local instance_data = world_instance:instance_data()
             local name_found = false
             for tweak_name, tbl in pairs(door) do
                 EHI:Log("tweak_name: " .. tostring(tweak_name))

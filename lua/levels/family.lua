@@ -4,17 +4,18 @@ local TT = EHI.Trackers
 local SF = EHI.SpecialFunctions
 local Hints = EHI.Hints
 local Status = EHI.Const.Trackers.Achievement.Status
+local VanDriveAwayIcon = EHI.TrackerUtils:GetTrackerIcons(Icon.CarWait, { { icon = Icon.Car, color = Color.red } })
 local VanDelay = 475/30
 local triggers = {
-    [102611] = { time = 1, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
-    [102612] = { time = 3, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
-    [102613] = { time = 5, id = "VanDriveAway", icons = Icon.CarWait, class = TT.Warning, hint = Hints.LootTimed },
+    [102611] = { time = 1, id = "VanDriveAway", icons = VanDriveAwayIcon, class = TT.Warning, hint = Hints.LootTimed },
+    [102612] = { time = 3, id = "VanDriveAway", icons = VanDriveAwayIcon, class = TT.Warning, hint = Hints.LootTimed },
+    [102613] = { time = 5, id = "VanDriveAway", icons = VanDriveAwayIcon, class = TT.Warning, hint = Hints.LootTimed },
 
-    [100750] = { time = 120 + 80 + VanDelay, id = "Van", icons = Icon.CarEscape, hint = Hints.LootEscape },
+    [100750] = { time = 120 + 80 + VanDelay, id = "Van", icons = Icon.CarEscape, class = TT.TimePreSync, hint = Hints.LootEscape },
     [101568] = { time = 20 + VanDelay, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
     [101569] = { time = 40 + VanDelay, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
     [101572] = { time = 60 + VanDelay, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
-    [101573] = { time = 80 + VanDelay, id = "Van", icons = Icon.CarEscape, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootEscape },
+    [101573] = { time = 80 + VanDelay, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
 
     ---units/payday2/vehicles/str_vehicle_van_family_jewels_4/str_vehicle_van_family_jewels_4/escape1_van
     [100752] = { time = 336/30, id = "Van", icons = Icon.CarEscape, special_function = SF.SetTimeOrCreateTracker, hint = Hints.LootEscape },
@@ -49,7 +50,7 @@ local sidejob =
     {
         elements =
         {
-            [100108] = { special_function = EHI.Manager:RegisterCustomSF(function(self, trigger, ...)
+            [100108] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
                 local trophy = tweak_data.achievement.loot_cash_achievements.daily_mortage.secured
                 self._trackers:AddTracker({
                     id = trigger.id,
@@ -59,7 +60,7 @@ local sidejob =
                 })
                 self._loot:AddListener(trigger.id, function(loot)
                     local progress = loot:GetSecuredBagsTypeAmount(trophy.carry_id)
-                    self._trackers:SetTrackerProgress(trigger.id, progress)
+                    self._trackers:SetProgress(trigger.id, progress)
                     if progress >= trophy.total_amount then
                         self._loot:RemoveListener(trigger.id)
                     end
@@ -118,7 +119,7 @@ local min_bags = EHI:GetValueBasedOnDifficulty({
     veryhard = 10,
     overkill_or_above = 14
 })
-EHI.Manager:ParseTriggers({
+EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
