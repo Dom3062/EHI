@@ -52,6 +52,7 @@ end
 function Setup:init_finalize(...)
     original.init_finalize(self, ...)
     managers.ehi_tracker:init_finalize()
+    managers.ehi_waypoint:init_finalize()
     managers.ehi_assault:init_finalize()
     managers.ehi_loot:init_finalize()
     managers.ehi_money:init_finalize(managers)

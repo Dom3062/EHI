@@ -288,7 +288,7 @@ function EHIAssaultManager:AssaultEnd()
     if self._is_skirmish then
         self._current_assault_number = (self._current_assault_number or 0) + 1
     end
-    if self._assault_block then
+    if self._assault_block or self._assault_delay.blocked then
         return
     elseif self._trackers:Exists(self._assault_time.name) then
         local f = self._control_block and "AssaultEndWithBlock" or "AssaultEnd"

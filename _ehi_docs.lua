@@ -18,7 +18,7 @@ _G.EHI.Mission = EHIMissionHolder
 
 ---@class ElementWaypointTrigger : WaypointInitData
 ---@field waypointless boolean Creates Waypoint class without any waypoint in the game world
----@field id number|string? ID of the waypoint, if not provided, `id` is then copied from the trigger
+---@field id string? ID of the waypoint, if not provided, `id` is then copied from the trigger
 ---@field icon string? 
 ---@field time number? Time to run down. If not provided, `time` is then copied from the trigger
 ---@field class string? Class of the waypoint. If not provided, `class` is then copied from the trigger and converted to Waypoint class

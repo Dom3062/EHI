@@ -1,3 +1,8 @@
+r326 (07. 07. 2025):
+Fixed a crash after assault end
+Hell's Island: Fixed a logspam after opening the lid
+Waypoints: Fixed an issue where some waypoints are stuck after alarm
+
 r325 (06. 07. 2025):
 Any related code to Buffs will load only if Buffs are enabled
 Added options:

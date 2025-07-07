@@ -37,19 +37,22 @@ function EHITrackingManager:UpdateID(id, new_id)
 end
 
 ---@param id string
-function EHITrackingManager:Exists(id)
-    return self._trackers:Exists(id) or self._waypoints:WaypointExists(id)
+---@param waypoint_id string?
+function EHITrackingManager:Exists(id, waypoint_id)
+    return self._trackers:Exists(id) or self._waypoints:WaypointExists(waypoint_id or id)
 end
 
 ---@param id string
-function EHITrackingManager:DoesNotExist(id)
-    return not self:Exists(id)
+---@param waypoint_id string?
+function EHITrackingManager:DoesNotExist(id, waypoint_id)
+    return not self:Exists(id, waypoint_id)
 end
 
 ---@param id string
-function EHITrackingManager:Remove(id)
+---@param waypoint_id string?
+function EHITrackingManager:Remove(id, waypoint_id)
     self._trackers:RemoveTracker(id)
-    self._waypoints:RemoveWaypoint(id)
+    self._waypoints:RemoveWaypoint(waypoint_id or id)
 end
 
 ---@param timer_id string
@@ -61,9 +64,10 @@ function EHITrackingManager:RemoveUnit(timer_id, unit_id, remove)
 end
 
 ---@param id string
-function EHITrackingManager:ForceRemove(id)
+---@param waypoint_id string?
+function EHITrackingManager:ForceRemove(id, waypoint_id)
     self._trackers:ForceRemoveTracker(id)
-    self._waypoints:RemoveWaypoint(id)
+    self._waypoints:RemoveWaypoint(waypoint_id or id)
 end
 
 ---@param id string

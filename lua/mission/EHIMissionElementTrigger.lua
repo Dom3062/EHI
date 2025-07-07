@@ -408,7 +408,7 @@ function EHIMissionElementTrigger:AddWaypoint(waypoint)
                 self._waypoints:RemoveWaypoint(self._params.id)
             end)
         elseif w.unit:base() and w.unit:base().add_destroy_listener then
-            w.unit:base():add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function()
+            w.unit:base():add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function() ---@diagnostic disable-line
                 self._waypoints:RemoveWaypoint(self._params.id)
             end)
         else
@@ -459,9 +459,9 @@ if Visibility._SHOW_MISSION_WAYPOINTS and not Visibility._SHOW_MISSION_TRACKERS 
                 trigger.waypoint.time = self:GetRandomTime(trigger)
             end
             if trigger.waypoint.waypointless then
-                self._waypoints:AddWaypointlessWaypoint(trigger.timer_id or trigger.id, trigger.waypoint)
+                self._waypoints:AddWaypointlessWaypoint(trigger.waypoint.id or trigger.id, trigger.waypoint)
             else
-                self._waypoints:AddWaypoint(trigger.timer_id or trigger.id, trigger.waypoint)
+                self._waypoints:AddWaypoint(trigger.waypoint.id or trigger.id, trigger.waypoint)
             end
         elseif trigger.run then
             self._trackers:RunTracker(trigger.id, trigger.run)
@@ -503,9 +503,9 @@ else
             trigger.waypoint_f(self, trigger)
         elseif trigger.waypoint then
             if trigger.waypoint.waypointless then
-                self._waypoints:AddWaypointlessWaypoint(trigger.timer_id or trigger.id, trigger.waypoint)
+                self._waypoints:AddWaypointlessWaypoint(trigger.waypoint.id or trigger.id, trigger.waypoint)
             else
-                self._waypoints:AddWaypoint(trigger.timer_id or trigger.id, trigger.waypoint)
+                self._waypoints:AddWaypoint(trigger.waypoint.id or trigger.id, trigger.waypoint)
             end
         end
     end

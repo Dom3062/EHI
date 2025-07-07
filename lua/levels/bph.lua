@@ -61,7 +61,7 @@ EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other,
     assault = {
-        force_assault_start = true,
+        ignore_assault_start_count = 1,
         wave_mode_elements_block = { 101325, 100115 },
         fake_assault_block = true
     }
