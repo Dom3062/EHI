@@ -143,6 +143,29 @@
             "parent" : "ehi_buffs_other_weapon_swap_choice",
             "ehi_ver" : 325
         },
+                {
+            "type": "toggle",
+            "id": "ehi_buffs_other_carry_interaction_cooldown_choice",
+            "title": "ehi_buffs_other_carry_interaction_cooldown",
+            "callback": "SetBuffOption",
+            "callback_arguments": "carry_interaction_cooldown",
+            "value": "carry_interaction_cooldown",
+            "default_value": true,
+            "is_parent": true,
+            "ehi_ver" : 327
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_carry_interaction_cooldown_persistent_choice",
+            "title": "ehi_buffs_other_carry_interaction_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffOption",
+            "callback_arguments": "carry_interaction_cooldown_persistent",
+            "value": "carry_interaction_cooldown_persistent",
+            "default_value": false,
+            "parent" : "ehi_buffs_other_carry_interaction_cooldown_choice",
+            "ehi_ver" : 327
+        },
         {
             "type": "divider",
             "size": 10

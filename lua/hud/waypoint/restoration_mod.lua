@@ -1,3 +1,5 @@
+---@class EHIWaypointManager
+local EHIWaypointManager = ...
 local original =
 {
     AddWaypoint = EHIWaypointManager.AddWaypoint,
@@ -22,3 +24,5 @@ function EHIWaypointManager:AddWaypointlessWaypoint(id, params)
 end
 
 EHIWaypoint._default_color = tweak_data.hud.prime_color
+
+return EHIWaypointManager

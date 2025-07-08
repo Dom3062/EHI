@@ -1,6 +1,6 @@
 local EHI = EHI
 ---@class EHITrackerManager
-EHITrackerManagerVR = EHITrackerManager
+local EHITrackerManagerVR = ...
 EHITrackerManagerVR.old_PreloadTracker = EHITrackerManager.PreloadTracker
 EHITrackerManagerVR.old_AddLaserTracker = EHITrackerManager.AddLaserTracker
 EHITrackerManagerVR.old_RemoveLaserTracker = EHITrackerManager.RemoveLaserTracker
@@ -97,3 +97,5 @@ function EHITrackerManagerVR:RemoveLaserTracker(id, t)
     end
     self:old_RemoveLaserTracker(id, t)
 end
+
+return EHITrackerManagerVR

@@ -1,12 +1,12 @@
 local EHI = EHI
 ---@class EHIWaypointManager
-EHIWaypointManager = {}
+local EHIWaypointManager = {}
 EHIWaypointManager._font = tweak_data.menu.pd2_large_font_id -- Large font
 EHIWaypointManager._timer_font_size = 32
 EHIWaypointManager._distance_font_size = tweak_data.hud.default_font_size
 EHIWaypointManager._bitmap_w = 32
 EHIWaypointManager._bitmap_h = 32
-function EHIWaypointManager:new()
+function EHIWaypointManager:post_init()
     EHIWaypoint._parent_class = self
     self._t = 0
     self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
@@ -16,7 +16,6 @@ function EHIWaypointManager:new()
     self._waypoints_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIWaypoint?>
     self._base_waypoint_class = EHI.Waypoints.Base
     self._get_icon = tweak_data.ehi.default.tracker.get_icon
-    return self
 end
 
 function EHIWaypointManager:init_finalize()
@@ -378,9 +377,10 @@ do
 end
 
 if _G.IS_VR then
-    return
+    return EHIWaypointManager
 elseif VoidUI and VoidUI.options.enable_waypoints then
-    dofile(EHI.LuaPath .. "hud/waypoint/void_ui.lua")
+    return blt.vm.loadfile(EHI.LuaPath .. "hud/waypoint/void_ui.lua")(EHIWaypointManager)
 elseif restoration and restoration.Options and restoration.Options:GetValue("HUD/Waypoints") then
-    dofile(EHI.LuaPath .. "hud/waypoint/restoration_mod.lua")
+    return blt.vm.loadfile(EHI.LuaPath .. "hud/waypoint/restoration_mod.lua")(EHIWaypointManager)
 end
+return EHIWaypointManager

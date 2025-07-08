@@ -32,7 +32,7 @@ EHI:AddXPBreakdown({
             { amount = 6000, loud = true },
         }}
     },
-    total_xp_override =z
+    total_xp_override =
     {
         params =
         {

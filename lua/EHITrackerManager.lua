@@ -5,7 +5,7 @@ local EHI = EHI
 ---@field IsLoading fun(self: self): boolean `VR only (EHITrackerManagerVR)`
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) `VR only (EHITrackerManagerVR)`
 ---@field SetPanel fun(self: self, panel: Panel) `VR only (EHITrackerManagerVR)`
-EHITrackerManager = {}
+local EHITrackerManager = {}
 EHITrackerManager._sync_tm_add_tracker = "EHI_TM_SyncAddTracker"
 EHITrackerManager._sync_tm_update_tracker = "EHI_TM_SyncUpdateTracker"
 EHITrackerManager.Rounding =
@@ -13,7 +13,7 @@ EHITrackerManager.Rounding =
     Standard = 1,
     Chance = 2
 }
-function EHITrackerManager:new()
+function EHITrackerManager:post_init()
     EHITracker._parent_class = self
     self:CreateWorkspace()
     self._t = 0
@@ -25,7 +25,6 @@ function EHITrackerManager:new()
     self._panel_size = tweak_data.ehi.default.tracker.size_h * self._scale
     self._panel_offset = tweak_data.ehi.default.tracker.offset * self._scale
     self._base_tracker_class = EHI.Trackers.Base
-    return self
 end
 
 function EHITrackerManager:CreateWorkspace()
@@ -827,7 +826,9 @@ do
 end
 
 if _G.IS_VR then
-    dofile(EHI.LuaPath .. "EHITrackerManagerVR.lua")
+    return blt.vm.loadfile(EHI.LuaPath .. "EHITrackerManagerVR.lua")(EHITrackerManager)
 elseif VoidUI then
     dofile(EHI.LuaPath .. "hud/tracker/void_ui.lua")
 end
+
+return EHITrackerManager

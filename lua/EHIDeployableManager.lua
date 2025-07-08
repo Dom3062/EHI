@@ -144,6 +144,10 @@ function EHIDeployableManager:UpdateAmount(key, amount, id, t_id)
     self._trackers:CallFunction(tracker, "UpdateAmount", key, amount, id)
 end
 
+EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
+    EHIDeployableManager:post_init(managers.ehi_tracker)
+end)
+
 if _G.IS_VR then
     return blt.vm.loadfile(EHI.LuaPath .. "EHIDeployableManagerVR.lua")(EHIDeployableManager)
 end

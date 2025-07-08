@@ -1,6 +1,12 @@
+r327 (08. 07. 2025):
+Added buff "Bag Interaction Cooldown"
+Code for deployables and timers will load if their respective option is on
+Improved detection and hooking of Captain Damage Reduction tracker (EHI will hook vanilla code and load tracker only if at least 1 spawn point for Captain is defined in the script)
+Big Oil Day 1: Fixed XP Overview not visible
+
 r326 (07. 07. 2025):
 Fixed a crash after assault end
-Hell's Island: Fixed a logspam after opening the lid
+Hell's Island: Fixed a log spam after opening the lid
 Waypoints: Fixed an issue where some waypoints are stuck after alarm
 
 r325 (06. 07. 2025):

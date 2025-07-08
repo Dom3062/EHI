@@ -918,6 +918,8 @@
     "ehi_buffs_other_stamina" : "Stamina",
     "ehi_buffs_other_weapon_swap" : "Weapon Swap",
     "ehi_buffs_other_weapon_swap_persistent" : "Persistent Weapon Swap",
+    "ehi_buffs_other_carry_interaction_cooldown" : "Bag Interaction Cooldown",
+    "ehi_buffs_other_carry_interaction_cooldown_persistent" : "Persistent Bag Interaction Cooldown",
     "ehi_buffs_other_dodge" : "Dodge Chance",
     "ehi_buffs_other_dodge_refresh" : "Dodge Chance Refresh",
     "ehi_buffs_other_dodge_refresh_desc" : "Sets how often 'Dodge Chance' gauge should be updated per second",
@@ -988,6 +990,7 @@
     "ehi_buffs_hint_reload_increase" : "Rld+",
     "ehi_buffs_hint_movement_increase" : "Mov+",
     "ehi_buffs_hint_regen" : "Regen",
+    "ehi_buffs_hint_cooldown" : "Cooldown",
 
     "ehi_inventory_menu" : "Inventory",
 

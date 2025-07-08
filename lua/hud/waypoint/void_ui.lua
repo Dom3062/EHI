@@ -1,3 +1,5 @@
+---@class EHIWaypointManager
+local EHIWaypointManager = ...
 local original =
 {
     new = EHIWaypointManager.new,
@@ -23,3 +25,5 @@ function VoidUI:Save()
         managers.ehi_waypoint:UpdateValues()
     end
 end
+
+return EHIWaypointManager

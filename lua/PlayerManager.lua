@@ -43,6 +43,7 @@
 ---@field current_state fun(self: self): string
 ---@field is_damage_health_ratio_active fun(self: self, health_ratio: number): boolean
 ---@field _smoke_screen_effects SmokeScreenEffect[]
+---@field _carry_blocked_cooldown_t number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -300,6 +301,17 @@ if EHI:GetBuffOption("inspire_ace") then
             return
         end
         managers.ehi_buff:AddBuff("long_dis_revive", upgrade_value[2])
+    end
+end
+
+if EHI:GetBuffOption("carry_interaction_cooldown") then
+    original.drop_carry = PlayerManager.drop_carry
+    function PlayerManager:drop_carry(...)
+        original.drop_carry(self, ...)
+        if self._carry_blocked_cooldown_t ~= self._ehi_carry_blocked_cooldown_t then
+            self._ehi_carry_blocked_cooldown_t = self._carry_blocked_cooldown_t
+            managers.ehi_buff:AddBuff("CarryInteractionCooldown", self._carry_blocked_cooldown_t - Application:time())
+        end
     end
 end
 

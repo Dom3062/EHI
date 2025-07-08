@@ -148,6 +148,20 @@ function EHITweakData:new(tweak_data)
             format = "damage",
             option = "armor"
         },
+        CarryInteractionCooldown =
+        {
+            u100skill = true,
+            group = "cooldown",
+            text_localize = "ehi_buffs_hint_cooldown",
+            x = 4,
+            y = 3,
+            option = "carry_interaction_cooldown",
+            permanent =
+            {
+                option = "carry_interaction_cooldown_persistent",
+                always_show = true
+            }
+        },
         DodgeChance =
         {
             u100skill = true,

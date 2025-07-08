@@ -294,4 +294,8 @@ function EHITimerManager:SetTimerUpgrades(timer_gui)
     end
 end
 
+EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
+    EHITimerManager:post_init(managers.ehi_tracker, managers.ehi_waypoint)
+end)
+
 return EHITimerManager

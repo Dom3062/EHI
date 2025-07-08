@@ -21,12 +21,6 @@ function EHIPhalanxManager:init_finalize(trackers, hook, assault)
     self._assault = assault
     self._phalanx_spawn_chance = tweak_data.group_ai.phalanx.spawn_chance or {}
     self._phalanx_spawn_time_check = tweak_data.group_ai.phalanx.check_spawn_intervall or 120
-    if EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
-        self._tracker_enabled = true
-        EHI:AddOnAlarmCallback(function(dropin)
-            self:SwitchToLoudMode(dropin)
-        end)
-    end
 end
 
 ---@param element_so ElementSpecialObjective
@@ -35,6 +29,7 @@ function EHIPhalanxManager:OnSOPhalanxCreated(element_so)
     if self._disabled_in_levels[level_id] then
         return
     elseif self._requires_manual_on_exec[level_id] then
+        self:LoadHooks()
         self._hook:HookElement(element_so, function(element, ...)
             if EHI.IsHost and not element._values.enabled then
                 return
@@ -42,7 +37,36 @@ function EHIPhalanxManager:OnSOPhalanxCreated(element_so)
             self:OnPhalanxAdded(true)
         end)
     else
+        self:LoadHooks()
         self:OnPhalanxAdded()
+    end
+end
+
+function EHIPhalanxManager:LoadHooks()
+    if self.__hooked or tweak_data.levels:IsLevelSkirmish() then
+        return
+    end
+    self.__hooked = true
+    if EHI:GetOptionAndLoadTracker("show_captain_damage_reduction") then
+        Hooks:PostHook(GroupAIStateBesiege, "set_phalanx_damage_reduction_buff", "EHI_EHIPhalanxManager_GroupAIStateBesiege_set_phalanx_damage_reduction", function(group_ai, damage_reduction, ...) ---@param damage_reduction number?
+            self._trackers:SetChancePercent("PhalanxDamageReduction", damage_reduction or 0)
+        end)
+        self._assault:AddAssaultModeChangedCallback(function(mode)
+            if mode == "phalanx" then
+                self._trackers:AddTracker({
+                    id = "PhalanxDamageReduction",
+                    class = "EHIPhalanxDamageReductionTracker",
+                })
+            else
+                self._trackers:ForceRemoveTracker("PhalanxDamageReduction")
+            end
+        end)
+    end
+    if EHI:GetOptionAndLoadTracker("show_captain_spawn_chance") then
+        self._tracker_enabled = true
+        EHI:AddOnAlarmCallback(function(dropin)
+            self:SwitchToLoudMode(dropin)
+        end)
     end
 end
 

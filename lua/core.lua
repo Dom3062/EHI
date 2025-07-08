@@ -1149,6 +1149,8 @@ local function LoadDefaultValues(self)
             stamina = true,
             weapon_swap = true,
             weapon_swap_persistent = false,
+            carry_interaction_cooldown = true,
+            carry_interaction_cooldown_persistent = false,
             dodge = true,
             dodge_refresh = 1, -- 1 / value
             dodge_persistent = false,
