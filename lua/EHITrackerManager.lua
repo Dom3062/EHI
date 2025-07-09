@@ -6,6 +6,7 @@ local EHI = EHI
 ---@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) `VR only (EHITrackerManagerVR)`
 ---@field SetPanel fun(self: self, panel: Panel) `VR only (EHITrackerManagerVR)`
 local EHITrackerManager = {}
+EHITrackerManager._trackers = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITrackerManager.Tracker?>
 EHITrackerManager._sync_tm_add_tracker = "EHI_TM_SyncAddTracker"
 EHITrackerManager._sync_tm_update_tracker = "EHI_TM_SyncUpdateTracker"
 EHITrackerManager.Rounding =
@@ -17,7 +18,6 @@ function EHITrackerManager:post_init()
     EHITracker._parent_class = self
     self:CreateWorkspace()
     self._t = 0
-    self._trackers = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITrackerManager.Tracker?>
     self._stealth_trackers = { lasers = {} }
     self._trackers_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITracker?>
     self._n_of_trackers = 0

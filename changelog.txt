@@ -1,3 +1,6 @@
+r328 (09. 07. 2025):
+Trackers: Fixed a possible crash in Crime Spree
+
 r327 (08. 07. 2025):
 Added buff "Bag Interaction Cooldown"
 Code for deployables and timers will load if their respective option is on

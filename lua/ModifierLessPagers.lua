@@ -4,7 +4,5 @@ if EHI:CheckLoadHook("ModifierLessPagers") or not EHI:GetTrackerOption("show_pag
 end
 
 Hooks:PostHook(ModifierLessPagers, "init", "EHI_ModifierLessPagers_init", function(self, ...)
-    if managers.ehi_tracker then
-        managers.ehi_tracker:CallFunction("Pagers", "DecreaseProgressMaxIfProgress", 4, self:value())
-    end
+    managers.ehi_tracker:CallFunction("Pagers", "DecreaseProgressMaxIfProgress", 4, self:value()) -- Works on drop-ins (for players who play from start (synced before a level is loaded) it won't work and HUDManager will do it instead)
 end)
