@@ -25,7 +25,7 @@ local Icon = EHI.Icons
 local Hints = EHI.Hints
 ---@class EHIGasTracker : EHITimedProgressTracker
 ---@field super EHITimedProgressTracker
-local EHIGasTracker = class(EHITimedProgressTracker)
+EHIGasTracker = class(EHITimedProgressTracker)
 EHIGasTracker._forced_icons = { Icon.Fire }
 EHIGasTracker._forced_hint_text = Hints.run_Gas
 function EHIGasTracker:FormatProgress()

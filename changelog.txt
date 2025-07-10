@@ -1,3 +1,7 @@
+r329 (10. 07. 2025):
+Heat Street: Fixed a crash after placing and destroying gas can
+VR: Fixed a crash during game load
+
 r328 (09. 07. 2025):
 Trackers: Fixed a possible crash in Crime Spree
 

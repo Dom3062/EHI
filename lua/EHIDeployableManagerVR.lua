@@ -1,9 +1,9 @@
 ---@class EHIDeployableManager
 local EHIDeployableManagerVR = ...
-EHIDeployableManagerVR.old_AddToCache = EHIDeployableManager.AddToCache
-EHIDeployableManagerVR.old_LoadFromCache = EHIDeployableManager.LoadFromCache
-EHIDeployableManagerVR.old_RemoveFromCache = EHIDeployableManager.RemoveFromCache
-EHIDeployableManagerVR.old_UpdateAmount = EHIDeployableManager.UpdateAmount
+EHIDeployableManagerVR.old_AddToCache = EHIDeployableManagerVR.AddToCache
+EHIDeployableManagerVR.old_LoadFromCache = EHIDeployableManagerVR.LoadFromCache
+EHIDeployableManagerVR.old_RemoveFromCache = EHIDeployableManagerVR.RemoveFromCache
+EHIDeployableManagerVR.old_UpdateAmount = EHIDeployableManagerVR.UpdateAmount
 
 ---@param key string
 ---@param data { f: string, ehi_tracker: string, unit: UnitDeployable, tracker_type: string? }
