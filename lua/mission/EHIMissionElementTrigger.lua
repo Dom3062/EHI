@@ -1174,6 +1174,7 @@ function EHIMissionHolder:new()
             chances = true
         }
     }
+    self._WaypointDataCopy[self.Waypoints.Less.Chance] = self._WaypointDataCopy[self.Waypoints.Chance]
     self._ConditionalLoad =
     {
         [self.Trackers.Code] = { tracker = "EHICodesTracker", waypoint = "EHICodesWaypoint", also_remove = self.Trackers.ColoredCodes },

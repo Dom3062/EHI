@@ -1,3 +1,7 @@
+r330 (13. 07. 2025):
+Diamond Heist: Fixed a crash after taking CFO to the roof
+Fixed an issue where waypoints have incorrect data while in trackers they are correct
+
 r329 (10. 07. 2025):
 Heat Street: Fixed a crash after placing and destroying gas can
 VR: Fixed a crash during game load

@@ -7,7 +7,7 @@ local heli_delay = 26 + 6
 local OVKorAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local element_sync_triggers =
 {
-    [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438, hint = Hints.Wait, waypoint = { data_from_element_and_remove_vanilla_waypoint = 104393 } }
+    [103569] = { time = 25, id = "CFOFall", icons = { Icon.Hostage, Icon.Goto }, hook_element = 100438, hint = Hints.Wait, --[[waypoint = { data_from_element_and_remove_vanilla_waypoint = 104393 }]] }
 }
 ---@type ParseTriggerTable
 local triggers = {
