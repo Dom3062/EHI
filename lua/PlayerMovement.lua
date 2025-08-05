@@ -37,3 +37,17 @@ if (EHI:GetBuffOption("inspire_reload") or EHI:GetBuffOption("inspire_movement")
         managers.ehi_buff:AddBuff("inspire_movement", t)
     end
 end
+
+if EHI:GetBuffOption("stamina") then
+    original._max_stamina = PlayerMovement._max_stamina
+    function PlayerMovement:_max_stamina(...)
+        local max_stamina = original._max_stamina(self, ...)
+        managers.ehi_buff:CallFunction("Stamina", "SetMaxStamina", max_stamina)
+        return max_stamina
+    end
+    original._change_stamina = PlayerMovement._change_stamina
+    function PlayerMovement:_change_stamina(...)
+        original._change_stamina(self, ...)
+        managers.ehi_buff:AddGauge("Stamina", self._stamina)
+    end
+end

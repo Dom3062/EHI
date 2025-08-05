@@ -1,3 +1,6 @@
+r331 (05. 08. 2025):
+Fixed Stamina buff not working with Sora's HUD Reborn
+
 r330 (13. 07. 2025):
 Diamond Heist: Fixed a crash after taking CFO to the roof
 Fixed an issue where waypoints have incorrect data while in trackers they are correct

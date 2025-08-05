@@ -169,19 +169,6 @@ function HUDManager:sync_set_assault_mode(mode, ...)
     managers.ehi_assault:CallAssaultModeChangedCallback(mode)
 end
 
-if EHI:GetBuffAndOption("stamina") then
-    original.set_stamina_value = HUDManager.set_stamina_value
-    function HUDManager:set_stamina_value(value, ...)
-        original.set_stamina_value(self, value, ...)
-        managers.ehi_buff:AddGauge("Stamina", value)
-    end
-    original.set_max_stamina = HUDManager.set_max_stamina
-    function HUDManager:set_max_stamina(value, ...)
-        original.set_max_stamina(self, value, ...)
-        managers.ehi_buff:CallFunction("Stamina", "SetMaxStamina", value)
-    end
-end
-
 function HUDManager:set_disabled(...)
     original.set_disabled(self, ...)
     EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, false)
