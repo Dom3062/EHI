@@ -137,8 +137,8 @@ local achievements =
         difficulty_pass = EHI:IsMayhemOrAbove(),
         elements =
         {
-            [100264] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true }, -- Guest Rooms (civilian mode)
-            [102955] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true }, -- Crew Deck
+            [100264] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true, status_is_overridable = true }, -- Guest Rooms (civilian mode)
+            [102955] = { max = 8, class = TT.Achievement.Progress, show_finish_after_reaching_target = true, status_is_overridable = true }, -- Crew Deck
             [102944] = { special_function = SF.IncreaseProgress }, -- Bodybag thrown
             [103371] = { special_function = SF.SetAchievementFailed } -- Civie killed
         },

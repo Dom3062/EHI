@@ -1,3 +1,6 @@
+r332 (12. 08. 2025):
+Black Cat: Fixed an issue where achievement tracker for "Master of Floatation" does not fail after alarm and throwing 8 bodybags in stealth
+
 r331 (05. 08. 2025):
 Fixed Stamina buff not working with Sora's HUD Reborn
 
