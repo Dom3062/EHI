@@ -19,7 +19,7 @@ if EHI:IsRunningBB() then
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai then
             managers.ehi_experience:IncreaseAlivePlayers()
-            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
+            managers.ehi_experience:CallRefreshPlayerCountListener()
         end
     end)
     Hooks:PostHook(CriminalsManager, "set_unit", "EHI_CriminalsManager_set_unit",
@@ -29,18 +29,18 @@ if EHI:IsRunningBB() then
         local character = self:character_by_name(name)
         if character and character.taken and character.data.ai and not unit:base().is_local_player then
             managers.ehi_experience:IncreaseAlivePlayers()
-            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
+            managers.ehi_experience:CallRefreshPlayerCountListener()
         end
     end)
     Hooks:PreHook(CriminalsManager, "_remove", "EHI_CriminalsManager_remove", function(self, id) ---@param id number
         local char_data = self._characters[id]
         if char_data.data.ai then
             managers.ehi_experience:DecreaseAlivePlayers()
-            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
+            managers.ehi_experience:CallRefreshPlayerCountListener()
         end
     end)
 elseif EHI:IsRunningUsefulBots() then
-    EHIExperienceManager:SetCriminalsListener(true)
+    managers.ehi_experience:SetCriminalsListener(true)
 elseif not Global.game_settings.single_player then
-    EHIExperienceManager:SetCriminalsListener()
+    managers.ehi_experience:SetCriminalsListener()
 end

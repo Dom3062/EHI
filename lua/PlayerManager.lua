@@ -446,20 +446,18 @@ if EHI:GetBuffOption("bullseye") or EHI:GetBuffDeckOption("copycat", "head_games
     original.on_headshot_dealt = PlayerManager.on_headshot_dealt
     function PlayerManager:on_headshot_dealt(...)
         local previouscooldown = self._on_headshot_dealt_t or 0
-
         original.on_headshot_dealt(self, ...)
-
-        local t = Application:time()
-
-        if self:has_category_upgrade("player", "headshot_regen_armor_bonus") then
-            if t >= previouscooldown then
-                managers.ehi_buff:AddBuff("headshot_regen_armor_bonus", self._on_headshot_dealt_t - t)
+        if self._on_headshot_dealt_t then
+            local t = Application:time()
+            if self:has_category_upgrade("player", "headshot_regen_armor_bonus") then
+                if t >= previouscooldown then
+                    managers.ehi_buff:AddBuff("headshot_regen_armor_bonus", self._on_headshot_dealt_t - t)
+                end
             end
-        end
-
-        if self:has_category_upgrade("player", "headshot_regen_health_bonus") then
-            if t >= previouscooldown then
-                managers.ehi_buff:AddBuff("headshot_regen_health_bonus", self._on_headshot_dealt_t - t)
+            if self:has_category_upgrade("player", "headshot_regen_health_bonus") then
+                if t >= previouscooldown then
+                    managers.ehi_buff:AddBuff("headshot_regen_health_bonus", self._on_headshot_dealt_t - t)
+                end
             end
         end
     end

@@ -29,6 +29,13 @@ if EHI:GetOption("show_progress_reload") then
     end)
     Hooks:PreHook(PlayerStandard, "_interupt_action_reload", "EHI_ReloadInteract_interupt_action_reload", function(self, ...)
         if self._state_data.reload_expire_t then
+            self._state_data.ehi_reload_t = nil
+            managers.hud:hide_interaction_bar()
+        end
+    end)
+    Hooks:PostHook(PlayerStandard, "destroy", "EHI_ReloadInteract_destroy", function(self, ...)
+        if self._state_data and self._state_data.reload_expire_t then
+            self._state_data.ehi_reload_t = nil
             managers.hud:hide_interaction_bar()
         end
     end)

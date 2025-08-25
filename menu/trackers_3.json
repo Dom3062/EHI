@@ -8,10 +8,38 @@
             "id": "ehi_trackers_next_menu",
             "title": "ehi_menu_next_page",
             "next_menu": "ehi_trackers_4_menu",
-            "ehi_ver" : 318,
+            "ehi_ver" : 333,
             "load_menu" : {
                 "file_path" : "trackers_4.json"
             }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_pager_tracker_choice",
+            "title": "ehi_show_pager_tracker",
+            "description": "ehi_show_pager_tracker_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_pager_tracker",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_pager_tracker",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_pager_callback_trackers_choice",
+            "title": "ehi_show_pager_callback_trackers",
+            "description": "ehi_show_pager_callback_trackers_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_pager_callback",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_pager_callback",
+            "default_value": true,
+            "is_parent" : true,
+            "ehi_ver" : 13
         },
         {
             "type": "divider",

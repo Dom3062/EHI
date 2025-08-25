@@ -50,7 +50,7 @@ function HUDManager:AddWaypointFromTrigger(id, params)
     if params.icon_redirect then
         local wp = self:AddEHIWaypoint(id, params)
         if wp and wp.bitmap then
-            managers.ehi_waypoint:SetWaypointInitialIcon(wp, params)
+            managers.ehi_waypoint:_set_waypoint_initial_icon(wp, params)
         else -- Remove the waypoint as it does not have bitmap
             self:remove_waypoint(id)
         end
@@ -79,7 +79,7 @@ end
 ---@param id number
 function HUDManager:SoftRemoveWaypoint2(id)
     self:SoftRemoveWaypoint(id)
-    EHI:DisableElementWaypoint(id)
+    EHI.Waypoint:DisableElementWaypoint(id)
 end
 
 ---@param id number
@@ -97,21 +97,20 @@ end
 ---@param id number
 function HUDManager:RestoreWaypoint2(id)
     self:RestoreWaypoint(id)
-    EHI:RestoreElementWaypoint(id)
+    EHI.Waypoint:RestoreElementWaypoint(id)
 end
 
 ---@param id number
 function HUDManager:RemoveTimerWaypoint(id)
     self:SoftRemoveWaypoint(id)
-    EHI._cache.IgnoreWaypoints[id] = true
-    EHI:DisableElementWaypoint(id)
+    EHI.Waypoint._ignore[id] = true
+    EHI.Waypoint:DisableElementWaypoint(id)
 end
 
 ---@param id number
 function HUDManager:RestoreTimerWaypoint(id)
-    EHI._cache.IgnoreWaypoints[id] = nil
-    self:RestoreWaypoint(id)
-    EHI:RestoreElementWaypoint(id)
+    EHI.Waypoint._ignore[id] = nil
+    self:RestoreWaypoint2(id)
 end
 
 ---@param id string
@@ -139,7 +138,7 @@ function HUDManager:load(data, ...)
     managers.ehi_loot:pre_load(state.waypoints)
     original.load(self, data, ...)
     for id, _ in pairs(self._hud.waypoints or {}) do ---@cast id -string
-        if EHI._cache.IgnoreWaypoints[id] then
+        if EHI.Waypoint._ignore[id] then
             self:SoftRemoveWaypoint(id)
         end
     end

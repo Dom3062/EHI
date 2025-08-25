@@ -95,7 +95,7 @@ function TimerGui:AddWaypoint(t, autorepair)
             icon = self._icons or self._ehi_icon[1].icon,
             position = self._forced_pos or self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
             autorepair = autorepair,
-            class = "EHITimerGuiWaypoint"
+            class = (managers.ehi_timer:SharedMasterIsEnabled() and not self.__ehi_merge) and "EHITimerWaypoint" or "EHITimerGuiWaypoint"
         })
     end
 end

@@ -152,6 +152,36 @@
             "parent": "ehi_show_money_tracker_choice",
             "default_value": 1,
             "ehi_ver" : 318
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+                {
+            "type": "toggle",
+            "id": "ehi_show_ping_tracker_choice",
+            "title": "ehi_show_ping_tracker",
+            "description": "ehi_show_ping_tracker_desc",
+            "callback": ["SetOption", "UpdateTrackerVisibility"],
+            "callback_arguments": "show_ping_tracker",
+            "focus_changed_callback": "SetFocus",
+            "value": "show_ping_tracker",
+            "default_value": true,
+            "ehi_ver" : 333
+        },
+        {
+            "type": "slider",
+            "id": "ehi_show_ping_tracker_refresh_t_offset_choice",
+            "title": "ehi_show_ping_tracker_refresh_t",
+            "description": "ehi_show_ping_tracker_refresh_t_desc",
+            "callback": "SetOption",
+            "callback_arguments" : "show_ping_tracker_refresh_t",
+            "value": "show_ping_tracker_refresh_t",
+            "default_value": 2,
+            "max": 10,
+            "min": 0,
+            "step": 1,
+            "ehi_ver" : 333
         }
     ]
 }

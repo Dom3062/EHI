@@ -14,6 +14,9 @@ end
 ---@field owner fun(self: self): UnitPlayer
 
 local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_equipment_tracker", "show_waypoints_ecmjammer")
+if show_tracker and (EHI:GetOption("show_equipment_ecmjammer") or EHI:GetOption("show_equipment_ecmfeedback")) then
+    EHI:LoadTracker("EHIECMTracker")
+end
 
 local original =
 {

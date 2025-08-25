@@ -3,10 +3,28 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+---@param self EHIMissionElementTrigger
+---@param trigger ElementTrigger
+local function ShowEscapeWaypoint(self, trigger)
+    self._waypoints:AddWaypoint(trigger.id, {
+        time = trigger.time,
+        icon = Icon.LootDrop,
+        position = Vector3()
+    })
+end
+local UpdateEscapeWaypointPosition = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+    self._waypoints:SetWaypointPosition("Escape", self._mission:GetElementPositionOrDefault(trigger.waypoint_id))
+end)
+---@type ParseTriggerTable
 local triggers = {
-    [102449] = { time = 240, hint = Hints.LootEscape },
-    [102450] = { time = 180, hint = Hints.LootEscape },
-    [102451] = { time = 300, hint = Hints.LootEscape }
+    [102449] = { time = 240, hint = Hints.LootEscape, waypoint_f = ShowEscapeWaypoint },
+    [102450] = { time = 180, hint = Hints.LootEscape, waypoint_f = ShowEscapeWaypoint },
+    [102451] = { time = 300, hint = Hints.LootEscape, waypoint_f = ShowEscapeWaypoint },
+
+    [100779] = { waypoint_id = 100786, special_function = UpdateEscapeWaypointPosition },
+    [100780] = { waypoint_id = 100783, special_function = UpdateEscapeWaypointPosition },
+    [100781] = { waypoint_id = 100784, special_function = UpdateEscapeWaypointPosition },
+    [100782] = { waypoint_id = 100785, special_function = UpdateEscapeWaypointPosition }
 }
 
 if EHI.IsClient then
@@ -45,10 +63,10 @@ if EHI:IsLootCounterVisible() then
     end, { element = { 101918, 101942, 101943, 101945 } })
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
-    other[101285] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100786 } }
-    other[101286] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100783 } }
-    other[101287] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100784 } }
-    other[101284] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100785 } }
+    other[101285] = { special_function = SF.ShowWaypoint, data = { skip_if_waypoint_exists = "Escape", icon = Icon.Car, position_from_element = 100786 } }
+    other[101286] = { special_function = SF.ShowWaypoint, data = { skip_if_waypoint_exists = "Escape", icon = Icon.Car, position_from_element = 100783 } }
+    other[101287] = { special_function = SF.ShowWaypoint, data = { skip_if_waypoint_exists = "Escape", icon = Icon.Car, position_from_element = 100784 } }
+    other[101284] = { special_function = SF.ShowWaypoint, data = { skip_if_waypoint_exists = "Escape", icon = Icon.Car, position_from_element = 100785 } }
 end
 EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.CarEscape)
 

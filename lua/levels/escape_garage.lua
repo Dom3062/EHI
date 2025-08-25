@@ -11,10 +11,7 @@ local achievements =
                 self._cache.bilbo_baggin_bags = (self._cache.bilbo_baggin_bags or 0) + 1
                 if self._cache.bilbo_baggin_bags == 8 then
                     self._unlockable:AddAchievementProgressTracker("bilbo_baggin", 8, 0, true)
-                    self._loot:AddAchievementListener({
-                        achievement = "bilbo_baggin",
-                        max = 8
-                    })
+                    self._loot:AddAchievementListener({ achievement = "bilbo_baggin" }, 8)
                 end
             end }
         }

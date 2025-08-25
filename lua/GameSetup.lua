@@ -5,6 +5,8 @@ end
 EHI.Mission = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementTrigger.lua")
 EHI.Trigger = EHIMissionElementTrigger:__post_init()
 EHI.Element = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementOverride.lua")
+EHI.Waypoint = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementWaypoint.lua")
+EHI.Unit = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionUnit.lua")
 
 local redirect =
 {
@@ -140,7 +142,7 @@ local levels =
     wwh = true, -- Alaskan Deal
     dah = true, -- Diamond Heist
     hvh = true, -- Cursed Kill Room
-    rvd1 = true, -- Reservoir Dogs Heist Day 2; Add escape car wps
+    rvd1 = true, -- Reservoir Dogs Heist Day 2
     rvd2 = true, -- Reservoir Dogs Heist Day 1
     brb = true, -- Brooklyn Bank
     tag = true, -- Breakin' Feds
@@ -255,7 +257,7 @@ Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", functi
     end
     EHI.Mission:InitElements()
     EHI.Element:OverrideElements()
-    EHI:DisableTimerWaypointsOnInit()
+    EHI.Waypoint:GameInit()
     redirect = nil
     levels = nil
     custom_levels = nil
@@ -263,24 +265,23 @@ Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", functi
 end)
 
 Hooks:PreHook(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...) ---@param data SyncData
-    EHI:FinalizeUnitsClient()
+    EHI.Unit:FinalizeUnitsClient()
     managers.ehi_assault:load(data)
     managers.ehi_sync:load_pre(data)
 end)
 
 Hooks:PostHook(GameSetup, "load", "EHI_GameSetup_load_Post", function(self, data, ...) ---@param data SyncData
     EHI.Element:OverrideElements()
-    managers.ehi_sync:load_post()
+    managers.ehi_sync:load_post(data)
     EHI.Mission:load()
+    EHI.Waypoint:GameInitClient()
     EHI.Trigger:load(data)
-    --managers.ehi_tracker:load(data)
     managers.ehi_loot:load(data)
     managers.ehi_phalanx:load(data)
 end)
 
 Hooks:PostHook(GameSetup, "save", "EHI_GameSetup_save_Post", function(self, data, ...) ---@param data SyncData
     EHI.Trigger:save(data)
-    --managers.ehi_tracker:save(data)
     managers.ehi_assault:save(data)
     managers.ehi_loot:save(data)
     managers.ehi_phalanx:save(data)

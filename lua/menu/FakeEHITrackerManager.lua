@@ -21,7 +21,7 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
             self._x, self._y = managers.gui_data:safe_to_full(x_offset, y_offset)
         end
     end
-    self._text_scale = EHI:GetOption("text_scale")
+    self._text_scale = EHI:GetOption("text_scale") --[[@as number]]
     self._bg_visibility = EHI:GetOption("show_tracker_bg")
     self._corner_visibility = EHI:GetOption("show_tracker_corners")
     self._icons_visibility = EHI:GetOption("show_one_icon")
@@ -53,8 +53,18 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
         money = EHI:GetOption("money_tracker_format") ---@type number
     }
     self._trackers_enabled = EHI:GetOption("show_trackers") ---@type boolean
+    self:_update_tracker_internal_data()
     self:AddFakeTrackers()
     return self
+end
+
+function FakeEHITrackerManager:_update_tracker_internal_data()
+    local tracker = FakeEHITracker
+    tracker._text_scale = self._text_scale
+    tracker._gap_scaled = tracker._gap * self._scale
+    tracker._icon_size_scaled = self._tweak_data.size_h * self._scale
+    tracker._icon_gap_size_scaled = tracker._icon_gap_size * self._scale
+    tracker._default_bg_size = self._tweak_data.size_w * self._scale
 end
 
 function FakeEHITrackerManager:AddFakeTrackers()
@@ -134,7 +144,8 @@ function FakeEHITrackerManager:AddFakeTrackers()
     if not_u24_mod then
         self:AddFakeTracker({ id = "show_marshal_initial_time", time = math.random(0, 480), icons = { "equipment_sheriff_star" } })
     end
-    self:AddFakeTracker({ id = "show_money_tracker", time = math.random(1000000, 10000000), icons = { Icon.Money }, extend = true, class = "FakeEHIMoneyTracker" })
+    self:AddFakeTracker({ id = "show_money_tracker", time = math.random(1000000, 10000000), icons = { Icon.Money }, extend = true, extend_half = true, class = "FakeEHIMoneyTracker" })
+    self:AddFakeTracker({ id = "show_ping_tracker", icons = { "ping" }, class = "FakeEHIPlayerPingTracker" })
     self:AddPreviewText()
 end
 
@@ -153,7 +164,6 @@ end
 function FakeEHITrackerManager:CreateFakeTracker(params)
     params.x, params.y = self:GetPos(self._n_of_trackers)
     params.scale = self._scale
-    params.text_scale = self._text_scale
     params.bg = self._bg_visibility
     params.corners = self._corner_visibility
     params.one_icon = self._icons_visibility
@@ -196,8 +206,9 @@ function FakeEHITrackerManager:GetLocalPeerColor()
     end
     local i = 1
     local session = managers.network and managers.network:session()
-    if session and session:local_peer() then
-        i = session:local_peer():id()
+    local local_peer = session and session:local_peer()
+    if local_peer then
+        i = local_peer:id()
     end
     return tweak_data.chat_colors[i] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white
 end
@@ -206,8 +217,9 @@ function FakeEHITrackerManager:GetOtherPeerColor()
     local colors = deep_clone(tweak_data.chat_colors)
     local i = 1
     local session = managers.network and managers.network:session()
-    if session and session:local_peer() then
-        i = session:local_peer():id()
+    local local_peer = session and session:local_peer()
+    if local_peer then
+        i = local_peer:id()
     end
     table.remove(colors, i)
     return colors[math.random(#colors - 1)] or Color.white
@@ -288,7 +300,7 @@ function FakeEHITrackerManager:GetPos(pos)
         end
     elseif pos > 0 and self._tracker_alignment == 3 then -- Horizontal; Left to Right
         local tracker = self._fake_trackers[pos]
-        x = tracker._panel:right() + (tracker:GetSize() - tracker._panel:w()) + self._panel_offset
+        x = tracker._panel:right() + (tracker:GetTrackerSize() - tracker._panel:w()) + self._panel_offset
     end
     return x, y
 end
@@ -299,7 +311,7 @@ function FakeEHITrackerManager:GetPos2(tracker, pos)
     local x = self._x
     if pos > 0 then
         local previous_tracker = self._fake_trackers[pos]
-        x = previous_tracker._panel:left() - tracker:GetSize() - self._panel_offset
+        x = previous_tracker._panel:left() - tracker:GetTrackerSize() - self._panel_offset
     end
     return x, self._y
 end
@@ -419,8 +431,9 @@ end
 ---@param scale number
 function FakeEHITrackerManager:UpdateTextScale(scale)
     self._text_scale = scale
+    self:_update_tracker_internal_data()
     for _, tracker in ipairs(self._fake_trackers) do
-        tracker:UpdateTextScale(scale)
+        tracker:UpdateTextScale()
     end
 end
 
@@ -429,6 +442,7 @@ function FakeEHITrackerManager:UpdateScale(scale)
     self._scale = scale
     self._panel_size = self._tweak_data.size_h * scale
     self._panel_offset = self._tweak_data.offset * scale
+    self:_update_tracker_internal_data()
     self:Redraw()
 end
 

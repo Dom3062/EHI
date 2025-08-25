@@ -15,6 +15,9 @@ EHIAggregatedEquipmentTracker._dont_show_placed = { first_aid_kit = true }
 EHIAggregatedEquipmentTracker._ids = { "doctor_bag", "ammo_bag", "grenade_crate", "first_aid_kit", "bodybags_bag" }
 EHIAggregatedEquipmentTracker._init_create_text = false
 function EHIAggregatedEquipmentTracker:pre_init(params)
+    if params then
+        params.hide_on_delete = true
+    end
     self._n_of_deployables = 0
     self._count = {} ---@type table<string, { amount: number, placed: number, format: string }>
     self._deployables = {}
@@ -25,12 +28,6 @@ function EHIAggregatedEquipmentTracker:pre_init(params)
         self._count[id] = { amount = 0, placed = 0, format = self._format[id] or "charges" }
         self._deployables[id] = {}
     end
-end
-
-function EHIAggregatedEquipmentTracker:post_init(params)
-    self._default_panel_w = self._panel:w()
-    self._panel_w = self._default_panel_w
-    self._hide_on_delete = true
 end
 
 do
@@ -186,7 +183,7 @@ function EHIAggregatedEquipmentTracker:RemoveText(id)
     self._bg_box:remove(_text)
     self._n_of_deployables = self._n_of_deployables - 1
     if self._n_of_deployables == 1 then
-        local _, text = next(self._equipment) ---@cast text Text
+        local _, text = next(self._equipment) ---@cast text -?
         text:set_x(0)
         text:set_w(self._bg_box:w())
         self:FitTheText(text)
@@ -200,14 +197,6 @@ function EHIAggregatedEquipmentTracker:RedrawPanel()
             self:FitTheText(text)
         end
     end
-end
-
----@param addition boolean?
-function EHIAggregatedEquipmentTracker:AnimateMovement(addition)
-    self:AnimatePanelWAndRefresh(self._panel_w)
-    self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconsX()
-    self:AnimateAdjustHintX(addition and self._default_bg_size_half or -self._default_bg_size_half)
 end
 
 function EHIAggregatedEquipmentTracker:AlignTextOnHalfPos()
@@ -230,20 +219,14 @@ function EHIAggregatedEquipmentTracker:Reorganize(addition)
     elseif self._n_of_deployables == 2 then
         self:AlignTextOnHalfPos()
         if not addition then
-            self._panel_w = self._default_panel_w
-            self._bg_box:set_w(self._default_bg_size)
-            self:AnimateMovement()
+            self:AnimateMovement(self._anim_params.PanelSizeDecreaseHalf)
         end
     elseif addition then
         self:AlignTextOnHalfPos()
-        self._panel_w = self._panel_w + self._default_bg_size_half
-        self._bg_box:set_w(self._bg_box:w() + self._default_bg_size_half)
-        self:AnimateMovement(true)
+        self:AnimateMovement(self._anim_params.PanelSizeIncreaseHalf)
     else
         self:AlignTextOnHalfPos()
-        self._panel_w = self._panel_w - self._default_bg_size_half
-        self._bg_box:set_w(self._bg_box:w() - self._default_bg_size_half)
-        self:AnimateMovement()
+        self:AnimateMovement(self._anim_params.PanelSizeDecreaseHalf)
     end
 end
 

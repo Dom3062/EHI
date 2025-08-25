@@ -1,14 +1,5 @@
 ---@class EHITrackingManager
----@field _trackers EHITrackerManager
----@field _waypoints EHIWaypointManager
 local EHITrackingManager = { _t = 0 }
----@param trackers EHITrackerManager
----@param waypoints EHIWaypointManager
-function EHITrackingManager:post_init(trackers, waypoints)
-    self._trackers = trackers
-    self._waypoints = waypoints
-end
-
 ---@param t number
 function EHITrackingManager:LoadTime(t)
     self._t = t
@@ -149,6 +140,16 @@ function EHITrackingManager:IncreaseChance(id, amount)
     self._waypoints:IncreaseChance(id, amount)
 end
 
+---@param color string
+---@param code number
+---@param unit_id number
+---@param number_color Color
+---@param tracker_id string?
+function EHITrackingManager:SetColorCode(color, code, unit_id, number_color, tracker_id)
+    self._trackers:CallFunction(tracker_id or "ColorCodes", "SetCode", color, code)
+    self._waypoints:CallFunction(tracker_id or "ColorCodes", "CreateWaypoint", unit_id, nil, nil, number_color, code)
+end
+
 ---@param id string
 ---@param f string
 function EHITrackingManager:Call(id, f, ...)
@@ -160,5 +161,10 @@ function EHITrackingManager:destroy()
     self._trackers:destroy()
     self._waypoints:destroy()
 end
+
+EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
+    EHITrackingManager._trackers = managers.ehi_tracker
+    EHITrackingManager._waypoints = managers.ehi_waypoint
+end)
 
 return EHITrackingManager

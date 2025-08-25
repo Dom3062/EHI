@@ -7,7 +7,8 @@ local EHI = EHI
 
 ---@class EHISyncManager
 local EHISyncManager = {}
-function EHISyncManager:post_init()
+function EHISyncManager:init_finalize()
+    self._game_data_sync = CallbackEventHandler:new()
     if EHI.IsClient then
         self._drop_in_listener = CallbackEventHandler:new()
         self._load_sync = CallbackEventHandler:new()
@@ -19,6 +20,20 @@ function EHISyncManager:post_init()
             self._drop_in_listener = nil
             managers.network:remove_event_listener("EHISyncDropIn")
         end)
+    end
+end
+
+---@param f fun(data: SyncData)
+function EHISyncManager:AddGameDataSyncFunction(f)
+    if self._game_data_sync then
+        self._game_data_sync:add(f)
+    end
+end
+
+---@param o table Class with `__load (Client)` and `__save (Host)` functions; both functions has to accept `data: SyncData`
+function EHISyncManager:AddGameDataSyncFunctionByClass(o)
+    if self._game_data_sync then
+        self._game_data_sync:add(callback(o, o, EHI.IsHost and "__save" or "__load"))
     end
 end
 
@@ -47,7 +62,9 @@ function EHISyncManager:AddFullSyncFunction(f)
     end
 end
 
-function EHISyncManager:load_post()
+---@param data SyncData
+function EHISyncManager:load_post(data)
+    self._game_data_sync:dispatch(data)
     self.__syncing = true
     if self._is_dropin then
         self._load_sync:dispatch()
@@ -58,6 +75,8 @@ function EHISyncManager:load_post()
     self._full_sync = nil
     self._load_sync:clear()
     self._load_sync = nil
+    self._game_data_sync:clear()
+    self._game_data_sync = nil
     self.__syncing = nil
 end
 
@@ -134,6 +153,7 @@ function EHISyncManager:save(data)
     state.has_bots_enabled = Global.game_settings.team_ai
     state.has_hostages_extend_break_time = EHI:IsModInstalled("Hostages Extend Break Time", "Pat")
     data.EHISyncManager = state
+    self._game_data_sync:dispatch(data) -- Cannot delete the Event Handler as it needs to exists if new players will drop-in during gameplay
 end
 
 return EHISyncManager

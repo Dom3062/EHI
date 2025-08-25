@@ -35,6 +35,7 @@ _G.World = {}
 ---@field gui GuiTweakData
 ---@field group_ai GroupAITweakData
 ---@field hud_icons HudIconsTweakData
+---@field infamy InfamyNewTweakData
 ---@field interaction InteractionTweakData
 ---@field levels LevelsTweakData
 ---@field menu MenuTweakData
@@ -249,6 +250,12 @@ _G.tweak_data.achievement.complete_heist_achievements = {
         jobs = {
             "framing_frame"
         }
+    },
+    trophy_shoutout = {
+        timer = 420,
+        trophy_stat = "trophy_shoutout",
+        job = "shoutout_raid",
+        difficulty = overkill_and_above
     }
 }
 ---@class AchievementsTweakData.enemy_kill_achievements
@@ -727,6 +734,8 @@ _G.tweak_data.lootdrop = {}
 _G.tweak_data.lootdrop.global_values = {}
 ---@class MenuTweakData
 ---@field medium_font string
+---@field pd2_tiny_font string
+---@field pd2_tiny_font_size number
 ---@field pd2_small_font string
 ---@field pd2_small_font_size number
 ---@field pd2_medium_font string
@@ -1494,16 +1503,6 @@ end
 ---@return function
 _G.callback = function(o, base_callback_class, base_callback_func_name, base_callback_param)
 end
----@return Vector3
----@overload fun(x: number, y: number, z: number): Vector3
-_G.Vector3 = function()
-end
----@return Rotation
----@overload fun(x: number, y: number): Rotation
----@overload fun(x: number, y: number, z: number): Rotation
----@overload fun(x: number, y: number, z: number, w: number): Rotation
-_G.Rotation = function()
-end
 
 ---Has to be called in an animation
 ---@param seconds number
@@ -1518,13 +1517,6 @@ end
 _G.wait = function(seconds, fixed_dt)
 end
 
----@class _G.Idstring
----@overload fun(path_or_name: string): Idstring
-_G.Idstring = {}
-
----@class Rotation
----@field y fun(self: self): number
-
 ---@class SyncData
 ---@field EHIAssaultManager EHIAssaultManagerSyncData
 ---@field EHILootManager LootCounterTable
@@ -1532,6 +1524,7 @@ _G.Idstring = {}
 ---@field EHISyncManager EHISyncManagerSyncData
 ---@field EHIPhalanxManager EHIPhalanxManagerSyncData
 ---@field EHIMissionElementTrigger EHIManagerSyncData
+---@field HUDManager { assault_number: number, in_assault: boolean }
 
 ---@generic T
 ---@param TC T
@@ -1715,7 +1708,7 @@ end
 ---@field create_fullscreen_16_9_workspace fun(self: self): Workspace 16:9
 ---@field destroy_workspace fun(self: self, ws: Workspace)
 ---@field layout_fullscreen_workspace fun(self: self, ws: Workspace)
----@field safe_to_full fun(self: self, in_x: number, in_y: number): number, number
+---@field safe_to_full fun(self: self, in_x: number, in_y: number): x: number, y: number
 ---@field safe_to_full_16_9 fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_to_safe fun(self: self, in_x: number, in_y: number): number, number
 ---@field full_scaled_size fun(self: self): { x: number, y: number, w: number, h: number }
@@ -1820,9 +1813,9 @@ end
 ---@class SkirmishManager
 ---@field current_wave_number fun(self: self): number
 
----@class SlotMask
----@operator add(self): self
----@operator add(number): self
+---@class NetworkQOS
+---@field packet_loss number?
+---@field ping number
 
 ---@class SlotManager
 ---@field get_mask fun(self: self, ...: string): SlotMask
@@ -1873,6 +1866,9 @@ end
 ---@field order number
 ---@field static_data { voice: string, ai_mask_id: string, ai_character_id: string, ssuffix: string }
 ---@field body_g_object Idstring
+
+---@class InfamyNewTweakData
+---@field ranks 500
 
 ---@class MissionDoorTweakData.device
 ---@field align string

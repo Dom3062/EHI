@@ -22,8 +22,8 @@ EHIHealthFloatRect._unit_name =
     security_mex_no_pager = "Security",
     gensec = "GenSec",
     cop = "Cop",
-    cop_female 	= "Cop",
-    cop_scared 	= "Cop",
+    cop_female = "Cop",
+    cop_scared = "Cop",
     fbi = "FBI",
     fbi_female = "FBI",
     swat = "SWAT",
@@ -58,9 +58,9 @@ EHIHealthFloatRect._unit_name =
     biker_boss = "Boss",
     bank_manager = "Bank Manager",
     inside_man = "Inside Man",
-    escort_undercover 	= "Escort",
+    escort_undercover = "Escort",
     escort_chinese_prisoner = "Escort",
-    escort_cfo 	= "Escort",
+    escort_cfo = "Escort",
     drunk_pilot = "Drunk Pilot",
     boris = "Boris",
     spa_vip = "Charon",
@@ -73,7 +73,7 @@ EHIHealthFloatRect._unit_name =
     triad_boss_no_armor = "Yufu Wang",
     ranchmanager = "Ranch Manager",
     marshal_marksman = "Marshal Sniper",
-    marshal_shield 	= "Marshal Shield",
+    marshal_shield = "Marshal Shield",
     marshal_shield_break = "Marshal",
     zeal_heavy_swat = "Heavy ZEAL SWAT",
     zeal_swat = "ZEAL SWAT",
@@ -106,14 +106,9 @@ EHIHealthFloatRect._converts_disabled = not EHI:GetOption("show_floating_health_
 EHIHealthFloatRect._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 EHIHealthFloatRect._team_ai_disabled = not EHI:GetOption("show_floating_health_bar_team_ai") -- Converts share the same slot mask (16) with Team AI, workaround
 EHIHealthFloatRect._regular_disabled = not EHI:GetOption("show_floating_health_bar_regular_enemies")
-EHIHealthFloatRect._special_tank_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_tank")
-EHIHealthFloatRect._special_shield_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_shield")
-EHIHealthFloatRect._special_taser_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_taser")
-EHIHealthFloatRect._special_cloaker_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_cloaker")
-EHIHealthFloatRect._special_sniper_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_sniper")
-EHIHealthFloatRect._special_medic_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_medic")
-EHIHealthFloatRect._special_other_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_other")
-EHIHealthFloatRect._special_turret_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_turret")
+for _, option in ipairs({ "tank", "shield", "taser", "cloaker", "sniper", "medic", "other" }) do
+    EHIHealthFloatRect[string.format("_special_%s_disabled", option)] = not EHI:GetOption(string.format("show_floating_health_bar_special_enemies_%s", option))
+end
 ---@param hud_panel Panel
 function EHIHealthFloatRect:new(hud_panel)
     self._current_health = 0
@@ -222,6 +217,7 @@ function EHIHealthFloatRect:SetUnit(unit, t)
     elseif base then
         if base.has_tag then
             if base:has_tag("special") then
+                ---@diagnostic disable
                 if base:has_tag("tank") then
                     if self._special_tank_disabled then
                         self._block_update = true
@@ -265,6 +261,7 @@ function EHIHealthFloatRect:SetUnit(unit, t)
                         return
                     end
                 end
+                ---@diagnostic enable
             elseif self._regular_disabled then
                 self._block_update = true
                 self:set_visible(false)

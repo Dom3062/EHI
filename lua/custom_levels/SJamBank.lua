@@ -44,7 +44,7 @@ EHI.Mission:ParseTriggers({
     other = other
 })
 
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     -- units/payday2/equipment/gen_interactable_objective_laptop/mcm_laptop/014 (3405, 780, -312)
     [102850] = { remove_vanilla_waypoint = 100459 },
 
@@ -61,7 +61,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100034, 750)] = true, -- Defend
     [EHI:GetInstanceElementID(100031, 750)] = true -- Fix
 }
-EHI:DisableTimerWaypoints(DisableWaypoints)
+EHI.Waypoint:DisableTimerWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objectives =
     {

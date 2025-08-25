@@ -132,6 +132,7 @@ end
 EHI:ShowAchievementLootCounter({
     achievement = "deep_11",
     max = 4,
+    silent_max = 8,
     triggers =
     {
         [101084] = EHI:AddCustomCode(function(self)

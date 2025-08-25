@@ -32,14 +32,14 @@ local tbl =
         end)
     end}
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 local DisableWaypoints =
 {
     --levels/instances/mods/Constantine Scores/constantine_mobsterclub_server_computer/world
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b_002
     [EHI:GetInstanceElementID(100018, 3750)] = true -- Defend
 }
-EHI:DisableTimerWaypoints(DisableWaypoints)
+EHI.Waypoint:DisableTimerWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objectives =
     {

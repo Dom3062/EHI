@@ -160,6 +160,7 @@
     "ehi_hint_modifier_civilian_alarm" : "Counter of civilian kills to alarm",
     "ehi_hint_marshal" : "Marshal Groups",
     "ehi_hint_payday" : "PAYDAY",
+    "ehi_hint_ping" : "Ping",
 
     "ehi_hint_big_piggy" : "Moving Piggy",
     "ehi_hint_brb_winch_delivery" : "Winch Delivery",
@@ -223,7 +224,13 @@
     "ehi_hint_sand_heli_turret_timer" : "Heli Turret Timer",
     "ehi_hint_trai_crane" : "Crane Break Chance",
     "ehi_hint_trat_loco_start" : "Locomotive Start Chance",
+    "ehi_hint_vit_color_cables" : "Correct Cables",
     "ehi_hint_vit_teargas" : "Teargas Chance",
+
+    "ehi_color_r" : "R",
+    "ehi_color_g" : "G",
+    "ehi_color_b" : "B",
+    "ehi_color_y" : "Y",
 
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Reset Color",
@@ -231,9 +238,7 @@
     "ehi_preview" : "Preview (A map restart is required to take effect)\nRed corner indicates where the first tracker is going to appear",
 
     "ehi_x_offset" : "X offset",
-    "ehi_x_offset_desc" : "X offset",
     "ehi_y_offset" : "Y offset",
-    "ehi_y_offset_desc" : "Y offset",
 
     "ehi_text_scale" : "Text Scale",
     "ehi_text_scale_desc" : "Sets text scale.\nThis feature is useful for players with modded in-game fonts",
@@ -292,6 +297,14 @@
 
     "ehi_trackers_menu" : "Trackers",
     "ehi_trackers_menu_desc" : "",
+
+    "ehi_trackers_n_of_rc" : "Number of Trackers in Rows/Columns",
+    "ehi_trackers_n_of_rc_desc" : "Sets how many trackers will appear in a row/column before another one will be created\n\nIf Vertical alignment is selected, it will show the number of trackers in a row up to selected value before creating a new one\nIf Horizontal alignment, it will show the number of trackers in a column up to selected value creating a new one\n\nTo disable this feature, set the value to '0'",
+
+    "ehi_trackers_rc_horizontal_new_column_position" : "(Horizontal) New row position",
+    "ehi_trackers_rc_horizontal_new_column_position_desc" : "Where the new row should appear once the number of trackers in a previous row is full",
+    "ehi_trackers_rc_horizontal_new_column_position_1" : "Top",
+    "ehi_trackers_rc_horizontal_new_column_position_2" : "Bottom",
 
     "ehi_show_mission_trackers": "Show Mission Trackers",
     "ehi_show_mission_trackers_desc": "Shows mission trackers on the screen (e.g.: Van/Heli arrival time, Next objective wait time, etc...)\n\nThis option also applies to custom missions\nIf supported in EHI",
@@ -609,6 +622,12 @@
     "ehi_money_tracker_format_2" : "Spending / Offshore",
     "ehi_money_tracker_format_3" : "Offshore",
     "ehi_money_tracker_format_4" : "Spending",
+
+    "ehi_show_ping_tracker" : "Show Player Ping Tracker",
+    "ehi_show_ping_tracker_desc" : "Shows a ping to each player in the lobby (except you)\n\nPing is always in milliseconds and in case of packet loss, the amount of packet loss (in percent) will be visible next to the ping\nIf you are alone in the lobby, the tracker won't be visible until at least one player connects",
+
+    "ehi_show_ping_tracker_refresh_t" : "Player Ping Refresh Time (in seconds)",
+    "ehi_show_ping_tracker_refresh_t_desc" : "Sets how much time has to pass for Player Ping tracker to update ping for each player",
     
     "ehi_waypoints_menu" : "Waypoints",
     "ehi_waypoints_menu_desc" : "",

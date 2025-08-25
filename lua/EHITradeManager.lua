@@ -1,16 +1,11 @@
 ---@class EHITradeManager
 local EHITradeManager = {}
 EHITradeManager._id = "CustodyTime"
----@param ehi_tracker EHITrackerManager
-function EHITradeManager:post_init(ehi_tracker)
-    self._trackers = ehi_tracker
-    self._trade = {
-        ai = false,
-        normal = false
-    }
-    self._trade_delay = {} --[[@as table<number, { respawn_t: number, in_custody: boolean?, civilians_killed: number }>]]
-end
-
+EHITradeManager._trade = {
+    ai = false,
+    normal = false
+}
+EHITradeManager._trade_delay = {} --[[@as table<number, { respawn_t: number, in_custody: boolean?, civilians_killed: number }>]]
 ---@param type string
 ---@param pause boolean
 ---@param t number
@@ -22,7 +17,7 @@ end
 
 ---@param anim_flash boolean?
 function EHITradeManager:AddCustodyTimeTracker(anim_flash)
-    self._trackers:AddTrackerIfDoesNotExist({
+    managers.ehi_tracker:AddTrackerIfDoesNotExist({
         id = self._id,
         flash_bg = anim_flash ~= false,
         class = "EHITradeDelayTracker"
@@ -168,19 +163,30 @@ function EHITradeManager:PostPeerCustodyTime(peer_id, time, civilians_killed, in
         end
     else
         self:AddCustodyTimeTracker()
-        self:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody) ---@diagnostic disable-line
+        self:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody)
     end
 end
 
 ---@return EHITradeDelayTracker?
 function EHITradeManager:GetTracker()
-    return self._trackers:GetTracker(self._id) --[[@as EHITradeDelayTracker?]]
+    return managers.ehi_tracker:GetTracker(self._id) --[[@as EHITradeDelayTracker?]]
 end
 
 ---@param f string
 ---@param ... any
 function EHITradeManager:CallFunction(f, ...)
-    self._trackers:CallFunction(self._id, f, ...)
+    managers.ehi_tracker:CallFunction(self._id, f, ...)
 end
+
+EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
+    if EHI.IsClient and CustomNameColor and CustomNameColor.ModID then
+        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_EHITradeManager", function(data, sender)
+            if data and data ~= "" then
+                local col = NetworkHelper:StringToColour(data)
+                managers.ehi_tracker:CallFunction(EHITradeManager._id, "UpdateTextPeerColor", sender, col)
+            end
+        end)
+    end
+end)
 
 return EHITradeManager

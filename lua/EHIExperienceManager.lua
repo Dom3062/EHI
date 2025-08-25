@@ -1,7 +1,7 @@
 local EHI = EHI
 
 ---@class EHIExperienceManager
-EHIExperienceManager = {}
+local EHIExperienceManager = {}
 EHIExperienceManager._XPElementLevel =
 {
     jewelry_store = true,
@@ -34,11 +34,6 @@ function EHIExperienceManager:AddXPElement(element)
     if element._values.amount and element._values.amount > 0 then
         self._XPElement = self._XPElement + 1
     end
-end
-
----@param trackers EHITrackerManager
-function EHIExperienceManager:TrackersInit(trackers)
-    self._trackers = trackers
 end
 
 ---@param xp ExperienceManager
@@ -93,6 +88,7 @@ function EHIExperienceManager:ExperienceInit(xp)
     else
         EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(self, self, "HookAwardXP"))
     end
+    EHI:LoadTracker("EHIXPTracker")
 end
 
 function EHIExperienceManager:CreateXPTable()
@@ -190,8 +186,8 @@ function EHIExperienceManager:HookAwardXP()
             ---@param amount number
             self._show = function(id, amount)
                 local _id = string.format("XP%d", id)
-                if self._trackers:CallFunction2(_id, "AddXP", amount) then
-                    self._trackers:AddTracker({
+                if managers.ehi_tracker:CallFunction2(_id, "AddXP", amount) then
+                    managers.ehi_tracker:AddTracker({
                         id = _id,
                         amount = amount,
                         class = "EHIXPTracker"
@@ -202,7 +198,7 @@ function EHIExperienceManager:HookAwardXP()
             ---@param id number
             ---@param amount number
             self._show = function(id, amount)
-                self._trackers:CallFunction("XPHidden", "AddXP", amount)
+                managers.ehi_tracker:CallFunction("XPHidden", "AddXP", amount)
             end
         end
         if self._config.xp_panel == 2 then
@@ -210,7 +206,7 @@ function EHIExperienceManager:HookAwardXP()
                 ---@param id number
                 ---@param amount number
                 self._xp_awarded = function(id, amount)
-                    self._trackers:CallFunction("XPTotal", "AddXP", amount)
+                    managers.ehi_tracker:CallFunction("XPTotal", "AddXP", amount)
                     if self._config.show_xp_diff then
                         self:ShowGainedXP(id, amount, amount)
                     end
@@ -220,7 +216,7 @@ function EHIExperienceManager:HookAwardXP()
                 ---@param amount number
                 self._xp_awarded = function(id, amount)
                     local multiplied = amount * self._ehi_xp.difficulty_multiplier
-                    self._trackers:CallFunction("XPTotal", "AddXP", multiplied)
+                    managers.ehi_tracker:CallFunction("XPTotal", "AddXP", multiplied)
                     if self._config.show_xp_diff then
                         self:ShowGainedXP(id, amount, multiplied)
                     end
@@ -231,7 +227,7 @@ function EHIExperienceManager:HookAwardXP()
                 self._xp_awarded = function(id, amount)
                     self._base_xp = self._base_xp + amount
                     local new_total = self:MultiplyXPWithAllBonuses(self._base_xp)
-                    self._trackers:CallFunction("XPTotal", "SetXP", new_total)
+                    managers.ehi_tracker:CallFunction("XPTotal", "SetXP", new_total)
                     if self._config.show_xp_diff then
                         self:ShowGainedXP(id, 0, new_total, true)
                     end
@@ -242,7 +238,7 @@ function EHIExperienceManager:HookAwardXP()
         ---@param id number
         ---@param amount number
         self._show = function(id, amount)
-            if self._trackers:CallFunction2("XPHidden", "AddXP", amount) then
+            if managers.ehi_tracker:CallFunction2("XPHidden", "AddXP", amount) then
                 self._xp_to_award = (self._xp_to_award or 0) + amount
             end
         end
@@ -275,14 +271,14 @@ function EHIExperienceManager:HookAwardXP()
         end
         self._ehi_xp.bonus_xp = self._ehi_xp.bonus_xp + amount
         self:RecalculateXP(1)
-        EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, self:CurrentAlivePlayers())
+        self:CallRefreshPlayerCountListener()
     end)
     if self._config.xp_panel ~= 1 then
         local one_element = self:IsOneXPElementHeist(level_id)
         if self._config.xp_panel == 2 then
             local xp_limit = self:GetPlayerXPLimit()
             if xp_limit > 0 and not one_element then
-                self._trackers:AddTracker({
+                managers.ehi_tracker:AddTracker({
                     id = "XPTotal",
                     xp_limit = xp_limit,
                     xp_overflow_enabled = self._xp.prestige_enabled and EHI:IsModInstalled("Infamy Pool Overflow", "Dr_Newbie"),
@@ -291,7 +287,7 @@ function EHIExperienceManager:HookAwardXP()
             end
         end
         if self._config.xp_panel >= 3 or (self._config.xp_panel == 2 and self._config.show_total_xp_diff >= 3) then
-            self._trackers:AddHiddenTracker({
+            managers.ehi_tracker:AddHiddenTracker({
                 id = "XPHidden",
                 amount = self._xp_to_award,
                 panel = self._config.xp_panel == 2 and self._config.show_total_xp_diff or self._config.xp_panel,
@@ -629,14 +625,22 @@ function EHIExperienceManager:IsInfamyPoolOverflowed()
     return self._xp.prestige_xp_remaining < 0 --- Not possible in Vanilla, mod check
 end
 
-function EHIExperienceManager:CurrentAlivePlayers()
-    return self._ehi_xp and self._ehi_xp.alive_players or 0
+function EHIExperienceManager:CallRefreshPlayerCountListener()
+    if self._alive_players_listener then
+        self._alive_players_listener:dispatch(self._ehi_xp and self._ehi_xp.alive_players or 0)
+    end
+end
+
+---@param f fun(alive_players: integer)
+function EHIExperienceManager:AddRefreshPlayerCountListener(f)
+    self._alive_players_listener = self._alive_players_listener or CallbackEventHandler:new()
+    self._alive_players_listener:add(f)
 end
 
 function EHIExperienceManager:SetAIOnDeathListener()
     EHI:UpdateExistingHookIfExistsOrHook(TradeManager, "on_AI_criminal_death", "EHI_ExperienceManager_AICriminalDeath", function(...)
         self:DecreaseAlivePlayers()
-        EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, self:CurrentAlivePlayers())
+        self:CallRefreshPlayerCountListener()
     end)
 end
 
@@ -647,11 +651,11 @@ function EHIExperienceManager:SetCriminalsListener(ub)
             if not self._xp_disabled then
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
                     self:QueryAmountOfAllPlayers()
-                    EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, self:CurrentAlivePlayers())
+                    self:CallRefreshPlayerCountListener()
                 end)
             else
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
-                    EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, self:CurrentAlivePlayers())
+                    self:CallRefreshPlayerCountListener()
                 end)
             end
         end
@@ -670,11 +674,11 @@ function EHIExperienceManager:SetCriminalsListener(ub)
             if not self._xp_disabled then
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
                     self:QueryAmountOfAlivePlayers()
-                    EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, self:CurrentAlivePlayers())
+                    self:CallRefreshPlayerCountListener()
                 end)
             else
                 DelayedCalls:Add("EHIExperienceManager_SetCriminalsListener", 1, function()
-                    EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, self:CurrentAlivePlayers())
+                    self:CallRefreshPlayerCountListener()
                 end)
             end
         end
@@ -683,3 +687,5 @@ function EHIExperienceManager:SetCriminalsListener(ub)
         Hooks:PostHook(CriminalsManager, "on_peer_left", "EHI_CriminalsManager_on_peer_left", Query)
     end
 end
+
+return EHIExperienceManager

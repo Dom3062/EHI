@@ -27,10 +27,7 @@ function EHI:ShowBeardLibAchievementLootCounter_Mallbank(achievement, max, diffi
         show_finish_after_reaching_target = true,
         class = self.Trackers.Achievement.Progress
     })
-    managers.ehi_loot:AddAchievementListener({
-        achievement = achievement,
-        max = max
-    })
+    managers.ehi_loot:AddAchievementListener({ achievement = achievement }, max)
 end
 
 if EHI:GetUnlockableOption("hide_unlocked_achievements") then

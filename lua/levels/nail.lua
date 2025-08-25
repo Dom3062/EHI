@@ -37,7 +37,7 @@ EHI:ShowLootCounter({
         }
     },
     no_max = true
-})
+}, { element = 100726 })
 EHI:AddXPBreakdown({
     objectives =
     {

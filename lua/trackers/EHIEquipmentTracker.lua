@@ -3,15 +3,12 @@
 EHIEquipmentTracker = class(EHITracker)
 EHIEquipmentTracker._needs_update = false
 function EHIEquipmentTracker:pre_init(params)
+    params.hide_on_delete = true
     self._format = params.format or "charges"
     self._dont_show_placed = params.dont_show_placed
     self._amount = 0
     self._placed = 0
     self._deployables = {}
-end
-
-function EHIEquipmentTracker:post_init(params)
-    self._hide_on_delete = true
 end
 
 do

@@ -1,15 +1,14 @@
----@class EHILootSharedMaster
+---@class EHILootSharedMaster : EHIBaseMaster
+---@field super EHIBaseMaster
 ---@field new fun(self: self, params: EHITracker.params): self
-EHILootSharedMaster = class()
+EHILootSharedMaster = class(EHIBaseMaster)
+EHILootSharedMaster._loot = EHILootManager
 EHILootSharedMaster._id = EHILootManager._id
 EHILootSharedMaster._SHOW_POPUP = EHI:GetOption("show_all_loot_secured_popup")
-EHILootSharedMaster._SHOW_TRACKERS = EHI:GetOption("show_trackers") --[[@as boolean]]
-EHILootSharedMaster._SHOW_WAYPOINTS = EHI:GetOption("show_waypoints") --[[@as boolean]]
 ---@param params EHITracker.params
 function EHILootSharedMaster:init(params)
+    EHILootSharedMaster.super.init(self, params)
     self._achievement_id = params.achievement_id
-    self._tracking = params.tracking --[[@as EHITrackingManager]]
-    self._loot = params.loot --[[@as EHILootManager]]
     self._max = params.max or 0
     self._progress = params.progress or 0
     self._mission_loot = 0
@@ -355,18 +354,93 @@ function EHILootSharedMaster:delete_listener(silent_removal)
     self._loot:RemoveLootMaster(self._id)
 end
 
-function EHILootSharedMaster:AddToUpdate()
-    if self._SHOW_TRACKERS then
-        self._tracking._trackers:_add_tracker_to_update(self) ---@diagnostic disable-line
-    elseif self._SHOW_WAYPOINTS then
-        self._tracking._waypoints:_add_waypoint_to_update(self) ---@diagnostic disable-line
+---@class EHILootCountSharedMaster : EHILootSharedMaster
+---@field super EHILootSharedMaster
+EHILootCountSharedMaster = class(EHILootSharedMaster)
+function EHILootCountSharedMaster:Format()
+    return tostring(self._progress)
+end
+
+---@class EHILootMaxSharedMaster : EHILootSharedMaster
+---@field super EHILootSharedMaster
+---@field new fun(self: self, params: EHITracker.params): self
+EHILootMaxSharedMaster = class(EHILootSharedMaster)
+function EHILootMaxSharedMaster:init(params)
+    EHILootMaxSharedMaster.super.init(self, params)
+    self._show_progress_on_finish = true
+    self._params = params.xp_params or {} ---@type LootCounterTable.MaxBagsForMaxLevel
+    self._refresh_max = 5
+    self._stay_on_screen = true
+    local function refresh(alive_players) ---@param alive_players integer
+        self:Refresh()
+    end
+    managers.ehi_experience:AddRefreshPlayerCountListener(refresh)
+    EHI:AddCallback(EHI.CallbackMessage.SyncGagePackagesCount, refresh)
+    EHI:AddOnCustodyCallback(refresh)
+    EHI:AddOnSpawnedCallback(function()
+        self:AddToUpdate()
+    end)
+    if EHI.IsClient then
+        self._loot:AddSyncListener(function(loot)
+            self._offset = loot:GetSecuredBagsAmount()
+        end)
     end
 end
 
-function EHILootSharedMaster:RemoveFromUpdate()
-    if self._SHOW_TRACKERS then
-        self._tracking._trackers:_remove_tracker_from_update(self._id)
-    elseif self._SHOW_WAYPOINTS then
-        self._tracking._waypoints:_remove_waypoint_from_update(self._id)
+function EHILootMaxSharedMaster:update(dt)
+    if self._refresh_max then
+        self._refresh_max = self._refresh_max - dt
+        if self._refresh_max <= 0 then
+            self._refresh_max = nil
+            self._xp_player_limit = managers.ehi_experience:GetPlayerXPLimit(true)
+            self:Refresh()
+            self:RemoveFromUpdate()
+        end
     end
+end
+
+function EHILootMaxSharedMaster:VerifyStatus()
+    if self._progress == self._max then
+        self:SetCompleted()
+    end
+end
+
+function EHILootMaxSharedMaster:Refresh()
+    if self._refresh_max then
+        return
+    end
+    local xp_per_bags, current_secured_bags = 1, nil
+    if self._params.xp_per_loot then
+        local xp = 0
+        current_secured_bags = 0
+        for loot, value in pairs(self._params.xp_per_loot) do
+            local amount = managers.loot:GetSecuredBagsTypeAmount(loot)
+            xp = xp + (amount * value)
+            current_secured_bags = current_secured_bags + amount
+        end
+        xp_per_bags = managers.ehi_experience:MultiplyXPWithAllBonuses(xp, 1)
+    elseif self._params.xp_per_bag_all then
+        xp_per_bags = managers.ehi_experience:MultiplyXPWithAllBonuses(self._params.xp_per_bag_all, 1)
+    end
+    local xp_mission = managers.ehi_experience:MultiplyXPWithAllBonuses(self._params.mission_xp, 0)
+    local xp_remaining_to_max = self._xp_player_limit - xp_mission
+    local new_max = math.ceil(xp_remaining_to_max / xp_per_bags)
+    if new_max ~= self._max then
+        current_secured_bags = math.clamp((current_secured_bags or managers.loot:GetSecuredBagsAmount()) - self._offset, 0, math.huge)
+        local max_secured_bags = new_max
+        if new_max < self._max and self._progress > max_secured_bags then
+            current_secured_bags = new_max
+        end
+        self._progress = math.clamp(self._progress, current_secured_bags, max_secured_bags)
+        self:SetProgressMax(new_max)
+    end
+end
+
+---@param amount number
+function EHILootMaxSharedMaster:ObjectiveXPAwarded(amount)
+    if amount <= 0 then
+        return
+    end
+    self._params.mission_xp = (self._params.mission_xp or 0) + amount
+    self:Refresh()
 end

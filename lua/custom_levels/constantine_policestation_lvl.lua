@@ -28,7 +28,7 @@ local tbl =
     [EHI:GetInstanceUnitID(100037, 5750)] = { f = AdjustServerHackInstance, instance_id = 5750 },
     [EHI:GetInstanceUnitID(100037, 6000)] = { f = AdjustServerHackInstance, instance_id = 6000 }
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 local DisableWaypoints =
 {
     --levels/instances/mods/Constantine Scores/constantine_mobsterclub_server_computer/world
@@ -36,7 +36,7 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100018, 5750)] = true, -- Defend
     [EHI:GetInstanceElementID(100018, 6000)] = true -- Defend
 }
-EHI:DisableTimerWaypoints(DisableWaypoints)
+EHI.Waypoint:DisableTimerWaypoints(DisableWaypoints)
 EHI:AddXPBreakdown({
     objectives =
     {

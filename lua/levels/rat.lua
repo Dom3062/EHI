@@ -71,9 +71,21 @@ if EHI:IsMayhemOrAbove() then
     triggers[102197] = { id = "HeliMeth", run = { time = 180 + heli_delay_full }, waypoint_f = ShowFlareWP }
     if EHI:MissionTrackersAndWaypointEnabled() and EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
         local VanPos = 101454 -- 101454 - Left; 101449 - Center
-        local function ResetWaypoint()
-            managers.hud:RestoreWaypoint(VanPos)
-            VanPos = 101454 -- Reset to default position
+        local ResetWaypoint, DisableWaypoint
+        if EHI:IsLootCounterVisible() then
+            ResetWaypoint = function()
+                VanPos = 101454 -- Reset to default position
+            end
+            DisableWaypoint = function()
+            end
+        else
+            ResetWaypoint = function ()
+                managers.hud:RestoreWaypoint(VanPos)
+                VanPos = 101454 -- Reset to default position
+            end
+            DisableWaypoint = function()
+                managers.hud:SoftRemoveWaypoint2(VanPos)
+            end
         end
         table.insert(triggers[101001].data, 1010013)
         triggers[1010013] = { special_function = SF.CustomCode, f = ResetWaypoint }
@@ -85,21 +97,20 @@ if EHI:IsMayhemOrAbove() then
         triggers[1019822] = { special_function = SF.CustomCode, f = function()
             VanPos = 101449
         end }
-        local function DisableWaypoint()
-            managers.hud:SoftRemoveWaypoint2(VanPos)
-        end
         triggers[100763] = { special_function = SF.CustomCode, f = DisableWaypoint }
         triggers[101453] = { special_function = SF.CustomCode, f = DisableWaypoint }
         ---@param self EHIMissionElementTrigger
         ---@param trigger ElementTrigger
         local function ShowWaypoint(self, trigger)
-            local pos = VanPos == 101454 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
-            self._waypoints:AddWaypoint(trigger.id, {
-                time = trigger.run.time,
-                icon = Icon.LootDrop,
-                position = pos,
-                class = self._mission.Waypoints.Warning
-            })
+            if self._waypoints:ReturnValue2(self._loot._id, "StartTimer", trigger.run.time, true) then
+                local pos = VanPos == 101454 and Vector3(-1374, -2388, 1135) or Vector3(-1283, 1470, 1285)
+                self._waypoints:AddWaypoint(trigger.id, {
+                    time = trigger.run.time,
+                    icon = Icon.LootDrop,
+                    position = pos,
+                    class = self._mission.Waypoints.Warning
+                })
+            end
         end
         triggers[102219].waypoint_f = ShowWaypoint
         triggers[102236].waypoint_f = ShowWaypoint
@@ -216,7 +227,7 @@ EHI:ShowAchievementLootCounter({
     max = 7,
     difficulty_pass = ovk_and_up
 })
-EHI:ShowLootCounter({ max_bags_for_level = { xp_per_bag_all = 8000 }, no_max = true })
+EHI:ShowLootCounter({ max_bags_for_level = { xp_per_bag_all = 8000 }, no_max = true }, { element = { 101454, 101449 }, class = EHI.Waypoints.LootCounter.Timed })
 EHI:AddXPBreakdown({
     loot_all = 8000,
     total_xp_override =

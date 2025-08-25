@@ -61,7 +61,7 @@ function EHIWaypointManager:AddWaypoint(id, params)
         self._hud:remove_waypoint(id)
         return
     end
-    self:SetWaypointInitialIcon(waypoint, params)
+    self:_set_waypoint_initial_icon(waypoint, params)
     if waypoint.distance then
         waypoint.distance:set_font(self._font)
         waypoint.distance:set_font_size(self._distance_font_size)
@@ -116,7 +116,7 @@ function EHIWaypointManager:_create_waypoint(id, icon, position, present_timer)
         self._hud:remove_waypoint(id)
         return
     end
-    self:SetWaypointInitialIcon(waypoint, params) ---@diagnostic disable-line
+    self:_set_waypoint_initial_icon(waypoint, params) ---@diagnostic disable-line
     if waypoint.distance then
         waypoint.distance:set_font(self._font)
         waypoint.distance:set_font_size(self._distance_font_size)
@@ -156,32 +156,32 @@ function EHIWaypointManager:UpdateWaypointID(id, new_id)
     self._waypoints_to_update[new_id] = table.remove_key(self._waypoints_to_update, id)
 end
 
+---@param bitmap Bitmap?
+---@param icon string
+---@param texture_rect TextureRect
+function EHIWaypointManager:_set_bitmap_image(bitmap, icon, texture_rect)
+    if bitmap then
+        if texture_rect then
+            bitmap:set_image(icon, unpack(texture_rect))
+        else
+            bitmap:set_image(icon)
+        end
+        bitmap:set_size(self._bitmap_w, self._bitmap_h)
+    end
+end
+
 ---@param wp Waypoint
 ---@param params AddWaypointTable|ElementWaypointTrigger
-function EHIWaypointManager:SetWaypointInitialIcon(wp, params)
-    local bitmap = wp.bitmap
-    local bitmap_world = wp.bitmap_world -- VR
+function EHIWaypointManager:_set_waypoint_initial_icon(wp, params)
     local icon, texture_rect
     if params.texture then
         icon, texture_rect = params.texture, params.texture_rect
     else
         icon, texture_rect = self._get_icon(type(params.icon) == "table" and params.icon[1] or params.icon --[[@as string]])
     end
-    if texture_rect then
-        bitmap:set_image(icon, unpack(texture_rect))
-    else
-        bitmap:set_image(icon)
-    end
-    bitmap:set_size(self._bitmap_w, self._bitmap_h)
+    self:_set_bitmap_image(wp.bitmap, icon, texture_rect)
     wp.size = Vector3(self._bitmap_w, self._bitmap_h, 0)
-    if bitmap_world then
-        if texture_rect then
-            bitmap_world:set_image(icon, unpack(texture_rect))
-        else
-            bitmap_world:set_image(icon)
-        end
-        bitmap_world:set_size(self._bitmap_w, self._bitmap_h)
-    end
+    self:_set_bitmap_image(wp.bitmap_world, icon, texture_rect)
 end
 
 ---@param id string
@@ -190,7 +190,7 @@ function EHIWaypointManager:SetWaypointIcon(id, new_icon)
     if id and self._waypoints[id] then
         local wp = self._hud:get_waypoint_data(id)
         if wp then
-            self:SetWaypointInitialIcon(wp, { icon = new_icon })
+            self:_set_waypoint_initial_icon(wp, { icon = new_icon })
         end
     end
 end
@@ -371,9 +371,6 @@ do
     dofile(path .. "EHIProgressWaypoint.lua")
     dofile(path .. "EHIChanceWaypoint.lua")
     dofile(path .. "EHIInaccurateWaypoints.lua")
-    if EHI:GetWaypointOption("show_waypoints_loot_counter") then
-        dofile(path .. "EHILootWaypoint.lua")
-    end
 end
 
 if _G.IS_VR then

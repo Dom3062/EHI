@@ -15,16 +15,20 @@ end
 ---@field _definition WorldDefinition._definition
 ---@field get_unit fun(self: self, id: number): Unit?
 
-local units = {}
+local units = {} ---@type table<string, UnitUpdateDefinition>
 Hooks:PostHook(WorldDefinition, "init", "EHI_WorldDefinition_init", function(...)
-    units = tweak_data.ehi.units
+    units = EHI.Unit._units
+end)
+
+Hooks:PreHook(WorldDefinition, "init_done", "EHI_WorldDefinition_init_done", function(...)
+    EHI.Unit:FinalizeUnitsClient()
 end)
 
 Hooks:PostHook(WorldDefinition, "create", "EHI_WorldDefinition_create", function(self, ...)
     if self._definition.statics then -- Appears to be unused; every unit appears to be in their own continents
         for _, values in ipairs(self._definition.statics) do
             if units[values.unit_data.name] and not values.unit_data.instance then
-                EHI._cache.MissionUnits[values.unit_data.unit_id] = units[values.unit_data.name]
+                EHI.Unit._world[values.unit_data.unit_id] = units[values.unit_data.name]
             end
         end
     end
@@ -32,7 +36,7 @@ Hooks:PostHook(WorldDefinition, "create", "EHI_WorldDefinition_create", function
         if continent.statics then
             for _, values in ipairs(continent.statics) do
                 if units[values.unit_data.name] and not values.unit_data.instance then
-                    EHI._cache.MissionUnits[values.unit_data.unit_id] = units[values.unit_data.name]
+                    EHI.Unit._world[values.unit_data.unit_id] = units[values.unit_data.name]
                 end
             end
         end
@@ -231,7 +235,7 @@ instances["levels/instances/unique/sand/sand_server_hack/world"] = instances["le
 instances["levels/instances/unique/xmn/xmn_breakout_road001/world"] = instances["levels/instances/unique/hox_breakout_road001/world"]
 ---@param instance CoreWorldInstanceManager.Instance
 function WorldDefinition:OverrideUnitsInTheInstance(instance)
-    --EHI:PrintTable(instance, "Overriding instance")
+    --EHI:PrintTable(instance, nil, "Overriding instance")
     -- Don't update already checked instances
     if not instance.ehi_wd then
         local tbl = {}
@@ -245,7 +249,7 @@ function WorldDefinition:OverrideUnitsInTheInstance(instance)
             end
             tbl[final_index] = unit_data
         end
-        EHI:UpdateInstanceMissionUnits(tbl, self._all_units == nil)
+        EHI.Unit:UpdateInstanceMissionUnits(tbl, self._all_units == nil)
         instance.ehi_wd = true
     end
 end
@@ -268,57 +272,3 @@ Hooks:PostHook(WorldDefinition, "_insert_instances", "EHI_WorldDefinition_insert
         end
     end
 end)
-
-Hooks:PreHook(WorldDefinition, "init_done", "EHI_WorldDefinition_init_done", function(...)
-    EHI:FinalizeUnitsClient()
-end)
-
----@param unit_id number
----@param unit_data UnitUpdateDefinition
----@param unit UnitAmmoDeployable|UnitGrenadeDeployable
-function WorldDefinition:IgnoreDeployable(unit_id, unit_data, unit)
-    local base = unit:base()
-    if base and base.SetIgnore then
-        base:SetIgnore()
-    end
-end
-
----@param unit_id number
----@param unit_data UnitUpdateDefinition
----@param unit UnitAmmoDeployable|UnitGrenadeDeployable
-function WorldDefinition:IgnoreChildDeployable(unit_id, unit_data, unit)
-    local base = unit:base()
-    if base and base.SetIgnoreChild then
-        base:SetIgnoreChild()
-    end
-end
-
----@param unit_id number
----@param unit_data UnitUpdateDefinition
----@param unit UnitAmmoDeployable|UnitDoctorDeployable
-function WorldDefinition:SetDeployableOffset(unit_id, unit_data, unit)
-    local base = unit:base()
-    if base and base.SetOffset then
-        base:SetOffset(unit_data.offset or 1)
-    end
-end
-
----@param unit_id number
----@param unit_data UnitUpdateDefinition
----@param unit UnitDigitalTimer
-function WorldDefinition:chasC4(unit_id, unit_data, unit)
-    local digital = unit:digital_gui()
-    if not digital._ehi_key then
-        return
-    end
-    digital:SetHint(Hints.Explosion)
-    if not unit_data.instance then
-        digital:SetIcons(unit_data.icons)
-        return
-    end
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance.start_index, unit_data.continent_index) == 100054 then
-        digital:SetIcons(unit_data.icons)
-    else
-        digital:SetIgnore()
-    end
-end

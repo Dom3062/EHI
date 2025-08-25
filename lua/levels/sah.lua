@@ -56,7 +56,7 @@ EHI.Mission:ParseTriggers({
     other = other
 })
 
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     -- Unused Grenade case
     [400178] = { f = "IgnoreDeployable" }
 })

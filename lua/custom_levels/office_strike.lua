@@ -140,7 +140,7 @@ local tbl =
     [102775] = { remove_vanilla_waypoint = 200309 },
     [102776] = { remove_vanilla_waypoint = 200310 }
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:SetMissionDoorData({
     [Vector3(945.08, 3403.11, 92.4429)] = 200160
 })

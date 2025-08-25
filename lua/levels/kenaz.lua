@@ -89,26 +89,24 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
             end
             self:CreateTracker()
             local wd = managers.worlddefinition
-            local bg = Idstring("g_top_opened"):key()
+            local bg = Idstring("g_top_opened")
             for color, data in pairs(keycode_units) do
                 if data.unit_ids then
                     for _, unit_id in ipairs(data.unit_ids) do
                         if data.indexes then
                             for _, index in ipairs(data.indexes) do
-                                local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index)) --[[@as UnitBase ]]
+                                local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
                                 local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
                                 if code then
-                                    self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                                    self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                                    self._tracking:SetColorCode(color, code, unit_id, color_map[color])
                                     break
                                 end
                             end
                         else
-                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index)) --[[@as UnitBase ]]
+                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
                             local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
                             if code then
-                                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                                self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                                self._tracking:SetColorCode(color, code, unit_id, color_map[color])
                                 break
                             end
                         end
@@ -117,20 +115,18 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
                     local unit_id = data.unit_id
                     if data.indexes then
                         for _, index in ipairs(data.indexes) do
-                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index)) --[[@as UnitBase ]]
+                            local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, index))
                             local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
                             if code then
-                                self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                                self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                                self._tracking:SetColorCode(color, code, unit_id, color_map[color])
                                 break
                             end
                         end
                     else
-                        local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index)) --[[@as UnitBase ]]
+                        local unit = wd:get_unit(EHI:GetInstanceUnitID(unit_id, data.index))
                         local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
                         if code then
-                            self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                            self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                            self._tracking:SetColorCode(color, code, unit_id, color_map[color])
                             break
                         end
                     end

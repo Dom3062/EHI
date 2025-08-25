@@ -61,7 +61,7 @@ local tbl =
     [101318] = { remove_vanilla_waypoint = 101922, ignore_visibility = true, restore_waypoint_on_done = true },
     [101320] = { remove_vanilla_waypoint = 101923, ignore_visibility = true, restore_waypoint_on_done = true }
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     plan =
     {

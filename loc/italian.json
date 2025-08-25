@@ -17,9 +17,7 @@
     "ehi_preview" : "Anteprima (Richiede il riavvio della mappa perché le modifiche facciano effetto)\nL'angolo rosso indica dove apparirà il primo tracciatore",
  
     "ehi_x_offset" : "Posizione X",
-    "ehi_x_offset_desc" : "Posizione X",
     "ehi_y_offset" : "Posizione Y",
-    "ehi_y_offset_desc" : "Posizione Y",
  
     "ehi_text_scale" : "Dimensione Testo",
     "ehi_text_scale_desc" : "Imposta la dimensione del testo.\nQuesta funzionalità è utile per i giocatori che modificano il font originale",

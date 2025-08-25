@@ -141,7 +141,7 @@ local tbl =
     [102041] = { remove_vanilla_waypoint = 101992 }
 }
 
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =
     {

@@ -44,7 +44,6 @@ function ameno_3:OverridePanel()
     self._text:set_left(self._money_text:right())
     self._loot_parent = managers.ehi_loot
     self:AddLootListener({
-        max = self._max,
         counter =
         {
             check_type = EHI.Const.LootCounter.CheckType.ValueOfSmallLoot

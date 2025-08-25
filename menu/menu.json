@@ -36,7 +36,6 @@
                     "type": "slider",
                     "id": "ehi_x_offset",
                     "title": "ehi_vr_x_offset",
-                    "description": "ehi_x_offset_desc",
                     "callback": "SetOption",
                     "callback_arguments" : "vr_x_offset",
                     "value": "vr_x_offset",
@@ -50,7 +49,6 @@
                     "type": "slider",
                     "id": "ehi_x_offset",
                     "title": "ehi_x_offset",
-                    "description": "ehi_x_offset_desc",
                     "callback": ["SetOption", "UpdateXOffset"],
                     "callback_arguments" : "x_offset",
                     "value": "x_offset",
@@ -67,7 +65,6 @@
                     "type": "slider",
                     "id": "ehi_y_offset",
                     "title": "ehi_vr_y_offset",
-                    "description": "ehi_y_offset_desc",
                     "callback": "SetOption",
                     "callback_arguments": "vr_y_offset",
                     "value": "vr_y_offset",
@@ -81,7 +78,6 @@
                     "type": "slider",
                     "id": "ehi_y_offset",
                     "title": "ehi_y_offset",
-                    "description": "ehi_y_offset_desc",
                     "callback": ["SetOption", "UpdateYOffset"],
                     "callback_arguments": "y_offset",
                     "value": "y_offset",
@@ -250,7 +246,7 @@
                     "description": "ehi_trackers_menu_desc",
                     "next_menu": "ehi_trackers_menu",
                     "parent" : "ehi_show_trackers_choice",
-                    "ehi_ver" : 325,
+                    "ehi_ver" : 333,
                     "load_menu" : {
                         "file_path" : "trackers.json"
                     }

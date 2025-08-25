@@ -548,10 +548,8 @@ EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param m
     ]]
     instances["levels/instances/unique/tag/tag_keypad/world"][100176].element = 100012 -- "0" button
     instances["levels/instances/unique/tag/tag_keypad/world"][100176].special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
-        local button = managers.worlddefinition:get_unit(trigger.element) --[[@as UnitBase]]
-        local damage = button and button:damage()
-        local state = damage and damage._state and damage._state.graphic_group and damage._state.graphic_group.button_grp
-        if state and state[1] == "set_visibility" and state[2] then
+        local button = managers.worlddefinition:get_unit(trigger.element)
+        if button and button:body("static_body"):enabled() then
             if self._tracking:Exists(trigger.id) then
                 self._tracking:SetTime(trigger.id, trigger.time)
             else
@@ -719,10 +717,10 @@ function CoreWorldInstanceManager:_ehi_hook_mission_instance(instance, force_ins
             EHI.Mission:ParseMissionTriggers(triggers, nil, nil, defer_loading_waypoints)
         end
         if next(waypoints) then
-            EHI:DisableTimerWaypoints(waypoints)
+            EHI.Waypoint:DisableTimerWaypoints(waypoints)
         end
         if next(mission_waypoints) then
-            EHI:DisableMissionWaypoints(mission_waypoints)
+            EHI.Waypoint:DisableMissionWaypoints(mission_waypoints)
         end
         instance.ehi_cwim = true
     end
@@ -735,7 +733,7 @@ function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
     return instance_data
 end
 
-local units = {}
+local units = {} ---@type table<string, UnitUpdateDefinition>
 ---@param instance CoreWorldInstanceManager.Instance
 ---@param continent_data { base_id: number }
 function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ...)
@@ -749,7 +747,7 @@ function CoreWorldInstanceManager:prepare_unit_data(instance, continent_data, ..
             if unit.remove_vanilla_waypoint then
                 unit_data.remove_vanilla_waypoint = EHI:GetInstanceElementID(unit.remove_vanilla_waypoint, instance.start_index, continent_data.base_id)
             end
-            EHI._cache.InstanceUnits[entry.unit_data.unit_id] = unit_data
+            EHI.Unit._instance[entry.unit_data.unit_id] = unit_data
         end
     end
     return instance_data
@@ -760,11 +758,11 @@ Hooks:PostHook(CoreWorldInstanceManager, "custom_create_instance", "EHI_CoreWorl
     local instance = self:get_instance_data_by_name(instance_name)
     if instance then
         managers.worlddefinition:OverrideUnitsInMissionPlacedInstance(instance)
-        EHI:FinalizeUnits(EHI._cache.InstanceMissionUnits)
-        EHI:FinalizeUnits(EHI._cache.InstanceUnits)
+        EHI.Unit:FinalizeUnits(EHI.Unit._instance_mission)
+        EHI.Unit:FinalizeUnits(EHI.Unit._instance)
     end
 end)
 
 Hooks:PostHook(CoreWorldInstanceManager, "init", "EHI_CoreWorldInstanceManager_init", function(...)
-    units = tweak_data.ehi.units
+    units = EHI.Unit._units
 end)

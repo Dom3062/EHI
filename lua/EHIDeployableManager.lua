@@ -10,9 +10,7 @@ EHIDeployableManager._equipment_map =
     grenade = "grenade_crate",
     bodybag = "bodybags_bag"
 }
----@param ehi_tracker EHITrackerManager
-function EHIDeployableManager:post_init(ehi_tracker)
-    self._trackers = ehi_tracker
+function EHIDeployableManager:post_init()
     self._deployables = {} ---@type table<string, { unit: UnitDeployable, tracker_type: string? }>
     EHI:AddOnAlarmCallback(function(dropin)
         self:AddEquipmentToIgnore(self._equipment_map.bodybag)
@@ -20,14 +18,25 @@ function EHIDeployableManager:post_init(ehi_tracker)
     EHI:AddOnSpawnedCallback(function()
         if self._block_abilities_or_no_throwable and not managers.blackmarket:equipped_grenade_allows_pickups() then
             self:AddEquipmentToIgnore(self._equipment_map.grenade)
-            self._trackers:ForceRemoveTracker("GrenadeCases")
+            managers.ehi_tracker:ForceRemoveTracker("GrenadeCases")
         end
     end)
+    if self._all_deployables_tracker then
+        EHI:LoadTracker("EHIAggregatedEquipmentTracker")
+    else
+        if EHI:GetOption("show_equipment_aggregate_health") then
+            EHI:LoadTracker("EHIAggregatedEquipmentTracker") -- EHIAggregatedHealthEquipmentTracker depends on EHIAggregatedEquipmentTracker
+            EHI:LoadTracker("EHIAggregatedHealthEquipmentTracker")
+        end
+        if not EHIEquipmentTracker then -- Don't load it twice
+            EHI:LoadTracker("EHIEquipmentTracker")
+        end
+    end
 end
 
 ---@param type string
 function EHIDeployableManager:AddEquipmentToIgnore(type)
-    self._trackers:CallFunction("Deployables", "AddToIgnore", type)
+    managers.ehi_tracker:CallFunction("Deployables", "AddToIgnore", type)
     self._deployables_ignore = self._deployables_ignore or {}
     self._deployables_ignore[type] = true
 end
@@ -50,7 +59,7 @@ function EHIDeployableManager:AddToCache(ehi_tracker, key, unit, tracker_type)
         return
     end
     self._deployables[key] = { unit = unit, tracker_type = tracker_type }
-    self._trackers:CallFunction(ehi_tracker, "UpdateAmount", key, 0, tracker_type)
+    managers.ehi_tracker:CallFunction(ehi_tracker, "UpdateAmount", key, 0, tracker_type)
 end
 
 ---@param ehi_tracker string
@@ -77,7 +86,7 @@ end
 ---@param tracker_type string?
 function EHIDeployableManager:CreateDeployableTracker(type, tracker_type)
     if type == "Deployables" and self:IsDeployableAllowed(tracker_type) then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "Deployables",
             icons = { "deployables" },
             ignore = self._deployables_ignore,
@@ -86,20 +95,20 @@ function EHIDeployableManager:CreateDeployableTracker(type, tracker_type)
             class = "EHIAggregatedEquipmentTracker"
         })
     elseif type == "Health" then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "Health",
             hint = "doctor_fak",
             class = "EHIAggregatedHealthEquipmentTracker"
         })
     elseif type == "DoctorBags" then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "DoctorBags",
             icons = { "doctor_bag" },
             hint = "doctor_bag",
             class = "EHIEquipmentTracker"
         })
     elseif type == "AmmoBags" then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "AmmoBags",
             format = "percent",
             icons = { "ammo_bag" },
@@ -107,7 +116,7 @@ function EHIDeployableManager:CreateDeployableTracker(type, tracker_type)
             class = "EHIEquipmentTracker"
         })
     elseif type == "BodyBags" and self:IsDeployableAllowed(self._equipment_map.bodybag) then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "BodyBags",
             icons = { "bodybags_bag" },
             hint = "bodybags_bag",
@@ -115,7 +124,7 @@ function EHIDeployableManager:CreateDeployableTracker(type, tracker_type)
             class = "EHIEquipmentTracker"
         })
     elseif type == "FirstAidKits" then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "FirstAidKits",
             icons = { "first_aid_kit" },
             dont_show_placed = true,
@@ -123,7 +132,7 @@ function EHIDeployableManager:CreateDeployableTracker(type, tracker_type)
             class = "EHIEquipmentTracker"
         })
     elseif type == "GrenadeCases" and self:IsDeployableAllowed(self._equipment_map.grenade) then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = "GrenadeCases",
             icons = { "frag_grenade" },
             hint = "throwables",
@@ -138,17 +147,17 @@ end
 ---@param t_id string Tracker ID
 function EHIDeployableManager:UpdateAmount(key, amount, id, t_id)
     local tracker = self._all_deployables_tracker or t_id
-    if self._trackers:DoesNotExist(tracker) and amount > 0 then
+    if managers.ehi_tracker:DoesNotExist(tracker) and amount > 0 then
         self:CreateDeployableTracker(tracker, id)
     end
-    self._trackers:CallFunction(tracker, "UpdateAmount", key, amount, id)
+    managers.ehi_tracker:CallFunction(tracker, "UpdateAmount", key, amount, id)
 end
 
 EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
-    EHIDeployableManager:post_init(managers.ehi_tracker)
+    EHIDeployableManager:post_init()
 end)
 
 if _G.IS_VR then
-    return blt.vm.loadfile(EHI.LuaPath .. "EHIDeployableManagerVR.lua")(EHIDeployableManager)
+    return blt.vm.loadfile(EHI.LuaPath .. "vr/EHIDeployableManagerVR.lua")(EHIDeployableManager)
 end
 return EHIDeployableManager

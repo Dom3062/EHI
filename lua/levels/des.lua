@@ -154,12 +154,7 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
     triggers[100715] = { id = "ChemSet", special_function = SF.RemoveTracker }
 end
 if EHI.Mission._SHOW_MISSION_WAYPOINTS then
-    triggers[102473].waypoint_f = function(self, trigger) ---@param self EHIMissionElementTrigger
-        self._waypoints:AddWaypointlessWaypoint("HackChanceWaypoint", {
-            chance = trigger.chance,
-            class = self.Waypoints.Less.Chance
-        })
-    end
+    triggers[102473].waypoint = { id = "HackChanceWaypoint", waypointless = true, class = EHI.Waypoints.Less.Chance }
     triggers[101485].special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.id)
         self._waypoints:RemoveWaypoint("HackChanceWaypoint")
@@ -260,7 +255,7 @@ local tbl =
     [101324] = { remove_on_power_off = true }
 }
 
-EHI:DisableMissionWaypoints({ [EHI:GetInstanceElementID(100156, 26050)] = true }) -- Defend WP Methlab
+EHI.Waypoint:DisableMissionWaypoints({ [EHI:GetInstanceElementID(100156, 26050)] = true }) -- Defend WP Methlab
 
 -- levels/instances/unique/des/des_computer/001-004
 for i = 3000, 4500, 500 do
@@ -277,8 +272,8 @@ end
 -- levels/instances/unique/des/des_computer_002/002
 tbl[EHI:GetInstanceUnitID(100051, 29550)] = { tracker_merge_id = "HackChance" }
 
-EHI:UpdateUnits(tbl)
-EHI:DisableTimerWaypoints({
+EHI.Unit:UpdateUnits(tbl)
+EHI.Waypoint:DisableTimerWaypoints({
     -- Crane Fix WP
     [102467] = true,
 

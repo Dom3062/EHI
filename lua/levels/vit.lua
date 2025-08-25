@@ -9,6 +9,7 @@ local element_sync_triggers =
     -- Time before the tear gas is removed
     [102074] = { time = 3 + 2, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hook_element = 102073, hint = Hints.Teargas }
 }
+---@type ParseTriggerTable
 local triggers = {
     [102949] = { time = 17, id = "HeliDropWait", icons = { Icon.Wait }, hint = Hints.Wait },
 
@@ -36,6 +37,86 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     --triggers[101394] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists }, -- It will not run on Hard and below
     triggers[101377] = { amount = 20, id = "TearGasOfficeChance", special_function = SF.IncreaseChance }
     triggers[101393] = { id = "TearGasOfficeChance", special_function = SF.RemoveTracker }
+end
+if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
+    ---@class EHICorrectCablesTracker : EHITracker
+    ---@field super EHITracker
+    local EHICorrectCablesTracker = class(EHITracker)
+    EHICorrectCablesTracker._forced_icons = EHI:GetAchievementIcon("nmh_9") -- Cutting cables icon
+    EHICorrectCablesTracker._forced_hint_text = "vit_color_cables"
+    EHICorrectCablesTracker._needs_update = false
+    EHICorrectCablesTracker._color_map =
+    {
+        r = Color.red,
+        b = tweak_data.ehi:ColorRedirect(Color.blue),
+        g = Color.green,
+        y = Color.yellow
+    }
+    function EHICorrectCablesTracker:post_init(params)
+        self._text:set_w(self._bg_box:w() / 2)
+        self._text2 = self:CreateText({
+            w = self._text:w(),
+            text = "0.00",
+            left = self._text:right(),
+            FitTheText = true
+        })
+    end
+    ---@param color_text "r"|"g"|"b"|"y"
+    function EHICorrectCablesTracker:SetCode(color_text)
+        local text = self._code_index == nil and self._text or self._text2
+        text:set_text(managers.localization:text(string.format("ehi_color_%s", color_text)))
+        text:set_color(self._color_map[color_text])
+        self:FitTheText(text)
+        self._code_index = self._code_index or {} ---@type table<string, Text>
+        self._code_index[color_text] = text
+    end
+    ---@param color_text "r"|"g"|"b"|"y"
+    function EHICorrectCablesTracker:RemoveCode(color_text)
+        local text = self._code_index and self._code_index[color_text]
+        if text then
+            text:parent():remove(text)
+            self._code_index[color_text] = nil
+            local _, other_text = next(self._code_index)
+            if other_text then
+                self:AnimateTextPosition(0, self._bg_box:w(), other_text, true)
+                self:AnimateBG()
+            else
+                self:delete()
+            end
+        end
+    end
+    triggers[101692] = EHI:AddCustomCode(function(self)
+        local gate_box = managers.worlddefinition:get_unit(EHI:GetInstanceUnitID(100018, 4550))
+        if not gate_box then -- Oh no, something happened and our required unit does not exist; skip
+            return
+        end
+        self._trackers:AddTracker({
+            id = "CorrectCables",
+            class_table = EHICorrectCablesTracker
+        })
+        local colors =
+        {
+            { color = "r", object = "g_light_01" },
+            { color = "g", object = "g_light_02" },
+            { color = "b", object = "g_light_03" },
+            { color = "y", object = "g_light_04" }
+        }
+        for _, tbl in ipairs(colors) do
+            if gate_box:get_object(Idstring(tbl.object)):visibility() then
+                self._trackers:CallFunction("CorrectCables", "SetCode", tbl.color)
+            end
+        end
+    end)
+    -- 100076 = Wire cut
+    -- 100081 = Hack done
+    triggers[EHI:GetInstanceElementID(100076, 4150)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "r" } }
+    triggers[EHI:GetInstanceElementID(100081, 4150)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "r" } }
+    triggers[EHI:GetInstanceElementID(100076, 4250)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "g" } }
+    triggers[EHI:GetInstanceElementID(100081, 4250)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "g" } }
+    triggers[EHI:GetInstanceElementID(100076, 4350)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "b" } }
+    triggers[EHI:GetInstanceElementID(100081, 4350)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "b" } }
+    triggers[EHI:GetInstanceElementID(100076, 4450)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "y" } }
+    triggers[EHI:GetInstanceElementID(100081, 4450)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "y" } }
 end
 if EHI.IsClient then
     triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
@@ -86,7 +167,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     -- Enemies killed via "ElementAIRemove" DOES NOT TRIGGER ElementEnemyDummyTrigger if "force_ragdoll" and "true_death" are set to "false" and "use_instigator" is set to "true"
     other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }
 end
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     [EHI:GetInstanceUnitID(100058, 22250)] = { tracker_merge_id = "MaxHacks" },
     [EHI:GetInstanceUnitID(100191, 22250)] = { tracker_merge_id = "MaxHacks" },
     [EHI:GetInstanceUnitID(100192, 22250)] = { tracker_merge_id = "MaxHacks", destroy_tracker_merge_on_done = true }
@@ -130,7 +211,7 @@ local loud_objectives =
     { amount = 2000, name = "heli_arrival" }
 }
 local xp_breakdown = {}
-if managers.custom_safehouse:uno_achievement_challenge():challenge_completed() then
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and managers.custom_safehouse:uno_achievement_challenge():challenge_completed() then
     local secret_objectives =
     {
         stop_at_inclusive = "twh_pardons_stolen",

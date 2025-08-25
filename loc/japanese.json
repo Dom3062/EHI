@@ -55,10 +55,7 @@
   "ehi_preview": "プレビュー（反映にはマップの再起動が必要です）\n赤い角は最初のトラッカーが表示される場所を示します",
 
   "ehi_x_offset": "X オフセット",
-  "ehi_x_offset_desc": "X オフセット",
   "ehi_y_offset": "Y オフセット",
-  "ehi_y_offset_desc": "Y オフセット",
-
   "ehi_text_scale": "テキストのスケール",
   "ehi_text_scale_desc": "テキストの大きさを設定\nこの機能は、ゲーム内フォントを変更している場合に便利です。",
 

@@ -78,7 +78,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
 end
 EHI.Mission:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
 
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
     [101570] = { remove_vanilla_waypoint = 102899 },
     --units/payday2/props/gen_prop_security_timelock/gen_prop_security_timelock

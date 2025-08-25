@@ -2,13 +2,13 @@
 local EHIWaypointManager = ...
 local original =
 {
-    new = EHIWaypointManager.new,
+    post_init = EHIWaypointManager.post_init,
     Save = VoidUI.Save
 }
 
-function EHIWaypointManager:new()
+function EHIWaypointManager:post_init()
+    original.post_init(self)
     self:UpdateValues()
-    return original.new(self)
 end
 
 function EHIWaypointManager:UpdateValues()

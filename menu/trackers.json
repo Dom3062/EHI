@@ -8,10 +8,43 @@
             "id": "ehi_trackers_next_menu",
             "title": "ehi_menu_next_page",
             "next_menu": "ehi_trackers_2_menu",
-            "ehi_ver" : 318,
+            "ehi_ver" : 333,
             "load_menu" : {
                 "file_path" : "trackers_2.json"
             }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "slider",
+            "id": "ehi_trackers_n_of_rc_choice",
+            "title": "ehi_trackers_n_of_rc",
+            "description": "ehi_trackers_n_of_rc_desc",
+            "callback": "SetOption",
+            "callback_arguments": "trackers_n_of_rc",
+            "value": "trackers_n_of_rc",
+            "default_value": 0,
+            "max": 20,
+            "min": 0,
+            "step": 0,
+            "ehi_ver" : 333
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_trackers_rc_horizontal_new_column_position_choice",
+            "title": "ehi_trackers_rc_horizontal_new_column_position",
+            "description": "ehi_trackers_rc_horizontal_new_column_position_desc",
+            "callback": "SetOption",
+            "callback_arguments": "trackers_rc_horizontal_new_column_position",
+            "items": [
+                "ehi_trackers_rc_horizontal_new_column_position_1",
+                "ehi_trackers_rc_horizontal_new_column_position_2"
+            ],
+            "value": "trackers_rc_horizontal_new_column_position",
+            "default_value": 1,
+            "ehi_ver" : 333
         },
         {
             "type": "divider",
@@ -237,38 +270,6 @@
             "step": 0,
             "parent" : "ehi_show_timers_choice",
             "ehi_ver" : 226
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_camera_loop_choice",
-            "title": "ehi_show_camera_loop",
-            "description": "ehi_show_camera_loop_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_camera_loop",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_camera_loop",
-            "default_value": true,
-            "ehi_ver" : 74
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_show_enemy_turret_trackers_choice",
-            "title": "ehi_show_enemy_turret_trackers",
-            "description": "ehi_show_enemy_turret_trackers_desc",
-            "callback": ["SetOption", "UpdateTrackerVisibility"],
-            "callback_arguments": "show_enemy_turret_trackers",
-            "focus_changed_callback": "SetFocus",
-            "value": "show_enemy_turret_trackers",
-            "default_value": true,
-            "ehi_ver" : 122
         }
     ]
 }

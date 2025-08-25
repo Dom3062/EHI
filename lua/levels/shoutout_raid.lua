@@ -34,7 +34,7 @@ local trophy = {
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { time = 420, class = EHI.Trackers.Trophy }
+            [100107] = { time = tweak_data.achievement.complete_heist_achievements.trophy_shoutout.timer, class = EHI.Trackers.Trophy }
         },
         mission_end_callback = true
     }
@@ -61,7 +61,7 @@ EHI:ShowAchievementLootCounter({
 
 local mission_loot = ovk_and_up and 8 or 6
 EHI:ShowLootCounter({ max = mission_loot + 8 }, { element = EHI:GetInstanceElementID(100052, 5025) }) -- 14 or 16
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --levels/instances/unique/shout_container_vault
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     [EHI:GetInstanceUnitID(100014, 2850)] = { ignore = true }

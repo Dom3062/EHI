@@ -115,14 +115,6 @@ function EHIAchievementTracker:PlayerSpawned()
     self:ShowAchievementDescription()
 end
 
-function EHIAchievementTracker:save(data)
-    data.time = self._time
-end
-
-function EHIAchievementTracker:load(data)
-    self:SetTimeNoAnim(data.time)
-end
-
 ---@class EHIAchievementUnlockTracker : EHIAchievementTracker
 ---@field super EHIAchievementTracker
 EHIAchievementUnlockTracker = class(EHIAchievementTracker)
@@ -161,7 +153,7 @@ function EHIAchievementProgressTracker:AddLootListener(counter)
     if self._loot_parent then
         counter.achievement = counter.achievement or self._id
         counter.no_sync = true
-        self._loot_parent:AddAchievementListener(counter)
+        self._loot_parent:AddAchievementListener(counter, self._max)
     end
 end
 
@@ -169,14 +161,6 @@ function EHIAchievementProgressTracker:pre_destroy()
     if self._loot_parent then
         self._loot_parent:RemoveListener(self._id)
     end
-end
-
-function EHIAchievementProgressTracker:save(data)
-    data.progress = self._progress
-end
-
-function EHIAchievementProgressTracker:load(data)
-    self:SetProgress(data.progress or 0)
 end
 
 ---@class EHIAchievementProgressGroupTracker : EHIProgressGroupTracker, EHIAchievementTracker, EHIAchievementProgressTracker
@@ -188,23 +172,6 @@ function EHIAchievementProgressGroupTracker:init(panel, params)
     EHIAchievementProgressGroupTracker.super.init(self, panel, params)
     self:ShowStartedPopup(params.delay_popup)
     self:ShowAchievementDescription(params.delay_popup)
-end
-
-function EHIAchievementProgressGroupTracker:save(data)
-    local counters = {}
-    for key, tbl in pairs(self._counters_table) do
-        local counter = {}
-        counter.progress = tbl.progress
-        counters[key] = counter
-    end
-    data.counters = counters
-end
-
-function EHIAchievementProgressGroupTracker:load(data)
-    local counters = data.counters or {}
-    for key, counter in pairs(counters) do
-        self:SetProgress(counter.progress or 0, key)
-    end
 end
 
 ---@class EHIAchievementBagValueTracker : EHINeededValueTracker, EHIAchievementTracker
@@ -313,10 +280,175 @@ function EHIAchievementStatusTracker:SetTextColor(color)
     EHIAchievementStatusTracker.super.SetTextColor(self, c)
 end
 
-function EHIAchievementStatusTracker:save(data)
-    data.status = self._status
+---@class EHIAchievementLootCounterTracker : EHIProgressTracker, EHIAchievementTracker
+---@field super EHIProgressTracker
+EHIAchievementLootCounterTracker = ehi_achievement_class(EHIProgressTracker)
+EHIAchievementLootCounterTracker._PlayerSpawned = EHIAchievementTracker.PlayerSpawned
+EHIAchievementLootCounterTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
+function EHIAchievementLootCounterTracker:init(panel, params)
+    self._no_failure = params.no_failure
+    self._beardlib = params.beardlib
+    self._loot_counter_on_fail = params.loot_counter_on_fail
+    params.icons[2] = "pd2_loot"
+    if params.start_silent then
+        if self._ONE_ICON then
+            self._achievement_icon = params.icons[1]
+            params.first_icon_pos = 2
+        else
+            local achievement_icon = params.icons[1]
+            params.icons[1] = { icon = achievement_icon, visible = false }
+        end
+        params.hint = "loot_counter"
+        self._silent_start = true
+    else
+        self:PrepareHint(params)
+        self:ShowStartedPopup(params.delay_popup)
+        self:ShowAchievementDescription(params.delay_popup)
+    end
+    EHIAchievementLootCounterTracker.super.init(self, panel, params)
+    if params.start_silent and self._icons[2] then
+        if self._ICON_LEFT_SIDE_START and self._HORIZONTAL_ALIGNMENT then
+            self._bg_box:set_x(self._bg_box:x() - self._icon_gap_size_scaled)
+        end
+        if not self._VERTICAL_ANIM_W_LEFT or (self._VERTICAL_ANIM_W_LEFT and not self._ICON_LEFT_SIDE_START) then
+            self._icons[2]:set_x(self._icons[1]:x())
+        end
+    end
 end
 
-function EHIAchievementStatusTracker:load(data)
-    self:SetStatus(data.status or "ok")
+function EHIAchievementLootCounterTracker:pre_init(params)
+    EHIAchievementLootCounterTracker.super.pre_init(self, params)
+    self._offset = params.offset or 0
+    self._loot_parent = params.loot_parent --[[@as EHILootManager]]
+end
+
+function EHIAchievementLootCounterTracker:PositionHint(x, y)
+    if self._silent_start and self._icons[2] and self._ICON_LEFT_SIDE_START and self._VERTICAL_ANIM_W_LEFT then
+        x = x + self._icon_gap_size_scaled
+    end
+    EHIAchievementLootCounterTracker.super.PositionHint(self, x, y)
+end
+
+function EHIAchievementLootCounterTracker:PlayerSpawned()
+    if self._silent_start then
+        EHIAchievementLootCounterTracker.super.PlayerSpawned(self)
+        return
+    end
+    self:_PlayerSpawned()
+end
+
+function EHIAchievementLootCounterTracker:DelayForcedDelete()
+    EHIAchievementLootCounterTracker.super.DelayForcedDelete(self)
+    self._show_finish_after_reaching_target = nil
+    if self:CanShowLootSecuredPopup() then
+        self:ShowLootSecuredPopup()
+    end
+end
+
+function EHIAchievementLootCounterTracker:SetCompleted(...)
+    self._achieved_popup_showed = true
+    EHIAchievementLootCounterTracker.super.SetCompleted(self, ...)
+end
+
+function EHIAchievementLootCounterTracker:SetFailed()
+    if self._loot_counter_on_fail then
+        self:AnimateBG()
+        self._hint_vanilla_localization = nil
+        self._hint_no_localization = nil
+        self:UpdateHint("loot_counter")
+        if self._icons[2] then
+            self:RemoveIconAndAnimateMovement(1, true)
+        else
+            self:SetIconColor(Color.white)
+            self:SetIcon("pd2_loot")
+        end
+        self._show_finish_after_reaching_target = nil
+        self._status = nil
+        self._disable_counting = false
+        self:SetProgress(self._progress)
+    else
+        EHIAchievementLootCounterTracker.super.SetFailed(self)
+    end
+    if self._status_is_overridable then
+        self._achieved_popup_showed = nil
+    end
+    self:ShowFailedPopup()
+end
+
+function EHIAchievementLootCounterTracker:SetFailed2()
+    if self._failed_allowed then
+        self:SetFailed()
+    end
+end
+
+function EHIAchievementLootCounterTracker:SetFailedSilent()
+    self._show_failed = nil
+    self._show_finish_after_reaching_target = nil
+    self._hint_vanilla_localization = nil
+    self:UpdateHint("loot_counter")
+    self:SetFailed()
+end
+
+function EHIAchievementLootCounterTracker:SetStarted()
+    self._failed_allowed = self._silent_start
+    if self._silent_start then
+        self._hint_vanilla_localization = true
+        self:UpdateHint("achievement_" .. self._id)
+    end
+    self:ShowStartedPopup()
+    self._icons[1]:set_visible(true)
+    if self._icons[2] then
+        self._icons[2]:set_visible(true)
+        self:SetMovement(self._anim_params.IconCreated)
+    else
+        self:SetIconColor(self._forced_icon_color[1])
+        self:SetIcon(self._achievement_icon)
+    end
+    self:ShowAchievementDescription()
+end
+
+function EHIAchievementLootCounterTracker:SetProgress(progress)
+    local fixed_progress = progress - self._offset
+    EHIAchievementLootCounterTracker.super.SetProgress(self, fixed_progress)
+end
+
+function EHIAchievementLootCounterTracker:Finalize()
+    local progress = self._progress
+    self._progress = self._progress - self._offset
+    EHIAchievementLootCounterTracker.super.Finalize(self)
+    self._progress = progress
+end
+
+function EHIAchievementLootCounterTracker:SetCompleted(...)
+    EHIAchievementLootCounterTracker.super.SetCompleted(self, ...)
+    if self:CanShowLootSecuredPopup() then
+        self:ShowLootSecuredPopup()
+    end
+end
+
+function EHIAchievementLootCounterTracker:CanShowLootSecuredPopup()
+    return self._show_popup and not self._popup_showed and not self._show_finish_after_reaching_target
+end
+
+function EHIAchievementLootCounterTracker:ShowLootSecuredPopup()
+    self._popup_showed = true
+    self.update = self.update_fade
+    managers.hud:custom_ingame_popup_text("LOOT COUNTER", managers.localization:text("ehi_popup_all_loot_secured"), "EHI_Loot")
+end
+
+---@param max number
+function EHIAchievementLootCounterTracker:SetProgressMax(max)
+    EHIAchievementLootCounterTracker.super.SetProgressMax(self, max)
+    self._disable_counting = nil
+    self:VerifyStatus()
+end
+
+function EHIAchievementLootCounterTracker:VerifyStatus()
+    if self._progress == self._max then
+        self:SetCompleted()
+    end
+end
+
+function EHIAchievementLootCounterTracker:pre_destroy()
+    self._loot_parent:RemoveListener(self._id)
 end

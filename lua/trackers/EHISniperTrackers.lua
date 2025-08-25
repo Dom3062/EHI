@@ -461,7 +461,6 @@ function EHISniperLoopTracker:pre_init(params)
 end
 
 function EHISniperLoopTracker:OverridePanel()
-    self._original_bg_size = self._bg_box:w()
     self:SetBGSize(self._bg_box:w() / 2)
     local w = self._bg_box:w() / 3
     self._text:set_w(w)
@@ -536,7 +535,7 @@ function EHISniperLoopTracker:DisableChanceUpdate(amount)
 end
 
 function EHISniperLoopTracker:RequestRemoval()
-    if self._count == 0 then
+    if self._count <= 0 then
         self:ForceDelete()
         return
     end
@@ -545,15 +544,10 @@ function EHISniperLoopTracker:RequestRemoval()
     self._chance_text:set_visible(false)
     self._text:set_visible(false)
     self:RemoveTrackerFromUpdate()
-    self:SetBGSize(self._original_bg_size, "set", true)
+    self:AnimateMovement(self._anim_params.PanelSizeDecreaseHalf)
     self._count_text:set_w(self._bg_box:w())
     self._count_text:set_x(0)
     self:FitTheText(self._count_text)
-    local panel_w = self._original_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
-    self:AnimatePanelW(panel_w)
-    self:AnimIconsX()
-    self:ChangeTrackerWidth(panel_w)
-    self:AnimateAdjustHintX(-self._default_bg_size_half)
 end
 
 function EHISniperLoopTracker:pre_destroy()

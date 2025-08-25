@@ -8,7 +8,6 @@ EHIGroupTracker._init_create_text = false
 function EHIGroupTracker:post_init(params)
     self._timers = {} --[[@as EHIWarningGroupTracker.Timer[] ]]
     self._timers_n = 0
-    self._panel_override_w = self._panel:w()
     if params.unit then
         self._hide_on_delete = true
         self:AddUnit()
@@ -45,7 +44,7 @@ function EHIGroupTracker:Add(t, id)
     }
     self._timers_n = n
     if n >= 2 then
-        self:AnimateMovement(n)
+        self:AnimateMovement(self._anim_params.PanelSizeIncrease)
     end
 end
 
@@ -90,11 +89,11 @@ function EHIGroupTracker:Remove(i)
         if t.pos > pos then
             local new_pos = t.pos - 1
             t.pos = new_pos
-            t.label:set_x(new_pos * self._default_bg_size)
+            self:AnimateTextPositionLeft(new_pos * self._default_bg_size, t.label)
         end
     end
     if self._timers_n >= 2 then
-        self:AnimateMovement(self._timers_n - 1, true)
+        self:AnimateMovement(self._anim_params.PanelSizeDecrease)
     end
     self._timers_n = self._timers_n - 1
 end
@@ -107,21 +106,6 @@ function EHIGroupTracker:RemoveByID(id)
             return
         end
     end
-end
-
----@param n number
----@param delete boolean?
-function EHIGroupTracker:AnimateMovement(n, delete)
-    if delete then
-        self._panel_override_w = self._panel_override_w - self._default_bg_size
-    else
-        self._panel_override_w = self._panel_override_w + self._default_bg_size
-    end
-    self:AnimatePanelWAndRefresh(self._panel_override_w)
-    self:ChangeTrackerWidth(self._panel_override_w)
-    self:SetBGSize(self._default_bg_size * n, "set", true)
-    self:AnimateAdjustHintX(delete and -self._default_bg_size or self._default_bg_size)
-    self:AnimIconsX()
 end
 
 function EHIGroupTracker:AddUnit()
@@ -165,7 +149,6 @@ EHIWarningGroupTracker.Run = EHIGroupTracker.Run
 EHIWarningGroupTracker.SetTimeNoAnim = EHIGroupTracker.SetTimeNoAnim
 EHIWarningGroupTracker.Remove = EHIGroupTracker.Remove
 EHIWarningGroupTracker.RemoveByID = EHIGroupTracker.RemoveByID
-EHIWarningGroupTracker.AnimateMovement = EHIGroupTracker.AnimateMovement
 EHIWarningGroupTracker.AddUnit = EHIGroupTracker.AddUnit
 EHIWarningGroupTracker.RemoveUnit = EHIGroupTracker.RemoveUnit
 EHIWarningGroupTracker.CleanupOnHide = EHIGroupTracker.CleanupOnHide
@@ -235,38 +218,18 @@ function EHIProgressGroupTracker:Add(progress, max, id)
     }
     self._counters = n
     if n >= 2 then
-        self:SetBGSize(self._default_bg_size * n, "set")
-        self:ChangeTrackerWidth()
+        self:SetMovement(self._anim_params.PanelSizeIncrease)
     end
 end
 
 ---@param counters { progress: number, max: number, id: string }[]
 function EHIProgressGroupTracker:AddFromSync(counters)
-    local previous_counter = self._counters
     for _, counter in ipairs(counters) do
         self:Add(counter.progress or 0, counter.max or 0, counter.id)
     end
     for _, counter in pairs(self._counters_table) do
         if counter.progress == counter.max then
             self:_SetCompleted(counter.label)
-        end
-    end
-    if self._counters ~= previous_counter and self._counters >= 2 then
-        if previous_counter >= 1 then
-            previous_counter = previous_counter - 1
-        end
-        local x_diff = (self._default_bg_size * (self._counters - previous_counter - 1))
-        self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and -x_diff or x_diff)
-        if self._VERTICAL_ANIM_W_LEFT or self._HORIZONTAL_RIGHT_TO_LEFT then
-            self._panel:set_x(self._panel:x() - x_diff)
-            self:SetIconsX()
-            if self._HORIZONTAL_RIGHT_TO_LEFT and self._hint then
-                local hint_x = self._panel:x()
-                self._hint:set_w(self._panel:w())
-                self:FitTheText(self._hint, 18)
-                self._hint:set_x(hint_x)
-                self._hint_pos.x = hint_x
-            end
         end
     end
 end

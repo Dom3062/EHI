@@ -29,7 +29,7 @@ local tbl =
     [102187] = { f = ReplaceWaypointAddFunction },
     [102188] = { f = ReplaceWaypointAddFunction }
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

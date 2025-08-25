@@ -11,12 +11,12 @@ end
 
 if EHI:IsXPTrackerEnabled() then
     if EHI:IsRunningBB() or EHI:IsRunningUsefulBots() then
-        EHIExperienceManager:SetAIOnDeathListener()
+        managers.ehi_experience:SetAIOnDeathListener()
     end
     if not Global.game_settings.single_player then
         Hooks:PostHook(TradeManager, "on_player_criminal_death", "EHI_ExperienceManager_PlayerCriminalDeath", function(...)
             managers.ehi_experience:DecreaseAlivePlayers(true)
-            EHI:CallCallback(EHI.CallbackMessage.RefreshPlayerCount, managers.ehi_experience:CurrentAlivePlayers())
+            managers.ehi_experience:CallRefreshPlayerCountListener()
         end)
     end
 end

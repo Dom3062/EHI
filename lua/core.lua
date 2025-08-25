@@ -43,7 +43,7 @@ _G.EHI =
         show_escape_chance =
         {
             file = "EHIEscapeChanceTracker",
-            count = 2
+            count = 3
         },
         show_money_tracker =
         {
@@ -52,7 +52,19 @@ _G.EHI =
         show_trade_delay =
         {
             file = "EHITradeDelayTracker",
-            count = 3
+            count = 4
+        },
+        show_trophies =
+        {
+            file = "EHITrophyTrackers"
+        },
+        show_minion_health =
+        {
+            file = "EHIMinionTracker"
+        },
+        show_ping_tracker =
+        {
+            file = "EHIPlayerPingTracker"
         }
     },
 
@@ -62,6 +74,16 @@ _G.EHI =
     {
         Trackers =
         {
+            -- Used with options `tracker_alignment` or `vr_tracker_alignment`
+            Alignment =
+            {
+                Vertical_TopToBottom = 1,
+                Vertical_BottomToTop = 2,
+                Vertical = { [1] = true, [2] = true }, -- There should be a better way to do this
+                Horizontal_LeftToRight = 3,
+                Horizontal_RightToLeft = 4,
+                Horizontal = { [3] = true, [4] = true }
+            },
             Achievement =
             {
                 Status =
@@ -80,6 +102,29 @@ _G.EHI =
                     Objective = "objective",
                     Push = "push",
                     Secure = "secure"
+                }
+            },
+            -- Used with option `show_icon_position`
+            IconStartPosition =
+            {
+                Left = 1,
+                Right = 2
+            },
+            Horizontal =
+            {
+                NewRCAnim =
+                {
+                    Top = 1,
+                    Bottom = 2
+                }
+            },
+            Vertical =
+            {
+                -- Used with option `tracker_vertical_w_anim`
+                WidthAnim =
+                {
+                    LeftToRight = 1,
+                    RightToLeft = 2
                 }
             }
         },
@@ -107,11 +152,6 @@ _G.EHI =
     _cache =
     {
         AchievementsDisabled = false,
-        MissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
-        InstanceUnits = {}, ---@type table<number, UnitUpdateDefinition>
-        InstanceMissionUnits = {}, ---@type table<number, UnitUpdateDefinition>
-        IgnoreWaypoints = {}, ---@type table<number, boolean>
-        ElementWaypoint = {}, ---@type table<number, ElementWaypoint?>
         Mod = {} ---@type { [string]: true|false }
     },
 
@@ -141,11 +181,7 @@ _G.EHI =
         HUDVisibilityChanged = "HUDVisibilityChanged",
         -- Provides `picked_up` (a number value), `max_units` (a number value) and `client_sync_load` (a boolean value)
         SyncGagePackagesCount = "SyncGagePackagesCount",
-        -- Provides `diff` (a number value between 0-1)
-        SyncAssaultDiff = "SyncAssaultDiff",
-        -- Provides `alive_players` (a number value)
-        RefreshPlayerCount = "RefreshPlayerCount",
-        -- Callbacks related to anything related to UnitPlayer
+        -- Callbacks for anything related to UnitPlayer
         Player =
         {
             -- Provides `character_damage` (a PlayerDamage class)
@@ -580,7 +616,9 @@ _G.EHI =
             Base = "EHILootWaypoint",
             Timed = "EHITimedLootWaypoint"
         },
+        -- Loaded on demand; load it manually if created in registered custom function or other waypoints need it; depends on the tracker class (EHICodeTracker) that must be loaded first!
         Code = "EHICodeWaypoint",
+        -- Loaded on demand; load it manually if created in registered custom function or other waypoints need it; depends on the tracker class (EHICodeTracker) that must be loaded first!
         ColoredCodes = "EHIColoredCodesWaypoint",
         Less =
         {
@@ -796,6 +834,8 @@ local function LoadDefaultValues(self)
         show_tracker_hint_t = 15,
 
         -- Trackers
+        trackers_n_of_rc = 0, -- Number of Rows / Columns
+        trackers_rc_horizontal_new_column_position = 1, -- 1 = Top; 2 = Bottom
         show_trackers = true,
         show_mission_trackers = true,
         show_mission_trackers_cheaty = true,
@@ -859,7 +899,7 @@ local function LoadDefaultValues(self)
         show_equipment_ecmfeedback = true,
         show_ecmfeedback_refresh = true,
         show_equipment_aggregate_health = true,
-        show_equipment_aggregate_all = false,
+        show_equipment_aggregate_all = true,
         show_minion_tracker = true,
         show_minion_option = 3, -- 1 = You only; 2 = Total number of minions in one number; 3 = Number of minions per player
         show_minion_health = true,
@@ -894,6 +934,8 @@ local function LoadDefaultValues(self)
         show_marshal_initial_time = true,
         show_money_tracker = false,
         money_tracker_format = 1, -- 1 = Offshore/Spending; 2 = Spending/Offshore; 3 = Offshore; 4 = Spending
+        show_ping_tracker = true,
+        show_ping_tracker_refresh_t = 2,
 
         -- Waypoints
         show_waypoints = true,
@@ -1504,6 +1546,14 @@ function EHI:LoadBuff(filename)
     dofile(string.format("%s%s%s.lua", self.LuaPath, "buffs/", filename))
 end
 
+---@param filename string
+function EHI:LoadMaster(filename)
+    if not EHIBaseMaster then
+        dofile(string.format("%sshared/EHIBaseMaster.lua", self.LuaPath))
+    end
+    dofile(string.format("%s%s%s.lua", self.LuaPath, "shared/", filename))
+end
+
 ---@param option string
 function EHI:GetOption(option)
     if option then
@@ -1513,7 +1563,7 @@ end
 
 ---@param option string
 function EHI:IsVerticalAlignmentAndOption(option)
-    if self:GetOption("tracker_alignment") <= 2 then
+    if self:GetOption("tracker_alignment") <= self.Const.Trackers.Alignment.Vertical_BottomToTop then
         return self:GetOption(option)
     end
     return -1
@@ -2070,63 +2120,6 @@ function EHI:AddCustomCode(f, trigger_once)
     }
 end
 
----@param id number
-function EHI:DisableElementWaypoint(id)
-    local element = managers.mission:get_element_by_id(id) ---@cast element ElementWaypoint?
-    if not element or self._cache.ElementWaypoint[id] then
-        return
-    elseif not element.ehi_on_executed then
-        self:Log(string.format("Provided id %s is not an ElementWaypoint!", tostring(id)))
-        return
-    end
-    element.on_executed = element.ehi_on_executed
-    self._cache.ElementWaypoint[id] = element
-end
-
----@param id number
-function EHI:RestoreElementWaypoint(id)
-    local element = table.remove_key(self._cache.ElementWaypoint, id)
-    if element then
-        element.on_executed = element.original_on_executed
-    end
-end
-
----@param waypoints table<number, boolean>
-function EHI:CacheDisabledWaypoints(waypoints)
-    if self.DisableOnLoad then
-        for id, _ in pairs(waypoints) do
-            self.DisableOnLoad[id] = true
-        end
-    else
-        self.DisableOnLoad = waypoints
-    end
-    for id, _ in pairs(waypoints) do
-        self._cache.IgnoreWaypoints[id] = true
-    end
-end
-
----@param waypoints table<number, boolean>?
-function EHI:DisableTimerWaypoints(waypoints)
-    if not self:GetWaypointOption("show_waypoints_timers") or waypoints == nil then
-        return
-    end
-    self:CacheDisabledWaypoints(waypoints)
-end
-
----@param waypoints table<number, boolean>?
-function EHI:DisableMissionWaypoints(waypoints)
-    if not self:GetWaypointOption("show_waypoints_mission") or waypoints == nil then
-        return
-    end
-    self:CacheDisabledWaypoints(waypoints)
-end
-
-function EHI:DisableTimerWaypointsOnInit()
-    for id, _ in pairs(self.DisableOnLoad or {}) do
-        self:DisableElementWaypoint(id)
-    end
-end
-
 ---@param params LootCounterTable?
 ---@param waypoint_params WaypointLootCounterTable?
 function EHI:ShowLootCounter(params, waypoint_params)
@@ -2169,7 +2162,7 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
         if params.max_bags_for_level.objective_triggers then
             local xp_trigger = self:AddLootCounter4(function(manager, trigger, element, enabled) ---@cast element ElementExperience
                 if enabled then
-                    manager._trackers:CallFunction(trigger.id, "ObjectiveXPAwarded", element._values.amount or 0)
+                    managers.ehi_loot:ObjectiveXPAwarded(element._values.amount or 0)
                 end
             end)
             local triggers = {}
@@ -2199,9 +2192,9 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
     end
     if params.max_bags_for_level and params.max_bags_for_level.custom_counter and self:IsXPTrackerEnabled() and not _G.ch_settings then
         params.max_bags_for_level.custom_counter.achievement = managers.ehi_loot._id
-        managers.ehi_loot:AddAchievementListener(params.max_bags_for_level.custom_counter, true)
+        managers.ehi_loot:AddAchievementListener(params.max_bags_for_level.custom_counter, 0, true)
     else
-        managers.ehi_loot:AddLootListener(params.no_sync_load, params.no_max)
+        managers.ehi_loot:AddLootListener(params.no_sync_load)
     end
     if params.carry_data then
         if params.carry_data.loot and EHICarryData then
@@ -2353,13 +2346,13 @@ function EHI:ShowAchievementLootCounterNoCheck(params)
             self.Trigger:__FindAndHookElements(params.triggers)
         end
         if params.add_to_counter then
-            managers.ehi_loot:AddAchievementListener(params)
+            managers.ehi_loot:AddAchievementListener(params, params.start_silent and params.silent_max or params.max)
         end
         return
     elseif params.no_counting then
         return
     end
-    managers.ehi_loot:AddAchievementListener(params)
+    managers.ehi_loot:AddAchievementListener(params, params.start_silent and params.silent_max or params.max)
 end
 
 ---@param params AchievementBagValueCounterTable
@@ -2368,7 +2361,7 @@ function EHI:ShowAchievementBagValueCounter(params)
         return
     end
     managers.ehi_unlockable:AddAchievementBagValueCounter(params.achievement, params.value, params.show_finish_after_reaching_target)
-    managers.ehi_loot:AddAchievementListener(params)
+    managers.ehi_loot:AddAchievementListener(params, params.value)
 end
 
 ---@param params AchievementKillCounterTable
@@ -2398,160 +2391,6 @@ function EHI:ShowAchievementKillCounter(params)
             managers.ehi_tracker:IncreaseProgress(id, value)
         end
     end)
-end
-
-function EHI:FinalizeUnitsClient()
-    self:FinalizeUnits(self._cache.MissionUnits)
-    self:FinalizeUnits(self._cache.InstanceMissionUnits)
-    self:FinalizeUnits(self._cache.InstanceUnits)
-end
-
----@param tbl table<number, UnitUpdateDefinition>
-function EHI:FinalizeUnits(tbl)
-    local wd = managers.worlddefinition
-    for id, unit_data in pairs(tbl) do
-        local unit = wd:get_unit(id) --[[@as UnitTimer|UnitDigitalTimer?]]
-        if unit then
-            if unit_data.f then
-                if type(unit_data.f) == "string" then
-                    wd[unit_data.f](wd, id, unit_data, unit)
-                else
-                    unit_data.f(id, unit_data, unit)
-                end
-            else
-                local timer_gui = unit:timer_gui()
-                if timer_gui and timer_gui._ehi_key then
-                    if unit_data.child_units then
-                        timer_gui:SetChildUnits(unit_data.child_units, wd)
-                    end
-                    timer_gui:SetIcons(unit_data.icons)
-                    timer_gui:SetRemoveOnPowerOff(unit_data.remove_on_power_off)
-                    if unit_data.remove_on_alarm then
-                        timer_gui:SetOnAlarm()
-                    end
-                    if unit_data.remove_vanilla_waypoint then
-                        timer_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint, unit_data.restore_waypoint_on_done)
-                    end
-                    if unit_data.remove_vanilla_waypoint_overriden then
-                        timer_gui:RemoveVanillaWaypointOverriden(unit_data.remove_vanilla_waypoint_overriden, unit_data.restore_waypoint_on_done)
-                    end
-                    if unit_data.ignore_visibility then
-                        timer_gui:SetIgnoreVisibility()
-                    end
-                    if unit_data.set_custom_id then
-                        timer_gui:SetCustomID(unit_data.set_custom_id)
-                    end
-                    if unit_data.tracker_merge_id then
-                        timer_gui:SetTrackerMergeID(unit_data.tracker_merge_id, unit_data.destroy_tracker_merge_on_done)
-                    end
-                    if unit_data.custom_callback then
-                        timer_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
-                    end
-                    if unit_data.power_off_override then
-                        timer_gui:SetJammedStatusOverridePoweredStatus()
-                    end
-                    if unit_data.hint then
-                        timer_gui:SetHint(unit_data.hint)
-                    end
-                    timer_gui:SetWaypointPosition(unit_data.position)
-                    timer_gui:Finalize()
-                end
-                local digital_gui = unit:digital_gui()
-                if digital_gui and digital_gui._ehi_key then
-                    if unit_data.ignore then
-                        digital_gui:SetIgnore()
-                    else
-                        digital_gui:SetIcons(unit_data.icons)
-                        digital_gui:SetRemoveOnPause(unit_data.remove_on_pause)
-                        digital_gui:SetWarning(unit_data.warning)
-                        digital_gui:SetCompletion(unit_data.completion)
-                        if unit_data.remove_on_alarm then
-                            digital_gui:SetOnAlarm()
-                        end
-                        if unit_data.custom_callback then
-                            digital_gui:SetCustomCallback(unit_data.custom_callback.id, unit_data.custom_callback.f)
-                        end
-                        if unit_data.icon_on_pause then
-                            digital_gui:SetIconOnPause(unit_data.icon_on_pause)
-                        end
-                        if unit_data.remove_vanilla_waypoint then
-                            digital_gui:RemoveVanillaWaypoint(unit_data.remove_vanilla_waypoint)
-                        end
-                        if unit_data.ignore_visibility then
-                            digital_gui:SetIgnoreVisibility()
-                        end
-                        if unit_data.hint then
-                            digital_gui:SetHint(unit_data.hint)
-                        end
-                        if unit_data.ignore_waypoint then
-                            digital_gui:SetIgnoreWaypoint()
-                        end
-                    end
-                    digital_gui:Finalize()
-                end
-            end
-            -- Clear configured unit from the table
-            tbl[id] = nil
-        end
-    end
-end
-
----@param tbl table<number, UnitUpdateDefinition>
-function EHI:UpdateUnits(tbl)
-    if self:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
-        self:UpdateUnitsNoCheck(tbl)
-    end
-end
-
----@param tbl table<number, UnitUpdateDefinition>
-function EHI:UpdateUnitsNoCheck(tbl)
-    self:FinalizeUnits(tbl)
-    for id, data in pairs(tbl) do
-        self._cache.MissionUnits[id] = data
-    end
-end
-
----@param tbl table<number, UnitUpdateDefinition>
----@param skip_finalize boolean
-function EHI:UpdateInstanceMissionUnits(tbl, skip_finalize)
-    if not self:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
-        return
-    elseif not skip_finalize then
-        self:FinalizeUnits(tbl)
-    end
-    for id, data in pairs(tbl) do
-        self._cache.InstanceMissionUnits[id] = data
-    end
-end
-
----@param tbl table<number, UnitUpdateDefinition>
----@param instance_start_index number
----@param instance_continent_index number? Defaults to `100000` if not provided
-function EHI:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
-    if self:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
-        self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
-    end
-end
-
----@param tbl table<number, UnitUpdateDefinition>
----@param instance_start_index number
----@param instance_continent_index number? Defaults to `100000` if not provided
-function EHI:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
-    local new_tbl = {} ---@type ParseUnitsTable
-    instance_continent_index = instance_continent_index or 100000
-    for id, data in pairs(tbl) do
-        local computed_id = self:GetInstanceElementID(id, instance_start_index, instance_continent_index)
-        local cloned_data = deep_clone(data)
-        if data.remove_vanilla_waypoint then
-            cloned_data.remove_vanilla_waypoint = self:GetInstanceElementID(data.remove_vanilla_waypoint, instance_start_index, instance_continent_index)
-        end
-        cloned_data.base_index = id
-        new_tbl[computed_id] = cloned_data
-    end
-    self:FinalizeUnits(new_tbl)
-    for id, data in pairs(new_tbl) do
-        self._cache.InstanceUnits[id] = data
-    end
 end
 
 ---@param tbl table<Vector3, number|MissionDoorTable>
@@ -2731,8 +2570,7 @@ end
 function EHI:SetDeployableIgnorePos(type, pos)
     if not type then
         return
-    end
-    if type == "ammo_bag" and AmmoBagBase._ehi_ignored_pos then
+    elseif type == "ammo_bag" and AmmoBagBase._ehi_ignored_pos then
         for _, _pos in ipairs(pos) do
             AmmoBagBase._ehi_ignored_pos[tostring(_pos)] = true
         end
@@ -2772,8 +2610,7 @@ function EHI:HookColorCodes(color_table, params)
         local sequences = color_sequence_hash[color]
         for i = 0, 9, 1 do
             managers.mission:add_runned_unit_sequence_trigger(unit_id, sequences[i], function(...)
-                managers.ehi_tracker:CallFunction(tracker_name, "SetCode", color, i)
-                managers.ehi_waypoint:CallFunction(tracker_name, "CreateWaypoint", unit_id, nil, nil, color_map[color], i)
+                managers.ehi_tracking:SetColorCode(color, i, unit_id, color_map[color], tracker_name)
             end)
         end
     end

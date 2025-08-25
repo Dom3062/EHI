@@ -59,7 +59,7 @@ EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other
 })
-EHI:DisableTimerWaypoints({
+EHI.Waypoint:DisableTimerWaypoints({
     -- Drill WP in the tech store
     [100241] = true,
 
@@ -81,7 +81,7 @@ EHI:ShowAchievementLootCounter({
 })
 EHI:ShowLootCounter({ max = 12 }, { element = 101120 })
 
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     --Jewelry Store
     [105874] = { remove_vanilla_waypoint = 100776 }

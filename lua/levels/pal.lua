@@ -118,7 +118,7 @@ EHI:ShowLootCounter({
     no_max = true
 })
 
-EHI:DisableTimerWaypoints({
+EHI.Waypoint:DisableTimerWaypoints({
     -- Defend
     [100912] = true,
     [100913] = true,
@@ -126,7 +126,7 @@ EHI:DisableTimerWaypoints({
     [100916] = true,
     [100917] = true
 })
-EHI:UpdateUnits({ [102192] = { remove_vanilla_waypoint = 100943 } }) -- Drill
+EHI.Unit:UpdateUnits({ [102192] = { remove_vanilla_waypoint = 100943 } }) -- Drill
 EHI:AddXPBreakdown({
     objectives =
     {

@@ -4,7 +4,6 @@ local EHI = EHI
 EHITweakData = {}
 ---@param tweak_data tweak_data
 function EHITweakData:new(tweak_data)
-    local Icon = EHI.Icons
     self.default =
     {
         tracker =
@@ -99,31 +98,9 @@ function EHITweakData:new(tweak_data)
 
         hoxton_character = { texture = "guis/dlcs/trk/textures/pd2/old_hoxton_unlock_icon" },
 
-        daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} }
-    }
-    -- Broken units to be "fixed" during mission load
-    self.units =
-    {
-        -- Doctor Bags
-        ["units/payday2/props/stn_prop_medic_firstaid_box/stn_prop_medic_firstaid_box"] = { f = "SetDeployableOffset" }, -- CustomDoctorBagBase / cabinet 1
-        ["units/pd2_dlc_casino/props/cas_prop_medic_firstaid_box/cas_prop_medic_firstaid_box"] = { f = "SetDeployableOffset" }, -- CustomDoctorBagBase / cabinet 2
-        -- Ammo
-        ["units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-        ["units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
-        ["units/pd2_dlc_hvh/props/hvh_prop_armory_shelf_ammo/hvh_prop_armory_shelf_ammo"] = { f = "SetDeployableOffset" },
+        daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} },
 
-        ["units/pd2_dlc_chas/equipment/chas_interactable_c4/chas_interactable_c4"] = { icons = { Icon.C4 }, warning = true, hint = EHI.Hints.Explosion },
-        ["units/pd2_dlc_chas/equipment/chas_interactable_c4_placeable/chas_interactable_c4_placeable"] = { icons = { Icon.C4 }, f = "chasC4" },
-        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_01"] = { ignore_visibility = true },
-        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_02"] = { ignore_visibility = true },
-        ["units/pd2_dlc_vit/props/vit_interactable_computer_monitor/vit_interactable_hack_gui_03"] = { ignore_visibility = true },
-
-        ["units/world/props/suburbia_hackbox/suburbia_hackbox"] = { icons = { Icon.Tablet } },
-        ["units/pd2_dlc_dah/props/dah_prop_hack_box/dah_prop_hack_ipad_unit"] = { icons = { Icon.Tablet } },
-        ["units/pd2_dlc_sah/props/sah_interactable_hackbox/sah_interactable_hackbox"] = { icons = { Icon.Tablet } },
-        ["units/pd2_dlc_vit/props/vit_prop_hacking_device/vit_prop_hacking_device"] = { icons = { Icon.Tablet } },
-        ["units/pd2_dlc_pent/props/pent_prop_hacking_device/pent_prop_hacking_device"] = { icons = { Icon.Tablet } },
-        ["units/pd2_dlc_trai/props/trai_int_prop_hacking_device/trai_int_prop_hacking_device"] = { icons = { Icon.Tablet } }
+        ping = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 448, 192, 64, 64 } }
     }
     -- Definitions for buffs and their icons
     self.buff =
@@ -1618,6 +1595,10 @@ function EHITweakData:new(tweak_data)
         self.icons.daily_hangover = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.chca_spiked_drink.icon) }
         tweak_data.hud_icons.daily_hangover = self.icons.daily_hangover
     end
+    self.__color_redirect =
+    {
+        [Color.blue] = Color(0, 1, 1) -- Aqua as Blue can be hardly visible on some surfaces
+    }
     self:_classic_heisting_u24_tweaks()
     return self
 end
@@ -1710,4 +1691,9 @@ function EHITweakData:_classic_heisting_u24_tweaks()
     self.buff.MeleeCharge.y = 0
     -- Change texture atlas as the U100 Atlas is not used
     self.buff.no_ammo_cost.skills = true
+end
+
+---@param color Color
+function EHITweakData:ColorRedirect(color)
+    return self.__color_redirect[color] or color
 end

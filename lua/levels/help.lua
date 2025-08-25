@@ -48,6 +48,16 @@ EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other
 })
+local waypoint_elements = {}
+table.insert(waypoint_elements, EHI:GetInstanceElementID(100016, 1800))
+table.insert(waypoint_elements, EHI:GetInstanceElementID(100016, 1900))
+for i = 7000, 7300, 100 do
+    table.insert(waypoint_elements, EHI:GetInstanceElementID(100016, i))
+end
+for i = 10800, 12100, 100 do
+    table.insert(waypoint_elements, EHI:GetInstanceElementID(100016, i))
+end
+table.insert(waypoint_elements, EHI:GetInstanceElementID(100016, 3900))
 EHI:ShowLootCounter({
     max_bags_for_level =
     {
@@ -56,9 +66,9 @@ EHI:ShowLootCounter({
         objective_triggers = { 102461 }
     },
     no_max = true
-})
+}, { element = waypoint_elements })
 
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --units/pd2_dlc_chill/props/chl_prop_timer_large/chl_prop_timer_large
     [400003] = { ignore = true }
 })

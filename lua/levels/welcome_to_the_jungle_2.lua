@@ -91,7 +91,7 @@ local other =
 }
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     [103320] = { remove_vanilla_waypoint = 100309 },
     [101365] = { remove_vanilla_waypoint = 102499 },

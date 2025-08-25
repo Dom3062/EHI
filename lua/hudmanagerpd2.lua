@@ -129,6 +129,19 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
         dofile(EHI.LuaPath .. "EHIEndGameStats.lua")
         EHIEndGameStats:new()
     end
+    if not Global.game_settings.single_player and EHI:GetOptionAndLoadTracker("show_ping_tracker") then
+        local pos, assault_enabled, drama_enabled = 0, EHI:IsAssaultTrackerEnabled(), EHI:ShowDramaTracker()
+        if assault_enabled and drama_enabled then
+            pos = 2
+        elseif assault_enabled or drama_enabled then
+            pos = 1
+        end
+        hud._ehi_tracker:AddTracker({
+            id = "PlayerPing",
+            class = "EHIPlayerPingTracker"
+        }, pos)
+        EHIPlayerPingTracker._adjusted_pos = pos
+    end
 end)
 
 ---@param id string
@@ -294,7 +307,7 @@ function HUDManager:ShowSniperLogic(logic_started, icon)
 end
 
 if EHI.debug.created_waypoints then
-    Hooks:PostHook(HUDManager, "add_waypoint", "EHI_Debug_add_waypoint", function(_self, id, ...) ---@param id string|number
+    Hooks:PostHook(HUDManager, "add_waypoint", "EHI_Debug_add_waypoint", function(self, id, ...) ---@param id string|number
         EHI:LogWithCurrentFile("Created waypoint with ID: " .. tostring(id))
     end)
 end

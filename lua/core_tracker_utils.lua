@@ -26,26 +26,27 @@ function EHI.TrackerUtils:GetColorCodesMap()
     return {
         red = Color.red,
         green = Color.green,
-        blue = Color(0, 1, 1)
+        blue = tweak_data.ehi:ColorRedirect(Color.blue)
     }
 end
 
 ---@param colored_codes EHI.ColorTable
+---@return { string: Idstring[] }
 function EHI.TrackerUtils:CacheColorCodesNumbers(colored_codes)
     local codes = {}
     for color, _ in pairs(colored_codes) do
         local c = {}
         for i = 0, 9, 1 do
-            c[i] = Idstring(string.format("g_number_%s_0%d", color, i)):key()
+            c[i] = Idstring(string.format("g_number_%s_0%d", color, i))
         end
         codes[color] = c
     end
     return codes
 end
 
----@param codes table
----@param bg string
----@param unit UnitBase
+---@param codes { string: Idstring[] }
+---@param bg Idstring
+---@param unit Unit?
 ---@param color string
 ---@return number?
 function EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
@@ -53,11 +54,9 @@ function EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
         return nil
     end
     local color_codes = codes[color]
-    local damage = unit:damage()
-    local object = damage and damage._state and damage._state.object
-    if object and object[bg] then
+    if unit:get_object(bg):visibility() then
         for i = 0, 9, 1 do
-            if object[color_codes[i]] then
+            if unit:get_object(color_codes[i]):visibility() then
                 return i
             end
         end

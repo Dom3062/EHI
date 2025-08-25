@@ -57,7 +57,7 @@ if tweak_data.levels:IsLevelSkirmish() then
                 })
             end)
         else -- On client, wait until HUDManager data is synced from host
-            Hooks:PostHook(GameSetup, "load", "EHI_GameSetup_load_AssaultDiff", function(self, data, ...)
+            managers.ehi_sync:AddGameDataSyncFunction(function(data)
                 local state = data.HUDManager
                 managers.ehi_tracker:AddTracker({
                     id = "AssaultDiff",
@@ -78,7 +78,7 @@ local original =
 }
 
 if EHI:GetTrackerOption("show_difficulty_tracker") and not ((EHI:CombineAssaultDelayAndAssaultTime() or EHI:GetTrackerOption("show_assault_time_tracker")) and EHI:GetOption("show_assault_diff_in_assault_trackers")) then
-    EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, function(diff) ---@param diff number
+    managers.ehi_assault:AddAssaultDifficultyCallback(function(diff)
         local chance = math.ehi_round_chance(diff)
         if managers.ehi_tracker:CallFunction2("AssaultDiff", "SetChance", chance) then
             managers.ehi_tracker:AddTracker({
@@ -94,13 +94,13 @@ end
 
 function ElementDifficulty:client_on_executed(...)
     original.client_on_executed(self, ...)
-    EHI:CallCallback(EHI.CallbackMessage.SyncAssaultDiff, self._values.difficulty)
+    managers.ehi_assault:CallAssaultDifficultyCallback(self._values.difficulty)
 end
 
 function ElementDifficulty:on_executed(...)
     if not self._values.enabled then
         return
     end
-    EHI:CallCallback(EHI.CallbackMessage.SyncAssaultDiff, self._values.difficulty)
+    managers.ehi_assault:CallAssaultDifficultyCallback(self._values.difficulty)
     original.on_executed(self, ...)
 end

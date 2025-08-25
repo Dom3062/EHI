@@ -9,7 +9,6 @@ EHITimedChanceTracker.SetChance = EHIChanceTracker.SetChance
 EHITimedChanceTracker.FormatChance = EHIChanceTracker.FormatChance
 EHITimedChanceTracker._anim_chance = EHIChanceTracker._anim_chance
 function EHITimedChanceTracker:OverridePanel()
-    self:PrecomputeDoubleSize()
     self._chance_text = self:CreateText({
         text = self:FormatChance()
     })
@@ -19,7 +18,7 @@ end
 
 function EHITimedChanceTracker:post_init(params)
     if params.start_opened then
-        self:SetBGSize(self._bg_box_double, "set")
+        self:SetMovement(self._anim_params.PanelSizeIncrease)
     elseif params.stop_timer_on_end then
         self._stop_timer_on_end = true
         self._needs_update = false
@@ -36,11 +35,7 @@ function EHITimedChanceTracker:StartTimer(t, no_update)
     if t then
         self:SetTimeNoAnim(t)
     end
-    self:AnimatePanelW(self._panel_double)
-    self:ChangeTrackerWidth(self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons))
-    self._bg_box:set_w(self._bg_box_double)
-    self:AnimIconsX()
-    self:AnimateAdjustHintX(self._default_bg_size)
+    self:AnimateMovement(self._anim_params.PanelSizeIncrease)
     if not no_update then
         self:AddTrackerToUpdate()
     end
@@ -51,11 +46,7 @@ function EHITimedChanceTracker:StopTimer()
         return
     end
     self._started = nil
-    self:AnimatePanelW(self._panel_w)
-    self:ChangeTrackerWidth(self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons))
-    self._bg_box:set_w(self._default_bg_size)
-    self:AnimIconsX()
-    self:AnimateAdjustHintX(-self._default_bg_size)
+    self:AnimateMovement(self._anim_params.PanelSizeDecrease)
     self:RemoveTrackerFromUpdate()
 end
 
@@ -83,7 +74,6 @@ EHITimedProgressTracker.Format = EHITracker.Format
 EHITimedProgressTracker.StartTimer = EHITimedChanceTracker.StartTimer
 EHITimedProgressTracker.StopTimer = EHITimedChanceTracker.StopTimer
 function EHITimedProgressTracker:post_init(params)
-    self:PrecomputeDoubleSize()
     self._progress_text = self:CreateText({
         text = self:FormatProgress()
     })

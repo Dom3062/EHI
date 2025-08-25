@@ -28,8 +28,8 @@ function EHIPiggyBankMutatorTracker:OverridePanel()
 end
 
 function EHIPiggyBankMutatorTracker:SetNewMax()
-    local levels = self._piggy_tweak_data[self._current_level]
-    local new_max = levels and levels.bag_requirement or 0
+    local level = self._piggy_tweak_data[self._current_level]
+    local new_max = level and level.bag_requirement or 0
     if self._current_level <= 2 then
         new_max = new_max + 1
     end

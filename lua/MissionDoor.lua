@@ -49,15 +49,14 @@ if EHI.debug.mission_door and EHI.IsHost then
             if not drill_data then
                 return
             end
-            local unit_key = self._unit:key()
             local tbl = { unit = self._unit, positions = {} }
             for i, data in ipairs(drill_data) do
-                local a_obj = self._unit:get_object(Idstring(data.align))
+                local a_obj = self._unit:get_object(Idstring(data.align)) ---@cast a_obj -?
                 local position = a_obj:position()
                 tbl.positions[i] = position
             end
             door[self.tweak_data] = door[self.tweak_data] or {}
-            door[self.tweak_data][unit_key] = tbl
+            door[self.tweak_data][self._unit:key()] = tbl
         end
     end)
 
@@ -74,6 +73,7 @@ if EHI.debug.mission_door and EHI.IsHost then
                 for _, value in pairs(tbl) do
                     local unit_id = value.unit:editor_id()
                     EHI:Log("Unit ID: " .. unit_id)
+                    EHI:Log("Unit Position: " .. tostring(value.unit:position()))
                     if definition.statics then
                         for _, values in ipairs(definition.statics) do
                             if values.unit_data.unit_id == unit_id then

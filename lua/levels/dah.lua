@@ -33,14 +33,13 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
         triggers[103969].load_sync = function(self) ---@param self EHIMissionElementTrigger
             if self.ConditionFunctions.IsStealth() then
                 self:CreateTracker()
-                local bg = Idstring("g_code_screen"):key()
+                local bg = Idstring("g_code_screen")
                 for color, data in pairs(dah_laptop_codes) do
                     local unit_id = EHI:GetInstanceUnitID(100052, data)
-                    local unit = managers.worlddefinition:get_unit(unit_id) --[[@as UnitBase]]
+                    local unit = managers.worlddefinition:get_unit(unit_id)
                     local code = EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
                     if code then
-                        self._trackers:CallFunction("ColorCodes", "SetCode", color, code)
-                        self._waypoints:CallFunction("ColorCodes", "CreateWaypoint", unit_id, nil, nil, color_map[color], code)
+                        self._tracking:SetColorCode(color, code, unit_id, color_map[color])
                     end
                 end
             end
@@ -124,7 +123,7 @@ EHI.Mission:ParseTriggers({
     sync_triggers = { element = element_sync_triggers }
 })
 
-EHI:DisableTimerWaypoints({
+EHI.Waypoint:DisableTimerWaypoints({
     [101368] = true -- Drill waypoint for vault with red diamond
 })
 

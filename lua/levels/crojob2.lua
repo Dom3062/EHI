@@ -195,7 +195,7 @@ local tbl =
     [100689] = { remove_vanilla_waypoint = 103300 }, -- 13 front
     [100688] = { remove_vanilla_waypoint = 103300 }, -- 13 back
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     plan =
     {

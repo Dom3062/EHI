@@ -886,7 +886,7 @@ function EHIMenu:SetItem(item, value, menu)
         elseif item.type == "color_select" then
             self:CallCallback(item, { color_raw = value })
             value = Color(unpack(value)) / 255
-            item.panel:child("color"):set_color(value)
+            item.panel:child("color"):set_color(value) ---@diagnostic disable-line
             item.value = value
         end
         self:CallCallback(item, { to_n = item.type == "slider", skip_call = item.type == "color_select" })
@@ -1808,19 +1808,19 @@ end
 function EHIMenu:UpdateArrorsInMultiChoiceSlider(item)
     if item.value == 1 then
         item.panel:child("left_arrow"):set_image("guis/textures/menu_arrows", 0, 0, 24, 24) ---@diagnostic disable-line
-        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_3)
+        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_3) ---@diagnostic disable-line
         item.panel:child("right_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
-        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_2) ---@diagnostic disable-line
     elseif item.value == item.max then
         item.panel:child("left_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
-        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_2) ---@diagnostic disable-line
         item.panel:child("right_arrow"):set_image("guis/textures/menu_arrows", 0, 0, 24, 24) ---@diagnostic disable-line
-        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_3)
+        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_3) ---@diagnostic disable-line
     else
         item.panel:child("left_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
-        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+        item.panel:child("left_arrow"):set_color(tweak_data.screen_colors.button_stage_2) ---@diagnostic disable-line
         item.panel:child("right_arrow"):set_image("guis/textures/menu_arrows", 24, 0, 24, 24) ---@diagnostic disable-line
-        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_2)
+        item.panel:child("right_arrow"):set_color(tweak_data.screen_colors.button_stage_2) ---@diagnostic disable-line
     end
 end
 
@@ -2149,7 +2149,7 @@ function EHIMenu:SetColorSlider(item, x, type, add)
     value_text:set_text(value) ---@diagnostic disable-line
     local color = self._open_color_dialog.color
     self._open_color_dialog.color = Color(type == 1 and value / 255 or color.red, type == 2 and value / 255 or color.green, type == 3 and value / 255 or color.blue)
-    self._open_color_dialog.parent_item.panel:child("color"):set_color(self._open_color_dialog.color)
+    self._open_color_dialog.parent_item.panel:child("color"):set_color(self._open_color_dialog.color) ---@diagnostic disable-line
 end
 
 function EHIMenu:CloseColorMenu()
@@ -2171,7 +2171,7 @@ function EHIMenu:CloseColorMenu()
         self._open_color_dialog.parent_item.panel:parent():remove(o)
         local c = self._open_color_dialog.color
         self._open_color_dialog.parent_item.value = c
-        self._open_color_dialog.parent_item.panel:child("color"):set_color(c)
+        self._open_color_dialog.parent_item.panel:child("color"):set_color(c) ---@diagnostic disable-line
         self._open_color_dialog = nil
     end)
     self:SetLegends(true, true, false, false)
@@ -2415,7 +2415,7 @@ function EHIMenu:buffs_menu_created_callback(menu)
             local color, _ = tweak_data.ehi:GetBuffColorFromIndex(value)
             item.value = value
             item.panel:child("title_selected"):set_text(item.items[value]) ---@diagnostic disable-line
-            item.panel:child("title_selected"):set_color(color)
+            item.panel:child("title_selected"):set_color(color) ---@diagnostic disable-line
             self:UpdateArrorsInMultiChoiceSlider(item)
         end
     end
@@ -2472,7 +2472,7 @@ function EHIMenu:UpdateBuffColor(value, option, item_id)
     for _, item in ipairs(self:GetMenu("ehi_buffs_2_menu").items) do
         if item.id == item_id then
             local color, _ = tweak_data.ehi:GetBuffColorFromIndex(value)
-            item.panel:child("title_selected"):set_color(color)
+            item.panel:child("title_selected"):set_color(color) ---@diagnostic disable-line
             item.panel:child("title_selected"):set_text(item.items[value]) ---@diagnostic disable-line
             break
         end
@@ -2488,7 +2488,7 @@ end
 
 function EHIMenu:SetUnlockableColor(color, option, color_type)
     self:SetColor(color, option, color_type)
-    self._preview_panel:CallFunction(option, "UpdateIconColor", Color(255, color.red, color.green, color.blue) / 255)
+    self._preview_panel:CallFunction(option, "SetIconColor", Color(255, color.red, color.green, color.blue) / 255)
 end
 
 function EHIMenu:SetSniperCountColor(color, option, color_type)

@@ -34,7 +34,7 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
         end
     end}
 end
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objectives =
     {

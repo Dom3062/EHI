@@ -76,8 +76,8 @@ for i = 2000, 2500, 500 do
     DisableWaypoints[EHI:GetInstanceElementID(100067, i, 300000)] = true -- Fix Vault Drill
     units[EHI:GetInstanceUnitID(100002, i, 300000)] = { icons = { Icon.Vault } }
 end
-EHI:DisableTimerWaypoints(DisableWaypoints)
-EHI:UpdateUnits(units)
+EHI.Waypoint:DisableTimerWaypoints(DisableWaypoints)
+EHI.Unit:UpdateUnits(units)
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

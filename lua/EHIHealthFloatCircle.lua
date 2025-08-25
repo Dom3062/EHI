@@ -4,14 +4,9 @@ EHIHealthFloatCircle._converts_disabled = not EHI:GetOption("show_floating_healt
 EHIHealthFloatCircle._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 EHIHealthFloatCircle._team_ai_disabled = not EHI:GetOption("show_floating_health_bar_team_ai") -- Converts share the same slot mask (16) with Team AI, workaround
 EHIHealthFloatCircle._regular_disabled = not EHI:GetOption("show_floating_health_bar_regular_enemies")
-EHIHealthFloatCircle._special_tank_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_tank")
-EHIHealthFloatCircle._special_shield_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_shield")
-EHIHealthFloatCircle._special_taser_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_taser")
-EHIHealthFloatCircle._special_cloaker_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_cloaker")
-EHIHealthFloatCircle._special_sniper_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_sniper")
-EHIHealthFloatCircle._special_medic_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_medic")
-EHIHealthFloatCircle._special_other_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_other")
-EHIHealthFloatCircle._special_turret_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_turret")
+for _, option in ipairs({ "tank", "shield", "taser", "cloaker", "sniper", "medic", "other" }) do
+    EHIHealthFloatCircle[string.format("_special_%s_disabled", option)] = not EHI:GetOption(string.format("show_floating_health_bar_special_enemies_%s", option))
+end
 ---@param hud_panel Panel
 function EHIHealthFloatCircle:new(hud_panel)
     self._current_health = 0
@@ -161,6 +156,7 @@ function EHIHealthFloatCircle:SetUnit(unit, t)
     elseif base then
         if base.has_tag then
             if base:has_tag("special") then
+                ---@diagnostic disable
                 if base:has_tag("tank") then
                     if self._special_tank_disabled then
                         self._block_update = true
@@ -204,6 +200,7 @@ function EHIHealthFloatCircle:SetUnit(unit, t)
                         return
                     end
                 end
+                ---@diagnostic enable
             elseif self._regular_disabled then
                 self._block_update = true
                 self:set_visible(false)

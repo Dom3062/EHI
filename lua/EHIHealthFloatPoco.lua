@@ -8,10 +8,8 @@ end
 ---@field super CircleBitmapGuiObject
 ---@field new fun(self: self, panel: Panel, config: CircleBitmapGuiObject_params): self
 local EHICircleBitmapGuiObject = class(CircleBitmapGuiObject)
----@param panel Panel
----@param config CircleBitmapGuiObject_params
-function EHICircleBitmapGuiObject:init(panel, config)
-    EHICircleBitmapGuiObject.super.init(self, panel, config)
+function EHICircleBitmapGuiObject:init(...)
+    EHICircleBitmapGuiObject.super.init(self, ...)
     self._color = self._circle:color()
 end
 
@@ -34,13 +32,9 @@ EHIHealthFloatPoco._color_end = Color("FF0000"):with_alpha(1)
 EHIHealthFloatPoco._color_friendly = Color("00FF00"):with_alpha(1)
 EHIHealthFloatPoco._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 EHIHealthFloatPoco._regular_disabled = not EHI:GetOption("show_floating_health_bar_regular_enemies")
-EHIHealthFloatPoco._special_tank_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_tank")
-EHIHealthFloatPoco._special_shield_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_shield")
-EHIHealthFloatPoco._special_taser_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_taser")
-EHIHealthFloatPoco._special_cloaker_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_cloaker")
-EHIHealthFloatPoco._special_sniper_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_sniper")
-EHIHealthFloatPoco._special_medic_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_medic")
-EHIHealthFloatPoco._special_other_disabled = not EHI:GetOption("show_floating_health_bar_special_enemies_other")
+for _, option in ipairs({ "tank", "shield", "taser", "cloaker", "sniper", "medic", "other" }) do
+    EHIHealthFloatPoco[string.format("_special_%s_disabled", option)] = not EHI:GetOption(string.format("show_floating_health_bar_special_enemies_%s", option))
+end
 ---@param key userdata
 ---@param unit UnitObject
 ---@param t number
@@ -192,16 +186,17 @@ function EHIHealthFloatPoco:draw(t)
     self._pnl:set_visible(dot_visible)
     if dot_visible then
         local isADS = self._parent.ADS
-        local base = unit:base() ---@cast base -PlayerBase|HuskPlayerBase|SentryGunBase
+        local base = unit:base() ---@cast base -PlayerBase|HuskPlayerBase|SentryGunBase|UnitBase
         local character_damage = unit:character_damage()
         local cHealth = character_damage and character_damage._health and character_damage._health * 10 or 0
-        local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT and character_damage._HEALTH_INIT * 10 or character_damage._health_max and character_damage._health_max * 10) or 1
+        local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT * 10) or 1 ---@diagnostic disable-line
         local prog = cHealth / fHealth
         local isEnemy = managers.enemy:is_enemy(unit)
         if managers.enemy:is_civilian(unit) and self._civilians_disabled then
             prog = 0
         elseif isEnemy and base and base.has_tag then
             if base:has_tag("special") then
+                ---@diagnostic disable
                 if base:has_tag("tank") then
                     if self._special_tank_disabled then
                         prog = 0
@@ -229,6 +224,7 @@ function EHIHealthFloatPoco:draw(t)
                 elseif self._special_other_disabled then
                     prog = 0
                 end
+                ---@diagnostic enable
             elseif self._regular_disabled then
                 prog = 0
             end
@@ -371,7 +367,7 @@ function EHIReusableHealthFloatPoco:draw(t)
         local isADS = self._parent.ADS
         local character_damage = unit:character_damage()
         local cHealth = character_damage and character_damage._health and character_damage._health * 10 or 0
-        local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT and character_damage._HEALTH_INIT * 10 or character_damage._health_max and character_damage._health_max * 10) or 1
+        local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT * 10) or 1 ---@diagnostic disable-line
         local prog = self._UNIT_DISABLED_CONDITION and 0 or cHealth / fHealth
         if prog > 0 then
             local size = self._size

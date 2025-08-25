@@ -57,4 +57,4 @@ local tbl =
     --units/pd2_dlc_chill/props/chl_prop_timer_small/chl_prop_timer_small
     [EHI:GetInstanceUnitID(100056, 15620)] = { ignore = true }
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)

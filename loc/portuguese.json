@@ -17,9 +17,7 @@
     "ehi_preview" : "Prévia (É necessário recarregar o mapa para ter efeito)\nO canto vermelho indica onde o primeiro Tracker vai ser pocisionado",
 
     "ehi_x_offset" : "Posição X",
-    "ehi_x_offset_desc" : "Posição X",
     "ehi_y_offset" : "Posição Y",
-    "ehi_y_offset_desc" : "Posição Y",
 
     "ehi_text_scale" : "Tamanho do Texto",
     "ehi_text_scale_desc" : "Definie o tamanho do texto.\nEssa opção é útil para jogadores que tem mods de fontes",

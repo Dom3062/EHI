@@ -124,7 +124,7 @@ function DigitalGui:pent_10()
     end
 end
 
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     [102452] = { f = function(unit_id, unit_data, unit) ---@param unit UnitDigitalTimer
         local gui = unit:digital_gui()

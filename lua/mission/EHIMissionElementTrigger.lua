@@ -102,8 +102,7 @@ end
 
 function EHIMissionElementTrigger:AddTriggers(value)
     if self._params.data then
-        local data = value.data or {}
-        for _, data_value in ipairs(data) do
+        for _, data_value in ipairs(value.data or {}) do
             table.insert(self._params.data, data_value)
         end
     else
@@ -152,9 +151,8 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
         elseif f == self.SF.AddAchievementToCounter then
             local data = trigger.data or {} ---@cast data AchievementLootCounterTable
             data.achievement = data.achievement or trigger.id
-            data.max = data.max or trigger.max or 0
             data.no_sync = true
-            self._loot:AddAchievementListener(data)
+            self._loot:AddAchievementListener(data, data.max or trigger.max or 0)
             self:CreateTracker()
         elseif f == self.SF.IncreaseChance then
             self._tracking:IncreaseChance(trigger.id, trigger.amount)
@@ -301,7 +299,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
                 {
                     id = trigger.id,
                     max = trigger.max or 1,
-                    class = trigger.class or "EHILootTrackerNew"
+                    class = trigger.class or "EHILootTracker"
                 }
                 self:CreateTracker(new_trigger)
             end
@@ -323,6 +321,9 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
             end
             self:CreateTracker()
         elseif f == self.SF.ShowWaypoint then
+            if trigger.data.skip_if_waypoint_exists and self._waypoints:WaypointExists(trigger.data.skip_if_waypoint_exists) then
+                return
+            end
             managers.hud:AddWaypointFromTrigger(trigger.id, trigger.data)
         elseif f == self.SF.DecreaseProgressMax then
             self._tracking:DecreaseProgressMax(trigger.id, trigger.max)
@@ -569,6 +570,7 @@ end
 function EHIMissionElementTrigger:LoadSync()
     if self._params.load_sync then
         self._params.load_sync(self)
+        self._params.load_sync = nil
     end
 end
 
@@ -681,21 +683,21 @@ function EHIMissionElementTrigger:AddLoadSyncFunction(f)
     end
 end
 
----@param elements_to_hook table<number, EHIMissionElementTrigger?>
+---@param elements_to_hook table<number, EHIMissionElementTrigger?>?
 function EHIMissionElementTrigger:__HookElements(elements_to_hook)
     local client = self.IsClient
-    self._hook_f = self._hook_f or client and function(element, ...) ---@param element MissionScriptElement
+    self.__hook_f = self.__hook_f or client and function(element, ...) ---@param element MissionScriptElement
         self:RunTrigger(element._id, element, true)
     end or function(element, ...) ---@param element MissionScriptElement
         self:RunTrigger(element._id, element, element._values.enabled)
     end
     local scripts = managers.mission._scripts or {}
-    for id, trigger in pairs(elements_to_hook) do
+    for id, trigger in pairs(elements_to_hook or self._all_triggers) do
         if math.within(id, 100000, 999999) then
             for _, script in pairs(scripts) do
                 local element = script:element(id)
                 if element then
-                    self._hook:HookElement(element, self._hook_f)
+                    self._hook:HookElement(element, self.__hook_f)
                 elseif client then
                     --[[
                         On client, the element was not found
@@ -718,6 +720,14 @@ function EHIMissionElementTrigger:__FindAndHookElements(elements_to_hook)
         elements_to_hook[id] = self._all_triggers[id]
     end
     self:__HookElements(elements_to_hook)
+end
+
+---@param triggers table<number, ElementTrigger>
+---@param trigger_id_all string
+---@param trigger_icons_all table?
+function EHIMissionElementTrigger:__AddTriggersAndHookElements(triggers, trigger_id_all, trigger_icons_all)
+    self:__AddTriggers(triggers, trigger_id_all, trigger_icons_all)
+    self:__FindAndHookElements(triggers)
 end
 
 ---@param value ElementTrigger
@@ -929,6 +939,13 @@ function EHIHostElementDelayMissionElementTrigger:HookElementDelay(element)
     end
 end
 
+function EHIHostElementDelayMissionElementTrigger:sync_load()
+    for _, trigger in pairs(self.__elements) do
+        self._params = trigger
+        EHIHostElementDelayMissionElementTrigger.super.sync_load(self)
+    end
+end
+
 ---@class EHIClientMissionElementTrigger : EHIMissionElementTrigger
 ---@field super EHIMissionElementTrigger
 ---@field new fun(self: self, id: number, params: ElementTrigger): self
@@ -1025,20 +1042,17 @@ function EHIMissionUtils:InteractionExists(tweak_data)
 end
 
 ---@param id number
----@return boolean?
 function EHIMissionUtils:IsMissionElementEnabled(id)
     local element = managers.mission:get_element_by_id(id)
     return element and element:enabled()
 end
 
 ---@param id number
----@return boolean
 function EHIMissionUtils:IsMissionElementDisabled(id)
     return not self:IsMissionElementEnabled(id)
 end
 
 ---@param tweak_data string
----@return integer
 function EHIMissionUtils:CountInteractionAvailable(tweak_data)
     local count = 0
     local interactions = managers.interaction._interactive_units
@@ -1051,7 +1065,6 @@ function EHIMissionUtils:CountInteractionAvailable(tweak_data)
 end
 
 ---@param offset integer?
----@return integer
 function EHIMissionUtils:CountLootbagsOnTheGround(offset)
     local lootbags = {}
     local excluded = { value_multiplier = true, dye = true, types = true, small_loot = true }
@@ -1383,6 +1396,7 @@ function EHIMissionHolder:ParseTriggers(new_triggers, trigger_id_all, trigger_ic
     end
     if ehi_next(new_triggers.trophy) then
         if EHI:GetUnlockableAndOption("show_trophies") then
+            EHI:OptionAndLoadTracker("show_trophies")
             for id, data in pairs(new_triggers.trophy) do
                 if data.difficulty_pass ~= false and EHI:IsTrophyLocked(id) then
                     PreparseParams(data)
@@ -1663,7 +1677,7 @@ function EHIMissionHolder:InitElements()
         return
     end
     self.__init_done = true
-    self._triggers:__HookElements(self._triggers._all_triggers)
+    self._triggers:__HookElements()
     if EHI.IsClient then
         return
     end
@@ -1675,6 +1689,7 @@ function EHIMissionHolder:InitElements()
                 local element = script:element(id)
                 if element then
                     trigger:HookBaseDelay(element)
+                    trigger:sync_load()
                 end
             end
         end
@@ -1686,6 +1701,7 @@ function EHIMissionHolder:InitElements()
                 local element = script:element(id)
                 if element then
                     trigger:HookElementDelay(element)
+                    trigger:sync_load()
                 end
             end
         end
@@ -1770,9 +1786,6 @@ function EHIMissionHolder:load()
     end
     self._triggers:__HookElements(self._HookOnLoad)
     self._HookOnLoad = nil
-    EHI:DisableTimerWaypoints(EHI.DisableOnLoad)
-    EHI:DisableTimerWaypointsOnInit()
-    EHI.DisableOnLoad = nil
 end
 
 return EHIMissionHolder:new()

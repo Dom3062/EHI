@@ -12,8 +12,14 @@ local triggers = {
 if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
     triggers[EHI:GetInstanceElementID(100078, 10700)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
     triggers[EHI:GetInstanceElementID(100078, 11000)] = { time = 60, id = "Chimney", icons = LootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }
-    triggers[EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100016, 10700) } }
-    triggers[EHI:GetInstanceElementID(100011, 11000)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = SF.ReplaceTrackerWithTracker, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100016, 11000) } }
+    local WaypointSF = EHI:IsLootCounterVisible() and EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        if self._mission._SHOW_MISSION_TRACKERS then
+            self._trackers:AddTracker(trigger)
+        end
+        self._waypoints:CallFunction(self._loot._id, "StartTimer", trigger.time, true)
+    end) or SF.ReplaceTrackerWithTracker
+    triggers[EHI:GetInstanceElementID(100011, 10700)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = WaypointSF, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100016, 10700) } }
+    triggers[EHI:GetInstanceElementID(100011, 11000)] = { time = 207 + 3, id = "ChimneyClose", icons = TimedLootDrop, class = TT.Warning, special_function = WaypointSF, data = { id = "Chimney" }, hint = Hints.LootTimed, waypoint = { data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100016, 11000) } }
 end
 
 ---@param present_amount number?
@@ -108,7 +114,7 @@ EHI:ShowLootCounter({
         objective_triggers = { 100584, 101163 }
     },
     no_max = true
-})
+}, { element = { EHI:GetInstanceElementID(100016, 10700), EHI:GetInstanceElementID(100016, 11000) }, class = EHI.Waypoints.LootCounter.Timed })
 
 EHI:AddXPBreakdown({
     objectives =

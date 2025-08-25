@@ -189,8 +189,7 @@ if EHI:IsLootCounterVisible() then
         managers.mission:add_runned_unit_sequence_trigger(crate, "interact", function(...)
             self._loot:AddDelayedLootDeclinedCheck(crate)
         end)
-        self:__AddTriggers(LootTrigger, self._loot._id)
-        self:__FindAndHookElements(LootTrigger)
+        self:__AddTriggersAndHookElements(LootTrigger, self._loot._id)
         self._loot:IncreaseLootCounterMaxRandom()
     end)
     other[104274] = { special_function = IncreaseMaxRandomLoot, index = 500 }

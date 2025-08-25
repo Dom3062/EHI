@@ -195,3 +195,5 @@ function EHITimedLootWaypoint:SetCompleted(random_loot_present)
         end
     end
 end
+
+EHILootCountWaypoint = class(EHILootWaypoint)

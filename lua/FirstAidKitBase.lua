@@ -1,4 +1,12 @@
-if EHI:CheckLoadHook("FirstAidKitBase") or not EHI:GetEquipmentOption("show_equipment_firstaidkit") then
+if EHI:CheckLoadHook("FirstAidKitBase") then
+    return
+end
+
+function FirstAidKitBase:GetRealAmount()
+    return self._empty and 0 or 1
+end
+
+if not EHI:GetEquipmentOption("show_equipment_firstaidkit") then
     return
 end
 
@@ -18,10 +26,6 @@ function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     managers.ehi_deployable:UpdateAmount(self._ehi_key, 1, "first_aid_kit", self.__ehi_tracker)
-end
-
-function FirstAidKitBase:GetRealAmount()
-    return self._empty and 0 or 1
 end
 
 function FirstAidKitBase:destroy(...)

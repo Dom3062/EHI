@@ -75,7 +75,7 @@ for i = 0, 500, 100 do
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     tbl[EHI:GetInstanceUnitID(100022, i)] = { icons = { Icon.Vault }, remove_on_alarm = true }
 end
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:SetMissionDoorData({
     -- Vaults
     [Vector3(-150, -1100, 685)] = 100835,

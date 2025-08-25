@@ -130,7 +130,7 @@ EHI.Mission:ParseTriggers({
 })
 
 --units/pd2_dlc_nmh/props/nmh_interactable_teddy_saw/nmh_interactable_teddy_saw
-EHI:UpdateUnits({ [101387] = { remove_vanilla_waypoint = 104494 } })
+EHI.Unit:UpdateUnits({ [101387] = { remove_vanilla_waypoint = 104494 } })
 EHI:AddXPBreakdown({
     plan =
     {

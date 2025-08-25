@@ -148,7 +148,7 @@ local sidejob =
                             managers.ehi_loot:RemoveListener("daily_helicopter")
                         end
                 end }
-            })
+            }, 0)
         end
     }
 }
@@ -204,7 +204,7 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
         EHI.Trigger:AddWaypointToTrigger(104069, t)
     end }
 end
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:SetMissionDoorData({
     -- Server Room
     [Vector3(733.114, 1096.92, -907.557)] = { w_id = 103457, restore = true, unit_id = 104582 },

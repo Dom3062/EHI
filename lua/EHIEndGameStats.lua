@@ -72,7 +72,7 @@ function EHIEndGameStats:new()
         if total_kills <= 0 then
             return -- Don't print anything if all peers have 0 kills. This can happen as a client when you drop-in to a heist that already ended or playing a heist where kills did not happen -> Safehouse
         end
-        -- There is some fuckery going where delaying end game stats actually works
+        -- There is some fuckery going on where delaying end game stats actually works
         -- If it is not delayed, stats will still get printed, however the chat won't be visible
         -- Setting the delay to 0.25-1s is enough
         -- This needs to be investigated

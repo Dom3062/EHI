@@ -227,9 +227,7 @@
     "ehi_preview" : "预览 (重启劫案以应用更改)\n带有红色角标的窗口为第一个追踪器出现的位置",
 
     "ehi_x_offset" : "X轴偏移",
-    "ehi_x_offset_desc" : "X轴偏移设置（数值越小追踪器越靠左）",
     "ehi_y_offset" : "Y轴偏移",
-    "ehi_y_offset_desc" : "Y轴偏移设置（数值越小追踪器越靠上）",
     
     "ehi_text_scale" : "文本大小",
     "ehi_text_scale_desc" : "设置追踪器中文本的显示大小",

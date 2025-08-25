@@ -116,10 +116,9 @@ if not tweak_data.levels:IsStealthRequired() then
                 end
             end
         else
-            local minion_class = "EHIEquipmentTracker"
-            if EHI:GetOption("show_minion_health") then
-                minion_class = "EHITotalMinionTracker"
-                EHI:LoadTracker("EHIMinionTracker")
+            local minion_class = EHI:GetOptionAndLoadTracker("show_minion_health") and "EHITotalMinionTracker" or "EHIEquipmentTracker"
+            if minion_class == "EHIEquipmentTracker" and not EHIEquipmentTracker then
+                EHI:LoadTracker("EHIEquipmentTracker")
             end
             ---@param key userdata
             ---@param amount number
@@ -294,7 +293,7 @@ if EHI.IsHost and (EHI:CanShowCivilianCountTracker() and EHI:GetOption("civilian
     end
 end
 
-if EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") and not tweak_data.levels:IsLevelSafehouse() then
+if not tweak_data.levels:IsStealthRequired() and not tweak_data.levels:IsLevelSafehouse() and EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
     if EHI.IsHost then
         original.on_hostage_state = GroupAIStateBase.on_hostage_state
         function GroupAIStateBase:on_hostage_state(...)

@@ -44,7 +44,7 @@ function EHIMoneyManager:init_finalize(managers)
             self._spend_on_preplanning = managers.money:get_preplanning_total_cost()
         end
     end)
-    EHI:AddCallback(EHI.CallbackMessage.RefreshPlayerCount, function(alive_players) ---@param alive_players number
+    managers.ehi_experience:AddRefreshPlayerCountListener(function(alive_players)
         local multiplier = tweak_data:get_value("money_manager", "alive_humans_multiplier", alive_players or 1) or 1
         if self._trackers:CallFunction2("Money", "MultiplierChanged", multiplier) then
             self._alive_players_multiplier = multiplier

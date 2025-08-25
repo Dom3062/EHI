@@ -1,12 +1,6 @@
 local EHI = EHI
-managers.ehi_experience = EHIExperienceManager
+managers.ehi_experience = blt.vm.dofile(EHI.LuaPath .. "EHIExperienceManager.lua")
 if EHI:CheckLoadHook("Setup") then
-    EHI:Hook(Setup, "init_managers", function(self, managers, ...) ---@param managers managers
-        local achievements = tweak_data.achievement
-        if achievements and achievements._check_uno then
-            managers.savefile:add_load_done_callback(callback(achievements, achievements, "_check_uno"))
-        end
-    end)
     return
 end
 managers.ehi_tracker = blt.vm.dofile(EHI.LuaPath .. "EHITrackerManager.lua")
@@ -14,8 +8,12 @@ managers.ehi_waypoint = blt.vm.dofile(EHI.LuaPath .. "EHIWaypointManager.lua")
 if EHI:GetOption("show_equipment_tracker") and (EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_ammobag") or EHI:GetOption("show_equipment_bodybags") or EHI:GetOption("show_equipment_grenadecases") or EHI:GetOption("show_equipment_firstaidkit")) then
     managers.ehi_deployable = blt.vm.dofile(EHI.LuaPath .. "EHIDeployableManager.lua")
 end
-managers.ehi_trade = blt.vm.dofile(EHI.LuaPath .. "EHITradeManager.lua")
-managers.ehi_escape = blt.vm.dofile(EHI.LuaPath .. "EHIEscapeChanceManager.lua")
+if not EHI:IsTradeTrackerDisabled() then
+    managers.ehi_trade = blt.vm.dofile(EHI.LuaPath .. "EHITradeManager.lua")
+end
+if EHI:IsEscapeChanceEnabled() then
+    managers.ehi_escape = blt.vm.dofile(EHI.LuaPath .. "EHIEscapeChanceManager.lua")
+end
 managers.ehi_assault = blt.vm.dofile(EHI.LuaPath .. "EHIAssaultManager.lua")
 managers.ehi_unlockable = blt.vm.dofile(EHI.LuaPath .. "EHIUnlockableManager.lua")
 managers.ehi_phalanx = blt.vm.dofile(EHI.LuaPath .. "EHIPhalanxManager.lua")
@@ -39,15 +37,11 @@ function Setup:init_managers(managers, ...)
     original.init_managers(self, managers, ...)
     managers.ehi_tracker:post_init()
     managers.ehi_waypoint:post_init()
-    managers.ehi_trade:post_init(managers.ehi_tracker)
-    managers.ehi_escape:post_init(managers.ehi_tracker)
     managers.ehi_assault:post_init(managers.ehi_tracker)
     managers.ehi_unlockable:post_init(managers.ehi_tracker)
     managers.ehi_phalanx:init_finalize(managers.ehi_tracker, managers.ehi_hook, managers.ehi_assault)
-    managers.ehi_experience:TrackersInit(managers.ehi_tracker)
     managers.ehi_loot = EHILootManager:new(managers.ehi_tracker, managers.ehi_waypoint)
     managers.ehi_hook:post_init(managers.ehi_tracker, managers.ehi_loot)
-    managers.ehi_tracking:post_init(managers.ehi_tracker, managers.ehi_waypoint)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end
 
@@ -58,6 +52,6 @@ function Setup:init_finalize(...)
     managers.ehi_assault:init_finalize()
     managers.ehi_loot:init_finalize()
     managers.ehi_money:init_finalize(managers)
-    managers.ehi_sync:post_init()
+    managers.ehi_sync:init_finalize()
     EHI.Mission:init_finalize()
 end

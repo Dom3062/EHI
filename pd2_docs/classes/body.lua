@@ -44,7 +44,8 @@ function Body:dynamic(...) end
 
 function Body:enable_with_no_velocity(...) end
 
-function Body:enabled(...) end
+---@return boolean
+function Body:enabled() end
 
 function Body:fixed(...) end
 

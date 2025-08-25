@@ -160,6 +160,7 @@
     "ehi_hint_modifier_civilian_alarm" : "Počet zabití civilistů do alarmu",
     "ehi_hint_marshal" : "Maršálové",
     "ehi_hint_payday" : "Výplata po dokončení",
+    "ehi_hint_ping" : "Odezva",
 
     "ehi_hint_big_piggy" : "Přesouvání čuníka",
     "ehi_hint_brb_winch_delivery" : "Dodání navijáku",
@@ -223,7 +224,13 @@
     "ehi_hint_sand_heli_turret_timer" : "Čas helikoptéry se střílnou",
     "ehi_hint_trai_crane" : "Šance na rozbití jeřábu",
     "ehi_hint_trat_loco_start" : "Šance na start lokomotivy",
+    "ehi_hint_vit_color_cables" : "Správné kabely",
     "ehi_hint_vit_teargas" : "Šance na slzný plyn",
+
+    "ehi_color_r" : "Č",
+    "ehi_color_g" : "Z",
+    "ehi_color_b" : "M",
+    "ehi_color_y" : "Ž",
 
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Obnovit barvy",
@@ -231,9 +238,7 @@
     "ehi_preview" : "Náhled (Pro aktualizaci je nutný restart mapy)\nČervený roh ukazuje místo, kde se objeví první sledovač.",
 
     "ehi_x_offset" : "Posun X",
-    "ehi_x_offset_desc" : "Posun X",
     "ehi_y_offset" : "Posun Y",
-    "ehi_y_offset_desc" : "Posun Y",
 
     "ehi_text_scale" : "Měřítko textu",
     "ehi_text_scale_desc" : "Nastavuje měřítko textu.\nTato funkce je užitečná pro hráče s modifikovaným písmem",
@@ -292,6 +297,14 @@
 
     "ehi_trackers_menu" : "Sledovače",
     "ehi_trackers_menu_desc" : "",
+
+    "ehi_trackers_n_of_rc" : "Počet sledovačů na řádku/ve sloupci",
+    "ehi_trackers_n_of_rc_desc" : "Nastavuje počet sledovačů, které se objeví na řádku či sloupci, než se vytvoří další\n\nPokud je vybráno Vertikální zarovnání, zobrazí se počet sledovačů ve sloupci až do vybrané hodnoty, než se vytvoří nový\nPokud je vybráno Horizontální zarovnání, zobrazí se počet sledovačů v řádku až do vybrané hodnoty, než se vytvoří nový\n\nChcete-li tuto funkci zakázat, nastavte hodnotu na '0'",
+
+    "ehi_trackers_rc_horizontal_new_column_position" : "(Horizontální) Nová pozice řádku",
+    "ehi_trackers_rc_horizontal_new_column_position_desc" : "Kde se nový řádek má objevit jakmile počet sledovačů v předchozím řádku je rovný nastavenýmu počtu",
+    "ehi_trackers_rc_horizontal_new_column_position_1" : "Nahoře",
+    "ehi_trackers_rc_horizontal_new_column_position_2" : "Dole",
 
     "ehi_show_mission_trackers": "Zobrazovat sledovače (Loupež)",
     "ehi_show_mission_trackers_desc": "Zobrazuje sledovače v misi (příklad: Čas do příjezdu auta/přiletu helikoptéry, za jak dlouho se spustí další úkol a tak dále...)\n\nTato funkce taky funguje na neoficiálních misí\nPokud jsou podporovány",
@@ -609,6 +622,12 @@
     "ehi_money_tracker_format_2" : "Spending / Offshore",
     "ehi_money_tracker_format_3" : "Offshore",
     "ehi_money_tracker_format_4" : "Spending",
+
+    "ehi_show_ping_tracker" : "Zobrazovat sledovač s odezvou",
+    "ehi_show_ping_tracker_desc" : "Zobrazuje odezvu u každého hráče v lobby (kromě tebe)\n\nOdezva je vždy v milisekundách a v případě ztráty paketů bude vedle odezvy zobrazena výše ztráty paketů (v procentech)\nPokud jsi sám v lobby, sledovač nebude viditelný dokuď se nepřipojí hráč do hry",
+
+    "ehi_show_ping_tracker_refresh_t" : "Aktualizace odezvy (v sekundách)",
+    "ehi_show_ping_tracker_refresh_t_desc" : "Nastavuje, kolik času musí uplynout, než sledovač aktualizuje odezvu pro každého hráče",
     
     "ehi_waypoints_menu" : "Ukazatele",
     "ehi_waypoints_menu_desc" : "",

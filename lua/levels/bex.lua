@@ -25,14 +25,9 @@ function bex_11:pre_destroy()
 end
 
 function bex_11:CountersDone()
-    self:SetStatusText("finish", self._counters_table.bags.label)
-    self:SetBGSize(self._default_bg_size, "set", true)
-    local panel_w = self._default_bg_size + (self._icon_gap_size_scaled * self._n_of_icons)
-    self:AnimatePanelW(panel_w)
-    self:AnimIconsX()
-    self:AnimateAdjustHintX(-self._default_bg_size)
-    self:ChangeTrackerWidth(panel_w)
     self:AnimateBG()
+    self:SetStatusText("finish", self._counters_table.bags.label)
+    self:AnimateMovement(self._anim_params.PanelSizeDecrease)
     local boxes_label = self._counters_table.boxes.label
     boxes_label:parent():remove(boxes_label)
     self._counters_table.boxes = nil
@@ -108,7 +103,7 @@ local tbl =
 {
     [100000] = { remove_vanilla_waypoint = 100005 }
 }
-EHI:UpdateInstanceUnits(tbl, 22450)
+EHI.Unit:UpdateInstanceUnits(tbl, 22450)
 
 local other =
 {

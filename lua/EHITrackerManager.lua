@@ -9,6 +9,7 @@ local EHITrackerManager = {}
 EHITrackerManager._trackers = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITrackerManager.Tracker?>
 EHITrackerManager._sync_tm_add_tracker = "EHI_TM_SyncAddTracker"
 EHITrackerManager._sync_tm_update_tracker = "EHI_TM_SyncUpdateTracker"
+EHITrackerManager._n_of_rc = EHI:GetOption("trackers_n_of_rc") --[[@as number]] -- Number of Rows/Columns
 EHITrackerManager.Rounding =
 {
     Standard = 1,
@@ -25,6 +26,11 @@ function EHITrackerManager:post_init()
     self._panel_size = tweak_data.ehi.default.tracker.size_h * self._scale
     self._panel_offset = tweak_data.ehi.default.tracker.offset * self._scale
     self._base_tracker_class = EHI.Trackers.Base
+    if self._rc_params then
+        self._rc_params.next_panel_offset = self._rc_params.next_panel_offset * self._scale
+        self._rc_params.gap_scaled = self._rc_params.gap_scaled * self._scale
+        self._rc_params.horizontal_offset = self._panel_size + self._panel_size + self._panel_offset
+    end
 end
 
 function EHITrackerManager:CreateWorkspace()
@@ -54,12 +60,16 @@ function EHITrackerManager:init_finalize()
             def.tracker:SwitchToLoudMode()
         end
     end)
+    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+        for _, def in pairs(self._trackers) do
+            def.tracker:MissionEnd()
+        end
+    end)
     if CustomNameColor and CustomNameColor.ModID and not Global.game_settings.single_player then
-        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
+        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_EHITrackerManager", function(data, sender)
             if data and data ~= "" then
                 local col = NetworkHelper:StringToColour(data)
                 self:CallFunction("Converts", "UpdatePeerColor", sender, col)
-                self:CallFunction(managers.ehi_trade._id, "UpdateTextPeerColor", sender, col)
             end
         end)
     end
@@ -94,34 +104,18 @@ function EHITrackerManager:destroy()
     end
 end
 
-function EHITrackerManager:load(data)
-    local load_data = data.EHITrackerManager
-    if load_data then
-    end
-end
-
-function EHITrackerManager:save(data)
-    if self._trackers_to_sync then
-        local sync_data = {}
-        for key, value in pairs(self._trackers_to_sync) do
-            sync_data[key] = value
-        end
-        data.EHITrackerManager = sync_data
-    end
-end
-
 ---@param params ElementTrigger
 ---@param pos integer?
 function EHITrackerManager:AddTracker(params, pos)
     if self._trackers[params.id] then
-        EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
+        EHI:Log(string.format("Tracker with ID '%s' exists!", params.id))
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
     params.delay_popup = self._delay_popups
     local tracker = (params.class_table or _G[params.class or self._base_tracker_class]):new(self._panel, params)
-    local w = tracker:GetPanelW()
-    pos = self:_move_tracker(pos, w)
+    local w = tracker:GetTrackerSize()
+    pos = self:_move_trackers(pos, w)
     local x = self:_get_x(pos, w)
     local y = self:_get_y(pos)
     if tracker._needs_update then
@@ -129,13 +123,13 @@ function EHITrackerManager:AddTracker(params, pos)
     end
     tracker:PosAndSetVisible(x, y)
     self._trackers[params.id] = { tracker = tracker, pos = pos or self._n_of_trackers, x = x, w = w }
-    self._n_of_trackers = self._n_of_trackers + 1
+    self:_tracker_created(tracker, pos or self._n_of_trackers, w)
 end
 
 ---@param params ElementTrigger
 function EHITrackerManager:AddHiddenTracker(params)
     if self._trackers[params.id] then
-        EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
+        EHI:Log(string.format("Tracker with ID '%s' exists!", params.id))
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
@@ -149,7 +143,7 @@ end
 ---@param params ElementTrigger
 function EHITrackerManager:PreloadTracker(params)
     if self._trackers[params.id] then
-        EHI:Log("Tracker with ID '" .. tostring(params.id) .. "' exists!")
+        EHI:Log(string.format("Tracker with ID '%s' exists!", params.id))
         EHI:LogTraceback()
         self._trackers[params.id].tracker:ForceDelete()
     end
@@ -169,8 +163,8 @@ function EHITrackerManager:RunTracker(id, params, pos)
     if tbl.pos then
         return
     end
-    local w = tbl.tracker:GetPanelW()
-    pos = self:_move_tracker(pos, w)
+    local w = tbl.tracker:GetTrackerSize()
+    pos = self:_move_trackers(pos, w)
     local x = self:_get_x(pos, w)
     local y = self:_get_y(pos)
     tbl.tracker:PosAndSetVisible(x, y)
@@ -180,7 +174,7 @@ function EHITrackerManager:RunTracker(id, params, pos)
     if tbl.tracker._needs_update then
         self:_add_tracker_to_update(tbl.tracker)
     end
-    self._n_of_trackers = self._n_of_trackers + 1
+    self:_tracker_created(tbl.tracker, tbl.pos, w)
 end
 
 ---@param params ElementTrigger
@@ -217,245 +211,73 @@ function EHITrackerManager:RunTrackerIfDoesNotExist(id, params, pos)
     end
 end
 
-if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then -- Vertical in VR or in non-VR
-    ---@param pos number?
-    ---@param w number
-    function EHITrackerManager:_get_x(pos, w)
-        return self._x
-    end
-
-    if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 1) then -- Top to Bottom
-        ---@param pos number?
-        function EHITrackerManager:_get_y(pos)
-            pos = pos or self._n_of_trackers
-            return self._y + (pos * (self._panel_size + self._panel_offset))
-        end
-    else -- Bottom to Top
-        ---@param pos number?
-        function EHITrackerManager:_get_y(pos)
-            pos = pos or self._n_of_trackers
-            return self._y - (pos * (self._panel_size + self._panel_offset))
-        end
-    end
-
-    ---@param pos number?
-    ---@param w number
-    function EHITrackerManager:_move_tracker(pos, w)
-        if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
-            for _, tbl in pairs(self._trackers) do
-                if tbl.pos and tbl.pos >= pos then
-                    local final_pos = tbl.pos + 1
-                    tbl.tracker:AnimateTop(self:_get_y(final_pos))
-                    tbl.pos = final_pos
-                end
-            end
-            return pos
-        end
-        return nil -- Received crap or no tracker exists; create tracker on the first available position
-    end
-
-    ---@param pos number
-    ---@param w number
-    ---@param pos_move number?
-    ---@param panel_offset_move number?
-    function EHITrackerManager:_rearrange_trackers(pos, w, pos_move, panel_offset_move)
-        if not pos then
-            return
-        end
-        for _, tbl in pairs(self._trackers) do
-            if tbl.pos and tbl.pos > pos then
-                local final_pos = tbl.pos - 1
-                tbl.tracker:AnimateTop(self:_get_y(final_pos))
-                tbl.pos = final_pos
-            end
-        end
-    end
-
-    ---Call this function only from trackers themselves
-    ---@param id string
+if EHITrackerManager._n_of_rc > 0 then
     ---@param new_w number
-    ---@param move_the_tracker boolean?
-    function EHITrackerManager:_change_tracker_width(id, new_w, move_the_tracker)
+    ---@param previous_w number
+    ---@param new_id string Tracker ID
+    ---@param from_f string What EHITrackerManager function called this
+    local function LogReposition_WidthIsBigger(new_w, previous_w, new_id, from_f)
+        EHI:Log(string.format("[%s] Width is bigger than saved max size", from_f))
+        EHI:Log(string.format("[%s] All trackers will be repositioned", from_f))
+        EHI:Log(string.format("[%s] Provided: %g", from_f, new_w))
+        EHI:Log(string.format("[%s] Saved: %g", from_f, previous_w))
+        EHI:Log(string.format("[%s] Tracker that caused this: %s", from_f, new_id))
     end
-else -- Horizontal
     ---@param pos number?
-    function EHITrackerManager:_get_y(pos)
-        return self._y
-    end
-
-    if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 3) then -- Left to Right
-        ---@param pos number?
-        ---@param w number
-        function EHITrackerManager:_get_x(pos, w)
-            if self._n_of_trackers == 0 or pos and pos <= 0 then
-                return self._x
-            end
-            local x = 0
-            local pos_create = pos and (pos - 1) or (self._n_of_trackers - 1)
-            for _, tbl in pairs(self._trackers) do
-                if tbl.pos and tbl.pos == pos_create then
-                    x = tbl.x + tbl.w + self._panel_offset
-                    break
-                end
-            end
-            return x
-        end
-
-        ---@param pos number?
-        ---@param w number
-        function EHITrackerManager:_move_tracker(pos, w)
-            if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
-                for _, tbl in pairs(self._trackers) do
-                    if tbl.pos and tbl.pos >= pos then
-                        local final_x = tbl.x + w + self._panel_offset
-                        tbl.tracker:AnimateLeft(final_x)
-                        tbl.x = final_x
-                        tbl.pos = tbl.pos + 1
-                    end
-                end
-                return pos
-            end
-            return nil -- Received crap or no tracker exists; create tracker on the first available position
-        end
-
-        ---@param pos number
-        ---@param w number
-        ---@param pos_move number?
-        ---@param panel_offset_move number?
-        function EHITrackerManager:_rearrange_trackers(pos, w, pos_move, panel_offset_move)
-            if not pos then
-                return
-            end
-            pos_move = pos_move or 1
-            panel_offset_move = panel_offset_move or self._panel_offset
-            for _, tbl in pairs(self._trackers) do
-                if tbl.pos and tbl.pos > pos then
-                    local final_x = tbl.x - w - panel_offset_move
-                    tbl.tracker:AnimateLeft(final_x)
-                    tbl.x = final_x
-                    tbl.pos = tbl.pos - pos_move
-                end
-            end
-        end
-
-        ---Call this function only from trackers themselves
-        ---@param id string
-        ---@param new_w number
-        ---@param move_the_tracker boolean?
-        function EHITrackerManager:_change_tracker_width(id, new_w, move_the_tracker)
-            local tracker = self._trackers[id]
-            if not tracker then
-                return
-            end
-            local w = tracker.w
-            local w_diff = -(new_w - w)
-            if w_diff == 0 then
-                return
-            end
-            tracker.w = new_w
-            self:_rearrange_trackers(tracker.pos, w_diff, 0, 0)
-        end
-    else -- Right to Left
-        ---@param pos number?
-        ---@param w number
-        function EHITrackerManager:_get_x(pos, w)
-            if self._n_of_trackers == 0 or pos and pos <= 0 then
-                return self._x
-            end
-            local x = 0
-            local pos_create = pos and (pos - 1) or (self._n_of_trackers - 1)
-            for _, tbl in pairs(self._trackers) do
-                if tbl.pos and tbl.pos == pos_create then
-                    x = tbl.x - w - self._panel_offset
-                    break
-                end
-            end
-            return x
-        end
-
-        ---@param pos number?
-        ---@param w number
-        function EHITrackerManager:_move_tracker(pos, w)
-            if pos and pos >= 0 and self._n_of_trackers > 0 and pos <= self._n_of_trackers then
-                local list = {} ---@type EHITrackerManager.Tracker[]
-                for _, tbl in pairs(self._trackers) do
-                    if tbl.pos then
-                        list[tbl.pos] = tbl
-                    end
-                end
-                local start_pos = 0
-                local previous_x = self._x
-                if pos > 0 then
-                    local on_pos = list[pos]
-                    if on_pos then
-                        previous_x = on_pos.x - w - self._panel_offset
-                        on_pos.tracker:AnimateLeft(previous_x)
-                        on_pos.x = previous_x
-                        on_pos.pos = on_pos.pos + 1
-                        start_pos = pos + 1
-                    else
-                        EHI:Log("[EHITrackerManager:MoveTracker()] Something happened during getting the tracker on the position! Nil was returned")
-                        EHI:Log("This shouldn't happen, returning nil value to create the tracker on the last available position")
-                        return nil
-                    end
-                end
-                for i = start_pos, self._n_of_trackers - 1, 1 do
-                    local t_pos = list[i]
-                    local final_x = previous_x - t_pos.w - self._panel_offset
-                    previous_x = final_x
-                    t_pos.tracker:AnimateLeft(final_x)
-                    t_pos.x = final_x
-                    t_pos.pos = t_pos.pos + 1
-                end
-                return pos
-            end
-            return nil -- Received crap or no tracker exists; create tracker on the first available position
-        end
-
-        ---@param pos number
-        ---@param w number
-        ---@param pos_move number?
-        ---@param panel_offset_move number?
-        function EHITrackerManager:_rearrange_trackers(pos, w, pos_move, panel_offset_move)
-            if not pos then
-                return
-            end
-            pos_move = pos_move or 1
-            panel_offset_move = panel_offset_move or self._panel_offset
-            for _, tbl in pairs(self._trackers) do
-                if tbl.pos and tbl.pos > pos then
-                    local final_x = tbl.x + w + panel_offset_move
-                    tbl.tracker:AnimateLeft(final_x)
-                    tbl.x = final_x
-                    tbl.pos = tbl.pos - pos_move
-                end
-            end
-        end
-
-        ---Call this function only from trackers themselves
-        ---@param id string
-        ---@param new_w number
-        ---@param move_the_tracker boolean?
-        function EHITrackerManager:_change_tracker_width(id, new_w, move_the_tracker)
-            local tracker = self._trackers[id]
-            if not tracker then
-                return
-            end
-            local w = tracker.w
-            local w_diff = -(new_w - w)
-            if w_diff == 0 then
-                return
-            end
-            tracker.w = new_w
-            local pos = tracker.pos
-            if move_the_tracker then
-                pos = pos - 1
-            else
-                tracker.x = tracker.x + w_diff
-            end
-            self:_rearrange_trackers(pos, w_diff, 0, 0)
+    ---@param pos_line number
+    ---@param id string? Tracker ID
+    ---@param from_f string What EHITrackerManager function called this
+    local function LogReposition_CommonData(pos, pos_line, id, from_f)
+        EHI:Log(string.format("[%s] pos: %s", from_f, tostring(pos)))
+        EHI:Log(string.format("[%s] pos_line: %d", from_f, pos_line))
+        if id then
+            EHI:Log(string.format("[%s] Tracker that caused this: %s", from_f, new_id))
         end
     end
+    EHITrackerManager._rc_params =
+    {
+        last_line = 1,
+        next_panel_offset = tweak_data.ehi.default.tracker.size_h + tweak_data.ehi.default.tracker.gap, --[[@as number]]
+        gap_scaled = tweak_data.ehi.default.tracker.gap,
+        horizontal_offset = 0
+    }
+    ---@param pos number?
+    function EHITrackerManager:_get_rc_line_index(pos)
+        return math.floor((pos or self._n_of_trackers) / self._n_of_rc)
+    end
+
+    ---@param pos number?
+    ---@param pos_line number?
+    function EHITrackerManager:_get_rc_line_and_pos_line_from_pos(pos, pos_line)
+        pos_line = pos_line or (self:_get_rc_line_index(pos) + 1)
+        return self._rc_line[pos_line], pos_line
+    end
+
+    ---@param pos_line number
+    function EHITrackerManager:_get_start_end_pos_from_pos_line(pos_line)
+        pos_line = math.max(0, pos_line - 1)
+        return self._n_of_rc * pos_line, (self._n_of_rc * (pos_line + 1)) - 1
+    end
+
+    EHITrackerManager._rc_line = {} ---@type { max_size: number, id: string }[]
+    EHITrackerManager._rc_line[1] = { max_size = 0 }
+    if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", EHI.Const.Trackers.Alignment.Vertical) then -- Vertical in VR or in non-VR
+        blt.vm.loadfile(EHI.LuaPath .. "manager/tracker/rc_vertical.lua")(EHITrackerManager)
+    else -- Horizontal
+        blt.vm.loadfile(EHI.LuaPath .. "manager/tracker/rc_horizontal.lua")(EHITrackerManager)
+    end
+else
+    blt.vm.loadfile(EHI.LuaPath .. "manager/tracker/default.lua")(EHITrackerManager)
+end
+
+function EHITrackerManager:_itemize_list_of_trackers()
+    local list = {} ---@type EHITrackerManager.Tracker[]
+    for _, tbl in pairs(self._trackers) do
+        if tbl.pos then
+            list[tbl.pos] = tbl
+        end
+    end
+    return list
 end
 
 ---@param tracker EHITracker
@@ -517,10 +339,11 @@ function EHITrackerManager:HideTracker(id)
     local tracker = self._trackers[id]
     self._trackers_to_update[id] = nil
     if tracker and tracker.pos then
-        local pos = tracker.pos
+        local pos, w = tracker.pos, tracker.w
         tracker.pos = nil
         self._n_of_trackers = self._n_of_trackers - 1
-        self:_rearrange_trackers(pos, tracker.w)
+        self:_rearrange_trackers(pos, w)
+        self:_tracker_destroyed(id, pos, w)
     end
 end
 
@@ -529,8 +352,10 @@ function EHITrackerManager:_destroy_tracker(id)
     local tracker = table.remove_key(self._trackers, id)
     self._trackers_to_update[id] = nil
     if tracker and tracker.pos then
+        local pos, w = tracker.pos, tracker.w
         self._n_of_trackers = self._n_of_trackers - 1
-        self:_rearrange_trackers(tracker.pos, tracker.w)
+        self:_rearrange_trackers(pos, w)
+        self:_tracker_destroyed(id, pos, w)
     end
 end
 
@@ -747,21 +572,6 @@ function EHITrackerManager:SetSyncData(id, ...)
 end
 
 ---@param id string
----@param data table
-function EHITrackerManager:SetTrackerToSync(id, data)
-    self._trackers_to_sync = self._trackers_to_sync or {}
-    data._id = id
-    self._trackers_to_sync[id] = data
-end
-
----@param id string
----@param data table
-function EHITrackerManager:SetTrackerToSync2(id, data)
-    self:SetTrackerToSync(id, data)
-    managers.ehi_sync:SyncTable(self._sync_tm_add_tracker, self._trackers_to_sync[id])
-end
-
----@param id string
 ---@param f string
 function EHITrackerManager:CallFunction(id, f, ...)
     local tracker = self:GetTracker(id)
@@ -805,28 +615,11 @@ do
     dofile(path .. "EHITimedTrackers.lua")
     dofile(path .. "EHIGroupTrackers.lua")
     dofile(path .. "EHIAchievementTrackers.lua")
-    dofile(path .. "EHITrophyTrackers.lua")
     dofile(path .. "EHISideJobTrackers.lua")
-    if EHI:IsXPTrackerEnabled() then
-        dofile(path .. "EHIXPTracker.lua")
-    end
-    if EHI:GetOption("show_equipment_tracker") or (EHI:GetOption("show_minion_tracker") and EHI:GetOption("show_minion_option") == 2 and not EHI:GetOption("show_minion_health")) then
-        dofile(path .. "EHIEquipmentTracker.lua")
-    end
-    if EHI:GetOption("show_equipment_tracker") then
-        dofile(path .. "EHIAggregatedEquipmentTracker.lua")
-        dofile(path .. "EHIAggregatedHealthEquipmentTracker.lua")
-        if EHI:GetOption("show_equipment_ecmjammer") or EHI:GetOption("show_equipment_ecmfeedback") then
-            dofile(path .. "EHIECMTracker.lua")
-        end
-    end
-    if EHI:GetOption("show_loot_counter") then
-        dofile(path .. "EHILootTracker.lua")
-    end
 end
 
 if _G.IS_VR then
-    return blt.vm.loadfile(EHI.LuaPath .. "EHITrackerManagerVR.lua")(EHITrackerManager)
+    return blt.vm.loadfile(EHI.LuaPath .. "vr/EHITrackerManagerVR.lua")(EHITrackerManager)
 elseif VoidUI then
     dofile(EHI.LuaPath .. "hud/tracker/void_ui.lua")
 end

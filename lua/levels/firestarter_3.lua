@@ -161,7 +161,7 @@ EHI.Mission:ParseTriggers({
     other = other
 })
 
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --units/payday2/equipment/gen_interactable_lance_large/gen_interactable_lance_large
     [104674] = { remove_vanilla_waypoint = 102633 },
     [104466] = { remove_vanilla_waypoint = 102752 }

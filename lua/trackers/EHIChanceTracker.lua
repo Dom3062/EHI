@@ -8,16 +8,17 @@ EHIChanceTracker._needs_update = false
 ---@param self EHIChanceTracker
 EHIChanceTracker._anim_chance = function(o, self)
     local chance_to_anim = self._anim_static_chance
-    self._anim_static_chance = self._chance
     if chance_to_anim ~= self._chance then
         local t = 0
         while t < 1 do
             t = t + coroutine.yield()
             local n = math.floor(math.lerp(chance_to_anim, self._chance, t))
             o:set_text(self:FormatChance(n))
+            self._anim_static_chance = n
         end
         o:set_text(self:FormatChance())
         self:FitTheText(o)
+        self._anim_static_chance = self._chance
     end
 end
 

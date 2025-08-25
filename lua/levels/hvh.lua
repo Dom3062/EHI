@@ -21,7 +21,13 @@ local achievements =
 EHI.Mission:ParseTriggers({
     achievement = achievements
 })
-EHI:ShowLootCounter({ no_max = true })
+EHI:ShowLootCounter({ no_max = true }, { element =
+{
+    EHI:GetInstanceElementID(100013, 12294),
+    EHI:GetInstanceElementID(100013, 12394),
+    EHI:GetInstanceElementID(100013, 12794),
+    EHI:GetInstanceElementID(100013, 12894)
+}, present_timer = 0 })
 
 local tbl =
 {
@@ -39,7 +45,7 @@ local tbl =
     [100029] = { ignore = true },
     [100878] = { ignore = true }
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     objective =
     {

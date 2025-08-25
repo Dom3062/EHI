@@ -15,10 +15,7 @@
     "ehi_preview": "Aperçu (Un redémarrage de la carte est nécessaire pour être appliqué)\nLe coin rouge indiquera quand le premier moniteur apparaîtra",
 
     "ehi_x_offset": "Décalage X",
-    "ehi_x_offset_desc": "Décalage X",
     "ehi_y_offset": "Décalage Y",
-    "ehi_y_offset_desc": "Décalage Y",
-
     "ehi_text_scale" : "Text Scale",
     "ehi_text_scale_desc" : "Sets text scale.\nThis feature is useful for players with modded in-game fonts",
 

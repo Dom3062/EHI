@@ -1,8 +1,8 @@
 ---@class EHITradeDelayTracker : EHITracker
 ---@field super EHITracker
 EHITradeDelayTracker = class(EHITracker)
-EHITradeDelayTracker._forced_hint_text = "trade_delay"
 EHITradeDelayTracker._needs_update = false
+EHITradeDelayTracker._forced_hint_text = "trade_delay"
 EHITradeDelayTracker._forced_icons = { "mugshot_in_custody" }
 EHITradeDelayTracker._init_create_text = false
 function EHITradeDelayTracker:post_init(params)
@@ -12,11 +12,9 @@ function EHITradeDelayTracker:post_init(params)
     self._tick = 0
     if self._SIZE_INCREASE_NEEDED then
         self:SetBGSize(self._bg_box:w() / 2)
+        self._default_bg_size = self._bg_box:w()
+        self._default_bg_size_half = self._default_bg_size / 2
     end
-    self._default_panel_w = self._panel:w()
-    self._default_bg_box_w = self._bg_box:w()
-    self._panel_half = self._default_bg_box_w / 2
-    self._panel_w = self._default_panel_w
 end
 
 function EHITradeDelayTracker:SetTextPeerColor()
@@ -59,7 +57,7 @@ end
 ---@param civilians_killed number? Defaults to `1` if not provided
 ---@param in_custody boolean?
 function EHITradeDelayTracker:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody)
-    local text = self:CreateText({ w = self._default_bg_box_w })
+    local text = self:CreateText({ w = self._default_bg_size })
     local kills = civilians_killed or 1
     self._peers[peer_id] =
     {
@@ -89,22 +87,14 @@ function EHITradeDelayTracker:RedrawPanel()
     end
 end
 
----@param addition boolean?
-function EHITradeDelayTracker:AnimateMovement(addition)
-    self:AnimatePanelWAndRefresh(self._panel_w)
-    self:ChangeTrackerWidth(self._panel_w)
-    self:AnimIconsX()
-    self:AnimateAdjustHintX(addition and self._panel_half or -self._panel_half)
-end
-
 function EHITradeDelayTracker:AlignTextOnHalfPos()
     local pos = 0
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         local peer_data = self._peers[i]
         if peer_data then
             local text = peer_data.label
-            text:set_w(self._panel_half)
-            text:set_x(self._panel_half * pos)
+            text:set_w(self._default_bg_size_half)
+            text:set_x(self._default_bg_size_half * pos)
             self:FitTheText(text)
             pos = pos + 1
         end
@@ -118,20 +108,14 @@ function EHITradeDelayTracker:Reorganize(addition)
     elseif self._n_of_peers == 2 then
         self:AlignTextOnHalfPos()
         if not addition then
-            self._panel_w = self._default_panel_w
-            self._bg_box:set_w(self._default_bg_box_w)
-            self:AnimateMovement()
+            self:AnimateMovement(self._anim_params.PanelSizeDecreaseHalf)
         end
     elseif addition then
         self:AlignTextOnHalfPos()
-        self._panel_w = self._panel_w + self._panel_half
-        self._bg_box:set_w(self._bg_box:w() + self._panel_half)
-        self:AnimateMovement(true)
+        self:AnimateMovement(self._anim_params.PanelSizeIncreaseHalf)
     else
         self:AlignTextOnHalfPos()
-        self._panel_w = self._panel_w - self._panel_half
-        self._bg_box:set_w(self._bg_box:w() - self._panel_half)
-        self:AnimateMovement()
+        self:AnimateMovement(self._anim_params.PanelSizeDecreaseHalf)
     end
 end
 
@@ -223,7 +207,7 @@ function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
         local text = peer_data.label
         text:set_color(Color.white)
         text:set_x(0)
-        text:set_w(self._default_bg_box_w)
+        text:set_w(self._default_bg_size)
         self:FitTheText(text)
     end
     self:AnimateBG()

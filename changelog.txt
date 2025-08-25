@@ -1,3 +1,11 @@
+r333 (25. 08. 2025):
+Added "Player Ping" tracker
+Added option "Number of Trackers in Rows/Columns"
+Achievements Screen: "Conspiracy Theory", "For The Mad Hatter" and "Only For Us Naughty Heisters" will show heists are missing
+Any related code to Escape Tracker will load if the option is enabled
+Reworked animation system in trackers
+Crude Awakening: Fixed an issue where Loot Counter can count only first 4 loot bags and not all of them
+
 r332 (12. 08. 2025):
 Black Cat: Fixed an issue where achievement tracker for "Master of Floatation" does not fail after alarm and throwing 8 bodybags in stealth
 

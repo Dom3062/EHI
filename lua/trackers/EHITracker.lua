@@ -36,6 +36,7 @@ local function hint_wait(o, t, self)
         o:parent():remove(o)
         self._hint = nil
         self._hint_pos = nil
+        self._parent_class:_hint_removed(self._id)
     end
 end
 ---@param o Object
@@ -51,6 +52,21 @@ local function top(o, target_y)
 end
 ---@param o Object
 ---@param target_x number
+---@param target_y number
+local function top_left(o, target_x, target_y)
+    local t, total = 0, 0.18
+    local from_x, from_y = o:x(), o:y()
+    while t < total do
+        t = t + coroutine.yield()
+        local lerp = t / total
+        o:set_x(math.lerp(from_x, target_x, lerp))
+        o:set_y(math.lerp(from_y, target_y, lerp))
+    end
+    o:set_x(target_x)
+    o:set_y(target_y)
+end
+---@param o Object
+---@param target_x number
 local function left(o, target_x)
     local t, total = 0, 0.18
     local from_x = o:x()
@@ -61,16 +77,14 @@ local function left(o, target_x)
     o:set_x(target_x)
 end
 local panel_w
-if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or EHI:IsVerticalAlignmentAndOption("tracker_vertical_w_anim") == 2 then -- Horizontal; Right to Left or Panel W anim is Right to Left and Vertical alignment
+if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", EHI.Const.Trackers.Alignment.Horizontal_RightToLeft) or EHI:IsVerticalAlignmentAndOption("tracker_vertical_w_anim") == EHI.Const.Trackers.Vertical.WidthAnim.RightToLeft then -- Horizontal; Right to Left or Panel W anim is Right to Left and Vertical alignment
     if EHI:GetOption("show_tracker_bg") then
         ---@param o Object
         ---@param target_w number
-        ---@param from_w number?
-        ---@param self EHITracker?
-        panel_w = function(o, target_w, from_w, self)
+        ---@param self EHITracker
+        panel_w = function(o, target_w, self)
             local TOTAL_T = 0.18
-            from_w = from_w or o:w()
-            local from_x = o:x()
+            local from_x, from_w = o:x(), o:w()
             local abs = -(from_w - target_w)
             local target_x = from_x + -(target_w - from_w)
             local t = (1 - abs / abs) * TOTAL_T
@@ -81,32 +95,26 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", 4) or 
                 o:set_x(math.lerp(from_x, target_x, lerp))
                 o:set_w(math.lerp(from_w, target_w, lerp))
             end
-            if self then
-                self:RedrawPanel()
-            end
+            self:RedrawPanel()
         end
     else -- No need to animate as the background is not visible
         ---@param o Object
         ---@param target_w number
-        ---@param from_w number?
-        ---@param self EHITracker?
-        panel_w = function(o, target_w, from_w, self)
-            from_w = from_w or o:w()
+        ---@param self EHITracker
+        panel_w = function(o, target_w, self)
+            local from_w = o:w()
             o:set_x(o:x() + -(target_w - from_w))
             o:set_w(target_w)
-            if self then
-                self:RedrawPanel()
-            end
+            self:RedrawPanel()
         end
     end
 elseif EHI:GetOption("show_tracker_bg") then
     ---@param o Object
     ---@param target_w number
-    ---@param from_w number?
-    ---@param self EHITracker?
-    panel_w = function(o, target_w, from_w, self)
+    ---@param self EHITracker
+    panel_w = function(o, target_w, self)
         local TOTAL_T = 0.18
-        from_w = from_w or o:w()
+        local from_w = o:w()
         local abs = -(from_w - target_w)
         local t = (1 - abs / abs) * TOTAL_T
         while TOTAL_T > t do
@@ -115,20 +123,15 @@ elseif EHI:GetOption("show_tracker_bg") then
             local lerp = t / TOTAL_T
             o:set_w(math.lerp(from_w, target_w, lerp))
         end
-        if self then
-            self:RedrawPanel()
-        end
+        self:RedrawPanel()
     end
 else -- No need to animate as the background is not visible
     ---@param o Object
     ---@param target_w number
-    ---@param from_w number?
-    ---@param self EHITracker?
-    panel_w = function(o, target_w, from_w, self)
+    ---@param self EHITracker
+    panel_w = function(o, target_w, self)
         o:set_w(target_w)
-        if self then
-            self:RedrawPanel()
-        end
+        self:RedrawPanel()
     end
 end
 ---@param o Object
@@ -142,6 +145,28 @@ local function icon_x(o, target_x)
         t = math.min(t + dt, TOTAL_T)
         local lerp = t / TOTAL_T
         o:set_x(math.lerp(from_x, target_x, lerp))
+    end
+end
+---@param o Text
+---@param target_x number
+---@param target_w number
+---@param fit_the_text_after_anim boolean
+---@param self EHITracker
+local function icon_move_x_w(o, target_x, target_w, fit_the_text_after_anim, self)
+    local TOTAL_T = 0.18
+    local from_x, from_w = o:x(), o:w()
+    local t_x = (1 - math.abs(from_x - target_x) / math.abs(from_x - target_x)) * TOTAL_T
+    local t_w = (1 - math.abs(from_w - target_w) / math.abs(from_w - target_w)) * TOTAL_T
+    local t = math.max(t_x, t_w)
+    while TOTAL_T > t do
+        local dt = coroutine.yield()
+        t = math.min(t + dt, TOTAL_T)
+        local lerp = t / TOTAL_T
+        o:set_x(math.lerp(from_x, target_x, lerp))
+        o:set_w(math.lerp(from_w, target_w, lerp))
+    end
+    if fit_the_text_after_anim then
+        self:FitTheText(o)
     end
 end
 ---@param o Object
@@ -238,23 +263,21 @@ end
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
 ---@field _forced_icon_color Color[]? Forces specific icon color in the tracker
----@field _panel_from_w number? Used in Panel Width animation
----@field _panel_override_w number?
 ---@field _hint_no_localization boolean?
 ---@field _hint_vanilla_localization boolean?
 EHITracker = class()
 EHITracker._needs_update = true
 EHITracker._fade_time = 5
-EHITracker._gap = tweak_data.ehi.default.tracker.gap
-EHITracker._icon_size = tweak_data.ehi.default.tracker.size_h
 EHITracker._scale = EHI:GetOption(_G.IS_VR and "vr_scale" or "scale") --[[@as number]]
 EHITracker._text_scale = EHI:GetOption("text_scale") --[[@as number]]
+-- 32 + 5
+EHITracker._icon_gap_size = tweak_data.ehi.default.tracker.size_h + tweak_data.ehi.default.tracker.gap
 -- (32 + 5) * self._scale
-EHITracker._icon_gap_size_scaled = (EHITracker._icon_size + EHITracker._gap) * EHITracker._scale
+EHITracker._icon_gap_size_scaled = EHITracker._icon_gap_size * EHITracker._scale
 -- 32 * self._scale
-EHITracker._icon_size_scaled = EHITracker._icon_size * EHITracker._scale
+EHITracker._icon_size_scaled = tweak_data.ehi.default.tracker.size_h * EHITracker._scale
 -- 5 * self._scale
-EHITracker._gap_scaled = EHITracker._gap * EHITracker._scale
+EHITracker._gap_scaled = tweak_data.ehi.default.tracker.gap * EHITracker._scale
 EHITracker._default_bg_size = tweak_data.ehi.default.tracker.size_w * EHITracker._scale
 EHITracker._default_bg_size_half = EHITracker._default_bg_size / 2
 EHITracker._text_color = Color.white
@@ -264,9 +287,20 @@ else
     EHITracker._hint_disabled = true
 end
 EHITracker._init_create_text = true
-if EHI:GetOption("show_icon_position") == 1 then
+if EHI:GetOption("show_icon_position") == EHI.Const.Trackers.IconStartPosition.Left then
     EHITracker._ICON_LEFT_SIDE_START = true
 end
+-- Default size is based on default tracker size with one icon
+EHITracker.__default_panel_size = EHITracker._default_bg_size + EHITracker._icon_gap_size_scaled
+---@enum EHITracker.AnimParams
+EHITracker._anim_params = {
+    IconCreated = 1,
+    IconDeleted = 2,
+    PanelSizeIncrease = 3, -- 64 * scale (Same size as default BG size)
+    PanelSizeIncreaseHalf = 4, -- 32 * scale (Half size as default BG size)
+    PanelSizeDecrease = 5, -- 64 * scale (Same size as default BG size)
+    PanelSizeDecreaseHalf = 6 -- 32 * scale (Half size as default BG size)
+}
 EHITracker.make_fine_text = BlackMarketGui.make_fine_text
 ---@param panel Panel Main panel provided by `EHITrackerManager`
 ---@param params EHITracker.params
@@ -274,30 +308,28 @@ function EHITracker:init(panel, params)
     self:pre_init(params)
     self._id = params.id
     self._icons = {} ---@type Bitmap[]
-    self._n_of_icons = 0
-    local gap = 0
+    local n_of_icons = 0
     local tracker_icons = self._forced_icons or params.icons
     if type(tracker_icons) == "table" then
-        self._n_of_icons = #tracker_icons
-        if self._ONE_ICON and self._n_of_icons > 1 then
-            self._n_of_icons = 1
+        n_of_icons = #tracker_icons
+        if self._ONE_ICON and n_of_icons > 1 then
+            n_of_icons = 1
         end
-        if self._ICON_LEFT_SIDE_START and self._VERTICAL_ANIM_W_LEFT and self._n_of_icons > 1 and not self._HORIZONTAL_ALINGMENT then
-            self.__vertical_anim_w_left_diff = -(self._icon_gap_size_scaled * (self._n_of_icons - 1))
+        if self._ICON_LEFT_SIDE_START and self._VERTICAL_ANIM_W_LEFT and n_of_icons > 1 and not self._HORIZONTAL_ALIGNMENT then
+            self.__vertical_anim_w_left_diff = -(self._icon_gap_size_scaled * (n_of_icons - 1))
         end
-        gap = self._gap * self._n_of_icons
     end
     self._time = self._forced_time or params.time or 0
     self._panel = panel:panel({
         x = 0,
         y = 0,
-        w = (64 + gap + (self._icon_size * self._n_of_icons)) * self._scale,
+        w = (64 + (self._icon_gap_size * n_of_icons)) * self._scale,
         h = self._icon_size_scaled,
         alpha = 0,
         visible = true
     })
     self._bg_box = CreateHUDBGBox(self._panel, {
-        x = self._ICON_LEFT_SIDE_START and (self._icon_gap_size_scaled * self._n_of_icons) or 0,
+        x = self._ICON_LEFT_SIDE_START and (self._icon_gap_size_scaled * n_of_icons) or 0,
         y = 0,
         w = self._default_bg_size,
         h = self._icon_size_scaled
@@ -315,7 +347,7 @@ function EHITracker:init(panel, params)
         })
         self:FitTheText()
     end
-    if self._n_of_icons > 0 then
+    if n_of_icons > 0 then
         self:CreateIcons(tracker_icons, params.first_icon_pos) ---@diagnostic disable-line
     end
     self:OverridePanel()
@@ -339,11 +371,120 @@ end
 function EHITracker:OverridePanel()
 end
 
-function EHITracker:PrecomputeDoubleSize()
-    self._bg_box_w = self._bg_box:w()
-    self._bg_box_double = self._default_bg_size * 2
-    self._panel_w = self._panel:w()
-    self._panel_double = self._bg_box_double + (self._icon_gap_size_scaled * self._n_of_icons)
+---@param anim_type EHITracker.AnimParams
+function EHITracker:SetMovement(anim_type)
+    if anim_type == self._anim_params.IconCreated then
+        self:_set_icons_x()
+        if self._ICON_LEFT_SIDE_START and not self._VERTICAL_ANIM_W_LEFT then
+            self._bg_box:set_x(self._bg_box:x() + self._icon_gap_size_scaled)
+            if self._HORIZONTAL_RIGHT_TO_LEFT then
+                self._panel:set_x(self._panel:x() - self._icon_gap_size_scaled)
+            end
+        end
+        self:_change_tracker_width(self:GetTrackerSize(), true)
+        if self._HORIZONTAL_ALIGNMENT then
+            self:_adjust_horizontal_hint_x()
+        elseif not self._VERTICAL_ANIM_W_LEFT then
+            self:AdjustHintX(self._icon_gap_size_scaled)
+        end
+    elseif anim_type == self._anim_params.IconDeleted then
+    elseif anim_type == self._anim_params.PanelSizeIncrease or anim_type == self._anim_params.PanelSizeIncreaseHalf then
+        local size = anim_type == self._anim_params.PanelSizeIncrease and self._default_bg_size or self._default_bg_size_half
+        self:SetBGSize(size, "add")
+        self:_change_tracker_width()
+        if self._VERTICAL_ANIM_W_LEFT or self._HORIZONTAL_RIGHT_TO_LEFT then
+            self._panel:set_x(self._panel:x() - size)
+        end
+        if self._HORIZONTAL_ALIGNMENT then
+            self:_adjust_horizontal_hint_x()
+        else
+            self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and -size or size)
+        end
+    elseif anim_type == self._anim_params.PanelSizeDecrease or anim_type == self._anim_params.PanelSizeDecreaseHalf then
+        local size = anim_type == self._anim_params.PanelSizeDecrease and self._default_bg_size or self._default_bg_size_half
+        self:SetBGSize(size, "sub")
+        self:_change_tracker_width()
+        if self._VERTICAL_ANIM_W_LEFT or self._HORIZONTAL_RIGHT_TO_LEFT then
+            self._panel:set_x(self._panel:x() + size)
+        end
+        if self._HORIZONTAL_ALIGNMENT then
+            self:_adjust_horizontal_hint_x()
+        elseif self._VERTICAL_ANIM_W_LEFT then
+            self:AdjustHintX(size)
+        else
+            self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and size or -size)
+        end
+    end
+end
+
+---@param anim_type EHITracker.AnimParams
+function EHITracker:AnimateMovement(anim_type)
+    if anim_type == self._anim_params.IconCreated then
+        self:_anim_icons_x(self._VERTICAL_ANIM_W_LEFT and 0 or self._icon_gap_size_scaled)
+        if self._ICON_LEFT_SIDE_START and not self._VERTICAL_ANIM_W_LEFT then
+            self:_animate_bg_left(self._bg_box:x() + self._icon_gap_size_scaled)
+        end
+        self:_change_tracker_width(self:GetTrackerSize(), true)
+        if not self._VERTICAL_ANIM_W_LEFT or (self._VERTICAL_ANIM_W_LEFT and self._ICON_LEFT_SIDE_START) then
+            self:_animate_adjust_hint_x(-self._icon_gap_size_scaled)
+        end
+    elseif anim_type == self._anim_params.IconDeleted then
+        self:_anim_icons_x(self._VERTICAL_ANIM_W_LEFT and self._icon_gap_size_scaled or 0)
+        if self._ICON_LEFT_SIDE_START and not self._VERTICAL_ANIM_W_LEFT then
+            self:_animate_bg_left(self._bg_box:x() - self._icon_gap_size_scaled)
+        end
+        self:_change_tracker_width(self:GetTrackerSize(), true)
+        if not self._VERTICAL_ANIM_W_LEFT or (self._VERTICAL_ANIM_W_LEFT and self._ICON_LEFT_SIDE_START) then
+            self:_animate_adjust_hint_x(self._icon_gap_size_scaled)
+        end
+    elseif anim_type == self._anim_params.PanelSizeIncrease or anim_type == self._anim_params.PanelSizeIncreaseHalf then
+        local size = anim_type == self._anim_params.PanelSizeIncrease and self._default_bg_size or self._default_bg_size_half
+        self:SetBGSize(size, "add", true)
+        local new_panel_w = self:GetTrackerSize()
+        if not (self._VERTICAL_ANIM_W_LEFT and self._HORIZONTAL_RIGHT_TO_LEFT) then
+            self:_anim_icons_x()
+        end
+        self:_animate_panel_w(new_panel_w)
+        self:_change_tracker_width(new_panel_w)
+        self:_animate_adjust_hint_x(-size)
+    elseif anim_type == self._anim_params.PanelSizeDecrease or anim_type == self._anim_params.PanelSizeDecreaseHalf then
+        local size = anim_type == self._anim_params.PanelSizeDecrease and self._default_bg_size or self._default_bg_size_half
+        self:SetBGSize(size, "sub", true)
+        local new_panel_w = self:GetTrackerSize()
+        if not (self._VERTICAL_ANIM_W_LEFT and self._HORIZONTAL_RIGHT_TO_LEFT) then
+            self:_anim_icons_x()
+        end
+        self:_animate_panel_w(new_panel_w)
+        self:_change_tracker_width(new_panel_w)
+        self:_animate_adjust_hint_x(size)
+    end
+end
+
+---@param i number
+---@param set_next_icon_visible boolean?
+function EHITracker:RemoveIconAndAnimateMovement(i, set_next_icon_visible)
+    local icon = table.remove(self._icons, i) ---@cast icon Bitmap?
+    if icon then
+        self._panel:remove(icon)
+        table.remove(self._icon_anims or {}, i)
+        if set_next_icon_visible then
+            local next_icon = self._icons[i]
+            if next_icon then
+                next_icon:set_visible(true)
+            end
+        end
+        self:AnimateMovement(self._anim_params.IconDeleted)
+    end
+end
+
+---@param anim_type EHITracker.AnimParams
+---@param set_movement_condition boolean
+function EHITracker:AnimateOrSetMovement(anim_type, set_movement_condition)
+    if set_movement_condition then
+        self:SetMovement(anim_type)
+    else
+        self:AnimateMovement(anim_type)
+    end
 end
 
 ---@param x number
@@ -389,6 +530,40 @@ function EHITracker:AnimateTop(target_y)
 end
 
 ---@param target_x number
+---@param target_y number
+---@param panel_width number
+function EHITracker:AnimateTopLeft(target_x, target_y, panel_width)
+    if self._VERTICAL_ANIM_W_LEFT then
+        local diff = panel_width - self.__default_panel_size
+        if diff ~= 0 then -- Our panel is smaller or wider than default size, we need to adjust the target_x
+            target_x = target_x - diff
+        end
+    end
+    if self._anim_move then
+        self._panel:stop(self._anim_move)
+    end
+    self._anim_move = self._panel:animate(top_left, target_x, target_y)
+    if self._hint then
+        if self._anim_hint_move then
+            self._hint:stop(self._anim_hint_move)
+        end
+        local target_hint_x, target_hint_y
+        if self._VERTICAL_ANIM_W_LEFT then
+            target_hint_x = target_x - self._hint:w() - self._gap_scaled
+        else
+            target_hint_x = target_x + panel_width
+        end
+        if self._HORIZONTAL_ALIGNMENT then
+            target_hint_y = target_y + self._icon_gap_size_scaled
+        else
+            target_hint_y = target_y - self._hint_pos.y_diff
+        end
+        self._anim_hint_move = self._hint:animate(top_left, target_hint_x, target_hint_y)
+        self._hint_pos.x = target_hint_x
+    end
+end
+
+---@param target_x number
 function EHITracker:AnimateLeft(target_x)
     if self._anim_move then
         self._panel:stop(self._anim_move)
@@ -404,24 +579,42 @@ function EHITracker:AnimateLeft(target_x)
 end
 
 ---@param target_w number
-function EHITracker:AnimatePanelW(target_w)
+function EHITracker:_animate_panel_w(target_w)
     if self._anim_set_w then
         self._panel:stop(self._anim_set_w)
     end
-    self._anim_set_w = self._panel:animate(panel_w, target_w, self._panel_from_w)
+    self._anim_set_w = self._panel:animate(panel_w, target_w, self)
 end
 
----@param target_w number
-function EHITracker:AnimatePanelWAndRefresh(target_w)
-    if self._anim_set_w then
-        self._panel:stop(self._anim_set_w)
+---@param target_x number
+---@param text Text?
+function EHITracker:AnimateTextPositionLeft(target_x, text)
+    text = text or self._text
+    local key = text:key()
+    self.__text_anims = self.__text_anims or {}
+    if self.__text_anims[key] then
+        text:stop(self.__text_anims[key])
     end
-    self._anim_set_w = self._panel:animate(panel_w, target_w, self._panel_from_w, self)
+    self.__text_anims[key] = text:animate(left, target_x)
+end
+
+---@param target_x number
+---@param target_w number
+---@param text Text?
+---@param fit_the_text_after_anim boolean?
+function EHITracker:AnimateTextPosition(target_x, target_w, text, fit_the_text_after_anim)
+    text = text or self._text
+    local key = text:key()
+    self.__text_anims = self.__text_anims or {}
+    if self.__text_anims[key] then
+        text:stop(self.__text_anims[key])
+    end
+    text:animate(icon_move_x_w, target_x, target_w, fit_the_text_after_anim, self)
 end
 
 ---@param previous_icon Bitmap?
 ---@param icon Bitmap? Defaults to `self._icons[1]` if not provided
-function EHITracker:SetIconX(previous_icon, icon)
+function EHITracker:_set_icon_x(previous_icon, icon)
     icon = icon or self._icons[1]
     if icon then
         local x = previous_icon and previous_icon:right() or (self._ICON_LEFT_SIDE_START and 0 or self._bg_box:w())
@@ -430,20 +623,17 @@ function EHITracker:SetIconX(previous_icon, icon)
     end
 end
 
-function EHITracker:SetIconsX()
+function EHITracker:_set_icons_x()
     local previous_icon ---@type Bitmap?
     for _, icon in ipairs(self._icons) do
-        self:SetIconX(previous_icon, icon)
+        self:_set_icon_x(previous_icon, icon)
         previous_icon = icon
     end
 end
 
----@param x number?
-function EHITracker:AnimIconsX(x)
-    if self._ICON_LEFT_SIDE_START then
-        return
-    end
-    x = x or self._bg_box:w() + self._gap_scaled
+---@param x_offset number?
+function EHITracker:_anim_icons_x(x_offset)
+    local x = (self._ICON_LEFT_SIDE_START and 0 or self._bg_box:w() + self._gap_scaled) + (x_offset or 0)
     self._icon_anims = self._icon_anims or {}
     for i, icon in ipairs(self._icons) do
         if self._icon_anims[i] then
@@ -452,6 +642,14 @@ function EHITracker:AnimIconsX(x)
         local pos = i - 1
         self._icon_anims[i] = icon:animate(icon_x, x + (self._icon_gap_size_scaled * pos))
     end
+end
+
+---@param target_x number
+function EHITracker:_animate_bg_left(target_x)
+    if self._anim_bg_left then
+        self._bg_box:stop(self._anim_bg_left)
+    end
+    self._anim_bg_left = self._bg_box:animate(left, target_x)
 end
 
 if EHI:GetOption("time_format") == 1 then
@@ -474,13 +672,14 @@ if EHI:GetOption("show_one_icon") then
     ---@param first_icon_pos number?
     function EHITracker:CreateIcons(tracker_icons, first_icon_pos)
         local icon_pos = self._ICON_LEFT_SIDE_START and 0 or (self._bg_box:w() + self._gap_scaled)
-        local first_icon = tracker_icons[first_icon_pos or 1]
+        first_icon_pos = first_icon_pos or 1
+        local first_icon = tracker_icons[first_icon_pos]
         if type(first_icon) == "string" then
             local texture, rect = GetIcon(first_icon)
-            self:CreateIcon(1, texture, rect, icon_pos)
+            self:CreateIcon(1, first_icon_pos, texture, rect, icon_pos)
         elseif type(first_icon) == "table" then
             local texture, rect = GetIcon(first_icon.icon or "default")
-            self:CreateIcon(1, texture, rect, icon_pos, first_icon.visible,
+            self:CreateIcon(1, first_icon_pos, texture, rect, icon_pos, first_icon.visible,
             first_icon.peer_id and self._parent_class:GetPeerColorByPeerID(first_icon.peer_id) or first_icon.color, first_icon.alpha)
         end
     end
@@ -492,10 +691,10 @@ else
         for i, v in ipairs(tracker_icons) do
             if type(v) == "string" then
                 local texture, rect = GetIcon(v)
-                self:CreateIcon(i, texture, rect, icon_pos)
+                self:CreateIcon(i, i, texture, rect, icon_pos)
             elseif type(v) == "table" then -- table
                 local texture, rect = GetIcon(v.icon or "default")
-                self:CreateIcon(i, texture, rect, icon_pos, v.visible, v.peer_id and self._parent_class:GetPeerColorByPeerID(v.peer_id) or v.color, v.alpha)
+                self:CreateIcon(i, i, texture, rect, icon_pos, v.visible, v.peer_id and self._parent_class:GetPeerColorByPeerID(v.peer_id) or v.color, v.alpha)
             end
             icon_pos = icon_pos + self._icon_gap_size_scaled
         end
@@ -503,32 +702,26 @@ else
 end
 
 ---@param i number
+---@param i_pos number
 ---@param texture string
 ---@param texture_rect number[]
 ---@param x number
 ---@param visible boolean?
 ---@param color Color?
 ---@param alpha number?
-function EHITracker:CreateIcon(i, texture, texture_rect, x, visible, color, alpha)
+---@param layer integer?
+function EHITracker:CreateIcon(i, i_pos, texture, texture_rect, x, visible, color, alpha, layer)
     self._icons[i] = self._panel:bitmap({
         texture = texture,
         texture_rect = texture_rect,
-        color = self._forced_icon_color and self._forced_icon_color[i] or color or Color.white,
+        color = self._forced_icon_color and self._forced_icon_color[i_pos] or color or Color.white,
         alpha = alpha or 1,
+        layer = layer or 0,
         visible = visible ~= false,
         x = x,
         w = self._icon_size_scaled,
         h = self._icon_size_scaled
     })
-end
-
----@param i number
-function EHITracker:RemoveIcon(i)
-    local icon = table.remove(self._icons, i) ---@cast icon Bitmap?
-    if icon then
-        self._panel:remove(icon)
-        table.remove(self._icon_anims or {}, i)
-    end
 end
 
 ---@param params EHITracker.CreateText?
@@ -602,24 +795,33 @@ function EHITracker:AdjustHintX(x)
     self._hint_pos.x = new_x
 end
 
-if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] = true, [2] = true }) then
-    if EHI:GetOption("tracker_vertical_w_anim") == 2 then
-        EHITracker._VERTICAL_ANIM_W_LEFT = true
-        ---Adjusts hint X position; this function needs to run last after all panel animations are called
-        ---@param x number
-        ---@param icons_moved boolean?
-        function EHITracker:AnimateAdjustHintX(x, icons_moved)
-            if not self._hint or (icons_moved and not self._ICON_LEFT_SIDE_START) then
-                return
-            end
-            if self._anim_hint_x then
-                self._hint:stop(self._anim_hint_x)
-            end
-            local new_x = self._hint_pos.x - x
-            self._anim_hint_x = self._hint:animate(left, new_x)
-            self._hint_pos.x = new_x
-        end
+---Adjusts hint X position; this function needs to run last after all panel animations are called
+---@param x number
+function EHITracker:_animate_adjust_hint_x(x)
+    if not self._hint then
+        return
+    end
+    if self._HORIZONTAL_ALIGNMENT then
+        self:_adjust_horizontal_hint_x()
+        return
+    end
+    if self._anim_hint_x then
+        self._hint:stop(self._anim_hint_x)
+    end
+    local new_x
+    if self._VERTICAL_ANIM_W_LEFT then
+        new_x = self._hint_pos.x + x
+    else
+        new_x = self._hint_pos.x - x
+    end
+    self._anim_hint_x = self._hint:animate(left, new_x)
+    self._hint_pos.x = new_x
+end
 
+if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", EHI.Const.Trackers.Alignment.Vertical) then
+    EHITracker._VERTICAL_ALIGNMENT = true
+    if EHI:GetOption("tracker_vertical_w_anim") == EHI.Const.Trackers.Vertical.WidthAnim.RightToLeft then
+        EHITracker._VERTICAL_ANIM_W_LEFT = true
         ---@param x number World X
         ---@param y number World Y
         function EHITracker:PositionHint(x, y)
@@ -633,25 +835,8 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
             if self._hint_t > 0 and not self._delay_hint then
                 self._hint:animate(hint_wait, self._hint_t, self)
             end
-            self._hint_positioned = true
-            self:HintPositioned()
         end
     else
-        ---Adjusts hint X position; this function needs to run last after all panel animations are called
-        ---@param x number
-        ---@param icons_moved boolean?
-        function EHITracker:AnimateAdjustHintX(x, icons_moved)
-            if not self._hint or (self._ICON_LEFT_SIDE_START and icons_moved) then
-                return
-            end
-            if self._anim_hint_x then
-                self._hint:stop(self._anim_hint_x)
-            end
-            local new_x = self._hint_pos.x + x
-            self._anim_hint_x = self._hint:animate(left, new_x)
-            self._hint_pos.x = new_x
-        end
-
         ---@param x number World X
         ---@param y number World Y
         function EHITracker:PositionHint(x, y)
@@ -659,19 +844,17 @@ if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [1] 
                 return
             end
             self._hint:set_center_y(self._panel:center_y())
-            local hint_x = self._panel_override_w or (self._bg_box:w() + (self._icon_gap_size_scaled * self._n_of_icons))
-            self._hint:set_x(x + hint_x + 3)
+            self._hint:set_x(x + self:GetTrackerSize() + 3)
             self._hint_pos.x = self._hint:x()
             self._hint_pos.y_diff = y - self._hint:y()
             if self._hint_t > 0 and not self._delay_hint then
                 self._hint:animate(hint_wait, self._hint_t, self)
             end
-            self:HintPositioned()
         end
     end
 else
-    EHITracker._HORIZONTAL_ALINGMENT = true
-    EHITracker._HORIZONTAL_LEFT_TO_RIGHT = true
+    EHITracker._HORIZONTAL_RIGHT_TO_LEFT = EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", EHI.Const.Trackers.Alignment.Horizontal_RightToLeft)
+    EHITracker._HORIZONTAL_ALIGNMENT = true
     ---@param x number World X
     ---@param y number World Y
     function EHITracker:PositionHint(x, y)
@@ -682,87 +865,55 @@ else
         self._hint:set_x(x)
         self._hint_pos.x = x
         self._hint:set_y(y_new)
-        self._hint:set_w(self._panel_override_w or (self._bg_box:w() + (self._icon_gap_size_scaled * self._n_of_icons)))
+        self._hint:set_w(self:GetTrackerSize())
         self:FitTheText(self._hint, 18)
         if self._hint_t > 0 and not self._delay_hint then
             self._hint:animate(hint_wait, self._hint_t, self)
         end
-        self:HintPositioned()
-    end
-
-    if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", { [3] = true }) then
-        ---Adjusts hint X position; this function needs to run last after all panel animations are called
-        ---@param x number
-        ---@param icons_moved boolean?
-        function EHITracker:AnimateAdjustHintX(x, icons_moved)
-            if not self._hint then
-                return
-            end
-            self._hint:set_w(self._panel_override_w or self:GetTrackerSize())
-            self:FitTheText(self._hint, 18)
-            self._hint:set_x(self._hint_pos.x)
-        end
-    else
-        EHITracker._HORIZONTAL_RIGHT_TO_LEFT = true
-        ---Adjusts hint X position; this function needs to run last after all panel animations are called
-        ---@param x number
-        ---@param icons_moved boolean?
-        function EHITracker:AnimateAdjustHintX(x, icons_moved)
-            if not self._hint then
-                return
-            end
-            self._hint:set_w(self._panel_override_w or self:GetTrackerSize())
-            self:FitTheText(self._hint, 18)
-            self._hint:set_x(self._parent_class._trackers[self._id].x) -- There should be a better way to do this
-        end
     end
 end
 
-if EHITracker._VERTICAL_ANIM_W_LEFT then
-    ---@param text string
-    function EHITracker:UpdateHint(text)
-        if self._hint_disabled or not text or not self._hint then
-            return
-        end
-        local loc
-        if self._hint_no_localization then
-            loc = text
-        else
-            loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
-        end
-        self._hint:set_text(managers.localization:text(loc))
-        self:make_fine_text(self._hint)
-        if self._hint_positioned then
-            local x = self._panel:x() - self._hint:w() - 3
-            self._hint:set_x(x)
-            self._hint_pos.x = x
-        end
+---Adjusts hint X position; this function needs to run last after all panel animations are called
+function EHITracker:_adjust_horizontal_hint_x()
+    if not self._hint then
+        return
     end
-else
-    ---@param text string
-    function EHITracker:UpdateHint(text)
-        if self._hint_disabled or not text or not self._hint then
-            return
-        end
-        local loc
-        if self._hint_no_localization then
-            loc = text
-        else
-            loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
-        end
-        self._hint:set_text(managers.localization:text(loc))
-        self:make_fine_text(self._hint)
+    self._hint:set_w(self:GetTrackerSize())
+    self:FitTheText(self._hint, 18)
+    if self._HORIZONTAL_RIGHT_TO_LEFT then
+        self._hint:set_x(self._parent_class._trackers[self._id].x) -- There should be a better way to do this
+    else
         self._hint:set_x(self._hint_pos.x)
     end
 end
 
-function EHITracker:HintPositioned()
+---@param text string
+function EHITracker:UpdateHint(text)
+    if self._hint_disabled or not text or not self._hint then
+        return
+    end
+    local loc
+    if self._hint_no_localization then
+        loc = text
+    else
+        loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
+    end
+    self._hint:set_text(managers.localization:text(loc))
+    self:make_fine_text(self._hint)
+    if self._VERTICAL_ANIM_W_LEFT then
+        local x = self._panel:x() - self._hint:w() - 3
+        self._hint:set_x(x)
+        self._hint_pos.x = x
+    else
+        self._hint:set_x(self._hint_pos.x)
+    end
+    self._parent_class:_hint_updated(self._id, self._hint:w())
 end
 
 ---@param w number? If not provided, `w` is taken from the BG
 ---@param type string?
 ---|"add" # Adds `w` to the BG; default `type` if not provided
----|"short" # Shorts `w` on the BG
+---|"sub" # Subs `w` on the BG
 ---|"set" # Sets `w` on the BG
 ---@param dont_recalculate_panel_w boolean? Setting this to `true` will not recalculate the total width on the main panel
 ---@param dont_move_icons boolean? Setting this to `true` will not move icons when size of the panel changes
@@ -771,20 +922,18 @@ function EHITracker:SetBGSize(w, type, dont_recalculate_panel_w, dont_move_icons
     w = w or original_w
     if not type or type == "add" then
         self._bg_box:set_w(self._bg_box:w() + w)
-    elseif type == "short" then
+    elseif type == "sub" then
         self._bg_box:set_w(self._bg_box:w() - w)
     else
         self._bg_box:set_w(w)
     end
     if not dont_recalculate_panel_w then
-        local start = self._bg_box:w()
-        local icons_with_gap = self._icon_gap_size_scaled * self._n_of_icons
-        self._panel:set_w(start + icons_with_gap)
+        self._panel:set_w(self:GetTrackerSize())
         if not dont_move_icons then
-            self:SetIconsX()
+            self:_set_icons_x()
         end
     end
-    if self._VERTICAL_ANIM_W_LEFT and self._panel:alpha() == 0 then
+    if self._VERTICAL_ANIM_W_LEFT and self._panel:alpha() <= 0 then
         -- Panel is not visible, adjustment will be performed when manager calls the `EHITracker:PosAndSetVisible()` function  
         -- Otherwise you need to adjust panel position via animation
         self.__vertical_anim_w_left_diff = (self.__vertical_anim_w_left_diff or 0) + original_w - self._bg_box:w()
@@ -970,14 +1119,10 @@ function EHITracker:DelayForcedDelete()
     self:AddTrackerToUpdate()
 end
 
----@param w number? If not provided the width is then called from `EHITracker:GetPanelW()`
+---@param w number? If not provided the width is then called from `EHITracker:GetTrackerSize()`
 ---@param move_the_tracker boolean? If the tracker should move too, useful if number icons change and tracker needs to be rearranged to fit properly
-function EHITracker:ChangeTrackerWidth(w, move_the_tracker)
-    self._parent_class:_change_tracker_width(self._id, w or self:GetPanelW(), move_the_tracker)
-end
-
-function EHITracker:GetPanelW()
-    return self._panel_override_w or self._panel:w()
+function EHITracker:_change_tracker_width(w, move_the_tracker)
+    self._parent_class:_change_tracker_width(self._id, w or self:GetTrackerSize(), move_the_tracker)
 end
 
 function EHITracker:CleanupOnHide()
@@ -1045,15 +1190,21 @@ end
 function EHITracker:OnAlarm()
 end
 
+function EHITracker:MissionEnd()
+end
+
 function EHITracker:RedrawPanel()
 end
 
----Returns current real tracker size and not of what is reported via `self._panel:w()`
----@param n_of_icons number?
-function EHITracker:GetTrackerSize(n_of_icons)
-    local w = self._bg_box:w()
-    local n = n_of_icons or self._n_of_icons
-    return w + self._gap_scaled + (n * self._icon_gap_size_scaled)
+---Returns current real tracker size
+function EHITracker:GetTrackerSize()
+    local n = 0
+    for _, icon in ipairs(self._icons) do
+        if icon:visible() then
+            n = n + 1
+        end
+    end
+    return self._bg_box:w() + (n * self._icon_gap_size_scaled)
 end
 
 ---@param create_f fun(panel: Panel, params: table): Panel
@@ -1063,8 +1214,4 @@ function EHITracker.SetCustomBGFunctions(create_f, animate_f)
     if EHITracker._anim_bg_attention then
         EHITracker._anim_bg_attention = animate_f
     end
-end
-
-if EHITracker._ICON_LEFT_SIDE_START then
-    EHITracker.AnimatePanelW = EHITracker.AnimatePanelWAndRefresh
 end

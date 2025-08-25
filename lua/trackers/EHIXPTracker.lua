@@ -24,11 +24,10 @@ function EHIXPTracker:pre_init(params)
 end
 
 function EHIXPTracker:OverridePanel()
-    if self._xp and self._xp >= 1000000 then
+    if self._xp and math.abs(self._xp) >= 1000000 then
         self._size_increased = true
-        self:SetBGSize(self._bg_box:w() / 2)
+        self:SetMovement(self._anim_params.PanelSizeIncreaseHalf)
         self._text:set_w(self._bg_box:w())
-        self:SetIconsX()
         self:SetAndFitTheText()
     end
 end
@@ -47,16 +46,10 @@ end
 function EHIXPTracker:AddXP(amount)
     self._fade_time = 6
     local new_xp = self._xp + amount
-    if new_xp >= 1000000 and not self._size_increased then
+    if math.abs(new_xp) >= 1000000 and not self._size_increased then
         self._size_increased = true
-        local w = self._bg_box:w() / 2
-        self:SetBGSize(w, "add", true)
+        self:AnimateMovement(self._anim_params.PanelSizeIncreaseHalf)
         self._text:set_w(self._bg_box:w())
-        local panel_w = self._panel:w() + w
-        self:AnimatePanelWAndRefresh(panel_w)
-        self:ChangeTrackerWidth(panel_w)
-        self:AnimIconsX()
-        self:AnimateAdjustHintX(w)
     end
     self._text:stop()
     self._text:animate(self._anim_xp, self._xp, new_xp, self)
@@ -176,7 +169,7 @@ function EHITotalXPTracker:update(dt)
 end
 
 function EHITotalXPTracker:OverridePanel()
-    self:SetBGSize(self._bg_box:w() / 2)
+    self:SetMovement(self._anim_params.PanelSizeIncreaseHalf)
     self._text:set_w(self._bg_box:w())
 end
 

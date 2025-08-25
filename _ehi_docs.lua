@@ -13,6 +13,10 @@ _G.EHI.Trigger = EHIMissionElementTrigger
 _G.EHI.Element = EHIMissionElementOverride
 ---@type EHIMissionHolder
 _G.EHI.Mission = EHIMissionHolder
+---@type EHIMissionElementWaypoint
+_G.EHI.Waypoint = EHIMissionElementWaypoint
+---@type EHIMissionUnit
+_G.EHI.Unit = EHIMissionUnit
 
 ---@alias AnyExceptNil table|string|boolean|number|userdata
 
@@ -36,6 +40,7 @@ _G.EHI.Mission = EHIMissionHolder
 ---@field remove_on_alarm boolean Removes the waypoint on alarm
 ---@field skip_if_not_found boolean Skips error message if the instance is not placed on the map
 ---@field unit Unit
+---@field class_convert string?
 
 ---@class ElementClientTriggerData
 ---@field time number Maps to `additional_time`. If the field already exists, it is added to the field (+)
@@ -182,6 +187,7 @@ _G.EHI.Mission = EHIMissionHolder
 ---@field show_loot_counter boolean If achievement is already earned, show Loot Counter instead
 ---@field waypoint_loot_counter WaypointLootCounterTable
 ---@field max integer Maximum number of loot
+---@field silent_max integer Maximum number of loot if the achievement counter start with lower max amount
 ---@field progress integer Start with progress if provided, otherwise 0
 ---@field show_finish_after_reaching_target boolean Setting this to `true` will show `FINISH` in the tracker
 ---@field class string Achievement tracker class

@@ -77,7 +77,7 @@ if EHI:IsLootCounterVisible() then
 end
 
 --´drill defend waypoint001´ ElementWaypoint 101734
-EHI:DisableTimerWaypoints({ [101734] = true })
+EHI.Waypoint:DisableTimerWaypoints({ [101734] = true })
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

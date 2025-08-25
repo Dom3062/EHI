@@ -63,7 +63,7 @@ EHI.Mission:ParseTriggers({
     other = other,
     assault = { diff = 1 }
 })
-EHI:DisableTimerWaypoints(DisableWaypoints)
+EHI.Waypoint:DisableTimerWaypoints(DisableWaypoints)
 local wp_params = { element = {} }
 for i = 1050, 3525, 225 do
     if i ~= 2175 then -- Different instance

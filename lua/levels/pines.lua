@@ -60,8 +60,24 @@ local achievements =
 }
 if EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn() then
     table.insert(preload, { id = "HeliLootTakeOff", icons = Icon.HeliWait, class = TT.Warning, hint = Hints.LootTimed, hide_on_delete = true })
-    -- Hooked to 105072 instead of 105076 to track the take off accurately
-    triggers[105072] = { id = "HeliLootTakeOff", run = { time = 82 } }
+    ---@param self EHIMissionElementTrigger
+    ---@param trigger ElementTrigger
+    local function Waypoint(self, trigger)
+        if self._waypoints:ReturnValue2(self._loot._id, "StartTimer", trigger.run.time, true) then
+            self._waypoints:AddWaypoint(trigger.id, {
+                time = trigger.run.time,
+                icon = Icon.LootDrop,
+                position = self._mission:GetElementPositionOrDefault(trigger.waypoint_id),
+                remove_vanilla_waypoint = trigger.waypoint_id,
+                restore_on_done = true,
+                class = self.Waypoints.Warning
+            })
+        end
+    end
+    for i = 75, 675, 200 do
+        local id = EHI:GetInstanceElementID(100042, i)
+        triggers[id] = { id = "HeliLootTakeOff", run = { time = 80 + 2 }, waypoint_f = Waypoint, waypoint_id = id }
+    end
 end
 
 local other = {}
@@ -83,7 +99,11 @@ EHI.Mission:ParseTriggers({
     other = other,
     preload = preload
 })
-EHI:ShowLootCounter({ max_bags_for_level = { mission_xp = 8000, xp_per_bag_all = 2000 }, no_max = true })
+local waypoint_elements = {}
+for i = 75, 675, 200 do
+    table.insert(waypoint_elements, EHI:GetInstanceElementID(100028, i))
+end
+EHI:ShowLootCounter({ max_bags_for_level = { mission_xp = 8000, xp_per_bag_all = 2000 }, no_max = true }, { element = waypoint_elements, class = EHI.Waypoints.LootCounter.Timed })
 EHI:AddXPBreakdown({
     objective =
     {

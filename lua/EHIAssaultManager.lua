@@ -105,7 +105,7 @@ function EHIAssaultManager:init_finalize()
             end
         end)
         self:AddOnSustainListener("EHIAssaultManager", function(duration)
-            self:OnEnterSustain(duration)
+            self._trackers:CallFunction(self._assault_time.name, "OnEnterSustain", duration)
         end)
     end
     if EHI.IsHost then
@@ -143,7 +143,7 @@ function EHIAssaultManager:init_finalize()
             self._playing_from_start = false
         end)
     end
-    EHI:AddCallback(EHI.CallbackMessage.SyncAssaultDiff, callback(self, self, "SetDiff"))
+    self:AddAssaultDifficultyCallback(callback(self, self, "SetDiff"))
 end
 
 ---@param hud HUDManager
@@ -356,6 +356,19 @@ function EHIAssaultManager:RemoveOnSustainListener(id)
     self._on_sustain_listener:remove(id)
 end
 
+---@param f fun(diff: number) Number is always between 0 and 1
+function EHIAssaultManager:AddAssaultDifficultyCallback(f)
+    self._assault_diff_callback = self._assault_diff_callback or CallbackEventHandler:new()
+    self._assault_diff_callback:add(f)
+end
+
+---@param diff number Number is always between 0 and 1
+function EHIAssaultManager:CallAssaultDifficultyCallback(diff)
+    if self._assault_diff_callback then
+        self._assault_diff_callback:dispatch(diff)
+    end
+end
+
 ---@param assault_number number
 ---@param in_assault boolean
 function EHIAssaultManager:SetCurrentAssaultNumber(assault_number, in_assault)
@@ -366,11 +379,6 @@ function EHIAssaultManager:SetCurrentAssaultNumber(assault_number, in_assault)
     end
     self._current_assault_number = assault_number
     self:CallFunction("SetProgress", assault_number)
-end
-
----@param t number
-function EHIAssaultManager:OnEnterSustain(t)
-    self._trackers:CallFunction(self._assault_time.name, "OnEnterSustain", t)
 end
 
 ---@param block boolean?

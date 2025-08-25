@@ -91,10 +91,7 @@ local achievements =
                 -- Counter is bugged. Teaset is counted too.
                 -- Reported in:
                 -- https://steamcommunity.com/app/218620/discussions/14/3182363463067457019/
-                self._loot:AddAchievementListener({
-                    achievement = "sand_9",
-                    max = 10
-                })
+                self._loot:AddAchievementListener({ achievement = "sand_9" }, 10)
             end },
             [103208] = { special_function = SF.FinalizeAchievement }
         }
@@ -174,7 +171,7 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
     --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/013
     tbl[104308] = { f = f, trigger_id = 104305 }
 end
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:AddXPBreakdown({
     plan =
     {

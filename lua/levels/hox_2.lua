@@ -87,12 +87,7 @@ if EHI.Mission._SHOW_MISSION_TRACKERS then
     triggers[104472] = { id = "HoxtonMaxHacks", max = 4, show_progress_on_finish = true, icons = hoxton_hack, class = TT.Timer.Progress, hint = Hints.Hack }
 end
 if EHI.Mission._SHOW_MISSION_WAYPOINTS then
-    triggers[105113].waypoint_f = function(self, trigger) ---@param self EHIMissionElementTrigger
-        self._waypoints:AddWaypointlessWaypoint("ForensicsMatchChanceWaypoint", {
-            chances = trigger.chances,
-            class = self.Waypoints.Less.Chance
-        })
-    end
+    triggers[105113].waypoint = { id = "ForensicsMatchChanceWaypoint", waypointless = true, class = EHI.Waypoints.Less.Chance }
     EHI.Element:AddWaypointToOverride(101559, "ForensicsMatchChanceWaypoint")
 end
 
@@ -301,7 +296,7 @@ tbl[EHI:GetInstanceUnitID(100020, 6840)] = { f = "IgnoreChildDeployable" }
 for i = 100024, 100030, 1 do
     tbl[EHI:GetInstanceUnitID(i, 6840)] = { f = "IgnoreChildDeployable" }
 end
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 
 local SecurityOffice = EHI:GetInstanceElementID(100026, 6690)
 EHI:SetMissionDoorData({

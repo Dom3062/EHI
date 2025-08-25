@@ -18,11 +18,11 @@ local DisableWaypoints =
     [EHI:GetInstanceElementID(100022, 750)] = true -- Fix
 }
 
-EHI:DisableTimerWaypoints(DisableWaypoints)
+EHI.Waypoint:DisableTimerWaypoints(DisableWaypoints)
 
 local tbl =
 {
     [EHI:GetInstanceUnitID(100037, 6750)] = { remove_vanilla_waypoint = EHI:GetInstanceElementID(100017, 6750) }
 }
-EHI:UpdateUnits(tbl)
+EHI.Unit:UpdateUnits(tbl)
 EHI:ShowLootCounter({ max = 5 }, { element = EHI:GetInstanceElementID(100010, 6500) })

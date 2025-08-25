@@ -46,7 +46,7 @@ EHI.Mission:ParseTriggers({
     other = other,
     assault = { diff = 1 }
 })
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     --units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo
     [100751] = { f = "IgnoreDeployable" },
     [101242] = { f = "IgnoreDeployable" }

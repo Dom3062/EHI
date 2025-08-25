@@ -21,24 +21,20 @@ local triggers = {
 }
 if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
     EHI:LoadTracker("EHICodesTracker")
+    EHI:LoadWaypoint("EHICodesWaypoint")
     triggers[101073] = EHI:AddCustomCode(function(self)
         if self._cache.chca_C4Route or self._cache.chca_CodeUsed or self._cache.chca_CodeSeen then
             return
         end
-        local paper_unit = managers.worlddefinition:get_unit(EHI:GetInstanceElementID(100000, 14470)) --[[@as UnitBase?]]
+        local paper_unit = managers.worlddefinition:get_unit(EHI:GetInstanceElementID(100000, 14470))
         if not paper_unit then
-            return
-        end
-        local unit_damage = paper_unit:damage()
-        local object = unit_damage and unit_damage._state and unit_damage._state.object
-        if not object then
             return
         end
         local code = {}
         for i = 1, 4, 1 do
             local c = {}
             for j = 1, 10, 1 do
-                c[j] = Idstring(string.format("g_%d_%d", i, j - 1)):key()
+                c[j] = Idstring(string.format("g_%d_%d", i, j - 1))
             end
             code[i] = c
         end
@@ -46,12 +42,15 @@ if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
             id = "VaultCode",
             class = TT.Code
         })
+        self._waypoints:AddWaypoint("VaultCode", {
+            position = paper_unit:position(),
+            icon = "code",
+            class = self.Waypoints.Code
+        })
         for i, code_body in ipairs(code) do
-            for j, code_id in ipairs(code_body) do
-                local body = object[code_id] or {}
-                local visibility = body and body.set_visibility or {}
-                if visibility[2] then -- If code is visible
-                    self._trackers:CallFunction("VaultCode", "SetCodePart", i, tostring(j - 1), 4)
+            for j, object in ipairs(code_body) do
+                if paper_unit:get_object(object):visibility() then -- If code is visible
+                    self._tracking:Call("VaultCode", "SetCodePart", i, tostring(j - 1), 4)
                     break
                 end
             end
@@ -60,11 +59,11 @@ if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
     end, true) -- Spa first; Handprint second
     triggers[103761] = EHI:AddCustomCode(function(self)
         self._cache.chca_C4Route = true
-        self._trackers:RemoveTracker("VaultCode")
+        self._tracking:Remove("VaultCode")
     end)
     triggers[EHI:GetInstanceElementID(100023, 15470)] = EHI:AddCustomCode(function(self)
         self._cache.chca_CodeUsed = true
-        self._trackers:RemoveTracker("VaultCode")
+        self._tracking:Remove("VaultCode")
     end)
     triggers[100688] = triggers[101073] -- Handprint first; Spa second
 end
@@ -182,7 +181,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
         [100079] = { f = chca_12 },
         [100080] = { f = chca_12 }
     }
-    EHI:UpdateInstanceUnitsNoCheck(tbl, 15470)
+    EHI.Unit:UpdateInstanceUnitsNoCheck(tbl, 15470)
     local trigger = { special_function = SF.CustomCode, f = saw_done }
     other[EHI:GetInstanceElementID(100082, 15470)] = trigger
     other[EHI:GetInstanceElementID(100083, 15470)] = trigger

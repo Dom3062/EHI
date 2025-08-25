@@ -121,7 +121,7 @@ if ovk_and_up then
 end
 
 EHI:ShowLootCounter({ max = max + pig }, { element = 100787 })
-EHI:UpdateUnits({
+EHI.Unit:UpdateUnits({
     -- Drills
     [100035] = { remove_vanilla_waypoint = 103175 },
     [100949] = { remove_vanilla_waypoint = 103174 }

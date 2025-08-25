@@ -114,7 +114,7 @@ EHI.Mission:ParseTriggers({
     other = other
 })
 
-EHI:DisableTimerWaypoints({ [101738] = true }) -- Drill waypoint on mission door
+EHI.Waypoint:DisableTimerWaypoints({ [101738] = true }) -- Drill waypoint on mission door
 local GoatsToSecure = EHI:GetValueBasedOnDifficulty({
     normal = 5,
     hard = 7,

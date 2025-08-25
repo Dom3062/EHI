@@ -55,6 +55,7 @@
             <post :hook_id="menumanager" :script_path="menu/EHIMenu.lua" />
             <post :hook_id="menumanager" :script_path="MenuManager.lua" />
             <group :hook_id="menu/">
+                <post :hook_id="achievementlistgui" :script_path="AchievementListGui.lua"/>
                 <post :hook_id="blackmarketgui" :script_path="BlackMarketGui.lua" />
                 <post :hook_id="menunodegui" :script_path="MenuNodeMainGui.lua" />
                 <post :hook_id="missionbriefinggui" :script_path="MissionBriefingGui.lua" />
@@ -82,11 +83,11 @@
         <post hook_id="lib/network/base/networkpeer" :script_path="NetworkPeer.lua" />
 
         <group hook_id="lib/setups/">
-            <post :hook_id="setup" :script_path="EHIExperienceManager.lua" />
             <post :hook_id="setup" :script_path="Setup.lua" />
             <post :hook_id="gamesetup" :script_path="units/EHICarryData.lua" />
             <post :hook_id="gamesetup" :script_path="units/EHISniperData.lua" />
             <post :hook_id="gamesetup" :script_path="GameSetup.lua" />
+            <post :hook_id="menusetup" :script_path="MenuSetup.lua" />
         </group>
 
         <group hook_id="lib/states/">
@@ -105,6 +106,7 @@
             <post :hook_id="beings/player/playerdamage" :script_path="PlayerDamage.lua" />
             <post :hook_id="beings/player/playerinventory" :script_path="PlayerInventory.lua" />
             <post :hook_id="beings/player/playermovement" :script_path="PlayerMovement.lua" />
+            <post :hook_id="beings/player/states/playerincapacitated" :script_path="PlayerIncapacitated.lua" />
             <post :hook_id="beings/player/states/playerstandard" :script_path="PlayerStandard.lua" />
             <post :hook_id="civilians/logics/civilianlogicsurrender" :script_path="CivilianLogicSurrender.lua" />
             <post :hook_id="civilians/civiliandamage" :script_path="CivilianDamage.lua" />
