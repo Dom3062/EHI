@@ -1,8 +1,16 @@
+r334 (26. 08. 2025):
+Possible fix for tracker and waypoint timers showing 0 after upgrading
+Player Ping Tracker: Fixed overlapping white text
+Player Ping Tracker: Fixed a possible crash when finishing a heist alone in multiplayer
+Timer Tracker: Fixed an issue where timers do not run down
+Dragon Heist: Fixed a load crash
+
 r333 (25. 08. 2025):
 Added "Player Ping" tracker
 Added option "Number of Trackers in Rows/Columns"
-Achievements Screen: "Conspiracy Theory", "For The Mad Hatter" and "Only For Us Naughty Heisters" will show heists are missing
+Achievements Screen: "Conspiracy Theory", "For The Mad Hatter" and "Only For Us Naughty Heisters" will show what heists are missing
 Any related code to Escape Tracker will load if the option is enabled
+Fixed an issue where Timer code adjustment is not applied if 2 or more defitions of that Timer exists (client only)
 Reworked animation system in trackers
 Crude Awakening: Fixed an issue where Loot Counter can count only first 4 loot bags and not all of them
 

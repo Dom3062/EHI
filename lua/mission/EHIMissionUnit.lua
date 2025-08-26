@@ -227,7 +227,7 @@ function EHIMissionUnit:chasC4(unit_id, unit_data, unit)
     if not digital._ehi_key then
         return
     end
-    digital:SetHint(Hints.Explosion)
+    digital:SetHint(EHI.Hints.Explosion)
     if not unit_data.instance then
         digital:SetIcons(unit_data.icons)
         return

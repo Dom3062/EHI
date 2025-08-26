@@ -2,6 +2,7 @@
 ---@field super EHITracker
 EHIPlayerPingTracker = class(EHITracker)
 EHIPlayerPingTracker._needs_update = false
+EHIPlayerPingTracker._init_create_text = false
 EHIPlayerPingTracker._forced_icons = { "ping" }
 EHIPlayerPingTracker._forced_hint_text = "ping"
 EHIPlayerPingTracker._ping_t_refresh = EHI:GetOption("show_ping_tracker_refresh_t") --[[@as number]]
@@ -20,13 +21,16 @@ function EHIPlayerPingTracker:PlayerSpawned()
         self:AddPeer(peer)
     end
     Hooks:PostHook(NetworkPeer, "init", "EHI_NetworkPeer_init", function(peer, ...)
-        if not self._peers then
-            self._peers = {}
-        end
+        self._peers = self._peers or {}
         self:AddPeer(peer)
     end)
     Hooks:PostHook(NetworkPeer, "destroy", "EHI_NetworkPeer_destroy", function(peer, ...)
-        self:RemovePeer(peer:id())
+        if self._peers then
+            self:RemovePeer(peer:id())
+        end
+    end)
+    EHI:AddEndGameCallback(function()
+        self:MissionEnd()
     end)
 end
 
@@ -130,4 +134,9 @@ function EHIPlayerPingTracker:CleanupOnHide()
     self._time = self._ping_t_refresh
     self._peers = nil
 end
-EHIPlayerPingTracker.MissionEnd = EHIPlayerPingTracker.RemoveTrackerFromUpdate
+
+function EHIPlayerPingTracker:MissionEnd()
+    self:RemoveTrackerFromUpdate()
+    Hooks:RemovePostHook("EHI_NetworkPeer_init")
+    Hooks:RemovePostHook("EHI_NetworkPeer_destroy") -- Remove this PostHook as it may cause a crash when a peer is removed and panel is no longer valid
+end

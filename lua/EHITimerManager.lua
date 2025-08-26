@@ -156,7 +156,7 @@ function EHITimerManager:StartTimer(params)
         local tracker_id = self._get_tracker_id(group, subgroup, i_subgroup)
         self._units_in_active_group[params.id] = tracker_id
         params.id = tracker_id
-        params.class = (self._GROUPING_IS_ENABLED and params.timer_gui) and "EHITimerGroupTracker" or params.timer_gui and "EHITimerGuiGroupTracker" or "EHITimerGroupTracker"
+        params.class = (self._FORCE_SHARED_MASTER and self._GROUPING_IS_ENABLED and params.timer_gui) and "EHITimerGroupTracker" or params.timer_gui and "EHITimerGuiGroupTracker" or "EHITimerGroupTracker"
         params.subgroup = subgroup
         params.i_subgroup = i_subgroup
         if add_i_subgroup then
