@@ -78,6 +78,12 @@ local function HasWeaponEquipped(weapon_id)
 end
 
 ---@param type string
+local function HasPrimaryWeaponTypeEquipped(type)
+    local primary_categories = tweak_data.weapon[primary.weapon_id] and tweak_data.weapon[primary.weapon_id].categories or {}
+    return table.contains(primary_categories, type)
+end
+
+---@param type string
 local function HasWeaponTypeEquipped(type)
     local primary_categories = tweak_data.weapon[primary.weapon_id] and tweak_data.weapon[primary.weapon_id].categories or {}
     local secondary_categories = tweak_data.weapon[secondary.weapon_id] and tweak_data.weapon[secondary.weapon_id].categories or {}
@@ -335,6 +341,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     grenade = managers.blackmarket:equipped_grenade()
     is_stealth = managers.groupai:state():whisper_mode()
     local level = Global.game_settings.level_id
+    local job = managers.job:current_real_job_id()
     local mask_id = managers.blackmarket:equipped_mask().mask_id
     local from_beginning = managers.statistics:started_session_from_beginning()
     if EHI:GetUnlockableAndOption("show_achievements") then
@@ -385,7 +392,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
             if EHI:IsAchievementLocked2("gage2_5") and HasWeaponTypeEquipped("lmg") then -- "The Eighth and Final Rule" achievement
                 AddAchievementTracker("gage2_5", 0, 220)
-                Hooks:PostHook(StatisticsManager, "killed", "EHI_gage2_5_killed", function(self, data)
+                Hooks:PostHook(StatisticsManager, "killed", "EHI_gage2_5_killed", function(_, data)
                     if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("lmg") and not CopDamage.is_civilian(data.name) then
                         managers.ehi_tracker:IncreaseProgress("gage2_5")
                     end
@@ -556,7 +563,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end
             end
             if EHI:IsAchievementLocked2("cac_2") and WeaponsContainBlueprint("wpn_fps_upg_bp_lmg_lionbipod") then -- "Human Sentry Gun" achievement
-                local function f()
+                ShowTrackerInLoud(function()
                     local enemy_killed_key = "EHI_cac_2_enemy_killed"
                     AddAchievementTracker("cac_2", 0, 20)
                     local function on_enemy_killed(...)
@@ -570,8 +577,32 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                             managers.player:unregister_message(Message.OnEnemyKilled, enemy_killed_key)
                         end
                     end)
+                end)
+            end
+            if job == "wwh" and EHI:IsAchievementLocked2("cac_27") then -- "Global Warming" achievement
+                local cac_27 = tweak_data.achievement.complete_heist_achievements.cac_27
+                if managers.challenge:check_equipped_team(cac_27) then
+                    managers.ehi_unlockable:AddAchievementStatusTracker("cac_27")
+                    local function fail()
+                        managers.ehi_unlockable:SetAchievementFailed("cac_27")
+                        EHI:Unhook("cac_27__used_weapon")
+                        EHI:Unhook("cac_27_killed_by_anyone")
+                    end
+                    Hooks:PostHook(StatisticsManager, "_used_weapon", "EHI_cac_27__used_weapon", function(stat, weapon_id)
+                        if tweak_data:get_raw_value("weapon", stat:create_unified_weapon_name(weapon_id), "categories", 1) ~= "flamethrower" then
+                            fail()
+                        end
+                    end)
+                    Hooks:PostHook(StatisticsManager, "killed_by_anyone", "EHI_cac_27_killed_by_anyone", function(stat, data, ...)
+                        local name_id, throwable_id = stat:_get_name_id_and_throwable_id(data.weapon_unit)
+                        if data.variant == "melee" or data.variant == "explosion" or data.is_molotov or throwable_id then
+                            fail()
+                        end
+                    end)
+                    Hooks:PostHook(NetworkPeer, "set_outfit_string", "EHI_cac_27_set_outfit_string", function(peer, ...)
+                        managers.ehi_unlockable:SetAchievementStatus("cac_27", managers.challenge:check_equipped_team(cac_27) and "ok" or "fail")
+                    end)
                 end
-                ShowTrackerInLoud(f)
             end
             if EHI:IsAchievementLocked2("pxp2_1") and HasWeaponEquipped("hailstorm") and WeaponsContainFiremode("volley") then -- "Field Test" achievement
                 AddAchievementTrackerFromStat("pxp2_1_stats")
@@ -674,6 +705,28 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end
                 if level == "mad" and EHI:IsAchievementLocked2("pim_3") and HasWeaponTypeEquipped("smg") then -- "UMP for Me, UMP for You" achievement
                     AddAchievementTrackerFromStat("pim_3_stats")
+                end
+                if job == "rvd" and EHI:IsAchievementLocked2("rvd_8") and HasPrimaryWeaponTypeEquipped("assault_rifle") and from_beginning then -- "United We Heist" achievement
+                    if level == "rvd1" or managers.job:get_memory("ehi_rvd_8") then
+                        managers.ehi_unlockable:AddAchievementStatusTracker("rvd_8")
+                        local function fail()
+                            managers.ehi_unlockable:SetAchievementFailed("rvd_8")
+                            EHI:Unhook("rvd_8_shot_fired")
+                            EHI:Unhook("rvd_8_register_melee_hit")
+                        end
+                        Hooks:PostHook(StatisticsManager, "shot_fired", "EHI_rvd_8_shot_fired", function(sm, data)
+                            local name_id = data.name_id or data.weapon_unit:base():get_name_id()
+                            if tweak_data:get_raw_value("weapon", name_id, "categories", 1) ~= "assault_rifle" then
+                                fail()
+                            end
+                        end)
+                        Hooks:PostHook(StatisticsManager, "register_melee_hit", "EHI_rvd_8_register_melee_hit", fail)
+                        EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
+                            if success and level == "rvd1" and managers.ehi_tracker:Exists("rvd_8") then -- Finished first day
+                                managers.job:set_memory("ehi_rvd_8", true)
+                            end
+                        end)
+                    end
                 end
                 if level == "sand" and EHI:IsAchievementLocked2("sand_11") and HasWeaponTypeEquipped("snp") then -- "This Calls for a Round of Sputniks!" achievement
                     managers.ehi_tracker:AddTracker({
@@ -1079,8 +1132,9 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                             EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
                                 if success and managers.job:on_last_stage() and from_beginning then
                                     local progress, max = EHI:GetDailyChallengeProgressAndMax(challenge.id, c.progress_id)
-                                    if progress + 1 < max then
-                                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("menu_challenge_" .. challenge.id), tostring(progress + 1) .. "/" .. tostring(max), c.icon)
+                                    local new_progress = progress + 1
+                                    if new_progress < max then
+                                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("menu_challenge_" .. challenge.id), tostring(new_progress) .. "/" .. tostring(max), c.icon)
                                     end
                                 end
                             end)

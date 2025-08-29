@@ -256,6 +256,16 @@ _G.tweak_data.achievement.complete_heist_achievements = {
         trophy_stat = "trophy_shoutout",
         job = "shoutout_raid",
         difficulty = overkill_and_above
+    },
+    cac_27 = {
+        everyone_killed_by_grenade = 0,
+        award = "cac_27",
+        job = "wwh",
+        everyone_used_weapon_category = "flamethrower",
+        everyone_killed_by_melee = 0,
+        equipped_team = {
+            primary_category = "flamethrower"
+        }
     }
 }
 ---@class AchievementsTweakData.enemy_kill_achievements
@@ -1317,6 +1327,7 @@ _G.IngameWaitingForPlayersState = {}
 ---@field current_contact_id fun(self: self): string
 ---@field current_difficulty_stars fun(self: self): number
 ---@field current_job_id fun(self: self): string
+---@field current_real_job_id fun(self: self): string
 ---@field current_job_stars fun(self: self): number
 ---@field current_level_id fun(self: self): string
 ---@field current_stage fun(self: self): number
@@ -1461,6 +1472,7 @@ _G.SkirmishTweakData = {}
 ---@class StatisticsManager
 ---@field _get_boom_guns fun(self: self): string[]
 ---@field _get_name_id_and_throwable_id fun(self: self, weapon_unit: UnitWeapon): string?, string?
+---@field create_unified_weapon_name fun(self: self, weapon_id: string): string
 ---@field is_dropin fun(self: self): boolean
 ---@field session_hit_accuracy fun(self: self): number
 ---@field special_unit_ids string[]
@@ -1725,6 +1737,7 @@ end
 ---@field get_all_active_challenges fun(self: self): table<string, ChallengeManager.get_all_active_challenges?>
 ---@field get_challenge fun(self: self, id: string, key: string?): table?
 ---@field has_active_challenges fun(self: self, id: string, key: string?): boolean
+---@field check_equipped_team fun(self: self, achievement_data: table): boolean
 
 ---@class ChallengeManager.get_all_active_challenges
 ---@field completed boolean

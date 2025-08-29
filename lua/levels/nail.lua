@@ -31,7 +31,6 @@ EHI:ShowLootCounter({
         {
             counter =
             {
-                check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
                 loot_type = "meth_half"
             }
         }

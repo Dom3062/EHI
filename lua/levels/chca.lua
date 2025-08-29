@@ -104,8 +104,8 @@ end)
 
 local function chca_9_fail()
     managers.ehi_unlockable:SetAchievementFailed("chca_9")
-    EHI:Unhook("chca_9_killed")
-    EHI:Unhook("chca_9_killed_by_anyone")
+    EHI:Unhook("chca_9__used_weapon")
+    EHI:Unhook("chca_9__used_projectile")
 end
 ---@type ParseAchievementTable
 local achievements =
@@ -120,13 +120,8 @@ local achievements =
             [102955] = { special_function = SF.Trigger, data = { 1, 2 } }, -- Crew Deck
             [1] = { class = TT.Achievement.Status },
             [2] = { special_function = SF.CustomCode, f = function()
-                local function check(_, data)
-                    if data.variant ~= "melee" then
-                        chca_9_fail()
-                    end
-                end
-                Hooks:PostHook(StatisticsManager, "killed", "EHI_chca_9_killed", check)
-                Hooks:PostHook(StatisticsManager, "killed_by_anyone", "EHI_chca_9_killed_by_anyone", check)
+                Hooks:PostHook(StatisticsManager, "_used_weapon", "EHI_chca_9__used_weapon", chca_9_fail)
+                Hooks:PostHook(StatisticsManager, "_used_projectile", "EHI_chca_9__used_projectile", chca_9_fail)
             end }
         },
         alarm_callback = chca_9_fail
@@ -159,9 +154,6 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
         }
     }
     local active_saws = 0
-    local function chca_12(unit_id, unit_data, unit)
-        unit:timer_gui():chca_12()
-    end
     local function check(...)
         active_saws = active_saws + 1
         if active_saws > 1 then
@@ -169,10 +161,11 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
         end
     end
     local function saw_done()
-        active_saws = active_saws - 1
+        active_saws = math.max(active_saws - 1, 0)
     end
-    function TimerGui:chca_12()
-        Hooks:PostHook(self, "_start", string.format("EHI_saw_start_%s", self._ehi_key or self._unit:key()), check)
+    local function chca_12(unit_id, unit_data, unit) ---@param unit UnitTimer
+        local gui = unit:timer_gui()
+        Hooks:PostHook(gui, "_start", string.format("EHI_saw_start_%s", gui._ehi_key or tostring(unit:key())), check)
     end
     local tbl =
     {

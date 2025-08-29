@@ -97,10 +97,11 @@ local achievements = {
     "turtles_1", "turtles_2",
     "tango_achieve_2", "tango_achieve_3",
     "grv_2", "grv_3",
-    "cac_2",
+    "cac_2", "cac_27",
     "pxp2_1", "pxp2_2",
     "pim_1", "pim_3",
     "man_5",
+    "rvd_8",
     "sand_11",
     -- Melee
     "halloween_7",

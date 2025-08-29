@@ -72,6 +72,12 @@ function EHIWaypoint:SetColor(color)
     self._arrow:set_color(c)
 end
 
+---@param color Color?
+function EHIWaypoint:StopAndSetColor(color)
+    self._gui:stop()
+    self:SetColor(color)
+end
+
 function EHIWaypoint:AddWaypointToUpdate()
     self._parent_class:_add_waypoint_to_update(self)
 end

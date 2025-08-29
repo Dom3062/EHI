@@ -70,7 +70,6 @@ local achievements =
             [200106] = { max = 18, class = TT.Achievement.Progress, special_function = SF.AddAchievementToCounter, data = {
                 counter =
                 {
-                    check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
                     loot_type = "money"
                 }
             }}

@@ -87,7 +87,6 @@ local function dah_8(progress)
         max = 12,
         counter =
         {
-            check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
             loot_type = "diamondheist_big_diamond"
         }
     })

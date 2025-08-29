@@ -162,7 +162,6 @@ EHI:ShowAchievementLootCounter({
     max = 2,
     counter =
     {
-        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = "meth"
     }
 })

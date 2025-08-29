@@ -1,3 +1,10 @@
+r335 (29. 08. 2025):
+Alaskan Deal: Added achievement tracker for "Global Warming"
+Black Cat: Fixed shooting a weapon does not fail achievement tracker "Swimming Cat, Silent Burglar"
+San Martín Bank: Fixed loot and deposit counting in achievement tracker "Silencioso y Codicioso"
+Santa's Workshop: Added failed popup for achievement "Only Santa Brings Gifts" if the condition is not met at spawn
+Reservoir Dogs: Added achievement tracker for "United We Heist"
+
 r334 (26. 08. 2025):
 Possible fix for tracker and waypoint timers showing 0 after upgrading
 Player Ping Tracker: Fixed overlapping white text

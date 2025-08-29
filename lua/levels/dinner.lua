@@ -100,7 +100,6 @@ if ovk_and_up then
         show_finish_after_reaching_target = true,
         counter =
         {
-            check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
             loot_type = "din_pig"
         }
     })

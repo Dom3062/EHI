@@ -334,9 +334,15 @@ end
 function EHILootManager:AddAchievementListener(params, max, endless_counter)
     local check_type, loot_type, f = EHI.Const.LootCounter.CheckType.BagsOnly, nil, nil
     if params.counter then
-        check_type = params.counter.check_type or EHI.Const.LootCounter.CheckType.BagsOnly
-        loot_type = params.counter.loot_type
-        f = params.counter.f
+        if params.counter.f then
+            f = params.counter.f
+            check_type = EHI.Const.LootCounter.CheckType.CustomCheck
+        elseif params.counter.loot_type then
+            loot_type = params.counter.loot_type
+            check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot
+        else
+            check_type = params.counter.check_type or check_type
+        end
     end
     if endless_counter then
         self:AddListener(params.achievement, function(loot)

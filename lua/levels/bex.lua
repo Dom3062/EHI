@@ -8,11 +8,10 @@ function bex_11:post_init(...)
     self:AddLootListener({
         counter =
         {
-            check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
             f = function(loot)
                 local progress = loot:GetSecuredBagsAmount()
                 self:SetProgress(progress, "bags")
-                if progress >= self._max then
+                if progress >= self._counters_table.bags.max then
                     self._loot_parent:RemoveListener(self._id)
                 end
             end
@@ -58,6 +57,37 @@ local triggers = {
     -- levels/instances/unique/bex/bex_server
     -- Handled in CoreWorldInstanceManager
 }
+if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
+    EHI:LoadTracker("EHICorrectCablesTracker")
+    triggers[102225] = EHI:AddCustomCode(function(self)
+        local gate_box = managers.worlddefinition:get_unit(EHI:GetInstanceUnitID(100018, 3800))
+        if not gate_box then -- Oh no, something happened and our required unit does not exist; skip
+            return
+        end
+        self._trackers:AddTracker({
+            id = "CorrectCables",
+            remove_on_alarm = true,
+            class = "EHICorrectCablesTracker"
+        })
+        local colors =
+        {
+            { color = "r", object = "g_light_01" },
+            { color = "g", object = "g_light_02" },
+            { color = "b", object = "g_light_03" },
+            { color = "y", object = "g_light_04" }
+        }
+        for _, tbl in ipairs(colors) do
+            if gate_box:get_object(Idstring(tbl.object)):visibility() then
+                self._trackers:CallFunction("CorrectCables", "SetCode", tbl.color)
+            end
+        end
+    end)
+    -- 100076 = Wire cut
+    triggers[EHI:GetInstanceElementID(100076, 4100)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "b" } }
+    triggers[EHI:GetInstanceElementID(100076, 4250)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "g" } }
+    triggers[EHI:GetInstanceElementID(100076, 4400)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "r" } }
+    triggers[EHI:GetInstanceElementID(100076, 4550)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "y" } }
+end
 if EHI.IsClient then
     triggers[102157] = { additional_time = 60, random_time = 15, id = "VaultGas", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
 end
@@ -92,7 +122,7 @@ local achievements =
                 { max = 240, id = "boxes" }
             }, call_done_function = true, status_is_overridable = true },
             [103677] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
-                self._trackers:CallFunction(trigger.id, "SetProgress", 1, "boxes")
+                self._trackers:CallFunction(trigger.id, "IncreaseProgress", 1, "boxes")
             end) },
             [103772] = { special_function = SF.SetAchievementFailed }
         }

@@ -179,8 +179,8 @@ _G.EHI.Unit = EHIMissionUnit
 
 ---@class AchievementCounterTable
 ---@field check_type integer See `EHI.Const.LootCounter.CheckType`, defaults to `EHI.Const.LootCounter.CheckType.BagsOnly` if not provided
----@field loot_type string|string[] What loot should be counted
----@field f fun(loot: LootManager) Function for custom calculation when `check_type` is set to `EHI.Const.LootCounter.CheckType.CustomCheck`
+---@field loot_type string|string[] What loot should be counted; Autosets `check_type` to `EHI.Const.LootCounter.CheckType.CheckTypeOfLoot`
+---@field f fun(loot: LootManager) Function for custom calculation; Autosets `check_type` to `EHI.Const.LootCounter.CheckType.CustomCheck`
 
 ---@class AchievementLootCounterTable
 ---@field achievement string Achievement ID

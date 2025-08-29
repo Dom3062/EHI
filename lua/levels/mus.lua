@@ -101,7 +101,6 @@ EHI:ShowAchievementLootCounter({
     show_finish_after_reaching_target = true,
     counter =
     {
-        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "mus_artifact_paint", "mus_artifact" }
     }
 })

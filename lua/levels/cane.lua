@@ -60,6 +60,8 @@ local achievements =
             [100544] = { special_function = SF.CustomCode, f = function()
                 if #managers.assets:get_unlocked_asset_ids(true) == 0 then
                     cane_5()
+                elseif EHI:GetUnlockableOption("show_achievement_failed_popup") then
+                    managers.hud:ShowAchievementFailedPopup("cane_5")
                 end
             end },
         },

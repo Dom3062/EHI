@@ -238,7 +238,7 @@ function EHIAssaultTracker:SyncAnticipationColorInaccurate()
 end
 
 function EHIAssaultTracker:SyncAnticipationColor()
-    self:StopTextAnim()
+    self:StopAndSetTextColor()
     self:SetState(State.anticipation)
     self._time_warning = nil
     self.update = self.update_break
@@ -309,7 +309,7 @@ end
 
 ---@param t number
 function EHIAssaultTracker:StartAnticipation(t)
-    self:StopTextAnim(Color.yellow)
+    self:StopAndSetTextColor(Color.yellow)
     self._hostage_delay_disabled = true
     self._time = t
     if self.update == self.update_negative then
@@ -383,7 +383,7 @@ function EHIAssaultTracker:AssaultStart(diff)
         self:CalculateDifficultyRamp(diff)
     end
     self:AnimateBG()
-    self:StopTextAnim()
+    self:StopAndSetTextColor()
     self._time = self:CalculateAssaultTime()
     self._time_warning = nil
     self:SetState(State.build)
@@ -497,7 +497,7 @@ function EHIAssaultTracker:AssaultEnd(diff)
         self:CalculateDifficultyRamp(diff)
     end
     self:AnimateBG()
-    self:StopTextAnim()
+    self:StopAndSetTextColor()
     self._hostage_delay_disabled = nil
     self._assault = nil
     self:SetState(State.control)
@@ -520,12 +520,6 @@ function EHIAssaultTracker:AssaultEndWithBlock(diff)
     self:SetControlStateBlock(true, 0)
 end
 
----@param text_color Color?
-function EHIAssaultTracker:StopTextAnim(text_color)
-    self._text:stop()
-    self:SetTextColor(text_color or Color.white)
-end
-
 ---@param state number
 function EHIAssaultTracker:SetState(state)
     if self._state == state then
@@ -544,7 +538,7 @@ function EHIAssaultTracker:SetState(state)
         self:SetIconColor(Fade)
     elseif state == State.endless then
         self:RemoveTrackerFromUpdate()
-        self:StopTextAnim(Color.red)
+        self:StopAndSetTextColor(Color.red)
         self:SetIconColor(Color.red)
         self:SetStatusText("endless")
         self._time_warning = nil
@@ -565,7 +559,7 @@ function EHIAssaultTracker:CaptainArrived()
         self:SetAndFitTheText()
         self:SetTextColor(self._paused_color)
     else
-        self:StopTextAnim(self._paused_color)
+        self:StopAndSetTextColor(self._paused_color)
     end
     self:SetState(State.captain)
 end
@@ -645,7 +639,7 @@ end
 function EHIAssaultTracker:Refresh()
     self:StartNegativeUpdate()
     if not self._assault then
-        self:StopTextAnim()
+        self:StopAndSetTextColor()
         self:AnimateColor(true)
     end
 end

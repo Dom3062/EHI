@@ -88,7 +88,6 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
                 show_finish_after_reaching_target = true,
                 counter =
                 {
-                    check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
                     loot_type = "gnome"
                 }
             })
@@ -105,25 +104,6 @@ EHI:ShowLootCounter({
     triggers = loot_triggers
 }, { element = { 101958, 102013 } })
 
-function DigitalGui:pent_10()
-    local hook_key = string.format("EHI_pent_10_%s", self._ehi_key or tostring(self._unit:key()))
-    if EHI:GetUnlockableOption("show_achievement_started_popup") then
-        local function AchievementStarted(...)
-            managers.hud:ShowAchievementStartedPopup("pent_10")
-        end
-        if self.TimerStartCountDown then
-            Hooks:PostHook(self, "TimerStartCountDown", hook_key .. "_start", AchievementStarted)
-        else
-            Hooks:PostHook(self, "timer_start_count_down", hook_key .. "_start", AchievementStarted)
-        end
-    end
-    if EHI:GetUnlockableOption("show_achievement_failed_popup") then
-        Hooks:PostHook(self, "_timer_stop", hook_key .. "_end", function(...)
-            managers.hud:ShowAchievementFailedPopup("pent_10")
-        end)
-    end
-end
-
 EHI.Unit:UpdateUnits({
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     [102452] = { f = function(unit_id, unit_data, unit) ---@param unit UnitDigitalTimer
@@ -132,7 +112,17 @@ EHI.Unit:UpdateUnits({
         gui:SetWarning(true)
         if EHI:CanShowAchievement("pent_10") then
             gui:SetIcons(EHI:GetAchievementIcon("pent_10"))
-            gui:pent_10()
+            local hook_key = string.format("EHI_pent_10_%s", gui._ehi_key or tostring(gui._unit:key()))
+            if EHI:GetUnlockableOption("show_achievement_started_popup") then
+                Hooks:PostHook(gui, gui.TimerStartCountDown and "TimerStartCountDown" or "timer_start_count_down", hook_key .. "_start", function(...)
+                    managers.hud:ShowAchievementStartedPopup("pent_10")
+                end)
+            end
+            if EHI:GetUnlockableOption("show_achievement_failed_popup") then
+                Hooks:PostHook(gui, "_timer_stop", hook_key .. "_end", function(...)
+                    managers.hud:ShowAchievementFailedPopup("pent_10")
+                end)
+            end
         else
             gui:SetIcons({ EHI.Icons.Trophy })
         end

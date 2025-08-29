@@ -10,7 +10,6 @@ function EHIkosugi_5Tracker:post_init(...)
     self:AddLootListener({
         counter =
         {
-            check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
             f = function(loot)
                 self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
                 self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
@@ -207,7 +206,6 @@ EHI:ShowAchievementLootCounter({
     max = 4,
     counter =
     {
-        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = "samurai_suit"
     }
 })

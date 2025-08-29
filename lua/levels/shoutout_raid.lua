@@ -54,7 +54,6 @@ EHI:ShowAchievementLootCounter({
     max = 8,
     counter =
     {
-        check_type = EHI.Const.LootCounter.CheckType.CheckTypeOfLoot,
         loot_type = { "coke", "gold", "money", "weapon", "weapons" }
     }
 })

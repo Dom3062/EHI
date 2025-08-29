@@ -60,7 +60,7 @@ function EHIColoredCodesTracker:OverridePanel()
         text = "?",
         w = third,
         h = self._icon_size_scaled,
-        color = Color(0, 1, 1), -- Aqua
+        color = tweak_data.ehi:ColorRedirect(Color.blue),
         left = self._colors.green:right()
     })
 end

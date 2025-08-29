@@ -39,13 +39,13 @@ Hooks:PostHook(AchievementListGui, "update_detail", "EHI_AchievementListGui_upda
         local placer = canvas:placer()
         local pre, table_to_iterate
         if id == "xm20_1" then
-            pre = "Missing mask on the following heist(s):"
+            pre = "Missing mask in the following heist(s):"
             table_to_iterate = xm20_1
         elseif id == "pent_11" then
-            pre = "Missing teaset on the following heist(s):"
+            pre = "Missing teaset in the following heist(s):"
             table_to_iterate = pent_11
         else
-            pre = "Missing recording on the following heist(s):"
+            pre = "Missing recording in the following heist(s):"
             table_to_iterate = lrfo_1
         end
         placer:add_row(canvas:fine_text({
@@ -70,6 +70,47 @@ Hooks:PostHook(AchievementListGui, "update_detail", "EHI_AchievementListGui_upda
         end
         if self._detail_scroll:h() < canvas:h() and canvas:h() < self._detail_scroll:h() + 10 then
             self._detail_scroll:resize_canvas(nil, self._detail_scroll:h())
+        end
+    end
+end)
+
+Hooks:PostHook(AchievementDetailGui, "init", "EHI_AchievementDetailGui_init", function(self, ...)
+    if (self._id == "xm20_1" or self._id == "pent_11" or self._id == "lrfo_1") and not self._info.awarded then
+        local canvas = self._detail:canvas()
+        local placer = canvas:placer()
+        local pre, table_to_iterate
+        if self._id == "xm20_1" then
+            pre = "Missing mask in the following heist(s):"
+            table_to_iterate = xm20_1
+        elseif self._id == "pent_11" then
+            pre = "Missing teaset in the following heist(s):"
+            table_to_iterate = pent_11
+        else
+            pre = "Missing recording in the following heist(s):"
+            table_to_iterate = lrfo_1
+        end
+        placer:add_row(canvas:fine_text({
+            wrap = true,
+            word_wrap = true,
+            text = pre,
+            font = tiny_font,
+            font_size = tiny_font_size,
+            w = canvas:row_w()
+        }))
+        for _, value in ipairs(table_to_iterate) do
+            if not Global.mission_manager.saved_job_values[value.id] then
+                placer:add_row(canvas:fine_text({
+                    wrap = true,
+                    word_wrap = true,
+                    text = managers.localization:text(value.heist),
+                    font = tiny_font,
+                    font_size = tiny_font_size,
+                    w = canvas:row_w()
+                }))
+            end
+        end
+        if self._detail:h() < canvas:h() and canvas:h() < self._detail:h() + 10 then
+            self._detail:resize_canvas(nil, self._detail:h())
         end
     end
 end)

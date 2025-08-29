@@ -14,8 +14,7 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
         EHIPagerTracker._forced_time = 12
         function EHIPagerTracker:SetAnswered()
             self:RemoveTrackerFromUpdate()
-            self._text:stop()
-            self:SetTextColor(Color.green)
+            self:StopAndSetTextColor(Color.green)
             self:AnimateBG()
         end
     end
@@ -26,13 +25,7 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
         EHIPagerWaypoint._forced_time = 12
         function EHIPagerWaypoint:SetAnswered()
             self:RemoveWaypointFromUpdate()
-            self._gui:stop()
-            self._bitmap:stop()
-            self._arrow:stop()
-            if self._bitmap_world then
-                self._bitmap_world:stop()
-            end
-            self:SetColor(Color.green)
+            self:StopAndSetColor(Color.green)
         end
     end
 
@@ -53,7 +46,7 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
             if show_waypoint then
                 managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                     texture = "guis/dlcs/cee/textures/pd2/crime_spree/modifiers_atlas",
-                    texture_rect = {0, 384, 128, 128},
+                    texture_rect = { 0, 384, 128, 128 },
                     position = self._unit:position(),
                     warning = true,
                     remove_on_alarm = true,

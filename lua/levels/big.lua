@@ -140,7 +140,6 @@ local sidejob =
             managers.ehi_loot:AddAchievementListener({
                 achievement = "daily_helicopter",
                 counter = {
-                    check_type = EHI.Const.LootCounter.CheckType.CustomCheck,
                     f = function(loot)
                         local secured = loot:GetSecuredBagsAmount() - offset
                         managers.ehi_tracker:SetProgress("daily_helicopter", secured)
