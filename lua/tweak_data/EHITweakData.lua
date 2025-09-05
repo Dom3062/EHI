@@ -1356,6 +1356,18 @@ function EHITweakData:new(tweak_data)
     self.buff.mrwi_health_invulnerable_cooldown.permanent.deck_option.option = "grace_period_cooldown_persistent"
     self.functions =
     {
+        ---@param id string Achievement ID
+        ---@param stat string Achievement stat
+        eng_X = function(id, stat)
+            if EHI:CanShowAchievement2(id, "show_achievements_other") then
+                local progress = EHI:GetAchievementProgress(stat) + 1
+                managers.ehi_hook:HookAchievementAwardProgress(id, function(am, _stat, value)
+                    if _stat == stat and progress < 5 then
+                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_" .. id), tostring(progress) .. "/5", EHI:GetAchievementIconString(id))
+                    end
+                end)
+            end
+        end,
         ---@param check_job? boolean
         uno_1 = function(check_job)
             local achievement = tweak_data.achievement.complete_heist_achievements.uno_1

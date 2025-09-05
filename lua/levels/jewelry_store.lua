@@ -82,6 +82,7 @@ local achievements =
         }
     }
 }
+tweak_data.ehi.functions.eng_X("eng_1", "eng_1_stats") -- "The only one that is true" achievement
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

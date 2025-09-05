@@ -1,3 +1,6 @@
+r336 (05. 09. 2025):
+Added option "Tracker Description Position"
+
 r335 (29. 08. 2025):
 Alaskan Deal: Added achievement tracker for "Global Warming"
 Black Cat: Fixed shooting a weapon does not fail achievement tracker "Swimming Cat, Silent Burglar"

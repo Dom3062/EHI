@@ -1,42 +1,3 @@
-local Color = Color
----@class EHIsand_11Tracker : EHIAchievementProgressTracker, EHIChanceTracker
----@field super EHIAchievementProgressTracker
-EHIsand_11Tracker = class(EHIAchievementProgressTracker)
-EHIsand_11Tracker._forced_icons = EHI:GetAchievementIcon("sand_11")
-EHIsand_11Tracker.FormatChance = EHIChanceTracker.FormatChance
-function EHIsand_11Tracker:pre_init(params)
-    params.max = 100
-    params.show_finish_after_reaching_target = true
-    params.no_failure = true
-    self._chance = 0
-    EHIsand_11Tracker.super.pre_init(self, params)
-end
-
-function EHIsand_11Tracker:OverridePanel()
-    self:SetBGSize()
-    self._text_chance = self._bg_box:text({
-        text = self:FormatChance(),
-        align = "center",
-        vertical = "center",
-        w = self._bg_box:w() / 2,
-        h = self._bg_box:h(),
-        font = tweak_data.menu.pd2_large_font,
-        font_size = self._panel:h() * self._text_scale,
-        color = self._text_color
-    })
-    self._text_chance:set_right(self._bg_box:right())
-end
-
-function EHIsand_11Tracker:SetChance(amount)
-    self._chance = amount
-    self._text_chance:set_text(self:FormatChance())
-    if amount >= 100 then
-        self._text_chance:set_color(Color.green)
-    else
-        self._text_chance:set_color(Color.white)
-    end
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -110,6 +71,61 @@ local achievements =
         end
     }
 }
+if EHI:CanShowAchievement2("sand_11", "show_achievements_weapon") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then -- This Calls for a Round of Sputniks!
+    local Color = Color
+    ---@class EHIsand_11Tracker : EHIAchievementProgressTracker, EHIChanceTracker
+    ---@field super EHIAchievementProgressTracker
+    local sand_11 = class(EHIAchievementProgressTracker)
+    sand_11._forced_icons = EHI:GetAchievementIcon("sand_11")
+    sand_11.FormatChance = EHIChanceTracker.FormatChance
+    function sand_11:pre_init(params)
+        params.max = 100
+        params.show_finish_after_reaching_target = true
+        params.no_failure = true
+        self._chance = 0
+        sand_11.super.pre_init(self, params)
+    end
+    function sand_11:OverridePanel()
+        self:SetBGSize()
+        self._text_chance = self._bg_box:text({
+            text = self:FormatChance(),
+            align = "center",
+            vertical = "center",
+            w = self._bg_box:w() / 2,
+            h = self._bg_box:h(),
+            font = tweak_data.menu.pd2_large_font,
+            font_size = self._panel:h() * self._text_scale,
+            color = self._text_color
+        })
+        self._text_chance:set_right(self._bg_box:right())
+    end
+    function sand_11:SetChance(amount)
+        self._chance = amount
+        self._text_chance:set_text(self:FormatChance())
+        if amount >= 100 then
+            self._text_chance:set_color(Color.green)
+        else
+            self._text_chance:set_color(Color.white)
+        end
+    end
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if level == "sand" and self:EHIHasWeaponTypeEquipped("snp") then
+            managers.ehi_tracker:AddTracker({
+                id = "sand_11",
+                flash_times = 1,
+                class_table = sand_11
+            })
+            Hooks:PostHook(StatisticsManager, "killed", "EHI_sand_11_killed", function(_, data)
+                if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("snp") then
+                    managers.ehi_tracker:IncreaseProgress("sand_11")
+                end
+            end)
+            Hooks:PostHook(StatisticsManager, "shot_fired", "EHI_sand_11_accuracy", function(sm, _)
+                managers.ehi_tracker:SetChance("sand_11", sm:session_hit_accuracy())
+            end)
+        end
+    end)
+end
 
 local other =
 {

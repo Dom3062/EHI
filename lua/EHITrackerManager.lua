@@ -17,7 +17,7 @@ EHITrackerManager.Rounding =
 }
 function EHITrackerManager:post_init()
     EHITracker._parent_class = self
-    self:CreateWorkspace()
+    self:_create_workspace()
     self._t = 0
     self._stealth_trackers = { lasers = {} }
     self._trackers_to_update = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITracker?>
@@ -33,7 +33,7 @@ function EHITrackerManager:post_init()
     end
 end
 
-function EHITrackerManager:CreateWorkspace()
+function EHITrackerManager:_create_workspace()
     self._x, self._y = managers.gui_data:safe_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"))
     self._ws = managers.gui_data:create_fullscreen_workspace()
     self._ws:hide()
@@ -179,17 +179,26 @@ end
 
 ---@param params ElementTrigger
 function EHITrackerManager:AddLaserTracker(params)
-    if self._stealth_trackers.lasers[params.time] then
+    local count = self._stealth_trackers.lasers[params.time] or 0
+    if count > 0 then
+        self._stealth_trackers.lasers[params.time] = count + 1
         return
     end
-    self._stealth_trackers.lasers[params.time] = true
+    self._stealth_trackers.lasers[params.time] = 1
     self:AddTracker(params)
 end
 
 ---@param id string
 ---@param t number
 function EHITrackerManager:RemoveLaserTracker(id, t)
-    self._stealth_trackers.lasers[t] = nil
+    local count = self._stealth_trackers.lasers[t] or 0
+    if count > 0 then
+        if count - 1 <= 0 then
+            self._stealth_trackers.lasers[t] = nil
+        else
+            self._stealth_trackers.lasers[t] = count - 1
+        end
+    end
     self:RemoveTracker(id)
 end
 
@@ -212,28 +221,6 @@ function EHITrackerManager:RunTrackerIfDoesNotExist(id, params, pos)
 end
 
 if EHITrackerManager._n_of_rc > 0 then
-    ---@param new_w number
-    ---@param previous_w number
-    ---@param new_id string Tracker ID
-    ---@param from_f string What EHITrackerManager function called this
-    local function LogReposition_WidthIsBigger(new_w, previous_w, new_id, from_f)
-        EHI:Log(string.format("[%s] Width is bigger than saved max size", from_f))
-        EHI:Log(string.format("[%s] All trackers will be repositioned", from_f))
-        EHI:Log(string.format("[%s] Provided: %g", from_f, new_w))
-        EHI:Log(string.format("[%s] Saved: %g", from_f, previous_w))
-        EHI:Log(string.format("[%s] Tracker that caused this: %s", from_f, new_id))
-    end
-    ---@param pos number?
-    ---@param pos_line number
-    ---@param id string? Tracker ID
-    ---@param from_f string What EHITrackerManager function called this
-    local function LogReposition_CommonData(pos, pos_line, id, from_f)
-        EHI:Log(string.format("[%s] pos: %s", from_f, tostring(pos)))
-        EHI:Log(string.format("[%s] pos_line: %d", from_f, pos_line))
-        if id then
-            EHI:Log(string.format("[%s] Tracker that caused this: %s", from_f, new_id))
-        end
-    end
     EHITrackerManager._rc_params =
     {
         last_line = 1,

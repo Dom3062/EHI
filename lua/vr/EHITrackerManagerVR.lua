@@ -4,7 +4,7 @@ local EHITrackerManagerVR = ...
 EHITrackerManagerVR.old_PreloadTracker = EHITrackerManagerVR.PreloadTracker
 EHITrackerManagerVR.old_AddLaserTracker = EHITrackerManagerVR.AddLaserTracker
 EHITrackerManagerVR.old_RemoveLaserTracker = EHITrackerManagerVR.RemoveLaserTracker
-function EHITrackerManagerVR:CreateWorkspace()
+function EHITrackerManagerVR:_create_workspace()
     self._x, self._y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
     self._scale = EHI:GetOption("vr_scale") --[[@as number]]
     self._is_loading = true

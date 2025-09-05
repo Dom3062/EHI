@@ -43,6 +43,7 @@ local achievements =
         }
     }
 }
+tweak_data.ehi.functions.eng_X("eng_4", "eng_4_stats") -- "The one who declared himself the hero" achievement
 
 local sidejob =
 {

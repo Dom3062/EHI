@@ -69,6 +69,13 @@ local achievements =
         }
     }
 }
+if EHI:CanShowAchievement2("pim_3", "show_achievements_weapon") and ovk_and_up then -- "UMP for Me, UMP for You"
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if level == "mad" and self:EHIHasWeaponTypeEquipped("smg") then
+            self:EHIAddAchievementTrackerFromStat("pim_3_stats")
+        end
+    end)
+end
 
 local other =
 {

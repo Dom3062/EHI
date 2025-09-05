@@ -63,6 +63,13 @@ end
 if EHI.IsClient then
     triggers[104955] = EHI:ClientCopyTrigger(triggers[106013], { time = 30 })
 end
+if EHI:CanShowAchievement2("pig_3", "show_achievements_melee") then -- Do You Like Hurting Other People?
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if job == "mia" and self:EHIHasMeleeEquipped("baseballbat") then
+            self:EHIAddAchievementTrackerFromStat("pig_3_stats")
+        end
+    end)
+end
 
 local other =
 {

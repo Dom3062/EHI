@@ -51,6 +51,7 @@ local triggers = {
 
     [103629] = EHI:AddIncomingTurret(540/30, Vector3(0.425327, -3362.29, 254.634), nil, nil, _G.ch_settings == nil)
 }
+tweak_data.ehi.functions.eng_X("eng_3", "eng_3_stats") -- "The one that survived" achievement
 
 local CopArrivalDelay = EHI:GetValueBasedOnDifficulty({
     normal = 30,

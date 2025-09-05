@@ -1,3 +1,4 @@
+---@class orange_5 : EHIAchievementProgressTracker
 local orange_5 = class(EHIAchievementProgressTracker)
 function orange_5:Finalize()
     if self._progress < self._max then
@@ -39,6 +40,20 @@ local achievements =
         }
     }
 }
+if EHI:CanShowAchievement2("tawp_1", "show_achievements_other") and EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then -- Cloaker Charmer
+    -- Note: The achievement itself has no difficulty check, however cloakers start spawning on Very Hard or above
+    local tawp_1 = tweak_data.achievement.complete_heist_achievements.tawp_1
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if job == tawp_1.job and managers.blackmarket:equipped_mask().mask_id == tawp_1.mask then
+            self:EHIAddAchievementTracker("tawp_1", 0, 1, false, true)
+            managers.ehi_hook:HookKillFunction("tawp_1", nil, nil, function(sm, data)
+                if data.name == "spooc" then
+                    managers.ehi_tracker:IncreaseProgress("tawp_1")
+                end
+            end)
+        end
+    end)
+end
 local other =
 {
     [101315] = EHI:AddAssaultDelay({}) -- 30s

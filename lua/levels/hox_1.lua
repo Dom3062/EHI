@@ -21,6 +21,7 @@ local other =
 {
     [100332] = EHI:AddSniperSpawnedPopup(true, true)
 }
+tweak_data.ehi.functions.eng_X("eng_4", "eng_4_stats") -- "The one who declared himself the hero" achievement
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 

@@ -98,6 +98,28 @@ local achievements =
         }
     }
 }
+if EHI:CanShowAchievement2("pim_2", "show_achievements_grenade") then -- Crouched and Hidden, Flying Dagger
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if job ~= "dark" then
+            return
+        end
+        local progress = EHI:GetAchievementProgress("pim_2_stats")
+        self:EHIAddAchievementTracker("pim_2", progress, 8, false, true, true)
+        EHI:Hook(AchievmentManager, "add_heist_success_award_progress", function(am, id)
+            if id == "pim_2_stats" then
+                progress = progress + 1
+                managers.ehi_tracker:SetProgress("pim_2", progress)
+            end
+        end)
+        EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+            if success and progress < 8 then
+                managers.hud:custom_ingame_popup_text("SAVED", "Progress Saved: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+            elseif not success then
+                managers.hud:custom_ingame_popup_text("LOST", "Progress Lost: " .. tostring(progress) .. "/8", "C_Jimmy_H_MurkyStation_CrouchedandHidden")
+            end
+        end)
+    end)
+end
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

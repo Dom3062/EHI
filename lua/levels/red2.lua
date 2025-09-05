@@ -112,6 +112,7 @@ local achievements =
         }
     }
 }
+tweak_data.ehi.functions.eng_X("eng_2", "eng_2_stats") -- "The one that had many names" achievement
 
 local other =
 {

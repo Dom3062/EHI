@@ -232,6 +232,26 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101783] = { id = "Snipers", time = 56, loop = 2, special_function = SniperLootRestart }
     other[101784] = { id = "Snipers", time = 55, loop = 2, special_function = SniperLootRestart }
 end
+if EHI:CanShowAchievement2("gage2_3", "show_achievements_melee") then -- The Eighth and Final Rule
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if level == "nightclub" and self:EHIHasMeleeEquipped("fists") then
+            self:EHIShowTrackerInLoud(function()
+                self:EHIAddAchievementTrackerFromStat("gage2_3_stats")
+            end)
+            self:EHIAddToStats("gage2_3", "gage2_3_stats")
+        end
+    end)
+end
+if EHI:CanShowAchievement2("gage4_7", "show_achievements_melee") then -- Every day I'm Shovelin'
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if level == "nightclub" and self:EHIHasMeleeEquipped("shovel") then
+            self:EHIShowTrackerInLoud(function()
+                self:EHIAddAchievementTrackerFromStat("gage4_7_stats")
+            end)
+            self:EHIAddToStats("gage4_7", "gage4_7_stats")
+        end
+    end)
+end
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

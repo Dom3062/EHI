@@ -97,6 +97,30 @@ local achievements =
         end
     }
 }
+if EHI:CanShowAchievement2("man_5", "show_achievements_weapon") and ovk_and_up then -- "Blow-Out"
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if job == "man" and self:EHIHasWeaponTypeEquipped("grenade_launcher") and from_beginning then
+            managers.ehi_unlockable:AddAchievementStatusTracker("man_5")
+            local function fail()
+                managers.ehi_unlockable:SetAchievementFailed("man_5")
+                EHI:Unhook("man_5_killed")
+                EHI:Unhook("man_5__used_weapon")
+            end
+            managers.ehi_hook:HookKillFunction("man_5", nil, nil, function(sm, data)
+                local is_not_explosion = data.variant ~= "explosion"
+                local name_id, is_throwable = sm:_get_name_id_and_throwable_id(data.weapon_unit)
+                if is_not_explosion or (name_id and not table.contains(sm:_get_boom_guns(), name_id)) or is_throwable then
+                    fail()
+                end
+            end)
+            Hooks:PostHook(StatisticsManager, "_used_weapon", "EHI_man_5__used_weapon", function(sm, weapon_id, ...)
+                if tweak_data:get_raw_value("weapon", sm:create_unified_weapon_name(weapon_id), "categories", 1) ~= "grenade_launcher" then
+                    fail()
+                end
+            end)
+        end
+    end)
+end
 
 local other =
 {

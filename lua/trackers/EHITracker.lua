@@ -22,8 +22,7 @@ local function visibility(o, end_a) -- This is actually faster than manually re-
     while TOTAL_T > t do
         local dt = coroutine.yield()
         t = math.min(t + dt, TOTAL_T)
-        local lerp = t / TOTAL_T
-        o:set_alpha(math.lerp(start_a, end_a, lerp))
+        o:set_alpha(math.lerp(start_a, end_a, t / TOTAL_T))
     end
 end
 ---@param o Object
@@ -120,8 +119,7 @@ elseif EHI:GetOption("show_tracker_bg") then
         while TOTAL_T > t do
             local dt = coroutine.yield()
             t = math.min(t + dt, TOTAL_T)
-            local lerp = t / TOTAL_T
-            o:set_w(math.lerp(from_w, target_w, lerp))
+            o:set_w(math.lerp(from_w, target_w, t / TOTAL_T))
         end
         self:RedrawPanel()
     end
@@ -143,8 +141,7 @@ local function icon_x(o, target_x)
     while TOTAL_T > t do
         local dt = coroutine.yield()
         t = math.min(t + dt, TOTAL_T)
-        local lerp = t / TOTAL_T
-        o:set_x(math.lerp(from_x, target_x, lerp))
+        o:set_x(math.lerp(from_x, target_x, t / TOTAL_T))
     end
 end
 ---@param o Text
@@ -301,7 +298,7 @@ EHITracker._anim_params = {
     PanelSizeDecrease = 5, -- 64 * scale (Same size as default BG size)
     PanelSizeDecreaseHalf = 6 -- 32 * scale (Half size as default BG size)
 }
-EHITracker.make_fine_text = BlackMarketGui.make_fine_text
+EHITracker._make_fine_text = BlackMarketGui.make_fine_text
 ---@param panel Panel Main panel provided by `EHITrackerManager`
 ---@param params EHITracker.params
 function EHITracker:init(panel, params)
@@ -397,8 +394,8 @@ function EHITracker:SetMovement(anim_type)
         end
         if self._HORIZONTAL_ALIGNMENT then
             self:_adjust_horizontal_hint_x()
-        else
-            self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and -size or size)
+        elseif not (self._VERTICAL_ANIM_W_LEFT and self._VERTICAL_HINT_POS_RIGHT) then
+            self:AdjustHintX(self._VERTICAL_HINT_POS_LEFT and -size or size)
         end
     elseif anim_type == self._anim_params.PanelSizeDecrease or anim_type == self._anim_params.PanelSizeDecreaseHalf then
         local size = anim_type == self._anim_params.PanelSizeDecrease and self._default_bg_size or self._default_bg_size_half
@@ -409,10 +406,10 @@ function EHITracker:SetMovement(anim_type)
         end
         if self._HORIZONTAL_ALIGNMENT then
             self:_adjust_horizontal_hint_x()
-        elseif self._VERTICAL_ANIM_W_LEFT then
+        elseif self._VERTICAL_HINT_POS_LEFT then
             self:AdjustHintX(size)
-        else
-            self:AdjustHintX(self._VERTICAL_ANIM_W_LEFT and size or -size)
+        elseif not (self._VERTICAL_ANIM_W_LEFT and self._VERTICAL_HINT_POS_RIGHT) then
+            self:AdjustHintX(self._VERTICAL_HINT_POS_LEFT and size or -size)
         end
     end
 end
@@ -548,13 +545,17 @@ function EHITracker:AnimateTopLeft(target_x, target_y, panel_width)
             self._hint:stop(self._anim_hint_move)
         end
         local target_hint_x, target_hint_y
-        if self._VERTICAL_ANIM_W_LEFT then
+        if self._VERTICAL_HINT_POS_LEFT then
             target_hint_x = target_x - self._hint:w() - self._gap_scaled
         else
             target_hint_x = target_x + panel_width
         end
         if self._HORIZONTAL_ALIGNMENT then
-            target_hint_y = target_y + self._icon_gap_size_scaled
+            if self._HORIZONTAL_HINT_POS_DOWN then
+                target_hint_y = target_y + self._icon_gap_size_scaled
+            else
+                target_hint_y = target_y - self._icon_gap_size_scaled
+            end
         else
             target_hint_y = target_y - self._hint_pos.y_diff
         end
@@ -773,7 +774,7 @@ function EHITracker:CreateHint(text, delay_popup)
         visible = true,
         alpha = 0
     })
-    self:make_fine_text(self._hint)
+    self:_make_fine_text(self._hint)
     self._hint_pos = { x = self._hint:x(), y_diff = 0 }
     self._delay_hint = delay_popup
 end
@@ -798,7 +799,7 @@ end
 ---Adjusts hint X position; this function needs to run last after all panel animations are called
 ---@param x number
 function EHITracker:_animate_adjust_hint_x(x)
-    if not self._hint then
+    if not self._hint or (self._VERTICAL_ANIM_W_LEFT and self._VERTICAL_HINT_POS_RIGHT) then
         return
     end
     if self._HORIZONTAL_ALIGNMENT then
@@ -809,7 +810,7 @@ function EHITracker:_animate_adjust_hint_x(x)
         self._hint:stop(self._anim_hint_x)
     end
     local new_x
-    if self._VERTICAL_ANIM_W_LEFT then
+    if self._VERTICAL_HINT_POS_LEFT then
         new_x = self._hint_pos.x + x
     else
         new_x = self._hint_pos.x - x
@@ -820,51 +821,44 @@ end
 
 if EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", EHI.Const.Trackers.Alignment.Vertical) then
     EHITracker._VERTICAL_ALIGNMENT = true
-    if EHI:GetOption("tracker_vertical_w_anim") == EHI.Const.Trackers.Vertical.WidthAnim.RightToLeft then
-        EHITracker._VERTICAL_ANIM_W_LEFT = true
-        ---@param x number World X
-        ---@param y number World Y
-        function EHITracker:PositionHint(x, y)
-            if not self._hint then
-                return
-            end
-            self._hint:set_center_y(self._panel:center_y())
-            self._hint:set_x(x - self._hint:w() - 3)
-            self._hint_pos.x = self._hint:x()
-            self._hint_pos.y_diff = y - self._hint:y()
-            if self._hint_t > 0 and not self._delay_hint then
-                self._hint:animate(hint_wait, self._hint_t, self)
-            end
-        end
-    else
-        ---@param x number World X
-        ---@param y number World Y
-        function EHITracker:PositionHint(x, y)
-            if not self._hint then
-                return
-            end
-            self._hint:set_center_y(self._panel:center_y())
-            self._hint:set_x(x + self:GetTrackerSize() + 3)
-            self._hint_pos.x = self._hint:x()
-            self._hint_pos.y_diff = y - self._hint:y()
-            if self._hint_t > 0 and not self._delay_hint then
-                self._hint:animate(hint_wait, self._hint_t, self)
-            end
-        end
-    end
-else
-    EHITracker._HORIZONTAL_RIGHT_TO_LEFT = EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", EHI.Const.Trackers.Alignment.Horizontal_RightToLeft)
-    EHITracker._HORIZONTAL_ALIGNMENT = true
+    EHITracker._VERTICAL_ANIM_W_LEFT = EHI:GetOption("tracker_vertical_w_anim") == EHI.Const.Trackers.Vertical.WidthAnim.RightToLeft
+    EHITracker._VERTICAL_HINT_POS_RIGHT = EHI:GetOption("tracker_hint_position") == EHI.Const.Trackers.Hint.v_right_h_down
+    EHITracker._VERTICAL_HINT_POS_LEFT = not EHITracker._VERTICAL_HINT_POS_RIGHT
     ---@param x number World X
     ---@param y number World Y
     function EHITracker:PositionHint(x, y)
         if not self._hint then
             return
         end
-        local y_new = y + self._icon_size_scaled + 3
+        self._hint:set_center_y(self._panel:center_y())
+        if self._VERTICAL_HINT_POS_RIGHT then
+            self._hint:set_x(x + self:GetTrackerSize() + 3)
+        else
+            self._hint:set_x(x - self._hint:w() - 3)
+        end
+        self._hint_pos.x = self._hint:x()
+        self._hint_pos.y_diff = y - self._hint:y()
+        if self._hint_t > 0 and not self._delay_hint then
+            self._hint:animate(hint_wait, self._hint_t, self)
+        end
+    end
+else
+    EHITracker._HORIZONTAL_RIGHT_TO_LEFT = EHI:CheckVRAndNonVROption("vr_tracker_alignment", "tracker_alignment", EHI.Const.Trackers.Alignment.Horizontal_RightToLeft)
+    EHITracker._HORIZONTAL_ALIGNMENT = true
+    EHITracker._HORIZONTAL_HINT_POS_DOWN = EHI:GetOption("tracker_hint_position") == EHI.Const.Trackers.Hint.v_right_h_down
+    ---@param x number World X
+    ---@param y number World Y
+    function EHITracker:PositionHint(x, y)
+        if not self._hint then
+            return
+        end
         self._hint:set_x(x)
         self._hint_pos.x = x
-        self._hint:set_y(y_new)
+        if self._HORIZONTAL_HINT_POS_DOWN then
+            self._hint:set_y(y + self._icon_size_scaled + 3)
+        else
+            self._hint:set_y(y - self._icon_size_scaled - 3)
+        end
         self._hint:set_w(self:GetTrackerSize())
         self:FitTheText(self._hint, 18)
         if self._hint_t > 0 and not self._delay_hint then
@@ -899,8 +893,8 @@ function EHITracker:UpdateHint(text)
         loc = self._hint_vanilla_localization and text or "ehi_hint_" .. text
     end
     self._hint:set_text(managers.localization:text(loc))
-    self:make_fine_text(self._hint)
-    if self._VERTICAL_ANIM_W_LEFT then
+    self:_make_fine_text(self._hint)
+    if self._VERTICAL_HINT_POS_LEFT then
         local x = self._panel:x() - self._hint:w() - 3
         self._hint:set_x(x)
         self._hint_pos.x = x

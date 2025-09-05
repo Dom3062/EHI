@@ -117,6 +117,35 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+    if EHI:CanShowAchievement2("rvd_8", "show_achievements_weapon") then -- United We Heist
+        EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+            if job == "rvd" and self:EHIHasPrimaryWeaponTypeEquipped("assault_rifle") and managers.job:get_memory("ehi_rvd_8") then
+                managers.ehi_unlockable:AddAchievementStatusTracker("rvd_8")
+                local function fail()
+                    managers.ehi_unlockable:SetAchievementFailed("rvd_8")
+                    EHI:Unhook("rvd_8_shot_fired")
+                    EHI:Unhook("rvd_8_register_melee_hit")
+                end
+                Hooks:PostHook(StatisticsManager, "shot_fired", "EHI_rvd_8_shot_fired", function(sm, data)
+                    local name_id = data.name_id or data.weapon_unit:base():get_name_id()
+                    if tweak_data:get_raw_value("weapon", name_id, "categories", 1) ~= "assault_rifle" then
+                        fail()
+                    end
+                end)
+                Hooks:PostHook(StatisticsManager, "register_melee_hit", "EHI_rvd_8_register_melee_hit", fail)
+            end
+        end)
+    end
+    if EHI:CanShowAchievement2("rvd_12", "show_achievements_melee") then -- "Close Shave" achievement
+        EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+            if job == "rvd" then
+                self:EHIAddAchievementTrackerFromStat("rvd_12")
+            end
+        end)
+    end
+end
+
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

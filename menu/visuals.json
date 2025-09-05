@@ -83,6 +83,21 @@
             "step": 1,
             "default_value": 15,
             "ehi_ver" : 191
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_tracker_hint_position_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_tracker_hint_position_desc",
+            "callback": "SetOption",
+            "callback_arguments": "tracker_hint_position",
+            "items": [
+                "ehi_tracker_hint_position_1",
+                "ehi_tracker_hint_position_2"
+            ],
+            "value": "tracker_hint_position",
+            "default_value": 1,
+            "ehi_ver" : 336
         }
     ]
 }

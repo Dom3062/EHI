@@ -46,6 +46,13 @@ local achievements =
         end
     }
 }
+if EHI:CanShowAchievement2("pig_3", "show_achievements_melee") then -- Do You Like Hurting Other People?
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if job == "mia" and self:EHIHasMeleeEquipped("baseballbat") then
+            self:EHIAddAchievementTrackerFromStat("pig_3_stats")
+        end
+    end)
+end
 
 if not EHI:CanShowAchievement("pig_7") then
     local start = { time = 5, id = "HostageBomb", icons = { Icon.Hostage, Icon.C4 }, class = TT.Warning, hint = Hints.Explosion }

@@ -110,6 +110,12 @@ _G.EHI =
                 Left = 1,
                 Right = 2
             },
+            -- Used with option `tracker_hint_position`
+            Hint =
+            {
+                v_right_h_down = 1,
+                v_left_h_up = 2
+            },
             Horizontal =
             {
                 NewRCAnim =
@@ -832,6 +838,7 @@ local function LoadDefaultValues(self)
         show_icon_position = 2, -- 1 = Left; 2 = Right
         show_tracker_hint = true,
         show_tracker_hint_t = 15,
+        tracker_hint_position = 1, -- 1 = (Vertical) Right / (Horizontal) Down; 2 = (Vertical) Left / (Horizontal) Up
 
         -- Trackers
         trackers_n_of_rc = 0, -- Number of Rows / Columns
@@ -1599,10 +1606,13 @@ end
 
 ---@param id string Achievement ID
 function EHI:CanShowAchievement(id)
-    if self:ShowMissionAchievements() then
-        return self:IsAchievementLocked(id)
-    end
-    return false
+    return self:ShowMissionAchievements() and self:IsAchievementLocked(id)
+end
+
+---@param id string Achievement ID
+---@param unlockable_option string
+function EHI:CanShowAchievement2(id, unlockable_option)
+    return self:ShowMissionAchievements() and self:IsAchievementLocked2(id) and self:GetUnlockableOption(unlockable_option)
 end
 
 ---@param option string
@@ -1807,6 +1817,11 @@ end
 ---@param f function
 function EHI:AddOnSpawnedCallback(f)
     self:AddCallback("Spawned", f)
+end
+
+---@param f fun(self: IngameWaitingForPlayersState, job: string, level: string, from_beginning: boolean)
+function EHI:AddOnSpawnedExtendedCallback(f)
+    self:AddCallback("Spawned2", f)
 end
 
 ---@param f fun(loc: LocalizationManager, lang_name: string)

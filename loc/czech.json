@@ -293,6 +293,11 @@
     "ehi_show_tracker_hint_t" : "Popis sledovače (Čas)",
     "ehi_show_tracker_hint_t_desc" : "Definuje jak dlouho popis zůstane na obrazovce než se skryje\n\nPopis zůstane na obrazovce, pokud se nastaví hodnota na 0",
 
+    "ehi_tracker_hint_position" : "Pozice popisu sledovače",
+    "ehi_tracker_hint_position_desc" : "Nastavuje pozici popisu okolo sledovače",
+    "ehi_tracker_hint_position_1" : "(Vertikální) Vpravo / (Horizontální) Dole",
+    "ehi_tracker_hint_position_2" : "(Vertikální) Vlevo / (Horizontální) Nahoře",
+
     "ehi_show_trackers" : "Zobrazovat sledovače",
 
     "ehi_trackers_menu" : "Sledovače",

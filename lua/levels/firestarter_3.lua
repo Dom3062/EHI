@@ -79,6 +79,7 @@ achievements.voff_1 =
         [105704] = { special_function = SF.SetAchievementFailed } -- Killed
     }
 }
+tweak_data.ehi.functions.eng_X("eng_1", "eng_1_stats") -- "The only one that is true" achievement
 
 other[105364] = EHI:AddAssaultDelay({ control = 10 + 60, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

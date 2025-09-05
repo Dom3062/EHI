@@ -33,6 +33,13 @@ local achievements =
         }
     }
 }
+if EHI:CanShowAchievement2("bph_9", "show_achievements_melee") and ovk_and_up then -- Prison Rules, Bitch!
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if job == "bph" and self:EHIHasMeleeEquipped("toothbrush") then
+            self:EHIAddAchievementTrackerFromStat("bph_9_stat")
+        end
+    end)
+end
 
 local other =
 {

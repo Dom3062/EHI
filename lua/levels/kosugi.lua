@@ -209,6 +209,7 @@ EHI:ShowAchievementLootCounter({
         loot_type = "samurai_suit"
     }
 })
+tweak_data.ehi.functions.eng_X("eng_2", "eng_2_stats") -- "The one that had many names" achievement
 local min_bags = EHI:GetValueBasedOnDifficulty({
     normal = 3,
     hard = 5,

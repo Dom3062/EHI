@@ -13,7 +13,7 @@ end
 
 local Icon = EHI.Icons
 
-local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
+DigitalGui.__EHI_SHOW_TRACKER, DigitalGui.__EHI_SHOW_WAYPOINT = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
 
 local original =
 {
@@ -33,7 +33,7 @@ local level_id = Global.game_settings.level_id
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    if show_tracker then
+    if self:is_timer() and self.__EHI_SHOW_TRACKER then
         EHI:OptionAndLoadTracker("show_timers")
     end
 end
@@ -45,7 +45,7 @@ function DigitalGui:TimerStartCountDown()
         managers.ehi_timer:SetJammed(self._ehi_key, false)
         return
     end
-    if show_tracker then
+    if self.__EHI_SHOW_TRACKER then
         managers.ehi_timer:StartTimer({
             id = self._ehi_key,
             key = self._ehi_key,
@@ -58,7 +58,7 @@ function DigitalGui:TimerStartCountDown()
             class = EHI.Trackers.Timer.Base
         })
     end
-    if show_waypoint and not self._ignore_waypoint then
+    if self.__EHI_SHOW_WAYPOINT and not self._ignore_waypoint then
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
             time = self._timer,
             icon = self._icons or Icon.PCHack,
@@ -72,7 +72,7 @@ function DigitalGui:TimerStartCountDown()
 end
 
 function DigitalGui:HideWaypoint()
-    if self._remove_vanilla_waypoint and show_waypoint then
+    if self._remove_vanilla_waypoint and self.__EHI_SHOW_WAYPOINT then
         managers.hud:RemoveTimerWaypoint(self._remove_vanilla_waypoint)
     end
 end
@@ -90,14 +90,14 @@ if level_id == "shoutout_raid" then
         if old_time == timer then
             return
         elseif old_time == 0 then
-            if show_tracker then
+            if self.__EHI_SHOW_TRACKER then
                 managers.ehi_tracker:AddTracker({
                     id = self._ehi_key,
                     class = "EHIVaultTemperatureTracker",
                     hint = "timer"
                 })
             end
-            if show_waypoint then
+            if self.__EHI_SHOW_WAYPOINT then
                 managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
                     time = 500,
                     icon = Icon.Vault,
@@ -110,12 +110,12 @@ if level_id == "shoutout_raid" then
         managers.ehi_tracking:Call(self._ehi_key, "CheckTime", math.ehi_round(timer, 0.1))
     end
 else
-    if show_tracker and show_waypoint then
+    if DigitalGui.__EHI_SHOW_TRACKER and DigitalGui.__EHI_SHOW_WAYPOINT then
         function DigitalGui:_update_timer_text(...)
             managers.ehi_timer:UpdateTimer(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
-    elseif show_waypoint then
+    elseif DigitalGui.__EHI_SHOW_WAYPOINT then
         function DigitalGui:_update_timer_text(...)
             managers.ehi_waypoint:SetTime(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
