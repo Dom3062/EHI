@@ -299,7 +299,8 @@ end
 
 local pxp1_1_checked = false
 -- "Plague Doctor" achievement
-local function pxp1_1()
+---@param self IngameWaitingForPlayersState
+local function pxp1_1(self)
     if pxp1_1_checked then
         return
     elseif EHI:IsAchievementLocked2("pxp1_1") then
@@ -653,7 +654,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     self:EHIShowTrackerInLoud(f)
                     stats.pim_1_stats = "pim_1"
                 end
-                pxp1_1()
+                pxp1_1(self)
             end
             if EHI:IsDifficultyOrAbove(EHI.Difficulties.Mayhem) and EHI:IsAchievementLocked2("gage3_2") and HasWeaponEquipped("akm_gold") then -- "The Man With the Golden Gun" achievement
                 local function f()
@@ -705,7 +706,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         self:EHIAddAchievementTrackerFromStat("sawp_stat")
                     end
                 end
-                pxp1_1()
+                pxp1_1(self)
             end
         end
         if EHI:GetUnlockableOption("show_achievements_grenade") then -- Kill with grenades
@@ -731,7 +732,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 self:EHIAddAchievementTrackerFromStat("dec21_02_stat")
             end
             if OVKOrAbove then
-                pxp1_1()
+                pxp1_1(self)
                 if EHI:IsAchievementLocked2("pxp2_3") and HasGrenadeEquipped("poison_gas_grenade") then -- "Snake Charmer" achievement
                     self:EHIAddAchievementTrackerFromStat("pxp2_3_stats")
                 end
