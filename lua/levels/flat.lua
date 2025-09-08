@@ -64,6 +64,121 @@ local achievements =
         }
     }
 }
+if EHI:CanShowAchievement2("flat_5", "show_achievements_other") then
+    ---@class flat_5 : EHIChanceTracker, EHIAchievementTracker
+    ---@field super EHIChanceTracker
+    local flat_5 = ehi_achievement_class(EHIChanceTracker)
+    function flat_5:pre_init(params)
+        self._peers = {} ---@type { hits: number, shots: number }[]
+        self._n_of_peers = 0
+        params.flash_bg = false
+        params.disable_anim = true
+        flat_5.super.pre_init(self, params)
+    end
+    function flat_5:post_init(params)
+        flat_5.super.post_init(self, params)
+        EHIAchievementTracker.post_init(self, params)
+    end
+    ---@param peer_id integer
+    function flat_5:PlayerAdded(peer_id)
+        self._n_of_peers = self._n_of_peers + 1
+        self._peers[peer_id] = { hits = 0, shots = 0 }
+    end
+    ---@param peer_id integer
+    function flat_5:PlayerDisconnected(peer_id)
+        self._n_of_peers = self._n_of_peers - 1
+        self._peers[peer_id] = nil
+    end
+    ---@param peer_id integer
+    ---@param shot_made integer
+    function flat_5:ShotMade(peer_id, shot_made)
+        local peer = self._peers[peer_id]
+        if peer then
+            peer.shots = peer.shots + shot_made
+            self:UpdateAllAccuracy()
+        end
+    end
+    ---@param peer_id integer
+    function flat_5:HitMade(peer_id)
+        local peer = self._peers[peer_id]
+        if peer then
+            peer.hits = peer.hits + 1
+            self:UpdateAllAccuracy()
+        end
+    end
+    function flat_5:UpdateAllAccuracy()
+        local accuracy = 0
+        for _, peer in pairs(self._peers) do
+            if peer.shots > 0 then
+                accuracy = accuracy + math.floor(peer.hits / peer.shots * 100)
+            end
+        end
+        self:SetChance(math.floor(accuracy / self._n_of_peers))
+    end
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if level == "flat" and from_beginning then
+            local session = managers.network:session()
+            local my_peer_id = session:local_peer():id()
+            managers.ehi_tracker:AddTracker({
+                id = "flat_5",
+                icons = EHI:GetAchievementIcon("flat_5"),
+                class_table = flat_5
+            })
+            for id, _ in pairs(session:all_peers()) do
+                managers.ehi_tracker:CallFunction("flat_5", "PlayerAdded", id)
+            end
+            ---@param something UnitPlayer|UnitEnemy|UnitTeamAI
+            local function _pid(something)
+                local network = alive(something) and something:network()
+                local peer = network and network:peer()
+                return peer and peer:id() or 0
+            end
+            Hooks:PostHook(CopDamage, "_on_damage_received", "EHI_flat_5_CopData__on_damage_received", function(c_dmg, damage_info, ...) ---@param damage_info CopDamage.AttackData
+                local realAttacker = damage_info.attacker_unit
+                if alive(realAttacker) then
+                    local base = realAttacker:base()
+                    if base then
+                        if base.thrower_unit then
+                            realAttacker = base.thrower_unit
+                        elseif base.sentry_gun then
+                            realAttacker = base:get_owner()
+                        end
+                    end
+                end
+                local damage = damage_info.damage
+                if type(damage) ~= 'number'  -- Dragon's breath crash
+                    or damage_info.variant == 'stun'	-- Stun a convert crash with concussion grenade
+                    or damage == 0			-- Stun a shield crash with concussion grenade
+                    or type(realAttacker) == "function"
+                then
+                    return
+                end
+                local pid = _pid(realAttacker)
+                if damage_info.variant == "bullet" or damage_info.variant == "fire" or damage_info.variant == "explosion" or damage_info.variant == "melee" then
+                    managers.ehi_tracker:CallFunction("flat_5", "HitMade", pid)
+                end
+            end)
+            Hooks:PostHook(NetworkPeer, "init", "EHI_flat_5_NetworkPeer_init", function(peer, ...)
+                managers.ehi_tracker:CallFunction("flat_5", "PlayerAdded", peer:id())
+            end)
+            Hooks:PostHook(NetworkPeer, "destroy", "EHI_flat_5_NetworkPeer_destroy", function(peer, ...)
+                managers.ehi_tracker:CallFunction("flat_5", "PlayerDisconnected", peer:id())
+            end)
+            Hooks:PreHook(HUDTeammate, "set_ammo_amount_by_type", "EHI_flat_5_HUDTeammate_set_ammo_amount_by_type", function(hud, type, max_clip, current_clip, current_left, ...)
+                local clip = "__flat_5_last_clip_" .. type
+                local cc = hud[clip] or 0
+                if current_clip < cc then
+                    managers.ehi_tracker:CallFunction("flat_5", "ShotMade", hud._peer_id or my_peer_id or 0, cc - current_clip)
+                end
+                hud[clip] = current_clip
+            end)
+            Hooks:PostHook(HUDTeammate, "remove_panel", "EHI_flat_5_HUDTeammate_remove_panel", function(hud, ...)
+                hud["__flat_5_last_clip_primary"] = 0
+                hud["__flat_5 last_clip_secondary"] = 0
+            end)
+        end
+    end)
+end
 
 local other =
 {

@@ -310,7 +310,7 @@ function EHIEndGamePeerStats:ACC()
     elseif self._shots <= 0 then
         return "Acc:0%"
     end
-    return string.format("Acc:%d%%", self._hits / self._shots * 100)
+    return string.format("Acc:%d%%", math.floor(self._hits / self._shots * 100))
 end
 
 ---@param ghost string
