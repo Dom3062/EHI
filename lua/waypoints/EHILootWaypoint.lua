@@ -39,7 +39,7 @@ end
 ---@param icon string
 ---@param position Vector3
 function EHILootWaypoint:CreateWaypoint(id, icon, position)
-    local waypoint = self._parent_class:_create_waypoint(id, icon, position, self._present_timers and self._present_timers[id] or self._present_timer)
+    local waypoint = self._parent_class:_create_vanilla_waypoint(id, icon, position, self._present_timers and self._present_timers[id] or self._present_timer)
     if waypoint then
         local data = {}
         data.gui = waypoint.timer_gui
@@ -195,5 +195,3 @@ function EHITimedLootWaypoint:SetCompleted(random_loot_present)
         end
     end
 end
-
-EHILootCountWaypoint = class(EHILootWaypoint)

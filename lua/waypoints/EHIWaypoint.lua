@@ -126,7 +126,7 @@ end
 ---@param icon string
 ---@param position Vector3
 function EHIWaypointLessWaypoint:CreateWaypoint(id, icon, position)
-    local waypoint = self._parent_class:_create_waypoint(id, icon, position)
+    local waypoint = self._parent_class:_create_vanilla_waypoint(id, icon, position)
     if waypoint then
         self._waypoint_id = id
         self._gui = waypoint.timer_gui
@@ -159,5 +159,51 @@ function EHIWaypointLessWaypoint:RemoveWaypoint()
 end
 
 function EHIWaypointLessWaypoint:delete()
-    self._parent_class:RemoveWaypoint(self._id, self._waypoint_id)
+    if self._waypoint_id then
+        self._parent_class._hud:remove_waypoint(self._waypoint_id)
+    end
+    EHIWaypointLessWaypoint.super.delete(self)
+end
+
+---@class EHIWaypointsLessWaypoint : EHIWaypointLessWaypoint
+---@field super EHIWaypointLessWaypoint
+EHIWaypointsLessWaypoint = class(EHIWaypointLessWaypoint)
+function EHIWaypointsLessWaypoint:init(...)
+    self._waypoints = {} ---@type table<number, { gui: Text, bitmap: Bitmap, bitmap_world: Bitmap, arrow: Bitmap }>
+    EHIWaypointsLessWaypoint.super.init(self, ...)
+end
+
+function EHIWaypointsLessWaypoint:CreateWaypoint(id, icon, position, ...)
+    local waypoint = self._parent_class:_create_vanilla_waypoint(id, icon, position)
+    if waypoint then
+        local data = {}
+        data.gui = waypoint.timer_gui
+        data.gui:set_text(self:Format())
+        data.bitmap = waypoint.bitmap
+        data.arrow = waypoint.arrow
+        data.bitmap_world = waypoint.bitmap_world
+        self:WaypointCreated(data, ...)
+        self._waypoints[id] = data
+    end
+end
+
+---Called when a waypoint is created on the screen with additional parameters passed
+---@param waypoint { gui: Text, bitmap: Bitmap, bitmap_world: Bitmap, arrow: Bitmap }
+function EHIWaypointsLessWaypoint:WaypointCreated(waypoint, ...)
+end
+
+---@param id number
+function EHIWaypointsLessWaypoint:RemoveWaypoint(id)
+    if table.remove_key(self._waypoints, id) then
+        local init_data = self._parent_class._hud:GetStoredWaypointData(id)
+        self._parent_class._hud:remove_waypoint(id)
+        self._parent_class._hud:AddWaypointSoft(id, init_data) ---@diagnostic disable-line
+    end
+end
+
+function EHIWaypointsLessWaypoint:delete()
+    for id, _ in pairs(self._waypoints) do
+        self._parent_class._hud:remove_waypoint(id)
+    end
+    EHIWaypointsLessWaypoint.super.super.delete(self)
 end

@@ -2,8 +2,6 @@
 ---@field super EHIBaseMaster
 ---@field new fun(self: self, params: EHITracker.params): self
 EHILootSharedMaster = class(EHIBaseMaster)
-EHILootSharedMaster._loot = EHILootManager
-EHILootSharedMaster._id = EHILootManager._id
 EHILootSharedMaster._SHOW_POPUP = EHI:GetOption("show_all_loot_secured_popup")
 ---@param params EHITracker.params
 function EHILootSharedMaster:init(params)

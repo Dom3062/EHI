@@ -20,7 +20,7 @@ managers.ehi_phalanx = blt.vm.dofile(EHI.LuaPath .. "EHIPhalanxManager.lua")
 if EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
     managers.ehi_timer = blt.vm.dofile(EHI.LuaPath .. "EHITimerManager.lua")
 end
-dofile(EHI.LuaPath .. "EHILootManager.lua")
+managers.ehi_loot = blt.vm.dofile(EHI.LuaPath .. "EHILootManager.lua")
 managers.ehi_sync = blt.vm.dofile(EHI.LuaPath .. "EHISyncManager.lua")
 managers.ehi_hook = blt.vm.dofile(EHI.LuaPath .. "EHIHookManager.lua")
 managers.ehi_money = blt.vm.dofile(EHI.LuaPath .. "EHIMoneyManager.lua")
@@ -40,7 +40,6 @@ function Setup:init_managers(managers, ...)
     managers.ehi_assault:post_init(managers.ehi_tracker)
     managers.ehi_unlockable:post_init(managers.ehi_tracker)
     managers.ehi_phalanx:init_finalize(managers.ehi_tracker, managers.ehi_hook, managers.ehi_assault)
-    managers.ehi_loot = EHILootManager:new(managers.ehi_tracker, managers.ehi_waypoint)
     managers.ehi_hook:post_init(managers.ehi_tracker, managers.ehi_loot)
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitManagers, managers)
 end

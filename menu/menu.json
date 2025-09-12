@@ -361,6 +361,30 @@
             "value": "show_preview_text",
             "default_value": true,
             "ehi_ver" : 58
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_preview_trackers_choice",
+            "title": "ehi_show_preview_trackers",
+            "description": "ehi_show_preview_trackers_desc",
+            "callback": ["SetOption", "UpdateTrackerPreviewVisibility"],
+            "callback_arguments": "show_preview_trackers",
+            "value": "show_preview_trackers",
+            "parent" : "ehi_show_trackers_choice",
+            "default_value": true,
+            "ehi_ver" : 339
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_preview_buffs_choice",
+            "title": "ehi_show_preview_buffs",
+            "description": "ehi_show_preview_buffs_desc",
+            "callback": ["SetOption", "UpdateBuffsPreviewVisibility"],
+            "callback_arguments": "show_preview_buffs",
+            "value": "show_preview_buffs",
+            "parent" : "ehi_show_buffs_choice",
+            "default_value": true,
+            "ehi_ver" : 339
         }
     ]
 }

@@ -28,6 +28,10 @@
     "ehi_menu_only" : "Pouze v menu",
     "ehi_show_preview_text" : "Zobrazit text 'Náhled'",
     "ehi_show_preview_text_desc" : "Zobrazuje nebo skrývá náhledový text",
+    "ehi_show_preview_trackers" : "Zobrazit sledovače v náhledu",
+    "ehi_show_preview_trackers_desc" : "Zobrazuje nebo skrývá sledovače",
+    "ehi_show_preview_buffs" : "Zobrazit buffy v náhledu",
+    "ehi_show_preview_buffs_desc" : "Zobrazuje nebo skrývá buffy",
 
     "ehi_mission_briefing_toggle_plan_text" : "PŘEPNOUT",
     "ehi_mission_briefing_next_plan_text" : "DALŠÍ",

@@ -2,7 +2,7 @@ local mvector3 = mvector3
 
 ---@class EHIDamageFloatManager
 EHIDamageFloatManager = {}
-EHIDamageFloatManager._cop_damage_hook = "EHI_EHIDamageFloatManager_CopDamage_on_damage_received"
+EHIDamageFloatManager._cop_damage_hook = "DamageFloat"
 EHIDamageFloatManager._show_my_damage = EHI:GetOption("show_floating_damage_popup_my_damage")
 EHIDamageFloatManager._show_ai_damage = EHI:GetOption("show_floating_damage_popup_ai_damage")
 EHIDamageFloatManager._show_crew_damage = EHI:GetOption("show_floating_damage_popup_crew_damage")
@@ -23,15 +23,15 @@ function EHIDamageFloatManager:new(hud)
     self._damage_decay = EHI:GetOption("show_floating_damage_popup_time_on_screen") --[[@as number]]
     self._damage_crit_decay = self._damage_decay * 1.2
     self.pops = {} ---@type EHIDamageFloat[]
-    Hooks:PostHook(CopDamage, "_on_damage_received", self._cop_damage_hook, callback(self, self, "damage_callback"))
+    managers.ehi_hook:AddCopDamageListener(self._cop_damage_hook, callback(self, self, "damage_callback"))
     Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIDamageFloatManager_init", function(base, ...)
         self._player_movement = base
     end)
     Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHIDamageFloatManager_init", function(base, ...)
         self._player_camera = base._camera_object
         hud:AddEHIUpdator("EHIDamageFloatManager", self)
-        if not EHI:HookExists(CopDamage, "_on_damage_received", self._cop_damage_hook) then
-            Hooks:PostHook(CopDamage, "_on_damage_received", self._cop_damage_hook, callback(self, self, "damage_callback"))
+        if not managers.ehi_hook:HasCopDamageListener(self._cop_damage_hook) then
+            managers.ehi_hook:AddCopDamageListener(self._cop_damage_hook, callback(self, self, "damage_callback"))
         end
     end)
     Hooks:PreHook(PlayerMovement, "pre_destroy", "EHI_PlayerMovement_EHIDamageFloatManager_pre_destroy", function(...)
@@ -83,7 +83,7 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
 
     ---@param finished boolean?
     function EHIDamageFloatManager:update_last(finished)
-        Hooks:RemovePostHook(self._cop_damage_hook)
+        managers.ehi_hook:RemoveCopDamageListener(self._cop_damage_hook, not finished)
         for i = 0, self._pop_list, 1 do
             for key, pop in pairs(self.pops[i] or {}) do
                 pop:destroy2(key)
@@ -101,31 +101,13 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
 
     ---@param c_dmg CopDamage|HuskCopDamage
     ---@param damage_info CopDamage.AttackData
-    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info)
+    ---@param realAttacker UnitPlayer|UnitTeamAI
+    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
             local hitPos = Vector3()
             local col_ray = damage_info.col_ray or {}
             mvector3.set(hitPos, col_ray.position or damage_info.pos or col_ray.hit_position or self:_pos(c_dmg._unit))
             if hitPos then
-                local realAttacker = damage_info.attacker_unit
-                if alive(realAttacker) then
-                    local base = realAttacker:base()
-                    if base then
-                        if base.thrower_unit then
-                            realAttacker = base.thrower_unit
-                        elseif base.sentry_gun then
-                            realAttacker = base:get_owner()
-                        end
-                    end
-                end
-                local damage = damage_info.damage
-                if type(damage) ~= 'number'  -- Dragon's breath crash
-                    or damage_info.variant == 'stun'	-- Stun a convert crash with concussion grenade
-                    or damage == 0			-- Stun a shield crash with concussion grenade
-                    or type(realAttacker) == "function"
-                then
-                    return
-                end
                 local pid = self:_pid(realAttacker)
                 if pid == self.pid and not self._show_my_damage then
                     return
@@ -136,6 +118,7 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
                         return
                     end
                 end
+                local damage = damage_info.damage
                 local unit = c_dmg._unit
                 local key
                 local isCrit = damage_info.critical_hit
@@ -209,7 +192,7 @@ else
 
     ---@param finished boolean?
     function EHIDamageFloatManager:update_last(finished)
-        Hooks:RemovePostHook(self._cop_damage_hook)
+        managers.ehi_hook:RemoveCopDamageListener(self._cop_damage_hook, not finished)
         for key, pop in pairs(self.pops) do
             pop:destroy(key)
         end
@@ -224,31 +207,13 @@ else
 
     ---@param c_dmg CopDamage|HuskCopDamage
     ---@param damage_info CopDamage.AttackData
-    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info)
+    ---@param realAttacker UnitPlayer|UnitTeamAI
+    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
             local hitPos = Vector3()
             local col_ray = damage_info.col_ray or {}
             mvector3.set(hitPos, col_ray.position or damage_info.pos or col_ray.hit_position or self:_pos(c_dmg._unit))
             if hitPos then
-                local realAttacker = damage_info.attacker_unit
-                if alive(realAttacker) then
-                    local base = realAttacker:base()
-                    if base then
-                        if base.thrower_unit then
-                            realAttacker = base.thrower_unit
-                        elseif base.sentry_gun then
-                            realAttacker = base:get_owner()
-                        end
-                    end
-                end
-                local damage = damage_info.damage
-                if type(damage) ~= 'number'  -- Dragon's breath crash
-                    or damage_info.variant == 'stun'	-- Stun a convert crash with concussion grenade
-                    or damage == 0			-- Stun a shield crash with concussion grenade
-                    or type(realAttacker) == "function"
-                then
-                    return
-                end
                 local pid = self:_pid(realAttacker)
                 if pid == self.pid and not self._show_my_damage then
                     return
@@ -259,6 +224,7 @@ else
                         return
                     end
                 end
+                local damage = damage_info.damage
                 local unit = c_dmg._unit
                 local isCrit = damage_info.critical_hit
                 local rDamage = damage >= 0 and damage or -damage

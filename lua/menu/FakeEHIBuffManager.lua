@@ -16,6 +16,7 @@ function FakeEHIBuffsManager:new(panel)
     self._buff_data =
     {
         visible = EHI:GetOption("show_buffs"),
+        preview_visible = EHI:GetOption("show_preview_buffs"),
         shape = EHI:GetOption("buffs_shape"),
         show_progress = EHI:GetOption("buffs_show_progress"),
         invert = EHI:GetOption("buffs_invert_progress"),
@@ -23,7 +24,6 @@ function FakeEHIBuffsManager:new(panel)
     }
 	self._buffs = {} ---@type FakeEHIBuffTracker[]
     self._panel = panel:panel({
-        layer = 0,
         alpha = 1
     })
     self:SetScale(EHI:GetOption("buffs_scale"))
@@ -31,8 +31,8 @@ function FakeEHIBuffsManager:new(panel)
     self._y = EHI:GetOption("buffs_y_offset") --[[@as number]]
     self._n_visible = 0
 	self._buffs_alignment = EHI:GetOption("buffs_alignment") --[[@as number]]
-    self:AddFakeBuffs()
-    self:OrganizeBuffs()
+    self:_add_fake_buffs()
+    self:_organize_buffs()
     return self
 end
 
@@ -61,7 +61,7 @@ function FakeEHIBuffsManager:_get_max_hints(max_buffs)
     return max
 end
 
-function FakeEHIBuffsManager:AddFakeBuffs()
+function FakeEHIBuffsManager:_add_fake_buffs()
     local visible, max = 0, math.random(3, 7)
     local max_hints = self:_get_max_hints(max)
     local buffs = tweak_data.ehi.buff
@@ -75,7 +75,7 @@ function FakeEHIBuffsManager:AddFakeBuffs()
         if not visible_buffs[key] then
             visible_buffs[key] = true
             visible = visible + 1
-            self:AddFakeBuff(self:_create_buff_params(buffs_with_hint[key], saferect_x, saferect_y), self:_get_position(visible))
+            self:_add_fake_buff(self:_create_buff_params(buffs_with_hint[key], saferect_x, saferect_y), self:_get_position(visible))
         end
     until visible == max_hints
     repeat
@@ -83,7 +83,7 @@ function FakeEHIBuffsManager:AddFakeBuffs()
         if not visible_buffs[key] then
             visible_buffs[key] = true
             visible = visible + 1
-            self:AddFakeBuff(self:_create_buff_params(buffs[key], saferect_x, saferect_y), self:_get_position(visible - max_hints) + 1)
+            self:_add_fake_buff(self:_create_buff_params(buffs[key], saferect_x, saferect_y), self:_get_position(visible - max_hints) + 1)
         end
     until visible == max
 end
@@ -99,7 +99,7 @@ function FakeEHIBuffsManager:_create_buff_params(buff, saferect_x, saferect_y)
     params.x = self._x - saferect_x
     params.y = self._y + saferect_y
     params.group = buff.group
-    params.visible = self._buff_data.visible
+    params.visible = self._buff_data.visible and self._buff_data.preview_visible
     params.shape = self._buff_data.shape
     params.scale = self._scale
     params.show_progress = self._buff_data.show_progress
@@ -115,12 +115,12 @@ end
 
 ---@param params table
 ---@param pos number
-function FakeEHIBuffsManager:AddFakeBuff(params, pos)
+function FakeEHIBuffsManager:_add_fake_buff(params, pos)
     self._n_visible = self._n_visible + 1
     self._buffs[pos] = _G[params.class or "FakeEHIBuffTracker"]:new(self._panel, params)
 end
 
-function FakeEHIBuffsManager:OrganizeBuffs()
+function FakeEHIBuffsManager:_organize_buffs()
     if self._n_visible == 0 then
         return
     elseif self._buffs_alignment == 1 then -- Left
@@ -145,13 +145,25 @@ function FakeEHIBuffsManager:OrganizeBuffs()
     end
 end
 
+---@param visibility boolean
+function FakeEHIBuffsManager:UpdateBuffsVisibility(visibility)
+    self._buff_data.visible = visibility
+    self:UpdateBuffs("SetVisibility", visibility and self._buff_data.preview_visible)
+end
+
+---@param visibility boolean
+function FakeEHIBuffsManager:UpdatePreviewVisibility(visibility)
+    self._buff_data.preview_visible = visibility
+    self:UpdateBuffs("SetVisibility", self._buff_data.visible and visibility)
+end
+
 ---@param x number
 function FakeEHIBuffsManager:UpdateXOffset(x)
 	self._x = x
 	if self._buffs_alignment == 2 then -- Center
 		return
 	end
-	self:OrganizeBuffs()
+	self:_organize_buffs()
 end
 
 ---@param y number
@@ -166,14 +178,14 @@ function FakeEHIBuffsManager:UpdateScale(scale)
     self:UpdateBuffs("destroy")
     self._buffs = {}
     self._n_visible = 0
-    self:AddFakeBuffs()
-    self:OrganizeBuffs()
+    self:_add_fake_buffs()
+    self:_organize_buffs()
 end
 
 ---@param alignment number
 function FakeEHIBuffsManager:UpdateAlignment(alignment)
 	self._buffs_alignment = alignment
-	self:OrganizeBuffs()
+	self:_organize_buffs()
 end
 
 ---@param f string

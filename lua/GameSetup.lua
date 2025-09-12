@@ -40,145 +40,6 @@ local redirect =
     slaughter_house_new = "levels/dinner"
 }
 
-local levels =
-{
-    -- Tutorial
-    short2_stage2b = true, -- Basic Mission: Loud - Plan B
-    -- Safehouse Nightmare
-    haunted = true,
-    -- Escapes
-    escape_cafe = true, -- Escape: Cafe
-    escape_cafe_day = true, -- Escape: Cafe (Day)
-    escape_overpass = true, -- Escape: Overpass; Appears to be unused
-    escape_overpass_night = true, -- Escape: Overpass (Night)
-    escape_park = true, -- Escape: Park
-    escape_park_day = true, -- Escape: Park (Day)
-    escape_street = true, -- Escape: Street
-    escape_garage = true, -- Escape: Garage
-    -- Chapter 1: Just getting started
-    jewelry_store = true, -- Jewelry Store
-    branchbank = true, -- Branchbank: Random
-    branchbank_gold = true, -- Branchbank: Gold
-    branchbank_cash = true, -- Branchbank: Cash
-    branchbank_deposit = true, -- Branchbank: Deposit
-    kosugi = true, -- Shadow Raid
-    roberts = true, -- GO Bank
-    family = true, -- Diamond Store
-    arm_cro = true, -- Transport: Crossroads
-    arm_fac = true, -- Transport: Harbor
-    arm_hcm = true, -- Transport: Downtown
-    arm_par = true, -- Transport: Park
-    arm_und = true, -- Transport: Underpass
-    arm_for = true, -- Transport: Train Heist
-    mallcrasher = true, -- Mallcrasher
-    four_stores = true, -- Four Stores
-    pines = true, -- White Xmas; missing wps
-    ukrainian_job = true, -- Ukrainian Job
-    shoutout_raid = true, -- Meltdown
-    jolly = true, -- Aftershock
-    nightclub = true, -- Nightclub
-    moon = true, -- Stealing Xmas
-    watchdogs_1 = true, -- Watchdogs Day 1
-    watchdogs_1_night = true, -- Watchdogs Day 1 (Night)
-    watchdogs_2_day = true, -- Watchdogs Day 2 (Day)
-    watchdogs_2 = true, -- Watchdogs Day 2
-    firestarter_1 = true, -- Firestarter Day 1
-    firestarter_2 = true, -- Firestarter Day 2
-    firestarter_3 = true, -- Firestarter Day 3
-    alex_1 = true, -- Rats Day 1
-    alex_2 = true, -- Rats Day 2
-    alex_3 = true, -- Rats Day 3
-    -- Chapter 2: The Kings of CrimeNet
-    welcome_to_the_jungle_1 = true, -- Big Oil Day 1
-    welcome_to_the_jungle_1_night = true, -- Big Oil Day 1 (Night)
-    welcome_to_the_jungle_2 = true, -- Big Oil Day 2
-    framing_frame_1 = true, -- Framing Frame Day 1
-    framing_frame_2 = true, -- Framing Frame Day 2
-    framing_frame_3 = true, -- Framing Frame Day 3; PC Hack waypoint; removal needed
-    election_day_1 = true, -- Election Day D1
-    election_day_2 = true, -- Election Day D2 Plan A/B
-    election_day_3 = true, -- Election Day D2 Plan C
-    election_day_3_skip1 = true,
-    election_day_3_skip2 = true,
-    big = true, -- Big Bank
-    mia_1 = true, -- Hotline Miami Day 1
-    mia_2 = true, -- Hotline Miami Day 2
-    hox_1 = true, -- Hoxton Breakout Day 1
-    hox_2 = true, -- Hoxton Breakout Day 2
-    hox_3 = true, -- Hoxton Revenge
-    mus = true, -- The Diamond
-    arena = true, -- The Alesso Heist
-    kenaz = true, -- Golden Grin Casino
-    gallery = true, -- Art Gallery
-    crojob2 = true, -- The Bomb: Dockyard
-    crojob3 = true, -- The Bomb: Forest
-    crojob3_night = true, -- The Bomb: Forest (Night)
-    friend = true, -- Scarface Mansion
-    pal = true, -- Counterfeit
-    red2 = true, -- First World Bank
-    rat = true, -- Cook Off
-    dark = true, -- Murky Station
-    mad = true, -- Boiling Point
-    peta = true, -- Goat Simulator Heist Day 1
-    peta2 = true, -- Goat Simulator Heist Day 2
-    cane = true, -- Santa's Workshop
-    -- Chapter 3: Endgame
-    cage = true, -- Car Shop
-    born = true, -- The Biker Heist Day 1
-    chew = true, -- The Biker Heist Day 2
-    chill = true, -- Safehouse (New)
-    chill_combat = true, -- Safehouse Raid
-    flat = true, -- Panic Room
-    help = true, -- Prison Nightmare
-    spa = true, -- Brooklyn 10-10
-    fish = true, -- The Yacht Heist
-    man = true, -- Undercover
-    dinner = true, -- Slaughterhouse
-    nail = true, -- Lab Rats
-    pbr = true, -- Beneath the Mountain
-    pbr2 = true, -- Birth of Sky
-    run = true, -- Heat Street
-    glace = true, -- Green Bridge
-    wwh = true, -- Alaskan Deal
-    dah = true, -- Diamond Heist
-    hvh = true, -- Cursed Kill Room
-    rvd1 = true, -- Reservoir Dogs Heist Day 2
-    rvd2 = true, -- Reservoir Dogs Heist Day 1
-    brb = true, -- Brooklyn Bank
-    tag = true, -- Breakin' Feds
-    des = true, -- Henry's Rock
-    sah = true, -- Shacklethorne Auction
-    bph = true, -- Hell's Island
-    nmh = true, -- No Mercy
-    vit = true, -- The White House
-    -- Silkroad campaign
-    mex = true, -- Border Crossing
-    mex_cooking = true, -- Border Crystals
-    bex = true, -- San Martín Bank
-    pex = true, -- Breakfast in Tijuana
-    fex = true, -- Buluc's Mansion
-    -- City of Gold campaign
-    chas = true, -- Dragon Heist
-    sand = true, -- Ukrainian Prisoner Heist
-    chca = true, -- Black Cat Heist
-    pent = true, -- Mountain Master Heist
-    -- Texas Heat campaign
-    ranc = true, -- Midland Ranch
-    trai = true, -- Lost in Transit
-    corp = true, -- Hostile Takeover
-    deep = true, -- Crude Awakening
-    -- Holdout
-    skm_arena = true, -- Holdout: The Alesso Heist
-    skm_bex = true, -- Holdout: San Martín Bank
-    skm_big2 = true, -- Holdout: The Big Bank
-    skm_cas = true, -- Holdout: Golden Grin Casino
-    skm_mallcrasher = true, -- Holdout: Mallcrasher
-    skm_mus = true, -- Holdout: The Diamond
-    skm_red2 = true, -- Holdout: First World Bank
-    skm_run = true, -- Holdout: Heat Street
-    skm_watchdogs_stage2 = true -- Holdout: Watchdogs Day 2 (Day)
-}
-
 local custom_levels =
 {
     ratdaylight = true, -- Rats (Daylight)
@@ -238,30 +99,28 @@ local custom_levels =
 }
 
 Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", function(...)
-    if EHI.Mission.__init_done then
-        return
-    end
     EHI.Sync = managers.ehi_sync
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
-    if levels[level_id] then
-        local fixed_name = redirect[level_id] or level_id
-        dofile(string.format("%s%s%s.lua", EHI.LuaPath, "levels/", fixed_name))
-    end
-    if custom_levels[level_id] then
-        if not redirect[level_id] then
-            dofile(EHI.LuaPath .. "core_beardlib.lua")
+    if redirect[level_id] then -- Also applies to custom missions
+        dofile(string.format("%s%s%s.lua", EHI.LuaPath, "levels/", redirect[level_id]))
+    elseif custom_levels[level_id] then
+        dofile(EHI.LuaPath .. "core_beardlib.lua")
+        dofile(string.format("%s%s%s.lua", EHI.LuaPath, "custom_levels/", level_id))
+    else
+        local file = io.open(string.format("%s%s%s.lua", EHI.LuaPath, "levels/", level_id))
+        if file then
+            loadstring(file:read("*a"))()
+            file:close()
         end
-        local fixed_path = redirect[level_id] or ("custom_levels/" .. level_id)
-        dofile(string.format("%s%s.lua", EHI.LuaPath, fixed_path))
     end
     EHI.Mission:InitElements()
     EHI.Element:OverrideElements()
     EHI.Waypoint:GameInit()
     redirect = nil
-    levels = nil
     custom_levels = nil
     EHI.Sync = nil
+    Hooks:RemovePostHook("EHI_GameSetup_init_finalize")
 end)
 
 Hooks:PreHook(GameSetup, "load", "EHI_GameSetup_load_Pre", function(self, data, ...) ---@param data SyncData

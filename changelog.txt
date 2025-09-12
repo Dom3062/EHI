@@ -1,3 +1,6 @@
+r339 (12. 09. 2025):
+Added menu options "Show Trackers in Preview" and "Show Buffs in Preview"
+
 r338 (08. 09. 2025):
 End Game Stats: Adjusted accuracy rounding to be on par with in-game accuracy rounding
 Panic Room: Added achievement tracker for "Don't You Dare Miss"

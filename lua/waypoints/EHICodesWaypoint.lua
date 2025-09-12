@@ -9,9 +9,9 @@ function EHICodeWaypoint:SetCode(code)
     self._gui:set_text(self:Format(code))
 end
 
----@class EHIColoredCodesWaypoint : EHIWaypointLessWaypoint, EHICodeTracker
----@field super EHIWaypointLessWaypoint
-EHIColoredCodesWaypoint = class(EHIWaypointLessWaypoint)
+---@class EHIColoredCodesWaypoint : EHIWaypointsLessWaypoint, EHICodeTracker
+---@field super EHIWaypointsLessWaypoint
+EHIColoredCodesWaypoint = class(EHIWaypointsLessWaypoint)
 EHIColoredCodesWaypoint._needs_update = false
 EHIColoredCodesWaypoint.Format = EHICodeTracker.Format
 ---@param id number
@@ -20,25 +20,14 @@ EHIColoredCodesWaypoint.Format = EHICodeTracker.Format
 ---@param color Color
 ---@param code string
 function EHIColoredCodesWaypoint:CreateWaypoint(id, icon, position, color, code)
-    local waypoint = self._parent_class:_create_waypoint(id, "code", EHI.Mission:GetUnitPositionOrDefault(id))
-    if waypoint then
-        local data = {}
-        data.gui = waypoint.timer_gui
-        data.bitmap = waypoint.bitmap
-        data.arrow = waypoint.arrow
-        data.bitmap_world = waypoint.bitmap_world
-        data.gui:set_text(self:Format(code))
-        for _, object in pairs(data) do
-            object:set_color(color or Color.white)
-        end
-        self._codes = self._codes or {}
-        self._codes[id] = data
-    end
+    EHIColoredCodesWaypoint.super.CreateWaypoint(self, id, "code", EHI.Mission:GetUnitPositionOrDefault(id), color, code)
 end
 
-function EHIColoredCodesWaypoint:destroy()
-    EHIColoredCodesWaypoint.super.destroy(self)
-    for id, _ in pairs(self._codes or {}) do
-        self._parent_class._hud:remove_waypoint(id)
+---@param color Color
+---@param code string
+function EHIColoredCodesWaypoint:WaypointCreated(waypoint, color, code)
+    waypoint.gui:set_text(self:Format(code))
+    for _, object in pairs(waypoint) do
+        object:set_color(color or Color.white)
     end
 end

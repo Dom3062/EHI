@@ -1673,10 +1673,6 @@ function EHIMissionHolder:_filter_out_not_loaded_trackers(trigger_table, option)
 end
 
 function EHIMissionHolder:InitElements()
-    if self.__init_done then
-        return
-    end
-    self.__init_done = true
     self._triggers:__HookElements()
     if EHI.IsClient then
         return

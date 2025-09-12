@@ -622,7 +622,7 @@ function EHIMenu:MenuUp()
                 return
             end
         end
-        for i = #self._open_menu.items + 1, 1, - 1 do
+        for i = #self._open_menu.items + 1, 1, -1 do
             local item = self._open_menu.items[i - 1]
             if item and item.enabled and item.panel:child("bg") then
                 self:HighlightItem(item)
@@ -2269,6 +2269,10 @@ function EHIMenu:SetBuffDeckOption(value, deck, option)
     EHI.settings.buff_option[deck][option] = value
 end
 
+function EHIMenu:UpdateTrackerPreviewVisibility(visibility)
+    self._preview_panel:UpdateTrackerPreview(visibility)
+end
+
 function EHIMenu:UpdateTrackerState(value, option)
     self._preview_panel:UpdateTrackerState(value)
 end
@@ -2421,8 +2425,12 @@ function EHIMenu:buffs_menu_created_callback(menu)
     end
 end
 
+function EHIMenu:UpdateBuffsPreviewVisibility(visibility)
+    self._buffs_preview_panel:UpdatePreviewVisibility(visibility)
+end
+
 function EHIMenu:UpdateBuffsVisibility(visibility)
-    self._buffs_preview_panel:UpdateBuffs("SetVisibility", visibility)
+    self._buffs_preview_panel:UpdateBuffsVisibility(visibility)
 end
 
 function EHIMenu:UpdateBuffsXOffset(x)

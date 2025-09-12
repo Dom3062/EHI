@@ -117,14 +117,12 @@ if EHI:CanShowAchievement2("flat_5", "show_achievements_other") then
     end
     EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
         if level == "flat" and from_beginning then
-            local session = managers.network:session()
-            local my_peer_id = session:local_peer():id()
             managers.ehi_tracker:AddTracker({
                 id = "flat_5",
                 icons = EHI:GetAchievementIcon("flat_5"),
                 class_table = flat_5
             })
-            for id, _ in pairs(session:all_peers()) do
+            for id, _ in pairs(managers.network:session():all_peers()) do
                 managers.ehi_tracker:CallFunction("flat_5", "PlayerAdded", id)
             end
             ---@param something UnitPlayer|UnitEnemy|UnitTeamAI
@@ -133,48 +131,20 @@ if EHI:CanShowAchievement2("flat_5", "show_achievements_other") then
                 local peer = network and network:peer()
                 return peer and peer:id() or 0
             end
-            Hooks:PostHook(CopDamage, "_on_damage_received", "EHI_flat_5_CopData__on_damage_received", function(c_dmg, damage_info, ...) ---@param damage_info CopDamage.AttackData
-                local realAttacker = damage_info.attacker_unit
-                if alive(realAttacker) then
-                    local base = realAttacker:base()
-                    if base then
-                        if base.thrower_unit then
-                            realAttacker = base.thrower_unit
-                        elseif base.sentry_gun then
-                            realAttacker = base:get_owner()
-                        end
-                    end
-                end
-                local damage = damage_info.damage
-                if type(damage) ~= 'number'  -- Dragon's breath crash
-                    or damage_info.variant == 'stun'	-- Stun a convert crash with concussion grenade
-                    or damage == 0			-- Stun a shield crash with concussion grenade
-                    or type(realAttacker) == "function"
-                then
-                    return
-                end
-                local pid = _pid(realAttacker)
+            managers.ehi_hook:AddCopDamageListener("flat_5", function(c_dmg, damage_info, attacker_unit)
+                local pid = _pid(attacker_unit)
                 if damage_info.variant == "bullet" or damage_info.variant == "fire" or damage_info.variant == "explosion" or damage_info.variant == "melee" then
                     managers.ehi_tracker:CallFunction("flat_5", "HitMade", pid)
                 end
+            end)
+            managers.ehi_hook:AddShotWithAWeaponListener(function(peer_id, bullets_subtracted)
+                managers.ehi_tracker:CallFunction("flat_5", "ShotMade", peer_id, bullets_subtracted)
             end)
             Hooks:PostHook(NetworkPeer, "init", "EHI_flat_5_NetworkPeer_init", function(peer, ...)
                 managers.ehi_tracker:CallFunction("flat_5", "PlayerAdded", peer:id())
             end)
             Hooks:PostHook(NetworkPeer, "destroy", "EHI_flat_5_NetworkPeer_destroy", function(peer, ...)
                 managers.ehi_tracker:CallFunction("flat_5", "PlayerDisconnected", peer:id())
-            end)
-            Hooks:PreHook(HUDTeammate, "set_ammo_amount_by_type", "EHI_flat_5_HUDTeammate_set_ammo_amount_by_type", function(hud, type, max_clip, current_clip, current_left, ...)
-                local clip = "__flat_5_last_clip_" .. type
-                local cc = hud[clip] or 0
-                if current_clip < cc then
-                    managers.ehi_tracker:CallFunction("flat_5", "ShotMade", hud._peer_id or my_peer_id or 0, cc - current_clip)
-                end
-                hud[clip] = current_clip
-            end)
-            Hooks:PostHook(HUDTeammate, "remove_panel", "EHI_flat_5_HUDTeammate_remove_panel", function(hud, ...)
-                hud["__flat_5_last_clip_primary"] = 0
-                hud["__flat_5 last_clip_secondary"] = 0
             end)
         end
     end)

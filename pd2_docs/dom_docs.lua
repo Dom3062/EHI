@@ -1352,9 +1352,10 @@ _G.LobbyCodeMenuComponent = {}
 _G.LootManager = {}
 ---@class ListenerHolder
 ---@field _listeners table<string, function>?
----@field new fun(self: self): self
 ---@field add fun(self: self, key: string, clbk: function)
 ---@field call fun(self: self, ...)
+---@field is_empty fun(self: self): boolean
+---@field new fun(self: self): self
 ---@field remove fun(self: self, key: string)
 _G.ListenerHolder = {}
 ---@class CriminalsManager
@@ -1927,12 +1928,20 @@ end
 ---@field PrintTable fun(tbl: table) Prints tables, provided by SuperBLT
 
 ---@class mathlib
+---@field X Vector3
 ---@field round fun(n: number, precision: number?): number Rounds number with precision
 ---@field clamp fun(number: number?, min: number, max: number): number Returns `number` clamped to the inclusive range of `min` and `max`. If `number` is `nil`, returns `min`
 ---@field rand fun(a: number, b: number?): number If `b` is provided, returns random number between `a` and `b`. Otherwise returns number between `0` and `a`
 ---@field min_max fun(a: number, b: number): number, number
 ---@field mod fun(n: number, div: number): number Returns remainder of a division
 ---@field within fun(x: number, min: number, max: number): boolean Returns `true` or `false` if `x` is within (inclusive) `min` and `max`
+
+---@generic T
+---@param points T[]
+---@param t number
+---@return T
+function math.bezier(points, t)
+end
 
 ---Linearly interpolates between `a` and `b` by `lerp`
 ---@generic T
@@ -2384,18 +2393,26 @@ end
 ---@field distance Text
 ---@field arrow Bitmap
 ---@field position Vector3
+---@field move_speed number
 ---@field size Vector3
+---@field slot number
 ---@field slot_x number
 ---@field state "dirty"|"sneak_present"|"present_ended"|"present"|"offscreen"|"onscreen"
 ---@field present_timer number
+---@field radius number
+---@field text Text
+---@field unit Unit
 
 ---@class WaypointInitData
+---@field blend_mode string
+---@field color Color?
 ---@field distance boolean
 ---@field present_timer number
 ---@field position Vector3
 ---@field text string
 ---@field icon string
 ---@field state "dirty"|"sneak_present"|"present_ended"|"present"|"offscreen"|"onscreen"?
+---@field radius number?
 
 ---@class EquippedWeaponData
 ---@field blueprint table

@@ -5,7 +5,6 @@ end
 
 local original =
 {
-    set_waypoint_timer_pause = HUDManager.set_waypoint_timer_pause,
     save = HUDManager.save,
     load = HUDManager.load
 }
@@ -16,6 +15,7 @@ local original =
 ---@field _hud_hint table HUDHint class
 ---@field _hud_heist_timer HUDHeistTimer
 ---@field _hud_mission_briefing HUDMissionBriefing
+---@field _saferect Workspace
 ---@field PLAYER_PANEL number
 ---@field add_waypoint fun(self: self, id: number|string, params: table)
 ---@field remove_waypoint fun(self: self, id: number|string)
@@ -111,14 +111,6 @@ end
 function HUDManager:RestoreTimerWaypoint(id)
     EHI.Waypoint._ignore[id] = nil
     self:RestoreWaypoint2(id)
-end
-
----@param id string
-function HUDManager:set_waypoint_timer_pause(id, ...)
-    if id and managers.ehi_waypoint:WaypointExists(id) then -- Block attempts of pausing waypoints created in EHIWaypointManager
-        return
-    end
-    original.set_waypoint_timer_pause(self, id, ...)
 end
 
 function HUDManager:save(data, ...)

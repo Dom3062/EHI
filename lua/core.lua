@@ -666,6 +666,8 @@ local function LoadDefaultValues(self)
 
         -- Menu Only
         show_preview_text = true,
+        show_preview_trackers = true,
+        show_preview_buffs = true,
 
         -- Common
         x_offset = 0,

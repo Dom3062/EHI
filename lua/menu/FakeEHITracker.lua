@@ -176,6 +176,11 @@ function FakeEHITracker:init(panel, params)
     self:post_init(params)
 end
 
+---@param visibility boolean
+function FakeEHITracker:SetPanelVisible(visibility)
+    self._panel:set_visible(visibility)
+end
+
 ---`self._bg_box:right() - self._bg_box:x()`
 function FakeEHITracker:GetBGBoxRight()
     return self._bg_box:right() - self._bg_box:x()

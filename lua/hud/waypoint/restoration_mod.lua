@@ -2,25 +2,17 @@
 local EHIWaypointManager = ...
 local original =
 {
-    AddWaypoint = EHIWaypointManager.AddWaypoint,
-    AddWaypointlessWaypoint = EHIWaypointManager.AddWaypointlessWaypoint
+    _create_waypoint_data = EHIWaypointManager._create_waypoint_data
 }
 
-EHIWaypointManager._font = Idstring(tweak_data.menu.medium_font)
+EHIWaypointManager._font = tweak_data.menu.medium_font
+EHIWaypointManager._font_id = Idstring(EHIWaypointManager._font)
 EHIWaypointManager._timer_font_size = 20
 EHIWaypointManager._distance_font_size = 32
----@param id string
----@param params AddWaypointTable|ElementWaypointTrigger
-function EHIWaypointManager:AddWaypoint(id, params)
+EHIWaypointManager._vanilla_waypoint_show_distance = true
+function EHIWaypointManager:_create_waypoint_data(data)
     params.distance = true
-    original.AddWaypoint(self, id, params)
-end
-
----@param id string
----@param params AddWaypointTable|ElementWaypointTrigger
-function EHIWaypointManager:AddWaypointlessWaypoint(id, params)
-    params.distance = true
-    original.AddWaypointlessWaypoint(self, id, params)
+    return original._create_waypoint_data(self, data)
 end
 
 EHIWaypoint._default_color = tweak_data.hud.prime_color

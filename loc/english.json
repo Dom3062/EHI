@@ -28,6 +28,10 @@
     "ehi_menu_only" : "Menu only",
     "ehi_show_preview_text" : "Show Preview Text",
     "ehi_show_preview_text_desc" : "Hides or shows preview text",
+    "ehi_show_preview_trackers" : "Show Trackers in Preview",
+    "ehi_show_preview_trackers_desc" : "Hides or shows trackers",
+    "ehi_show_preview_buffs" : "Show Buffs in Preview",
+    "ehi_show_preview_buffs_desc" : "Hides or shows buffs",
 
     "ehi_mission_briefing_toggle_plan_text" : "TOGGLE",
     "ehi_mission_briefing_next_plan_text" : "NEXT",

@@ -107,7 +107,7 @@ function EHIEndGameStats:new()
         self._peers[peer_id]:Disconnected()
     end)
     if EHI:GetOption("show_end_game_stats_kills") > 1 or EHI:GetOption("show_end_game_stats_headshots") or EHI:GetOption("show_end_game_stats_dps") or EHI:GetOption("show_end_game_stats_kpm") then
-        Hooks:PostHook(CopDamage, "_on_damage_received", "EHI_EndGameKillStats", callback(self, self, "damage_callback"))
+        managers.ehi_hook:AddCopDamageListener("EndGameStats", callback(self, self, "damage_callback"))
     end
     if EHI:GetOption("show_end_game_stats_downs") then
         managers.player:add_listener("EHIEndGameStats_bleed_out", "bleed_out", function()
@@ -124,17 +124,8 @@ function EHIEndGameStats:new()
         end)
     end
     if EHI:GetOption("show_end_game_stats_acc") then
-        Hooks:PreHook(HUDTeammate, "set_ammo_amount_by_type", "EHI_EndGameStats_HUDTeammate_set_ammo_amount_by_type", function(hud, type, max_clip, current_clip, current_left, ...)
-            local clip = "__last_clip_" .. type
-            local cc = hud[clip] or 0
-            if current_clip < cc then
-                self._peers[hud._peer_id or self._my_peer_id or 0]:ShotMade(cc - current_clip)
-            end
-            hud[clip] = current_clip
-        end)
-        Hooks:PostHook(HUDTeammate, "remove_panel", "EHI_EndGameStats_HUDTeammate_remove_panel", function(hud, ...)
-            hud["__last_clip_primary"] = 0
-            hud["__last_clip_secondary"] = 0
+        managers.ehi_hook:AddShotWithAWeaponListener(function(peer_id, bullets_subtracted)
+            self._peers[peer_id]:ShotMade(bullets_subtracted)
         end)
     end
     if EHI.IsClient then
@@ -146,26 +137,8 @@ end
 
 ---@param c_dmg CopDamage
 ---@param damage_info CopDamage.AttackData
-function EHIEndGameStats:damage_callback(c_dmg, damage_info)
-    local realAttacker = damage_info.attacker_unit
-    if alive(realAttacker) then
-        local base = realAttacker:base()
-        if base then
-            if base.thrower_unit then
-                realAttacker = base.thrower_unit
-            elseif base.sentry_gun then
-                realAttacker = base:get_owner()
-            end
-        end
-    end
-    local damage = damage_info.damage
-    if type(damage) ~= 'number'  -- Dragon's breath crash
-        or damage_info.variant == 'stun'	-- Stun a convert crash with concussion grenade
-        or damage == 0			-- Stun a shield crash with concussion grenade
-        or type(realAttacker) == "function"
-    then
-        return
-    end
+---@param realAttacker UnitPlayer|UnitTeamAI
+function EHIEndGameStats:damage_callback(c_dmg, damage_info, realAttacker)
     local pid = self:_pid(realAttacker)
     local peer_stats = self._peers[pid]
     local rDamage = damage >= 0 and damage or -damage

@@ -53,6 +53,7 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
         money = EHI:GetOption("money_tracker_format") ---@type number
     }
     self._trackers_enabled = EHI:GetOption("show_trackers") ---@type boolean
+    self._trackers_visible = EHI:GetOption("show_preview_trackers") ---@type boolean
     self:_update_tracker_internal_data()
     self:AddFakeTrackers()
     return self
@@ -70,7 +71,7 @@ end
 function FakeEHITrackerManager:AddFakeTrackers()
     self._n_of_trackers = 0
     self._fake_trackers = {} ---@type FakeEHITracker[]?
-    if not self._trackers_enabled then
+    if not (self._trackers_enabled and self._trackers_visible) then
         return
     end
     local not_u24_mod = _G.ch_settings == nil
@@ -236,6 +237,21 @@ function FakeEHITrackerManager:UpdateTrackerState(state)
     else -- Trackers were disabled, remove them
         self:UpdatePreviewTextVisibility(false)
         self:Redraw()
+    end
+end
+
+---@param visibility boolean
+function FakeEHITrackerManager:UpdateTrackerPreview(visibility)
+    if self._trackers_visible == visibility then
+        return
+    end
+    self._trackers_visible = visibility
+    if self._n_of_trackers > 0 then
+        for _, tracker in ipairs(self._fake_trackers) do
+            tracker:SetPanelVisible(visibility)
+        end
+    elseif visibility then
+        self:AddFakeTrackers()
     end
 end
 

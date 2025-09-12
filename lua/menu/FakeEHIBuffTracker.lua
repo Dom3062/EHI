@@ -3,8 +3,8 @@ if not EHIBuffTracker then
 end
 
 ---@class FakeEHIBuffTracker : EHIBuffTracker
-FakeEHIBuffTracker = class()
-FakeEHIBuffTracker.FitTheText = EHIBuffTracker.FitTheText
+---@field super EHIBuffTracker
+FakeEHIBuffTracker = class(EHIBuffTracker)
 FakeEHIBuffTracker._rect_circle = { 128, 0, -128, 128 }
 FakeEHIBuffTracker._rect_square = { 32, 0, -32, 32 }
 FakeEHIBuffTracker._gap = tweak_data.ehi.default.buff.gap

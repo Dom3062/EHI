@@ -25,7 +25,7 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
     local trackers_visible = EHI:GetOption("show_trackers")
     local waypoints_visible = EHI:GetOption("show_waypoints")
     if waypoints_visible then
-        hud._ehi_waypoint:SetPlayerHUD(hud)
+        hud._ehi_waypoint:SetPlayerHUD(hud, panel, hud._saferect)
     end
     if server or EHI.HeistTimerIsInverted then
         if (trackers_visible and waypoints_visible) or show_mission_triggers then
