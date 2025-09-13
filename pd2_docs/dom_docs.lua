@@ -72,7 +72,7 @@ _G.TweakData = {
 ---@field get_value fun(self: self, ...): any
 _G.tweak_data = {
     contour = {
-		character = {
+        character = {
             standard_color = Vector3(0.1, 1, 0.5),
             friendly_color = Vector3(0.2, 0.8, 1),
             friendly_minion_color = Vector3(0.1, 0.4, 1),
@@ -93,33 +93,33 @@ _G.tweak_data = {
             standard_color = Vector3(1, 0.5, 0),
             selected_color = Vector3(1, 1, 1)
         },
-	    contour_off = {
+        contour_off = {
             standard_color = Vector3(0, 0, 0),
             selected_color = Vector3(0, 0, 0),
             standard_opacity = 0
         },
-	    deployable = {
+        deployable = {
             standard_color = Vector3(0.1, 1, 0.5),
             selected_color = Vector3(1, 1, 1),
             active_color = Vector3(0.1, 0.4, 1),
             interact_color = Vector3(0.1, 1, 0.1),
             disabled_color = Vector3(1, 0.1, 0.1)
         },
-	    upgradable = {
+        upgradable = {
             standard_color = Vector3(0.1, 0.5, 1),
             selected_color = Vector3(1, 1, 1)
         },
-	    pickup = {
+        pickup = {
             standard_color = Vector3(0.1, 1, 0.5),
             selected_color = Vector3(1, 1, 1),
             standard_opacity = 1
         },
-	    interactable_icon = {
+        interactable_icon = {
             standard_color = Vector3(0, 0, 0),
             selected_color = Vector3(0, 1, 0),
             standard_opacity = 0
         },
-	    interactable_look_at = {
+        interactable_look_at = {
             standard_color = Vector3(0, 0, 0),
             selected_color = Vector3(1, 1, 1)
         }
@@ -266,7 +266,19 @@ _G.tweak_data.achievement.complete_heist_achievements = {
         equipped_team = {
             primary_category = "flamethrower"
         }
-    }
+    },
+    spa_4 = {
+        award = "spa_4",
+        job = "spa",
+        need_full_job = true,
+        difficulty = overkill_and_above,
+        equipped_team = {
+            primary_category = "snp",
+            secondaries = {
+                "wpn_fps_saw_secondary"
+            }
+        }
+    },
 }
 ---@class AchievementsTweakData.enemy_kill_achievements
 _G.tweak_data.achievement.enemy_kill_achievements = {
@@ -760,92 +772,92 @@ _G.tweak_data.mission_door = {}
 ---@class MutatorsTweakData
 _G.tweak_data.mutators = {
     piggybank = {
-		pig_levels = {
-			{
-				range = 200,
-				sequre_zone_index = 1,
-				piggy_unit_index = 1,
-				bag_requirement = 0,
-				dialogs = {},
-				sequences = {
-					grow = "anim_pig_idle"
-				}
-			},
-			{
-				range = 200,
-				sequre_zone_index = 1,
-				piggy_unit_index = 1,
-				bag_requirement = 1,
-				dialogs = {
-					explode = "Play_alm_pda9_12",
-					show = "Play_alm_pda9_05"
-				},
-				sequences = {
-					explode = "anim_pig_explode",
-					grow = "anim_pig_grow",
-					show = "anim_pig_idle"
-				}
-			},
-			{
-				range = 300,
-				sequre_zone_index = 2,
-				piggy_unit_index = 2,
-				bag_requirement = 20,
-				dialogs = {
-					explode = "Play_alm_pda9_13",
-					show = "Play_alm_pda9_07"
-				},
-				sequences = {
-					explode = "anim_pig_explode",
-					grow = "anim_pig_grow",
-					show = "show"
-				}
-			},
-			{
-				range = 400,
-				sequre_zone_index = 3,
-				piggy_unit_index = 3,
-				bag_requirement = 80,
-				dialogs = {
-					explode = "Play_alm_pda9_14",
-					show = "Play_alm_pda9_08"
-				},
-				sequences = {
-					explode = "anim_pig_explode",
-					grow = "anim_pig_grow",
-					show = "show"
-				}
-			},
-			{
-				range = 500,
-				sequre_zone_index = 4,
-				piggy_unit_index = 4,
-				bag_requirement = 240,
-				dialogs = {
-					explode = "Play_alm_pda9_15",
-					show = "Play_alm_pda9_09"
-				},
-				sequences = {
-					explode = "anim_pig_explode",
-					grow = "anim_pig_grow",
-					show = "show"
-				}
-			},
-			{
-				range = 0,
-				piggy_unit_index = 4,
-				bag_requirement = 560,
-				dialogs = {
-					explode = "Play_alm_pda9_16",
-					show = "Play_alm_pda9_10"
-				},
-				sequences = {
-					explode = "anim_pig_explode",
-					show = "show_eyes"
-				}
-			}
-		}
-	},
+        pig_levels = {
+            {
+                range = 200,
+                sequre_zone_index = 1,
+                piggy_unit_index = 1,
+                bag_requirement = 0,
+                dialogs = {},
+                sequences = {
+                    grow = "anim_pig_idle"
+                }
+            },
+            {
+                range = 200,
+                sequre_zone_index = 1,
+                piggy_unit_index = 1,
+                bag_requirement = 1,
+                dialogs = {
+                    explode = "Play_alm_pda9_12",
+                    show = "Play_alm_pda9_05"
+                },
+                sequences = {
+                    explode = "anim_pig_explode",
+                    grow = "anim_pig_grow",
+                    show = "anim_pig_idle"
+                }
+            },
+            {
+                range = 300,
+                sequre_zone_index = 2,
+                piggy_unit_index = 2,
+                bag_requirement = 20,
+                dialogs = {
+                    explode = "Play_alm_pda9_13",
+                    show = "Play_alm_pda9_07"
+                },
+                sequences = {
+                    explode = "anim_pig_explode",
+                    grow = "anim_pig_grow",
+                    show = "show"
+                }
+            },
+            {
+                range = 400,
+                sequre_zone_index = 3,
+                piggy_unit_index = 3,
+                bag_requirement = 80,
+                dialogs = {
+                    explode = "Play_alm_pda9_14",
+                    show = "Play_alm_pda9_08"
+                },
+                sequences = {
+                    explode = "anim_pig_explode",
+                    grow = "anim_pig_grow",
+                    show = "show"
+                }
+            },
+            {
+                range = 500,
+                sequre_zone_index = 4,
+                piggy_unit_index = 4,
+                bag_requirement = 240,
+                dialogs = {
+                    explode = "Play_alm_pda9_15",
+                    show = "Play_alm_pda9_09"
+                },
+                sequences = {
+                    explode = "anim_pig_explode",
+                    grow = "anim_pig_grow",
+                    show = "show"
+                }
+            },
+            {
+                range = 0,
+                piggy_unit_index = 4,
+                bag_requirement = 560,
+                dialogs = {
+                    explode = "Play_alm_pda9_16",
+                    show = "Play_alm_pda9_10"
+                },
+                sequences = {
+                    explode = "anim_pig_explode",
+                    show = "show_eyes"
+                }
+            }
+        }
+    },
     piggyrevenge = {
         pig_levels = {
             {
@@ -1841,6 +1853,8 @@ end
 ---@class ViewportManager
 ---@field add_resolution_changed_func fun(self: self, func: function): function
 ---@field get_current_camera fun(self: self): Camera
+---@field get_current_camera_position fun(self: self): Vector3
+---@field get_current_camera_rotation fun(self: self): Rotation
 ---@field remove_resolution_changed_func fun(self: self, func: function)
 
 ---@class WeaponFactoryManager
@@ -1965,9 +1979,9 @@ end
 ---@generic K
 ---@param ... K
 function table.set(...)
-	return table.list_to_set({
-		...
-	})
+    return table.list_to_set({
+        ...
+    })
 end
 
 ---Maps values as keys with value `true`
@@ -2345,7 +2359,7 @@ end
 ---@class Bitmap_Params : PanelBaseObject_Params
 ---@field texture string
 ---@field texture_rect TextureRect
----@field render_template "VertexColorTexturedRadial"|"VertexColorTexturedBlur3D"
+---@field render_template "VertexColorTexturedRadial"|"VertexColorTexturedBlur3D"|"OverlayText"
 ---@field color Color
 ---@field rotation number In degrees
 ---@field alpha number
@@ -2402,6 +2416,7 @@ end
 ---@field radius number
 ---@field text Text
 ---@field unit Unit
+---@field ws Workspace
 
 ---@class WaypointInitData
 ---@field blend_mode string

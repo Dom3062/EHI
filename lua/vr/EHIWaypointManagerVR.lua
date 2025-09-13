@@ -1,28 +1,24 @@
 ---@class EHIWaypointManager
 local EHIWaypointManagerVR = ...
+local original = EHIWaypointManagerVR.SetPlayerHUD
+function EHIWaypointManagerVR:SetPlayerHUD(hud, ...)
+    original(self, hud, ...)
+    self._gui = hud._gui
+end
+
 function EHIWaypointManagerVR:_create_waypoint_data(data)
     local ws = self._gui:create_world_workspace(128, 64, (data.position or data.unit:position()) + Vector3(40, 0, 20), Vector3(-80, 0, 0), Vector3(0, 0, -40))
-
     ws:set_billboard(Workspace.BILLBOARD_Y)
-
-    local waypoint_panel = hud.panel
-    local icon = data.icon or "wp_standard"
-    local text = ""
-    local icon, texture_rect = tweak_data.hud_icons:get_icon_data(icon, {
-        0,
-        0,
-        32,
-        32
-    })
+    local waypoint_panel = self._panel
+    local icon, texture_rect = self:_unpack_icon(data)
     local bitmap = waypoint_panel:bitmap({
         layer = 0,
         visible = false,
         rotation = 360,
-        name = "bitmap" .. id,
         texture = icon,
         texture_rect = texture_rect,
-        w = texture_rect[3],
-        h = texture_rect[4],
+        w = self._bitmap_w,
+        h = self._bitmap_h,
         blend_mode = data.blend_mode
     })
     local arrow_icon, arrow_texture_rect = tweak_data.hud_icons:get_icon_data("wp_arrow")
@@ -30,7 +26,6 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         layer = 0,
         visible = false,
         rotation = 360,
-        name = "arrow" .. id,
         texture = arrow_icon,
         texture_rect = arrow_texture_rect,
         color = (data.color or Color.white):with_alpha(0.75),
@@ -43,11 +38,10 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         render_template = "OverlayText",
         depth_mode = "disabled",
         rotation = 360,
-        name = "bitmap" .. id,
         texture = icon,
         texture_rect = texture_rect,
-        w = texture_rect[3],
-        h = texture_rect[4],
+        w = self._bitmap_w,
+        h = self._bitmap_h,
         blend_mode = data.blend_mode
     })
 
@@ -66,7 +60,6 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
             depth_mode = "disabled",
             rotation = 360,
             layer = 0,
-            name = "distance" .. id,
             color = data.color or Color.white,
             font = tweak_data.hud.medium_font_noshadow,
             font_size = tweak_data.hud.default_font_size,
@@ -88,7 +81,6 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         depth_mode = "disabled",
         rotation = 360,
         layer = 0,
-        name = "timer" .. id,
         text = (math.round(data.timer) < 10 and "0" or "") .. math.round(data.timer),
         font = tweak_data.hud.medium_font_noshadow
     })
@@ -98,15 +90,14 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         timer:set_center_x(ws:panel():w() / 2)
     end
 
-    text = ws:panel():text({
+    local text = ws:panel():text({
         h = 24,
         vertical = "center",
         w = 512,
         align = "center",
         rotation = 360,
         layer = 0,
-        name = "text" .. id,
-        text = utf8.to_upper(" " .. text),
+        text = utf8.to_upper(" "),
         font = tweak_data.hud.small_font,
         font_size = tweak_data.hud.small_font_size
     })
@@ -137,35 +128,32 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         ws = ws,
         bitmap_world = bitmap_world
     } ---@cast wp Waypoint
-    self._hud.waypoints[id] = wp
-    self._hud.waypoints[id].init_data.position = data.position or data.unit:position()
-    local slot = 1
-    local t = {}
-
-    for _, data in pairs(self._hud.waypoints) do
-        if data.slot then
-            t[data.slot] = data.text:w()
-        end
+    self._waypoints_data[data.id] = wp
+    wp.init_data.position = data.position or data.unit and data.unit:position()
+    if not wp.init_data.position then
+        EHI:Log("[EHIWaypointManagerVR] Custom waypoint does not have position defined! Added default position to avoid crashing")
+        EHI:LogTraceback()
+        wp.init_data.position = Vector3()
     end
 
-    for i = 1, 10 do
-        if not t[i] then
-            self._hud.waypoints[id].slot = i
-
-            break
+    local t, slot = {}, 0
+    for _, w_data in pairs(self._waypoints_data) do
+        if w_data.slot then
+            slot = math.max(slot, w_data.slot)
+            t[w_data.slot] = w_data.text:w()
         end
     end
+    wp.slot = slot + 1
+    wp.slot_x = 0
 
-    self._hud.waypoints[id].slot_x = 0
-
-    if self._hud.waypoints[id].slot == 2 then
-        self._hud.waypoints[id].slot_x = t[1] / 2 + self._hud.waypoints[id].text:w() / 2 + 10
-    elseif self._hud.waypoints[id].slot == 3 then
-        self._hud.waypoints[id].slot_x = -t[1] / 2 - self._hud.waypoints[id].text:w() / 2 - 10
-    elseif self._hud.waypoints[id].slot == 4 then
-        self._hud.waypoints[id].slot_x = t[1] / 2 + t[2] + self._hud.waypoints[id].text:w() / 2 + 20
-    elseif self._hud.waypoints[id].slot == 5 then
-        self._hud.waypoints[id].slot_x = -t[1] / 2 - t[3] - self._hud.waypoints[id].text:w() / 2 - 20
+    if wp.slot == 2 then
+        wp.slot_x = t[1] / 2 + wp.text:w() / 2 + 10
+    elseif wp.slot == 3 then
+        wp.slot_x = -t[1] / 2 - wp.text:w() / 2 - 10
+    elseif wp.slot == 4 then
+        wp.slot_x = t[1] / 2 + t[2] + wp.text:w() / 2 + 20
+    elseif wp.slot == 5 then
+        wp.slot_x = -t[1] / 2 - t[3] - wp.text:w() / 2 - 20
     end
 
     return wp
@@ -189,7 +177,7 @@ function EHIWaypointManagerVR:update_position(t, dt)
 
     mrotation.y(cam_rot, wp_cam_forward)
 
-    for id, data in pairs(self._hud.waypoints) do
+    for id, data in pairs(self._waypoints_data) do
         local panel = data.bitmap:parent()
         if data.state == "sneak_present" then
             data.current_position = Vector3(panel:center_x(), panel:center_y())
@@ -221,7 +209,7 @@ function EHIWaypointManagerVR:update_position(t, dt)
             if data.text_alpha ~= 0 then
                 data.text_alpha = math.clamp(data.text_alpha - dt, 0, 1)
 
-                data.text:set_color(data.text:color():with_alpha(data.text_alpha))
+                data.text:set_alpha(data.text_alpha)
             end
 
             data.position = data.unit and data.unit:position() or data.position
@@ -241,7 +229,7 @@ function EHIWaypointManagerVR:update_position(t, dt)
                     data.arrow:set_visible(true)
                     data.bitmap_world:set_visible(false)
                     data.bitmap:set_visible(true)
-                    data.bitmap:set_color(data.bitmap:color():with_alpha(0.75))
+                    data.bitmap:set_alpha(0.75)
 
                     data.off_timer = 0 - (1 - data.in_timer)
                     data.target_scale = 0.75
@@ -309,7 +297,7 @@ function EHIWaypointManagerVR:update_position(t, dt)
                     data.arrow:set_visible(false)
                     data.bitmap:set_visible(false)
                     data.bitmap_world:set_visible(true)
-                    data.bitmap_world:set_color(data.bitmap_world:color():with_alpha(1))
+                    data.bitmap_world:set_alpha(1)
 
                     data.in_timer = 0 - (1 - data.off_timer)
                     data.target_scale = 1
@@ -329,15 +317,15 @@ function EHIWaypointManagerVR:update_position(t, dt)
                     alpha = math.clamp((1 - dot) / 0.01, 0.4, alpha)
                 end
 
-                if data.bitmap_world:color().alpha ~= alpha then
-                    data.bitmap_world:set_color(data.bitmap_world:color():with_alpha(alpha))
+                if data.bitmap_world:alpha() ~= alpha then
+                    data.bitmap_world:set_alpha(alpha)
 
                     if data.distance then
-                        data.distance:set_color(data.distance:color():with_alpha(alpha))
+                        data.distance:set_alpha(alpha)
                     end
 
                     if data.timer_gui then
-                        data.timer_gui:set_color(data.bitmap_world:color():with_alpha(alpha))
+                        data.timer_gui:set_alpha(alpha)
                     end
                 end
 

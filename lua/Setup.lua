@@ -23,7 +23,9 @@ end
 managers.ehi_loot = blt.vm.dofile(EHI.LuaPath .. "EHILootManager.lua")
 managers.ehi_sync = blt.vm.dofile(EHI.LuaPath .. "EHISyncManager.lua")
 managers.ehi_hook = blt.vm.dofile(EHI.LuaPath .. "EHIHookManager.lua")
-managers.ehi_money = blt.vm.dofile(EHI.LuaPath .. "EHIMoneyManager.lua")
+if EHI:GetOptionAndLoadTracker("show_money_tracker") then
+    managers.ehi_money = blt.vm.dofile(EHI.LuaPath .. "EHIMoneyManager.lua")
+end
 managers.ehi_tracking = blt.vm.dofile(EHI.LuaPath .. "EHITrackingManager.lua")
 
 local original =
@@ -50,7 +52,6 @@ function Setup:init_finalize(...)
     managers.ehi_waypoint:init_finalize()
     managers.ehi_assault:init_finalize()
     managers.ehi_loot:init_finalize()
-    managers.ehi_money:init_finalize(managers)
     managers.ehi_sync:init_finalize()
     EHI.Mission:init_finalize()
 end

@@ -141,6 +141,7 @@ end
 function EHIEndGameStats:damage_callback(c_dmg, damage_info, realAttacker)
     local pid = self:_pid(realAttacker)
     local peer_stats = self._peers[pid]
+    local damage = damage_info.damage
     local rDamage = damage >= 0 and damage or -damage
     if damage < 0 and c_dmg._HEALTH_INIT then
         rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)

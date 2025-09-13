@@ -1,10 +1,6 @@
 ---@class EHIMoneyManager
 local EHIMoneyManager = {}
----@param managers managers
-function EHIMoneyManager:init_finalize(managers)
-    if not EHI:GetOptionAndLoadTracker("show_money_tracker") then
-        return
-    end
+function EHIMoneyManager:init_finalize()
     local job = managers.job
     if tweak_data.levels:IsLevelSafehouse() or EHI._cache.PlayingDevMap then
         _G.EHIMoneyTracker = nil
@@ -74,5 +70,7 @@ function EHIMoneyManager:Spawned()
     self._bags_secured_value = nil
     self._small_loot_secured_value = nil
 end
+
+EHI:AddCallback(EHI.CallbackMessage.InitFinalize, callback(EHIMoneyManager, EHIMoneyManager, "init_finalize"))
 
 return EHIMoneyManager

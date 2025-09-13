@@ -41,6 +41,19 @@ local achievements =
         }
     }
 }
+if EHI:CanShowAchievement2("spa_4", "show_achievements_weapon") and ovk_and_up then -- "Apartment Sniper"
+    EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
+        if job == "spa" and from_beginning then
+            local spa_4 = tweak_data.achievement.complete_heist_achievements.spa_4
+            if managers.challenge:check_equipped_team(spa_4) then
+                managers.ehi_unlockable:AddAchievementStatusTracker("spa_4")
+                Hooks:PostHook(NetworkPeer, "set_outfit_string", "EHI_spa_4_set_outfit_string", function(...)
+                    managers.ehi_unlockable:SetAchievementStatus("spa_4", managers.challenge:check_equipped_team(spa_4) and "ok" or "fail")
+                end)
+            end
+        end
+    end)
+end
 
 local other =
 {

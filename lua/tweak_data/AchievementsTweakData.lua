@@ -75,7 +75,7 @@ local achievements = {
     "sah_9",
     "sand_9", "sand_10", "sand_11",
     "melt_3",
-    "spa_5", "spa_6",
+    "spa_4", "spa_5", "spa_6",
     "tag_9", "tag_10",
     "lets_do_this", "cac_12",
     "hot_wheels",

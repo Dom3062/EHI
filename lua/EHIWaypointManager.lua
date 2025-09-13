@@ -36,11 +36,10 @@ end
 
 ---@param hud HUDManager
 ---@param panel Panel
----@param saferect Workspace
-function EHIWaypointManager:SetPlayerHUD(hud, panel, saferect)
+function EHIWaypointManager:SetPlayerHUD(hud, panel)
     self._hud = hud
     self._panel = panel
-    self._saferect = saferect
+    self._saferect = hud._saferect
     for id, params in pairs(self._stored_waypoints) do
         self:AddWaypoint(id, params)
     end
@@ -268,8 +267,7 @@ function EHIWaypointManager:_create_waypoint_data(data)
         wp.init_data.position = Vector3()
     end
 
-    local t = {}
-    local slot = 0
+    local t, slot = {}, 0
     for _, w_data in pairs(self._waypoints_data) do
         if w_data.slot then
             slot = math.max(slot, w_data.slot)

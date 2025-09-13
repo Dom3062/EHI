@@ -15,6 +15,7 @@ local original =
 ---@field _hud_hint table HUDHint class
 ---@field _hud_heist_timer HUDHeistTimer
 ---@field _hud_mission_briefing HUDMissionBriefing
+---@field _gui Gui VR
 ---@field _saferect Workspace
 ---@field PLAYER_PANEL number
 ---@field add_waypoint fun(self: self, id: number|string, params: table)

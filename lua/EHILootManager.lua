@@ -73,12 +73,9 @@ end
 ---@param waypoint_class string?
 function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, unknown_random, no_max, max_bags_for_level, waypoint_class)
     EHI:LoadMaster("EHILootSharedMaster")
-    EHILootSharedMaster._loot = self
-    EHILootSharedMaster._id = self._id
     if max_bags_for_level then
         self._master = EHILootMaxSharedMaster:new({
             xp_params = max_bags_for_level,
-            loot = self,
             tracking = managers.ehi_tracking
         })
     elseif no_max then
@@ -87,7 +84,6 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
             max_random = max_random or 0,
             max_xp_bags = max_xp_bags or 0,
             offset = offset or 0,
-            loot = self,
             tracking = managers.ehi_tracking
         })
     else
@@ -97,7 +93,6 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
             max_xp_bags = max_xp_bags or 0,
             offset = offset or 0,
             unknown_random = unknown_random,
-            loot = self,
             tracking = managers.ehi_tracking
         })
     end
@@ -133,7 +128,6 @@ function EHILootManager:_create_waypoint_tracker(id, max)
         self._master = EHILootSharedMaster:new({
             achievement_id = id,
             max = max,
-            loot = self,
             tracking = managers.ehi_tracking
         })
         self:_adjust_master()
@@ -157,6 +151,8 @@ function EHILootManager:_adjust_master()
         self:WaypointRemoveFunctionCheck(self.__master_waypoint_remove_function_check)
         self.__master_waypoint_remove_function_check = nil
     end
+    EHILootSharedMaster._loot = self
+    EHILootSharedMaster._id = self._id
 end
 
 function EHILootManager:_adjust_waypoint()

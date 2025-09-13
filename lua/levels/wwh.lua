@@ -45,29 +45,31 @@ local achievements =
 }
 if EHI:CanShowAchievement2("cac_27", "show_achievements_weapon") then -- "Global Warming"
     EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
-        local cac_27 = tweak_data.achievement.complete_heist_achievements.cac_27
-        if managers.challenge:check_equipped_team(cac_27) then
-            managers.ehi_unlockable:AddAchievementStatusTracker("cac_27")
-            local function fail()
-                managers.ehi_unlockable:SetAchievementFailed("cac_27")
-                EHI:Unhook("cac_27__used_weapon")
-                EHI:Unhook("cac_27_killed_by_anyone")
-                EHI:Unhook("cac_27_set_outfit_string")
+        if job == "wwh" then
+            local cac_27 = tweak_data.achievement.complete_heist_achievements.cac_27
+            if managers.challenge:check_equipped_team(cac_27) then
+                managers.ehi_unlockable:AddAchievementStatusTracker("cac_27")
+                local function fail()
+                    managers.ehi_unlockable:SetAchievementFailed("cac_27")
+                    EHI:Unhook("cac_27__used_weapon")
+                    EHI:Unhook("cac_27_killed_by_anyone")
+                    EHI:Unhook("cac_27_set_outfit_string")
+                end
+                Hooks:PostHook(StatisticsManager, "_used_weapon", "EHI_cac_27__used_weapon", function(stat, weapon_id)
+                    if tweak_data:get_raw_value("weapon", stat:create_unified_weapon_name(weapon_id), "categories", 1) ~= "flamethrower" then
+                        fail()
+                    end
+                end)
+                Hooks:PostHook(StatisticsManager, "killed_by_anyone", "EHI_cac_27_killed_by_anyone", function(stat, data, ...)
+                    local _, throwable_id = stat:_get_name_id_and_throwable_id(data.weapon_unit)
+                    if data.variant == "melee" or data.variant == "explosion" or data.is_molotov or throwable_id then
+                        fail()
+                    end
+                end)
+                Hooks:PostHook(NetworkPeer, "set_outfit_string", "EHI_cac_27_set_outfit_string", function(...)
+                    managers.ehi_unlockable:SetAchievementStatus("cac_27", managers.challenge:check_equipped_team(cac_27) and "ok" or "fail")
+                end)
             end
-            Hooks:PostHook(StatisticsManager, "_used_weapon", "EHI_cac_27__used_weapon", function(stat, weapon_id)
-                if tweak_data:get_raw_value("weapon", stat:create_unified_weapon_name(weapon_id), "categories", 1) ~= "flamethrower" then
-                    fail()
-                end
-            end)
-            Hooks:PostHook(StatisticsManager, "killed_by_anyone", "EHI_cac_27_killed_by_anyone", function(stat, data, ...)
-                local _, throwable_id = stat:_get_name_id_and_throwable_id(data.weapon_unit)
-                if data.variant == "melee" or data.variant == "explosion" or data.is_molotov or throwable_id then
-                    fail()
-                end
-            end)
-            Hooks:PostHook(NetworkPeer, "set_outfit_string", "EHI_cac_27_set_outfit_string", function(peer, ...)
-                managers.ehi_unlockable:SetAchievementStatus("cac_27", managers.challenge:check_equipped_team(cac_27) and "ok" or "fail")
-            end)
         end
     end)
 end
