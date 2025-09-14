@@ -136,15 +136,19 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         wp.init_data.position = Vector3()
     end
 
-    local t, slot = {}, 0
+    local t = {}
     for _, w_data in pairs(self._waypoints_data) do
         if w_data.slot then
-            slot = math.max(slot, w_data.slot)
             t[w_data.slot] = w_data.text:w()
         end
     end
-    wp.slot = slot + 1
     wp.slot_x = 0
+    for i = 1, 10, 1 do
+        if not t[i] then
+            wp.slot = i
+            break
+        end
+    end
 
     if wp.slot == 2 then
         wp.slot_x = t[1] / 2 + wp.text:w() / 2 + 10

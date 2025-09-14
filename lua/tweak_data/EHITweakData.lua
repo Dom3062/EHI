@@ -100,7 +100,7 @@ function EHITweakData:new(tweak_data)
 
         daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} },
 
-        ping = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 448, 192, 64, 64 } }
+        ping = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 224, 192, 64, 64 } }
     }
     -- Definitions for buffs and their icons
     self.buff =
