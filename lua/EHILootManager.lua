@@ -153,6 +153,7 @@ function EHILootManager:_adjust_master()
     end
     EHILootSharedMaster._loot = self
     EHILootSharedMaster._id = self._id
+    self._master:post_init()
 end
 
 function EHILootManager:_adjust_waypoint()

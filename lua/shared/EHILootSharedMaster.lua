@@ -20,6 +20,9 @@ function EHILootSharedMaster:init(params)
     self._loot_check_n = 0
 end
 
+function EHILootSharedMaster:post_init()
+end
+
 function EHILootSharedMaster:GetListenerID()
     return self._achievement_id or self._id
 end
@@ -378,6 +381,9 @@ function EHILootMaxSharedMaster:init(params)
     EHI:AddOnSpawnedCallback(function()
         self:AddToUpdate()
     end)
+end
+
+function EHILootMaxSharedMaster:post_init()
     if EHI.IsClient then
         self._loot:AddSyncListener(function(loot)
             self._offset = loot:GetSecuredBagsAmount()

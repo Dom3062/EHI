@@ -1,3 +1,6 @@
+r342 (16. 09. 2025):
+Loot Counter: Fixed a load crash on endless heists
+
 r341 (14. 09. 2025):
 Player Ping Tracker: Updated tracker icon
 Waypoints: Possible fix for crashes when waypoints are created
