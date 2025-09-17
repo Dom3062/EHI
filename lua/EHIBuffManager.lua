@@ -50,7 +50,9 @@ function EHIBuffManager:init_finalize(hud, panel)
     if EHI.IsClient then
         managers.ehi_sync:AddReceiveHook(self._sync_add_buff, function(data, sender)
             local tbl = json.decode(data)
-            self:AddBuff(tbl.id, tbl.t)
+            if tbl then -- Check if the synced data is valid
+                self:AddBuff(tbl.id, tbl.t)
+            end
         end)
     end
 end
