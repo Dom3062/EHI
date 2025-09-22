@@ -81,11 +81,11 @@ if EHI:IsLootCounterVisible() then
 end
 EHI:SetMissionDoorData({
     -- Vault Doors
-    [Vector3(2350, -2320, 59.9998)] = 104556, -- Left
-    [Vector3(2250, -3121, 59.9998)] = 104611, -- Right
+    [100342] = 104556, -- Left
+    [100338] = 104611, -- Right
 
     -- Gate inside the vault
-    [Vector3(2493.96, -2793.65, 84.8657)] = { w_id = 104645, restore = true, unit_id = 101581 }
+    [101581] = { w_id = 104645, restore = true }
 })
 EHI.Mission:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
 EHI:AddXPBreakdown({

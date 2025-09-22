@@ -417,11 +417,6 @@ function EHITimerGroupTracker:IsTimerRunning(id)
     return self._timers[id] ~= nil
 end
 
----@param id string Unit Key
-function EHITimerGroupTracker:GetTimerTimeLeft(id)
-    return self._timers[id] and self._timers[id].time or 0
-end
-
 ---Workaround for crashes in `TimerGui:update(t, dt)`
 ---Class is updated in `HUDManager:add_updator()` as this is a unit
 ---@class EHITimerGuiGroupTracker : EHITimerGroupTracker

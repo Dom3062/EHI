@@ -51,7 +51,6 @@
     "ehi_status_hack" : "HACKEAR",
     "ehi_status_land" : "ATERRIZAR",
     "ehi_status_find" : "ENCONTRAR",
-    "ehi_status_bring" : "TRAER",
     "ehi_status_objective" : "OBJETIVO",
     "ehi_status_fail" : "FALLIDO",
 

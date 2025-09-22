@@ -237,9 +237,9 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         local from = self._player_movement:m_head_pos()
         if from then
             local to = from + self._player_movement:m_head_rot():y() * 30000
-            r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
+            r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask)
         end
-        local unit = r and r.unit ---@cast unit -UnitPlayer
+        local unit = r and r.unit
         if unit then
             if unit:in_slot(8) and alive(unit:parent()) then
                 unit = unit:parent() --[[@as UnitObject ]]

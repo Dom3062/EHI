@@ -298,20 +298,18 @@ for i = 100024, 100030, 1 do
 end
 EHI.Unit:UpdateUnits(tbl)
 
-local SecurityOffice = EHI:GetInstanceElementID(100026, 6690)
 EHI:SetMissionDoorData({
     -- Evidence
-    [Vector3(-1552.84, 816.472, -9.11819)] = 101562,
+    [101748] = 101562,
 
     -- Basement (Escape)
-    [Vector3(-744.305, 5042.19, -409.118)] = 102017,
+    [102005] = 102017,
 
     -- Archives
-    [Vector3(817.472, 2884.84, -809.118)] = 101345,
+    [101991] = 101345,
 
     -- Security Office
-    [Vector3(-1207.53, 4234.84, -409.118)] = SecurityOffice,
-    [Vector3(807.528, 4265.16, -9.11819)] = SecurityOffice
+    [EHI:GetInstanceUnitID(100002, 6690)] = EHI:GetInstanceElementID(100026, 6690)
 })
 EHI:AddXPBreakdown({
     objectives =

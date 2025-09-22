@@ -50,6 +50,7 @@
     "ehi_popup_trophy_failed" : "TROFEJ SELHALA!",
     "ehi_popup_daily_started" : "LZE DOKONČIT DENNÍ VÝZVU!",
     "ehi_popup_daily_failed" : "DENNÍ VÝZVA SELHALA!",
+    "ehi_popup_event_started" : "LZE DOKONČIT ÚKOL Z UDÁLOSTI!",
     "ehi_popup_loot_counter" : "POČET LUPU",
     "ehi_popup_all_loot_secured" : "Všechny pytle s lupem jsou zajištěny",
     "ehi_popup_all_xp_loot_secured" : "Všechny možné ZK ze zajištěných pytlů byly uděleny",
@@ -77,11 +78,13 @@
     "ehi_status_hack" : "HACKNOUT",
     "ehi_status_land" : "PŘISTÁT",
     "ehi_status_find" : "NAJÍT",
-    "ehi_status_bring" : "DONÉST",
+    "ehi_status_move" : "PŘESUNOUT",
     "ehi_status_objective" : "ÚKOL",
     "ehi_status_fail" : "SELHÁNÍ",
     "ehi_status_endless" : "NEKONEČNÝ",
     "ehi_status_break" : "PAUZA",
+    "ehi_status_kill" : "ZABÍT",
+    "ehi_status_mad_body" : "TĚLO",
     "ehi_hint_drill" : "Vrták",
     "ehi_hint_hack" : "Hack",
     "ehi_hint_laser" : "Laser",
@@ -386,6 +389,15 @@
 
     "ehi_show_daily_started_popup" : "Zobrazovat vyskakovací okno 'Lze dokončit denní výzvu'",
     "ehi_show_daily_started_popup_desc" : "Denní výzvy, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
+
+    "ehi_show_events" : "Zobrazovat úkoly z herní události",
+    "ehi_show_events_desc" : "Zobrazuje na obrazovce úkoly, jsou-li aktivní\n\nDokončené úkoly se neobjeví na obrazovce",
+
+    "ehi_show_event_description" : "Zobrazovat popis úkolu",
+    "ehi_show_event_description_desc" : "Zobrazuje popis úkolu v herním chatu\n\nPopis vidíš jenom ty",
+
+    "ehi_show_event_started_popup" : "Zobrazovat vyskakovací okno 'Lze dokončit úkol z události'",
+    "ehi_show_event_started_popup_desc" : "Úkoly, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
 
     "ehi_show_gained_xp" : "Zobrazovat získané ZK",
     "ehi_show_gained_xp_desc" : "Zobrazuje získané ZK v misi.\nTento sledovač je automaticky zakázán v herním módu Crime Spree.",

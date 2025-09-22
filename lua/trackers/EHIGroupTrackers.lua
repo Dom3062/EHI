@@ -190,6 +190,7 @@ EHIProgressGroupTracker = class(EHIProgressTracker)
 EHIProgressGroupTracker._init_create_text = false
 function EHIProgressGroupTracker:post_init(params)
     self._call_done_function_on_completion = params.call_done_function
+    self._force_first_completion = params.first_completion
     self._counters = 0
     self._completed_counters = 0
     self._counters_table = {} --[[@as table<string, EHIProgressGroupTracker.Counter> ]]
@@ -283,7 +284,7 @@ function EHIProgressGroupTracker:SetProgress(progress, id)
             if counter.set_color_bad_when_reached then
                 self:SetBad(counter.label)
             else
-                self:_SetCompleted(counter.label)
+                self:_SetCompleted(counter.label, self._force_first_completion)
             end
         end
     end

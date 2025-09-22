@@ -45,6 +45,19 @@
             "color_type" : "unlockables",
             "setting_value": "colors",
             "ehi_ver" : 245
+        },
+        {
+            "type": "color_select",
+            "id": "ehi_colors_event_choice",
+            "title": "ehi_colors_event",
+            "description": "ehi_colors_event_desc",
+            "value": "event",
+            "default_value": [255, 168, 0],
+            "callback": "SetUnlockableColor",
+            "callback_arguments": ["event", "unlockables"],
+            "color_type" : "unlockables",
+            "setting_value": "colors",
+            "ehi_ver" : 344
         }
     ]
 }

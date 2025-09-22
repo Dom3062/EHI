@@ -11,6 +11,7 @@ function EHIPlayerPingTracker:post_init(params)
     self._peers = {} ---@type table<number, { peer: NetworkPeer, label: Text }>
     self._n_of_peers = 0
     self._update_callback = callback(self, self, "update")
+    self:SetMovement(self._anim_params.PanelSizeIncreaseHalf)
 end
 
 function EHIPlayerPingTracker:PlayerSpawned()
@@ -67,7 +68,13 @@ function EHIPlayerPingTracker:AddPeer(peer)
     }
     self._n_of_peers = self._n_of_peers + 1
     if self._n_of_peers == 1 then
-        self._parent_class:RunTracker(self._id, nil, self._adjusted_pos)
+        local pos, assault_exists, drama_exists = 0, managers.ehi_assault:Exists(), self._parent_class:Exists("Drama")
+        if assault_exists and drama_exists then
+            pos = 2
+        elseif assault_exists or drama_exists then
+            pos = 1
+        end
+        self._parent_class:RunTracker(self._id, nil, pos)
         self:AddTrackerToUpdate()
     else
         self:Reorganize(true)

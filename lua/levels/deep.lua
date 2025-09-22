@@ -165,13 +165,13 @@ EHI.Mission:ParseTriggers({
 })
 EHI:SetMissionDoorData({
     -- Arrival
-    [Vector3(2308.08, 3258.11, 4092.94)] = 104170,
+    [103576] = 104170,
 
     -- Relax
-    [Vector3(3712.11, 1893.92, 4090.94)] = 104171,
+    [103575] = 104171,
 
     -- Locker
-    [Vector3(2358.11, 867.92, 4091.94)] = 104174
+    [101911] = 104174
 })
 local total_xp_override =
 {

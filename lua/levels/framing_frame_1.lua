@@ -109,9 +109,9 @@ EHI.Mission:ParseTriggers({ achievement = achievements, other = other, assault =
 
 EHI:SetMissionDoorData({
     -- Security doors
-    [Vector3(-827.08, 115.886, 92.4429)] = 103191,
-    [Vector3(-60.1138, 802.08, 92.4429)] = 103188,
-    [Vector3(-140.886, -852.08, 92.4429)] = 103202
+    [100937] = 103191,
+    [100259] = 103188,
+    [100233] = 103202
 })
 local xp_override =
 {

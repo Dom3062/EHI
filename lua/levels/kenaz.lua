@@ -63,26 +63,26 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
             index = 15370
         }
     }
+    EHI:HookColorCodes(keycode_units)
     triggers[100282] = { id = "ColorCodes", class = TT.ColoredCodes, special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
         if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
             return
         end
         self:CreateTracker()
     end), waypoint = { waypointless = true } }
-    triggers[100091] = { id = "ColorCodes", special_function = SF.RemoveTracker } -- Code entered (stealth)
-    triggers[101357] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
+    triggers[102761] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled then
             self._tracking:Remove("ColorCodes")
         end
-    end) } -- Code entered (loud)
-    EHI:HookColorCodes(keycode_units)
+    end) } -- Code entered (stealth); vault opened
+    triggers[101357] = triggers[102761] -- Code entered (loud); armory opened
     if EHI.IsClient then
         local codes = EHI.TrackerUtils:CacheColorCodesNumbers(keycode_units)
         local color_map = EHI.TrackerUtils:GetColorCodesMap()
         triggers[100282].load_sync = function(self) ---@param self EHIMissionElementTrigger
             if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
                 return
-            elseif self.ConditionFunctions.IsStealth() and self._utils:IsMissionElementDisabled(100270) then -- If it is disabled, the vault has been opened; exit
+            elseif self._utils:IsMissionElementDisabled(100851) then -- If it is disabled, the vault has been opened; exit
                 return
             elseif managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
                 return
@@ -163,10 +163,10 @@ local achievements =
     {
         elements =
         {
-            [EHI:GetInstanceElementID(100008, 12500)] = { class = TT.Achievement.Status },
-            [EHI:GetInstanceElementID(100008, 12580)] = { class = TT.Achievement.Status },
-            [EHI:GetInstanceElementID(100008, 12660)] = { class = TT.Achievement.Status },
-            [EHI:GetInstanceElementID(100008, 18700)] = { class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100008, 12500)] = { status = Status.Kill, class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100008, 12580)] = { status = Status.Kill, class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100008, 12660)] = { status = Status.Kill, class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100008, 18700)] = { status = Status.Kill, class = TT.Achievement.Status },
             [102806] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
             [102808] = { special_function = SF.SetAchievementFailed }
         }

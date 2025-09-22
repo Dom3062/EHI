@@ -29,10 +29,10 @@ if EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_missi
 end
 EHI:SetMissionDoorData({
     -- Security doors
-    [Vector3(-2357.87, -3621.42, 489.107)] = 101899,
-    [Vector3(1221.42, -2957.87, 489.107)] = 101834,
-    [Vector3(1342.13, -2621.42, 89.1069)] = 101782, --101867
-    [Vector3(-2830.08, 341.886, 492.443)] = 101783 --102199
+    [101671] = 101899,
+    [101855] = 101834,
+    [101867] = 101782,
+    [102199] = 101783
 })
 
 ---@type ParseAchievementTable

@@ -4,13 +4,6 @@ local EHI = EHI
 local EHIHookManager = {}
 EHIHookManager._cop_damage_hook = "EHI_EHIHookManager_CopDamage__on_damage_received"
 EHIHookManager._element_hook_function = EHI.IsClient and "client_on_executed" or "on_executed"
----@param ehi_tracker EHITrackerManager
----@param ehi_loot EHILootManager
-function EHIHookManager:post_init(ehi_tracker, ehi_loot)
-    self._trackers = ehi_tracker
-    self._loot = ehi_loot
-end
-
 ---@param element MissionScriptElement
 ---@param post_call fun(element: MissionScriptElement, instigator: Unit?)
 function EHIHookManager:HookElement(element, post_call)
@@ -42,7 +35,7 @@ function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian, cus
             if data.variant ~= "melee" and not CopDamage.is_civilian(data.name) then
                 local name_id, _ = sm:_get_name_id_and_throwable_id(data.weapon_unit)
                 if name_id == weapon_id then
-                    self._trackers:IncreaseProgress(tracker_id)
+                    managers.ehi_tracker:IncreaseProgress(tracker_id)
                 end
             end
         end)
@@ -51,7 +44,7 @@ function EHIHookManager:HookKillFunction(tracker_id, weapon_id, no_civilian, cus
             if data.variant ~= "melee" then
                 local name_id, _ = sm:_get_name_id_and_throwable_id(data.weapon_unit)
                 if name_id == weapon_id then
-                    self._trackers:IncreaseProgress(tracker_id)
+                    managers.ehi_tracker:IncreaseProgress(tracker_id)
                 end
             end
         end)
@@ -64,7 +57,7 @@ end
 function EHIHookManager:HookSecuredBag(id, trophy, icon)
     local progress, max = EHI:GetSHSideJobProgressAndMax(id)
     local current_progress = progress
-    self._loot:AddListener(id, function(loot)
+    managers.ehi_loot:AddListener(id, function(loot)
         local new_current_progress = progress + loot:GetSecuredBagsTypeAmount(trophy.carry_id)
         if current_progress == new_current_progress then
             return
@@ -72,7 +65,7 @@ function EHIHookManager:HookSecuredBag(id, trophy, icon)
             managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(new_current_progress) .. "/" .. tostring(max), icon)
             current_progress = new_current_progress
         else
-            self._loot:RemoveListener(id)
+            managers.ehi_loot:RemoveListener(id)
         end
     end)
 end
@@ -104,7 +97,7 @@ function EHIHookManager:HookChallengeAwardProgress(id, f)
 end
 
 ---@param id string
----@param f fun(self: CopDamage, damage_info: CopDamage.AttackData, attacker_unit: UnitPlayer|UnitTeamAI)
+---@param f fun(self: CopDamage, damage_info: CopDamage.AttackData, attacker_unit: UnitPlayer|UnitTeamAI, damage: number)
 function EHIHookManager:AddCopDamageListener(id, f)
     if not self._cop_damage_listener then
         self._cop_damage_listener = ListenerHolder:new()
@@ -128,22 +121,16 @@ function EHIHookManager:AddCopDamageListener(id, f)
             then
                 return
             end
-            self._cop_damage_listener:call(c_dmg, damage_info, realAttacker)
+            self._cop_damage_listener:call(c_dmg, damage_info, realAttacker, damage)
         end)
     end
     self._cop_damage_listener:add(id, f)
 end
 
 ---@param id string
----@param keep_if_empty boolean?
-function EHIHookManager:RemoveCopDamageListener(id, keep_if_empty)
-    if not self._cop_damage_listener then
-        return
-    end
-    self._cop_damage_listener:remove(id)
-    if self._cop_damage_listener:is_empty() and not keep_if_empty then
-        self._cop_damage_listener = nil
-        Hooks:RemovePostHook(self._cop_damage_hook)
+function EHIHookManager:RemoveCopDamageListener(id)
+    if self._cop_damage_listener then
+        self._cop_damage_listener:remove(id)
     end
 end
 

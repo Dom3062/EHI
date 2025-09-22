@@ -14,15 +14,6 @@ end
 EHIColoredCodesWaypoint = class(EHIWaypointsLessWaypoint)
 EHIColoredCodesWaypoint._needs_update = false
 EHIColoredCodesWaypoint.Format = EHICodeTracker.Format
----@param id number
----@param icon nil
----@param position nil
----@param color Color
----@param code string
-function EHIColoredCodesWaypoint:CreateWaypoint(id, icon, position, color, code)
-    EHIColoredCodesWaypoint.super.CreateWaypoint(self, id, "code", EHI.Mission:GetUnitPositionOrDefault(id), color, code)
-end
-
 ---@param color Color
 ---@param code string
 function EHIColoredCodesWaypoint:WaypointCreated(waypoint, color, code)

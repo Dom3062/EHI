@@ -141,7 +141,7 @@ local tbl =
 }
 EHI.Unit:UpdateUnits(tbl)
 EHI:SetMissionDoorData({
-    [Vector3(945.08, 3403.11, 92.4429)] = 200160
+    [100242] = 200160
 })
 
 EHI.Mission:ParseTriggers({

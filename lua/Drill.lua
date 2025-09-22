@@ -14,9 +14,7 @@ if EHI:CheckLoadHook("Drill") or not EHI:GetTrackerOrWaypointOption("show_timers
 end
 local highest_id = 0
 for _, id in pairs(Drill.EVENT_IDS) do
-    if id > highest_id then
-        highest_id = id
-    end
+    highest_id = math.max(highest_id, id)
 end
 local HasAutorepair = highest_id + 1
 local NoAutorepair = highest_id + 2

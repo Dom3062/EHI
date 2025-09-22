@@ -8,7 +8,7 @@ corp_9._forced_hint_text = "achievement_corp_9"
 corp_9._hint_vanilla_localization = true
 function corp_9:post_init(params)
     self:ShowStartedPopup()
-    self:ShowAchievementDescription()
+    self:ShowUnlockableDescription()
 end
 
 function corp_9:OverridePanel()

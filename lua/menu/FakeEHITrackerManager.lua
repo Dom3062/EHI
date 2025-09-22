@@ -88,6 +88,9 @@ function FakeEHITrackerManager:AddFakeTrackers()
         if EHI:GetUnlockableOption("show_dailies") then
             self:AddFakeTracker({ ids = { "sidejob", "show_dailies" }, time = math.random(60, 180), icons = { { icon = Icon.Trophy, color = EHI:GetColorFromOption("unlockables", "sidejob") } } })
         end
+        if EHI:GetUnlockableOption("show_events") then
+            self:AddFakeTracker({ ids = { "event", "show_events" }, time = math.random(60, 180), icons = { { icon = Icon.Trophy, color = EHI:GetColorFromOption("unlockables", "event") } } })
+        end
     end
     if not_u24_mod then
         local xp_panel = EHI:GetOption("xp_panel")

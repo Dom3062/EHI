@@ -29,7 +29,8 @@ local triggers = {
     [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth, hint = Hints.Wait },
     [1020952] = EHI:AddEndlessAssault(26, "AirlockOpenOutsideEndlessAssault", true),
 
-    [102104] = { time = 30 + 26, id = "LockeHeliEscape", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 101914 }, hint = Hints.Escape } -- 30s delay + 26s escape zone delay
+    [102104] = { time = 30 + 26, id = "LockeHeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 101914 }, hint = Hints.Escape }, -- 30s delay + 26s escape zone delay
+    [104036] = { time = 26, id = "LockeHeliEscapeStealth", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101914, restore_on_done = true }, hint = Hints.Escape }
 }
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     triggers[101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, hint = Hints.vit_Teargas }
@@ -72,6 +73,27 @@ if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
     triggers[EHI:GetInstanceElementID(100081, 4350)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "b" } }
     triggers[EHI:GetInstanceElementID(100076, 4450)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "y" } }
     triggers[EHI:GetInstanceElementID(100081, 4450)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "y" } }
+    for _, index in ipairs({ 5100, 5400, 5700, 15450 }) do
+        triggers[EHI:GetInstanceElementID(100139, index)] = { id = "SafeCode", class = TT.Code, remove_on_alarm = true, waypoint = { icon = "code", position_from_unit = EHI:GetInstanceUnitID(100004, index) } }
+    end
+    triggers[EHI:GetInstanceElementID(100230, 12900)] = { id = "SafeCode", special_function = SF.RemoveTracker }
+    ---@param self EHIMissionElementTrigger
+    ---@param arg number[]
+    local function ShowCodePart(self, arg)
+        self._tracking:Call("SafeCode", "SetCodePart", arg[1], arg[2], 4)
+    end
+    local num, pos = 1, 1
+    for i = 102622, 102661, 1 do
+        triggers[i] = { special_function = SF.CustomCode2, f = ShowCodePart, arg = { pos, num } }
+        if num == 9 then
+            num = 0
+        elseif num == 0 then
+            num = num + 1
+            pos = pos + 1
+        else
+            num = num + 1
+        end
+    end
 end
 if EHI.IsClient then
     triggers[102073] = { additional_time = 30 + 3 + 2, random_time = 10, id = "TearGasPEOC", icons = { Icon.Teargas }, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Teargas }
@@ -81,6 +103,9 @@ end
 ---@param self EHIMissionElementTrigger
 ---@param disable boolean
 local function ToggleAssaultTracker(self, disable)
+    if disable == false and self.ConditionFunctions.IsStealth() then
+        return
+    end
     self._assault:SetControlStateBlock(disable, 30)
 end
 local other =

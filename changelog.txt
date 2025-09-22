@@ -1,3 +1,17 @@
+r344 (22. 09. 2025):
+Added options for unlockable "Event Missions" in Side Jobs
+Streamlined code for units that use MissionDoor class
+Fixed an issue where sometimes -1 was returned when trying to determine a count of loot or snipers when playing on certain difficulties
+Fixed an issue where after upgrading a drill/saw the timer in the tracker did not match in waypoint
+Possible fix for 0s in Timer tracker and waypoint after upgrading a drill/saw
+Golden Grin Casino: Fixed an issue where Colored Code tracker and waypoint does not hide after opening the vault
+Player Ping Tracker: Increased tracker size a bit to improve readability
+Player Ping Tracker: Fixed empty tracker when starting a heist alone in multiplayer
+Player Ping Tracker: Fixed position sometimes not reflecting correctly
+Scarface Mansion: Added trophy tracker for "Pelican Killer"
+The White House: Fixed an issue where Assault tracker is visible in stealth after entering PEOC
+Waypoints: Fixed an issue where Colored Code waypoints are not sometimes removed when they should be
+
 r343 (17. 09. 2025):
 Buffs: Fixed a possible crash when nil data are synced
 

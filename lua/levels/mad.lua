@@ -63,8 +63,11 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100547] = { status = Status.Defend, class = TT.Achievement.Status },
-            [101925] = { special_function = SF.SetAchievementFailed },
+            [100189] = { status = "mad_body", condition_function = EHI.ConditionFunctions.PlayingFromStart, class = TT.Achievement.Status },
+            [EHI:GetInstanceElementID(100007, 3150)] = { status = "mad_body", special_function = SF.SetAchievementStatus }, -- Body scanned, next one
+            [EHI:GetInstanceElementID(100013, 3150)] = { status = Status.Defend, special_function = SF.SetAchievementStatus }, -- Body placed
+            [EHI:GetInstanceElementID(100033, 3150)] = { special_function = SF.SetAchievementFailed }, -- Server picked with less bodies scanned than required
+            [101925] = { special_function = SF.SetAchievementFailed }, -- Stopped or power went down
             [101924] = { special_function = SF.SetAchievementComplete }
         }
     }

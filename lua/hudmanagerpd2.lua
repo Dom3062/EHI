@@ -130,17 +130,10 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
         EHIEndGameStats:new()
     end
     if not Global.game_settings.single_player and EHI:GetOptionAndLoadTracker("show_ping_tracker") then
-        local pos, assault_enabled, drama_enabled = 0, EHI:IsAssaultTrackerEnabled(), EHI:ShowDramaTracker()
-        if assault_enabled and drama_enabled then
-            pos = 2
-        elseif assault_enabled or drama_enabled then
-            pos = 1
-        end
-        hud._ehi_tracker:AddTracker({
+        hud._ehi_tracker:PreloadTracker({
             id = "PlayerPing",
             class = "EHIPlayerPingTracker"
-        }, pos)
-        EHIPlayerPingTracker._adjusted_pos = pos
+        })
     end
 end)
 
@@ -288,6 +281,17 @@ function HUDManager:ShowSideJobDescription(id, daily_job, desc)
     local text = desc or (daily_job and ("menu_challenge_" .. id) or id)
     local objective = daily_job and ((desc or ("menu_challenge_" .. id)) .. "_desc") or (id .. "_objective")
     managers.chat:_receive_message(1, managers.localization:text(text), managers.localization:text(objective), Color.white)
+end
+
+---@param id string
+function HUDManager:ShowEventStartedPopup(id)
+    self:custom_ingame_popup_text("EVENT STARTED!", managers.localization:to_upper_text("menu_" .. id), "milestone_trophy")
+end
+
+---@param id string
+---@param desc string
+function HUDManager:ShowEventDescription(id, desc)
+    managers.chat:_receive_message(1, managers.localization:text("menu_" .. id), managers.localization:text(desc), Color.white)
 end
 
 ---@param single_sniper boolean?

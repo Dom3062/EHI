@@ -516,6 +516,16 @@ function EHITrackerManager:SetProgressRemaining(id, remaining)
     end
 end
 
+---@param id string Tracker ID
+---@param group_id string ID of the group
+---@param value number?
+function EHITrackerManager:IncreaseGroupProgress(id, group_id, value)
+    local tracker = self:GetTracker(id) --[[@as EHIProgressGroupTracker]]
+    if tracker and tracker.IncreaseProgress then
+        tracker:IncreaseProgress(value, group_id)
+    end
+end
+
 ---@param id string
 ---@param time number
 function EHITrackerManager:SetAccurate(id, time)
@@ -603,6 +613,7 @@ do
     dofile(path .. "EHIGroupTrackers.lua")
     dofile(path .. "EHIAchievementTrackers.lua")
     dofile(path .. "EHISideJobTrackers.lua")
+    dofile(path .. "EHIEventMissionTrackers.lua")
 end
 
 if _G.IS_VR then

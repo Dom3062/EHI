@@ -101,7 +101,6 @@ _G.EHI.Unit = EHIMissionUnit
 ---@field cleanup_callback fun() Function runs during achievement traversal when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field cleanup_class string EHI class name to delete when difficulty check or unlock check is false; intended to delete remnants so they don't occupy memory
 ---@field mission_end_callback boolean Achieves or fails achievement on mission end
----@field data_sync table<string, any> Params to sync to other players
 
 ---@class ParseAchievementTable
 ---@field [string] ParseAchievementDefinitionTable Achievement Definition

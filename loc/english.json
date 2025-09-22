@@ -50,6 +50,7 @@
     "ehi_popup_trophy_failed" : "TROPHY FAILED!",
     "ehi_popup_daily_started" : "DAILY SIDE JOB STARTED!",
     "ehi_popup_daily_failed" : "DAILY SIDE JOB FAILED!",
+    "ehi_popup_event_started" : "EVENT MISSION STARTED!",
     "ehi_popup_loot_counter" : "LOOT COUNTER",
     "ehi_popup_all_loot_secured" : "All loot bags have been secured",
     "ehi_popup_all_xp_loot_secured" : "All possible XP from secured loot bags have been awarded",
@@ -77,11 +78,13 @@
     "ehi_status_hack" : "HACK",
     "ehi_status_land" : "LAND",
     "ehi_status_find" : "FIND",
-    "ehi_status_bring" : "BRING",
+    "ehi_status_move" : "MOVE",
     "ehi_status_objective" : "OBJECTIVE",
     "ehi_status_fail" : "FAIL",
     "ehi_status_endless" : "ENDLESS",
     "ehi_status_break" : "BREAK",
+    "ehi_status_kill" : "KILL",
+    "ehi_status_mad_body" : "BODY",
     "ehi_hint_drill" : "Drill",
     "ehi_hint_hack" : "Hack",
     "ehi_hint_laser" : "Laser",
@@ -386,6 +389,15 @@
 
     "ehi_show_daily_started_popup" : "Show 'Daily Side Job Started' Popup",
     "ehi_show_daily_started_popup_desc" : "Dailies that are now being tracked will show as green in the popup",
+
+    "ehi_show_events" : "Show Event Missions",
+    "ehi_show_events_desc" : "Shows event missions on the screen if the are active\n\nCompleted events won't appear on the screen",
+
+    "ehi_show_event_description" : "Show Event Mission Description",
+    "ehi_show_event_description_desc" : "Shows event mission description in the game chat\n\nThe description is only visible to you",
+
+    "ehi_show_event_started_popup" : "Show 'Event Mission Started' Popup",
+    "ehi_show_event_started_popup_desc" : "Events that are now being tracked will show as green in the popup",
 
     "ehi_show_gained_xp" : "Show gained XP",
     "ehi_show_gained_xp_desc" : "Shows earned XP in a mission.\nThis tracker is disabled in Crime Spree.",

@@ -83,7 +83,7 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
 
     ---@param finished boolean?
     function EHIDamageFloatManager:update_last(finished)
-        managers.ehi_hook:RemoveCopDamageListener(self._cop_damage_hook, not finished)
+        managers.ehi_hook:RemoveCopDamageListener(self._cop_damage_hook)
         for i = 0, self._pop_list, 1 do
             for key, pop in pairs(self.pops[i] or {}) do
                 pop:destroy2(key)
@@ -102,7 +102,8 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
     ---@param c_dmg CopDamage|HuskCopDamage
     ---@param damage_info CopDamage.AttackData
     ---@param realAttacker UnitPlayer|UnitTeamAI
-    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker)
+    ---@param damage number
+    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker, damage)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
             local hitPos = Vector3()
             local col_ray = damage_info.col_ray or {}
@@ -118,7 +119,6 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
                         return
                     end
                 end
-                local damage = damage_info.damage
                 local unit = c_dmg._unit
                 local key
                 local isCrit = damage_info.critical_hit
@@ -192,7 +192,7 @@ else
 
     ---@param finished boolean?
     function EHIDamageFloatManager:update_last(finished)
-        managers.ehi_hook:RemoveCopDamageListener(self._cop_damage_hook, not finished)
+        managers.ehi_hook:RemoveCopDamageListener(self._cop_damage_hook)
         for key, pop in pairs(self.pops) do
             pop:destroy(key)
         end
@@ -208,7 +208,8 @@ else
     ---@param c_dmg CopDamage|HuskCopDamage
     ---@param damage_info CopDamage.AttackData
     ---@param realAttacker UnitPlayer|UnitTeamAI
-    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker)
+    ---@param damage number
+    function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker, damage)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
             local hitPos = Vector3()
             local col_ray = damage_info.col_ray or {}
@@ -224,7 +225,6 @@ else
                         return
                     end
                 end
-                local damage = damage_info.damage
                 local unit = c_dmg._unit
                 local isCrit = damage_info.critical_hit
                 local rDamage = damage >= 0 and damage or -damage

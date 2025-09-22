@@ -12,17 +12,8 @@ EHIPhalanxManager._requires_manual_on_exec = table.set("dinner", "slaughter_hous
 EHIPhalanxManager._disabled_in_levels = table.set("born")
 EHIPhalanxManager._counter_trigger = EHI.IsClient and 3 or 2
 EHIPhalanxManager._first_assault = true
----@param trackers EHITrackerManager
----@param hook EHIHookManager
----@param assault EHIAssaultManager
-function EHIPhalanxManager:init_finalize(trackers, hook, assault)
-    self._trackers = trackers
-    self._hook = hook
-    self._assault = assault
-    self._phalanx_spawn_chance = tweak_data.group_ai.phalanx.spawn_chance or {}
-    self._phalanx_spawn_time_check = tweak_data.group_ai.phalanx.check_spawn_intervall or 120
-end
-
+EHIPhalanxManager._phalanx_spawn_chance = tweak_data.group_ai.phalanx.spawn_chance or {}
+EHIPhalanxManager._phalanx_spawn_time_check = tweak_data.group_ai.phalanx.check_spawn_intervall or 120
 ---@param element_so ElementSpecialObjective
 function EHIPhalanxManager:OnSOPhalanxCreated(element_so)
     local level_id = Global.game_settings.level_id
@@ -30,7 +21,7 @@ function EHIPhalanxManager:OnSOPhalanxCreated(element_so)
         return
     elseif self._requires_manual_on_exec[level_id] then
         self:LoadHooks()
-        self._hook:HookElement(element_so, function(element, ...)
+        managers.ehi_hook:HookElement(element_so, function(element, ...)
             if EHI.IsHost and not element._values.enabled then
                 return
             end
@@ -49,16 +40,16 @@ function EHIPhalanxManager:LoadHooks()
     self.__hooked = true
     if EHI:GetOptionAndLoadTracker("show_captain_damage_reduction") then
         Hooks:PostHook(GroupAIStateBesiege, "set_phalanx_damage_reduction_buff", "EHI_EHIPhalanxManager_GroupAIStateBesiege_set_phalanx_damage_reduction", function(group_ai, damage_reduction, ...) ---@param damage_reduction number?
-            self._trackers:SetChancePercent("PhalanxDamageReduction", damage_reduction or 0)
+            managers.ehi_tracker:SetChancePercent("PhalanxDamageReduction", damage_reduction or 0)
         end)
-        self._assault:AddAssaultModeChangedCallback(function(mode)
+        managers.ehi_assault:AddAssaultModeChangedCallback(function(mode)
             if mode == "phalanx" then
-                self._trackers:AddTracker({
+                managers.ehi_tracker:AddTracker({
                     id = "PhalanxDamageReduction",
                     class = "EHIPhalanxDamageReductionTracker",
                 })
             else
-                self._trackers:ForceRemoveTracker("PhalanxDamageReduction")
+                managers.ehi_tracker:ForceRemoveTracker("PhalanxDamageReduction")
             end
         end)
     end
@@ -92,7 +83,7 @@ function EHIPhalanxManager:OnPhalanxAdded(manual)
                 assault_state = phase
             end
         end)
-        self._assault:AddAssaultModeChangedCallback(function(mode)
+        managers.ehi_assault:AddAssaultModeChangedCallback(function(mode)
             if mode == "phalanx" then
                 Hooks:RemovePostHook("EHI_EHIPhalanxManager_upd_assault_task")
                 assault_state = nil ---@diagnostic disable-line
@@ -127,7 +118,7 @@ function EHIPhalanxManager:AddTracker()
     end
     local assault_extender = managers.modifiers:IsModifierActive("ModifierAssaultExtender", "crime_spree")
     self._tracker_created = true
-    self._trackers:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = "CaptainChance",
         time = self._phalanx_spawn_time_check,
         chance = self._phalanx_spawn_chance.start * 100,
@@ -136,26 +127,26 @@ function EHIPhalanxManager:AddTracker()
         assault_extender = assault_extender,
         class = "EHIPhalanxChanceTracker"
     })
-    self._assault:AddAssaultModeChangedCallback(function(mode)
+    managers.ehi_assault:AddAssaultModeChangedCallback(function(mode)
         if mode == "phalanx" then
-            self._trackers:ForceRemoveTracker("CaptainChance")
-            self._assault:RemoveOnSustainListener("EHIPhalanxManager")
+            managers.ehi_tracker:ForceRemoveTracker("CaptainChance")
+            managers.ehi_assault:RemoveOnSustainListener("EHIPhalanxManager")
         end
     end)
     if not assault_extender then
-        self._assault:AddOnSustainListener("EHIPhalanxManager", function(duration)
-            self._trackers:CallFunction("CaptainChance", "OnEnterSustain", duration)
+        managers.ehi_assault:AddOnSustainListener("EHIPhalanxManager", function(duration)
+            managers.ehi_tracker:CallFunction("CaptainChance", "OnEnterSustain", duration)
         end)
     end
-    self._assault:AddAssaultStartCallback(function()
-        self._trackers:CallFunction("CaptainChance", "AssaultStart")
+    managers.ehi_assault:AddAssaultStartCallback(function()
+        managers.ehi_tracker:CallFunction("CaptainChance", "AssaultStart")
     end)
-    self._assault:AddAssaultEndCallback(function()
-        self._trackers:CallFunction("CaptainChance", "AssaultEnd")
+    managers.ehi_assault:AddAssaultEndCallback(function()
+        managers.ehi_tracker:CallFunction("CaptainChance", "AssaultEnd")
     end)
     if not self._no_endless_assault_check[Global.game_settings.level_id] then
-        self._assault:AddAssaultTypeChangedCallback(function(mode, element_id)
-            self._trackers:CallFunction("CaptainChance", "SetEndlessAssault", mode == "endless")
+        managers.ehi_assault:AddAssaultTypeChangedCallback(function(mode, element_id)
+            managers.ehi_tracker:CallFunction("CaptainChance", "SetEndlessAssault", mode == "endless")
         end)
     end
 end

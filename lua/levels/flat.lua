@@ -131,7 +131,7 @@ if EHI:CanShowAchievement2("flat_5", "show_achievements_other") then
                 local peer = network and network:peer()
                 return peer and peer:id() or 0
             end
-            managers.ehi_hook:AddCopDamageListener("flat_5", function(c_dmg, damage_info, attacker_unit)
+            managers.ehi_hook:AddCopDamageListener("flat_5", function(c_dmg, damage_info, attacker_unit, damage)
                 local pid = _pid(attacker_unit)
                 if damage_info.variant == "bullet" or damage_info.variant == "fire" or damage_info.variant == "explosion" or damage_info.variant == "melee" then
                     managers.ehi_tracker:CallFunction("flat_5", "HitMade", pid)

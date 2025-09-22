@@ -142,7 +142,8 @@ function Unit:driving(...) end
 
 function Unit:editable_gui(...) end
 
-function Unit:editor_id(...) end
+---@return integer
+function Unit:editor_id() end
 
 function Unit:effect_spawner(...) end
 

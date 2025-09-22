@@ -170,6 +170,8 @@ function EHITimerManager:StartTimer(params)
         else -- add group
             self._groups[group] = { [subgroup] = { count = 1, { name = tracker_id, timer_count = 1 } }, count = 1 }
         end
+    elseif self._FORCE_SHARED_MASTER and params.timer_gui then
+        params.class = "EHITimerTracker"
     end
     managers.ehi_tracker:AddTracker(params)
     if self._FORCE_SHARED_MASTER and params.timer_gui then -- Enabled for now for TimerGui units
@@ -311,7 +313,7 @@ function EHITimerManager:SetTimerUpgrades(timer_gui)
                 if self._groups[group] then
                     local visibility_data = timer_gui:GetVisibilityData()
                     local g_i_subgroup = self._groups[group][new_subgroup]
-                    local t = managers.ehi_tracker:ReturnValue(unit_group, "GetTimerTimeLeft", id) or 0
+                    local t = timer_gui._time_left
                     if g_i_subgroup then -- New subgroup exists, check to what tracker we can add it
                         local new_i_group = 0
                         for i, sub in ipairs(g_i_subgroup) do

@@ -93,6 +93,28 @@ local achievements =
     }
 }
 
+local trophy =
+{
+    trophy_flamingo =
+    {
+        parsed_callback = function()
+            local trophy = managers.custom_safehouse:get_trophy("trophy_flamingo")
+            if trophy.completed then
+                return
+            end
+            local progress, max = EHI._get_objective_progress(trophy.objectives, trophy.id)
+            Hooks:PostHook(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", trophy.id), function(csm, id_stat)
+                if id_stat == trophy.id then
+                    progress = progress + 1
+                    if progress < max then
+                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(trophy.id), tostring(progress) .. "/" .. tostring(max), "milestone_trophy")
+                    end
+                end
+            end)
+        end
+    }
+}
+
 local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 30 + 1, trigger_once = true })
@@ -101,6 +123,7 @@ local other =
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
+    trophy = trophy,
     other = other,
     sync_triggers = { element = element_sync_triggers }
 })

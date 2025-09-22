@@ -598,7 +598,6 @@ end
 
 local original =
 {
-    prepare_mission_data = CoreWorldInstanceManager.prepare_mission_data,
     prepare_unit_data = CoreWorldInstanceManager.prepare_unit_data
 }
 
@@ -727,11 +726,9 @@ function CoreWorldInstanceManager:_ehi_hook_mission_instance(instance, force_ins
 end
 
 ---@param instance CoreWorldInstanceManager.Instance
-function CoreWorldInstanceManager:prepare_mission_data(instance, ...)
-    local instance_data = original.prepare_mission_data(self, instance, ...)
+Hooks:PostHook(CoreWorldInstanceManager, "prepare_mission_data", "EHI_CoreWorldInstanceManager_prepare_mission_data", function(self, instance, ...)
     self:_ehi_hook_mission_instance(instance)
-    return instance_data
-end
+end)
 
 local units = {} ---@type table<string, UnitUpdateDefinition>
 ---@param instance CoreWorldInstanceManager.Instance

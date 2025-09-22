@@ -87,15 +87,7 @@ local custom_levels =
     office_strike = true, -- Office Strike
     tonmapjam22l = true, -- Hard Cash
     SJamBank = true, -- Branch Bank Initiative
-    roberts_v2 = true, -- GO Bank Remastered
-    lvl_friday = true, -- Crashing Capitol
-    ["Henry's Rock (Better Spawns)"] = true,
-    sahv2 = true,
-    ["Auction Edit"] = true,
-    ["Auction Heist No Rain"] = true,
-    ["Auction Edit Rain"] = true,
-    fexbetterspawns = true,
-    slaughter_house_new = true
+    lvl_friday = true -- Crashing Capitol
 }
 
 Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", function(...)

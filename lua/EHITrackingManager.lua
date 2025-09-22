@@ -147,7 +147,7 @@ end
 ---@param tracker_id string?
 function EHITrackingManager:SetColorCode(color, code, unit_id, number_color, tracker_id)
     self._trackers:CallFunction(tracker_id or "ColorCodes", "SetCode", color, code)
-    self._waypoints:CallFunction(tracker_id or "ColorCodes", "CreateWaypoint", unit_id, nil, nil, number_color, code)
+    self._waypoints:CallFunction(tracker_id or "ColorCodes", "CreateWaypoint", unit_id, "code", EHI.Mission:GetUnitPositionOrDefault(unit_id), number_color, code)
 end
 
 ---@param id string

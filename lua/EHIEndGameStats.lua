@@ -106,15 +106,15 @@ function EHIEndGameStats:new()
     Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHIEndGameStats", function(peer, peer_id, reason)
         self._peers[peer_id]:Disconnected()
     end)
-    if EHI:GetOption("show_end_game_stats_kills") > 1 or EHI:GetOption("show_end_game_stats_headshots") or EHI:GetOption("show_end_game_stats_dps") or EHI:GetOption("show_end_game_stats_kpm") then
+    if EHI:GetOption("show_end_game_stats_kills") > 1 or EHI:GetOption("show_end_game_stats_headshots") or EHI:GetOption("show_end_game_stats_dps") or EHI:GetOption("show_end_game_stats_kpm") or EHI:GetOption("show_end_game_stats_acc") then
         managers.ehi_hook:AddCopDamageListener("EndGameStats", callback(self, self, "damage_callback"))
     end
     if EHI:GetOption("show_end_game_stats_downs") then
         managers.player:add_listener("EHIEndGameStats_bleed_out", "bleed_out", function()
-            self._peers[managers.network:session():local_peer():id()]:Downed()
+            self._peers[self._my_peer_id]:Downed()
         end)
         managers.player:add_listener("EHIEndGameStats_incapacitated", "incapacitated", function()
-            self._peers[managers.network:session():local_peer():id()]:DownedIncapacitated()
+            self._peers[self._my_peer_id]:DownedIncapacitated()
         end)
         Hooks:PostHook(HuskPlayerMovement, "_sync_movement_state_bleed_out", "EHI_EndGameStats_HuskPlayerMovement_sync_bleed_out", function(movement, ...)
             self._peers[self:_pid(movement._unit)]:Downed()
@@ -138,10 +138,10 @@ end
 ---@param c_dmg CopDamage
 ---@param damage_info CopDamage.AttackData
 ---@param realAttacker UnitPlayer|UnitTeamAI
-function EHIEndGameStats:damage_callback(c_dmg, damage_info, realAttacker)
+---@param damage number
+function EHIEndGameStats:damage_callback(c_dmg, damage_info, realAttacker, damage)
     local pid = self:_pid(realAttacker)
     local peer_stats = self._peers[pid]
-    local damage = damage_info.damage
     local rDamage = damage >= 0 and damage or -damage
     if damage < 0 and c_dmg._HEALTH_INIT then
         rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)

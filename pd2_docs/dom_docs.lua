@@ -1109,9 +1109,11 @@ _G.game_state_machine = {}
 ---@field ehi_sync EHISyncManager
 ---@field ehi_hook EHIHookManager
 ---@field ehi_money EHIMoneyManager
+---@field ehi_common EHICommonDataManager
 ---@field enemy EnemyManager
 ---@field environment_controller CoreEnvironmentControllerManager
 ---@field environment_effects EnvironmentEffectsManager
+---@field event_jobs SideJobEventManager
 ---@field experience ExperienceManager
 ---@field gage_assignment GageAssignmentManager
 ---@field game_play_central GamePlayCentralManager
@@ -1428,6 +1430,7 @@ _G.MissionBriefingGui = {}
 ---@field deselect fun()
 _G.MissionBriefingTabItem = {}
 ---@class MissionDoor
+---@field __ehi_use_me integer
 ---@field tweak_data string
 ---@field _unit Unit
 _G.MissionDoor = {}
@@ -1480,6 +1483,10 @@ _G.PlayerStandard = {}
 ---@field _tweak WeaponTweakData._string_.SentryGun
 ---@field m_head_pos fun(self: self): Vector3
 _G.SentryGunMovement = {}
+---@class SideJobEventManager
+---@field can_progress fun(self: self): boolean
+---@field get_challenge fun(self: self, id: string): SideJobEventManager_Challenge
+_G.SideJobEventManager = {}
 ---@class SkirmishTweakData
 _G.SkirmishTweakData = {}
 ---@class StatisticsManager
@@ -1716,6 +1723,7 @@ end
 ---@class CustomSafehouseManager
 ---@field can_progress_trophies fun(self: self, id: string): boolean
 ---@field get_daily_challenge fun(self: self): CustomSafehouseManager._global.daily
+---@field get_trophy fun(self: self, id: string): CustomSafehouseManager._trophy
 ---@field is_trophy_unlocked fun(self: self, id: string): boolean
 ---@field unlocked fun(self: self): boolean
 ---@field uno_achievement_challenge fun(self: self): UnoAchievementChallenge
@@ -1724,6 +1732,11 @@ end
 ---@field id string
 ---@field state "unstarted"|"seen"|"accepted"|"completed"|"rewarded"
 ---@field trophy table
+
+---@class CustomSafehouseManager._trophy
+---@field completed boolean
+---@field id string
+---@field objectives table
 
 ---@class EnvironmentEffectsManager
 ---@field _mission_effects table<number, boolean>
@@ -1790,6 +1803,9 @@ end
 ---@field _type string
 ---@field value fun(self: self, id: string): number
 
+---@class BaseMutator
+---@field _type string
+
 ---@class MoneyManager
 ---@field get_civilian_deduction fun(self: self): number
 ---@field get_money_by_job fun(self: self, job_id: string, difficulty: number): payout: number, base_payout: number, risk_payout: number
@@ -1818,7 +1834,8 @@ end
 ---@field are_achievements_disabled fun(self: self): boolean
 ---@field can_mutators_be_active fun(self: self): boolean
 ---@field get_experience_reduction fun(self: self): number
----@field is_mutator_active fun(self: self, mutator: table): boolean
+---@field get_mutator_from_id fun(self: self, id: string): BaseMutator
+---@field is_mutator_active fun(self: self, mutator: BaseMutator): boolean
 
 ---@class NetworkAccountBase
 ---@field get_stat fun(self: self, key: string): number
@@ -1946,7 +1963,7 @@ end
 ---@field round fun(n: number, precision: number?): number Rounds number with precision
 ---@field clamp fun(number: number?, min: number, max: number): number Returns `number` clamped to the inclusive range of `min` and `max`. If `number` is `nil`, returns `min`
 ---@field rand fun(a: number, b: number?): number If `b` is provided, returns random number between `a` and `b`. Otherwise returns number between `0` and `a`
----@field min_max fun(a: number, b: number): number, number
+---@field min_max fun(a: number, b: number): number, number Returns `min` and `max` according to their value
 ---@field mod fun(n: number, div: number): number Returns remainder of a division
 ---@field within fun(x: number, min: number, max: number): boolean Returns `true` or `false` if `x` is within (inclusive) `min` and `max`
 
@@ -2446,3 +2463,38 @@ end
 ---@field AUTO_RELOAD_DURATION number
 ---@field AUTO_REPAIR boolean
 ---@field AUTO_REPAIR_DURATION number
+
+---@class SideJobEventManager_Challenge
+---@field id string
+---@field rewards table
+---@field locked_id string
+---@field show_progress boolean
+---@field desc_id string
+---@field rewarded boolean
+---@field completed boolean
+---@field objectives SideJobEventManager_Challenge_Objective[]
+---@field name_id string
+---@field global_value string
+---@field reward_id string
+
+---@class SideJobEventManager_Challenge_Objective
+---@field name_id string
+---@field max_progress number
+---@field challenge_choices_saved_values table
+---@field displayed boolean
+---@field desc_id string
+---@field completed boolean
+---@field progress number
+---@field choice_id string
+---@field challenge_choices SideJobEventManager_Challenge_Objective_ChallengeChoice[]
+---@field save_values table
+
+---@class SideJobEventManager_Challenge_Objective_ChallengeChoice
+---@field completed boolean
+---@field desc_id string
+---@field max_progress number
+---@field name_id string
+---@field progress_id string
+---@field save_values table
+---@field displayed boolean
+---@field progress number

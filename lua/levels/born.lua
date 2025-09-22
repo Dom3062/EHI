@@ -78,11 +78,11 @@ EHI.Unit:UpdateUnits({
 })
 EHI:SetMissionDoorData({
     -- Workshop
-    [Vector3(-3798.92, -1094.9, -6.52779)] = 101580,
+    [101312] = 101580,
 
     -- Safe with a bike mask
-    [Vector3(1570.02, -419.693, 185.724)] = EHI:GetInstanceElementID(100007, 4850),
-    [Vector3(1570.02, -419.693, 585.724)] = EHI:GetInstanceElementID(100007, 5350)
+    [EHI:GetInstanceUnitID(100026, 4850)] = EHI:GetInstanceElementID(100007, 4850),
+    [EHI:GetInstanceUnitID(100026, 5350)] = EHI:GetInstanceElementID(100007, 5350)
 })
 EHI:AddXPBreakdown({
     objectives =

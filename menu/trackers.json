@@ -98,7 +98,7 @@
             "description": "ehi_unlockables_menu_desc",
             "next_menu": "ehi_unlockables_menu",
             "parent": "ehi_show_unlockables_choice",
-            "ehi_ver" : 84,
+            "ehi_ver" : 344,
             "load_menu" : {
                 "file_path" : "unlockables.json",
                 "settings" : "unlockables"

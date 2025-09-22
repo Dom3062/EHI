@@ -56,6 +56,18 @@ local sh_dailies =
     daily_candy = { hook_secured = true, first_entry = true } -- Secure cocaine
 }
 
+-- Event Challenges active in SideJobEventManager  
+-- Max seems hardcoded in EventJobsTweakData
+local events =
+{
+    cg22_1 = { objective =
+        {
+            { check = { grenade = "xmas_snowball", mutator = "MutatorCG22" }, stat = "cg22_personal_1" },
+            { check = { weapon_type = "snp" }, stat = "cg22_post_objective_1" }
+        }
+    }
+}
+
 local armored_4_levels = table.list_to_set(tweak_data.achievement.complete_heist_achievements.i_take_scores.jobs)
 
 local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false ---@type EquippedWeaponData, EquippedWeaponData, string, string, boolean
@@ -985,8 +997,47 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             end
         end
     end
+    if EHI:GetUnlockableAndOption("show_events") and managers.event_jobs:can_progress() and events then
+        for id, data in pairs(events) do
+            local c = managers.event_jobs:get_challenge(id)
+            if c and not c.completed then
+                local objective, first_objective, second_objective = data.objective, false, false
+                if objective[1].check then
+                    first_objective = HasGrenadeEquipped(objective[1].check.grenade) and managers.mutators:is_mutator_active(managers.mutators:get_mutator_from_id(objective[1].check.mutator))
+                else
+                    first_objective = true
+                end
+                if objective[2].check then
+                    second_objective = self:EHIHasWeaponTypeEquipped(objective[2].check.weapon_type)
+                else
+                    second_objective = true
+                end
+                if first_objective and second_objective then
+                    local o1, o2 = objective[1], objective[2]
+                    local p1, m1 = EHI:GetEventMissionProgressAndMax(c, o1.stat)
+                    local p2, m2 = EHI:GetEventMissionProgressAndMax(c, o2.stat)
+                    managers.ehi_unlockable:AddEventTrackerWithBothObjectives(id, m1, p1, o1.stat, m2, p2, o2.stat)
+                    managers.ehi_hook:HookAchievementAwardProgress(o1.stat, function(am, stat, value)
+                        if stat == o1.stat or stat == o2.stat then
+                            managers.ehi_tracker:IncreaseGroupProgress(id, stat, value)
+                        end
+                    end)
+                elseif first_objective or second_objective then
+                    local objective_to_track = first_objective and objective[1] or objective[2]
+                    local progress, max = EHI:GetEventMissionProgressAndMax(c, objective_to_track.stat)
+                    managers.ehi_unlockable:AddEventProgressTracker(id, objective_to_track.stat, max, progress)
+                    managers.ehi_hook:HookAchievementAwardProgress(id, function(am, stat, value)
+                        if stat == objective_to_track.stat then
+                            managers.ehi_tracker:IncreaseProgress(id, value)
+                        end
+                    end)
+                end
+            end
+        end
+    end
     challenges = nil
     sh_dailies = nil
+    events = nil
     for stat_id, id in pairs(stats) do
         managers.ehi_hook:HookAchievementAwardProgress(id, function(am, stat, value)
             if stat == stat_id then

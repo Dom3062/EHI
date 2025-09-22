@@ -87,6 +87,9 @@ end
 if EHI:GetUnlockableOption("show_daily_started_popup") then
     EHI:SetNotificationAlert("DAILY SIDE JOB STARTED!", "ehi_popup_daily_started", Color.green)
 end
+if EHI:GetUnlockableOption("show_event_started_popup") then
+    EHI:SetNotificationAlert("EVENT MISSION STARTED!", "ehi_popup_event_started", Color.green)
+end
 if EHI:GetOption("show_sniper_spawned_popup") then
     local color = EHI:GetColorFromOption("tracker_waypoint", "sniper_count")
     EHI:SetNotificationAlert("SNIPER!", "ehi_popup_sniper", color)

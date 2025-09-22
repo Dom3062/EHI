@@ -76,6 +76,10 @@ local instances =
     {
         [100068] = { icons = { "equipment_harddrive" }, remove_vanilla_waypoint = 100019 } -- PC
     },
+    ["levels/instances/unique/kenaz/security_room/world"] =
+    {
+        [100472] = { remove_vanilla_waypoint = 100024 } -- PC
+    },
     ["levels/instances/unique/kenaz/the_drill/world"] =
     {
         [100000] = { icons = { Icon.Drill }, ignore_visibility = true, hint = "drill" }

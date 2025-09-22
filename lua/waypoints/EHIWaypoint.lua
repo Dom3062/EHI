@@ -158,11 +158,11 @@ function EHIWaypointLessWaypoint:RemoveWaypoint()
     end
 end
 
-function EHIWaypointLessWaypoint:delete()
+function EHIWaypointLessWaypoint:destroy()
     if self._waypoint_id then
         self._parent_class._hud:remove_waypoint(self._waypoint_id)
     end
-    EHIWaypointLessWaypoint.super.delete(self)
+    EHIWaypointLessWaypoint.super.destroy(self)
 end
 
 ---@class EHIWaypointsLessWaypoint : EHIWaypointLessWaypoint
@@ -201,9 +201,9 @@ function EHIWaypointsLessWaypoint:RemoveWaypoint(id)
     end
 end
 
-function EHIWaypointsLessWaypoint:delete()
+function EHIWaypointsLessWaypoint:destroy()
     for id, _ in pairs(self._waypoints) do
         self._parent_class._hud:remove_waypoint(id)
     end
-    EHIWaypointsLessWaypoint.super.super.delete(self)
+    EHIWaypointsLessWaypoint.super.super.destroy(self)
 end

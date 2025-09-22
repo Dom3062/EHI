@@ -7,7 +7,6 @@ _G.EHI =
     debug =
     {
         achievements = false,
-        mission_door = false,
         all_instances = false,
         gained_experience = { enabled = false, log = true },
         created_waypoints = false
@@ -89,13 +88,14 @@ _G.EHI =
                 Status =
                 {
                     Alarm = "alarm",
-                    Bring = "bring",
                     Defend = "defend",
                     Destroy = "destroy",
                     Find = "find",
                     Finish = "finish",
+                    Kill = "kill",
                     Loud = "loud",
                     Mark = "mark",
+                    Move = "move",
                     NoDown = "no_down",
                     Ok = "ok",
                     Ready = "ready",
@@ -603,6 +603,11 @@ _G.EHI =
             Base = "EHIGroupTracker",
             Warning = "EHIWarningGroupTracker",
             Progress = "EHIProgressGroupTracker"
+        },
+        Event =
+        {
+            Base = "EHIEventMissionTracker",
+            Group = "EHIEventMissionGroupTracker"
         }
     },
 
@@ -775,6 +780,12 @@ local function LoadDefaultValues(self)
                     r = 214,
                     g = 116,
                     b = 0
+                },
+                event =
+                {
+                    r = 255,
+                    g = 168,
+                    b = 0
                 }
             },
             equipment =
@@ -875,7 +886,12 @@ local function LoadDefaultValues(self)
             show_dailies = true,
             show_daily_description = false,
             show_daily_failed_popup = true,
-            show_daily_started_popup = true
+            show_daily_started_popup = true,
+
+            -- Event missions
+            show_events = true,
+            show_event_description = false,
+            show_event_started_popup = true
         },
         show_gained_xp = true,
         xp_format = 3,
@@ -2403,18 +2419,43 @@ function EHI:ShowAchievementKillCounter(params)
         return
     end
     managers.ehi_unlockable:AddAchievementKillCounter(id, progress, max)
-    Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_award_progress_%s", id), function(am, stat, value)
+    managers.ehi_hook:HookAchievementAwardProgress(id, function(am, stat, value)
         if stat == id_stat then
             managers.ehi_tracker:IncreaseProgress(id, value)
         end
     end)
 end
 
----@param tbl table<Vector3, number|MissionDoorTable>
+---Caches Mission Door Data as the units are not ready during mission load
+---@param tbl table<integer, number|MissionDoorTable|MissionDoorTable[]>
 function EHI:SetMissionDoorData(tbl)
-    if TimerGui._ehi_MissionDoor then
-        for vector, value in pairs(tbl) do
-            TimerGui._ehi_MissionDoor[tostring(vector)] = value
+    if TimerGui.AddMissionDoorData then
+        for id, data in pairs(tbl) do
+            if type(data) == "table" and data.restore and not data.unit_id then
+                data.unit_id = id
+            end
+        end
+        self._cache.MissionDoor = tbl
+        TimerGui._ehi_MissionDoorData = true
+    end
+end
+
+---Sets values in TimerGui once the units are ready (called from MissionDoor.lua)
+---@param id integer Mission Door Editor ID
+---@param tbl Vector3[]
+function EHI:_SetMissionDoorData(id, tbl)
+    local door = self._cache.MissionDoor and self._cache.MissionDoor[id]
+    if door and tbl then
+        if type(door) == "number" then
+            TimerGui.AddMissionDoorData(tbl[1], door)
+        elseif type(door) == "table" then
+            if type(door[1]) == "table" then -- Multiple drills in one door data
+                for i, data in ipairs(door) do
+                    TimerGui.AddMissionDoorData(tbl[i], data)
+                end
+            else -- Single drill in one door data
+                TimerGui.AddMissionDoorData(tbl[1], door)
+            end
         end
     end
 end
@@ -2511,42 +2552,44 @@ end
 function EHI:GetValueBasedOnDifficulty(values)
     if values.normal_or_above and self:IsDifficultyOrAbove(self.Difficulties.Normal) then
         return values.normal_or_above
-    elseif self:IsDifficulty(self.Difficulties.Normal) then
-        return values.normal or -1
+    elseif values.normal and self:IsDifficulty(self.Difficulties.Normal) then
+        return values.normal
     elseif values.hard_or_below and self:IsDifficultyOrBelow(self.Difficulties.Hard) then
         return values.hard_or_below
     elseif values.hard_or_above and self:IsDifficultyOrAbove(self.Difficulties.Hard) then
         return values.hard_or_above
-    elseif self:IsDifficulty(self.Difficulties.Hard) then
-        return values.hard or -1
+    elseif values.hard and self:IsDifficulty(self.Difficulties.Hard) then
+        return values.hard
     elseif values.veryhard_or_below and self:IsDifficultyOrBelow(self.Difficulties.VeryHard) then
         return values.veryhard_or_below
     elseif values.veryhard_or_above and self:IsDifficultyOrAbove(self.Difficulties.VeryHard) then
         return values.veryhard_or_above
-    elseif self:IsDifficulty(self.Difficulties.VeryHard) then
-        return values.veryhard or -1
+    elseif values.veryhard and self:IsDifficulty(self.Difficulties.VeryHard) then
+        return values.veryhard
     elseif values.overkill_or_below and self:IsDifficultyOrBelow(self.Difficulties.OVERKILL) then
         return values.overkill_or_below
     elseif values.overkill_or_above and self:IsDifficultyOrAbove(self.Difficulties.OVERKILL) then
         return values.overkill_or_above
-    elseif self:IsDifficulty(self.Difficulties.OVERKILL) then
-        return values.overkill or -1
+    elseif values.overkill and self:IsDifficulty(self.Difficulties.OVERKILL) then
+        return values.overkill
     elseif values.mayhem_or_below and self:IsDifficultyOrBelow(self.Difficulties.Mayhem) then
         return values.mayhem_or_below
     elseif values.mayhem_or_above and self:IsMayhemOrAbove() then
         return values.mayhem_or_above
-    elseif self:IsDifficulty(self.Difficulties.Mayhem) then
-        return values.mayhem or -1
+    elseif values.mayhem and self:IsDifficulty(self.Difficulties.Mayhem) then
+        return values.mayhem
     elseif values.deathwish_or_below and self:IsDifficultyOrBelow(self.Difficulties.DeathWish) then
         return values.deathwish_or_below
     elseif values.deathwish_or_above and self:IsDifficultyOrAbove(self.Difficulties.DeathWish) then
         return values.deathwish_or_above
-    elseif self:IsDifficulty(self.Difficulties.DeathWish) then
-        return values.deathwish or -1
+    elseif values.deathwish and self:IsDifficulty(self.Difficulties.DeathWish) then
+        return values.deathwish
     elseif values.deathsentence_or_below and self:IsDifficultyOrBelow(self.Difficulties.DeathSentence) then
         return values.deathsentence_or_below
+    elseif values.deathsentence and self:IsDifficulty(self.Difficulties.DeathSentence) then
+        return values.deathsentence
     end
-    return values.deathsentence or -1
+    return -1
 end
 
 ---@param trigger ElementTrigger?
@@ -2873,6 +2916,21 @@ function EHI:GetDailyChallengeProgressAndMax(daily_id, progress_id)
     local current_job = managers.challenge:get_active_challenge(daily_id)
     if current_job and current_job.id == daily_id and current_job.objectives and managers.challenge:can_progress_challenges() then
         return self._get_objective_progress(current_job.objectives, progress_id or daily_id)
+    end
+    return 0, 0
+end
+
+---@param event SideJobEventManager_Challenge
+---@param stat_id string
+function EHI:GetEventMissionProgressAndMax(event, stat_id)
+    for _, objective in ipairs(event.objectives) do
+        if objective.challenge_choices then
+            for _, choice in ipairs(objective.challenge_choices) do
+                if choice.progress_id == stat_id then
+                    return choice.progress, choice.max_progress
+                end
+            end
+        end
     end
     return 0, 0
 end

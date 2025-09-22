@@ -23,6 +23,13 @@ local Icon = EHI.Icons
 TimerGui.__EHI_SHOW_TRACKER, TimerGui.__EHI_SHOW_WAYPOINT = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
 ---@type { [string]: number|MissionDoorTable? }
 TimerGui._ehi_MissionDoor = {}
+TimerGui._ehi_MissionDoor_clbk = ListenerHolder:new()
+---@param vector Vector3
+---@param data number|MissionDoorTable
+function TimerGui.AddMissionDoorData(vector, data)
+    TimerGui._ehi_MissionDoor[tostring(vector)] = data
+    TimerGui._ehi_MissionDoor_clbk:call()
+end
 
 local original =
 {
@@ -100,8 +107,9 @@ function TimerGui:AddWaypoint(t, autorepair)
     end
 end
 
-function TimerGui:PostStartTimer()
-    if self._unit:mission_door_device() then
+---@param from_callback boolean?
+function TimerGui:PostStartTimer(from_callback)
+    if self._unit:mission_door_device() and self._ehi_MissionDoorData then
         local data = self._ehi_MissionDoor[tostring(self._unit:position())]
         if data then
             if type(data) == "table" then
@@ -119,6 +127,11 @@ function TimerGui:PostStartTimer()
             elseif type(data) == "number" then
                 self._remove_vanilla_waypoint = data
             end
+            if from_callback then -- Mission Door data found after they were added, remove callback
+                self._ehi_MissionDoor_clbk:remove(self._ehi_key)
+            end
+        elseif not from_callback then -- No data found, add a callback in case it gets added later
+            self._ehi_MissionDoor_clbk:add(self._ehi_key, callback(self, self, "PostStartTimer"))
         end
     end
     self:HideWaypoint()
@@ -253,6 +266,7 @@ function TimerGui:RemoveTracker(destroy)
     else
         managers.ehi_timer:RemoveTimer(self._ehi_key)
     end
+    self._ehi_MissionDoor_clbk:remove(self._ehi_key)
 end
 
 function TimerGui:OnAlarm()

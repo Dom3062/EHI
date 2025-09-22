@@ -71,11 +71,11 @@ achievements.voff_1 =
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
     elements =
     {
-        [105665] = { status = Status.Bring, class = TT.Achievement.Status },
+        [105665] = { status = Status.Move, class = TT.Achievement.Status },
         [105686] = { special_function = SF.SetAchievementComplete },
         [105691] = { status = Status.Finish, special_function = SF.SetAchievementStatus }, -- Entered area again
         [105694] = { status = Status.Finish, special_function = SF.SetAchievementStatus }, -- Both secured
-        [105698] = { status = Status.Bring, special_function = SF.SetAchievementStatus }, -- Left the area
+        [105698] = { status = Status.Move, special_function = SF.SetAchievementStatus }, -- Left the area
         [105704] = { special_function = SF.SetAchievementFailed } -- Killed
     }
 }

@@ -2,11 +2,6 @@ local EHI = EHI
 ---@class EHIUnlockableManager
 local EHIUnlockableManager = {}
 EHIUnlockableManager.GetAchievementIcon = EHI.GetAchievementIcon
----@param ehi_tracker EHITrackerManager
-function EHIUnlockableManager:post_init(ehi_tracker)
-    self._trackers = ehi_tracker
-end
-
 ---@param achievement_id string
 ---@param id string
 function EHIUnlockableManager:AddTFCallback(achievement_id, id)
@@ -25,9 +20,9 @@ end
 ---@param id string
 ---@param time_max number
 function EHIUnlockableManager:AddTimedAchievementTracker(id, time_max)
-    local t = time_max - math.max(managers.ehi_tracking._t, self._trackers._t)
+    local t = time_max - math.max(managers.ehi_tracking._t, managers.ehi_tracker._t)
     if t > 0 then
-        self._trackers:AddTracker({
+        managers.ehi_tracker:AddTracker({
             id = id,
             time = t,
             icons = self:GetAchievementIcon(id),
@@ -42,7 +37,7 @@ end
 ---@param show_finish_after_reaching_target boolean?
 ---@param class string?
 function EHIUnlockableManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class)
-    self._trackers:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = id,
         progress = progress,
         max = max,
@@ -56,7 +51,7 @@ end
 ---@param id string
 ---@param status string?
 function EHIUnlockableManager:AddAchievementStatusTracker(id, status)
-    self._trackers:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = id,
         status = status,
         icons = self:GetAchievementIcon(id),
@@ -69,7 +64,7 @@ end
 ---@param loot_counter_on_fail boolean?
 ---@param start_silent boolean?
 function EHIUnlockableManager:AddAchievementLootCounter(id, max, loot_counter_on_fail, start_silent)
-    self._trackers:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = id,
         max = max,
         icons = self:GetAchievementIcon(id),
@@ -84,7 +79,7 @@ end
 ---@param max number
 ---@param show_finish_after_reaching_target boolean?
 function EHIUnlockableManager:AddAchievementBagValueCounter(id, max, show_finish_after_reaching_target)
-    self._trackers:AddTracker({ -- `uno_1` achievement gets synced via `EHILootManager:CallSyncListeners()` callback
+    managers.ehi_tracker:AddTracker({ -- `uno_1` achievement gets synced via `EHILootManager:CallSyncListeners()` callback
         id = id,
         max = max,
         icons = self:GetAchievementIcon(id),
@@ -97,7 +92,7 @@ end
 ---@param progress number
 ---@param max number
 function EHIUnlockableManager:AddAchievementKillCounter(id, progress, max)
-    self._trackers:AddTracker({ -- Both `ranc_9` and `ranc_11` achievements are local only, no need to sync
+    managers.ehi_tracker:AddTracker({ -- Both `ranc_9` and `ranc_11` achievements are local only, no need to sync
         id = id,
         progress = progress,
         max = max,
@@ -109,31 +104,67 @@ end
 ---@param id string
 ---@param force boolean?
 function EHIUnlockableManager:SetAchievementComplete(id, force)
-    self._trackers:CallFunction(id, "SetCompleted", force)
+    managers.ehi_tracker:CallFunction(id, "SetCompleted", force)
 end
 
 ---@param id string
 ---@param silent_fail boolean?
 function EHIUnlockableManager:SetAchievementFailed(id, silent_fail)
-    self._trackers:CallFunction(id, silent_fail and "SetFailedSilent" or "SetFailed")
+    managers.ehi_tracker:CallFunction(id, silent_fail and "SetFailedSilent" or "SetFailed")
 end
 
 ---@param id string
 ---@param status string
 function EHIUnlockableManager:SetAchievementStatus(id, status)
-    self._trackers:CallFunction(id, "SetStatus", status)
+    managers.ehi_tracker:CallFunction(id, "SetStatus", status)
 end
 
 ---@param id string
 ---@param max number
 ---@param progress number?
 function EHIUnlockableManager:AddSHDailyProgressTracker(id, max, progress)
-    self._trackers:AddTracker({
+    managers.ehi_tracker:AddTracker({
         id = id,
         progress = progress,
         max = max,
         icons = { EHI.Icons.Trophy },
         class = EHI.Trackers.SideJob.Progress
+    })
+end
+
+---@param id string
+---@param max1 number
+---@param stat1 string
+---@param progress1 number
+---@param max2 number
+---@param progress2 number
+---@param stat2 string
+function EHIUnlockableManager:AddEventTrackerWithBothObjectives(id, max1, progress1, stat1, max2, progress2, stat2)
+    managers.ehi_tracker:AddTracker({
+        id = id,
+        counter =
+        {
+            { max = max1, progress = progress1, id = stat1 },
+            { max = max2, progress = progress2, id = stat2 }
+        },
+        first_completion = true,
+        icons = { EHI.Icons.Trophy },
+        class = EHI.Trackers.Event.Group
+    })
+end
+
+---@param id string
+---@param stat string
+---@param max number
+---@param progress number
+function EHIUnlockableManager:AddEventProgressTracker(id, stat, max, progress)
+    managers.ehi_tracker:AddTracker({
+        id = id,
+        progress = progress,
+        max = max,
+        stat = stat,
+        icons = { EHI.Icons.Trophy },
+        class = EHI.Trackers.Event.Base
     })
 end
 
