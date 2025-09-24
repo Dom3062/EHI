@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("MissionDoor") or not (EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission")) then
+if EHI:CheckLoadHook("MissionDoor") then
     return
 end
 

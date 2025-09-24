@@ -4,7 +4,69 @@ if EHI:CheckLoadHook("PlayerStandard") then
 end
 
 local original = {}
-if EHI:GetOption("show_progress_reload") then
+local WeaponLib = EHI:IsModInstalled("WeaponLib", "Cpone")
+if WeaponLib then -- Workaround for Buff Reload and Progress Reload not working / working incorrectly
+    if EHI:GetOption("show_progress_reload") or EHI:GetBuffAndOption("reload") then
+        local progress_reload, buff_reload = EHI:GetOption("show_progress_reload"), EHI:GetBuffAndOption("reload")
+        Hooks:PreHook(PlayerStandard, "_update_reload_timers", "EHI_WeaponLib_pre_update_reload_timers", function(self, t, dt, ...) ---@param dt number
+            if self._state_data.reload_expire_t and self._state_data.ehi_reload_handled then
+                local exit_t = self._state_data.ehi_reload_exit_t or 0
+                local new_t = (self._state_data.ehi_reload_t or 0) + dt
+                if new_t >= exit_t or self._queue_reload_interupt then
+                    if buff_reload and self._queue_reload_interupt then
+                        managers.ehi_buff:RemoveAndResetBuff("Reload")
+                    end
+                    if progress_reload then
+                        managers.hud:hide_interaction_bar(not self._queue_reload_interupt)
+                    end
+                    self._state_data.ehi_reload_t = nil
+                    self._state_data.ehi_reload_exit_t = nil
+                    self._state_data.ehi_reload_handled = nil
+                    self._state_data.ehi_flicker_guard = self._queue_reload_interupt
+                else
+                    self._state_data.ehi_reload_t = new_t
+                    if progress_reload then
+                        managers.hud:set_interaction_bar_width(exit_t * (new_t / exit_t), exit_t)
+                    end
+                end
+            end
+        end)
+        Hooks:PostHook(PlayerStandard, "_update_reload_timers", "EHI_WeaponLib_post_update_reload_timers", function(self, t, ...) ---@param t number
+            if self._state_data.reload_expire_t and not self._state_data.ehi_reload_handled then
+                if self._state_data.ehi_flicker_guard then
+                    return
+                end
+                self._state_data.ehi_reload_handled = true
+                local reload_t = self._state_data.reload_expire_t - t
+                self._state_data.ehi_reload_t = 0
+                self._state_data.ehi_reload_exit_t = reload_t
+                if buff_reload then
+                    managers.ehi_buff:AddBuff("Reload", reload_t)
+                end
+                if progress_reload then
+                    managers.hud:show_interaction_bar(0, reload_t)
+                end
+            elseif self._state_data.ehi_flicker_guard then
+                self._state_data.ehi_flicker_guard = nil
+                self._state_data.ehi_reload_handled = nil
+            end
+        end)
+        Hooks:PostHook(PlayerStandard, "destroy", "EHI_WeaponLib_destroy", function(self, ...)
+            if self._state_data and self._state_data.reload_expire_t then
+                self._state_data.ehi_reload_t = nil
+                self._state_data.ehi_reload_handled = nil
+                self._state_data.ehi_flicker_guard = nil
+                if buff_reload then
+                    managers.ehi_buff:RemoveAndResetBuff("Reload")
+                end
+                if progress_reload then
+                    managers.hud:hide_interaction_bar()
+                end
+            end
+        end)
+    end
+end
+if EHI:GetOption("show_progress_reload") and not WeaponLib then
     Hooks:PostHook(PlayerStandard, "_start_action_reload", "EHI_ReloadInteract_start_action_reload", function(self, t, ...) ---@param t number
         if self._state_data.reload_expire_t then
             local reload_t = self._state_data.reload_expire_t - t
@@ -176,7 +238,7 @@ if EHI:GetBuffOption("sixth_sense_initial") or EHI:GetBuffOption("sixth_sense_re
     end
 end
 
-if EHI:GetBuffOption("reload") then
+if EHI:GetBuffOption("reload") and not WeaponLib then
     Hooks:PostHook(PlayerStandard, "_start_action_reload", "EHI_ReloadBuff_start_action_reload", function(self, t, ...) ---@param t number
         if self._state_data.reload_expire_t then
             managers.ehi_buff:AddBuff("Reload", self._state_data.reload_expire_t - t)

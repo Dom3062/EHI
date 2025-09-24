@@ -1,3 +1,6 @@
+r345 (24. 09. 2025):
+Buffs: Fixed a compatibility issue with WeaponLib causing Buff and Interaction Reload to not work correctly
+
 r344 (22. 09. 2025):
 Added options for unlockable "Event Missions" in Side Jobs
 Streamlined code for units that use MissionDoor class
