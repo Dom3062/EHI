@@ -156,9 +156,11 @@ end
 if EHI:GetBuffOption("sixth_sense_initial") or EHI:GetBuffOption("sixth_sense_refresh") or EHI:GetBuffOption("sixth_sense_marked") then
     original._update_omniscience = PlayerStandard._update_omniscience
     EHI:AddOnAlarmCallback(function(dropin)
-        managers.ehi_buff:DeleteBuff("standstill_omniscience_initial")
-        managers.ehi_buff:DeleteBuff("standstill_omniscience")
-        managers.ehi_buff:DeleteBuff("standstill_omniscience_highlighted")
+        if managers.ehi_buff then -- ResMod fix as the alarm callback is called before EHIBuffManager has a chance to initialize
+            managers.ehi_buff:DeleteBuff("standstill_omniscience_initial")
+            managers.ehi_buff:DeleteBuff("standstill_omniscience")
+            managers.ehi_buff:DeleteBuff("standstill_omniscience_highlighted")
+        end
         PlayerStandard._update_omniscience = original._update_omniscience
     end)
     -- Assume default, recomputed after spawn
