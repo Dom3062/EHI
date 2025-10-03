@@ -1,7 +1,6 @@
 local EHI = EHI
-if EHI.IsClient then
-    return
-end
 EHI:AddOnSpawnedCallback(function()
-    managers.ehi_assault:StartAssaultCountdown(15 + math.rand(5), true)
+    if EHI:IsPlayingFromStart() then
+        managers.ehi_assault:StartAssaultCountdown(15 + math.rand(5), true)
+    end
 end)

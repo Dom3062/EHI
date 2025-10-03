@@ -1,10 +1,10 @@
 local EHI = EHI
 local SF = EHI.SpecialFunctions
 
-local other =
-{
-    [101326] = EHI.IsHost and EHI:AddAssaultDelay({ time = 15 })
-}
+local other = {}
+if EHI.IsHost then
+    other[101326] = EHI:AddAssaultDelay({ time = 15 })
+end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100203] = { chance = 90, time = 10 + 1 + 10, recheck_t = 20 + 10, id = "Snipers", class = EHI.Trackers.Sniper.TimedChance, single_sniper = true, trigger_once = true }
     other[102224] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%

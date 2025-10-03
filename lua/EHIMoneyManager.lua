@@ -46,6 +46,11 @@ function EHIMoneyManager:init_finalize()
             self._alive_players_multiplier = multiplier
         end
     end)
+    if managers.skirmish:is_skirmish() then
+        Hooks:PostHook(SkirmishManager, "set_ransom_amount", "EHI_EHIMoneyManager_set_ransom_amount", function(_, amount, ...) ---@param amount number
+            self._trackers:CallFunction("Money", "LootSecured", amount)
+        end)
+    end
     EHI:AddOnSpawnedCallback(function()
         self:Spawned()
     end)

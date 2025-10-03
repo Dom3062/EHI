@@ -1,3 +1,7 @@
+r347 (03. 10. 2025):
+Holdout: First World Bank: Fixed a load crash on client
+Money Tracker: Fixed an issue where ransom payout is not counted in Holdout
+
 r346 (29. 09. 2025):
 Heat Street: Fixed a load crash with Restoration Mod installed
 
