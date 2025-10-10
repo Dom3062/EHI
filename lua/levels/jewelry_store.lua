@@ -26,7 +26,7 @@ local other =
     [100149] = EHI:AddAssaultDelay({ control = 7 + 80 })
 }
 if EHI:IsEscapeChanceEnabled() then
-    other[101433] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    other[101433] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, escape_chance_start)
     end)
@@ -82,7 +82,7 @@ local achievements =
         }
     }
 }
-tweak_data.ehi.functions.eng_X("eng_1", "eng_1_stats") -- "The only one that is true" achievement
+tweak_data.ehi.functions.achievements.eng_X("eng_1") -- "The only one that is true" achievement
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

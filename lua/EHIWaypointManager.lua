@@ -34,12 +34,11 @@ function EHIWaypointManager:init_finalize()
     end
 end
 
----@param hud HUDManager
 ---@param panel Panel
-function EHIWaypointManager:SetPlayerHUD(hud, panel)
-    self._hud = hud
+---@param saferect Workspace
+function EHIWaypointManager:SetPlayerHUD(panel, saferect)
     self._panel = panel
-    self._saferect = hud._saferect
+    self._saferect = saferect
     for id, params in pairs(self._stored_waypoints) do
         self:AddWaypoint(id, params)
     end
@@ -65,10 +64,10 @@ function EHIWaypointManager:AddWaypoint(id, params)
     end
     self._waypoints[id] = w
     if params.remove_vanilla_waypoint then
-        self._hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
+        managers.hud:SoftRemoveWaypoint2(params.remove_vanilla_waypoint)
     end
     if self._n_of_waypoints <= 0 then
-        self._hud:add_updator(self._id, self._update_waypoint_position_callback)
+        managers.hud:add_updator(self._id, self._update_waypoint_position_callback)
     end
     self._n_of_waypoints = self._n_of_waypoints + 1
 end
@@ -98,7 +97,7 @@ function EHIWaypointManager:_create_waypoint(id, icon, position, present_timer)
     params.present_timer = present_timer or self._present_timer
     params.position = position
     if self._n_of_waypoints <= 0 then
-        self._hud:add_updator(self._id, self._update_waypoint_position_callback)
+        managers.hud:add_updator(self._id, self._update_waypoint_position_callback)
     end
     self._n_of_waypoints = self._n_of_waypoints + 1
     return self:_create_waypoint_data(params)
@@ -123,11 +122,11 @@ function EHIWaypointManager:_create_vanilla_waypoint(id, icon, position, present
     params.present_timer = present_timer or self._present_timer
     params.position = position
     params.distance = self._vanilla_waypoint_show_distance
-    local waypoint = self._hud:AddEHIWaypoint(id, params)
+    local waypoint = managers.hud:AddEHIWaypoint(id, params)
     if not waypoint then
         return
     elseif not (waypoint.bitmap and waypoint.timer_gui) then
-        self._hud:remove_waypoint(id)
+        managers.hud:remove_waypoint(id)
         return
     end
     self:_set_waypoint_initial_icon(waypoint, params) ---@diagnostic disable-line
@@ -152,7 +151,7 @@ function EHIWaypointManager:RemoveWaypoint(id)
         self:_remove_waypoint_data(wp_data)
         self._n_of_waypoints = self._n_of_waypoints - 1
         if self._n_of_waypoints <= 0 then
-            self._hud:remove_updator(self._id)
+            managers.hud:remove_updator(self._id)
         end
     end
 end
@@ -160,7 +159,7 @@ end
 ---@param id number
 function EHIWaypointManager:RestoreVanillaWaypoint(id)
     if id then
-        self._hud:RestoreWaypoint2(id)
+        managers.hud:RestoreWaypoint2(id)
     end
 end
 
@@ -265,6 +264,7 @@ function EHIWaypointManager:_create_waypoint_data(data)
         EHI:Log("[EHIWaypointManager] Custom waypoint does not have position defined! Added default position to avoid crashing")
         EHI:LogTraceback()
         wp.init_data.position = Vector3()
+        wp.position = Vector3()
     end
 
     local t = {}
@@ -345,7 +345,7 @@ end
 ---@param new_icon string
 function EHIWaypointManager:SetWaypointIcon(id, new_icon)
     if id and self._waypoints[id] then
-        local wp = self._waypoints_data[id] or self._hud:get_waypoint_data(id)
+        local wp = self._waypoints_data[id] or managers.hud:get_waypoint_data(id)
         if wp then
             self:_set_waypoint_initial_icon(wp, { icon = new_icon })
         end
@@ -356,7 +356,7 @@ end
 ---@param pos Vector3
 function EHIWaypointManager:SetWaypointPosition(id, pos)
     if self:WaypointExists(id) then
-        local wp = self._waypoints_data[id] or self._hud:get_waypoint_data(id)
+        local wp = self._waypoints_data[id] or managers.hud:get_waypoint_data(id)
         if wp and pos then
             wp.position = pos
             wp.init_data.position = pos

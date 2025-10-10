@@ -21,18 +21,16 @@ function _G.ehi_achievement_class(super)
     return klass
 end
 
----@class EHIAchievementTracker : EHIWarningTracker
----@field super EHIWarningTracker
-EHIAchievementTracker = class(EHIWarningTracker)
+---@class EHIAchievementTracker : EHIUnlockableTracker
+---@field super EHIUnlockableTracker
+EHIAchievementTracker = class(EHIUnlockableTracker)
 EHIAchievementTracker._forced_icon_color = { EHI:GetColorFromOption("unlockables", "achievement") }
 EHIAchievementTracker._show_started = EHI:GetUnlockableOption("show_achievement_started_popup")
 EHIAchievementTracker._show_failed = EHI:GetUnlockableOption("show_achievement_failed_popup")
 EHIAchievementTracker._show_desc = EHI:GetUnlockableOption("show_achievement_description")
 function EHIAchievementTracker:post_init(params)
     self._beardlib = params.beardlib
-    self:ShowStartedPopup(params.delay_popup)
-    self:ShowUnlockableDescription(params.delay_popup)
-    self:PrepareHint(params)
+    EHIAchievementTracker.super.post_init(self, params)
 end
 
 ---@param params EHITracker.params
@@ -47,123 +45,70 @@ function EHIAchievementTracker:PrepareHint(params)
     end
 end
 
----@param success boolean?
-function EHIAchievementTracker:delete_with_delay(success)
-    self.update = self.update_fade
-    self:StopAndSetTextColor(success and Color.green or Color.red)
-    self:AddTrackerToUpdate()
-    self:AnimateBG()
-end
-
-function EHIAchievementTracker:SetCompleted()
-    self._achieved_popup_showed = true
-    self:delete_with_delay(true)
-end
-
-function EHIAchievementTracker:SetFailed()
-    self:delete_with_delay()
-    self:ShowFailedPopup()
-end
-
-function EHIAchievementTracker:pre_destroy()
-    self:ShowFailedPopup()
-end
-
----@param delay_popup boolean?
-function EHIAchievementTracker:ShowStartedPopup(delay_popup)
-    if delay_popup or self._started_popup_showed or self._failed_on_sync or not self._show_started then ---@diagnostic disable-line
-        return
-    end
-    self:_ShowStartedPopup()
-    self._started_popup_showed = true
-end
-
 function EHIAchievementTracker:_ShowStartedPopup()
     managers.hud:ShowAchievementStartedPopup(self._id, self._beardlib)
-end
-
-function EHIAchievementTracker:ShowFailedPopup()
-    if self._failed_popup_showed or self._achieved_popup_showed or self._no_failure or not self._show_failed then ---@diagnostic disable-line
-        return
-    end
-    self:_ShowFailedPopup()
-    self._failed_popup_showed = true
 end
 
 function EHIAchievementTracker:_ShowFailedPopup()
     managers.hud:ShowAchievementFailedPopup(self._id, self._beardlib)
 end
 
----@param delay_popup boolean?
-function EHIAchievementTracker:ShowUnlockableDescription(delay_popup)
-    if delay_popup or self._desc_showed or self._failed_on_sync or not self._show_desc then ---@diagnostic disable-line
-        return
-    end
-    self:_ShowUnlockableDescription()
-    self._desc_showed = true
-end
-
 function EHIAchievementTracker:_ShowUnlockableDescription()
     managers.hud:ShowAchievementDescription(self._id, self._beardlib)
-end
-
-function EHIAchievementTracker:PlayerSpawned()
-    EHIAchievementTracker.super.PlayerSpawned(self)
-    self:ShowStartedPopup()
-    self:ShowUnlockableDescription()
 end
 
 ---@class EHIAchievementUnlockTracker : EHIAchievementTracker
 ---@field super EHIAchievementTracker
 EHIAchievementUnlockTracker = class(EHIAchievementTracker)
 EHIAchievementUnlockTracker._show_completion_color = true
-EHIAchievementUnlockTracker.delete = EHIAchievementUnlockTracker.super.super.delete
+EHIAchievementUnlockTracker.pre_destroy = EHIAchievementUnlockTracker.super.super.super.pre_destroy
 EHIAchievementUnlockTracker.SetCompleted = function(...) end
-
----@class EHIAchievementProgressTracker : EHIProgressTracker, EHIAchievementTracker
----@field super EHIProgressTracker
-EHIAchievementProgressTracker = ehi_achievement_class(EHIProgressTracker)
-function EHIAchievementProgressTracker:init(panel, params)
-    self._no_failure = params.no_failure
-    self._beardlib = params.beardlib
-    self._loot_parent = params.loot_parent --[[@as EHILootManager?]]
-    self:PrepareHint(params)
-    EHIAchievementProgressTracker.super.init(self, panel, params)
-    self:ShowStartedPopup(params.delay_popup)
-    self:ShowUnlockableDescription(params.delay_popup)
+function EHIAchievementUnlockTracker:pre_init(params)
+    self._refresh_on_delete = params.show_finish_on_done
+    EHIAchievementUnlockTracker.super.pre_init(self, params)
 end
 
-function EHIAchievementProgressTracker:SetCompleted(force)
+function EHIAchievementUnlockTracker:SetFailed()
+    self._refresh_on_delete = nil
+    EHIAchievementUnlockTracker.super.SetFailed(self)
+end
+
+function EHIAchievementUnlockTracker:Refresh()
     self._achieved_popup_showed = true
-    EHIAchievementProgressTracker.super.SetCompleted(self, force)
+    self:RemoveTrackerFromUpdate()
+    self:StopAndSetTextColor(Color.green)
+    self:SetStatusText("finish")
+    self:AnimateBG()
 end
 
-function EHIAchievementProgressTracker:SetFailed()
-    EHIAchievementProgressTracker.super.SetFailed(self)
-    if self._status_is_overridable then
-        self._achieved_popup_showed = nil
-    end
-    self:ShowFailedPopup()
+---@class EHIAchievementProgressTracker : EHIUnlockableProgressTracker, EHIAchievementTracker
+---@field super EHIProgressTracker
+EHIAchievementProgressTracker = ehi_achievement_class(EHIUnlockableProgressTracker)
+function EHIAchievementProgressTracker:init(panel, params)
+    self._beardlib = params.beardlib
+    EHIAchievementProgressTracker.super.init(self, panel, params)
 end
 
 ---@param counter AchievementBagValueCounterTable|AchievementLootCounterTable
 function EHIAchievementProgressTracker:AddLootListener(counter)
-    if self._loot_parent then
-        counter.achievement = counter.achievement or self._id
-        counter.no_sync = true
-        self._loot_parent:AddAchievementListener(counter, self._max)
-    end
+    counter.achievement = counter.achievement or self._id
+    counter.no_sync = true
+    managers.ehi_loot:AddAchievementListener(counter, self._max)
+    self._loot_listener = true
 end
 
 function EHIAchievementProgressTracker:pre_destroy()
-    if self._loot_parent then
-        self._loot_parent:RemoveListener(self._id)
+    if self._loot_listener then
+        managers.ehi_loot:RemoveListener(self._id)
     end
 end
 
 ---@class EHIAchievementProgressGroupTracker : EHIProgressGroupTracker, EHIAchievementTracker, EHIAchievementProgressTracker
+---@field super EHIProgressGroupTracker
 EHIAchievementProgressGroupTracker = ehi_achievement_class(EHIProgressGroupTracker)
+EHIAchievementProgressGroupTracker.CreateIcon = EHIUnlockableTracker.CreateIcon
 EHIAchievementProgressGroupTracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
+EHIAchievementProgressGroupTracker.pre_destroy = EHIAchievementProgressTracker.pre_destroy
 function EHIAchievementProgressGroupTracker:init(panel, params)
     self._beardlib = params.beardlib
     self:PrepareHint(params)
@@ -175,6 +120,7 @@ end
 ---@class EHIAchievementBagValueTracker : EHINeededValueTracker, EHIAchievementTracker
 ---@field super EHINeededValueTracker
 EHIAchievementBagValueTracker = ehi_achievement_class(EHINeededValueTracker)
+EHIAchievementBagValueTracker.CreateIcon = EHIUnlockableTracker.CreateIcon
 function EHIAchievementBagValueTracker:post_init(params)
     self._beardlib = params.beardlib
     self:ShowStartedPopup(params.delay_popup)
@@ -283,6 +229,7 @@ end
 ---@class EHIAchievementLootCounterTracker : EHIProgressTracker, EHIAchievementTracker
 ---@field super EHIProgressTracker
 EHIAchievementLootCounterTracker = ehi_achievement_class(EHIProgressTracker)
+EHIAchievementLootCounterTracker.CreateIcon = EHIUnlockableTracker.CreateIcon
 EHIAchievementLootCounterTracker._PlayerSpawned = EHIAchievementTracker.PlayerSpawned
 EHIAchievementLootCounterTracker._show_popup = EHI:GetOption("show_all_loot_secured_popup")
 function EHIAchievementLootCounterTracker:init(panel, params)

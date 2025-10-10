@@ -3,6 +3,7 @@ local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
+local ehi_functions = tweak_data.ehi.functions
 local triggers = {
     [100247] = { time = 180, hint = Hints.LootEscape },
     [100248] = { time = 120, hint = Hints.LootEscape }
@@ -23,9 +24,9 @@ local achievements =
 
 local other =
 {
-    [100968] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } }),
-    [100969] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround), -- No need to copy Waypoint elements, it will just spam BLT log
-    [100970] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround)
+    [100968] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } }),
+    [100969] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround), -- No need to copy Waypoint elements, it will just spam BLT log
+    [100970] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround)
 }
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100318 } }
@@ -54,7 +55,7 @@ EHI.Mission:ParseTriggers({
     assault = { diff = 0.5 }
 }, "Escape", Icon.CarEscape)
 
-tweak_data.ehi.functions.uno_1(true)
+ehi_functions.achievements.uno_1()
 EHI:AddXPBreakdown({
     objective =
     {

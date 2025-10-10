@@ -72,11 +72,7 @@ function EHIAssaultManager:init_finalize()
     end)
     if not self._assault_time.blocked then
         self:AddAssaultModeChangedCallback(function(mode)
-            if mode == "phalanx" then
-                managers.ehi_tracker:CallFunction(self._assault_time.name, "CaptainArrived")
-            else
-                managers.ehi_tracker:CallFunction(self._assault_time.name, "CaptainDefeated")
-            end
+            managers.ehi_tracker:CallFunction(self._assault_time.name, mode == "phalanx" and "CaptainArrived" or "CaptainDefeated")
             self._endless_assault = nil
         end)
         -- Crime Spree

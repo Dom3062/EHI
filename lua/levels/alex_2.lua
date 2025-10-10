@@ -30,7 +30,7 @@ if EHI:IsLootCounterVisible() then
     end
 end
 if EHI:IsEscapeChanceEnabled() then
-    other[100342] = EHI:AddEscapeChance(25, true)
+    other[100342] = managers.ehi_escape:AddTrigger(25, true)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount }

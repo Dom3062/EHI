@@ -18,7 +18,7 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
 if EHI:IsEscapeChanceEnabled() then
-    other[104800] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    other[104800] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 15)
     end)
@@ -59,6 +59,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100215] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100008 } }
     other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100020 } }
 end
+tweak_data.ehi.functions.achievements.armored_4()
 EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,

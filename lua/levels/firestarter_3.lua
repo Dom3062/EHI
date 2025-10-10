@@ -25,7 +25,7 @@ if Global.game_settings.level_id == "firestarter_3" then
     }
 else
     -- Branchbank: Random, Branchbank: Gold, Branchbank: Cash, Branchbank: Deposit
-    tweak_data.ehi.functions.uno_1()
+    tweak_data.ehi.functions.achievements.uno_1()
     EscapeXP = 12000
     escape_chance =
     {
@@ -33,7 +33,7 @@ else
         kill_add_chance = 5
     }
     if EHI:IsEscapeChanceEnabled() then
-        other[103306] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+        other[103306] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
         EHI:AddOnAlarmCallback(function(dropin)
             managers.ehi_escape:AddEscapeChanceTrackerAndCheckPreplanning(dropin, escape_chance.start_chance, 104825)
         end)
@@ -79,7 +79,7 @@ achievements.voff_1 =
         [105704] = { special_function = SF.SetAchievementFailed } -- Killed
     }
 }
-tweak_data.ehi.functions.eng_X("eng_1", "eng_1_stats") -- "The only one that is true" achievement
+tweak_data.ehi.functions.achievements.eng_X("eng_1") -- "The only one that is true" achievement
 
 other[105364] = EHI:AddAssaultDelay({ control = 10 + 60, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

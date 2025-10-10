@@ -43,7 +43,6 @@ function EHIUnlockableManager:AddAchievementProgressTracker(id, max, progress, s
         max = max,
         icons = self:GetAchievementIcon(id),
         show_finish_after_reaching_target = show_finish_after_reaching_target,
-        loot_parent = managers.ehi_loot,
         class = class or EHI.Trackers.Achievement.Progress
     })
 end

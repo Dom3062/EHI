@@ -19,7 +19,7 @@ local SetChanceWhenTrackerExists = EHI.Trigger:RegisterCustomSF(function(self, t
         self._trackers:SetChance(trigger.id, element._values.chance)
     else
         trigger.chance = element._values.chance
-        self:CreateTracker()
+        self:CreateTracking()
     end
 end)
 local chance = { id = "PresentDropChance", merge_id = "PresentDrop", icons = { "C_Vlad_H_XMas_Impossible" }, class = TT.Chance, special_function = SetChanceWhenTrackerExists, hint = Hints.pines_Chance }

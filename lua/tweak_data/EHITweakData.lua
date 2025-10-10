@@ -650,8 +650,17 @@ function EHITweakData:new(tweak_data)
             group = "melee_damage_increase",
             text_localize = "ehi_buffs_hint_melee_damage_increase",
             format = "multiplier",
-            class = "EHIGaugeBuffTracker",
-            option = "bloodthirst"
+            option = "bloodthirst",
+            permanent =
+            {
+                option_true = true,
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "melee_damage_stacking"
+                },
+                class = "EHIPermanentGaugeBuffTracker"
+            }
         },
         melee_kill_increase_reload_speed =
         {
@@ -1356,34 +1365,57 @@ function EHITweakData:new(tweak_data)
     self.buff.mrwi_health_invulnerable_cooldown.permanent.deck_option.option = "grace_period_cooldown_persistent"
     self.functions =
     {
-        ---@param id string Achievement ID
-        ---@param stat string Achievement stat
-        eng_X = function(id, stat)
-            if EHI:CanShowAchievement2(id, "show_achievements_other") then
-                local progress = EHI:GetAchievementProgress(stat) + 1
-                managers.ehi_hook:HookAchievementAwardProgress(id, function(am, _stat, value)
-                    if _stat == stat and progress < 5 then
-                        managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_" .. id), tostring(progress) .. "/5", EHI:GetAchievementIconString(id))
-                    end
-                end)
-            end
-        end,
-        ---@param check_job? boolean
-        uno_1 = function(check_job)
-            local achievement = tweak_data.achievement.complete_heist_achievements.uno_1
-            if check_job and not table.contains(achievement.jobs, managers.job:current_job_id()) then
-                return
-            end
-            EHI:ShowAchievementBagValueCounter({
-                achievement = achievement.award,
-                value = achievement.bag_loot_value,
-                show_finish_after_reaching_target = true,
-                counter =
-                {
-                    check_type = EHI.Const.LootCounter.CheckType.ValueOfBags
-                }
-            })
-        end,
+        achievements =
+        {
+            -- I Do What I Do Best, I Take Scores
+            armored_4 = function()
+                if EHI:CanShowAchievement2("armored_4", "show_achievements_other") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+                    local armored_4 = tweak_data.achievement.complete_heist_achievements.i_take_scores
+                    EHI:AddOnSpawnedExtendedCallback(function(ingame, job, level, from_beginning)
+                        if table.contains(armored_4.jobs, job) and managers.blackmarket:equipped_mask().mask_id == armored_4.mask and from_beginning then
+                            local progress = EHI:GetAchievementProgress("armored_4_stat")
+                            EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
+                                if success and progress < 15 and managers.job:on_last_stage() then
+                                    managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_armored_4"), tostring(progress + 1) .. "/15", EHI:GetAchievementIconString("armored_4"))
+                                end
+                            end)
+                        end
+                    end)
+                end
+            end,
+            -- The only one that is true  
+            -- The one that had many names  
+            -- The one that survived  
+            -- The one who declared himself the hero
+            ---@param id string Achievement ID
+            eng_X = function(id)
+                if EHI:CanShowAchievement2(id, "show_achievements_other") then
+                    local id_stat = id .. "_stats"
+                    local progress = EHI:GetAchievementProgress(id_stat) + 1
+                    managers.ehi_hook:HookAchievementAwardProgress(id, function(am, stat, value)
+                        if stat == id_stat and progress < 5 then
+                            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text("achievement_" .. id), tostring(progress) .. "/5", EHI:GetAchievementIconString(id))
+                        end
+                    end)
+                end
+            end,
+            -- A Good Haul
+            uno_1 = function()
+                local achievement = tweak_data.achievement.complete_heist_achievements.uno_1
+                if not table.contains(achievement.jobs, managers.job:current_real_job_id()) then
+                    return
+                end
+                EHI:ShowAchievementBagValueCounter({
+                    achievement = achievement.award,
+                    value = achievement.bag_loot_value,
+                    show_finish_after_reaching_target = true,
+                    counter =
+                    {
+                        check_type = EHI.Const.LootCounter.CheckType.ValueOfBags
+                    }
+                })
+            end,
+        },
         ShowNumberOfLootbagsOnTheGround = function()
             local max = EHI.Mission._utils:CountLootbagsOnTheGround()
             if max > 0 then
@@ -1453,7 +1485,7 @@ function EHITweakData:new(tweak_data)
             managers.mission:add_runned_unit_sequence_trigger(truck_id, "set_exploded", function()
                 exploded = true
             end)
-            for _, l in ipairs(loot or { "gold", "money", "art" }) do
+            for _, l in ipairs(loot or { "gold", "money", "art" }) do -- "art" = jewelry
                 for i = 1, 9, 1 do
                     local sequence = string.format("spawn_loot_%s_%d", l, i)
                     if i <= 2 then -- Explosion can disable this loot
@@ -1611,6 +1643,34 @@ function EHITweakData:new(tweak_data)
     {
         [Color.blue] = Color(0, 1, 1) -- Aqua as Blue can be hardly visible on some surfaces
     }
+    self.__language_format =
+    {
+        -- Default language format (even for English)
+        default =
+        {
+            percent = function()
+                return "%"
+            end,
+            equipment = function()
+                ---@param charges number
+                return function(charges)
+                    return string.format("%g %s left", charges, charges > 1 and "uses" or "use")
+                end
+            end
+        },
+        czech =
+        {
+            percent = function()
+                return " %"
+            end,
+            equipment = function()
+                ---@param charges number
+                return function(charges)
+                    return string.format("%s %g použití", math.within(charges, 2, 4) and "Zbývají" or "Zbývá", charges)
+                end
+            end
+        }
+    }
     self:_classic_heisting_u24_tweaks()
     return self
 end
@@ -1708,4 +1768,10 @@ end
 ---@param color Color
 function EHITweakData:ColorRedirect(color)
     return self.__color_redirect[color] or color
+end
+
+---@param language string?
+function EHITweakData:GetLanguageFormat(language)
+    language = language or "default"
+    return self.__language_format[language] or self.__language_format.default
 end

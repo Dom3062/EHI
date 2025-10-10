@@ -1,80 +1,4 @@
 local EHI = EHI
-EHI:LoadTracker("EHICodesTracker")
----@class corp_9 : EHIColoredCodesTracker, EHIAchievementTracker
----@field super EHIColoredCodesTracker
-local corp_9 = ehi_achievement_class(EHIColoredCodesTracker)
-corp_9._forced_icons = EHI:GetAchievementIcon("corp_9")
-corp_9._forced_hint_text = "achievement_corp_9"
-corp_9._hint_vanilla_localization = true
-function corp_9:post_init(params)
-    self:ShowStartedPopup()
-    self:ShowUnlockableDescription()
-end
-
-function corp_9:OverridePanel()
-    corp_9.super.OverridePanel(self)
-    self._find = self:CreateText({
-        status_text = "find",
-        h = self._icon_size_scaled,
-        color = Color.yellow
-    })
-    self._colors.red:set_visible(false)
-    self._colors.green:set_visible(false)
-    self._colors.blue:set_visible(false)
-end
-
-function corp_9:LaptopInteracted()
-    self:SetStatusText("push", self._find)
-    self:AnimateBG()
-end
-
-function corp_9:FindCodesStarted()
-    self._colors.red:set_visible(true)
-    self._colors.green:set_visible(true)
-    self._colors.blue:set_visible(true)
-    self._find:set_visible(false)
-    self:AnimateBG()
-end
-
-function corp_9:SetCompleted()
-    self.update = self.update_fade
-    self._achieved_popup_showed = true
-    self:AnimateBG()
-    self._colors.red:set_color(Color.green)
-    self._colors.green:set_color(Color.green)
-    self._colors.blue:set_color(Color.green)
-    self:DelayForcedDelete()
-end
-
-function corp_9:SetFailed()
-    if self._achieved_popup_showed then
-        return
-    end
-    self.update = self.update_fade
-    self:AnimateBG()
-    self:ShowFailedPopup()
-    self._colors.red:set_color(Color.red)
-    self._colors.green:set_color(Color.red)
-    self._colors.blue:set_color(Color.red)
-    self:SetStatusText("fail", self._find)
-    self._find:set_color(Color.red)
-    self:DelayForcedDelete()
-end
-
----@class corp_12 : EHIAchievementTracker
-local corp_12 = class(EHIAchievementTracker)
-corp_12._forced_icons = EHI:GetAchievementIcon("corp_12")
-function corp_12:SetMPState()
-    if self._mp then
-        return
-    end
-    self._text:stop()
-    self._time_warning = false
-    self._time = self._time - 180
-    self._check_anim_progress = self._time <= 10
-    self._mp = true
-end
-
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -97,13 +21,12 @@ local achievements =
         difficulty_pass = managers.mission:get_saved_job_value("usb_train") == 1,
         elements =
         {
-            [100107] = { class_table = corp_9 },
             [EHI:GetInstanceElementID(100010, 14610)] = { special_function = SF.CallCustomFunction, f = "LaptopInteracted" },
             [103518] = { special_function = SF.CallCustomFunction, f = "FindCodesStarted" },
             [103045] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100021, 11090)] = { special_function = SF.SetAchievementFailed } -- Lab destroyed with C4
         },
-        parsed_callback = function()
+        preparse_callback = function(data)
             EHI:HookColorCodes({
                 red =
                 {
@@ -118,6 +41,61 @@ local achievements =
                     unit_ids = { 102873, 102874, 102875 }
                 }
             }, { no_mission_check = true, tracker_name = "corp_9" })
+            EHI:LoadTracker("EHICodesTracker")
+            ---@class corp_9 : EHIColoredCodesTracker, EHIAchievementTracker
+            ---@field super EHIColoredCodesTracker
+            local corp_9 = ehi_achievement_class(EHIColoredCodesTracker)
+            corp_9.CreateIcon = EHIUnlockableTracker.CreateIcon
+            corp_9._forced_hint_text = "achievement_corp_9"
+            corp_9._hint_vanilla_localization = true
+            function corp_9:post_init(params)
+                self:ShowStartedPopup()
+                self:ShowUnlockableDescription()
+            end
+            function corp_9:OverridePanel()
+                corp_9.super.OverridePanel(self)
+                self._find = self:CreateText({
+                    status_text = "find",
+                    h = self._icon_size_scaled,
+                    color = Color.yellow
+                })
+                self._colors.red:set_visible(false)
+                self._colors.green:set_visible(false)
+                self._colors.blue:set_visible(false)
+            end
+            function corp_9:LaptopInteracted()
+                self:SetStatusText("push", self._find)
+                self:AnimateBG()
+            end
+            function corp_9:FindCodesStarted()
+                self._colors.red:set_visible(true)
+                self._colors.green:set_visible(true)
+                self._colors.blue:set_visible(true)
+                self._find:set_visible(false)
+                self:AnimateBG()
+            end
+            function corp_9:SetCompleted()
+                self.update = self.update_fade
+                self._achieved_popup_showed = true
+                self:AnimateBG()
+                self._colors.red:set_color(Color.green)
+                self._colors.blue:set_color(Color.green)
+                self:DelayForcedDelete()
+            end
+            function corp_9:SetFailed()
+                if self._achieved_popup_showed then
+                    return
+                end
+                self.update = self.update_fade
+                self:AnimateBG()
+                self:ShowFailedPopup()
+                self._colors.green:set_color(Color.red)
+                self._colors.blue:set_color(Color.red)
+                self:SetStatusText("fail", self._find)
+                self._find:set_color(Color.red)
+                self:DelayForcedDelete()
+            end
+            data.elements[100107] = { class_table = corp_9 }
         end
     },
     corp_10 =
@@ -134,21 +112,11 @@ local achievements =
     {
         elements =
         {
-            [102728] = { class = TT.Achievement.Base, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
-                if self._cache.corp_11_StartDisabled then
-                    return
-                end
-                self._trackers:AddTracker({
-                    id = "corp_11",
-                    time = 60,
-                    icons = trigger.icons,
-                    class = trigger.class
-                })
-            end) },
+            [102728] = { time = 60, class = TT.Achievement.Base },
             [102683] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
                 if enabled then
                     self._unlockable:SetAchievementFailed("corp_11")
-                    self._cache.corp_11_StartDisabled = true
+                    self:UnhookTrigger(102728)
                 end
             end) },
             [102741] = { special_function = SF.SetAchievementComplete }
@@ -166,7 +134,7 @@ local achievements =
         elements =
         {
             -- SP (MP has 240s)
-            [100107] = { time = 420, class_table = corp_12, special_function = SF.AddTrackerIfDoesNotExist },
+            [100107] = { time = 420, class = "EHIcorp_12Tracker", special_function = SF.AddTrackerIfDoesNotExist },
             [102739] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
                 if self.ConditionFunctions.IsLoud() then
                     return
@@ -174,7 +142,7 @@ local achievements =
                     self._trackers:AddTracker({
                         id = "corp_12",
                         time = 420,
-                        class_table = corp_12
+                        class = "EHIcorp_12Tracker"
                     })
                 end
                 self._trackers:CallFunction("corp_12", "SetMPState")
@@ -182,7 +150,22 @@ local achievements =
             [102014] = { special_function = SF.SetAchievementFailed }, -- Alarm
             [102736] = { special_function = SF.SetAchievementFailed }, -- Civilian killed
             [102740] = { special_function = SF.SetAchievementComplete }
-        }
+        },
+        parsed_callback = function()
+            ---@class EHIcorp_12Tracker : EHIAchievementTracker
+            EHIcorp_12Tracker = class(EHIAchievementTracker)
+            EHIcorp_12Tracker._forced_icons = EHI:GetAchievementIcon("corp_12")
+            function EHIcorp_12Tracker:SetMPState()
+                if self._mp then
+                    return
+                end
+                self._text:stop()
+                self._time_warning = false
+                self._time = self._time - 180
+                self._check_anim_progress = self._time <= 10
+                self._mp = true
+            end
+        end
     }
 }
 

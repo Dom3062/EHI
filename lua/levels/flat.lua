@@ -9,12 +9,12 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
-local kills = 7 -- Normal + Hard
-if EHI:IsBetweenDifficulties(EHI.Difficulties.VeryHard, EHI.Difficulties.OVERKILL) then
-    kills = 10
-elseif EHI:IsMayhemOrAbove() then
-    kills = 15
-end
+local kills = EHI:GetValueBasedOnDifficulty({
+    hard_or_below = 7,
+    veryhard = 10,
+    overkill = 10,
+    mayhem_or_above = 15
+})
 ---@type ParseTriggerTable
 local triggers = {
     [100001] = { time = 30, id = "BileArrival", icons = { Icon.Heli, Icon.C4 }, hint = Hints.C4Delivery },
@@ -31,7 +31,7 @@ local triggers = {
     --- Add 0.2 delay here so the tracker does not hide first before this gets executed again; players won't notice 0.2 delay here
     [100147] = { time = 18.2 + 0.2, id = "HeliMagnetLoop", icons = { Icon.Heli, Icon.Winch, Icon.Loop }, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled and self._trackers:CallFunction2(trigger.id, "SetTimeNoAnim", trigger.time) then
-            self:CreateTracker()
+            self:CreateTracking()
         end
     end), hint = Hints.Wait },
     [102181] = { id = "HeliMagnetLoop", special_function = SF.RemoveTracker },
@@ -68,6 +68,7 @@ if EHI:CanShowAchievement2("flat_5", "show_achievements_other") then
     ---@class flat_5 : EHIChanceTracker, EHIAchievementTracker
     ---@field super EHIChanceTracker
     local flat_5 = ehi_achievement_class(EHIChanceTracker)
+    flat_5.CreateIcon = EHIUnlockableTracker.CreateIcon
     function flat_5:pre_init(params)
         self._peers = {} ---@type { hits: number, shots: number }[]
         self._n_of_peers = 0

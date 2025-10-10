@@ -7,12 +7,15 @@ local EHI = EHI
 
 ---@class EHISyncManager
 local EHISyncManager = {}
+EHISyncManager._game_data_sync = CallbackEventHandler:new()
+if EHI.IsClient then
+    EHISyncManager._drop_in_listener = CallbackEventHandler:new()
+    EHISyncManager._load_sync = CallbackEventHandler:new()
+    EHISyncManager._full_sync = CallbackEventHandler:new()
+end
+
 function EHISyncManager:init_finalize()
-    self._game_data_sync = CallbackEventHandler:new()
-    if EHI.IsClient then
-        self._drop_in_listener = CallbackEventHandler:new()
-        self._load_sync = CallbackEventHandler:new()
-        self._full_sync = CallbackEventHandler:new()
+    if self._drop_in_listener then
         managers.network:add_event_listener("EHISyncDropIn", "on_set_dropin", function()
             self._is_dropin = true
             self._drop_in_listener:dispatch()
@@ -44,10 +47,6 @@ function EHISyncManager:AddDropInListener(f)
     end
 end
 
-function EHISyncManager:IsDropIn()
-    return self._is_dropin
-end
-
 ---@param f function
 function EHISyncManager:AddLoadSyncFunction(f)
     if self._load_sync then
@@ -77,6 +76,10 @@ function EHISyncManager:load_post(data)
     self._load_sync = nil
     self._game_data_sync:clear()
     self._game_data_sync = nil
+    if self._drop_in_listener then
+        self._drop_in_listener:clear()
+        self._drop_in_listener = nil
+    end
     self.__syncing = nil
 end
 
@@ -88,7 +91,7 @@ end
 ---@param message_id string A message to sync data to
 ---@param hook_id string
 ---@param f fun(data: string, sender: integer)
----@overload fun(self: self, message_id: string, f: fun(data: string, sender: integer))
+---@overload fun(self: EHISyncManager, message_id: string, f: fun(data: string, sender: integer))
 function EHISyncManager:AddReceiveHook(message_id, hook_id, f)
     if f then
         NetworkHelper:AddReceiveHook(message_id, hook_id, f)

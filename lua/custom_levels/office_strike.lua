@@ -34,7 +34,7 @@ local triggers = {
             trigger.waypoint.icon = icons[1]
             trigger.waypoint.position = self._mission:GetElementPositionOrDefault(element)
         end
-        self:CreateTracker()
+        self:CreateTracking()
     end), waypoint = {}, hint = Hints.LootEscape }
 }
 EHI.Trigger._SyncedSFF.office_strike_escape = "Heli"

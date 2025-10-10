@@ -41,8 +41,7 @@ if EHI:IsLootCounterVisible() then
     end
     other[100238] = { special_function = SF.CustomCode, f = LootCounter, arg = 1 }
     other[101189] = { special_function = SF.CustomCode, f = LootCounter, arg = 2 }
-    other[101190] = { special_function = SF.CustomCode, f = LootCounter, arg = 3 }
-    other[101220] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
+    other[101190] = { special_function = SF.CustomCode, f = LootCounter, arg = 3 } -- There are 3 trucks at most, 4 trucks are disabled
     EHI:ShowLootCounterWaypoint({ element = { 100233, 100008, 100020 } })
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
@@ -53,6 +52,7 @@ end
 if EHI.IsClient then
     triggers[102379] = { run = { time = 30 + van_delay }, special_function = SF.AddTrackerIfDoesNotExist }
 end
+tweak_data.ehi.functions.achievements.armored_4()
 EHI.Mission:ParseTriggers({ mission = triggers, preload = preload, other = other }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,

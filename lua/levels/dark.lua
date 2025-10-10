@@ -1,40 +1,3 @@
----@class dark_5 : EHIProgressTracker
----@field super EHIProgressTracker
-local dark_5 = class(EHIProgressTracker)
-function dark_5:pre_init(...)
-    self._bodies = {}
-    dark_5.super.pre_init(self, ...)
-end
-
-function dark_5:SetProgress(...)
-    self:SetTextColor(Color.white)
-    dark_5.super.SetProgress(self, ...)
-end
-
----@param value number
----@param key any Unused
-function dark_5.is_in_dumpster(value, key)
-    return value == 1 -- Mission Script expects exactly 1 body bag in dumpster
-end
-
----@param element number
-function dark_5:IncreaseProgress(element)
-    self._bodies[element] = (self._bodies[element] or 0) + 1
-    self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
-end
-
----@param element number
-function dark_5:DecreaseProgress(element)
-    self._bodies[element] = (self._bodies[element] or 1) - 1
-    self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
-end
-
-function dark_5:SetCompleted(...)
-    dark_5.super.SetCompleted(self, ...)
-    self._disable_counting = false
-    self._status = nil
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
@@ -72,7 +35,7 @@ local achievements =
     {
         elements =
         {
-            [100296] = { max = 4, class_table = dark_5, show_finish_after_reaching_target = true },
+            [100296] = { max = 4, show_finish_after_reaching_target = true },
         },
         preparse_callback = function(data)
             local AddBodyBag = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
@@ -86,6 +49,38 @@ local achievements =
                 data.elements[inc] = { special_function = AddBodyBag, element = i }
                 data.elements[inc + 1] = { special_function = RemoveBodyBag, element = i }
             end
+            ---@class dark_5 : EHIProgressTracker, EHIAchievementTracker
+            ---@field super EHIProgressTracker
+            local dark_5 = ehi_achievement_class(EHIProgressTracker)
+            dark_5.CreateIcon = EHIUnlockableTracker.CreateIcon
+            function dark_5:post_init(params)
+                self._bodies = {}
+                dark_5.super.post_init(self, params)
+                EHIAchievementTracker.post_init(self, params)
+            end
+            function dark_5:SetProgress(...)
+                self:SetTextColor(Color.white)
+                dark_5.super.SetProgress(self, ...)
+            end
+            ---@param value number
+            ---@param key any Unused
+            function dark_5.is_in_dumpster(value, key)
+                return value == 1 -- Mission Script expects exactly 1 body bag in dumpster
+            end
+            function dark_5:IncreaseProgress(element)
+                self._bodies[element] = (self._bodies[element] or 0) + 1
+                self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
+            end
+            function dark_5:DecreaseProgress(element)
+                self._bodies[element] = (self._bodies[element] or 1) - 1
+                self:SetProgress(table.count(self._bodies, self.is_in_dumpster))
+            end
+            function dark_5:SetCompleted(...)
+                dark_5.super.SetCompleted(self, ...)
+                self._disable_counting = false
+                self._status = nil
+            end
+            data.elements[100296].class_table = dark_5
         end
     },
     voff_3 =
@@ -125,6 +120,7 @@ EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements
 })
+-- 2 mission bags, 6 bags in a train (twice), 2 bags in the basement
 EHI:ShowLootCounter({ max = 16 }, { element = { 105873, 105874 } })
 EHI:AddXPBreakdown({
     objectives =

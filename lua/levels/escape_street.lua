@@ -51,7 +51,8 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
 end
 EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)
 
-tweak_data.ehi.functions.uno_1(true)
+tweak_data.ehi.functions.achievements.armored_4()
+tweak_data.ehi.functions.achievements.uno_1()
 EHI:AddXPBreakdown({
     objective =
     {

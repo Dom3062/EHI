@@ -1,5 +1,13 @@
 ---@class EHIEscapeChanceManager
 local EHIEscapeChanceManager = {}
+EHIEscapeChanceManager._trigger_data =
+{
+    id = "EscapeChance",
+    SF_increase = EHI.SpecialFunctions.IncreaseChanceFromElement,
+    SF_check = EHI.SpecialFunctions.AddTrackerIfDoesNotExist,
+    SF_set = EHI.SpecialFunctions.SetChanceFromElement,
+    class = "EHIEscapeChanceTracker"
+}
 EHIEscapeChanceManager._civilians_killed = 0
 EHIEscapeChanceManager._disabled = false
 ---@param dropin boolean
@@ -55,6 +63,37 @@ function EHIEscapeChanceManager:AddChanceWhenDoesNotExists(dropin, chance, civil
             self:AddEscapeChanceTracker(dropin, chance, civilian_killed_multiplier)
         end
     end
+end
+
+---@param chance number
+---@param check_if_does_not_exist boolean?
+---@return ElementTrigger
+function EHIEscapeChanceManager:AddTrigger(chance, check_if_does_not_exist)
+    return
+    {
+        id = self._trigger_data.id,
+        chance = chance,
+        special_function = check_if_does_not_exist and self._trigger_data.SF_check,
+        class = self._trigger_data.class
+    }
+end
+
+---@return ElementTrigger
+function EHIEscapeChanceManager:IncreaseChanceFromTrigger()
+    return
+    {
+        id = self._trigger_data.id,
+        special_function = self._trigger_data.SF_increase
+    }
+end
+
+---@return ElementTrigger
+function EHIEscapeChanceManager:SetChanceFromTrigger()
+    return
+    {
+        id = self._trigger_data.id,
+        special_function = self._trigger_data.SF_set
+    }
 end
 
 return EHIEscapeChanceManager

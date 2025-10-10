@@ -133,15 +133,15 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
             if self._tracking:Exists(trigger.id) then
                 self._tracking:Unpause(trigger.id)
             else
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.AddTrackerIfDoesNotExist then
             if self._tracking:DoesNotExist(trigger.id) then
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.ReplaceTrackerWithTracker then
             self._tracking:ForceRemove(trigger.data.id)
-            self:CreateTracker()
+            self:CreateTracking()
         elseif f == self.SF.SetAchievementComplete then
             self._unlockable:SetAchievementComplete(trigger.id, true)
         elseif f == self.SF.SetAchievementStatus then
@@ -153,7 +153,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
             data.achievement = data.achievement or trigger.id
             data.no_sync = true
             self._loot:AddAchievementListener(data, data.max or trigger.max or 0)
-            self:CreateTracker()
+            self:CreateTracking()
         elseif f == self.SF.IncreaseChance then
             self._tracking:IncreaseChance(trigger.id, trigger.amount)
         elseif f == self.SF.TriggerIfEnabled then
@@ -167,7 +167,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
                 end
             end
         elseif f == self.SF.CreateAnotherTrackerWithTracker then
-            self:CreateTracker()
+            self:CreateTracking()
             self:RunTrigger(trigger.data.fake_id, element, enabled)
         elseif f == self.SF.SetChanceWhenTrackerExists then
             if self._trackers:Exists(trigger.id) then
@@ -176,7 +176,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
                     self._trackers:SetTime(trigger.id, trigger.time)
                 end
             else
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.Trigger then
             if trigger.data then
@@ -215,19 +215,19 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
                 local time = trigger.run and trigger.run.time or trigger.time or 0
                 self._tracking:SetTime(key, time)
             else
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.SetTimeOrCreateTrackerIfEnabled then
             if enabled then
                 if self._tracking:Exists(trigger.id) then
                     self._tracking:SetTime(trigger.id, trigger.time)
                 else
-                    self:CreateTracker()
+                    self:CreateTracking()
                 end
             end
         elseif f == self.SF.ExecuteIfElementIsEnabled then
             if enabled then
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.SetTimeByPreplanning then
             if managers.preplanning:IsAssetBought(trigger.data.id) then
@@ -238,19 +238,19 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
             if trigger.waypoint then
                 trigger.waypoint.time = trigger.time
             end
-            self:CreateTracker()
+            self:CreateTracking()
         elseif f == self.SF.IncreaseProgress then
             self._tracking:IncreaseProgress(trigger.id)
         elseif f == self.SF.SetTrackerAccurate then
             if self._tracking:Exists(trigger.id) then
                 self._tracking:SetAccurate(trigger.id, trigger.time)
             else
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.SetRandomTime then
             if self._trackers:DoesNotExist(trigger.id) then
                 trigger.time = table.random(trigger.data)
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.DecreaseChance then
             self._trackers:DecreaseChance(trigger.id, trigger.amount)
@@ -267,7 +267,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
                 self._tracking:Unpause(trigger.id)
             else
                 if trigger.time then
-                    self:CreateTracker()
+                    self:CreateTracking()
                     return
                 end
                 if managers.preplanning:IsAssetBought(trigger.data.id) then
@@ -275,7 +275,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
                 else
                     trigger.time = trigger.data.no
                 end
-                self:CreateTracker()
+                self:CreateTracking()
             end
         elseif f == self.SF.FinalizeAchievement then
             self._trackers:CallFunction(trigger.id, "Finalize")
@@ -301,7 +301,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
                     max = trigger.max or 1,
                     class = trigger.class or "EHILootTracker"
                 }
-                self:CreateTracker(new_trigger)
+                self:CreateTracking(new_trigger)
             end
         elseif f == self.SF.SetTimeIfLoudOrStealth then
             if managers.groupai:state():whisper_mode() then
@@ -312,14 +312,14 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
             if trigger.waypoint then
                 trigger.waypoint.time = trigger.time
             end
-            self:CreateTracker()
+            self:CreateTracking()
         elseif f == self.SF.AddTimeByPreplanning then
             local t = managers.preplanning:IsAssetBought(trigger.data.id) and trigger.data.yes or trigger.data.no
             trigger.time = trigger.time + t
             if trigger.waypoint then
                 trigger.waypoint.time = trigger.time
             end
-            self:CreateTracker()
+            self:CreateTracking()
         elseif f == self.SF.ShowWaypoint then
             if trigger.data.skip_if_waypoint_exists and self._waypoints:WaypointExists(trigger.data.skip_if_waypoint_exists) then
                 return
@@ -375,7 +375,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
             self._f(self, self._params, element, enabled)
         end
     else
-        self:CreateTracker()
+        self:CreateTracking()
     end
     if trigger.trigger_once then
         self:UnhookTrigger()
@@ -418,22 +418,8 @@ function EHIMissionElementTrigger:AddWaypoint(waypoint)
     end
 end
 
----@param icon string
-function EHIMissionElementTrigger:UpdateWaypointIcon(icon)
-    if self._params.waypoint then
-        self._params.waypoint.icon = icon
-        self._waypoints:SetWaypointIcon(self._params.id, icon)
-    end
-end
-
 ---@param trigger ElementTrigger
 function EHIMissionElementTrigger:_AddTracker(trigger)
-    if trigger.random_time then
-        trigger.time = self:GetRandomTime(trigger)
-        if trigger.waypoint then
-            trigger.waypoint.time = trigger.time
-        end
-    end
     self._trackers:AddTracker(trigger, trigger.pos)
 end
 
@@ -444,21 +430,21 @@ end
 
 if Visibility._SHOW_MISSION_WAYPOINTS and not Visibility._SHOW_MISSION_TRACKERS then
     ---@param trigger ElementTrigger?
-    function EHIMissionElementTrigger:CreateTracker(trigger)
+    function EHIMissionElementTrigger:CreateTracking(trigger)
         trigger = trigger or self._params
         if trigger.condition_function and not trigger.condition_function() then
             return
-        elseif trigger.waypoint_f then
-            if not trigger.run then
-                if trigger.random_time then
-                    trigger.time = self:GetRandomTime(trigger)
-                end
+        end
+        if trigger.random_time and not trigger.run then
+            local t = self:GetRandomTime(trigger)
+            trigger.time = t
+            if trigger.waypoint then
+                trigger.waypoint.time = t
             end
+        end
+        if trigger.waypoint_f then
             trigger.waypoint_f(self, trigger)
         elseif trigger.waypoint then
-            if trigger.random_time then
-                trigger.waypoint.time = self:GetRandomTime(trigger)
-            end
             if trigger.waypoint.waypointless then
                 self._waypoints:AddWaypointlessWaypoint(trigger.waypoint.id or trigger.id, trigger.waypoint)
             else
@@ -481,11 +467,19 @@ if Visibility._SHOW_MISSION_WAYPOINTS and not Visibility._SHOW_MISSION_TRACKERS 
     end
 else
     ---@param trigger ElementTrigger?
-    function EHIMissionElementTrigger:CreateTracker(trigger)
+    function EHIMissionElementTrigger:CreateTracking(trigger)
         trigger = trigger or self._params
         if trigger.condition_function and not trigger.condition_function() then
             return
-        elseif trigger.run then
+        end
+        if trigger.random_time and not trigger.run then
+            local t = self:GetRandomTime(trigger)
+            trigger.time = t
+            if trigger.waypoint then
+                trigger.waypoint.time = t
+            end
+        end
+        if trigger.run then
             self._trackers:RunTracker(trigger.id, trigger.run)
         elseif trigger.tracker_merge and self._trackers:Exists(trigger.tracker_merge.id or trigger.id) then
             local key = trigger.tracker_merge.id or trigger.id
@@ -512,6 +506,27 @@ else
     end
 end
 
+---@param trigger ElementTrigger?
+function EHIMissionElementTrigger:CreateWaypoint(trigger)
+    trigger = trigger or self._params
+    if trigger.waypoint_f then
+        if not trigger.run then
+            if trigger.random_time then
+                trigger.time = self:GetRandomTime(trigger)
+            end
+        end
+        trigger.waypoint_f(self, trigger)
+    elseif trigger.waypoint then
+        if trigger.random_time then
+        end
+        if trigger.waypoint.waypointless then
+            self._waypoints:AddWaypointlessWaypoint(trigger.waypoint.id or trigger.id, trigger.waypoint)
+        else
+            self._waypoints:AddWaypoint(trigger.waypoint.id or trigger.id, trigger.waypoint)
+        end
+    end
+end
+
 if Visibility._SHOW_MISSION_TRIGGERS then
     function EHIMissionElementTrigger:GetElementTimerAccurate()
         if self.IsHost then
@@ -522,11 +537,11 @@ if Visibility._SHOW_MISSION_TRIGGERS then
                 if self._params.waypoint then
                     self._params.waypoint.time = t
                 end
-                self:CreateTracker()
+                self:CreateTracking()
                 self:SendMessage(t)
             end
         else
-            self:CreateTracker()
+            self:CreateTracking()
         end
     end
 else
@@ -638,7 +653,7 @@ function EHIMissionElementTrigger:UpdateWaypointTriggerIcon(id, icon)
     local trigger = self._all_triggers[id]
     if trigger and trigger._params.waypoint then
         trigger._params.waypoint.icon = icon
-        self._waypoints:SetWaypointIcon(trigger._params.id, icon)
+        self._waypoints:SetWaypointIcon(trigger._params.waypoint.id or trigger._params.id, icon)
     end
 end
 
@@ -818,6 +833,8 @@ function EHIMissionElementTrigger:__full_sync()
         element:sync_load()
         element:RemoveLoadSync()
     end
+    self.LoadSyncHandler:clear()
+    self.LoadSyncHandler = nil
 end
 
 ---@param data SyncData
@@ -1348,9 +1365,6 @@ function EHIMissionHolder:ParseTriggers(new_triggers, trigger_id_all, trigger_ic
         if data.cleanup_callback then
             data.cleanup_callback()
         end
-        if data.cleanup_class then
-            _G[data.cleanup_class] = nil
-        end
     end
     self._triggers:__AddTriggers(new_triggers.other or {}, trigger_id_all or "Trigger", trigger_icons_all)
     if ehi_next(new_triggers.achievement) then
@@ -1360,7 +1374,11 @@ function EHIMissionHolder:ParseTriggers(new_triggers, trigger_id_all, trigger_ic
             local function Parser(data, id)
                 PreparseParams(data)
                 for _, element in pairs(data.elements or {}) do
-                    if element.class or element.class_table then
+                    if element.class or element.class_table or element.class_achievement then
+                        if element.class_achievement then
+                            element.class_table = ehi_achievement_class(_G[element.class_achievement])
+                            element.class_achievement = nil
+                        end
                         element.beardlib = data.beardlib
                         if not element.icons then
                             if data.beardlib then
@@ -1421,8 +1439,14 @@ function EHIMissionHolder:ParseTriggers(new_triggers, trigger_id_all, trigger_ic
                 if data.difficulty_pass ~= false and EHI:IsSHSideJobAvailable(id) then
                     PreparseParams(data)
                     for _, element in pairs(data.elements or {}) do
-                        if (element.class or element.class_table) and not element.icons then
-                            element.icons = { EHI.Icons.Trophy }
+                        if element.class or element.class_table or element.class_daily then
+                            if element.class_daily then
+                                element.class_table = ehi_sidejob_class(_G[element.class_daily])
+                                element.class_daily = nil
+                            end
+                            if not element.icons then
+                                element.icons = { EHI.Icons.Trophy }
+                            end
                         end
                     end
                     self._triggers:__AddTriggers(data.elements or {}, id)

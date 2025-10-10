@@ -21,12 +21,10 @@ local colors =
     optional = EHI:GetColorFromOption("mission_briefing", "optional")
 }
 
-local percent_format, localization = "%", "english"
+local percent_format, localization = tweak_data.ehi:GetLanguageFormat().percent(), "english"
 EHI:AddOnLocalizationLoaded(function(loc, lang_name)
     localization = lang_name
-    if lang_name == "czech" then
-        percent_format = " %"
-    end
+    percent_format = tweak_data.ehi:GetLanguageFormat(lang_name).percent()
 end)
 
 local reloading_outfit = false -- Fix for Beardlib stack overflow crash

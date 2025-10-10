@@ -162,8 +162,7 @@ function EHITradeManager:PostPeerCustodyTime(peer_id, time, civilians_killed, in
             tracker:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody)
         end
     else
-        self:AddCustodyTimeTracker()
-        self:AddPeerCustodyTime(peer_id, time, civilians_killed, in_custody)
+        self:AddCustodyTimeTrackerWithPeer(peer_id, time, civilians_killed, in_custody)
     end
 end
 
@@ -178,15 +177,13 @@ function EHITradeManager:CallFunction(f, ...)
     managers.ehi_tracker:CallFunction(self._id, f, ...)
 end
 
-EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers
-    if EHI.IsClient and CustomNameColor and CustomNameColor.ModID then
-        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_EHITradeManager", function(data, sender)
-            if data and data ~= "" then
-                local col = NetworkHelper:StringToColour(data)
-                managers.ehi_tracker:CallFunction(EHITradeManager._id, "UpdateTextPeerColor", sender, col)
-            end
-        end)
-    end
-end)
+if EHI.IsClient and CustomNameColor and CustomNameColor.ModID then
+    managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_EHITradeManager", function(data, sender)
+        if data and data ~= "" then
+            local col = NetworkHelper:StringToColour(data)
+            EHITradeManager:CallFunction("UpdateTextPeerColor", sender, col)
+        end
+    end)
+end
 
 return EHITradeManager

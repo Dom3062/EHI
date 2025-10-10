@@ -36,7 +36,7 @@ local triggers = {
 if EHI.IsClient then
     triggers[101934] = EHI:ClientCopyTrigger(triggers[101929], { time = delay })
 end
-tweak_data.ehi.functions.eng_X("eng_3", "eng_3_stats") -- "The one that survived" achievement
+tweak_data.ehi.functions.achievements.eng_X("eng_3") -- "The one that survived" achievement
 
 local sidejob =
 {

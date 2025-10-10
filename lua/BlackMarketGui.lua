@@ -33,7 +33,7 @@ local original =
 }
 
 local strs = {}
-local percent_format = "%"
+local percent_format = tweak_data.ehi:GetLanguageFormat().percent()
 EHI:AddOnLocalizationLoaded(function(loc, lang_name)
     strs.poison = loc:text("ehi_bm_poison")
     strs.fire = loc:text("ehi_bm_fire")
@@ -52,9 +52,7 @@ EHI:AddOnLocalizationLoaded(function(loc, lang_name)
     strs.charges = loc:text("ehi_bm_charges")
     strs.charges_no_total = loc:text("ehi_bm_charges_no_total")
     strs.no_impact_detonation = loc:text("ehi_bm_no_impact_detonation")
-    if lang_name == "czech" then
-        percent_format = " %"
-    end
+    percent_format = tweak_data.ehi:GetLanguageFormat(lang_name).percent()
 end)
 
 ---@param id string

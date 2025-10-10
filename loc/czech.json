@@ -821,8 +821,6 @@
     "ehi_buffs_skills_fugitive_brawler_subclass" : "Brawler",
     "ehi_buffs_skills_fugitive_swan_song_persistent" : "Neschovávat Swan Song",
     "ehi_buffs_skills_fugitive_bloodthirst" : "Bloodthirst",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio" : "Poměr Bloodthirst",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio_desc" : "Nastavuje procentuální poměr k zobrazení skillu Bloodthirst\nNastavením hodnoty na 0 % bude buff vždycky viditelný\n\nVýchozí hodnota je 34 %, což je 6 zabití v nemódované hře",
     "ehi_buffs_skills_fugitive_bloodthirst_reload" : "Bloodthirst (Nabití zbraně)",
     "ehi_buffs_skills_fugitive_bloodthirst_reload_persistent" : "Neschovávat Bloodthirst (Nabití zbraně)",
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",

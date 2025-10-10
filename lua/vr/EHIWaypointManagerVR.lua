@@ -1,13 +1,16 @@
 ---@class EHIWaypointManager
 local EHIWaypointManagerVR = ...
 local original = EHIWaypointManagerVR.SetPlayerHUD
-function EHIWaypointManagerVR:SetPlayerHUD(hud, ...)
-    original(self, hud, ...)
-    self._gui = hud._gui
+---@param panel Panel
+---@param gui Gui
+function EHIWaypointManagerVR:SetPlayerHUD(panel, saferect, gui)
+    original(self, panel, saferect)
+    self._gui = gui
 end
 
 function EHIWaypointManagerVR:_create_waypoint_data(data)
-    local ws = self._gui:create_world_workspace(128, 64, (data.position or data.unit:position()) + Vector3(40, 0, 20), Vector3(-80, 0, 0), Vector3(0, 0, -40))
+    local vector_pos = data.position or data.unit and data.unit:position() or Vector3()
+    local ws = self._gui:create_world_workspace(128, 64, vector_pos + Vector3(40, 0, 20), Vector3(-80, 0, 0), Vector3(0, 0, -40))
     ws:set_billboard(Workspace.BILLBOARD_Y)
     local waypoint_panel = self._panel
     local icon, texture_rect = self:_unpack_icon(data)
@@ -134,6 +137,7 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         EHI:Log("[EHIWaypointManagerVR] Custom waypoint does not have position defined! Added default position to avoid crashing")
         EHI:LogTraceback()
         wp.init_data.position = Vector3()
+        wp.position = Vector3()
     end
 
     local t = {}

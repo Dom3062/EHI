@@ -26,6 +26,7 @@ local original =
 function GrenadeCrateBase:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     original.init(self, unit, ...)
+    managers.ehi_deployable:OnDeployablePlaced(unit)
 end
 
 ---@param amount number?
@@ -46,6 +47,7 @@ function GrenadeCrateBase:SetIgnore()
     end
     self._ignore = true
     self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
 end
 
 function GrenadeCrateBase:SetIgnoreChild()
@@ -65,6 +67,7 @@ end
 
 function GrenadeCrateBase:destroy(...)
     self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
     original.destroy(self, ...)
 end
 

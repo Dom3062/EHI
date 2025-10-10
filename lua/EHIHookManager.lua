@@ -76,8 +76,8 @@ function EHIHookManager:HookMissionEndCSMAward(id, icon)
     local progress, max = EHI:GetSHSideJobProgressAndMax(id)
     if progress + 1 < max then
         icon = icon or "milestone_trophy"
-        Hooks:PostHook(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", id), function(csm, id_stat)
-            if id_stat == id then
+        self:HookCustomSafehouseAward(id, function(csm, stat)
+            if stat == id then
                 managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(progress + 1) .. "/" .. tostring(max), icon)
             end
         end)
@@ -87,13 +87,19 @@ end
 ---@param id string
 ---@param f fun(am: AchievmentManager, stat: string, value: number?)
 function EHIHookManager:HookAchievementAwardProgress(id, f)
-    Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
+    Hooks:PostHook(AchievmentManager, "award_progress", string.format("EHI_%s_AchievementManager_award_progress", id), f)
 end
 
 ---@param id string
----@param f fun(am: AchievmentManager, stat: string, value: number?)
+---@param f fun(cm: ChallengeManager, stat: string, value: number?)
 function EHIHookManager:HookChallengeAwardProgress(id, f)
-    Hooks:PostHook(ChallengeManager, "award_progress", string.format("EHI_%s_AwardProgress", id), f)
+    Hooks:PostHook(ChallengeManager, "award_progress", string.format("EHI_%s_ChallengeManager_award_progress", id), f)
+end
+
+---@param id string
+---@param f fun(csm: CustomSafehouseManager, stat: string)
+function EHIHookManager:HookCustomSafehouseAward(id, f)
+    Hooks:PostHook(CustomSafehouseManager, "award", string.format("EHI_%s_CustomSafehouseManager_award", id), f)
 end
 
 ---@param id string

@@ -23,7 +23,7 @@ end
 
 if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
     local mvector3 = mvector3
-    dofile(EHI.LuaPath .. "EHIHealthFloatPoco.lua")
+    dofile(EHI.LuaPath .. "manager/health_float/EHIHealthFloatPoco.lua")
     ---@param hud HUDManager
     ---@param hud_panel Panel
     function EHIHealthFloatManager:post_init(hud, hud_panel)
@@ -258,7 +258,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
     end
 else
     if EHI:GetOption("show_floating_health_bar_style") == 2 then
-        dofile(EHI.LuaPath .. "EHIHealthFloatCircle.lua")
+        dofile(EHI.LuaPath .. "manager/health_float/EHIHealthFloatCircle.lua")
         ---@param hud HUDManager
         ---@param hud_panel Panel
         function EHIHealthFloatManager:post_init(hud, hud_panel)
@@ -272,7 +272,7 @@ else
             end)
         end
     else
-        dofile(EHI.LuaPath .. "EHIHealthFloatRect.lua")
+        dofile(EHI.LuaPath .. "manager/health_float/EHIHealthFloatRect.lua")
         ---@param hud HUDManager
         ---@param hud_panel Panel
         function EHIHealthFloatManager:post_init(hud, hud_panel)

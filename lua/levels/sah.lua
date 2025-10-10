@@ -5,7 +5,7 @@ local TT = EHI.Trackers
 local Hints = EHI.Hints
 ---@type ParseTriggerTable
 local triggers = {
-    [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning, hint = Hints.Alarm },
+    [100643] = { time = 30, id = "CrowdAlert", icons = { Icon.Alarm }, class = TT.Warning, hint = Hints.Alarm, remove_on_alarm = true },
     [100645] = { id = "CrowdAlert", special_function = SF.RemoveTracker }
 
     -- Heli Escape is in CoreWorldInstanceManager

@@ -83,7 +83,7 @@ function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
             params.scale = scale
             params.skill_check_after_spawn = buff.skill_check_after_spawn
             if buff.permanent then
-                if buff.permanent.option and EHI:GetBuffOption(buff.permanent.option) then
+                if (buff.permanent.option and EHI:GetBuffOption(buff.permanent.option)) or buff.permanent.option_true then
                     params.class = buff.permanent.class or "EHIPermanentBuffTracker"
                     params.skill_check = buff.permanent.skill_check
                     params.team_skill_check = buff.permanent.team_skill_check
@@ -233,10 +233,7 @@ function EHIBuffManager:SyncAndAddBuff(id, t)
 end
 
 function EHIBuffManager:ActivateUpdatingBuffs()
-    if table.ehi_empty(self._skill_check_after_spawn) then
-        return
-    end
-    for _, buff in ipairs(self._skill_check_after_spawn) do
+    for _, buff in ipairs(self._skill_check_after_spawn or {}) do
         if buff:SkillCheck() then
             buff:PreUpdate()
         elseif buff:CanDeleteOnFalseSkillCheck() then

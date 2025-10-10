@@ -64,7 +64,7 @@ function EHILootWaypoint:RemoveWaypoint(id)
     end
     local wp = table.remove_key(self._waypoints or {}, id)
     if wp then
-        self._parent_class._hud:remove_waypoint(id)
+        managers.hud:remove_waypoint(id)
     end
 end
 
@@ -166,7 +166,7 @@ function EHITimedLootWaypoint:StartTimer(t, no_delete)
     self._no_delete_after_time_out = no_delete
     self._format = "%s (%s)"
     self:AddWaypointToUpdate()
-    local waypoints = self._parent_class._hud._hud.waypoints or {}
+    local waypoints = managers.hud._hud.waypoints or {}
     for id, _ in pairs(self._waypoints or {}) do
         local wp = waypoints[id]
         if wp then

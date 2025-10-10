@@ -18,6 +18,7 @@ end
 
 function EHISkillRefreshBuffTracker:EnableInLoud()
     self._enable_in_loud = true
+    self._update_loop_in_pre_update = true
 end
 
 function EHISkillRefreshBuffTracker:PreUpdate()
@@ -25,6 +26,9 @@ function EHISkillRefreshBuffTracker:PreUpdate()
     self:SetRatio(0)
     if not self._enable_in_loud then
         self:PreUpdate2()
+        if self._update_loop_in_pre_update then
+            self:AddBuffToUpdate()
+        end
     end
 end
 

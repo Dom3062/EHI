@@ -43,7 +43,7 @@ local achievements =
         }
     }
 }
-tweak_data.ehi.functions.eng_X("eng_4", "eng_4_stats") -- "The one who declared himself the hero" achievement
+tweak_data.ehi.functions.achievements.eng_X("eng_4") -- "The one who declared himself the hero" achievement
 
 local sidejob =
 {
@@ -98,7 +98,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101353] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101286 } }
 end
 if EHI:IsEscapeChanceEnabled() then
-    other[102622] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    other[102622] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)
     end)

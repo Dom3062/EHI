@@ -1,68 +1,3 @@
----@class cac_10 : EHIAchievementTracker, EHIProgressTracker
----@field super EHIAchievementTracker
-local cac_10 = class(EHIAchievementTracker)
-cac_10._needs_update = false
-cac_10.FormatProgress = EHIProgressTracker.FormatProgress
-cac_10.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-cac_10.IncreaseProgressMax = EHIProgressTracker.IncreaseProgressMax
----@param class cac_10
-cac_10._anim_warning = function(o, old_color, color, start_t, class)
-    local c = Color(old_color.r, old_color.g, old_color.b)
-    local progress = class._progress_text
-    local t = 1
-    while true do
-        while t > 0 do
-            t = t - coroutine.yield()
-            local n = math.sin(t * 180)
-            c.r = math.lerp(old_color.r, color.r, n)
-            c.g = math.lerp(old_color.g, color.g, n)
-            c.b = math.lerp(old_color.b, color.b, n)
-            o:set_color(c)
-            progress:set_color(c)
-        end
-        t = 1
-    end
-end
-function cac_10:OverridePanel()
-    self._max = 0
-    self._progress = 0
-    self:SetBGSize()
-    self._progress_text = self:CreateText({
-        text = self:FormatProgress(),
-        w = self._bg_box:w() / 2,
-        left = 0,
-        FitTheText = true
-    })
-    self._text:set_left(self._progress_text:right())
-end
-
-function cac_10:SetProgressMax(max)
-    self._max = max
-    self._progress_text:set_text(self:FormatProgress())
-end
-
-function cac_10:SetProgress(progress)
-    if self._progress ~= progress then
-        self._progress = progress
-        self._progress_text:set_text(self:FormatProgress())
-        self:FitTheText(self._progress_text)
-        self:AnimateBG()
-    end
-end
-
-function cac_10:SetCompleted(force)
-    self._status = "completed"
-    self._text:stop()
-    self:SetTextColor(Color.green)
-    self.update = self.update_fade
-    self._achieved_popup_showed = true
-end
-
-function cac_10:SetTextColor(color)
-    cac_10.super.SetTextColor(self, color)
-    self._progress_text:set_color(color)
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -70,12 +5,22 @@ local CF = EHI.ConditionFunctions
 local TT = EHI.Trackers
 local Hints = EHI.Hints
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
+---@type ParseTriggerTable
 local triggers = {
-    [101299] = { time = 300, id = "Thermite", icons = { Icon.Fire }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1012991 }, hint = Hints.Thermite },
+    [101299] = { time = 300, id = "Thermite", icons = { Icon.Fire }, special_function = SF.CreateAnotherTrackerWithTracker, data = { fake_id = 1012991 }, hint = Hints.Thermite, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100691 } },
     [1012991] = { time = 90, id = "ThermiteShorterTime", icons = { Icon.Fire, Icon.Wait }, class = TT.Warning, hint = Hints.red2_Thermite }, -- Triggered by 101299
-    [101325] = { special_function = SF.TriggerIfEnabled, data = { 1013251, 1013252 } },
-    [1013251] = { time = 180, id = "Thermite", icons = { Icon.Fire }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Thermite },
-    [1013252] = { id = "ThermiteShorterTime", special_function = SF.RemoveTracker },
+    [101325] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
+        if enabled then
+            self:RunTrigger(1013251, element, true)
+            self._trackers:ForceRemoveTracker("ThermiteShorterTime")
+            managers.hud:SoftRemoveWaypoint2(100739)
+        elseif self._waypoints:WaypointExists("Thermite") then
+            self._waypoints:SetWaypointPosition("Thermite", Vector3(6950, 1750, 0))
+            self._waypoints:SetWaypointIcon("Thermite", "pd2_generic_look")
+            managers.hud:SoftRemoveWaypoint2(100739)
+        end
+    end) },
+    [1013251] = { time = 180, id = "Thermite", icons = { Icon.Fire }, special_function = SF.SetTimeOrCreateTracker, hint = Hints.Thermite, waypoint = { data_from_element_and_remove_vanilla_waypoint = 100739 } },
     [101684] = { time = 5.1, id = "C4", icons = { Icon.C4 }, hint = Hints.Explosion, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101667 } },
     [100211] = { chance = 10, id = "PCChance", icons = { Icon.PCHack }, class = TT.Chance, hint = Hints.man_Code, remove_on_alarm = true },
     [101226] = { id = "PCChance", special_function = SF.IncreaseChanceFromElement }, -- +17%
@@ -104,7 +49,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101341] = { time = 30, class_table = cac_10, condition_function = CF.IsLoud },
+            [101341] = { time = 30, class_achievement = TT.Unlockable.TimedProgress, start_paused = true, condition_function = CF.IsLoud },
             [107072] = { special_function = SF.SetAchievementComplete },
             [101544] = { special_function = SF.CallCustomFunction, f = "AddTrackerToUpdate", trigger_once = true },
             [107066] = { special_function = SF.IncreaseProgressMax },
@@ -112,7 +57,7 @@ local achievements =
         }
     }
 }
-tweak_data.ehi.functions.eng_X("eng_2", "eng_2_stats") -- "The one that had many names" achievement
+tweak_data.ehi.functions.achievements.eng_X("eng_2") -- "The one that had many names" achievement
 
 local other =
 {

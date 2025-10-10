@@ -3,23 +3,25 @@
 ---@return T
 function _G.ehi_sidejob_class(super)
     local klass = class(super)
+    klass._hint_vanilla_localization = true
     klass._forced_icon_color = EHISideJobTracker._forced_icon_color
     klass._show_started = EHISideJobTracker._show_started
     klass._show_failed = EHISideJobTracker._show_failed
     klass._show_desc = EHISideJobTracker._show_desc
     klass.PrepareHint = EHISideJobTracker.PrepareHint
-    klass.ShowStartedPopup = klass.ShowStartedPopup or EHISideJobTracker.ShowStartedPopup
-    klass.ShowFailedPopup = klass.ShowFailedPopup or EHISideJobTracker.ShowFailedPopup
-    klass.ShowUnlockableDescription = klass.ShowUnlockableDescription or EHISideJobTracker.ShowUnlockableDescription
+    klass.ShowStartedPopup = EHISideJobTracker.ShowStartedPopup
+    klass.ShowFailedPopup = EHISideJobTracker.ShowFailedPopup
+    klass.ShowUnlockableDescription = EHISideJobTracker.ShowUnlockableDescription
     klass._ShowStartedPopup = EHISideJobTracker._ShowStartedPopup
     klass._ShowFailedPopup = EHISideJobTracker._ShowFailedPopup
     klass._ShowUnlockableDescription = EHISideJobTracker._ShowUnlockableDescription
     return klass
 end
 
----@class EHISideJobTracker : EHIAchievementTracker
----@field super EHIAchievementTracker
-EHISideJobTracker = class(EHIAchievementTracker)
+---@class EHISideJobTracker : EHIUnlockableTracker
+---@field super EHIUnlockableTracker
+EHISideJobTracker = class(EHIUnlockableTracker)
+EHISideJobTracker._hint_vanilla_localization = true
 EHISideJobTracker._forced_icon_color = { EHI:GetColorFromOption("unlockables", "sidejob") }
 EHISideJobTracker._show_started = EHI:GetUnlockableOption("show_daily_started_popup")
 EHISideJobTracker._show_failed = EHI:GetUnlockableOption("show_daily_failed_popup")
@@ -33,7 +35,6 @@ function EHISideJobTracker:PrepareHint(params)
     local id = self._id or params.id
     params.hint = params.desc or (params.daily_job and ("menu_challenge_" .. id) or id)
     self._desc = params.desc
-    self._hint_vanilla_localization = true
 end
 
 function EHISideJobTracker:_ShowStartedPopup()
@@ -48,9 +49,9 @@ function EHISideJobTracker:_ShowUnlockableDescription()
     managers.hud:ShowSideJobDescription(self._id, self._daily_job)
 end
 
----@class EHISideJobProgressTracker : EHIAchievementProgressTracker
----@field super EHIAchievementProgressTracker
-EHISideJobProgressTracker = ehi_sidejob_class(EHIAchievementProgressTracker)
+---@class EHISideJobProgressTracker : EHIUnlockableProgressTracker
+---@field super EHIUnlockableProgressTracker
+EHISideJobProgressTracker = ehi_sidejob_class(EHIUnlockableProgressTracker)
 function EHISideJobProgressTracker:pre_init(params)
     self._daily_job = params.daily_job
     EHISideJobProgressTracker.super.pre_init(self, params)

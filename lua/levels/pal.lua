@@ -36,7 +36,7 @@ if EHI.IsClient then
     local ReplaceTrackerWithTrackerAndAddTrackerIfDoesNotExists = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:RemoveTracker(trigger.data.id)
         if self._trackers:DoesNotExist(trigger.id) then
-            self:CreateTracker()
+            self:CreateTracking()
         end
     end)
     triggers[102892] = { additional_time = 1800/30 + 120, random_time = 60, id = "HeliCage", icons = Icon.HeliLootDrop, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.Loot }

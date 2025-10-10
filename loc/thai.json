@@ -608,8 +608,6 @@
     "ehi_buffs_skills_fugitive_swan_song" : "Swan Song",
     "ehi_buffs_skills_fugitive_brawler_subclass" : "Brawler",
     "ehi_buffs_skills_fugitive_bloodthirst" : "Bloodthirst",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio" : "รูปแบบค่า Bloodthirst",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio_desc" : "แสดงค่าเป็นเปอร์เซ็นเทียบกับจำนวนสำหรับสถานะบัพ Bloodthirst\nตั้งค่าที่ 0% คือให้แสดงค่าตลอด\n\nค่าดั้งเดิมที่ตั้งไว้ คือ 34% คือฆ่าไปราวๆ 6 คนโดยปรกติ",
     "ehi_buffs_skills_fugitive_bloodthirst_reload" : "Bloodthirst (Reload)",
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "อัพเดทค่า Berserker",

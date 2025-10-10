@@ -19,7 +19,7 @@ if EHI.Mission._SHOW_MISSION_TRACKERS then
         elseif self._trackers:Exists(trigger.id) then
             self._trackers:SetProgress(trigger.id, trigger.progress)
         elseif not trigger.dont_create then
-            self:CreateTracker()
+            self:CreateTracking()
         end
         self._cache.CurrentHackNumber = trigger.progress
     end)

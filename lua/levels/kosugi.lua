@@ -1,26 +1,6 @@
 local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
----@class EHIkosugi_5Tracker : EHIAchievementProgressGroupTracker
----@field super EHIAchievementProgressGroupTracker
-EHIkosugi_5Tracker = class(EHIAchievementProgressGroupTracker)
-function EHIkosugi_5Tracker:post_init(...)
-    EHIkosugi_5Tracker.super.post_init(self, ...)
-    self._loot_parent = managers.ehi_loot
-    self:AddLootListener({
-        counter =
-        {
-            f = function(loot)
-                self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
-                self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
-                if self._counters == self._completed_counters then
-                    self._loot_parent:RemoveListener(self._id)
-                end
-            end
-        }
-    })
-end
-
 if EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission") then
     local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_mission_trackers", "show_waypoints_mission")
     for _, unit_id in ipairs({ 100098, 102897, 102899, 102900 }) do
@@ -48,7 +28,7 @@ local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 local DisableTriggerAndExecute = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     self:UnhookTrigger(trigger.data.id)
-    self:CreateTracker()
+    self:CreateTracking()
 end)
 local triggers = {
     [103492] = { time = 300, id = "Blackhawk", icons = { Icon.Heli, Icon.Goto }, hint = Hints.kosugi_Heli, trigger_once = true },
@@ -100,7 +80,7 @@ local achievements =
     {
         elements =
         {
-            [102700] = { class = "EHIkosugi_5Tracker", counter = {
+            [102700] = { counter = {
                 { max = 16, id = "bags" },
                 { max = 4, id = "armor" }
             } }
@@ -116,7 +96,24 @@ local achievements =
                 })
             end
         end,
-        cleanup_class = "EHIkosugi_5Tracker"
+        preparse_callback = function(data)
+            ---@class kosugi_5 : EHIAchievementProgressGroupTracker
+            ---@field super EHIAchievementProgressGroupTracker
+            local kosugi_5 = class(EHIAchievementProgressGroupTracker)
+            function kosugi_5:post_init(...)
+                kosugi_5.super.post_init(self, ...)
+                self:AddLootListener({
+                    counter =
+                    {
+                        f = function(loot)
+                            self:SetProgress(loot:GetSecuredBagsTypeAmount("samurai_suit"), "armor")
+                            self:SetProgress(loot:GetSecuredBagsAmount(), "bags")
+                        end
+                    }
+                })
+            end
+            data.elements[102700].class_table = kosugi_5
+        end
     }
 }
 
@@ -209,7 +206,7 @@ EHI:ShowAchievementLootCounter({
         loot_type = "samurai_suit"
     }
 })
-tweak_data.ehi.functions.eng_X("eng_2", "eng_2_stats") -- "The one that had many names" achievement
+tweak_data.ehi.functions.achievements.eng_X("eng_2") -- "The one that had many names" achievement
 local min_bags = EHI:GetValueBasedOnDifficulty({
     normal = 3,
     hard = 5,

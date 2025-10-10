@@ -142,7 +142,7 @@ if EHI.IsClient then
                 tracker:SetTimeNoAnim(self:GetRandomTime(trigger), true)
             end
         else
-            self:CreateTracker()
+            self:CreateTracking()
         end
     end)
     triggers[102383].class_table = EHICookingChanceTracker

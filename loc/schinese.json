@@ -733,8 +733,6 @@
     "ehi_buffs_skills_fugitive_swan_song" : "天鹅绝唱",
     "ehi_buffs_skills_fugitive_brawler_subclass" : "格斗系",
     "ehi_buffs_skills_fugitive_bloodthirst" : "嗜血渴望",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio" : "嗜血渴望显示比率",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio_desc" : "设置累计了百分之多少的加成后显示该技能的追踪器\n将其设置为 0% 可以使该追踪器常驻\n\n默认值为 34%，在原版游戏中为6次击杀",
     "ehi_buffs_skills_fugitive_bloodthirst_reload" : "嗜血渴望 (装填加成)",
     "ehi_buffs_skills_fugitive_berserker" : "狂战士",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "狂战士刷新频率",

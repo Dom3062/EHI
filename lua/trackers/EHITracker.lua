@@ -259,7 +259,6 @@ end
 ---@field _forced_icons table? Forces specific icons in the tracker
 ---@field _forced_time number? Forces specific time in the tracker
 ---@field _forced_hint_text string? Forces specific hint text in the tracker
----@field _forced_icon_color Color[]? Forces specific icon color in the tracker
 ---@field _hint_no_localization boolean?
 ---@field _hint_vanilla_localization boolean?
 EHITracker = class()
@@ -715,7 +714,7 @@ function EHITracker:CreateIcon(i, i_pos, texture, texture_rect, x, visible, colo
     self._icons[i] = self._panel:bitmap({
         texture = texture,
         texture_rect = texture_rect,
-        color = self._forced_icon_color and self._forced_icon_color[i_pos] or color or Color.white,
+        color = color or Color.white,
         alpha = alpha or 1,
         layer = layer or 0,
         visible = visible ~= false,

@@ -15,7 +15,7 @@ end
 local FultonCatchAgain = { id = "FultonCatchAgain", icons = WeaponsPickUp, special_function = SF.AddTrackerIfDoesNotExist, hint = Hints.LootTimed }
 local FultonCatchSuccess = { time = 6.8, id = "FultonCatchSuccess", icons = WeaponsPickUp, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     if self._trackers:DoesNotExist("FultonCatch") or self._trackers:DoesNotExist("FultonCatchAgain") then
-        self:CreateTracker()
+        self:CreateTracking()
     end
 end), hint = Hints.LootTimed }
 local FultonCatchIncreaseChance = { id = "FultonCatchChance", special_function = SF.IncreaseChanceFromElement }

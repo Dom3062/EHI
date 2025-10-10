@@ -41,6 +41,7 @@ function AmmoBagBase:init(unit, ...)
     if next(self._ehi_ignored_pos) and self._ehi_ignored_pos[tostring(unit:position())] then
         self._ignore = true
     end
+    managers.ehi_deployable:OnDeployablePlaced(unit)
 end
 
 ---@param amount number?
@@ -54,6 +55,7 @@ function AmmoBagBase:SetIgnore()
     end
     self._ignore = true
     self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
 end
 
 function AmmoBagBase:SetIgnoreChild()
@@ -80,10 +82,12 @@ end
 
 function AmmoBagBase:destroy(...)
     self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
     original.destroy(self, ...)
 end
 
 function CustomAmmoBagBase:_set_empty(...)
     original.custom_set_empty(self, ...)
     self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
 end

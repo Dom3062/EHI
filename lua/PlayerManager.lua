@@ -213,16 +213,8 @@ end
 if EHI:GetBuffOption("bloodthirst") then
     local meele_boost_tweak = tweak_data.upgrades.values.player.melee_damage_stacking[1] or {}
     local bloodthirst_reload = EHI:GetBuffOption("bloodthirst_reload")
-    local bloodthirst_ratio = EHI:GetBuffOption("bloodthirst_ratio") / 100
     local max_multiplier = meele_boost_tweak.max_multiplier or 16
     local bloodthirst_max = false
-    if bloodthirst_ratio == 0 then
-        EHI:AddOnSpawnedCallback(function()
-            if managers.player:has_category_upgrade("player", "melee_damage_stacking") then
-                managers.ehi_buff:AddGauge("melee_damage_stacking", 1 / max_multiplier, 1)
-            end
-        end)
-    end
     original.set_melee_dmg_multiplier = PlayerManager.set_melee_dmg_multiplier
     function PlayerManager:set_melee_dmg_multiplier(multiplier, ...)
         original.set_melee_dmg_multiplier(self, multiplier, ...)
@@ -230,19 +222,13 @@ if EHI:GetBuffOption("bloodthirst") then
             return
         end
         local ratio = multiplier / max_multiplier
-        if ratio >= bloodthirst_ratio then
-            bloodthirst_max = ratio >= 1
-            managers.ehi_buff:AddGauge("melee_damage_stacking", ratio, multiplier)
-        end
+        bloodthirst_max = ratio >= 1
+        managers.ehi_buff:AddGauge("melee_damage_stacking", ratio, multiplier)
     end
     original.reset_melee_dmg_multiplier = PlayerManager.reset_melee_dmg_multiplier
     function PlayerManager:reset_melee_dmg_multiplier(...)
         original.reset_melee_dmg_multiplier(self, ...)
-        if bloodthirst_ratio > 0 then
-            managers.ehi_buff:RemoveBuff("melee_damage_stacking")
-        else
-            managers.ehi_buff:AddGauge("melee_damage_stacking", self._melee_dmg_mul / max_multiplier, self._melee_dmg_mul)
-        end
+        managers.ehi_buff:AddGauge("melee_damage_stacking", self._melee_dmg_mul / max_multiplier, self._melee_dmg_mul)
         bloodthirst_max = false -- Reset the lock
         if bloodthirst_reload then
             local data = self:upgrade_value("player", "melee_kill_increase_reload_speed", 0)

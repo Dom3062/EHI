@@ -32,6 +32,16 @@ function DoctorBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
     self._offset = 0
+    managers.ehi_deployable:OnDeployablePlaced(unit)
+end
+
+function DoctorBagBase:SetIgnore()
+    if self._ignore_set_by_parent then
+        return
+    end
+    self._ignore = true
+    self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
 end
 
 ---@param amount number?
@@ -41,15 +51,19 @@ end
 
 function DoctorBagBase:_set_visual_stage(...)
     original._set_visual_stage(self, ...)
-    self:UpdateAmount()
+    if not self._ignore then
+        self:UpdateAmount()
+    end
 end
 
 function DoctorBagBase:destroy(...)
     self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
     original.destroy(self, ...)
 end
 
 function CustomDoctorBagBase:_set_empty(...)
     original.custom_set_empty(self, ...)
     self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
 end

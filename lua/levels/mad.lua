@@ -1,39 +1,3 @@
----@class daily_cake : EHISideJobTracker, EHIProgressTracker
----@field super EHISideJobTracker
-local daily_cake = class(EHISideJobTracker)
-daily_cake.FormatProgress = EHIProgressTracker.FormatProgress
-daily_cake.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-daily_cake.SetProgress = EHIProgressTracker.SetProgress
-function daily_cake:OverridePanel()
-    self._max = 4
-    self._progress = 0
-    self:SetBGSize()
-    self._progress_text = self:CreateText({
-        text = self:FormatProgress(),
-        w = self._bg_box:w() / 2,
-        left = 0,
-        FitTheText = true
-    })
-    self._text:set_left(self._progress_text:right())
-end
-
-function daily_cake:SetCompleted(force)
-    if not self._status then
-        self._status = "completed"
-        self._progress_text:set_color(Color.green)
-        self:SetStatusText("finish", self._progress_text)
-        self._disable_counting = true
-    elseif force then
-        self._text:set_color(Color.green)
-        self:DelayForcedDelete()
-    end
-end
-
-function daily_cake:DelayForcedDelete()
-    self.update = self.update_fade
-    daily_cake.super.DelayForcedDelete(self)
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -92,7 +56,7 @@ local sidejob =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [101906] = { time = 1200, class_table = daily_cake },
+            [101906] = { max = 4, time = 1200, show_progress_on_finish = true, class_daily = TT.Unlockable.TimedProgress },
             [101898] = { special_function = SF.SetAchievementComplete },
             [EHI:GetInstanceElementID(100038, 3150)] = { special_function = SF.IncreaseProgress }
         }

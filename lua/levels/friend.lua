@@ -1,27 +1,3 @@
----@class uno_7 : EHIAchievementTracker
----@field super EHIAchievementTracker
-local uno_7 = class(EHIAchievementTracker)
-function uno_7:post_init(...)
-    self._blocked_warning = true
-    self._text:set_color(Color.red)
-    self:PrepareHint(...)
-end
-
-function uno_7:OnAlarm()
-    self._blocked_warning = nil
-    self._text:set_color(Color.white)
-    if self._time <= 10 then
-        self:AnimateColor(true)
-    end
-end
-
-function uno_7:AnimateColor(...)
-    if self._blocked_warning then
-        return
-    end
-    uno_7.super.AnimateColor(self, ...)
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -88,8 +64,32 @@ local achievements =
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [100107] = { time = 901, class_table = uno_7, update_on_alarm = true }
-        }
+            [100107] = { time = 901, update_on_alarm = true }
+        },
+        preparse_callback = function(data)
+            ---@class uno_7 : EHIAchievementTracker
+            ---@field super EHIAchievementTracker
+            local uno_7 = class(EHIAchievementTracker)
+            function uno_7:post_init(...)
+                self._blocked_warning = true
+                self._text:set_color(Color.red)
+                self:PrepareHint(...)
+            end
+            function uno_7:OnAlarm()
+                self._blocked_warning = nil
+                self._text:set_color(Color.white)
+                if self._time <= 10 then
+                    self:AnimateColor(true)
+                end
+            end
+            function uno_7:AnimateColor(...)
+                if self._blocked_warning then
+                    return
+                end
+                uno_7.super.AnimateColor(self, ...)
+            end
+            data.elements[100107].class_table = uno_7
+        end
     }
 }
 
@@ -103,8 +103,8 @@ local trophy =
                 return
             end
             local progress, max = EHI._get_objective_progress(trophy.objectives, trophy.id)
-            Hooks:PostHook(CustomSafehouseManager, "award", string.format("EHI_%s_AwardProgress", trophy.id), function(csm, id_stat)
-                if id_stat == trophy.id then
+            managers.ehi_hook:HookCustomSafehouseAward(trophy.id, function(csm, stat)
+                if stat == trophy.id then
                     progress = progress + 1
                     if progress < max then
                         managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(trophy.id), tostring(progress) .. "/" .. tostring(max), "milestone_trophy")

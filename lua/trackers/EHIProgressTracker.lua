@@ -131,8 +131,8 @@ function EHIProgressTracker:SetFailed()
     if self._status and not self._status_is_overridable then
         return
     end
-    self:SetTextColor(Color.red, self._progress_text)
     self._status = "failed"
+    self:SetTextColor(Color.red, self._progress_text)
     self:AddTrackerToUpdate()
     self:AnimateBG()
     self._disable_counting = true

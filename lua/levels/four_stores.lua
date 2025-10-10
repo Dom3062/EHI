@@ -51,7 +51,7 @@ local triggers = {
 
     [103629] = EHI:AddIncomingTurret(540/30, Vector3(0.425327, -3362.29, 254.634), nil, nil, _G.ch_settings == nil)
 }
-tweak_data.ehi.functions.eng_X("eng_3", "eng_3_stats") -- "The one that survived" achievement
+tweak_data.ehi.functions.achievements.eng_X("eng_3") -- "The one that survived" achievement
 
 local CopArrivalDelay = EHI:GetValueBasedOnDifficulty({
     normal = 30,
@@ -70,7 +70,7 @@ if CopArrivalDelay > 0 then
     other[103278] = EHI:AddAssaultDelay({ control = FirstAssaultBreak + CopArrivalDelay, trigger_once = true }) -- Full assault break; 15s (55s delay)
 end
 if EHI:IsEscapeChanceEnabled() then
-    other[103501] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    other[103501] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 30)
     end)
@@ -83,7 +83,7 @@ if EHI:IsLootCounterVisible() then
         return false -- Return false because the loot bag is random => to not show Loot Waypoint once escape is available (default behavior)
     end }, function(self)
         if self._utils:IsMissionElementDisabled(101804) and managers.loot:GetSecuredBagsAmount() == 0 then
-            self:CreateTracker()
+            self:CreateTracking()
         end
     end)
 end

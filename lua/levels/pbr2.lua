@@ -1,37 +1,3 @@
----@class cac_33 : EHIAchievementStatusTracker, EHIProgressTracker
----@field super EHIAchievementStatusTracker
-local cac_33 = class(EHIAchievementStatusTracker)
-cac_33.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-cac_33.FormatProgress = EHIProgressTracker.FormatProgress
-cac_33.SetProgress = EHIProgressTracker.SetProgress
-function cac_33:post_init(params)
-    cac_33.super.post_init(self, params)
-    self._progress = 0
-    self._max = 200
-    self._progress_text = self:CreateText({
-        text = self:FormatProgress(),
-        visible = false,
-        FitTheText = true
-    })
-end
-
-function cac_33:Activate()
-    self._progress_text:set_visible(true)
-    self._text:set_visible(false)
-end
-
-function cac_33:SetCompleted()
-    cac_33.super.SetCompleted(self)
-    self._disable_counting = true
-    self._progress_text:set_color(Color.green)
-end
-
-function cac_33:SetFailed()
-    cac_33.super.SetFailed(self)
-    self._disable_counting = true
-    self._progress_text:set_color(Color.red)
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -88,12 +54,45 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.DeathWish),
         elements =
         {
-            [102504] = { status = "land", class_table = cac_33, flash_times = 1 },
+            [102504] = { status = "land", flash_times = 1 },
             [103479] = { special_function = SF.SetAchievementComplete },
             [103475] = { special_function = SF.SetAchievementFailed },
             [103487] = { special_function = SF.CallCustomFunction, f = "Activate" },
             [103477] = { special_function = SF.IncreaseProgress }
-        }
+        },
+        preparse_callback = function(data)
+            ---@class cac_33 : EHIAchievementStatusTracker, EHIProgressTracker
+            ---@field super EHIAchievementStatusTracker
+            local cac_33 = class(EHIAchievementStatusTracker)
+            cac_33.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+            cac_33.FormatProgress = EHIProgressTracker.FormatProgress
+            cac_33.SetProgress = EHIProgressTracker.SetProgress
+            function cac_33:post_init(params)
+                cac_33.super.post_init(self, params)
+                self._progress = 0
+                self._max = 200
+                self._progress_text = self:CreateText({
+                    text = self:FormatProgress(),
+                    visible = false,
+                    FitTheText = true
+                })
+            end
+            function cac_33:Activate()
+                self._progress_text:set_visible(true)
+                self._text:set_visible(false)
+            end
+            function cac_33:SetCompleted()
+                cac_33.super.SetCompleted(self)
+                self._disable_counting = true
+                self._progress_text:set_color(Color.green)
+            end
+            function cac_33:SetFailed()
+                cac_33.super.SetFailed(self)
+                self._disable_counting = true
+                self._progress_text:set_color(Color.red)
+            end
+            data.elements[102504].class_table = cac_33
+        end
     }
 }
 

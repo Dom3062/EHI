@@ -139,7 +139,7 @@ end
 
 ---@param id number
 function EHIWaypointLessWaypoint:RestoreWaypoint(id)
-    local init_data = self._parent_class._hud:GetStoredWaypointData(id)
+    local init_data = managers.hud:GetStoredWaypointData(id)
     if init_data then
         self:CreateWaypoint(id, init_data.icon, init_data.position)
     end
@@ -147,9 +147,9 @@ end
 
 function EHIWaypointLessWaypoint:RemoveWaypoint()
     if self._waypoint_id then
-        local init_data = self._parent_class._hud:GetStoredWaypointData(self._waypoint_id)
-        self._parent_class._hud:remove_waypoint(self._waypoint_id)
-        self._parent_class._hud:AddWaypointSoft(self._waypoint_id, init_data) ---@diagnostic disable-line
+        local init_data = managers.hud:GetStoredWaypointData(self._waypoint_id)
+        managers.hud:remove_waypoint(self._waypoint_id)
+        managers.hud:AddWaypointSoft(self._waypoint_id, init_data) ---@diagnostic disable-line
         self._waypoint_id = nil
         self._gui = nil
         self._bitmap = nil
@@ -160,7 +160,7 @@ end
 
 function EHIWaypointLessWaypoint:destroy()
     if self._waypoint_id then
-        self._parent_class._hud:remove_waypoint(self._waypoint_id)
+        managers.hud:remove_waypoint(self._waypoint_id)
     end
     EHIWaypointLessWaypoint.super.destroy(self)
 end
@@ -195,15 +195,15 @@ end
 ---@param id number
 function EHIWaypointsLessWaypoint:RemoveWaypoint(id)
     if table.remove_key(self._waypoints, id) then
-        local init_data = self._parent_class._hud:GetStoredWaypointData(id)
-        self._parent_class._hud:remove_waypoint(id)
-        self._parent_class._hud:AddWaypointSoft(id, init_data) ---@diagnostic disable-line
+        local init_data = managers.hud:GetStoredWaypointData(id)
+        managers.hud:remove_waypoint(id)
+        managers.hud:AddWaypointSoft(id, init_data) ---@diagnostic disable-line
     end
 end
 
 function EHIWaypointsLessWaypoint:destroy()
     for id, _ in pairs(self._waypoints) do
-        self._parent_class._hud:remove_waypoint(id)
+        managers.hud:remove_waypoint(id)
     end
     EHIWaypointsLessWaypoint.super.super.destroy(self)
 end

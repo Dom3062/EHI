@@ -16,7 +16,7 @@ local GetFromCache = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     else
         trigger.waypoint = nil
     end
-    self:CreateTracker()
+    self:CreateTracking()
 end)
 local triggers = {
     [101145] = { time = 180, special_function = GetFromCache, icons = { "pd2_question", Icon.Escape, Icon.LootDrop }, hint = Hints.LootEscape, waypoint = { icon = Icon.Car, position_from_element = 102141 } },

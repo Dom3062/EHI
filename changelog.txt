@@ -1,3 +1,9 @@
+r348 (10. 10. 2025):
+Buffs: Fixed an issue where some Buffs do not update after drop in
+Buffs: Removed "Bloodthirst Ration" and Bloodthirst Gauge will appear on the screen as long the skill is equipped
+Player Ping Tracker: Fixed an empty space
+The White House: Deployables left in the PEOC are ignored after leaving
+
 r347 (03. 10. 2025):
 Holdout: First World Bank: Fixed a load crash on client
 Money Tracker: Fixed an issue where ransom payout is not counted in Holdout

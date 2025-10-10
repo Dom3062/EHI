@@ -1,37 +1,4 @@
 local EHI = EHI
----@class bex_11 : EHIAchievementProgressGroupTracker
----@field super EHIAchievementProgressGroupTracker
-local bex_11 = class(EHIAchievementProgressGroupTracker)
-function bex_11:post_init(...)
-    bex_11.super.post_init(self, ...)
-    self._loot_parent = managers.ehi_loot
-    self:AddLootListener({
-        counter =
-        {
-            f = function(loot)
-                local progress = loot:GetSecuredBagsAmount()
-                self:SetProgress(progress, "bags")
-                if progress >= self._counters_table.bags.max then
-                    self._loot_parent:RemoveListener(self._id)
-                end
-            end
-        }
-    })
-end
-
-function bex_11:pre_destroy()
-    self._loot_parent:RemoveListener(self._id)
-end
-
-function bex_11:CountersDone()
-    self:AnimateBG()
-    self:SetStatusText("finish", self._counters_table.bags.label)
-    self:AnimateMovement(self._anim_params.PanelSizeDecrease)
-    local boxes_label = self._counters_table.boxes.label
-    boxes_label:parent():remove(boxes_label)
-    self._counters_table.boxes = nil
-end
-
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -117,7 +84,7 @@ local achievements =
         difficulty_pass = ovk_and_up,
         elements =
         {
-            [100107] = { class_table = bex_11, counter = {
+            [100107] = { counter = {
                 { max = 11, id = "bags" },
                 { max = 240, id = "boxes" }
             }, call_done_function = true, status_is_overridable = true },
@@ -125,7 +92,39 @@ local achievements =
                 self._trackers:CallFunction(trigger.id, "IncreaseProgress", 1, "boxes")
             end) },
             [103772] = { special_function = SF.SetAchievementFailed }
-        }
+        },
+        preparse_callback = function(data)
+            ---@class bex_11 : EHIAchievementProgressGroupTracker
+            ---@field super EHIAchievementProgressGroupTracker
+            local bex_11 = class(EHIAchievementProgressGroupTracker)
+            function bex_11:post_init(...)
+                bex_11.super.post_init(self, ...)
+                self:AddLootListener({
+                    counter =
+                    {
+                        f = function(loot)
+                            local progress = loot:GetSecuredBagsAmount()
+                            self:SetProgress(progress, "bags")
+                            if progress >= self._counters_table.bags.max then
+                                managers.ehi_loot:RemoveListener(self._id)
+                            end
+                        end
+                    }
+                })
+            end
+            function bex_11:pre_destroy()
+                managers.ehi_loot:RemoveListener(self._id)
+            end
+            function bex_11:CountersDone()
+                self:AnimateBG()
+                self:SetStatusText("finish", self._counters_table.bags.label)
+                self:AnimateMovement(self._anim_params.PanelSizeDecrease)
+                local boxes_label = self._counters_table.boxes.label
+                boxes_label:parent():remove(boxes_label)
+                self._counters_table.boxes = nil
+            end
+            data.elements[100107].class_table = bex_11
+        end
     }
 }
 

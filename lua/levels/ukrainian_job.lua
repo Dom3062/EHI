@@ -56,7 +56,7 @@ local achievements =
         {
             [100074] = { status = Status.Alarm, class = TT.Achievement.Status, special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
                 if self._utils:InteractionExists("circuit_breaker_off") then
-                    self:CreateTracker()
+                    self:CreateTracking()
                 end
             end) },
             [104406] = { status = Status.Finish, special_function = SF.SetAchievementStatus },
@@ -103,7 +103,7 @@ if EHI:IsEscapeChanceEnabled() then
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, escape_chance_start)
     end)
-    other[101614] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    other[101614] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103183] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103194 } }

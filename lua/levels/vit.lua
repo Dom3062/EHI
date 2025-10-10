@@ -29,8 +29,8 @@ local triggers = {
     [1020951] = { time = 26, id = "AirlockOpenOutside", icons = { Icon.Door }, condition_function = CF.IsStealth, hint = Hints.Wait },
     [1020952] = EHI:AddEndlessAssault(26, "AirlockOpenOutsideEndlessAssault", true),
 
-    [102104] = { time = 30 + 26, id = "LockeHeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element = 101914 }, hint = Hints.Escape }, -- 30s delay + 26s escape zone delay
-    [104036] = { time = 26, id = "LockeHeliEscapeStealth", icons = Icon.HeliEscapeNoLoot, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101914, restore_on_done = true }, hint = Hints.Escape }
+    [102104] = { time = 30 + 26, id = "LockeHeliEscapeLoud", icons = Icon.HeliEscapeNoLoot, condition_function = CF.IsLoud, waypoint = { data_from_element = 101914 }, hint = Hints.Escape }, -- 30s delay + 26s escape zone delay
+    [104036] = { time = 26, id = "LockeHeliEscapeStealth", icons = Icon.HeliEscapeNoLoot, condition_function = CF.IsStealth, waypoint = { data_from_element_and_remove_vanilla_waypoint = 101914, restore_on_done = true }, hint = Hints.Escape }
 }
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     triggers[101580] = { chance = 20, id = "TearGasOfficeChance", icons = { Icon.Teargas }, class = TT.Chance, hint = Hints.vit_Teargas }
@@ -146,6 +146,17 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101324] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
     -- Enemies killed via "ElementAIRemove" DOES NOT TRIGGER ElementEnemyDummyTrigger if "force_ragdoll" and "true_death" are set to "false" and "use_instigator" is set to "true"
     other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }
+end
+if managers.ehi_deployable then
+    managers.ehi_deployable:AddPositionShapeCheck(Vector3(7487, 4600, -1725), Rotation(0, 0, -0), 8000, 4440, 3260) -- Same as ´peoc_kill_area´ ElementAreaTrigger 103128
+    other[102083] = { special_function = SF.CustomCode, f = function()
+        managers.ehi_deployable:RunPositionShapeChecks()
+    end, load_sync = function(self) ---@param self EHIMissionElementTrigger
+        local despawn_area = managers.mission:get_element_by_id(103128) --[[@as ElementAreaTrigger?]]
+        if despawn_area and despawn_area:enabled() then
+            self:Trigger()
+        end
+    end }
 end
 EHI.Unit:UpdateUnits({
     [EHI:GetInstanceUnitID(100058, 22250)] = { tracker_merge_id = "MaxHacks" },

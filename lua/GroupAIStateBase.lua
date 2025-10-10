@@ -4,6 +4,9 @@ if EHI:CheckLoadHook("GroupAIStateBase") then
 end
 
 local dropin = false
+managers.ehi_sync:AddDropInListener(function()
+    dropin = true
+end)
 local original =
 {
     init = GroupAIStateBase.init,
@@ -16,7 +19,7 @@ local original =
 }
 
 function GroupAIStateBase:init(...)
-	original.init(self, ...)
+    original.init(self, ...)
     self:add_listener("EHI_EnemyWeaponsHot", "enemy_weapons_hot", function()
         EHI:RunOnAlarmCallbacks(dropin)
         self:remove_listener("EHI_EnemyWeaponsHot")
@@ -39,7 +42,6 @@ function GroupAIStateBase:sync_alarm_pager_bluff(...) -- Called by client
 end
 
 function GroupAIStateBase:load(...)
-    dropin = managers.ehi_sync:IsDropIn()
     original.load(self, ...)
     if self._enemy_weapons_hot then
         EHI:RunOnAlarmCallbacks(dropin)
@@ -52,7 +54,7 @@ function GroupAIStateBase:load(...)
         end
     else
         managers.ehi_tracker:SetProgress("Pagers", self._nr_successful_alarm_pager_bluffs)
-	end
+    end
 end
 
 if not tweak_data.levels:IsStealthRequired() then
@@ -158,6 +160,33 @@ if not tweak_data.levels:IsStealthRequired() then
         end
         EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, local_peer, peer_id)
             UpdateTracker(key, 0, peer_id)
+        end)
+    end
+    if not tweak_data.levels:IsLevelSafehouse() and EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
+        if EHI.IsHost then
+            original.on_hostage_state = GroupAIStateBase.on_hostage_state
+            function GroupAIStateBase:on_hostage_state(...)
+                local original_count = self._hostage_headcount
+                original.on_hostage_state(self, ...)
+                if original_count ~= self._hostage_headcount then
+                    managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountHost", self._hostage_headcount, self._police_hostage_headcount)
+                end
+            end
+        else
+            original.sync_hostage_headcount = GroupAIStateBase.sync_hostage_headcount
+            function GroupAIStateBase:sync_hostage_headcount(...)
+                original.sync_hostage_headcount(self, ...)
+                managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountClient", self._hostage_headcount)
+            end
+        end
+        EHI:AddOnSpawnedCallback(function()
+            local ai_state = managers.groupai:state()
+            managers.ehi_tracker:AddTracker({
+                id = "HostageCount",
+                total_hostages = ai_state:hostage_count(),
+                police_hostages = EHI.IsHost and ai_state:police_hostage_count(),
+                class = "EHIHostageCountTracker"
+            })
         end)
     end
     if EHI:GetTrackerOption("show_marshal_initial_time") then
@@ -291,32 +320,4 @@ if EHI.IsHost and (EHI:CanShowCivilianCountTracker() and EHI:GetOption("civilian
         original.on_civilian_tied(self, u_key, ...)
         managers.ehi_tracker:CallFunction("CivilianCount", "CivilianTied", u_key)
     end
-end
-
-if not tweak_data.levels:IsStealthRequired() and not tweak_data.levels:IsLevelSafehouse() and EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
-    if EHI.IsHost then
-        original.on_hostage_state = GroupAIStateBase.on_hostage_state
-        function GroupAIStateBase:on_hostage_state(...)
-            local original_count = self._hostage_headcount
-            original.on_hostage_state(self, ...)
-            if original_count ~= self._hostage_headcount then
-                managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountHost", self._hostage_headcount, self._police_hostage_headcount)
-            end
-        end
-    else
-        original.sync_hostage_headcount = GroupAIStateBase.sync_hostage_headcount
-        function GroupAIStateBase:sync_hostage_headcount(...)
-            original.sync_hostage_headcount(self, ...)
-            managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountClient", self._hostage_headcount)
-        end
-    end
-    EHI:AddOnSpawnedCallback(function()
-        local ai_state = managers.groupai:state()
-        managers.ehi_tracker:AddTracker({
-            id = "HostageCount",
-            total_hostages = ai_state:hostage_count(),
-            police_hostages = EHI.IsHost and ai_state:police_hostage_count(),
-            class = "EHIHostageCountTracker"
-        })
-    end)
 end

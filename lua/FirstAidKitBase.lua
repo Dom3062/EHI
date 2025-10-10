@@ -25,10 +25,23 @@ FirstAidKitBase.__ehi_tracker = EHI:GetOption("show_equipment_aggregate_health")
 function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    managers.ehi_deployable:UpdateAmount(self._ehi_key, 1, "first_aid_kit", self.__ehi_tracker)
+    if not self._ignore then
+        managers.ehi_deployable:OnDeployablePlaced(unit)
+        managers.ehi_deployable:UpdateAmount(self._ehi_key, 1, "first_aid_kit", self.__ehi_tracker)
+    end
+end
+
+function FirstAidKitBase:SetIgnore()
+    if self._ignore_set_by_parent then ---@diagnostic disable-line
+        return
+    end
+    self._ignore = true
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, "first_aid_kit", self.__ehi_tracker)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
 end
 
 function FirstAidKitBase:destroy(...)
     managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, "first_aid_kit", self.__ehi_tracker)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
     original.destroy(self, ...)
 end

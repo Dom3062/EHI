@@ -10,8 +10,8 @@ EHIDeployableManager._equipment_map =
     grenade = "grenade_crate",
     bodybag = "bodybags_bag"
 }
+EHIDeployableManager._deployables = {} ---@type table<string, { unit: UnitDeployable, tracker_type: string? }>
 function EHIDeployableManager:post_init()
-    self._deployables = {} ---@type table<string, { unit: UnitDeployable, tracker_type: string? }>
     EHI:AddOnAlarmCallback(function(dropin)
         self:AddEquipmentToIgnore(self._equipment_map.bodybag)
     end)
@@ -151,6 +151,60 @@ function EHIDeployableManager:UpdateAmount(key, amount, id, t_id)
         self:CreateDeployableTracker(tracker, id)
     end
     managers.ehi_tracker:CallFunction(tracker, "UpdateAmount", key, amount, id)
+end
+
+---@param pos Vector3
+---@param rot Rotation
+---@param width number
+---@param depth number
+---@param height number
+function EHIDeployableManager:AddPositionShapeCheck(pos, rot, width, depth, height)
+    self._shapes = self._shapes or {} ---@type CoreShapeManager.ShapeBoxMiddle[]
+    table.insert(self._shapes, CoreShapeManager.ShapeBoxMiddle:new({
+        position = pos,
+        rotation = rot,
+        width = width,
+        depth = depth,
+        height = height
+    }))
+end
+
+function EHIDeployableManager:RunPositionShapeChecks()
+    if self._ignore_shape_check_run then
+        return
+    end
+    self._ignore_shape_check_run = true
+    if self._shape_check_callback then
+        self._shape_check_callback:call()
+        self._shape_check_callback = nil
+    end
+end
+
+---@param unit UnitDeployable
+function EHIDeployableManager:OnDeployablePlaced(unit)
+    if not self._shapes then
+        return
+    end
+    local pos = unit:position()
+    local base = unit:base() --[[@as AmmoBagBase|GrenadeCrateBase]]
+    for _, shape in ipairs(self._shapes) do
+        if shape:is_inside(pos) then
+            if self._ignore_shape_check_run then
+                base:SetIgnore()
+            else
+                self._shape_check_callback = self._shape_check_callback or ListenerHolder:new()
+                self._shape_check_callback:add(base._ehi_key, callback(base, base, "SetIgnore"))
+            end
+            break
+        end
+    end
+end
+
+---@param key string
+function EHIDeployableManager:OnDeployableConsumed(key)
+    if self._shape_check_callback then
+        self._shape_check_callback:remove(key)
+    end
 end
 
 EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param managers managers

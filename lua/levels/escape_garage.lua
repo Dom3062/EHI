@@ -29,6 +29,7 @@ if EHI:IsLootCounterVisible() then
     end, { element = { 101999, 102000, 101442 } })
 end
 
+tweak_data.ehi.functions.achievements.armored_4()
 EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other

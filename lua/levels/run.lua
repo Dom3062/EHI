@@ -1,25 +1,3 @@
----@class run_9 : EHIAchievementUnlockTracker
----@field super EHIAchievementUnlockTracker
-local run_9 = class(EHIAchievementUnlockTracker)
-function run_9:pre_init(params)
-    self._refresh_on_delete = true
-    run_9.super.pre_init(self, params)
-end
-
-function run_9:SetFailed()
-    self._refresh_on_delete = nil
-    run_9.super.SetFailed(self)
-end
-
-function run_9:Refresh()
-    self._text:stop()
-    self._achieved_popup_showed = true
-    self:SetTextColor(Color.green)
-    self:SetStatusText("finish")
-    self:AnimateBG()
-    self:RemoveTrackerFromUpdate()
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local Hints = EHI.Hints
@@ -99,7 +77,7 @@ local achievements =
     {
         elements =
         {
-            [100120] = { time = 1800, class_table = run_9 },
+            [100120] = { time = 1800, show_finish_on_done = true, class = TT.Achievement.Unlock },
             [100144] = { special_function = SF.SetAchievementFailed }
         }
     },

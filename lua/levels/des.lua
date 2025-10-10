@@ -133,7 +133,7 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
         elseif trigger.id == "ChemSetInterrupted" then
             self._tracking:ForceRemove(trigger.data.id)
         end
-        self:CreateTracker()
+        self:CreateTracking()
     end)
     triggers[102593].special_function = ChemSet
     triggers[101217].special_function = ChemSet

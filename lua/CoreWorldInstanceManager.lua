@@ -553,7 +553,7 @@ EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers) ---@param m
             if self._tracking:Exists(trigger.id) then
                 self._tracking:SetTime(trigger.id, trigger.time)
             else
-                self:CreateTracker()
+                self:CreateTracking()
             end
         end
     end)

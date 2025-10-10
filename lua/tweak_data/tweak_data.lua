@@ -70,15 +70,6 @@ function table.remove_key(map, key)
     return value
 end
 
----Works the same as `table.empty` but it returns `true` if a nil table is passed to the function
----@param v table?
-function table.ehi_empty(v)
-    if v then -- It cannot be on one line because of boolean values
-        return table.empty(v)
-    end
-    return true
-end
-
 ---Works the same as `table.size` but it returns `0` if a nil table is passed to the function
 ---@param v table?
 function table.ehi_size(v)

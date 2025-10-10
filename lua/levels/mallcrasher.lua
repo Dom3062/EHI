@@ -1,85 +1,4 @@
 local EHI = EHI
-local Color = Color
----@class ameno_3 : EHIAchievementTracker, EHINeededValueTracker, EHIAchievementProgressTracker
----@field super EHIAchievementTracker
-local ameno_3 = class(EHIAchievementTracker)
-ameno_3.FormatNumber = EHINeededValueTracker.Format
-ameno_3.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
-ameno_3.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-ameno_3.AddLootListener = EHIAchievementProgressTracker.AddLootListener
----@param class ameno_3
-ameno_3._anim_warning = function(o, old_color, color, start_t, class)
-    local c = Color(old_color.r, old_color.g, old_color.b)
-    local money = class._money_text
-    while true do
-        local t = 1
-        while t > 0 do
-            t = t - coroutine.yield()
-            local n = math.sin(t * 180)
-            c.r = math.lerp(old_color.r, color.r, n)
-            c.g = math.lerp(old_color.g, color.g, n)
-            c.b = math.lerp(old_color.b, color.b, n)
-            o:set_color(c)
-            money:set_color(c)
-        end
-        t = 1
-    end
-end
-function ameno_3:pre_init(params)
-    self._cash_sign = managers.localization:text("cash_sign")
-    self._max = 1800000
-    self._progress = params.progress or 0
-    self._progress_formatted = self:FormatNumber2(self._progress)
-    self._max_formatted = self:FormatNumber2(self._max)
-end
-
-function ameno_3:OverridePanel()
-    self:SetBGSize()
-    self._money_text = self:CreateText({
-        text = self:FormatNumber(),
-        w = self._bg_box:w() / 2,
-        left = 0,
-        FitTheText = true
-    })
-    self._text:set_left(self._money_text:right())
-    self._loot_parent = managers.ehi_loot
-    self:AddLootListener({
-        counter =
-        {
-            check_type = EHI.Const.LootCounter.CheckType.ValueOfSmallLoot
-        }
-    })
-end
-
-function ameno_3:SetProgress(progress)
-    if self._progress ~= progress and not self._disable_counting then
-        self._progress = progress
-        self._progress_formatted = self:FormatNumber2(progress)
-        self._money_text:set_text(self:FormatNumber())
-        self:FitTheText(self._money_text)
-        self:AnimateBG()
-        self:SetCompleted()
-    end
-end
-
-function ameno_3:SetCompleted()
-    if self._progress >= self._max and not self._status then
-        self._status = "completed"
-        self._disable_counting = true
-        self._achieved_popup_showed = true
-        self:delete_with_delay(true)
-    end
-end
-
-function ameno_3:SetTextColor(color)
-    EHINeededValueTracker.super.SetTextColor(self, color)
-    self._money_text:set_color(color)
-end
-
-function ameno_3:pre_destroy()
-    self._loot_parent:RemoveListener("ameno_3")
-end
-
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
@@ -132,7 +51,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficulty(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [301148] = { time = 50, class_table = ameno_3 },
+            [301148] = { time = 50, class = "EHIameno_3Tracker" },
         },
         load_sync = function(self)
             local t = 50 - math.max(self._trackers._t, self._tracking._t)
@@ -143,8 +62,84 @@ local achievements =
                     id = "ameno_3",
                     progress = progress,
                     icons = EHI:GetAchievementIcon("ameno_3"),
-                    class_table = ameno_3
+                    class = "EHIameno_3Tracker"
                 })
+            end
+        end,
+        parsed_callback = function()
+            ---@class EHIameno_3Tracker : EHIAchievementTracker, EHINeededValueTracker, EHIAchievementProgressTracker
+            ---@field super EHIAchievementTracker
+            EHIameno_3Tracker = class(EHIAchievementTracker)
+            EHIameno_3Tracker.FormatNumber = EHINeededValueTracker.Format
+            EHIameno_3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
+            EHIameno_3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+            EHIameno_3Tracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
+            ---@param class EHIameno_3Tracker
+            EHIameno_3Tracker._anim_warning = function(o, old_color, color, start_t, class)
+                local c = Color(old_color.r, old_color.g, old_color.b)
+                local money = class._money_text
+                while true do
+                    local t = 1
+                    while t > 0 do
+                        t = t - coroutine.yield()
+                        local n = math.sin(t * 180)
+                        c.r = math.lerp(old_color.r, color.r, n)
+                        c.g = math.lerp(old_color.g, color.g, n)
+                        c.b = math.lerp(old_color.b, color.b, n)
+                        o:set_color(c)
+                        money:set_color(c)
+                    end
+                    t = 1
+                end
+            end
+            function EHIameno_3Tracker:pre_init(params)
+                self._cash_sign = managers.localization:text("cash_sign")
+                self._max = 1800000
+                self._progress = params.progress or 0
+                self._progress_formatted = self:FormatNumber2(self._progress)
+                self._max_formatted = self:FormatNumber2(self._max)
+            end
+            function EHIameno_3Tracker:OverridePanel()
+                self:SetBGSize()
+                self._money_text = self:CreateText({
+                    text = self:FormatNumber(),
+                    w = self._bg_box:w() / 2,
+                    left = 0,
+                    FitTheText = true
+                })
+                self._text:set_left(self._money_text:right())
+                self:AddLootListener({
+                    counter =
+                    {
+                        check_type = EHI.Const.LootCounter.CheckType.ValueOfSmallLoot
+                    }
+                })
+            end
+            function EHIameno_3Tracker:SetProgress(progress)
+                if self._progress ~= progress and not self._disable_counting then
+                    self._progress = progress
+                    self._progress_formatted = self:FormatNumber2(progress)
+                    self._money_text:set_text(self:FormatNumber())
+                    self:FitTheText(self._money_text)
+                    self:AnimateBG()
+                    self:SetCompleted()
+                end
+            end
+            function EHIameno_3Tracker:SetCompleted()
+                if self._progress >= self._max and not self._status then
+                    self._status = "completed"
+                    self._disable_counting = true
+                    self._achieved_popup_showed = true
+                    self:delete_with_delay(true)
+                end
+            end
+            function EHIameno_3Tracker:SetTextColor(color)
+                EHINeededValueTracker.super.SetTextColor(self, color)
+                self._money_text:set_color(color)
+            end
+            function EHIameno_3Tracker:pre_destroy()
+                EHIameno_3Tracker.super.pre_destroy(self)
+                managers.ehi_loot:RemoveListener("ameno_3")
             end
         end
     },

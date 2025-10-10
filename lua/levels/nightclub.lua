@@ -139,7 +139,7 @@ if EHI:IsEscapeChanceEnabled() then
         -- Reported in: https://steamcommunity.com/app/218620/discussions/14/5487063042655462839/
         managers.ehi_escape:AddEscapeChanceTracker(false, 25, 0)
     end)
-    --other[104285] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    --other[104285] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     ---@class EHIMultipleSniperLoopsTracker : EHITracker, EHISniperBaseTracker

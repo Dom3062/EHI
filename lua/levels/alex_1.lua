@@ -10,7 +10,7 @@ local assault_delay_methlab = 20 + assault_delay
 local triggers = {
     [101970] = { time = (240 + 12) - 3, waypoint = { position_from_element = 101454 }, hint = Hints.LootEscape },
     [100199] = { time = 5 + 1, id = "CookingDone", icons = { Icon.Methlab, Icon.Interact }, waypoint = { data_from_element = 100485 }, hint = Hints.mia_1_MethDone, special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
-        self:CreateTracker()
+        self:CreateTracking()
         self._cache.BagsCooked = (self._cache.BagsCooked or 0) + 1
         if self._cache.BagsCooked >= 7 then
             self._trackers:ForceRemoveTracker("CookingChance")
@@ -49,7 +49,7 @@ local other =
     [100380] = EHI:AddAssaultDelay({ control = 45 + 40 + assault_delay }),
     [100707] = EHI:AddAssaultDelay({ control = assault_delay_methlab, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SetTimeIfLower", trigger.time) then
-            self:CreateTracker()
+            self:CreateTracking()
         end
     end), trigger_once = true })
 }
@@ -122,7 +122,7 @@ EHI:ShowAchievementLootCounter({
     waypoint_loot_counter = { element = 101454 }
 })
 if EHI:IsEscapeChanceEnabled() then
-    other[101863] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement }
+    other[101863] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
     EHI:AddOnAlarmCallback(function(dropin)
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 25)
     end)

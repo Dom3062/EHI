@@ -43,7 +43,7 @@ local other =
         if (EHI.IsHost and element:counter_value() ~= 0) or self._trackers:Exists(trigger.id) then
             return
         end
-        self:CreateTracker()
+        self:CreateTracking()
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

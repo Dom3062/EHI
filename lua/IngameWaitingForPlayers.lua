@@ -68,8 +68,6 @@ local events =
     }
 }
 
-local armored_4_levels = table.list_to_set(tweak_data.achievement.complete_heist_achievements.i_take_scores.jobs)
-
 local primary, secondary, melee, grenade, is_stealth = nil, nil, nil, nil, false ---@type EquippedWeaponData, EquippedWeaponData, string, string, boolean
 local VeryHardOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard)
 local OVKOrAbove = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
@@ -336,6 +334,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     if not game_state_machine:verify_game_state(GameStateFilters.any_ingame_playing, next_state:name()) then --- Don't do anything if host disconnected before spawn / closed game in Singleplayer
         challenges = nil
         sh_dailies = nil
+        events = nil
         return
     end
     EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, not Global.hud_disabled)
@@ -343,6 +342,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     if EHI._cache.UnlockablesAreDisabled or GunGameGame or TIM then -- Twitch Integration Mod
         challenges = nil
         sh_dailies = nil
+        events = nil
         return
     end
     primary = managers.blackmarket:equipped_primary()
@@ -354,6 +354,47 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     local mask_id = managers.blackmarket:equipped_mask().mask_id
     local from_beginning = managers.statistics:started_session_from_beginning()
     EHI:CallCallbackOnce("Spawned2", self, managers.job:current_real_job_id(), level, from_beginning)
+    if level == "safehouse" or level == "chill" then
+        if EHI:GetUnlockableAndOption("show_achievements") and EHI:GetUnlockableOption("show_achievements_other") then
+            if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It" achievement
+                -- Only tracked in Safehouse to prevent tracker spam in heists
+                ---@class EHIovk3Tracker : EHIAchievementUnlockTracker
+                ---@field super EHIAchievementUnlockTracker
+                local EHIovk3Tracker = class(EHIAchievementUnlockTracker)
+                EHIovk3Tracker._forced_icons = EHI:GetAchievementIcon("ovk_3")
+                function EHIovk3Tracker:Reset()
+                    self:SetTime(25)
+                    self._fade_time = 5
+                    self:StopAndSetTextColor(Color.white)
+                    self.update = EHIovk3Tracker.super.update
+                end
+                Hooks:PostHook(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
+                    if self._shooting and self:get_name_id() == "m134" and managers.ehi_tracker:CallFunction2("ovk_3", "Reset") then
+                        managers.ehi_tracker:AddTracker({
+                            id = "ovk_3",
+                            time = 25,
+                            status_is_overridable = false,
+                            class_table = EHIovk3Tracker
+                        })
+                    end
+                end)
+                Hooks:PostHook(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
+                    managers.ehi_unlockable:SetAchievementFailed("ovk_3")
+                end)
+                Hooks:PostHook(AchievmentManager, "award", "EHI_ovk_3_award", function(am, id)
+                    if id == "ovk_3" then
+                        EHI:Unhook("ovk_3_start_shooting")
+                        EHI:Unhook("ovk_3_stop_shooting")
+                        EHI:Unhook("ovk_3_award")
+                    end
+                end)
+            end
+        end
+        challenges = nil
+        sh_dailies = nil
+        events = nil
+        return
+    end
     if EHI:GetUnlockableAndOption("show_achievements") then
         if EHI:GetUnlockableOption("show_achievements_weapon") then -- Kill with weapons (primary or secondary)
             if EHI:IsAchievementLocked2("halloween_6") and mask_id == tweak_data.achievement.pump_action.mask and self:EHIHasWeaponTypeEquipped("shotgun") then -- "Pump-Action" achievement
@@ -845,39 +886,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     end
                 end)
             end
-            if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It" achievement
-                -- Only tracked in Safehouse to prevent tracker spam in heists
-                ---@class EHIovk3Tracker : EHIAchievementUnlockTracker
-                ---@field super EHIAchievementUnlockTracker
-                local EHIovk3Tracker = class(EHIAchievementUnlockTracker)
-                EHIovk3Tracker._forced_icons = EHI:GetAchievementIcon("ovk_3")
-                function EHIovk3Tracker:Reset()
-                    self:SetTime(25)
-                    self._fade_time = 5
-                    self:StopAndSetTextColor(Color.white)
-                    self.update = EHIovk3Tracker.super.update
-                end
-                Hooks:PostHook(RaycastWeaponBase, "start_shooting", "EHI_ovk_3_start_shooting", function(self, ...)
-                    if self._shooting and self:get_name_id() == "m134" and managers.ehi_tracker:CallFunction2("ovk_3", "Reset") then
-                        managers.ehi_tracker:AddTracker({
-                            id = "ovk_3",
-                            time = 25,
-                            status_is_overridable = false,
-                            class_table = EHIovk3Tracker
-                        })
-                    end
-                end)
-                Hooks:PostHook(RaycastWeaponBase, "stop_shooting", "EHI_ovk_3_stop_shooting", function(...)
-                    managers.ehi_unlockable:SetAchievementFailed("ovk_3")
-                end)
-                Hooks:PostHook(AchievmentManager, "award", "EHI_ovk_3_award", function(am, id)
-                    if id == "ovk_3" then
-                        EHI:Unhook("ovk_3_start_shooting")
-                        EHI:Unhook("ovk_3_stop_shooting")
-                        EHI:Unhook("ovk_3_award")
-                    end
-                end)
-            end
             if EHI:IsAchievementLocked2("cac_3") then -- "Denied" achievement
                 local progress = EHI:GetAchievementProgress("cac_3_stats")
                 managers.ehi_hook:HookAchievementAwardProgress("cac_3", function(am, stat, value)
@@ -901,14 +909,6 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end)
             end
             if OVKOrAbove then
-                if armored_4_levels[level] and EHI:IsAchievementLocked2("armored_4") and mask_id == tweak_data.achievement.complete_heist_achievements.i_take_scores.mask and from_beginning then -- I Do What I Do Best, I Take Scores
-                    local progress = EHI:GetAchievementProgress("armored_4_stat")
-                    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
-                        if success and progress < 15 and managers.job:on_last_stage() then
-                            ShowPopup("armored_4", progress + 1, 15)
-                        end
-                    end)
-                end
                 if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and from_beginning then -- From Russia With Love
                     local progress = EHI:GetAchievementProgress("halloween_10_stats")
                     EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)

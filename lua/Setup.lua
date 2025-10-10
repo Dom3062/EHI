@@ -3,6 +3,7 @@ managers.ehi_experience = blt.vm.dofile(EHI.LuaPath .. "EHIExperienceManager.lua
 if EHI:CheckLoadHook("Setup") then
     return
 end
+managers.ehi_sync = blt.vm.dofile(EHI.LuaPath .. "EHISyncManager.lua")
 managers.ehi_tracker = blt.vm.dofile(EHI.LuaPath .. "EHITrackerManager.lua")
 managers.ehi_waypoint = blt.vm.dofile(EHI.LuaPath .. "EHIWaypointManager.lua")
 if EHI:GetOption("show_equipment_tracker") and (EHI:GetOption("show_equipment_doctorbag") or EHI:GetOption("show_equipment_ammobag") or EHI:GetOption("show_equipment_bodybags") or EHI:GetOption("show_equipment_grenadecases") or EHI:GetOption("show_equipment_firstaidkit")) then
@@ -21,7 +22,6 @@ if EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
     managers.ehi_timer = blt.vm.dofile(EHI.LuaPath .. "EHITimerManager.lua")
 end
 managers.ehi_loot = blt.vm.dofile(EHI.LuaPath .. "EHILootManager.lua")
-managers.ehi_sync = blt.vm.dofile(EHI.LuaPath .. "EHISyncManager.lua")
 managers.ehi_hook = blt.vm.dofile(EHI.LuaPath .. "EHIHookManager.lua")
 if EHI:GetOptionAndLoadTracker("show_money_tracker") then
     managers.ehi_money = blt.vm.dofile(EHI.LuaPath .. "EHIMoneyManager.lua")

@@ -323,7 +323,7 @@ _G.EHI =
         -- Optional `arg (1 argument to pass to the function)` and `t`
         CustomCodeDelayed = 1004,
 
-        -- Don't use it directly! Instead, call `EHIManager:RegisterCustomSF()`
+        -- Don't use it directly! Instead, call `EHI.Trigger:RegisterCustomSF()`
         CustomSF = 100000,
         CustomSyncedSF = 200000
     },
@@ -608,6 +608,13 @@ _G.EHI =
         {
             Base = "EHIEventMissionTracker",
             Group = "EHIEventMissionGroupTracker"
+        },
+        -- Do not use it directly, it is here to provide base unlockable classes to be used for achievement, sidejob, trophy or event trackers
+        Unlockable =
+        {
+            Base = "EHIUnlockableTracker",
+            Progress = "EHIUnlockableProgressTracker",
+            TimedProgress = "EHIUnlockableTimedProgressTracker"
         }
     },
 
@@ -1088,7 +1095,6 @@ local function LoadDefaultValues(self)
             bloodthirst = true,
             bloodthirst_reload = true,
             bloodthirst_reload_persistent = false,
-            bloodthirst_ratio = 34, -- value / 100
             berserker = true,
             berserker_refresh = 4, -- 1 / value
             berserker_format = 1, -- 1 = Multiplier; 2 = Percent
@@ -2010,19 +2016,6 @@ function EHI:CleanupCustomSFTriggers(triggers)
     end
 end
 
----@param chance number
----@param check_if_does_not_exist boolean?
----@return ElementTrigger
-function EHI:AddEscapeChance(chance, check_if_does_not_exist)
-    return
-    {
-        id = "EscapeChance",
-        chance = chance,
-        special_function = check_if_does_not_exist and self.SpecialFunctions.AddTrackerIfDoesNotExist,
-        class = "EHIEscapeChanceTracker"
-    }
-end
-
 ---@param params AssaultElementTrigger
 ---@return ElementTrigger?
 function EHI:AddAssaultDelay(params)
@@ -2889,6 +2882,7 @@ end
 
 ---@param objectives table
 ---@param progress_id string
+---@return integer progress, integer max
 function EHI._get_objective_progress(objectives, progress_id)
     for _, objective in ipairs(objectives) do
         if objective.progress_id == progress_id then
@@ -2922,6 +2916,7 @@ end
 
 ---@param event SideJobEventManager_Challenge
 ---@param stat_id string
+---@return integer progress, integer max
 function EHI:GetEventMissionProgressAndMax(event, stat_id)
     for _, objective in ipairs(event.objectives) do
         if objective.challenge_choices then

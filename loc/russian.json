@@ -436,8 +436,6 @@
     "ehi_buffs_skills_fugitive_swan_song" : "Лебединная песня",
     "ehi_buffs_skills_fugitive_brawler_subclass" : "Буян",
     "ehi_buffs_skills_fugitive_bloodthirst" : "Жажда крови",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio" : "Жажда крови (Процент)",
-    "ehi_buffs_skills_fugitive_bloodthirst_ratio_desc" : "Устанавливает процентное соотношение для отображения индикатора Жажда крови\nУстановив его на 0%, бафф всегда будет виден\n\nЗначение по умолчанию — 34%, что соответствует 6 убийствам в ваниле.",
     "ehi_buffs_skills_fugitive_bloodthirst_reload" : "Жажда крови (Перезарядка)",
     "ehi_buffs_skills_fugitive_berserker" : "Берсеркер",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "Обновление Берсеркера",

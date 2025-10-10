@@ -27,7 +27,7 @@ local HeliTimer = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
     if self._tracking:Exists(trigger.id) then
         self._tracking:SetTimeNoAnim(trigger.id, trigger.time)
     else
-        self:CreateTracker()
+        self:CreateTracking()
     end
 end)
 local triggers = {

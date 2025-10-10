@@ -32,7 +32,7 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
         local color_map = EHI.TrackerUtils:GetColorCodesMap()
         triggers[103969].load_sync = function(self) ---@param self EHIMissionElementTrigger
             if self.ConditionFunctions.IsStealth() then
-                self:CreateTracker()
+                self:CreateTracking()
                 local bg = Idstring("g_code_screen")
                 for color, data in pairs(dah_laptop_codes) do
                     local unit_id = EHI:GetInstanceUnitID(100052, data)

@@ -28,7 +28,7 @@ TimerGui._ehi_MissionDoor_clbk = ListenerHolder:new()
 ---@param data number|MissionDoorTable
 function TimerGui.AddMissionDoorData(vector, data)
     TimerGui._ehi_MissionDoor[tostring(vector)] = data
-    TimerGui._ehi_MissionDoor_clbk:call()
+    TimerGui._ehi_MissionDoor_clbk:call(true)
 end
 
 local original =

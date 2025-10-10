@@ -68,7 +68,7 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
         if managers.preplanning:IsAssetBought(101826) then -- Loud entry with C4
             return
         end
-        self:CreateTracker()
+        self:CreateTracking()
     end), waypoint = { waypointless = true } }
     triggers[102761] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, enabled)
         if enabled then
@@ -87,7 +87,7 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
             elseif managers.game_play_central:IsMissionUnitEnabled(EHI:GetInstanceUnitID(100184, 66615)) then -- If it is enabled, the armory has been opened; exit
                 return
             end
-            self:CreateTracker()
+            self:CreateTracking()
             local wd = managers.worlddefinition
             local bg = Idstring("g_top_opened")
             for color, data in pairs(keycode_units) do
@@ -183,7 +183,7 @@ local other =
             t = 30
         end
         trigger.time = trigger.time + t
-        self:CreateTracker()
+        self:CreateTracking()
     end) })
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

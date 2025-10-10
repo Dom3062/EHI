@@ -84,9 +84,9 @@ else -- Framing Frame Day 1
     })
 
     if EHI:IsEscapeChanceEnabled() then
-        other[102437] = { id = "EscapeChance", special_function = SF.IncreaseChanceFromElement } -- +5%
-        other[103884] = { id = "EscapeChance", special_function = SF.SetChanceFromElement } -- 100 %
-        other[100905] = EHI:AddEscapeChance(25, true)
+        other[102437] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
+        other[103884] = managers.ehi_escape:SetChanceFromTrigger() -- 100%
+        other[100905] = managers.ehi_escape:AddTrigger(25, true)
         if EHI.IsClient then
             EHI:AddOnAlarmCallback(function(dropin)
                 managers.ehi_escape:AddEscapeChanceTrackerAndCheckPreplanning(dropin, 25, 104159)

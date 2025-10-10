@@ -5,7 +5,6 @@ function _G.ehi_eventjob_class(super)
     local klass = class(super)
     klass._forced_icon_color = EHIEventMissionTracker._forced_icon_color
     klass._show_started = EHIEventMissionTracker._show_started
-    klass._show_failed = false
     klass._show_desc = EHIEventMissionTracker._show_desc
     klass.PrepareHint = EHIEventMissionTracker.PrepareHint
     klass.ShowStartedPopup = klass.ShowStartedPopup or EHIEventMissionTracker.ShowStartedPopup
@@ -20,7 +19,6 @@ end
 EHIEventMissionTracker = class(EHIAchievementProgressTracker)
 EHIEventMissionTracker._forced_icon_color = { EHI:GetColorFromOption("unlockables", "event") }
 EHIEventMissionTracker._show_started = EHI:GetUnlockableOption("show_event_started_popup")
-EHIEventMissionTracker._show_failed = false
 EHIEventMissionTracker._show_desc = EHI:GetUnlockableOption("show_event_description")
 function EHIEventMissionTracker:PrepareHint(params)
     local id = self._id or params.id

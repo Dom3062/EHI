@@ -48,7 +48,6 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
                     texture = "guis/dlcs/cee/textures/pd2/crime_spree/modifiers_atlas",
                     texture_rect = { 0, 384, 128, 128 },
                     position = self._unit:position(),
-                    warning = true,
                     remove_on_alarm = true,
                     class = "EHIPagerWaypoint"
                 })
@@ -175,22 +174,13 @@ do
         EHI:AddOnLocalizationLoaded(function(loc, lang_name)
             for key, _ in pairs(equipment) do
                 local tweak = tweak_data.interaction[key]
-                if not (tweak and tweak.text_id) then
-                    return
+                if tweak and tweak.text_id then
+                    local text = loc:text(tweak.text_id, { BTN_INTERACT = "$BTN_INTERACT" })
+                    LocalizationManager._custom_localizations[tweak.text_id] = string.format("%s\n%s", text, "$EHI_USE_LEFT")
                 end
-                local text = loc:text(tweak.text_id, { BTN_INTERACT = "$BTN_INTERACT" })
-                LocalizationManager._custom_localizations[tweak.text_id] = string.format("%s\n%s", text, "$EHI_USE_LEFT")
             end
             equipment = nil
-            if lang_name == "czech" then
-                format_function = function(charges)
-                    return string.format("%s %g použití", math.within(charges, 2, 4) and "Zbývají" or "Zbývá", charges)
-                end
-            else
-                format_function = function(charges)
-                    return string.format("%g %s left", charges, charges > 1 and "uses" or "use")
-                end
-            end
+            format_function = tweak_data.ehi:GetLanguageFormat(lang_name).equipment()
         end)
     else
         equipment = nil

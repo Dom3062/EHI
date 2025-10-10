@@ -123,6 +123,57 @@ _G.tweak_data = {
             standard_color = Vector3(0, 0, 0),
             selected_color = Vector3(1, 1, 1)
         }
+    },
+    scale = {
+        is_sd = false,
+        title_image_multiplier = 1,
+        menu_logo_multiplier = 1,
+        menu_border_multiplier = 1,
+        default_font_multiplier = 1 * lang_l_mod,
+        small_font_multiplier = 1 * lang_s_mod,
+        lobby_info_font_size_scale_multiplier = 1 * lang_l_mod,
+        lobby_name_font_size_scale_multiplier = 1 * lang_l_mod,
+        server_list_font_size_multiplier = 1 * lang_l_mod * server_list_font_multiplier,
+        multichoice_arrow_multiplier = 1,
+        align_line_padding_multiplier = 1,
+        menu_arrow_padding_multiplier = 1,
+        briefing_text_h_multiplier = 1 * lang_s_mod,
+        experience_bar_multiplier = 1,
+        hud_equipment_icon_multiplier = 1,
+        hud_default_font_multiplier = 1 * lang_l_mod,
+        hud_ammo_clip_multiplier = 1,
+        hud_health_multiplier = 1,
+        hud_mugshot_multiplier = 1,
+        hud_assault_image_multiplier = 1,
+        hud_crosshair_offset_multiplier = 1,
+        hud_objectives_pad_multiplier = 1,
+        experience_upgrade_multiplier = 1,
+        level_up_multiplier = 1,
+        next_upgrade_font_multiplier = 1 * lang_l_mod,
+        level_up_font_multiplier = 1 * lang_l_mod,
+        present_multiplier = 1,
+        lobby_info_offset_multiplier = 1,
+        info_padding_multiplier = 1,
+        loading_challenge_bar_scale = 1,
+        kit_menu_bar_scale = 1,
+        kit_menu_description_h_scale = 1,
+        button_layout_multiplier = 1,
+        subtitle_pos_multiplier = 1,
+        subtitle_font_multiplier = 1 * lang_l_mod,
+        subtitle_lang_multiplier = subtitle_multiplier,
+        default_font_kern = 0,
+        stats_upgrade_kern = stats_upgrade_kern or 0,
+        level_up_text_kern = 0,
+        victory_screen_kern = victory_screen_kern or 0,
+        upgrade_menu_kern = 0,
+        mugshot_name_kern = 0,
+        objectives_text_kern = objectives_text_kern or 0,
+        objectives_desc_text_kern = objectives_desc_text_kern or 0,
+        kit_description_multiplier = 1 * kit_desc_large,
+        chat_multiplier = 1,
+        chat_menu_h_multiplier = 1,
+        w_interact_multiplier = 1 * w_interact_multiplier,
+        victory_title_multiplier = victory_title_multiplier or 1
     }
 }
 ---@class AchievementsTweakData
@@ -710,6 +761,13 @@ _G.tweak_data.equipments = {
         quantity = {
             1
         }
+    },
+    class_name_to_deployable_id = {
+        BodyBagsBagBase = "bodybags_bag",
+        GrenadeCrateDeployableBase = "grenade_crate",
+        AmmoBagBase = "ammo_bag",
+        DoctorBagBase = "doctor_bag",
+        FirstAidKitBase = "first_aid_kit"
     }
 }
 ---@class GageAssignmentTweakData
@@ -1109,7 +1167,6 @@ _G.game_state_machine = {}
 ---@field ehi_sync EHISyncManager
 ---@field ehi_hook EHIHookManager
 ---@field ehi_money EHIMoneyManager
----@field ehi_common EHICommonDataManager
 ---@field enemy EnemyManager
 ---@field environment_controller CoreEnvironmentControllerManager
 ---@field environment_effects EnvironmentEffectsManager
@@ -1185,6 +1242,13 @@ _G.GrenadeCrateInteractionExt = {}
 _G.CallbackEventHandler = {}
 ---@class CarryTweakData
 _G.CarryTweakData = {}
+---@class CoreShapeManager
+_G.CoreShapeManager = {
+    ---@class CoreShapeManager.ShapeBoxMiddle
+    ---@field new fun(self: self, params: table)
+    ---@field is_inside fun(self: self, pos: Vector3): boolean
+    ShapeBoxMiddle = {}
+}
 ---@class CoreWorldInstanceManager
 _G.CoreWorldInstanceManager = {}
 ---@class CircleBitmapGuiObject
@@ -1434,6 +1498,8 @@ _G.MissionBriefingTabItem = {}
 ---@field tweak_data string
 ---@field _unit Unit
 _G.MissionDoor = {}
+---@class MissionScriptElement
+_G.MissionScriptElement = {}
 ---@class ModifiersManager
 _G.ModifiersManager = {}
 ---@class MoneyManager
@@ -1591,6 +1657,7 @@ end
 ---@field t fun(self: self): string Returns self formatted as @ID<16 byte hex>@; Example: `@IDe166f63494083d58@`
 
 ---@class ElementAreaTrigger : MissionScriptElement
+---@field _chk_setup_local_client_on_execute_elements fun(self: self)
 ---@field _is_inside fun(self: self, position: Vector3): boolean
 
 ---@class ElementCounterFilter : MissionScriptElement
@@ -1620,16 +1687,19 @@ end
 
 ---@class MissionScript
 ---@field element fun(self: self, id: number): MissionScriptElement?
+---@field remove_save_state_cb fun(self: self, id: number)
 
 ---@class MissionScriptElement
 ---@field _id number
 ---@field _editor_name string
+---@field _mission_script MissionScript
 ---@field counter_value fun(self: self): number `ElementCounter`
 ---@field enabled fun(self: self): boolean
 ---@field value fun(self: self, value: string): any
 ---@field id fun(self: self): number
 ---@field editor_name fun(self: self): string
 ---@field on_executed fun(self: self, instigator: UnitPlayer|UnitEnemy?, alternative: string?, skip_execute_on_executed: boolean?, sync_id_from: number?)
+---@field set_enabled fun(self: self, enabled: boolean)
 ---@field _is_inside fun(self: self, position: Vector3): boolean `ElementAreaReportTrigger `
 ---@field _values_ok fun(self: self): boolean `ElementStopwatchFilter`
 ---@field _values MissionScriptElement._values
@@ -1783,6 +1853,8 @@ end
 
 ---@class MissionManager
 ---@field _scripts table<string, MissionScript> All running scripts in a mission
+---@field _activate_mission fun(self: self, name: string?)
+---@field _add_script fun(self: self, data: table)
 ---@field add_global_event_listener fun(self: self, key: string, event_types: string[], clbk: function)
 ---@field add_runned_unit_sequence_trigger fun(self: self, unit_id: number, sequence: string, callback: fun(unit: Unit))
 ---@field check_mission_filter fun(self: self, value: number): boolean
@@ -1855,6 +1927,7 @@ end
 
 ---@class SkirmishManager
 ---@field current_wave_number fun(self: self): number
+---@field is_skirmish fun(self: self): boolean
 
 ---@class NetworkQOS
 ---@field packet_loss number?
@@ -2255,6 +2328,7 @@ end
 
 ---@class UnitDeployable : Unit
 ---@field SetCountThisUnit fun(self: self) EHI added function
+---@field SetIgnore fun(self: self) EHI added function
 ---@field SetIgnoreChild fun(self: self) EHI added function
 
 ---@class UnitAmmoDeployable : UnitDeployable

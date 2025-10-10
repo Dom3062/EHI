@@ -12,6 +12,8 @@ function EHIPlayerPingTracker:post_init(params)
     self._n_of_peers = 0
     self._update_callback = callback(self, self, "update")
     self:SetMovement(self._anim_params.PanelSizeIncreaseHalf)
+    self._default_bg_size = self._bg_box:w()
+    self._default_bg_size_half = self._default_bg_size / 2
 end
 
 function EHIPlayerPingTracker:PlayerSpawned()

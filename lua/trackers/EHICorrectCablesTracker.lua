@@ -36,10 +36,10 @@ end
 function EHICorrectCablesTracker:RemoveCode(color_text)
     local text = self._code_index and self._code_index[color_text]
     if text then
-        text:parent():remove(text)
         self._code_index[color_text] = nil
         local _, other_text = next(self._code_index)
         if other_text then
+            text:parent():remove(text)
             self:AnimateTextPosition(0, self._bg_box:w(), other_text, true)
             self:AnimateBG()
         else

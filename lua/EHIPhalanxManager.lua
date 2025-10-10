@@ -151,7 +151,11 @@ function EHIPhalanxManager:AddTracker()
     end
 end
 
-if EHI.IsClient or EHI:IsModInstalled("Allow Winters Spawn Offline", "Offyerrocker") then
+if SuperSeriousShooter then -- Mod by Hoppip https://modworkshop.net/mod/42514
+    function EHIPhalanxManager:IsPhalanxDisabled()
+        return true
+    end
+elseif EHI.IsClient or EHI:IsModInstalled("Allow Winters Spawn Offline", "Offyerrocker") then
     function EHIPhalanxManager:IsPhalanxDisabled()
         return self._phalanx_spawn_chance.max == 0
     end
@@ -163,7 +167,7 @@ end
 
 ---@param data SyncData
 function EHIPhalanxManager:save(data)
-    if tweak_data.levels:IsLevelSkirmish() or not self._so_phalanx then
+    if tweak_data.levels:IsLevelSkirmish() or not self._so_phalanx or self:IsPhalanxDisabled() then
         return
     end
     local state = {}

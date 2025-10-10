@@ -1,11 +1,3 @@
----@class orange_5 : EHIAchievementProgressTracker
-local orange_5 = class(EHIAchievementProgressTracker)
-function orange_5:Finalize()
-    if self._progress < self._max then
-        self:SetFailed()
-    end
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -33,7 +25,7 @@ local achievements =
         difficulty_pass = mayhem_and_up,
         elements =
         {
-            [100279] = { max = 15, class_table = orange_5, status_is_overridable = true, show_finish_after_reaching_target = true },
+            [100279] = { max = 15, class = TT.Achievement.Progress, status_is_overridable = true, show_finish_after_reaching_target = true },
             [EHI:GetInstanceElementID(100471, 21700)] = { special_function = SF.SetAchievementFailed },
             [EHI:GetInstanceElementID(100474, 21700)] = { special_function = SF.IncreaseProgress },
             [EHI:GetInstanceElementID(100005, 12200)] = { special_function = SF.FinalizeAchievement }

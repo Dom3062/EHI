@@ -1,23 +1,4 @@
 local EHI = EHI
----@class fish_6 : EHIAchievementProgressTracker
----@field super EHIAchievementProgressTracker
-local fish_6 = class(EHIAchievementProgressTracker)
-fish_6._forced_icons = EHI:GetAchievementIcon("fish_6")
-function fish_6:pre_init(params)
-    params.max = managers.enemy:GetNumberOfEnemies()
-    CopDamage.register_listener("EHI_fish_6_listener", { "on_damage" }, function(damage_info)
-        if damage_info.result.type == "death" then
-            self:IncreaseProgress()
-        end
-    end)
-    fish_6.super.pre_init(self, params)
-end
-
-function fish_6:pre_destroy()
-    fish_6.super.pre_destroy(self)
-    CopDamage.unregister_listener("EHI_fish_6_listener")
-end
-
 local SF = EHI.SpecialFunctions
 local TT = EHI.Trackers
 ---@type ParseAchievementTable
@@ -48,8 +29,28 @@ local achievements = {
     {
         elements =
         {
-            [100244] = { class_table = fish_6, show_finish_after_reaching_target = true } -- Maximum is set in the tracker; difficulty dependant
-        }
+            [100244] = { show_finish_after_reaching_target = true } -- Maximum is set in the tracker; difficulty dependant
+        },
+        preparse_callback = function(data)
+            ---@class fish_6 : EHIAchievementProgressTracker
+            ---@field super EHIAchievementProgressTracker
+            local fish_6 = class(EHIAchievementProgressTracker)
+            fish_6._forced_icons = EHI:GetAchievementIcon("fish_6")
+            function fish_6:pre_init(params)
+                params.max = managers.enemy:GetNumberOfEnemies()
+                CopDamage.register_listener("EHI_fish_6_listener", { "on_damage" }, function(damage_info)
+                    if damage_info.result.type == "death" then
+                        self:IncreaseProgress()
+                    end
+                end)
+                fish_6.super.pre_init(self, params)
+            end
+            function fish_6:pre_destroy()
+                fish_6.super.pre_destroy(self)
+                CopDamage.unregister_listener("EHI_fish_6_listener")
+            end
+            data.elements[100244].class_table = fish_6
+        end
     }
 }
 

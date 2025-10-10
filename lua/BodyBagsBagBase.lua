@@ -14,13 +14,22 @@ local original =
 {
     init = BodyBagsBagBase.init,
     _set_visual_stage = BodyBagsBagBase._set_visual_stage,
-
-    custom_set_empty = CustomBodyBagsBagBase._set_empty
+    destroy = BodyBagsBagBase.destroy
 }
 
 function BodyBagsBagBase:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
+    managers.ehi_deployable:OnDeployablePlaced(unit)
+end
+
+function BodyBagsBagBase:SetIgnore()
+    if self._ignore_set_by_parent then
+        return
+    end
+    self._ignore = true
+    self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
 end
 
 ---@param amount number?
@@ -33,7 +42,8 @@ function BodyBagsBagBase:_set_visual_stage(...)
     self:UpdateAmount()
 end
 
-function CustomBodyBagsBagBase:_set_empty(...)
-    original.custom_set_empty(self, ...)
-	self:UpdateAmount(0)
+function BodyBagsBagBase:destroy(...)
+    self:UpdateAmount(0)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+	original.destroy(self, ...)
 end

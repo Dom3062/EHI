@@ -50,7 +50,7 @@ local triggers =
         if trigger.waypoint then
             trigger.waypoint.time = trigger.time
         end
-        self:CreateTracker()
+        self:CreateTracking()
     end), fix_wp = EHI:GetInstanceElementID(100068, 4650), success_sequence = EHI:GetInstanceElementID(100016, 4650), waypoint = { class_table = EHIFuelCheckingWaypoint, data_from_element_and_remove_vanilla_waypoint = EHI:GetInstanceElementID(100067, 4650) }, hint = Hints.Wait },
     [103055] = { id = "FuelChecking", special_function = SF.PauseTracker },
     [103070] = { id = "FuelChecking", special_function = SF.RemoveTracker }, -- Checking done; loud

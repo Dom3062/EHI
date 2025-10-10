@@ -611,9 +611,16 @@ do
     dofile(path .. "EHIInaccurateTrackers.lua")
     dofile(path .. "EHITimedTrackers.lua")
     dofile(path .. "EHIGroupTrackers.lua")
-    dofile(path .. "EHIAchievementTrackers.lua")
-    dofile(path .. "EHISideJobTrackers.lua")
-    dofile(path .. "EHIEventMissionTrackers.lua")
+    if EHI:GetOption("show_unlockables") then
+        dofile(path .. "EHIUnlockableTrackers.lua")
+        dofile(path .. "EHIAchievementTrackers.lua")
+        if EHI:GetUnlockableOption("show_dailies") then
+            dofile(path .. "EHISideJobTrackers.lua")
+        end
+        if EHI:GetUnlockableOption("show_events") then
+            dofile(path .. "EHIEventMissionTrackers.lua")
+        end
+    end
 end
 
 if _G.IS_VR then

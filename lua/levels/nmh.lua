@@ -55,7 +55,7 @@ local triggers = {
         local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer?]]
         local o = elevator_counter and elevator_counter:digital_gui()
         if o and o._timer and o._timer ~= 30 then
-            self:CreateTracker()
+            self:CreateTracking()
             self._tracking:Call("EscapeElevator", "SetFloors", o._timer - 4)
             if self._utils:InteractionExists("circuit_breaker") or self._utils:InteractionExists("press_call_elevator") then
                 self._tracking:Pause("EscapeElevator")
@@ -115,7 +115,7 @@ local other =
 {
     [102344] = EHI:AddAssaultDelay({ special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
         if EHI:IsPlayingFromStart() and not self._assault:Exists() then
-            self:CreateTracker()
+            self:CreateTracking()
         end
     end), trigger_once = true }),
     [104721] = EHI:AddCustomCode(function(self)
