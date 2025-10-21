@@ -302,7 +302,7 @@
                     "description": "ehi_buffs_menu_desc",
                     "next_menu": "ehi_buffs_menu",
                     "parent" : "ehi_show_buffs_choice",
-                    "ehi_ver" : 325,
+                    "ehi_ver" : 349,
                     "load_menu" : {
                         "file_path" : "buffs.json"
                     }

@@ -182,7 +182,7 @@
             "id": "ehi_buffs_perks_menu",
             "title": "ehi_buffs_perks_menu",
             "next_menu": "ehi_buffs_perks_menu",
-            "ehi_ver" : 325,
+            "ehi_ver" : 349,
             "load_menu" : {
                 "file_path" : "buff_options/perks.json"
             }

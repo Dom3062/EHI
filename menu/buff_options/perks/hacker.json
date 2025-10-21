@@ -12,7 +12,20 @@
             "callback_arguments": [ "hacker", "pecm_cooldown" ],
             "value": "pecm_cooldown",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_hacker_pecm_cooldown_persistent_choice",
+            "title": "ehi_buffs_perks_hacker_pecm_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "hacker", "pecm_cooldown_persistent" ],
+            "value": "pecm_cooldown_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_hacker_pecm_cooldown_choice",
+            "ehi_ver" : 349
         },
         {
             "type" : "divider",
@@ -27,7 +40,20 @@
             "callback_arguments": [ "hacker", "pecm_dodge" ],
             "value": "pecm_dodge",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_hacker_pecm_dodge_persistent_choice",
+            "title": "ehi_buffs_perks_hacker_pecm_dodge_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "hacker", "pecm_dodge_persistent" ],
+            "value": "pecm_dodge_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_hacker_pecm_dodge_choice",
+            "ehi_ver" : 349
         },
         {
             "type": "toggle",
@@ -38,7 +64,20 @@
             "callback_arguments": [ "hacker", "pecm_jammer" ],
             "value": "pecm_jammer",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_hacker_pecm_jammer_persistent_choice",
+            "title": "ehi_buffs_perks_hacker_pecm_jammer_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "hacker", "pecm_jammer_persistent" ],
+            "value": "pecm_jammer_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_hacker_pecm_jammer_choice",
+            "ehi_ver" : 349
         },
         {
             "type": "toggle",
@@ -49,7 +88,20 @@
             "callback_arguments": [ "hacker", "pecm_feedback" ],
             "value": "pecm_feedback",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_hacker_pecm_feedback_persistent_choice",
+            "title": "ehi_buffs_perks_hacker_pecm_feedback_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "hacker", "pecm_feedback_persistent" ],
+            "value": "pecm_feedback_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_hacker_pecm_feedback_choice",
+            "ehi_ver" : 349
         }
     ]
 }

@@ -4,7 +4,9 @@ EHIPermanentBuffTracker = class(EHIBuffTracker)
 EHIPermanentBuffTracker._DELETE_BUFF_ON_FALSE_SKILL_CHECK = true
 function EHIPermanentBuffTracker:post_init(params)
     self._text:set_text("0")
+    self._activate_on_alarm = params.activate_on_alarm
     self._skill_check = params.skill_check
+    self._stealth_check = params.stealth_check
     self._always_show = params.always_show
     self._show_on_trigger = params.show_on_trigger
     self._show_on_trigger_when_synced = params.show_on_trigger_when_synced
@@ -21,6 +23,21 @@ function EHIPermanentBuffTracker:post_init(params)
                 end
             end)
         end
+    end
+end
+
+function EHIPermanentBuffTracker:SwitchToLoudMode()
+    if self._remove_on_alarm then
+        if self._active then
+            self.Deactivate = self.delete
+        else
+            self:Remove()
+        end
+    elseif self._activate_on_alarm then
+        if not self._active and not self._skill_check then -- Alarm can be called before skill check is called
+            self._parent_class:AddBuffNoUpdate(self._id)
+        end
+        self._activate_on_alarm = nil
     end
 end
 
@@ -67,6 +84,9 @@ function EHIPermanentBuffTracker:SkillCheck()
     if self._always_show or self._show_on_trigger then
         return true
     elseif self._skill_check then
+        if self._stealth_check and not managers.groupai:state():whisper_mode() then
+            return false
+        end
         if self._skill_check.skills then
             local value = false
             for _, upgrade in ipairs(self._skill_check.skills) do
@@ -85,6 +105,8 @@ function EHIPermanentBuffTracker:SkillCheck()
             return true
         end
         return managers.player:has_category_upgrade(self._skill_check.category, self._skill_check.upgrade)
+    elseif self._stealth_check and managers.groupai:state():whisper_mode() then
+        return true
     end
     return false
 end
@@ -92,13 +114,12 @@ end
 function EHIPermanentBuffTracker:PreUpdate()
     self._always_show = nil
     self._skill_check = nil
-    if not self._show_on_trigger then
+    if not self._show_on_trigger and not self._activate_on_alarm then
         self._parent_class:AddBuffNoUpdate(self._id)
-        self._active = true
     end
     self._show_on_trigger = nil
     self._show_on_trigger_when_synced = nil
-    self._delete_on_false_check = nil
+    self._stealth_check = nil
 end
 
 function EHIPermanentBuffTracker:delete()

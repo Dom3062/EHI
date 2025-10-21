@@ -105,6 +105,52 @@ function EHITweakData:new(tweak_data)
     -- Definitions for buffs and their icons
     self.buff =
     {
+        Ability =
+        {
+            dont_show_in_menu = true,
+            skill_check_after_spawn = true,
+            text = "Ability",
+            class = "EHIAbilityBuffTracker",
+            prepopulate_options =
+            {
+                chico_injector = { deck_option = { deck = "kingpin", option = "injector" } },
+                smoke_screen_grenade = { deck_option = { deck = "sicario", option = "smoke_bomb" } },
+                damage_control = { deck_option = { deck = "stoic", option = "duration" } },
+                copr_ability = { deck_option = { deck = "leech", option = "ampule" } }
+            },
+            prepopulate_options_permanent =
+            {
+                chico_injector = { deck_option = { deck = "kingpin", option = "injector_persistent" } },
+                smoke_screen_grenade = { deck_option = { deck = "sicario", option = "smoke_bomb_persistent" } },
+                damage_control = { deck_option = { deck = "stoic", option = "duration_persistent" } },
+                copr_ability = { deck_option = { deck = "leech", option = "ampule_persistent" } }
+            }
+        },
+        AbilityCooldown =
+        {
+            dont_show_in_menu = true,
+            skill_check_after_spawn = true,
+            group = "cooldown",
+            class = "EHIAbilityRefreshBuffTracker",
+            prepopulate_options =
+            {
+                chico_injector = { deck_option = { deck = "kingpin", option = "injector_cooldown" } },
+                smoke_screen_grenade = { deck_option = { deck = "sicario", option = "smoke_bomb_cooldown" } },
+                damage_control = { deck_option = { deck = "stoic", option = "cooldown" } },
+                tag_team = { deck_option = { deck = "tag_team", option = "cooldown" } },
+                pocket_ecm_jammer = { deck_option = { deck = "hacker", option = "pecm_cooldown" } },
+                copr_ability = { deck_option = { deck = "leech", option = "ampule_cooldown" } }
+            },
+            prepopulate_options_permanent =
+            {
+                chico_injector = { deck_option = { deck = "kingpin", option = "injector_cooldown_persistent" } },
+                smoke_screen_grenade = { deck_option = { deck = "sicario", option = "smoke_bomb_cooldown_persistent" } },
+                damage_control = { deck_option = { deck = "stoic", option = "cooldown_persistent" } },
+                tag_team = { deck_option = { deck = "tag_team", option = "cooldown_persistent" } },
+                pocket_ecm_jammer = { deck_option = { deck = "hacker", option = "pecm_cooldown_persistent" } },
+                copr_ability = { deck_option = { deck = "leech", option = "ampule_cooldown_persistent" } }
+            }
+        },
         Health =
         {
             deck = true,
@@ -615,6 +661,8 @@ function EHITweakData:new(tweak_data)
             x = 10,
             y = 11,
             option = "unseen_strike",
+            parent_buff = "CritChance",
+            class = "EHIForceUpdateParentBuffTracker",
             permanent =
             {
                 option = "unseen_strike_persistent",
@@ -622,6 +670,11 @@ function EHITweakData:new(tweak_data)
                 {
                     category = "player",
                     upgrade = "unseen_increased_crit_chance"
+                },
+                class_to_load =
+                {
+                    prerequisite = "EHIPermanentForceUpdateParentBuffTracker",
+                    class = "EHIPermanentForceUpdateParentBuffTracker"
                 }
             }
         },
@@ -651,16 +704,8 @@ function EHITweakData:new(tweak_data)
             text_localize = "ehi_buffs_hint_melee_damage_increase",
             format = "multiplier",
             option = "bloodthirst",
-            permanent =
-            {
-                option_true = true,
-                skill_check =
-                {
-                    category = "player",
-                    upgrade = "melee_damage_stacking"
-                },
-                class = "EHIPermanentGaugeBuffTracker"
-            }
+            skill_check_after_spawn = true,
+            class = "EHIBloodthirstBuffTracker"
         },
         melee_kill_increase_reload_speed =
         {
@@ -687,6 +732,7 @@ function EHITweakData:new(tweak_data)
             x = 6,
             y = 10,
             option = "sixth_sense_refresh",
+            remove_on_alarm = true,
             permanent =
             {
                 option = "sixth_sense_refresh_persistent",
@@ -694,7 +740,8 @@ function EHITweakData:new(tweak_data)
                 {
                     category = "player",
                     upgrade = "standstill_omniscience"
-                }
+                },
+                stealth_check = true
             }
         },
         no_ammo_cost =
@@ -831,7 +878,21 @@ function EHITweakData:new(tweak_data)
             deck_option =
             {
                 deck = "sicario",
-                option = "twitch"
+                option = "twitch",
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "sicario",
+                    option = "twitch_persistent"
+                },
+                class = "EHIPermanentGaugeBuffTracker",
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "dodge_shot_gain"
+                }
             }
         },
         SicarioTwitchCooldown =
@@ -844,6 +905,19 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "sicario",
                 option = "twitch_cooldown"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "sicario",
+                    option = "twitch_cooldown_persistent"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "dodge_shot_gain"
+                }
             }
         },
         ammo_efficiency =
@@ -866,6 +940,7 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             group = "cooldown",
+            text_localize = "ehi_buffs_hint_immunity",
             x = 6,
             y = 1,
             deck_option =
@@ -1118,48 +1193,36 @@ function EHITweakData:new(tweak_data)
                 class = "EHIBikerBuffTracker"
             }
         },
-        chico_injector =
-        {
-            deck = true,
-            folder = "chico",
-            deck_option =
-            {
-                deck = "kingpin",
-                option = "injector"
-            }
-        },
-        smoke_screen_grenade =
-        {
-            deck = true,
-            folder = "max",
-            deck_option =
-            {
-                deck = "sicario",
-                option = "smoke_bomb"
-            }
-        },
-        damage_control =
-        {
-            deck = true,
-            folder = "myh",
-            class = "EHIStoicBuffTracker",
-            deck_option =
-            {
-                deck = "stoic",
-                option = "duration"
-            }
-        },
         TagTeamEffect =
         {
             deck = true,
             folder = "ecp",
+            text = "Ability",
             y = 1,
             deck_option =
             {
                 deck = "tag_team",
                 option = "effect"
             },
-            class = "EHITagTeamBuffTracker"
+            class = "EHITagTeamBuffTracker",
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "tag_team",
+                    option = "effect_persistent"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "tag_team_base"
+                },
+                class_to_load =
+                {
+                    prerequisite = "EHIPermanentTagTeamBuffTracker",
+                    class = "EHIPermanentTagTeamBuffTracker"
+                }
+            }
         },
         pocket_ecm_kill_dodge =
         {
@@ -1168,11 +1231,30 @@ function EHITweakData:new(tweak_data)
             group = "dodge",
             x = 3,
             text_localize = "ehi_buffs_hint_dodge_increase",
-            class = "EHIHackerTemporaryDodgeBuffTracker",
+            parent_buff = "DodgeChance",
+            class = "EHIForceUpdateParentBuffTracker",
             deck_option =
             {
                 deck = "hacker",
                 option = "pecm_dodge",
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "hacker",
+                    option = "pecm_dodge_persistent",
+                    class_to_load =
+                    {
+                        prerequisite = "EHIPermanentForceUpdateParentBuffTracker",
+                        class = "EHIPermanentForceUpdateParentBuffTracker"
+                    },
+                    skill_check =
+                    {
+                        category = "temporary",
+                        upgrade = "pocket_ecm_kill_dodge"
+                    }
+                }
             }
         },
         HackerJammerEffect =
@@ -1184,6 +1266,20 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "hacker",
                 option = "pecm_jammer"
+            },
+            remove_on_alarm = true,
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "hacker",
+                    option = "pecm_jammer_persistent"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "pocket_ecm_jammer_base"
+                }
             }
         },
         HackerFeedbackEffect =
@@ -1195,16 +1291,20 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "hacker",
                 option = "pecm_feedback"
-            }
-        },
-        copr_ability =
-        {
-            deck = true,
-            folder = "copr",
-            deck_option =
+            },
+            activate_on_alarm = true,
+            permanent =
             {
-                deck = "leech",
-                option = "ampule"
+                deck_option =
+                {
+                    deck = "hacker",
+                    option = "pecm_feedback_persistent"
+                },
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "pocket_ecm_jammer_base"
+                }
             }
         },
         headshot_regen_health_bonus =
@@ -1236,6 +1336,7 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             folder = "mrwi",
+            text_localize = "ehi_buffs_hint_immunity",
             x = 3,
             deck_option =
             {
@@ -1254,6 +1355,27 @@ function EHITweakData:new(tweak_data)
                     category = "temporary",
                     upgrade = "mrwi_health_invulnerable"
                 }
+            }
+        },
+        primary_reload_secondary =
+        {
+            deck = true,
+            folder = "mrwi",
+            text = "Primary",
+            deck_option =
+            {
+                deck = "copycat",
+                option = "primary_reload_secondary"
+            },
+            permanent =
+            {
+                option_true = true,
+                skill_check =
+                {
+                    category = "player",
+                    upgrade = "primary_reload_secondary"
+                },
+                class = "EHIPermanentGaugeBuffTracker"
             }
         },
         DamageAbsorption =
@@ -1326,14 +1448,6 @@ function EHITweakData:new(tweak_data)
     self.buff.reload_weapon_faster.group = "increased_weapon_reload"
     self.buff.reload_weapon_faster.option = "running_from_death_reload"
     self.buff.reload_weapon_faster.permanent.option = "running_from_death_reload_persistent"
-    self.buff.chico_injector_cooldown = deep_clone(self.buff.chico_injector)
-    self.buff.chico_injector_cooldown.group = "cooldown"
-    self.buff.chico_injector_cooldown.deck_option.option = "injector_cooldown"
-    self.buff.chico_injector_cooldown.class = "EHIReplenishThrowableBuffTracker"
-    self.buff.smoke_screen_grenade_cooldown = deep_clone(self.buff.chico_injector_cooldown)
-    self.buff.smoke_screen_grenade_cooldown.folder = "max"
-    self.buff.smoke_screen_grenade_cooldown.deck_option.deck = "sicario"
-    self.buff.smoke_screen_grenade_cooldown.deck_option.option = "smoke_bomb_cooldown"
     self.buff.TagTeamAbsorption = deep_clone(self.buff.TagTeamEffect)
     self.buff.TagTeamAbsorption.group = "player_damage_absorption"
     self.buff.TagTeamAbsorption.deck_option.option = "absorption"
@@ -1342,27 +1456,24 @@ function EHITweakData:new(tweak_data)
     self.buff.TagTeamAbsorption.text = "Absorption"
     self.buff.TagTeamAbsorption.format = "damage"
     self.buff.TagTeamAbsorption.class = "EHIGaugeBuffTracker"
-    self.buff.tag_team_cooldown = deep_clone(self.buff.chico_injector_cooldown)
-    self.buff.tag_team_cooldown.folder = "ecp"
-    self.buff.tag_team_cooldown.deck_option.deck = "tag_team"
-    self.buff.tag_team_cooldown.deck_option.option = "cooldown"
-    self.buff.damage_control_cooldown = deep_clone(self.buff.damage_control)
-    self.buff.damage_control_cooldown.group = "cooldown"
-    self.buff.damage_control_cooldown.y = 1
-    self.buff.damage_control_cooldown.deck_option.option = "cooldown"
-    self.buff.damage_control_cooldown.class = "EHIReplenishThrowableBuffTracker"
-    self.buff.pocket_ecm_jammer_cooldown = deep_clone(self.buff.chico_injector_cooldown)
-    self.buff.pocket_ecm_jammer_cooldown.folder = "joy"
-    self.buff.pocket_ecm_jammer_cooldown.deck_option.deck = "hacker"
-    self.buff.pocket_ecm_jammer_cooldown.deck_option.option = "pecm_cooldown"
-    self.buff.copr_ability_cooldown = deep_clone(self.buff.copr_ability)
-    self.buff.copr_ability_cooldown.group = "cooldown"
-    self.buff.copr_ability_cooldown.deck_option.option = "ampule_cooldown"
-    self.buff.copr_ability_cooldown.class = "EHIReplenishThrowableBuffTracker"
     self.buff.mrwi_health_invulnerable_cooldown = deep_clone(self.buff.mrwi_health_invulnerable)
     self.buff.mrwi_health_invulnerable_cooldown.group = "cooldown"
+    self.buff.mrwi_health_invulnerable_cooldown.text_localize = "ehi_buffs_hint_cooldown"
     self.buff.mrwi_health_invulnerable_cooldown.deck_option.option = "grace_period_cooldown"
     self.buff.mrwi_health_invulnerable_cooldown.permanent.deck_option.option = "grace_period_cooldown_persistent"
+    self.buff.secondary_reload_primary = deep_clone(self.buff.primary_reload_secondary)
+    self.buff.secondary_reload_primary.text = "Secondary"
+    self.buff.secondary_reload_primary.deck_option.option = "secondary_reload_primary"
+    self.buff.secondary_reload_primary.permanent.skill_check.upgrade = "secondary_reload_primary"
+    -- Buff redirect for buffs that use more than just one ID
+    self.buff_redirect =
+    {
+        chico_injector = "Ability", -- Kingpin Injector
+        smoke_screen_grenade = "Ability", -- Sicario Smoke Bomb
+        damage_control = "Ability", -- Stoic's Hip Flask
+        --tag_team = "Ability", -- Gas Dispenser
+        copr_ability = "Ability" -- Leech Ampule
+    }
     self.functions =
     {
         achievements =
@@ -1635,10 +1746,8 @@ function EHITweakData:new(tweak_data)
     self.icons.zipline_bag = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.corp_zipline_north.icon) }
     self.icons.tablet = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.crojob2_manifest.icon) }
     self.icons.code = { texture = path, texture_rect = preplanning:get_type_texture_rect(84) } -- Code, currently unused -> hardcoded number
-    if EHI:GetUnlockableAndOption("show_dailies") then
-        self.icons.daily_hangover = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.chca_spiked_drink.icon) }
-        tweak_data.hud_icons.daily_hangover = self.icons.daily_hangover
-    end
+    self.icons.daily_hangover = { texture = path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.chca_spiked_drink.icon) }
+    tweak_data.hud_icons.daily_hangover = self.icons.daily_hangover
     self.__color_redirect =
     {
         [Color.blue] = Color(0, 1, 1) -- Aqua as Blue can be hardly visible on some surfaces

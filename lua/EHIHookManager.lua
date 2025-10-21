@@ -6,14 +6,16 @@ EHIHookManager._cop_damage_hook = "EHI_EHIHookManager_CopDamage__on_damage_recei
 EHIHookManager._element_hook_function = EHI.IsClient and "client_on_executed" or "on_executed"
 ---@param element MissionScriptElement
 ---@param post_call fun(element: MissionScriptElement, instigator: Unit?)
-function EHIHookManager:HookElement(element, post_call)
-    Hooks:PostHook(element, self._element_hook_function, string.format("EHI_Element_%d", element._id), post_call)
+---@param f string?
+function EHIHookManager:HookElement(element, post_call, f)
+    Hooks:PostHook(element, f or self._element_hook_function, string.format("EHI_Element_%d", element._id), post_call)
 end
 
 ---@param element MissionScriptElement
 ---@param pre_call fun(element: MissionScriptElement, instigator: Unit?)
-function EHIHookManager:PrehookElement(element, pre_call)
-    Hooks:PreHook(element, self._element_hook_function, string.format("EHI_Prehook_Element_%d", element._id), pre_call)
+---@param f string?
+function EHIHookManager:PrehookElement(element, pre_call, f)
+    Hooks:PreHook(element, f or self._element_hook_function, string.format("EHI_Prehook_Element_%d", element._id), pre_call)
 end
 
 ---@param id number
@@ -168,6 +170,47 @@ function EHIHookManager:AddShotWithAWeaponListener(f)
         end)
     end
     self._shot_with_weapon_listener:add(f)
+end
+
+---@param id string
+---@param f fun(character_damage: PlayerDamage)
+function EHIHookManager:AddPlayerSpawnedListener(id, f)
+    self._player_spawned_listener = self._player_spawned_listener or ListenerHolder:new()
+    self._player_spawned_listener:add(id, f)
+end
+
+---@param id string
+function EHIHookManager:RemovePlayerSpawnedListener(id)
+    if self._player_spawned_listener then
+        self._player_spawned_listener:remove(id)
+    end
+end
+
+---@param player_damage PlayerDamage
+function EHIHookManager:PlayerSpawned(player_damage)
+    if self._player_spawned_listener then
+        self._player_spawned_listener:call(player_damage)
+    end
+end
+
+---@param id string
+---@param f fun()
+function EHIHookManager:AddPlayerDespawnedListener(id, f)
+    self._player_despawned_listener = self._player_despawned_listener or ListenerHolder:new()
+    self._player_despawned_listener:add(id, f)
+end
+
+function EHIHookManager:PlayerDespawned()
+    if self._player_despawned_listener then
+        self._player_despawned_listener:call()
+    end
+end
+
+---@param id string
+function EHIHookManager:RemovePlayerDespawnedListener(id)
+    if self._player_despawned_listener then
+        self._player_despawned_listener:remove(id)
+    end
 end
 
 return EHIHookManager

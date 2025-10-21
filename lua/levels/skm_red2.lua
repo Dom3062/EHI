@@ -26,7 +26,13 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             })
         end
     end) }
-    other[101322] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
+    other[100366] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
+        -- Snipers can spawn only during assault, if they are suppose to spawn during control state, the filter won't get executed
+        -- and it will effectively block all sniper spawns for the rest of the game
+        -- This is very big oversight from OVK, snipers should spawn all the time and not only during assaults
+        -- Easy fix is to remove the filter
+        self._trackers:CallFunction("Snipers", element:_check_mode() and "SniperSpawnsSuccess" or "RequestRemoval")
+    end) }
 end
 EHI.Mission:ParseTriggers({
     other = other

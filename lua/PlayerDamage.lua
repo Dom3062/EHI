@@ -63,11 +63,11 @@ function PlayerDamage:init(...)
         end
         CopDamage.register_listener("EHI_anarchist_on_damage", { "on_damage" }, on_damage)
     end
-    EHI:CallCallback(EHI.CallbackMessage.Player.Spawned, self)
+    managers.ehi_hook:PlayerSpawned(self)
 end
 
 function PlayerDamage:pre_destroy(...)
-    EHI:CallCallback(EHI.CallbackMessage.Player.Despawned)
+    managers.ehi_hook:PlayerDespawned()
     CopDamage.unregister_listener("EHI_anarchist_on_damage")
     managers.player:unregister_message(Message.SetWeaponStagger, "EHI_Buff_DireNeed")
     managers.ehi_buff:RemoveBuff("DireNeed")
@@ -189,13 +189,12 @@ end
 --/////////////--
 --//  Stoic  //--
 --/////////////--
-if EHI:GetBuffDeckOption("stoic", "dot") then
+if EHI:GetBuffDeckOption("stoic", "duration") then
     original.delay_damage = PlayerDamage.delay_damage
     function PlayerDamage:delay_damage(damage, seconds, ...)
         managers.ehi_buff:AddBuff("damage_control", seconds)
         original.delay_damage(self, damage, seconds, ...)
     end
-
     original.clear_delayed_damage = PlayerDamage.clear_delayed_damage
     function PlayerDamage:clear_delayed_damage(...)
         managers.ehi_buff:RemoveBuff("damage_control")

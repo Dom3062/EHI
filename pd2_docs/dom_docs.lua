@@ -1751,6 +1751,7 @@ end
 ---@field equipped_secondary fun(self: self): EquippedWeaponData
 ---@field equipped_suit_variation fun(self: self): string
 ---@field get_suspicion_offset_of_local fun(self: self, lerp: number, ignore_armor_kit: boolean?): number
+---@field has_equipped_ability fun(self: self): boolean
 ---@field outfit_string fun(self: self): table
 
 ---@class CoreAccessObjectBase
@@ -1952,6 +1953,7 @@ end
 
 ---@class BlackMarketTweakData
 ---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
+---@field projectiles { [string] : { max_amount: integer, texture_bundle_folder: string? } }
 
 ---@class CharacterTweakData._string_.Enemy : table
 ---@field has_alarm_pager boolean
@@ -2241,6 +2243,7 @@ end
 ---@field velocity fun(self: self): Vector3
 
 ---@class RaycastWeaponBase
+---@field get_name_id fun(self: self): string
 ---@field selection_index fun(self: self): number
 ---@field weapon_tweak_data fun(self: self): WeaponTweakData._string_.Weapon
 

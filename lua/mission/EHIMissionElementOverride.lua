@@ -12,7 +12,7 @@ function EHIMissionElementOverride:OverrideElements()
                 if element then
                     element.__ehi_original_on_executed = element.on_executed
                     element.on_executed = tbl_f.on_executed
-                    Hooks:PreHook(element, "operation_remove", string.format("EHI_Prehook_Element_%d", element:id()), tbl_f.operation_remove)
+                    managers.ehi_hook:PrehookElement(element, tbl_f.operation_remove, "operation_remove")
                     self._elements[id] = nil
                     self._overrides[id] = true
                     self._waypoint_override_cache[tbl_f.waypoint_id] = nil

@@ -2,7 +2,10 @@ local EHI = EHI
 ---@class FakeEHIBuffsManager
 FakeEHIBuffsManager = {}
 FakeEHIBuffsManager._filter_hint_buff = function(value, key)
-    return value.text ~= nil
+    if value.dont_show_in_menu then
+        return false
+    end
+    return value.text ~= nil or value.text_localize ~= nil
 end
 ---@param panel Panel
 function FakeEHIBuffsManager:new(panel)
@@ -94,6 +97,7 @@ function FakeEHIBuffsManager:_create_buff_params(buff, saferect_x, saferect_y)
     local params = {}
     params.texture, params.texture_rect = self._tweak_data.get_icon(buff)
     params.text = buff.text
+    params.text_localize = buff.text_localize
     params.w = self._buff_w
     params.h = self._buff_h
     params.x = self._x - saferect_x

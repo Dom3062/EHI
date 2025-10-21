@@ -1,9 +1,25 @@
 ---@class EHIArmorRegenDelayBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIArmorRegenDelayBuffTracker = class(EHIBuffTracker)
-EHIArmorRegenDelayBuffTracker.CanDeleteOnFalseSkillCheck = EHIPermanentBuffTracker.CanDeleteOnFalseSkillCheck
+EHIArmorRegenDelayBuffTracker._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK = true
 function EHIArmorRegenDelayBuffTracker:SkillCheck()
     return not managers.player:has_category_upgrade("player", "armor_to_health_conversion")
+end
+
+---@class EHIBloodthirstBuffTracker : EHIGaugeBuffTracker
+---@field super EHIGaugeBuffTracker
+EHIBloodthirstBuffTracker = class(EHIGaugeBuffTracker)
+EHIBloodthirstBuffTracker._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK = true
+function EHIBloodthirstBuffTracker:SkillCheck()
+    return managers.player:has_category_upgrade("player", "melee_damage_stacking")
+end
+
+function EHIBloodthirstBuffTracker:PreUpdate()
+    local upgrade = managers.player:upgrade_value("player", "melee_damage_stacking")
+    if upgrade and type(upgrade) ~= "number" then
+        self:SetRatio(1 / upgrade.max_multiplier, 1)
+    end
+    self._parent_class:AddBuffNoUpdate(self._id)
 end
 
 ---@class EHIHealthRegenBuffTracker : EHIBuffTracker
@@ -59,13 +75,13 @@ function EHIHealthRegenBuffTracker:post_init(...)
             self:AddBuffToUpdate2()
         end
     end)
-    EHI:AddCallback(EHI.CallbackMessage.Player.Spawned, function(character_damage) ---@param character_damage PlayerDamage
+    managers.ehi_hook:AddPlayerSpawnedListener(self._id, function(character_damage)
         self._character_damage = character_damage
         if self._perform_update_from_spawn then
             self:AddBuffToUpdate2()
         end
     end)
-    EHI:AddCallback(EHI.CallbackMessage.Player.Despawned, function()
+    managers.ehi_hook:AddPlayerDespawnedListener(self._id, function()
         self:RemoveBuffFromUpdate2()
         self._character_damage = nil
         self._max_health = 0
@@ -206,46 +222,21 @@ function EHIStaminaBuffTracker:Deactivate()
     self._active = false
 end
 
----@class EHIStoicBuffTracker : EHIBuffTracker
+---@class EHIForceUpdateParentBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
-EHIStoicBuffTracker = class(EHIBuffTracker)
-function EHIStoicBuffTracker:Activate(t, pos)
-    EHIStoicBuffTracker.super.Activate(self, self._auto_shrug or t, pos)
+EHIForceUpdateParentBuffTracker = class(EHIBuffTracker)
+function EHIForceUpdateParentBuffTracker:post_init(params)
+    self._parent_buff = params.parent_buff
 end
 
-function EHIStoicBuffTracker:Extend(t)
-    EHIStoicBuffTracker.super.Extend(self, self._auto_shrug or t)
+function EHIForceUpdateParentBuffTracker:Activate(...)
+    EHIForceUpdateParentBuffTracker.super.Activate(self, ...)
+    self._parent_class:CallFunction(self._parent_buff, "ForceUpdate")
 end
 
----@param t number
-function EHIStoicBuffTracker:SetAutoShrug(t)
-    self._auto_shrug = t
-end
-
----@class EHIHackerTemporaryDodgeBuffTracker : EHIBuffTracker
----@field super EHIBuffTracker
-EHIHackerTemporaryDodgeBuffTracker = class(EHIBuffTracker)
-function EHIHackerTemporaryDodgeBuffTracker:Activate(...)
-    EHIHackerTemporaryDodgeBuffTracker.super.Activate(self, ...)
-    self._parent_class:CallFunction("DodgeChance", "ForceUpdate")
-end
-
-function EHIHackerTemporaryDodgeBuffTracker:Deactivate()
-    EHIHackerTemporaryDodgeBuffTracker.super.Deactivate(self)
-    self._parent_class:CallFunction("DodgeChance", "ForceUpdate")
-end
-
----@class EHIUnseenStrikeBuffTracker : EHIBuffTracker
----@field super EHIBuffTracker
-EHIUnseenStrikeBuffTracker = class(EHIBuffTracker)
-function EHIUnseenStrikeBuffTracker:Activate(...)
-    EHIUnseenStrikeBuffTracker.super.Activate(self, ...)
-    self._parent_class:CallFunction("CritChance", "ForceUpdate")
-end
-
-function EHIUnseenStrikeBuffTracker:Deactivate()
-    EHIUnseenStrikeBuffTracker.super.Deactivate(self)
-    self._parent_class:CallFunction("CritChance", "ForceUpdate")
+function EHIForceUpdateParentBuffTracker:Deactivate()
+    EHIForceUpdateParentBuffTracker.super.Deactivate(self)
+    self._parent_class:CallFunction(self._parent_buff, "ForceUpdate")
 end
 
 ---@class EHIExPresidentBuffTracker : EHIGaugeBuffTracker
@@ -319,32 +310,6 @@ function EHIManiacBuffTracker:Deactivate()
     EHIManiacBuffTracker.super.Deactivate(self)
 end
 
----@class EHIReplenishThrowableBuffTracker : EHIBuffTracker
----@field super EHIBuffTracker
-EHIReplenishThrowableBuffTracker = class(EHIBuffTracker)
-function EHIReplenishThrowableBuffTracker:post_init(...)
-    self._replenish_count_running = 0
-    self._hint:set_visible(false)
-end
-
-function EHIReplenishThrowableBuffTracker:AddToReplenish()
-    self._replenish_count_running = self._replenish_count_running + 1
-    self:SetHintText(self._replenish_count_running)
-    self._hint:set_visible(self._replenish_count_running >= 2)
-end
-
-function EHIReplenishThrowableBuffTracker:Replenished()
-    self._replenish_count_running = math.max(0, self._replenish_count_running - 1)
-    self:SetHintText(self._replenish_count_running)
-    self._hint:set_visible(self._replenish_count_running >= 2)
-end
-
-function EHIReplenishThrowableBuffTracker:SetCustodyState(state)
-    if state and self._active then
-        self:Deactivate()
-    end
-end
-
 ---@class EHITagTeamBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHITagTeamBuffTracker = class(EHIBuffTracker)
@@ -352,6 +317,127 @@ EHITagTeamBuffTracker = class(EHIBuffTracker)
 ---@param max number
 function EHITagTeamBuffTracker:AddTimeCeil(t, max)
     self._time = math.min(self._time + t, max)
+end
+
+---@class EHIAbilityBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
+---@field _ABILITY_COOLDOWN boolean
+EHIAbilityBuffTracker = class(EHIBuffTracker)
+EHIAbilityBuffTracker._DELETE_BUFF_ON_FALSE_SKILL_CHECK = true
+EHIAbilityBuffTracker._ABILITY_AS_A_GRENADE =
+{
+    smoke_screen_grenade = true
+}
+EHIAbilityBuffTracker._AUTOFAIL_SKILL_CHECK_ON_NOT_ABILITY_COOLDOWN =
+{
+    pocket_ecm_jammer = true
+}
+function EHIAbilityBuffTracker:post_init(params)
+    self._ehi_options = params.options
+    self._ehi_options_permanent = params.options_permanent
+end
+
+function EHIAbilityBuffTracker:Activate(t, ...)
+    EHIAbilityBuffTracker.super.Activate(self, self._duration_override or t, ...)
+end
+
+function EHIAbilityBuffTracker:Extend(t)
+    EHIAbilityBuffTracker.super.Extend(self, self._duration_override or t)
+    if self._persistent and not self._update then
+        self:AddBuffToUpdate()
+        self._update = true
+    end
+end
+
+function EHIAbilityBuffTracker:Deactivate()
+    if self._persistent then
+        self:RemoveBuffFromUpdate()
+        self._update = false
+        return
+    end
+    EHIAbilityBuffTracker.super.Deactivate(self)
+end
+
+---@param ability string
+function EHIAbilityBuffTracker:SetAbilityIcon(ability)
+    local projectile = tweak_data.blackmarket.projectiles[ability] or {}
+    local icon_params =
+    {
+        deck = true,
+        folder = projectile.texture_bundle_folder
+    }
+    if ability == "damage_control" then
+        if self._ABILITY_COOLDOWN then
+            icon_params.y = 1
+        elseif managers.player:has_category_upgrade("player", "damage_control_auto_shrug") then
+            icon_params.x = 2 -- 128px
+            self._duration_override = managers.player:upgrade_value("player", "damage_control_auto_shrug") --[[@as number]]
+        end
+    end
+    self:UpdateIcon(tweak_data.ehi.default.buff.get_icon(icon_params))
+end
+
+function EHIAbilityBuffTracker:SkillCheck()
+    local ability = managers.blackmarket:equipped_grenade()
+    if not (managers.blackmarket:has_equipped_ability() or self._ABILITY_AS_A_GRENADE[ability]) then
+        return false
+    elseif (self._AUTOFAIL_SKILL_CHECK_ON_NOT_ABILITY_COOLDOWN[ability] and not self._ABILITY_COOLDOWN) or (self._ehi_options and not self._ehi_options[ability]) then
+        return false
+    elseif self._ehi_options_permanent and self._ehi_options_permanent[ability] then
+        self:SetAbilityIcon(ability)
+        self:SetPersistent()
+        return true
+    end
+    self:SetAbilityIcon(ability)
+    return true
+end
+
+function EHIAbilityBuffTracker:SetCustodyState(state)
+    if state and self._active then
+        self:DeactivateAndReset()
+    end
+end
+
+function EHIAbilityBuffTracker:SetPersistent()
+    self._text:set_text("0")
+    self._persistent = true
+    self._active = true
+    self:ActivateSoft()
+end
+
+---@class EHIAbilityRefreshBuffTracker : EHIAbilityBuffTracker
+---@field super EHIAbilityBuffTracker
+EHIAbilityRefreshBuffTracker = class(EHIAbilityBuffTracker)
+EHIAbilityRefreshBuffTracker._ABILITY_COOLDOWN = true
+function EHIAbilityRefreshBuffTracker:post_init(params)
+    self._ehi_options = params.options
+    self._ehi_options_permanent = params.options_permanent
+    self._replenish_count_running = 0
+    self._hint:hide()
+end
+
+---@param add_to_replenish boolean?
+function EHIAbilityRefreshBuffTracker:ReplenishCountChanged(add_to_replenish)
+    self._replenish_count_running = add_to_replenish and (self._replenish_count_running + 1) or math.max(0, self._replenish_count_running - 1)
+    self:SetHintText(self._replenish_count_running)
+    self._hint:set_visible(self._replenish_count_running >= 2)
+end
+
+function EHIAbilityRefreshBuffTracker:SetAbilityIcon(ability)
+    EHIAbilityRefreshBuffTracker.super.SetAbilityIcon(self, ability)
+    Hooks:PreHook(PlayerManager, "speed_up_grenade_cooldown", "EHI_AbilityRefreshBuff_speed_up_grenade_cooldown", function(pm, time, ...) ---@param time number
+        if pm._timers.replenish_grenades then
+            self._time = self._time - time
+        end
+    end)
+    local projectile = tweak_data.blackmarket.projectiles[ability] or {}
+    if (projectile.max_amount or 0) > 1 then
+        Hooks:PreHook(PlayerManager, "add_grenade_amount", "EHI_Replenish_Throwable", function(pm, amount, ...) ---@param amount number
+            if amount ~= 0 then
+                self:ReplenishCountChanged(amount < 0)
+            end
+        end)
+    end
 end
 
 ---@class EHIHealthBuffTracker : EHIGaugeBuffTracker
@@ -368,7 +454,7 @@ function EHIHealthBuffTracker:post_init(params)
     local function refresh_max_armor(character_damage) ---@param character_damage PlayerDamage
         self._armor_value = character_damage:_max_armor()
     end
-    EHI:AddCallback(EHI.CallbackMessage.Player.Spawned, refresh_max_armor)
+    managers.ehi_hook:AddPlayerSpawnedListener(self._id, refresh_max_armor)
     EHI:AddOnSpawnedCallback(function()
         local damage_reduction = managers.player:upgrade_value("player", "health_damage_reduction", 1) -- Frenzy
         if self._HIGHEST_HEAVY_SWAT_DAMAGE then

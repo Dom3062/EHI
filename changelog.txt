@@ -1,3 +1,12 @@
+r349 (21. 10. 2025):
+Added remaining Persistent state to buffs in perks with abilities
+Added buff for "Tactical Reload" from Copycat perk
+Bloodthirst Buff: Fixed visual 0x multiplier after spawn
+Buffs: Fixed incorrect number of ability recharge timers
+Buffs: Fixed missing options for Tag Team - Absorption
+Buffs: Fixed Stoic's applied damage over-time not working (regression from r249)
+Sicario's Smoke Bomb: Fixed waypoint to the cloud always have white color and not color of the thrower
+
 r348 (10. 10. 2025):
 Buffs: Fixed an issue where some Buffs do not update after drop in
 Buffs: Removed "Bloodthirst Ration" and Bloodthirst Gauge will appear on the screen as long the skill is equipped

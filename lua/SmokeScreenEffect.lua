@@ -40,7 +40,8 @@ function SmokeScreenEffect:init(position, normal, time, has_dodge_bonus, grenade
                     icon = "smoke",
                     peer_id = color_id or 0
                 }
-            }
+            },
+            hint = "sicario_smoke_bomb"
         })
     end
     if show_waypoint then
@@ -48,7 +49,7 @@ function SmokeScreenEffect:init(position, normal, time, has_dodge_bonus, grenade
             time = time,
             icon = "smoke",
             position = position,
-            color = color,
+            color = tweak_data.chat_colors[color_id or 0] or Color.white,
             class = "EHISmokeBombWaypoint"
         })
     end

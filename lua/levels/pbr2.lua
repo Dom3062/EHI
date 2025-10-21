@@ -78,8 +78,8 @@ local achievements =
                 })
             end
             function cac_33:Activate()
-                self._progress_text:set_visible(true)
-                self._text:set_visible(false)
+                self._progress_text:show()
+                self._text:hide()
             end
             function cac_33:SetCompleted()
                 cac_33.super.SetCompleted(self)

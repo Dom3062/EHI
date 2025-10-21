@@ -191,6 +191,7 @@ end
 ---@class EHICritChanceBuffTracker : EHISkillRefreshBuffTracker
 ---@field super EHISkillRefreshBuffTracker
 EHICritChanceBuffTracker = class(EHISkillRefreshBuffTracker)
+EHICritChanceBuffTracker.ForceUpdate = EHIDodgeChanceBuffTracker.ForceUpdate
 EHICritChanceBuffTracker._refresh_option = "crit_refresh"
 function EHICritChanceBuffTracker:init(...)
     EHICritChanceBuffTracker.super.init(self, ...)
@@ -209,13 +210,6 @@ function EHICritChanceBuffTracker:UpdateValue()
         self:DeactivateNextFrame()
     end
     self._skill_value = total
-end
-
-function EHICritChanceBuffTracker:ForceUpdate()
-    if self._update_disabled then
-        return
-    end
-    self._time = 0.01 -- Activate next frame or the buff will be stuck in the buff that forced an update
 end
 
 function EHICritChanceBuffTracker:PreUpdate()
@@ -332,6 +326,15 @@ function EHIBerserkerBuffTracker:post_init(...)
         self:SetGroup("melee_damage_increase")
     end
     self._text_format_macros = { postfix = EHI:GetBuffOption("berserker_format") == 1 and "x" or "%" }
+    managers.ehi_hook:AddPlayerSpawnedListener(self._id, function(character_damage)
+        self._character_damage = character_damage
+        self:CanActivateUpdateLoop()
+    end)
+    managers.ehi_hook:AddPlayerDespawnedListener(self._id, function()
+        self:RemoveBuffFromUpdate()
+        self:Deactivate()
+        self._character_damage = nil
+    end)
     EHIBerserkerBuffTracker.super.post_init(self, ...)
 end
 
@@ -351,27 +354,23 @@ function EHIBerserkerBuffTracker:PreUpdate()
         self:delete_with_class()
         return
     end
-    self:AddBuffToUpdate()
+    self.__pre_update = true
+    self:CanActivateUpdateLoop()
 end
 
-function EHIBerserkerBuffTracker:SetCustodyState(state)
-    if state then
-        self:RemoveBuffFromUpdate()
-        self:Deactivate()
-    else
+function EHIBerserkerBuffTracker:CanActivateUpdateLoop()
+    if self._character_damage and self.__pre_update then
         self:Activate()
         self._time = self._refresh_time
         self:AddBuffToUpdate()
     end
 end
 
+function EHIBerserkerBuffTracker:SetCustodyState(state)
+end
+
 function EHIBerserkerBuffTracker:UpdateValue()
-    local player_unit = self._player_manager:player_unit()
-    local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
-    if not character_damage then
-        return
-    end
-    local health_ratio = character_damage:health_ratio()
+    local health_ratio = self._character_damage:health_ratio()
     if self._persistent or health_ratio <= self._THRESHOLD then
         local damage_ratio = 1 - (health_ratio / math.max(0.01, self._THRESHOLD))
         self._current_melee_damage_multiplier = 1 + self._melee_damage_multiplier * damage_ratio
@@ -419,6 +418,13 @@ else
     end
 end
 
+function EHIBerserkerBuffTracker:delete_with_class()
+    managers.ehi_hook:RemovePlayerSpawnedListener(self._id)
+    managers.ehi_hook:RemovePlayerDespawnedListener(self._id)
+    self._character_damage = nil
+    EHIBerserkerBuffTracker.super.delete_with_class(self)
+end
+
 ---@class EHIYakuzaBuffTracker : EHISkillRefreshBuffTracker
 ---@field super EHISkillRefreshBuffTracker
 EHIYakuzaBuffTracker = class(EHISkillRefreshBuffTracker)
@@ -443,6 +449,15 @@ function EHIYakuzaBuffTracker:post_init(...)
         self:SetGroup("player_movement_increase")
     end
     self._text_format_macros = { postfix = EHI:GetBuffDeckOption("yakuza", "irezumi_format") == 1 and "x" or "%" }
+    managers.ehi_hook:AddPlayerSpawnedListener(self._id, function(character_damage)
+        self._character_damage = character_damage
+        self:CanActivateUpdateLoop()
+    end)
+    managers.ehi_hook:AddPlayerDespawnedListener(self._id, function()
+        self:RemoveBuffFromUpdate()
+        self:Deactivate()
+        self._character_damage = nil
+    end)
     EHIYakuzaBuffTracker.super.post_init(self, ...)
 end
 
@@ -451,11 +466,6 @@ function EHIYakuzaBuffTracker:PreUpdate()
     if not (self._player_manager:has_category_upgrade("player", "armor_regen_damage_health_ratio_multiplier") or self._player_manager:has_category_upgrade("player", "movement_speed_damage_health_ratio_multiplier")) then
         self:delete_with_class()
         return
-    end
-    if self._player_manager:has_category_upgrade("player", "armor_regen_damage_health_ratio_threshold_multiplier") or self._player_manager:has_category_upgrade("player", "movement_speed_damage_health_ratio_threshold_multiplier") then -- Yakuza 9/9 deck
-        self._THRESHOLD = 0.5
-    else
-        self._THRESHOLD = 0.25
     end
     self._armor_regen_multiplier = self._player_manager:upgrade_value("player", "armor_regen_damage_health_ratio_multiplier", 0) --[[@as number]]
     if self._text_format == "$arm;$postfix;" and self._armor_regen_multiplier == 0 then
@@ -467,27 +477,27 @@ function EHIYakuzaBuffTracker:PreUpdate()
         self:delete_with_class()
         return
     end
-    self:AddBuffToUpdate()
+    if self._player_manager:has_category_upgrade("player", "armor_regen_damage_health_ratio_threshold_multiplier") or self._player_manager:has_category_upgrade("player", "movement_speed_damage_health_ratio_threshold_multiplier") then -- Yakuza 9/9 deck
+        self._THRESHOLD = 0.5
+    else
+        self._THRESHOLD = 0.25
+    end
+    self:CanActivateUpdateLoop()
 end
 
-function EHIYakuzaBuffTracker:SetCustodyState(state)
-    if state then
-        self:RemoveBuffFromUpdate()
-        self:Deactivate()
-    else
+function EHIYakuzaBuffTracker:CanActivateUpdateLoop()
+    if self._character_damage and self._THRESHOLD then
         self:Activate()
         self._time = self._refresh_time
         self:AddBuffToUpdate()
     end
 end
 
+function EHIYakuzaBuffTracker:SetCustodyState(state)
+end
+
 function EHIYakuzaBuffTracker:UpdateValue()
-    local player_unit = self._player_manager:player_unit()
-    local character_damage = player_unit and player_unit:character_damage() ---@cast character_damage -HuskPlayerDamage
-    if not character_damage then
-        return
-    end
-    local health_ratio = character_damage:health_ratio()
+    local health_ratio = self._character_damage:health_ratio()
     if self._persistent or health_ratio <= self._THRESHOLD then
         local damage_ratio = 1 - (health_ratio / math.max(0.01, self._THRESHOLD))
         self._current_movement_multiplier = 1 + self._movement_multiplier * damage_ratio
@@ -533,6 +543,13 @@ else
         self._text_format_macros.mov = self._current_movement_multiplier > 1 and math.ehi_round_chance(self._current_movement_multiplier - 1) or 0
         return managers.localization:_text_macroize(self._text_format, self._text_format_macros)
     end
+end
+
+function EHIYakuzaBuffTracker:delete_with_class()
+    managers.ehi_hook:RemovePlayerSpawnedListener(self._id)
+    managers.ehi_hook:RemovePlayerDespawnedListener(self._id)
+    self._character_damage = nil
+    EHIYakuzaBuffTracker.super.delete_with_class(self)
 end
 
 ---@class EHIUppersRangeBuffTracker : EHISkillRefreshBuffTracker

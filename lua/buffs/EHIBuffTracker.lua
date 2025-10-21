@@ -171,6 +171,7 @@ function EHIBuffTracker:init(panel, params)
     local panel_w = self._panel:w()
     self._panel_w_gap = panel_w + 6
     self._panel_move_gap = (panel_w / 2) + 3 -- add only half of the gap
+    self._remove_on_alarm = params.remove_on_alarm
     self:post_init(params)
 end
 
@@ -193,7 +194,7 @@ function EHIBuffTracker:SetPersistent()
 end
 
 ---@param texture string
----@param texture_rect table?
+---@param texture_rect number[]?
 function EHIBuffTracker:UpdateIcon(texture, texture_rect)
     if texture_rect then
         self._icon:set_image(texture, unpack(texture_rect))
@@ -288,11 +289,6 @@ function EHIBuffTracker:DeactivateSoft()
     self._visible = false
 end
 
----@param t number
-function EHIBuffTracker:Shorten(t)
-    self._time = self._time - t
-end
-
 ---@param localize boolean?
 function EHIBuffTracker:SetHintText(text, localize)
     self._hint:set_text(localize and managers.localization:text(text) or tostring(text))
@@ -381,6 +377,9 @@ function EHIBuffTracker:SetCustodyState(state)
 end
 
 function EHIBuffTracker:SwitchToLoudMode()
+    if self._remove_on_alarm then
+        self:Remove()
+    end
 end
 
 ---@param dt number

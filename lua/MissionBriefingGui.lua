@@ -95,7 +95,7 @@ end
 ---@param offset number
 function XPBreakdownButton:SetVisibleWithOffset(offset)
     self._tab_text:set_y(self._tab_text:y() + offset)
-    self._tab_text:set_visible(true)
+    self._tab_text:show()
     self._tab_select_rect:set_y(self._tab_text:y())
 end
 
@@ -176,7 +176,7 @@ function XPBreakdownButtonSwitch:new(ws_panel, max_plans, loc, button)
     self:make_fine_text(self._text)
     self._text:set_bottom(button:bottom())
     self._text:set_left(button:right() + 10)
-    self._text:set_visible(true)
+    self._text:show()
 end
 
 function XPBreakdownButtonSwitch:IsCreated()
@@ -2304,7 +2304,7 @@ end
 
 ---@param base_xp number
 function MissionBriefingGui:FormatXPWithAllGagePackagesNoString(base_xp)
-    self._gage_bonus = 1.05
+    self._gage_bonus = tweak_data.gage_assignment:get_experience_multiplier(1)
     local value = self._xp:FakeMultiplyXPWithAllBonuses(base_xp)
     self._gage_bonus = 1
     return value

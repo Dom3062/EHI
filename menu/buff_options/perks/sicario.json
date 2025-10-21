@@ -12,7 +12,20 @@
             "callback_arguments": [ "sicario", "smoke_bomb" ],
             "value": "smoke_bomb",
             "default_value": true,
+            "is_parent" : true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_sicario_smoke_bomb_persistent_choice",
+            "title": "ehi_buffs_perks_sicario_smoke_bomb_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "sicario", "smoke_bomb_persistent" ],
+            "value": "smoke_bomb_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_sicario_smoke_bomb_choice",
+            "ehi_ver" : 349
         },
         {
             "type": "toggle",
@@ -23,7 +36,20 @@
             "callback_arguments": [ "sicario", "smoke_bomb_cooldown" ],
             "value": "smoke_bomb_cooldown",
             "default_value": true,
+            "is_parent" : true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent_choice",
+            "title": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "sicario", "smoke_bomb_cooldown_persistent" ],
+            "value": "smoke_bomb_cooldown_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_choice",
+            "ehi_ver" : 349
         },
         {
             "type" : "divider",
@@ -38,7 +64,20 @@
             "callback_arguments": [ "sicario", "twitch" ],
             "value": "twitch",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_sicario_twitch_persistent_choice",
+            "title": "ehi_buffs_perks_sicario_twitch_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "sicario", "twitch_persistent" ],
+            "value": "twitch_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_sicario_twitch_choice",
+            "ehi_ver" : 349
         },
         {
             "type": "toggle",
@@ -49,7 +88,20 @@
             "callback_arguments": [ "sicario", "twitch_cooldown" ],
             "value": "twitch_cooldown",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_sicario_twitch_cooldown_persistent_choice",
+            "title": "ehi_buffs_perks_sicario_twitch_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "sicario", "twitch_cooldown_persistent" ],
+            "value": "twitch_cooldown_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_sicario_twitch_cooldown_choice",
+            "ehi_ver" : 349
         }
     ]
 }

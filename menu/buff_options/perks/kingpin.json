@@ -12,7 +12,20 @@
             "callback_arguments": [ "kingpin", "injector" ],
             "value": "injector",
             "default_value": true,
+            "is_parent": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_kingpin_injector_persistent_choice",
+            "title": "ehi_buffs_perks_kingpin_injector_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "kingpin", "injector_persistent" ],
+            "value": "injector_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_kingpin_injector_choice",
+            "ehi_ver" : 349
         },
         {
             "type": "toggle",
@@ -24,6 +37,18 @@
             "value": "injector_cooldown",
             "default_value": true,
             "ehi_ver" : 204
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_kingpin_injector_cooldown_persistent_choice",
+            "title": "ehi_buffs_perks_kingpin_injector_cooldown_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "SetBuffDeckOption",
+            "callback_arguments": [ "kingpin", "injector_cooldown_persistent" ],
+            "value": "injector_cooldown_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_kingpin_injector_cooldown_choice",
+            "ehi_ver" : 349
         }
     ]
 }

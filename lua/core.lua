@@ -191,9 +191,6 @@ _G.EHI =
         Player =
         {
             -- Provides `character_damage` (a PlayerDamage class)
-            Spawned = "PlayerDamageInit",
-            Despawned = "PlayerDamageDestroy", -- Called everytime local player goes to custody or is deleted after mission end
-            -- Provides `character_damage` (a PlayerDamage class)
             ArmorKitUsed = "PlayerDamageArmorKitUsed"
         }
     },
@@ -1126,7 +1123,6 @@ local function LoadDefaultValues(self)
                 stack = true,
                 stack_persistent = true,
                 stack_refresh = 1,
-                stack_update_rate = true,
                 stack_decay = true
             },
             anarchist =
@@ -1145,8 +1141,8 @@ local function LoadDefaultValues(self)
                 irezumi = true,
                 irezumi_refresh = 2, -- 1 / value
                 irezumi_format = 1, -- 1 = Multiplier; 2 = Percent
-                irezumi_text_format = 1, -- 1 = Weapon Damage | Melee / Saw Damage; 2 = Melee / Saw Damage | Weapon Damage; 3 = Weapon Damage; 4 = Melee / Saw Damage 
-                irezumi_persistent = false,
+                irezumi_text_format = 1, -- 1 = Armor Regen Speed | Movement Speed; 2 = Movement Speed | Armor Regen Speed; 3 = Armor Regen Speed; 4 = Movement Speed 
+                irezumi_persistent = false
             },
             expresident =
             {
@@ -1160,41 +1156,61 @@ local function LoadDefaultValues(self)
             kingpin =
             {
                 injector = true,
-                injector_cooldown = true
+                injector_persistent = false,
+                injector_cooldown = true,
+                injector_cooldown_persistent = false
             },
             sicario =
             {
                 smoke_bomb = true,
+                smoke_bomb_persistent = false,
                 smoke_bomb_cooldown = true,
+                smoke_bomb_cooldown_persistent = false,
                 twitch = true,
-                twitch_cooldown = true
+                twitch_persistent = false,
+                twitch_cooldown = true,
+                twitch_cooldown_persistent = false
             },
             stoic =
             {
                 duration = true,
-                cooldown = true
+                duration_persistent = false,
+                cooldown = true,
+                cooldown_persistent = false
             },
             tag_team =
             {
                 cooldown = true,
+                cooldown_persistent = false,
                 effect = true,
+                effect_persistent = false,
                 absorption = true,
-                tagged = true
+                absorption_persistent = false,
+                tagged = true,
+                tagged_persistent = false
             },
             hacker =
             {
                 pecm_cooldown = true,
+                pecm_cooldown_persistent = false,
                 pecm_dodge = true,
+                pecm_dodge_persistent = false,
                 pecm_jammer = true,
-                pecm_feedback = true
+                pecm_jammer_persistent = false,
+                pecm_feedback = true,
+                pecm_feedback_persistent = false
             },
             leech =
             {
                 ampule = true,
-                ampule_cooldown = true
+                ampule_persistent = false,
+                ampule_cooldown = true,
+                ampule_cooldown_persistent = false
             },
             copycat =
             {
+                primary_reload_secondary = true,
+                secondary_reload_primary = true,
                 head_games_cooldown = true,
                 head_games_cooldown_persistent = false,
                 grace_period = true,

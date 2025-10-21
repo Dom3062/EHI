@@ -44,6 +44,8 @@
 ---@field is_damage_health_ratio_active fun(self: self, health_ratio: number): boolean
 ---@field _smoke_screen_effects SmokeScreenEffect[]
 ---@field _carry_blocked_cooldown_t number
+---@field _has_primary_reload_secondary boolean
+---@field _has_secondary_reload_primary boolean
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -137,48 +139,6 @@ if EHI:GetBuffOption("crit") then
     end
 end
 
-local AbilityKey, AbilitySpeedUp
-EHI:AddOnSpawnedCallback(function()
-    local self = managers.player
-    local grenade = managers.blackmarket:equipped_grenade()
-    if grenade == "chico_injector" then -- Kingpin
-        AbilityKey = "chico_injector"
-        AbilitySpeedUp = "speed_up_chico_injector"
-    elseif grenade == "smoke_screen_grenade" then -- Sicario
-        AbilityKey = "smoke_screen_grenade"
-    elseif grenade == "damage_control" then -- Stoic
-        AbilityKey = "damage_control"
-        if self:has_category_upgrade("player", "damage_control_auto_shrug") then
-            tweak_data.ehi.buff.damage_control.x = 2 -- 128px
-            managers.ehi_buff:UpdateBuffIcon("damage_control")
-            managers.ehi_buff:CallFunction("damage_control", "SetAutoShrug", self:upgrade_value("player", "damage_control_auto_shrug"))
-        end
-        self:register_message("ability_activated", "EHI_Stoic_Ability_Activated", function(ability_name)
-            if ability_name == "damage_control" then
-                managers.ehi_buff:RemoveBuff("damage_control")
-            end
-        end)
-    elseif grenade == "tag_team" then -- Tag Team
-        AbilityKey = "tag_team"
-    elseif grenade == "pocket_ecm_jammer" then -- Hacker
-        AbilityKey = "pocket_ecm_jammer"
-        AbilitySpeedUp = "speed_up_pocket_ecm_jammer"
-    elseif grenade == "copr_ability" then -- Leech
-        AbilityKey = "copr_ability"
-        AbilitySpeedUp = "speed_up_copr_ability"
-    end
-    if AbilityKey then
-        AbilityKey = AbilityKey .. "_cooldown"
-        Hooks:PreHook(self, "add_grenade_amount", "EHI_Replenish_Throwable", function(pm, amount, ...)
-            if amount > 0 then
-                managers.ehi_buff:CallFunction(AbilityKey, "Replenished")
-            elseif amount < 0 then
-                managers.ehi_buff:CallFunction(AbilityKey, "AddToReplenish")
-            end
-        end)
-    end
-end)
-
 original.activate_temporary_upgrade = PlayerManager.activate_temporary_upgrade
 function PlayerManager:activate_temporary_upgrade(category, upgrade, ...)
     original.activate_temporary_upgrade(self, category, upgrade, ...)
@@ -190,24 +150,12 @@ end
 
 original.start_timer = PlayerManager.start_timer
 function PlayerManager:start_timer(key, duration, ...)
-    if key == "replenish_grenades" and AbilityKey then
-        managers.ehi_buff:AddBuff(AbilityKey, duration)
+    if key == "replenish_grenades" then
+        managers.ehi_buff:AddBuff("AbilityCooldown", duration)
     elseif key == "team_crew_inspire" then
         managers.ehi_buff:SyncAndAddBuff(key, duration)
     end
     original.start_timer(self, key, duration, ...)
-end
-
-original.speed_up_grenade_cooldown = PlayerManager.speed_up_grenade_cooldown
-function PlayerManager:speed_up_grenade_cooldown(time, ...)
-    if not self._timers.replenish_grenades then
-        return
-    end
-    if not AbilityKey then
-        return original.speed_up_grenade_cooldown(self, time, ...)
-    end
-    managers.ehi_buff:ShortBuffTime(AbilityKey, time)
-    original.speed_up_grenade_cooldown(self, time, ...)
 end
 
 if EHI:GetBuffOption("bloodthirst") then

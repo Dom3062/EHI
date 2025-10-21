@@ -8,6 +8,7 @@ EHIBuffManager._sync_add_buff = "EHISyncAddBuff"
 function EHIBuffManager:init_finalize(hud, panel)
     local tweak_data = tweak_data.ehi.default.buff
     self._buffs = {} ---@type table<string, EHIBuffTracker?>
+    self._buffs_redirect = {} --- Do not run same functions twice or more times for the same buff from redirects
     self._update_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
     self._visible_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
     self._n_visible = 0
@@ -27,6 +28,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     local buff_h = tweak_data.size_h * scale
     self:_init_buffs(buff_y, buff_w, buff_h, scale)
     self:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
+    self:_init_buff_redirect()
     self:_cleanup_unused_buff_classes()
     table.sort(self._skill_check_after_spawn or {}, function(a, b)
         return a._id:lower() < b._id:lower()
@@ -38,19 +40,23 @@ function EHIBuffManager:init_finalize(hud, panel)
         self._update_buffs = {}
     end)
     EHI:AddOnCustodyCallback(function(custody_state)
-        for _, buff in pairs(self._buffs) do
-            buff:SetCustodyState(custody_state)
+        for id, buff in pairs(self._buffs) do
+            if not self._buffs_redirect[id] then
+                buff:SetCustodyState(custody_state)
+            end
         end
     end)
     EHI:AddOnAlarmCallback(function(dropin)
         for _, buff in pairs(self._buffs) do
-            buff:SwitchToLoudMode()
+            if not self._buffs_redirect[id] then
+                buff:SwitchToLoudMode()
+            end
         end
     end)
     if EHI.IsClient then
         managers.ehi_sync:AddReceiveHook(self._sync_add_buff, function(data, sender)
             local tbl = json.decode(data)
-            if tbl then -- Check if the synced data is valid
+            if tbl and tbl.id and tbl.t then -- Check if the synced data is valid
                 self:AddBuff(tbl.id, tbl.t)
             end
         end)
@@ -82,9 +88,25 @@ function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
             params.max = buff.max
             params.scale = scale
             params.skill_check_after_spawn = buff.skill_check_after_spawn
+            params.parent_buff = buff.parent_buff
+            params.remove_on_alarm = buff.remove_on_alarm
+            params.activate_on_alarm = buff.activate_on_alarm
+            if buff.prepopulate_options then
+                params.options = {}
+                for key, value in pairs(buff.prepopulate_options) do
+                    params.options[key] = EHI:GetBuffDeckOption(value.deck_option.deck, value.deck_option.option)
+                end
+            end
+            if buff.prepopulate_options_permanent then
+                params.options_permanent = {}
+                for key, value in pairs(buff.prepopulate_options_permanent) do
+                    params.options_permanent[key] = EHI:GetBuffDeckOption(value.deck_option.deck, value.deck_option.option)
+                end
+            end
             if buff.permanent then
                 if (buff.permanent.option and EHI:GetBuffOption(buff.permanent.option)) or buff.permanent.option_true then
                     params.class = buff.permanent.class or "EHIPermanentBuffTracker"
+                    params.stealth_check = buff.permanent.stealth_check
                     params.skill_check = buff.permanent.skill_check
                     params.team_skill_check = buff.permanent.team_skill_check
                     params.team_ai_skill_check = buff.permanent.team_ai_skill_check
@@ -131,7 +153,9 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     if Global.game_settings.single_player or not local_peer_id then
         return
     end
-    local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(tweak_data.ehi.buff.TagTeamEffect)
+    local Effect = tweak_data.ehi.buff.TagTeamEffect
+    local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(Effect)
+    local permanent = EHI:GetBuffDeckOption("tag_team", "tagged_persistent")
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         if i ~= local_peer_id then -- You cannot tag yourself...
             local params = {}
@@ -140,11 +164,19 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             params.y = buff_y
             params.w = buff_w
             params.h = buff_h
+            params.text = "Paired"
             params.texture = texture
             params.texture_rect = texture_rect
             params.icon_color = tweak_data.chat_colors[i] or Color.white
             params.scale = scale
-            params.class = "EHITagTeamBuffTracker"
+            if permanent then
+                params.class_to_load = Effect.permanent.class_to_load
+                params.skill_check_after_spawn = true
+                params.check_buff_on_spawn = true
+                params.show_on_trigger = true
+            else
+                params.class = "EHITagTeamBuffTracker"
+            end
             self:_create_buff(params)
         end
     end
@@ -158,6 +190,13 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
                 end
             end
         end)
+    end
+end
+
+function EHIBuffManager:_init_buff_redirect()
+    for key, redirect in pairs(tweak_data.ehi.buff_redirect) do
+        self._buffs[key] = self._buffs[redirect]
+        self._buffs_redirect[key] = true
     end
 end
 
@@ -207,16 +246,6 @@ function EHIBuffManager:_cleanup_unused_buff_classes()
 end
 
 ---@param id string
-function EHIBuffManager:UpdateBuffIcon(id)
-    local tweak = tweak_data.ehi.buff[id]
-    local buff = self._buffs[id]
-    if buff and tweak then
-        local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(tweak) ---@cast texture -?
-        buff:UpdateIcon(texture, texture_rect)
-    end
-end
-
----@param id string
 ---@param f string
 function EHIBuffManager:CallFunction(id, f, ...)
     local buff = self._buffs[id]
@@ -245,6 +274,37 @@ function EHIBuffManager:ActivateUpdatingBuffs()
         end
     end
     self._skill_check_after_spawn = nil
+    local pm = managers.player
+    if pm._has_primary_reload_secondary or pm._has_secondary_reload_primary then
+        local primary_count, secondary_count = 0, 0
+        local primary_limit = pm:upgrade_value("player", "primary_reload_secondary", 10)
+        local secondary_limit = pm:upgrade_value("player", "secondary_reload_primary", 10)
+        ---@param equipped_unit UnitWeapon?
+        ---@param variant string
+        ---@param killed_unit UnitEnemy?
+        pm:register_message(Message.OnEnemyKilled, "EHI_copycat_reload_primary_secondary", function(equipped_unit, variant, killed_unit)
+            if variant == "melee" then
+                return
+            end
+            local base = equipped_unit and equipped_unit:base()
+            local selection_index = base and base:selection_index() or 0
+            local update_secondary_reload_primary = selection_index == 1 and pm._has_secondary_reload_primary
+	        local update_primary_reload_secondary = selection_index == 2 and pm._has_primary_reload_secondary
+            if update_secondary_reload_primary then
+                secondary_count = secondary_count + 1
+                if secondary_limit <= secondary_count then
+                    secondary_count = 0
+                end
+                self:AddGauge("secondary_reload_primary", secondary_count / secondary_limit, secondary_count)
+            elseif update_primary_reload_secondary then
+                primary_count = primary_count + 1
+                if primary_limit <= primary_count then
+                    primary_count = 0
+                end
+                self:AddGauge("primary_reload_secondary", primary_count / primary_limit, primary_count)
+            end
+        end)
+    end
 end
 
 ---@param id string
@@ -256,7 +316,7 @@ function EHIBuffManager:AddBuff(id, t)
             buff:Extend(t)
         else
             buff:Activate(t, self._n_visible)
-            self._visible_buffs[id] = buff
+            self._visible_buffs[buff._id] = buff
             self._n_visible = self._n_visible + 1
             self:ReorganizeFast(self._n_visible, buff)
         end
@@ -275,7 +335,7 @@ function EHIBuffManager:AddBuffNoUpdate(id)
     local buff = self._buffs[id]
     if buff and not buff:IsActive() then
         buff:ActivateNoUpdate(self._n_visible)
-        self._visible_buffs[id] = buff
+        self._visible_buffs[buff._id] = buff
         self._n_visible = self._n_visible + 1
         self:ReorganizeFast(self._n_visible, buff)
     end
@@ -291,7 +351,7 @@ function EHIBuffManager:AddGauge(id, ratio, custom_value)
             buff:SetRatio(ratio, custom_value)
         else
             buff:Activate(ratio, custom_value, self._n_visible)
-            self._visible_buffs[id] = buff
+            self._visible_buffs[buff._id] = buff
             self._n_visible = self._n_visible + 1
             self:ReorganizeFast(self._n_visible, buff)
         end
@@ -311,23 +371,6 @@ function EHIBuffManager:RemoveAndResetBuff(id)
     local buff = self._buffs[id]
     if buff and buff:IsActive() then
         buff:DeactivateAndReset()
-    end
-end
-
----@param id string
-function EHIBuffManager:DeleteBuff(id)
-    local buff = self._buffs[id]
-    if buff then
-        buff:Remove()
-    end
-end
-
----@param id string
----@param t number
-function EHIBuffManager:ShortBuffTime(id, t)
-    local buff = self._buffs[id]
-    if buff then
-        buff:Shorten(t)
     end
 end
 
