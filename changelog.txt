@@ -1,3 +1,6 @@
+r350 (22. 10. 2025):
+Buffs: Fixed a crash when ability timer is disabled
+
 r349 (21. 10. 2025):
 Added remaining Persistent state to buffs in perks with abilities
 Added buff for "Tactical Reload" from Copycat perk

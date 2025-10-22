@@ -405,10 +405,16 @@ function EHIAbilityBuffTracker:SetPersistent()
     self:ActivateSoft()
 end
 
+function EHIAbilityBuffTracker:delete()
+    self._parent_class:_remove_buff_redirect(self._id)
+    EHIAbilityBuffTracker.super.delete(self)
+end
+
 ---@class EHIAbilityRefreshBuffTracker : EHIAbilityBuffTracker
 ---@field super EHIAbilityBuffTracker
 EHIAbilityRefreshBuffTracker = class(EHIAbilityBuffTracker)
 EHIAbilityRefreshBuffTracker._ABILITY_COOLDOWN = true
+EHIAbilityRefreshBuffTracker.delete = EHIAbilityRefreshBuffTracker.super.super.delete
 function EHIAbilityRefreshBuffTracker:post_init(params)
     self._ehi_options = params.options
     self._ehi_options_permanent = params.options_permanent

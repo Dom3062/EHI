@@ -196,7 +196,7 @@ end
 function EHIBuffManager:_init_buff_redirect()
     for key, redirect in pairs(tweak_data.ehi.buff_redirect) do
         self._buffs[key] = self._buffs[redirect]
-        self._buffs_redirect[key] = true
+        self._buffs_redirect[key] = redirect
     end
 end
 
@@ -241,6 +241,16 @@ function EHIBuffManager:_cleanup_unused_buff_classes()
             if _G[class] and not self._buffs[id] then -- Tracker class exists, but the tracker is not created because it is disabled; remove the class
                 _G[class] = nil
             end
+        end
+    end
+end
+
+---@param id string
+function EHIBuffManager:_remove_buff_redirect(id)
+    for key, value in pairs(self._buffs_redirect) do
+        if value == id then
+            self._buffs[key] = nil
+            self._buffs_redirect[key] = nil
         end
     end
 end
