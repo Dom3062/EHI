@@ -1,3 +1,11 @@
+r351 (28. 10. 2025):
+Aggregated Health Equipment Tracker: Fixed an issue where panel is misaligned
+Buffs: Fixed an issue where Interact buff is not visible when putting on mask
+Buffs: Optimization in Biker buff
+Buffs: Removed persistent state from Maniac, Biker, Berserker and Yakuza - These buffs will be visible if the skill/perk is equipped
+Buffs: Removed Hysteria Stacks Refresh option - Buff gets updated once game synces current amount of Hysteria Stacks to other players (once every 4s)
+Buffs: Reworked Maniac buff to show amount of Hysteria Stacks and current absorption
+
 r350 (22. 10. 2025):
 Buffs: Fixed a crash when ability timer is disabled
 
@@ -12,7 +20,7 @@ Sicario's Smoke Bomb: Fixed waypoint to the cloud always have white color and no
 
 r348 (10. 10. 2025):
 Buffs: Fixed an issue where some Buffs do not update after drop in
-Buffs: Removed "Bloodthirst Ration" and Bloodthirst Gauge will appear on the screen as long the skill is equipped
+Buffs: Removed "Bloodthirst Ratio" and Bloodthirst Gauge will appear on the screen as long the skill is equipped
 Player Ping Tracker: Fixed an empty space
 The White House: Deployables left in the PEOC are ignored after leaving
 

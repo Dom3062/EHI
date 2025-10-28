@@ -63,18 +63,6 @@
             "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
             "default_value": 1,
             "ehi_ver" : 325
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_buffs_perks_yakuza_irezumi_persistent_choice",
-            "title": "ehi_buffs_perks_yakuza_irezumi_persistent",
-            "description": "ehi_buffs_perks_yakuza_irezumi_persistent_desc",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "yakuza", "irezumi_persistent" ],
-            "value": "irezumi_persistent",
-            "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
-            "default_value": false,
-            "ehi_ver" : 325
         }
     ]
 }

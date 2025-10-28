@@ -1032,7 +1032,13 @@ _G.tweak_data.upgrades = {
     first_aid_kit = {
         first_aid_kit_auto_recovery = { 500 }
     },
+    cocaine_stacks_convert_levels = {
+        30,
+        25
+    },
+    cocaine_stacks_dmg_absorption_value = 0.1,
     max_cocaine_stacks_per_tick = 240,
+    max_total_cocaine_stacks = 600,
     morale_boost_time = 10,
     sentry_gun_base_ammo = 100,
     sentry_gun_base_armor = 10,

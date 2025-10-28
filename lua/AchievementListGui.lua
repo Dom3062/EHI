@@ -6,6 +6,12 @@ end
 local tiny_font = tweak_data.menu.pd2_tiny_font
 local tiny_font_size = tweak_data.menu.pd2_tiny_font_size
 
+local achievements =
+{
+    xm20_1 = true,
+    pent_11 = true,
+    lrfo_1 = true
+}
 local xm20_1 =
 {
     { id = "present_mex", heist = "heist_mex" },
@@ -34,7 +40,7 @@ Hooks:PostHook(AchievementListGui, "update_detail", "EHI_AchievementListGui_upda
     end
     local info = selected._info or {}
     local id = info.id
-    if (id == "xm20_1" or id == "pent_11" or id == "lrfo_1") and not info.awarded then
+    if achievements[id] and not info.awarded then
         local canvas = self._detail_scroll:canvas()
         local placer = canvas:placer()
         local pre, table_to_iterate
@@ -75,7 +81,7 @@ Hooks:PostHook(AchievementListGui, "update_detail", "EHI_AchievementListGui_upda
 end)
 
 Hooks:PostHook(AchievementDetailGui, "init", "EHI_AchievementDetailGui_init", function(self, ...)
-    if (self._id == "xm20_1" or self._id == "pent_11" or self._id == "lrfo_1") and not self._info.awarded then
+    if achievements[self._id] and not self._info.awarded then
         local canvas = self._detail:canvas()
         local placer = canvas:placer()
         local pre, table_to_iterate

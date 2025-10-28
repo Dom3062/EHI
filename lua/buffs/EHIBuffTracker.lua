@@ -203,37 +203,6 @@ function EHIBuffTracker:UpdateIcon(texture, texture_rect)
     end
 end
 
----@param center_x number
-function EHIBuffTracker:SetCenterDefaultX(center_x)
-    self._panel:set_center_x(center_x)
-    self._pos = 0
-end
-
----@param x number
-function EHIBuffTracker:MovePanelRight(x)
-    self._panel:move(x, 0)
-end
-
----@param x number
-function EHIBuffTracker:SetX(x)
-    if self._move_panel_x then
-        self._panel:stop(self._move_panel_x)
-    end
-    self._move_panel_x = self._panel:animate(set_x, x)
-end
-
----@param x number
-function EHIBuffTracker:SetRight(x)
-    if self._move_panel_x then
-        self._panel:stop(self._move_panel_x)
-    end
-    self._move_panel_x = self._panel:animate(set_right, x)
-end
-
-function EHIBuffTracker:IsActive()
-    return self._active
-end
-
 ---@param t number? Required
 ---@param pos number? Required
 function EHIBuffTracker:Activate(t, pos)
@@ -301,7 +270,16 @@ function EHIBuffTracker:SetLeftXByPos(x, pos)
     if pos < self._pos then
         self._pos = self._pos - 1
     end
-    self:SetX(x + (self._panel_w_gap * self._pos))
+    if self._move_panel_x then
+        self._panel:stop(self._move_panel_x)
+    end
+    self._move_panel_x = self._panel:animate(set_x, x + (self._panel_w_gap * self._pos))
+end
+
+---@param center_x number
+function EHIBuffTracker:SetCenterDefaultX(center_x)
+    self._panel:set_center_x(center_x)
+    self._pos = 0
 end
 
 ---@param center_x number
@@ -339,7 +317,10 @@ function EHIBuffTracker:SetRightXByPos(x, pos)
     if pos < self._pos then
         self._pos = self._pos - 1
     end
-    self:SetRight(x + (self._panel_w_gap * self._pos))
+    if self._move_panel_x then
+        self._panel:stop(self._move_panel_x)
+    end
+    self._move_panel_x = self._panel:animate(set_right, x + (self._panel_w_gap * self._pos))
 end
 
 function EHIBuffTracker:AddBuffToUpdate()
@@ -366,10 +347,7 @@ function EHIBuffTracker:SkillCheck()
 end
 
 function EHIBuffTracker:CanDeleteOnFalseSkillCheck()
-    if self._DELETE_BUFF_ON_FALSE_SKILL_CHECK or self._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK then
-        return true
-    end
-    return false
+    return self._DELETE_BUFF_ON_FALSE_SKILL_CHECK or self._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK
 end
 
 ---@param state boolean

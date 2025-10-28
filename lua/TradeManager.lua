@@ -102,22 +102,21 @@ function TradeManager:on_player_criminal_death(criminal_name, respawn_penalty, h
         if on_death_show then
             CreateTracker(peer_id, respawn_penalty, hostages_killed)
         elseif respawn_penalty > tweak_data.player.damage.base_respawn_time_penalty then
-            if show_trade_for_other_players and peer_id == managers.network:session():local_peer():id() then
-                return criminal
+            if show_trade_for_other_players and peer_id == managers.network:session():local_peer():id() then -- queued
             elseif suppress_in_stealth and managers.groupai:state():whisper_mode() then
                 managers.ehi_trade:AddToTradeDelayCache(peer_id, respawn_penalty, hostages_killed, true)
-                return criminal
-            end
-            local tracker = managers.ehi_trade:GetTracker()
-            if tracker then
-                if tracker:PeerExists(peer_id) then
-                    tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty, hostages_killed)
-                    tracker:SetPeerInCustody(peer_id)
-                else
-                    tracker:AddPeerCustodyTime(peer_id, respawn_penalty, hostages_killed, true)
-                end
             else
-                managers.ehi_trade:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty, hostages_killed, true)
+                local tracker = managers.ehi_trade:GetTracker()
+                if tracker then
+                    if tracker:PeerExists(peer_id) then
+                        tracker:UpdatePeerCustodyTime(peer_id, respawn_penalty, hostages_killed)
+                        tracker:SetPeerInCustody(peer_id)
+                    else
+                        tracker:AddPeerCustodyTime(peer_id, respawn_penalty, hostages_killed, true)
+                    end
+                else
+                    managers.ehi_trade:AddCustodyTimeTrackerWithPeer(peer_id, respawn_penalty, hostages_killed, true)
+                end
             end
         end
     end

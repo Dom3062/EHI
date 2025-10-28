@@ -7,6 +7,13 @@ EHIAggregatedHealthEquipmentTracker._init_create_text = true
 function EHIAggregatedHealthEquipmentTracker:post_init(...)
     EHIAggregatedHealthEquipmentTracker.super.post_init(self, ...)
     self._active_icons = 0
+    if self._ICON_LEFT_SIDE_START then
+        if self._VERTICAL_ALIGNMENT then
+            self._bg_box:move(-self._icon_gap_size_scaled, 0)
+        else
+            self._bg_box:set_x(0)
+        end
+    end
 end
 
 function EHIAggregatedHealthEquipmentTracker:Format()

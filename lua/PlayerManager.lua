@@ -46,6 +46,8 @@
 ---@field _carry_blocked_cooldown_t number
 ---@field _has_primary_reload_secondary boolean
 ---@field _has_secondary_reload_primary boolean
+---@field get_synced_cocaine_stacks fun(self: self, peer_id: integer): { amount: number, in_use: boolean, upgrade_level: integer, power_level: integer }?
+---@field _get_cocaine_damage_absorption_from_data fun(self: self, data: { amount: number, upgrade_level: integer }): number
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -422,12 +424,9 @@ end
 --//////////////--
 --//  Maniac  //--
 --//////////////--
-if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_convert_rate") then
-    local next_maniac_stack_poll = EHI:GetBuffDeckOption("maniac", "stack") and 0 or math.huge
+if EHI:GetBuffDeckSelectedOptions("maniac", "stack_decay", "stack_convert_rate") then
     local ShowManiacStackTicks = EHI:GetBuffDeckOption("maniac", "stack_convert_rate")
     local ShowManiacDecayTicks = EHI:GetBuffDeckOption("maniac", "stack_decay")
-    local NextStackPoll = EHI:GetBuffDeckOption("maniac", "stack_refresh")
-    local maxstacks = tweak_data.upgrades.max_cocaine_stacks_per_tick or 20
     original._update_damage_dealt = PlayerManager._update_damage_dealt
     function PlayerManager:_update_damage_dealt(t, ...)
         local previousstack = self._damage_dealt_to_cops_t or 0
@@ -435,7 +434,7 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_conve
 
         original._update_damage_dealt(self, t, ...)
 
-        if not self:has_category_upgrade("player", "cocaine_stacking") or self:local_player() == nil or self._damage_dealt_to_cops_t == nil or self._damage_dealt_to_cops_decay_t == nil then
+        if not self:has_category_upgrade("player", "cocaine_stacking") or self._damage_dealt_to_cops_t == nil or self._damage_dealt_to_cops_decay_t == nil then
             return
         end
 
@@ -447,18 +446,14 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack", "stack_decay", "stack_conve
         if t >= previousdecay and ShowManiacDecayTicks then
             managers.ehi_buff:AddBuff2("ManiacDecayTicks", self._damage_dealt_to_cops_decay_t - t)
         end
+    end
+end
 
-        -- Poll accumulated hysteria stacks, but not every frame
-        if t >= next_maniac_stack_poll then
-            local newstacks = math.min((self._damage_dealt_to_cops or 0) * tweak_data.gui.stats_present_multiplier * self:upgrade_value("player", "cocaine_stacking", 0), maxstacks)
-            local ratio = newstacks / maxstacks
-            if ratio > 0 then
-                managers.ehi_buff:AddGauge("ManiacAccumulatedStacks", math.ehi_round(ratio, 0.01))
-            else
-                managers.ehi_buff:RemoveBuff("ManiacAccumulatedStacks")
-            end
-            next_maniac_stack_poll = t + NextStackPoll
-        end
+if EHI:GetBuffDeckOption("maniac", "stack") then
+    original.update_synced_cocaine_stacks_to_peers = PlayerManager.update_synced_cocaine_stacks_to_peers
+    function PlayerManager:update_synced_cocaine_stacks_to_peers(amount, ...)
+        managers.ehi_buff:CallFunction("ManiacAccumulatedStacks", "UpdateStack", amount)
+        original.update_synced_cocaine_stacks_to_peers(self, amount)
     end
 end
 

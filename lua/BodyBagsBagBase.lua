@@ -14,6 +14,7 @@ local original =
 {
     init = BodyBagsBagBase.init,
     _set_visual_stage = BodyBagsBagBase._set_visual_stage,
+    _set_empty = BodyBagsBagBase._set_empty,
     destroy = BodyBagsBagBase.destroy
 }
 
@@ -42,8 +43,13 @@ function BodyBagsBagBase:_set_visual_stage(...)
     self:UpdateAmount()
 end
 
+function BodyBagsBagBase:_set_empty(...)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+    original._set_empty(self, ...)
+end
+
 function BodyBagsBagBase:destroy(...)
     self:UpdateAmount(0)
     managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
-	original.destroy(self, ...)
+    original.destroy(self, ...)
 end

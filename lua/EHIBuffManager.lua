@@ -33,9 +33,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     table.sort(self._skill_check_after_spawn or {}, function(a, b)
         return a._id:lower() < b._id:lower()
     end)
-    EHI:AddOnSpawnedCallback(function()
-        self:ActivateUpdatingBuffs()
-    end)
+    EHI:AddOnSpawnedCallback(callback(self, self, "ActivateUpdatingBuffs"))
     EHI:AddEndGameCallback(function()
         self._update_buffs = {}
     end)
@@ -322,7 +320,7 @@ end
 function EHIBuffManager:AddBuff(id, t)
     local buff = self._buffs[id]
     if buff then
-        if buff:IsActive() then
+        if buff._active then
             buff:Extend(t)
         else
             buff:Activate(t, self._n_visible)
@@ -343,7 +341,7 @@ end
 ---@param id string
 function EHIBuffManager:AddBuffNoUpdate(id)
     local buff = self._buffs[id]
-    if buff and not buff:IsActive() then
+    if buff and not buff._active then
         buff:ActivateNoUpdate(self._n_visible)
         self._visible_buffs[buff._id] = buff
         self._n_visible = self._n_visible + 1
@@ -357,7 +355,7 @@ end
 function EHIBuffManager:AddGauge(id, ratio, custom_value)
     local buff = self._buffs[id] --[[@as EHIGaugeBuffTracker?]]
     if buff then
-        if buff:IsActive() then
+        if buff._active then
             buff:SetRatio(ratio, custom_value)
         else
             buff:Activate(ratio, custom_value, self._n_visible)
@@ -371,7 +369,7 @@ end
 ---@param id string
 function EHIBuffManager:RemoveBuff(id)
     local buff = self._buffs[id]
-    if buff and buff:IsActive() then
+    if buff and buff._active then
         buff:Deactivate()
     end
 end
@@ -379,7 +377,7 @@ end
 ---@param id string
 function EHIBuffManager:RemoveAndResetBuff(id)
     local buff = self._buffs[id]
-    if buff and buff:IsActive() then
+    if buff and buff._active then
         buff:DeactivateAndReset()
     end
 end

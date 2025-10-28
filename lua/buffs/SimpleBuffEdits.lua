@@ -177,16 +177,20 @@ function EHIHealthRegenBuffTracker:SetPersistent()
     self._text:set_text("0")
 end
 
+function EHIHealthRegenBuffTracker:delete()
+    managers.ehi_hook:RemovePlayerSpawnedListener(self._id)
+    managers.ehi_hook:RemovePlayerDespawnedListener(self._id)
+    self:RemoveBuffFromUpdate2()
+    self._character_damage = nil
+    EHIHealthRegenBuffTracker.super.delete(self)
+end
+
 ---@class EHIStaminaBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
 EHIStaminaBuffTracker = class(EHIGaugeBuffTracker)
 ---@param max_stamina number
 function EHIStaminaBuffTracker:Spawned(max_stamina)
     self:SetMaxStamina(max_stamina)
-    self:PreUpdate()
-end
-
-function EHIStaminaBuffTracker:PreUpdate()
     self:SetRatio(self._max_stamina)
     self:Activate()
 end
@@ -210,16 +214,6 @@ function EHIStaminaBuffTracker:Activate()
     self._panel:stop()
     self._panel:animate(self._show)
     self:AddVisibleBuff()
-end
-
-function EHIStaminaBuffTracker:Deactivate()
-    if not self._active then
-        return
-    end
-    self:RemoveVisibleBuff()
-    self._panel:stop()
-    self._panel:animate(self._hide)
-    self._active = false
 end
 
 ---@class EHIForceUpdateParentBuffTracker : EHIBuffTracker
@@ -290,24 +284,30 @@ end
 ---@class EHIManiacBuffTracker : EHIGaugeBuffTracker
 ---@field super EHIGaugeBuffTracker
 EHIManiacBuffTracker = class(EHIGaugeBuffTracker)
+EHIManiacBuffTracker._stack_convert_levels = tweak_data.upgrades.cocaine_stacks_convert_levels or {}
+EHIManiacBuffTracker._stack_dmg_absorption_value = tweak_data.upgrades.cocaine_stacks_dmg_absorption_value or 0.1
+EHIManiacBuffTracker._max_stacks = tweak_data.upgrades.max_total_cocaine_stacks or 2047
+EHIManiacBuffTracker._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK = true
 function EHIManiacBuffTracker:SkillCheck()
-    if self._persistent and managers.player:has_category_upgrade("player", "cocaine_stacking") then
-        self:ActivateSoft()
-    end
+    return managers.player:has_category_upgrade("player", "cocaine_stacking")
 end
 
-function EHIManiacBuffTracker:SetPersistent()
-    self._persistent = true
+function EHIManiacBuffTracker:PreUpdate()
+    self._cocaine_stack_convert_level = managers.player:upgrade_value("player", "sync_cocaine_upgrade_level", 1)
+    local power_level = managers.player:upgrade_level("player", "cocaine_stack_absorption_multiplier", 0)
+    self._cocaine_stack_multiplier = managers.player:upgrade_value_by_level("player", "cocaine_stack_absorption_multiplier", power_level or 0, 1)
+    self._parent_class:AddBuffNoUpdate(self._id)
 end
 
-function EHIManiacBuffTracker:Deactivate()
-    if self._persistent then
-        self._ratio = 0
-        self._progress:stop()
-        self._progress:animate(self._anim, 0, self._progress_bar)
-        return
+---@param amount number
+function EHIManiacBuffTracker:UpdateStack(amount)
+    if (self._previous_amount or 0) ~= amount then
+        self._previous_amount = amount
+        local ratio = amount / self._max_stacks
+        self:SetRatio(ratio, math.floor(amount))
+        local absorption = amount / (self._stack_convert_levels[self._cocaine_stack_convert_level or 1] or 20) * self._stack_dmg_absorption_value
+        self:SetHintText(tostring(math.floor(absorption * (self._cocaine_stack_multiplier or 1) * 10)))
     end
-    EHIManiacBuffTracker.super.Deactivate(self)
 end
 
 ---@class EHITagTeamBuffTracker : EHIBuffTracker

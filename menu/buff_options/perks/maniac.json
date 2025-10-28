@@ -12,34 +12,6 @@
             "callback_arguments": [ "maniac", "stack" ],
             "value": "stack",
             "default_value": true,
-            "is_parent" : true,
-            "ehi_ver" : 204
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_buffs_perks_maniac_stack_persistent_choice",
-            "title": "ehi_buffs_perks_maniac_stack_persistent",
-            "description": "ehi_buffs_perks_maniac_stack_persistent_desc",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "maniac", "stack_persistent" ],
-            "value": "stack_persistent",
-            "default_value": true,
-            "parent" : "ehi_buffs_perks_maniac_stack_choice",
-            "ehi_ver" : 204
-        },
-        {
-            "type": "slider",
-            "id": "ehi_buffs_perks_maniac_stack_refresh_choice",
-            "title": "ehi_buffs_perks_maniac_stack_refresh",
-            "description": "ehi_buffs_perks_maniac_stack_refresh_desc",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "maniac", "stack_refresh" ],
-            "value": "stack_refresh",
-            "parent" : "ehi_buffs_perks_maniac_stack_choice",
-            "default_value": 1,
-            "max": 10,
-            "min": 1,
-            "step": 0,
             "ehi_ver" : 204
         },
         {
@@ -55,8 +27,8 @@
         },
         {
             "type": "toggle",
-            "id": "ehi_buffs_perks_maniac_stack_choice",
-            "title": "ehi_buffs_perks_maniac_stack",
+            "id": "ehi_buffs_perks_maniac_stack_decay_choice",
+            "title": "ehi_buffs_perks_maniac_stack_decay",
             "description": "ehi_buffs_skills_duration",
             "callback": "SetBuffDeckOption",
             "callback_arguments": [ "maniac", "stack_decay" ],

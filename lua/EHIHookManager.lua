@@ -194,7 +194,7 @@ function EHIHookManager:PlayerSpawned(player_damage)
 end
 
 ---@param id string
----@param f fun()
+---@param f function
 function EHIHookManager:AddPlayerDespawnedListener(id, f)
     self._player_despawned_listener = self._player_despawned_listener or ListenerHolder:new()
     self._player_despawned_listener:add(id, f)

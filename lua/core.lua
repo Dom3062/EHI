@@ -1096,7 +1096,6 @@ local function LoadDefaultValues(self)
             berserker_refresh = 4, -- 1 / value
             berserker_format = 1, -- 1 = Multiplier; 2 = Percent
             berserker_text_format = 1, -- 1 = Weapon Damage | Melee / Saw Damage; 2 = Melee / Saw Damage | Weapon Damage; 3 = Weapon Damage; 4 = Melee / Saw Damage 
-            berserker_persistent = false,
 
             -- Perks
             infiltrator =
@@ -1121,8 +1120,7 @@ local function LoadDefaultValues(self)
             maniac =
             {
                 stack = true,
-                stack_persistent = true,
-                stack_refresh = 1,
+                stack_convert_rate = true,
                 stack_decay = true
             },
             anarchist =
@@ -1141,8 +1139,7 @@ local function LoadDefaultValues(self)
                 irezumi = true,
                 irezumi_refresh = 2, -- 1 / value
                 irezumi_format = 1, -- 1 = Multiplier; 2 = Percent
-                irezumi_text_format = 1, -- 1 = Armor Regen Speed | Movement Speed; 2 = Movement Speed | Armor Regen Speed; 3 = Armor Regen Speed; 4 = Movement Speed 
-                irezumi_persistent = false
+                irezumi_text_format = 1 -- 1 = Armor Regen Speed | Movement Speed; 2 = Movement Speed | Armor Regen Speed; 3 = Armor Regen Speed; 4 = Movement Speed 
             },
             expresident =
             {
@@ -1150,8 +1147,7 @@ local function LoadDefaultValues(self)
             },
             biker =
             {
-                kill_counter = true,
-                kill_counter_persistent = true
+                kill_counter = true
             },
             kingpin =
             {

@@ -332,7 +332,6 @@ function EHIBerserkerBuffTracker:post_init(...)
     end)
     managers.ehi_hook:AddPlayerDespawnedListener(self._id, function()
         self:RemoveBuffFromUpdate()
-        self:Deactivate()
         self._character_damage = nil
     end)
     EHIBerserkerBuffTracker.super.post_init(self, ...)
@@ -355,6 +354,7 @@ function EHIBerserkerBuffTracker:PreUpdate()
         return
     end
     self.__pre_update = true
+    self:SetPersistent()
     self:CanActivateUpdateLoop()
 end
 
@@ -455,7 +455,6 @@ function EHIYakuzaBuffTracker:post_init(...)
     end)
     managers.ehi_hook:AddPlayerDespawnedListener(self._id, function()
         self:RemoveBuffFromUpdate()
-        self:Deactivate()
         self._character_damage = nil
     end)
     EHIYakuzaBuffTracker.super.post_init(self, ...)
@@ -482,6 +481,7 @@ function EHIYakuzaBuffTracker:PreUpdate()
     else
         self._THRESHOLD = 0.25
     end
+    self:SetPersistent()
     self:CanActivateUpdateLoop()
 end
 

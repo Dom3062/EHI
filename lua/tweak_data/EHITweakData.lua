@@ -226,7 +226,6 @@ function EHITweakData:new(tweak_data)
             y = 2,
             skill_check_after_spawn = true,
             option = "berserker",
-            persistent = "berserker_persistent",
             class_to_load =
             {
                 prerequisite = "EHISkillRefreshBuffTracker",
@@ -243,7 +242,6 @@ function EHITweakData:new(tweak_data)
             {
                 deck = "yakuza",
                 option = "irezumi",
-                persistent = "irezumi_refresh"
             },
             skill_check_after_spawn = true,
             class_to_load =
@@ -806,13 +804,12 @@ function EHITweakData:new(tweak_data)
             folder = "coco",
             group = "player_damage_absorption",
             x = 3,
-            format = "percent",
+            format = "standard",
             skill_check_after_spawn = true,
             deck_option =
             {
                 deck = "maniac",
                 option = "stack",
-                persistent = "stack_persistent"
             },
             class = "EHIManiacBuffTracker"
         },
@@ -1180,17 +1177,27 @@ function EHITweakData:new(tweak_data)
         {
             deck = true,
             folder = "wild",
-            skill_check_after_spawn = true,
             deck_option =
             {
                 deck = "biker",
                 option = "kill_counter",
-                persistent = "kill_counter_persistent"
             },
-            class_to_load =
+            permanent =
             {
-                load_class = "EHIBikerBuffTracker",
-                class = "EHIBikerBuffTracker"
+                option_true = true,
+                skill_check =
+                {
+                    skills =
+                    {
+                        { category = "player", upgrade = "wild_health_amount" },
+                        { category = "player", upgrade = "wild_armor_amount" }
+                    }
+                },
+                class_to_load =
+                {
+                    load_class = "EHIBikerBuffTracker",
+                    class = "EHIBikerBuffTracker"
+                }
             }
         },
         TagTeamEffect =

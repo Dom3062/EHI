@@ -103,11 +103,16 @@
         </group>
 
         <group hook_id="lib/units/">
-            <post :hook_id="beings/player/playerdamage" :script_path="PlayerDamage.lua" />
-            <post :hook_id="beings/player/playerinventory" :script_path="PlayerInventory.lua" />
-            <post :hook_id="beings/player/playermovement" :script_path="PlayerMovement.lua" />
-            <post :hook_id="beings/player/states/playerincapacitated" :script_path="PlayerIncapacitated.lua" />
-            <post :hook_id="beings/player/states/playerstandard" :script_path="PlayerStandard.lua" />
+            <group :hook_id="beings/player/">
+                <post :hook_id="playerdamage" :script_path="PlayerDamage.lua" />
+                <post :hook_id="playerinventory" :script_path="PlayerInventory.lua" />
+                <post :hook_id="playermovement" :script_path="PlayerMovement.lua" />
+                <group :hook_id="states/">
+                    <post :hook_id="playermaskoff" :script_path="PlayerMaskOff.lua" />
+                    <post :hook_id="playerincapacitated" :script_path="PlayerIncapacitated.lua" />
+                    <post :hook_id="playerstandard" :script_path="PlayerStandard.lua" />
+                </group>
+            </group>
             <post :hook_id="civilians/logics/civilianlogicsurrender" :script_path="CivilianLogicSurrender.lua" />
             <post :hook_id="civilians/civiliandamage" :script_path="CivilianDamage.lua" />
             <post :hook_id="civilians/huskciviliandamage" :script_path="HuskCivilianDamage.lua" />

@@ -19,6 +19,7 @@ local original =
 {
     init = GrenadeCrateBase.init,
     _set_visual_stage = GrenadeCrateBase._set_visual_stage,
+    _set_empty = GrenadeCrateBase._set_empty,
     destroy = GrenadeCrateBase.destroy,
 
     init_custom = CustomGrenadeCrateBase.init
@@ -63,6 +64,11 @@ function GrenadeCrateBase:SetCountThisUnit()
     self._ignore_set_by_parent = nil
     self._parent_done = true
     self:UpdateAmount()
+end
+
+function GrenadeCrateBase:_set_empty(...)
+    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+    original._set_empty(self, ...)
 end
 
 function GrenadeCrateBase:destroy(...)
