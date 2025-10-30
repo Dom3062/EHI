@@ -1,3 +1,6 @@
+r352 (30. 10. 2025):
+Experience: Fixed a possible crash when job is not active
+
 r351 (28. 10. 2025):
 Aggregated Health Equipment Tracker: Fixed an issue where panel is misaligned
 Buffs: Fixed an issue where Interact buff is not visible when putting on mask

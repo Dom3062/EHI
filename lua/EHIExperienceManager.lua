@@ -125,6 +125,10 @@ function EHIExperienceManager:LoadData(managers)
     self._ehi_xp = self._ehi_xp or self:CreateXPTable()
     -- Job
     local job = managers.job
+    if not job:has_active_job() then
+        self._xp_disabled = true
+        return
+    end
     local is_current_job_professional = job:is_current_job_professional()
     local difficulty_stars = job:current_difficulty_stars()
     self._ehi_xp.job_stars = job:current_job_stars()
@@ -264,7 +268,7 @@ function EHIExperienceManager:HookAwardXP()
             end
         end
     end
-    EHI:Hook(ExperienceManager, "on_loot_drop_xp", function(xp, value_id)
+    Hooks:PostHook(ExperienceManager, "on_loot_drop_xp", "EHI_ExperienceManager_on_loot_drop_xp", function(xp, value_id)
         local amount = tweak_data:get_value("experience_manager", "loot_drop_value", value_id) or 0
         if amount <= 0 then
             return
