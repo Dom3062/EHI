@@ -489,7 +489,7 @@ if _G.ch_settings then
         local multiplier = self._ehi_xp.skill_xp_multiplier or 1
         skill_dissect = math.round(total_contract_xp * multiplier - total_contract_xp)
         total_xp = total_xp + skill_dissect
-        local bonus_xp = self._ehi_xp.infamy_bonus
+        local bonus_xp = self._ehi_xp.infamy_bonus or 1
         infamy_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
         total_xp = total_xp + infamy_dissect
         bonus_xp = tweak_data:get_value("experience_manager", "limited_bonus_multiplier") or 1
@@ -501,7 +501,7 @@ if _G.ch_settings then
 
         ghost_dissect = math.round(total_xp * ghost_multiplier - total_xp)
         total_xp = total_xp + ghost_dissect
-        job_heat_dissect = math.round(total_xp * self._ehi_xp.heat - total_xp)
+        job_heat_dissect = math.round(total_xp * (self._ehi_xp.heat or 1) - total_xp)
         total_xp = total_xp + job_heat_dissect
 
         return math.round(total_xp)
@@ -562,7 +562,7 @@ else
         bonus_xp = self._ehi_xp.skill_xp_multiplier or 1
         skill_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
         total_xp = total_xp + skill_dissect
-        bonus_xp = self._ehi_xp.infamy_bonus
+        bonus_xp = self._ehi_xp.infamy_bonus or 1
         infamy_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
         total_xp = total_xp + infamy_dissect
 
@@ -570,20 +570,20 @@ else
         alive_crew_dissect = math.round(total_contract_xp * num_players_bonus - total_contract_xp)
         total_xp = total_xp + alive_crew_dissect
 
-        bonus_xp = self._ehi_xp.gage_bonus
+        bonus_xp = self._ehi_xp.gage_bonus or 1
         gage_assignment_dissect = math.round(total_contract_xp * bonus_xp - total_contract_xp)
         total_xp = total_xp + gage_assignment_dissect
         ghost_dissect = math.round(total_xp * ghost_multiplier - total_xp)
         total_xp = total_xp + ghost_dissect
-        local heat_xp_mul = self._ehi_xp.heat
+        local heat_xp_mul = self._ehi_xp.heat or 1
         job_heat_dissect = math.round(total_xp * heat_xp_mul - total_xp)
         total_xp = total_xp + job_heat_dissect
-        bonus_xp = self._ehi_xp.limited_xp_bonus
+        bonus_xp = self._ehi_xp.limited_xp_bonus or 1
         extra_bonus_dissect = math.round(total_xp * bonus_xp - total_xp)
         total_xp = total_xp + extra_bonus_dissect
-        local bonus_mutators_dissect = total_xp * self._ehi_xp.mutator_xp_reduction
+        local bonus_mutators_dissect = total_xp * (self._ehi_xp.mutator_xp_reduction or 1)
         total_xp = total_xp + bonus_mutators_dissect
-        total_xp = total_xp + self._ehi_xp.bonus_xp
+        total_xp = total_xp + (self._ehi_xp.bonus_xp or 1)
         return total_xp
     end
 end

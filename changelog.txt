@@ -1,3 +1,6 @@
+r353 (01. 11. 2025):
+Experience: Fixed nil value in infamy bonus
+
 r352 (30. 10. 2025):
 Experience: Fixed a possible crash when job is not active
 
