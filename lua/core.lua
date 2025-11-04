@@ -3059,29 +3059,25 @@ local paths = {
     "units/payday2/characters/ene_sniper_2/ene_sniper_2",
     "units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam"
 }
-Hooks:Add("BeardLibPostInit", "EHI_BeardLib_Crash_Fix", function()
-    if not Global.game_settings then
-        return
-    elseif not Idstring("unit").key then
+local unit_key = "8f6601ad58a9bc7d" -- unit
+Hooks:Add("BeardLibPreInit", "EHI_BeardLib_Crash_Fix", function()
+    if Global.EHI_VanillaHeist == nil and Global.EHI_AppliedBeardLibFix == nil then -- First launch, avoid doing anything as the game will shortly crash because it will try to load snipers
         return
     elseif not Global.fm then
         Global.fm = { added_files = {} }
     end
-    if Global.game_settings then
-        local unit_key = Idstring("unit"):key()
-        if Global.game_settings.ehi_vanilla_heist and Global.game_settings.ehi_applied_beardlib_fix ~= false then
-            if Global.fm.added_files[unit_key] then -- Check if the unit table exists, otherwise it may crash
-                for _, path in ipairs(paths) do
-                    Global.fm.added_files[unit_key][Idstring(path):key()] = nil
-                end
-            end
-            Global.game_settings.ehi_applied_beardlib_fix = false
-        elseif not Global.game_settings.ehi_vanilla_heist and not Global.game_settings.ehi_applied_beardlib_fix then
-            Global.fm.added_files[unit_key] = Global.fm.added_files[unit_key] or {}
+    if Global.EHI_VanillaHeist and Global.EHI_AppliedBeardLibFix ~= false then
+        if Global.fm.added_files[unit_key] then -- Check if the unit table exists, otherwise it may crash
             for _, path in ipairs(paths) do
-                Global.fm.added_files[unit_key][Idstring(path):key()] = { path = path }
+                Global.fm.added_files[unit_key][Idstring(path):key()] = nil
             end
-            Global.game_settings.ehi_applied_beardlib_fix = true
         end
+        Global.EHI_AppliedBeardLibFix = false
+    elseif not Global.EHI_VanillaHeist and not Global.EHI_AppliedBeardLibFix then
+        Global.fm.added_files[unit_key] = Global.fm.added_files[unit_key] or {}
+        for _, path in ipairs(paths) do
+            Global.fm.added_files[unit_key][Idstring(path):key()] = { path = path }
+        end
+        Global.EHI_AppliedBeardLibFix = true
     end
 end)
