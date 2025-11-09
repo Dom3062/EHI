@@ -27,7 +27,7 @@ local function cane_5(present_amount)
     Hooks:PostHook(PlayerManager, "set_synced_deployable_equipment", "EHI_cane_5_fail_trigger", function(self, ...)
         if self._peer_used_deployable then
             managers.ehi_unlockable:SetAchievementFailed("cane_5")
-            EHI:Unhook("cane_5_fail_trigger")
+            Hooks:RemovePostHook("EHI_cane_5_fail_trigger")
         end
     end)
     EHI:ShowAchievementLootCounterNoCheck({

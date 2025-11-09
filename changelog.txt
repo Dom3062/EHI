@@ -1,3 +1,6 @@
+r355 (09. 11. 2025):
+Menu: Redesigned options menu to use Vanilla style
+
 r354 (04. 11. 2025):
 Fixed Beardlib fix not working as intended
 

@@ -1872,10 +1872,13 @@ end
 ---@class MenuInput : CoreMenuInput
 
 ---@class MenuManager : CoreMenuManager
+---@field back fun(self: self)
 ---@field is_pc_controller fun(self: self): boolean Returns `true` if the game was started by mouse or keyboard
+---@field open_node fun(self: self, node_name: string, parameter_list: any[]?)
 
 ---@class MenuComponentManager
 ---@field _mission_briefing_gui MissionBriefingGui
+---@field _ws Workspace
 ---@field post_event fun(self: self, event: string, unique: boolean?)
 
 ---@class BaseModifier
@@ -1959,7 +1962,7 @@ end
 
 ---@class BlackMarketTweakData
 ---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
----@field projectiles { [string] : { max_amount: integer, texture_bundle_folder: string? } }
+---@field projectiles { [string] : { ability: boolean, is_explosive: boolean, max_amount: integer, texture_bundle_folder: string? } }
 
 ---@class CharacterTweakData._string_.Enemy : table
 ---@field has_alarm_pager boolean
@@ -2385,57 +2388,6 @@ end
 ---@field add_destroy_listener fun(self: self, key: string, clbk: function)
 ---@field remove_destroy_listener fun(self: self, key: string)
 
----@class PanelBaseObject
----@field x fun(self: self): number
----@field set_x fun(self: self, x: number)
----@field y fun(self: self): number
----@field set_y fun(self: self, y: number)
----@field w fun(self: self): number
----@field set_w fun(self: self, w: number)
----@field h fun(self: self): number
----@field set_h fun(self: self, h: number)
----@field top fun(self: self): number Returns `y`
----@field set_top fun(self: self, top: number)
----@field bottom fun(self: self): number Returns `y + h`
----@field set_bottom fun(self: self, bottom: number)
----@field left fun(self: self): number Returns `x`
----@field set_left fun(self: self, left: number)
----@field right fun(self: self): number Returns `x + w`
----@field set_right fun(self: self, right: number)
----@field center fun(self: self): x: number, y: number
----@field set_center fun(self: self, x: number, y: number)
----@field center_x fun(self: self): number
----@field set_center_x fun(self: self, center_x: number)
----@field center_y fun(self: self): number
----@field set_center_y fun(self: self, center_y: number)
----@field position fun(self: self): x: number, y: number
----@field set_position fun(self: self, x: number, y: number)
----@field set_leftbottom fun(self: self, left: number, bottom: number)
----@field set_righttop fun(self: self, right: number, top: number)
----@field set_rightbottom fun(self: self, right: number, bottom: number)
----@field set_layer fun(self: self, layer: number)
----@field layer fun(self: self): number
----@field alpha fun(self: self) : number
----@field set_alpha fun(self: self, alpha: number)
----@field stop fun(self: self, anim_thread: thread?) If `anim_thread` is not provided, the function stops all current active animations
----@field animate fun(self: self, f: fun(o: self, ...: any?), ...:any?): thread
----@field set_size fun(self: self, w: number, h: number)
----@field size fun(self: self): w: number, h: number
----@field visible fun(self: self): boolean
----@field set_visible fun(self: self, visible: boolean)
----@field parent fun(self: self): Panel
----@field color fun(self: self): Color
----@field set_color fun(self: self, color: Color)
----@field inside fun(self: self, x: number, y: number): boolean Returns `true` or `false` if provided `x` and `y` are inside the object
----@field shape fun(self: self): x: number, y: number, w: number, h: number
----@field set_shape fun(self: self, x: number, y: number, w: number, h: number)
----@field set_blend_mode fun(self: self, mode: "add"|"normal"|"sub")
----@field show fun(self: self)
----@field hide fun(self: self)
----@field name fun(self: self): string
----@field move fun(self: self, x: number, y: number) Moves the object based on provided `x` and `y`
----@field world_x fun(self: self): number Returns X where object really is
-
 ---@class PanelBaseObject_Params
 ---@field name string
 ---@field layer integer
@@ -2477,10 +2429,10 @@ end
 ---@field rotation number In degrees
 
 ---@class Panel
----@field text fun(self: self, params: Text_Params): Text
----@field bitmap fun(self: self, params: Bitmap_Params): Bitmap
----@field rect fun(self: self, params: PanelRectangle_Params): Rect
----@field panel fun(self: self, params: Panel_Params): self
+---@field text fun(self: self, params: Text_Params?): Text
+---@field bitmap fun(self: self, params: Bitmap_Params?): Bitmap
+---@field rect fun(self: self, params: PanelRectangle_Params?): Rect
+---@field panel fun(self: self, params: Panel_Params?): self
 
 ---@class Text
 ---@field text fun(self: self): string
@@ -2490,6 +2442,38 @@ end
 
 ---@class GrowPanel : ExtendedPanel
 ---@field new fun(self: self, parent: table, config: Panel_Params): self
+
+_G.CoreMenuNode = {}
+---@class CoreMenuNode.MenuNode
+---@field new fun(self: self, data_node: table?): self
+---@field set_callback_handler fun(self: self, callback_handler: MenuCallbackHandler)
+_G.CoreMenuNode.MenuNode = {}
+
+---@class CoreMenuItem.Item
+---@field dirty fun(self: self)
+---@field name fun(self: self): string
+---@field set_enabled fun(self: self, enabled: boolean)
+---@field set_parameter fun(self: self, name: any, value: any)
+---@field parameters fun(self: self): table
+---@field type fun(self: self): string
+
+---@class MenuItemDivider : CoreMenuItem.Item
+
+---@class CoreMenuItemToggle.ItemToggle : CoreMenuItem.Item
+---@field value fun(self: self): "on"|"off"
+
+---@class CoreMenuItemSlider.ItemSlider : CoreMenuItem.Item
+---@field set_decimal_count fun(self: self, decimal_count: number)
+---@field raw_value_string fun(self: self): string
+---@field value fun(self: self): number
+---@field value_string fun(self: self): string
+
+---@class MenuItemMultiChoice : CoreMenuItem.Item
+---@field value fun(self: self): integer
+
+---@class MenuItemCustomizeController : CoreMenuItem.Item
+
+---@class MenuItemInput : CoreMenuItem.Item
 
 ---@class CircleBitmapGuiObject_params : Bitmap_Params
 ---@field bg string Depends on `use_bg`

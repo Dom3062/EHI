@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_expresident_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_expresident",
     "items": [
         {
@@ -8,10 +8,12 @@
             "id": "ehi_buffs_perks_expresident_stored_health_choice",
             "title": "ehi_buffs_perks_expresident_stored_health",
             "description": "ehi_buffs_skills_value",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "expresident", "stored_health" ],
+            "callback": "ehi_set_item_value",
             "value": "stored_health",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "expresident" ]
+            },
             "ehi_ver" : 204
         }
     ]

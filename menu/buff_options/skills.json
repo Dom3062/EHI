@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_skills_menu",
-    "parent_menu" : "ehi_buffs_menu",
+    "parent_menu_id" : "ehi_buffs_menu",
     "title": "ehi_buffs_skills_menu",
     "items": [
         {
@@ -8,11 +8,7 @@
             "id": "ehi_buffs_skills_mastermind_menu",
             "title": "ehi_buffs_skills_mastermind_menu",
             "next_menu": "ehi_buffs_skills_mastermind_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/skills/mastermind.json",
-                "settings" : "buff_option"
-            }
+            "ehi_ver" : 325
         },
         {
             "type": "divider",
@@ -23,11 +19,7 @@
             "id": "ehi_buffs_skills_enforcer_menu",
             "title": "ehi_buffs_skills_enforcer_menu",
             "next_menu": "ehi_buffs_skills_enforcer_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/skills/enforcer.json",
-                "settings" : "buff_option"
-            }
+            "ehi_ver" : 325
         },
         {
             "type": "divider",
@@ -38,11 +30,7 @@
             "id": "ehi_buffs_skills_ghost_menu",
             "title": "ehi_buffs_skills_ghost_menu",
             "next_menu": "ehi_buffs_skills_ghost_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/skills/ghost.json",
-                "settings" : "buff_option"
-            }
+            "ehi_ver" : 325
         },
         {
             "type": "divider",
@@ -53,11 +41,7 @@
             "id": "ehi_buffs_skills_fugitive_menu",
             "title": "ehi_buffs_skills_fugitive_menu",
             "next_menu": "ehi_buffs_skills_fugitive_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/skills/fugitive.json",
-                "settings" : "buff_option"
-            }
+            "ehi_ver" : 325
         }
     ]
 }

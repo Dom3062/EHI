@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_menu",
-    "parent_menu" : "ehi_buffs_menu",
+    "parent_menu_id" : "ehi_buffs_menu",
     "title": "ehi_buffs_perks_menu",
     "items": [
         {
@@ -8,165 +8,105 @@
             "id": "ehi_buffs_perks_infiltrator_choice",
             "title": "ehi_buffs_perks_infiltrator",
             "next_menu": "ehi_buffs_perks_infiltrator_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/infiltrator.json",
-                "settings" : [ "buff_option", "infiltrator" ]
-            }
+            "ehi_ver" : 325
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_gambler_choice",
             "title": "ehi_buffs_perks_gambler",
             "next_menu": "ehi_buffs_perks_gambler_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/gambler.json",
-                "settings" : [ "buff_option", "gambler" ]
-            }
+            "ehi_ver" : 325
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_grinder_choice",
             "title": "ehi_buffs_perks_grinder",
             "next_menu": "ehi_buffs_perks_grinder_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/grinder.json",
-                "settings" : [ "buff_option", "grinder" ]
-            }
+            "ehi_ver" : 325
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_maniac_choice",
             "title": "ehi_buffs_perks_maniac",
             "next_menu" : "ehi_buffs_perks_maniac_menu",
-            "ehi_ver" : 204,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/maniac.json",
-                "settings" : [ "buff_option", "maniac" ]
-            }
+            "ehi_ver" : 204
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_anarchist_choice",
             "title": "ehi_buffs_perks_anarchist",
             "next_menu" : "ehi_buffs_perks_anarchist_menu",
-            "ehi_ver" : 319,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/anarchist.json",
-                "settings" : [ "buff_option", "anarchist" ]
-            }
+            "ehi_ver" : 319
         },
-                {
+        {
             "type": "button",
             "id": "ehi_buffs_perks_yakuza_choice",
             "title": "ehi_buffs_perks_yakuza",
             "next_menu" : "ehi_buffs_perks_yakuza_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/yakuza.json",
-                "settings" : [ "buff_option", "yakuza" ]
-            }
+            "ehi_ver" : 325
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_expresident_choice",
             "title": "ehi_buffs_perks_expresident",
             "next_menu": "ehi_buffs_perks_expresident_menu",
-            "ehi_ver" : 204,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/expresident.json",
-                "settings" : [ "buff_option", "expresident" ]
-            }
+            "ehi_ver" : 204
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_biker_choice",
             "title": "ehi_buffs_perks_biker",
             "next_menu": "ehi_buffs_perks_biker_menu",
-            "ehi_ver" : 204,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/biker.json",
-                "settings" : [ "buff_option", "biker" ]
-            }
+            "ehi_ver" : 204
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_kingpin_choice",
             "title": "ehi_buffs_perks_kingpin",
             "next_menu": "ehi_buffs_perks_kingpin_menu",
-            "ehi_ver" : 349,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/kingpin.json",
-                "settings" : [ "buff_option", "kingpin" ]
-            }
+            "ehi_ver" : 349
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_sicario_choice",
             "title": "ehi_buffs_perks_sicario",
             "next_menu": "ehi_buffs_perks_sicario_menu",
-            "ehi_ver" : 349,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/sicario.json",
-                "settings" : [ "buff_option", "sicario" ]
-            }
+            "ehi_ver" : 349
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_stoic_choice",
             "title": "ehi_buffs_perks_stoic",
             "next_menu": "ehi_buffs_perks_stoic_menu",
-            "ehi_ver" : 349,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/stoic.json",
-                "settings" : [ "buff_option", "stoic" ]
-            }
+            "ehi_ver" : 349
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_tag_team_choice",
             "title": "ehi_buffs_perks_tag_team",
             "next_menu": "ehi_buffs_perks_tag_team_menu",
-            "ehi_ver" : 349,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/tag_team.json",
-                "settings" : [ "buff_option", "tag_team" ]
-            }
+            "ehi_ver" : 349
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_hacker_choice",
             "title": "ehi_buffs_perks_hacker",
             "next_menu": "ehi_buffs_perks_hacker_menu",
-            "ehi_ver" : 349,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/hacker.json",
-                "settings" : [ "buff_option", "hacker" ]
-            }
+            "ehi_ver" : 349
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_leech_choice",
             "title": "ehi_buffs_perks_leech",
             "next_menu": "ehi_buffs_perks_leech_menu",
-            "ehi_ver" : 349,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/leech.json",
-                "settings" : [ "buff_option", "leech" ]
-            }
+            "ehi_ver" : 349
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_copycat_choice",
             "title": "ehi_buffs_perks_copycat",
             "next_menu": "ehi_buffs_perks_copycat_menu",
-            "ehi_ver" : 349,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/copycat.json",
-                "settings" : [ "buff_option", "copycat" ]
-            }
+            "ehi_ver" : 349
         },
         {
             "type": "divider",
@@ -178,11 +118,7 @@
             "title": "ehi_buffs_perks_gage_boosts",
             "description" : "ehi_buffs_perks_gage_boosts_desc",
             "next_menu": "ehi_buffs_perks_gage_boosts_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/perks/gage_boosts.json",
-                "settings" : [ "buff_option", "gage_boosts" ]
-            }
+            "ehi_ver" : 325
         }
     ]
 }

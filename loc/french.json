@@ -2,9 +2,6 @@
     "ehi_mod_title": "Extra infos de braquage",
     "ehi_mod_desc": "",
 
-    "ehi_menu_next_page" : "Page suivante -->",
-    "ehi_menu_previous_page" : "<-- Page précédente",
-
     "ehi_language" : "Langage",
     "ehi_language_desc" : "Change le langage du mod. Pour que cela prenne effet, un redémarrage du niveau est nécessaire.",
     "ehi_language_1" : "Détecte automatiquement",
@@ -99,7 +96,6 @@
     "ehi_equipment_menu": "Menu d’Équipement",
     "ehi_equipment_menu_desc": "",
 
-    "ehi_equipment_format" : "Format de l’équipement",
     "ehi_equipment_format_desc" : "Définit comment l’équipement doit être formatté.",
     "ehi_equipment_format_1" : "Charges (Sacs placés)",
     "ehi_equipment_format_2" : "(Sacs placés) Charges",

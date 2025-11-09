@@ -124,8 +124,8 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
                 managers.ehi_unlockable:AddAchievementStatusTracker("rvd_8")
                 local function fail()
                     managers.ehi_unlockable:SetAchievementFailed("rvd_8")
-                    EHI:Unhook("rvd_8_shot_fired")
-                    EHI:Unhook("rvd_8_register_melee_hit")
+                    Hooks:RemovePostHook("EHI_rvd_8_shot_fired")
+                    Hooks:RemovePostHook("EHI_rvd_8_register_melee_hit")
                 end
                 Hooks:PostHook(StatisticsManager, "shot_fired", "EHI_rvd_8_shot_fired", function(sm, data)
                     local name_id = data.name_id or data.weapon_unit:base():get_name_id()

@@ -103,8 +103,8 @@ if EHI:CanShowAchievement2("man_5", "show_achievements_weapon") and ovk_and_up t
             managers.ehi_unlockable:AddAchievementStatusTracker("man_5")
             local function fail()
                 managers.ehi_unlockable:SetAchievementFailed("man_5")
-                EHI:Unhook("man_5_killed")
-                EHI:Unhook("man_5__used_weapon")
+                Hooks:RemovePostHook("EHI_man_5_killed")
+                Hooks:RemovePostHook("EHI_man_5__used_weapon")
             end
             managers.ehi_hook:HookKillFunction("man_5", nil, nil, function(sm, data)
                 local is_not_explosion = data.variant ~= "explosion"

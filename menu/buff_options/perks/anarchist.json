@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_anarchist_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_anarchist",
     "items": [
         {
@@ -8,11 +8,13 @@
             "id": "ehi_buffs_perks_anarchist_continuous_armor_regen_choice",
             "title": "ehi_buffs_perks_anarchist_continuous_armor_regen",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "continuous_armor_regen" ],
+            "callback": "ehi_set_item_value",
             "value": "continuous_armor_regen",
             "default_value": true,
-            "is_parent" : true,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
+            "child" : "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -20,23 +22,31 @@
             "id": "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent_choice",
             "title": "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "continuous_armor_regen_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "continuous_armor_regen_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
             "parent" : "ehi_buffs_perks_anarchist_continuous_armor_regen_choice",
             "ehi_ver" : 314
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_anarchist_immunity_choice",
             "title": "ehi_buffs_perks_anarchist_immunity",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "immunity" ],
+            "callback": "ehi_set_item_value",
             "value": "immunity",
-            "is_parent": true,
+            "child": "ehi_buffs_perks_anarchist_immunity_persistent_choice",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -44,23 +54,31 @@
             "id": "ehi_buffs_perks_anarchist_immunity_persistent_choice",
             "title": "ehi_buffs_perks_anarchist_immunity_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "immunity_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "immunity_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
             "parent" : "ehi_buffs_perks_anarchist_immunity_choice",
             "ehi_ver" : 319
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_anarchist_immunity_cooldown_choice",
             "title": "ehi_buffs_perks_anarchist_immunity_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "immunity_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "immunity_cooldown",
-            "is_parent": true,
+            "child": "ehi_buffs_perks_anarchist_immunity_cooldown_persistent_choice",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -68,23 +86,31 @@
             "id": "ehi_buffs_perks_anarchist_immunity_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_anarchist_immunity_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "immunity_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "immunity_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
             "parent" : "ehi_buffs_perks_anarchist_immunity_cooldown_choice",
             "ehi_ver" : 319
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_choice",
             "title": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "kill_armor_regen_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "kill_armor_regen_cooldown",
-            "is_parent": true,
+            "child": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent_choice",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -92,10 +118,12 @@
             "id": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "anarchist", "kill_armor_regen_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "kill_armor_regen_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "anarchist" ]
+            },
             "parent" : "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_choice",
             "ehi_ver" : 319
         }

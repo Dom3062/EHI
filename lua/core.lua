@@ -1615,7 +1615,11 @@ end
 ---@param option string
 ---@param color string
 function EHI:GetColorFromOption(option, color)
-    return self:GetColor(option and self.settings.colors[option] and self.settings.colors[option][color or ""])
+    local c = option and self.settings.colors[option] and self.settings.colors[option][color or ""]
+    if c and c.r and c.g and c.b then
+        return Color(255, c.r, c.g, c.b) / 255
+    end
+    return Color.white
 end
 
 function EHI:GetVectorFromOption(option, color)
@@ -1685,14 +1689,6 @@ end
 ---@return boolean, boolean
 function EHI:GetShowTrackerAndWaypoint(tracker, waypoint)
     return self:GetTrackerOption(tracker), self:GetWaypointOption(waypoint)
-end
-
----@param color { r: number, g: number, b: number }?
-function EHI:GetColor(color)
-    if color and color.r and color.g and color.b then
-        return Color(255, color.r, color.g, color.b) / 255
-    end
-    return Color.white
 end
 
 ---@param option string?
@@ -1902,27 +1898,11 @@ end
 ---@generic T
 ---@param object T
 ---@param func string
----@param post_call fun(self: T, ...)
-function EHI:Hook(object, func, post_call)
-    Hooks:PostHook(object, func, string.format("EHI_%s", func), post_call)
-end
-
----@generic T
----@param object T
----@param func string
----@param pre_call fun(self: T, ...)
-function EHI:PreHook(object, func, pre_call)
-    Hooks:PreHook(object, func, string.format("EHI_Pre_%s", func), pre_call)
-end
-
----@generic T
----@param object T
----@param func string
 ---@param pre_call fun(self: T, ...)
 ---@param post_call fun(self: T, ...)
 function EHI:PreHookAndHook(object, func, pre_call, post_call)
-    self:PreHook(object, func, pre_call)
-    self:Hook(object, func, post_call)
+    Hooks:PreHook(object, func, string.format("EHI_Pre_%s", func), pre_call)
+    Hooks:PostHook(object, func, string.format("EHI_%s", func), post_call)
 end
 
 ---@generic T
@@ -1934,12 +1914,6 @@ end
 function EHI:PreHookAndHookWithID(object, func, id, pre_call, post_call)
     Hooks:PreHook(object, func, id, pre_call)
     Hooks:PostHook(object, func, id, post_call)
-end
-
----Includes `EHI_`
----@param id string
-function EHI:Unhook(id)
-    Hooks:RemovePostHook("EHI_" .. id)
 end
 
 ---@return boolean
@@ -3037,27 +3011,28 @@ function EHI:PrintClass(tbl, ...)
     Utils.PrintTable(tbl)
 end
 
+--- ["path"] = Idstring(path):key()
 local paths = {
-    "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_gold",
-    "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_money",
-    "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_jewelry",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_special_money",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_a",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_b",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_c",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_d",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_e",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_a",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_b",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_c",
-    "units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_d",
-    "units/pd2_dlc_jfr/pickups/spawn_german_folder/spawn_german_folder",
-    "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box",
-    "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box_intel",
-    "units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_gensec_doors/spawn_gensec_doors",
-    "units/payday2/characters/ene_sniper_1/ene_sniper_1",
-    "units/payday2/characters/ene_sniper_2/ene_sniper_2",
-    "units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam"
+    ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_gold"] = "5dcd1776e3f2f767",
+    ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_money"] = "8d8c766828915eb9",
+    ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_deposit/spawn_jewelry"] = "51da6d6c91d378c1",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_special_money"] = "eee53eb5be4a40f7",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_a"] = "8c6bb6d9e7c729ef",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_b"] = "34542bae5d32069e",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_c"] = "92c7be115bbd2886",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_d"] = "825640d06a632353",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_value_e"] = "6b344f61865251a3",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_a"] = "2bf8e3a9464bf3e0",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_b"] = "7018d5bfd34e2981",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_c"] = "38a21571a66976ef",
+    ["units/payday2/props/bnk_prop_vault_loot/bnk_prop_vault_loot_crap_d"] = "03967aa3cba558ed",
+    ["units/pd2_dlc_jfr/pickups/spawn_german_folder/spawn_german_folder"] = "d2d7c5a3aced6f0f",
+    ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box"] = "e4bc87015ed9fd46",
+    ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box_intel"] = "50aac55917cba830",
+    ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_gensec_doors/spawn_gensec_doors"] = "899966c1e07635cf",
+    ["units/payday2/characters/ene_sniper_1/ene_sniper_1"] = "ffcb30c12128fc5b",
+    ["units/payday2/characters/ene_sniper_2/ene_sniper_2"] = "490944f03e56fcf0",
+    ["units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam"] = "0cec8292d88a4875"
 }
 local unit_key = "8f6601ad58a9bc7d" -- unit
 Hooks:Add("BeardLibPreInit", "EHI_BeardLib_Crash_Fix", function()
@@ -3068,15 +3043,15 @@ Hooks:Add("BeardLibPreInit", "EHI_BeardLib_Crash_Fix", function()
     end
     if Global.EHI_VanillaHeist and Global.EHI_AppliedBeardLibFix ~= false then
         if Global.fm.added_files[unit_key] then -- Check if the unit table exists, otherwise it may crash
-            for _, path in ipairs(paths) do
-                Global.fm.added_files[unit_key][Idstring(path):key()] = nil
+            for _, key in pairs(paths) do
+                Global.fm.added_files[unit_key][key] = nil
             end
         end
         Global.EHI_AppliedBeardLibFix = false
     elseif not Global.EHI_VanillaHeist and not Global.EHI_AppliedBeardLibFix then
         Global.fm.added_files[unit_key] = Global.fm.added_files[unit_key] or {}
-        for _, path in ipairs(paths) do
-            Global.fm.added_files[unit_key][Idstring(path):key()] = { path = path }
+        for path, key in pairs(paths) do
+            Global.fm.added_files[unit_key][key] = { path = path }
         end
         Global.EHI_AppliedBeardLibFix = true
     end

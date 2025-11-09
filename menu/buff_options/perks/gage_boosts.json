@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_gage_boosts_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_gage_boosts",
     "items": [
         {
@@ -8,11 +8,13 @@
             "id": "ehi_buffs_perks_gage_boosts_life_steal_choice",
             "title": "ehi_buffs_perks_gage_boosts_life_steal",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "gage_boosts", "life_steal" ],
+            "callback": "ehi_set_item_value",
             "value": "life_steal",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "gage_boosts" ]
+            },
+            "child": "ehi_buffs_perks_gage_boosts_life_steal_persistent_choice",
             "ehi_ver" : 272
         },
         {
@@ -20,23 +22,31 @@
             "id": "ehi_buffs_perks_gage_boosts_life_steal_persistent_choice",
             "title": "ehi_buffs_perks_gage_boosts_life_steal_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "gage_boosts", "life_steal_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "life_steal_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "gage_boosts" ]
+            },
             "parent": "ehi_buffs_perks_gage_boosts_life_steal_choice",
             "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_gage_boosts_melee_invulnerability_choice",
             "title": "ehi_buffs_perks_gage_boosts_melee_invulnerability",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "gage_boosts", "melee_invulnerability" ],
+            "callback": "ehi_set_item_value",
             "value": "melee_invulnerability",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "gage_boosts" ]
+            },
+            "child": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent_choice",
             "ehi_ver" : 272
         },
         {
@@ -44,10 +54,12 @@
             "id": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent_choice",
             "title": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "gage_boosts", "melee_invulnerability_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "melee_invulnerability_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "gage_boosts" ]
+            },
             "parent": "ehi_buffs_perks_gage_boosts_melee_invulnerability_choice",
             "ehi_ver" : 325
         }

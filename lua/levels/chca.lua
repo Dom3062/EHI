@@ -104,8 +104,8 @@ end)
 
 local function chca_9_fail()
     managers.ehi_unlockable:SetAchievementFailed("chca_9")
-    EHI:Unhook("chca_9__used_weapon")
-    EHI:Unhook("chca_9__used_projectile")
+    Hooks:RemovePostHook("EHI_chca_9__used_weapon")
+    Hooks:RemovePostHook("EHI_chca_9__used_projectile")
 end
 ---@type ParseAchievementTable
 local achievements =

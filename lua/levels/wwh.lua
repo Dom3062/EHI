@@ -51,9 +51,9 @@ if EHI:CanShowAchievement2("cac_27", "show_achievements_weapon") then -- "Global
                 managers.ehi_unlockable:AddAchievementStatusTracker("cac_27")
                 local function fail()
                     managers.ehi_unlockable:SetAchievementFailed("cac_27")
-                    EHI:Unhook("cac_27__used_weapon")
-                    EHI:Unhook("cac_27_killed_by_anyone")
-                    EHI:Unhook("cac_27_set_outfit_string")
+                    Hooks:RemovePostHook("EHI_cac_27__used_weapon")
+                    Hooks:RemovePostHook("EHI_cac_27_killed_by_anyone")
+                    Hooks:RemovePostHook("EHI_cac_27_set_outfit_string")
                 end
                 Hooks:PostHook(StatisticsManager, "_used_weapon", "EHI_cac_27__used_weapon", function(stat, weapon_id)
                     if tweak_data:get_raw_value("weapon", stat:create_unified_weapon_name(weapon_id), "categories", 1) ~= "flamethrower" then

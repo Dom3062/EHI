@@ -7,11 +7,6 @@
 
     "ehi_level_restart_required" : "Для вступления параметров в силу требуется перезапуск ограбления",
 
-    "ehi_item_depends_on" : "Параметр '$option;' должен быть включён для работы",
-
-    "ehi_menu_next_page" : "Следующая страница -->",
-    "ehi_menu_previous_page" : "<-- Предыдущая страница",
-
     "ehi_language" : "Язык",
     "ehi_language_desc" : "Изменяет язык мода. Чтобы изменение применилось, необходимо перезапустить игру.",
     "ehi_language_1" : "Автоопределние",
@@ -121,19 +116,19 @@
     "ehi_hide_unlocked_achievements_desc" : "Когда выбрано, открытые достижения не будут показываться в трекерах",
 
     "ehi_show_achievements_weapon" : "Показать достижения (оружие)",
-    "ehi_show_achievements_weapon_desc" : "показывать достижения, требующие от вас убийства врагов определённым оружием.\n\nТрекер не будет виден после разблокировки достижения.",
+    "ehi_show_achievements_weapon_desc" : "показывать достижения, требующие от вас убийства врагов определённым оружием.\nТрекер не будет виден после разблокировки достижения.",
 
     "ehi_show_achievements_melee" : "Показать достижения (ближний бой)",
-    "ehi_show_achievements_melee_desc" : "показывать достижения, требующие убийства врагов в ближнем бою.\n\nТрекер не будет виден после разблокировки достижения.",
+    "ehi_show_achievements_melee_desc" : "показывать достижения, требующие убийства врагов в ближнем бою.\nТрекер не будет виден после разблокировки достижения.",
 
     "ehi_show_achievements_grenade" : "Показать достижения (метательное)",
-    "ehi_show_achievements_grenade_desc" : "показывать достижения, требующие от вас убийства врагов метательными.\n\nТрекер не будет виден после разблокировки достижения",
+    "ehi_show_achievements_grenade_desc" : "показывать достижения, требующие от вас убийства врагов метательными.\nТрекер не будет виден после разблокировки достижения",
 
     "ehi_show_achievements_vehicle" : "Показать достижения (транспорт)",
-    "ehi_show_achievements_vehicle_desc" : "показывать достижения, которые требуют, чтобы вы переезжали врагов на транспортных средствах.\n\nТрекер не будет виден после разблокировки достижения",
+    "ehi_show_achievements_vehicle_desc" : "показывать достижения, которые требуют, чтобы вы переезжали врагов на транспортных средствах.\nТрекер не будет виден после разблокировки достижения",
 
     "ehi_show_achievements_other" : "Показать достижения (остальное)",
-    "ehi_show_achievements_other_desc" : "показывать достижения, которые не принадлежат ни к одной группе выше\n\nТрекер не будет виден после разблокировки достижения",
+    "ehi_show_achievements_other_desc" : "показывать достижения, которые не принадлежат ни к одной группе выше\nТрекер не будет виден после разблокировки достижения",
 
     "ehi_show_achievement_failed_popup" : "Показать всплывающее окно 'Достижение провалено'",
     "ehi_show_achievement_failed_popup_desc" : "Проваленные достижения будут отображаться красным во всплывающем окне.",
@@ -154,7 +149,7 @@
     "ehi_show_trophy_started_popup_desc" : "Трофеи, которые сейчас отслеживаются, будут отображаться зеленым цветом во всплывающем окне.",
 
     "ehi_show_dailies" : "Показывать ежедневные задания",
-    "ehi_show_dailies_desc" : "показывать ежедневные задания на экране, если они активны\n\nЗавершенные ежедневные задания не будут отображаться на экране.",
+    "ehi_show_dailies_desc" : "показывать ежедневные задания на экране, если они активны\nЗавершенные ежедневные задания не будут отображаться на экране.",
 
     "ehi_show_daily_failed_popup" : "Показать всплывающее окно 'Ежедневное задание провалено'",
     "ehi_show_daily_failed_popup_desc" : "Проваленные ежедневные задания будут отображаться красным во всплывающем окне.",
@@ -223,7 +218,6 @@
     "ehi_equipment_menu" : "Меню снаряжения",
     "ehi_equipment_menu_desc" : "",
 
-    "ehi_equipment_format" : "Отображение снаряжения",
     "ehi_equipment_format_desc" : "Определяет как показывать снаряжение",
     "ehi_equipment_format_1" : "Использований (Количество сумок)",
     "ehi_equipment_format_2" : "(Количество сумок) Использований",
@@ -301,10 +295,10 @@
     "ehi_show_laser_tracker_desc" : "показывать трекер для лазеров, которые работают каждые несколько секунд",
 
     "ehi_show_assault_delay_tracker" : "Показать отслеживание задержки нападения",
-    "ehi_show_assault_delay_tracker_desc" : "Показывать трекер, как долго будет задержка штурма\n\nТрекер не будет отображаться у клиентов, когда они заходят после того, как сложность штурма была увеличена.",
+    "ehi_show_assault_delay_tracker_desc" : "Показывать трекер, как долго будет задержка штурма\nТрекер не будет отображаться у клиентов, когда они заходят после того, как сложность штурма была увеличена.",
 
     "ehi_show_assault_time_tracker" : "Show Assault Duration Tracker",
-    "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
     "ehi_show_loot_counter" : "Показывать счетчик добычи",
     "ehi_show_loot_counter_desc" : "показывать трекер, сколько сумок с добычей на ограблении",
@@ -313,10 +307,10 @@
     "ehi_show_all_loot_secured_popup_desc" : "показывать всплывающее окно, когда вся добыча на карте захвачена.",
 
     "ehi_variable_random_loot_format" : "Переменный формат случайного лута",
-    "ehi_variable_random_loot_format_desc" : "Определяет, как должна быть отформатирована дополнительная случайная добыча.\n\nПример:16 гарантированные сумки с 4 сейфами, в которых может быть или не быть добычи; 9 сумок захвачено\n\nОпция 1:\n9/16-20?\n\nОпция 2:\n9/20?\n\nОпция 3:\n9/16+4?",
-    "ehi_variable_random_loot_format_1" : "Прогресс / Max - (Максимум + Случайно)?",
-    "ehi_variable_random_loot_format_2" : "Прогресс / (Максимум + Случайно)?",
-    "ehi_variable_random_loot_format_3" : "Прогресс / Максимум + Случайно?",
+    "ehi_variable_random_loot_format_desc" : "Определяет, как должна быть отформатирована дополнительная случайная добыча.\nПример:16 гарантированные сумки с 4 сейфами, в которых может быть или не быть добычи; 9 сумок захвачено",
+    "ehi_variable_random_loot_format_1" : "9/16+20?",
+    "ehi_variable_random_loot_format_2" : "9/20?",
+    "ehi_variable_random_loot_format_3" : "9/16+4?",
 
     "ehi_show_bodybags_counter" : "Показывать счётчик мешков для трупов",
     "ehi_show_bodybags_counter_desc" : "показывать трекер, сколько у вас мешков для трупов",

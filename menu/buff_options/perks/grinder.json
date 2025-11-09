@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_grinder_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_grinder",
     "items": [
         {
@@ -8,10 +8,13 @@
             "id": "ehi_buffs_perks_grinder_regen_duration_choice",
             "title": "ehi_buffs_perks_grinder_regen_duration",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "grinder", "regen_duration" ],
+            "callback": "ehi_set_item_value",
             "value": "regen_duration",
             "default_value": true,
+            "child": "ehi_buffs_perks_grinder_regen_duration_persistent_choice",
+            "params": {
+                "settings" : [ "buff_option", "grinder" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -19,21 +22,30 @@
             "id": "ehi_buffs_perks_grinder_regen_duration_persistent_choice",
             "title": "ehi_buffs_perks_grinder_regen_duration_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "grinder", "regen_duration_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "regen_duration_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "grinder" ]
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_grinder_stack_cooldown_choice",
             "title": "ehi_buffs_perks_grinder_stack_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "grinder", "stack_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "stack_cooldown",
             "default_value": true,
+            "child": "ehi_buffs_perks_grinder_stack_cooldown_persistent_choice",
+            "params": {
+                "settings" : [ "buff_option", "grinder" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -41,10 +53,12 @@
             "id": "ehi_buffs_perks_grinder_stack_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_grinder_stack_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "grinder", "stack_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "stack_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "grinder" ]
+            },
             "ehi_ver" : 325
         }
     ]

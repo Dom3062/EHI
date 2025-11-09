@@ -1,32 +1,17 @@
 {
     "menu_id": "ehi_other_menu",
-    "parent_menu" : "ehi_menu",
+    "parent_menu_id" : "ehi_menu",
     "title": "ehi_other_menu",
     "items": [
-        {
-            "type": "button",
-            "id": "ehi_other_next_menu",
-            "title": "ehi_menu_next_page",
-            "next_menu": "ehi_other_2_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "other_2.json"
-            }
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
         {
             "type": "toggle",
             "id": "ehi_other_show_remaining_xp_choice",
             "title": "ehi_other_show_remaining_xp",
             "description": "ehi_other_show_remaining_xp_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_remaining_xp",
+            "callback": "ehi_set_item_value",
             "value": "show_remaining_xp",
             "default_value": true,
-            "is_parent" : true,
+            "child" : "ehi_other_show_remaining_xp_to_100_choice",
             "ehi_ver" : 129
         },
         {
@@ -34,8 +19,7 @@
             "id": "ehi_other_show_remaining_xp_to_100_choice",
             "title": "ehi_other_show_remaining_xp_to_100",
             "description": "ehi_other_show_remaining_xp_to_100_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_remaining_xp_to_100",
+            "callback": "ehi_set_item_value",
             "value": "show_remaining_xp_to_100",
             "default_value": false,
             "parent" : "ehi_other_show_remaining_xp_choice",
@@ -50,53 +34,64 @@
             "id": "ehi_other_show_mission_xp_overview_choice",
             "title": "ehi_other_show_mission_xp_overview",
             "description": "ehi_other_show_mission_xp_overview_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_mission_xp_overview",
+            "callback": "ehi_set_item_value",
             "value": "show_mission_xp_overview",
             "default_value": true,
-            "is_parent": true,
+            "children": [ "ehi_colors_loot_secured_choice", "ehi_colors_total_xp_choice", "ehi_colors_optional_choice" ],
             "ehi_ver" : 129
         },
         {
-            "type": "color_select",
+            "type": "color",
             "id": "ehi_colors_loot_secured_choice",
             "title": "ehi_colors_loot_secured",
             "description": "ehi_colors_loot_secured_desc",
             "value": "loot_secured",
-            "default_value": [255, 188, 0],
-            "callback": "SetColor",
-            "callback_arguments": ["loot_secured", "mission_briefing"],
-            "color_type" : "mission_briefing",
-            "setting_value": "colors",
+            "default_value": {
+                "r": 255,
+                "g": 188,
+                "b": 0
+            },
+            "callback": "ehi_modify_item_color",
             "parent": "ehi_other_show_mission_xp_overview_choice",
+            "params" : {
+                "settings" : [ "mission_briefing", "loot_secured" ]
+            },
             "ehi_ver" : 155
         },
         {
-            "type": "color_select",
+            "type": "color",
             "id": "ehi_colors_total_xp_choice",
             "title": "ehi_colors_total_xp",
             "description": "ehi_colors_total_xp_desc",
             "value": "total_xp",
-            "default_value": [0, 255, 0],
-            "callback": "SetColor",
-            "callback_arguments": ["total_xp", "mission_briefing"],
-            "color_type" : "mission_briefing",
-            "setting_value": "colors",
+            "default_value": {
+                "r": 0,
+                "g": 255,
+                "b": 0
+            },
+            "callback": "ehi_modify_item_color",
             "parent": "ehi_other_show_mission_xp_overview_choice",
+            "params" : {
+                "settings" : [ "mission_briefing", "total_xp" ]
+            },
             "ehi_ver" : 155
         },
         {
-            "type": "color_select",
+            "type": "color",
             "id": "ehi_colors_optional_choice",
             "title": "ehi_colors_optional",
             "description": "ehi_colors_optional_desc",
             "value": "optional",
-            "default_value": [137, 209, 254],
-            "callback": "SetColor",
-            "callback_arguments": ["optional", "mission_briefing"],
-            "color_type" : "mission_briefing",
-            "setting_value": "colors",
+            "default_value": {
+                "r": 137,
+                "g": 209,
+                "b": 254
+            },
+            "callback": "ehi_modify_item_color",
             "parent": "ehi_other_show_mission_xp_overview_choice",
+            "params" : {
+                "settings" : [ "mission_briefing", "optional" ]
+            },
             "ehi_ver" : 155
         },
         {
@@ -108,10 +103,9 @@
             "id": "ehi_show_minion_killed_message_choice",
             "title": "ehi_show_minion_killed_message",
             "description": "ehi_show_minion_killed_message_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_minion_killed_message",
+            "callback": "ehi_set_item_value",
             "value": "show_minion_killed_message",
-            "is_parent" : true,
+            "children" : [ "ehi_show_minion_killed_message_type_choice" ],
             "default_value": true,
             "ehi_ver" : 68
         },
@@ -119,8 +113,7 @@
             "type": "multiple_choice",
             "id": "ehi_show_minion_killed_message_type_choice",
             "title": "ehi_show_minion_killed_message_type",
-            "callback": "SetOption",
-            "callback_arguments": "show_minion_killed_message_type",
+            "callback": "ehi_set_item_value",
             "items": [
                 "ehi_gage_tracker_panel_2",
                 "ehi_show_minion_killed_message_type_2"
@@ -139,23 +132,185 @@
             "id": "ehi_other_show_floating_health_bar_choice",
             "title": "ehi_other_show_floating_health_bar",
             "description": "ehi_other_show_floating_health_bar_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_floating_health_bar",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_health_bar",
             "default_value": true,
             "ehi_ver" : 206,
-            "is_parent" : true
+            "children" : [
+                "ehi_other_show_floating_health_bar_style_choice",
+                "ehi_other_show_floating_health_bar_converts_choice",
+                "ehi_other_show_floating_health_bar_civilians_choice",
+                "ehi_other_show_floating_health_bar_team_ai_choice",
+                "ehi_other_show_floating_health_bar_regular_enemies_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_tank_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_shield_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_taser_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_cloaker_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_sniper_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_medic_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_turret_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_other_choice"
+            ],
+            "children_f": {
+                "ehi_other_show_floating_health_bar_style_poco_blur_choice": "ehi_show_floating_health_bar_style_poco_blur_available_1"
+            }
         },
         {
-            "type": "button",
-            "id": "ehi_other_floating_health_bar_menu",
-            "title": "ehi_other_floating_health_bar_menu",
-            "next_menu": "ehi_other_floating_health_bar_menu",
-            "parent": "ehi_other_show_floating_health_bar_choice",
-            "ehi_ver": 319,
-            "load_menu" : {
-                "file_path" : "other_options/floating_health_bar.json"
-            }
+            "type": "multiple_choice",
+            "id": "ehi_other_show_floating_health_bar_style_choice",
+            "title": "ehi_other_show_floating_health_bar_style",
+            "callback": "ehi_set_item_value",
+            "items": [
+                "ehi_other_show_floating_health_bar_style_1",
+                "ehi_other_show_floating_health_bar_style_2",
+                "ehi_other_show_floating_health_bar_style_3"
+            ],
+            "value": "show_floating_health_bar_style",
+            "default_value": 1,
+            "child_compare": {
+                "ehi_other_show_floating_health_bar_style_poco_blur_choice": {
+                    "comparator": "==",
+                    "value": 1
+                }
+            },
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 276
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_style_poco_blur_choice",
+            "title": "ehi_other_show_floating_health_bar_style_poco_blur",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_style_poco_blur",
+            "default_value": true,
+            "parent_compare": {
+                "id": "ehi_other_show_floating_health_bar_style_choice",
+                "comparator": "==",
+                "value": 1,
+                "enabled": true
+            },
+            "ehi_ver" : 296
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_converts_choice",
+            "title": "ehi_other_show_floating_health_bar_converts",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_converts",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 253
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_civilians_choice",
+            "title": "ehi_other_show_floating_health_bar_civilians",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_civilians",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 253
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_team_ai_choice",
+            "title": "ehi_other_show_floating_health_bar_team_ai",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_team_ai",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 276
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_regular_enemies_choice",
+            "title": "ehi_other_show_floating_health_bar_regular_enemies",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_regular_enemies",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_tank_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_tank",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_tank",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_shield_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_shield",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_shield",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_taser_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_taser",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_taser",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_cloaker_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_cloaker",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_cloaker",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_sniper_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_sniper",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_sniper",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_medic_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_medic",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_medic",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_turret_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_turret",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_turret",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_other_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_other",
+            "description": "ehi_other_show_floating_health_bar_special_enemies_other_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_other",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice",
+            "ehi_ver" : 319
         },
         {
             "type": "divider",
@@ -166,20 +321,25 @@
             "id": "ehi_other_show_floating_damage_popup_choice",
             "title": "ehi_other_show_floating_damage_popup",
             "description": "ehi_other_show_floating_damage_popup_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_floating_damage_popup",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup",
             "default_value": true,
             "ehi_ver" : 298,
-            "is_parent" : true
+            "children" : [
+                "ehi_other_show_floating_damage_popup_accumulate_choice",
+                "ehi_other_show_floating_damage_popup_size_choice",
+                "ehi_other_show_floating_damage_popup_time_on_screen_choice",
+                "ehi_other_show_floating_damage_popup_my_damage_choice",
+                "ehi_other_show_floating_damage_popup_ai_damage_choice",
+                "ehi_other_show_floating_damage_popup_crew_damage_choice"
+            ]
         },
         {
             "type": "toggle",
             "id": "ehi_other_show_floating_damage_popup_accumulate_choice",
             "title": "ehi_other_show_floating_damage_popup_accumulate",
             "description": "ehi_other_show_floating_damage_popup_accumulate_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_floating_damage_popup_accumulate",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup_accumulate",
             "default_value": false,
             "ehi_ver" : 303,
@@ -189,13 +349,13 @@
             "type": "slider",
             "id": "ehi_other_show_floating_damage_popup_size_choice",
             "title": "ehi_other_show_floating_damage_popup_size",
-            "callback": "SetOption",
-            "callback_arguments" : "show_floating_damage_popup_size",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup_size",
             "default_value": 22,
             "max": 30,
             "min": 10,
-            "step": 0,
+            "step": 1,
+            "display_precision": 0,
             "ehi_ver" : 298,
             "parent" : "ehi_other_show_floating_damage_popup_choice"
         },
@@ -204,13 +364,13 @@
             "id": "ehi_other_show_floating_damage_popup_time_on_screen_choice",
             "title": "ehi_other_show_floating_damage_popup_time_on_screen",
             "description" : "ehi_other_show_floating_damage_popup_time_on_screen_desc",
-            "callback": "SetOption",
-            "callback_arguments" : "show_floating_damage_popup_time_on_screen",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup_time_on_screen",
             "default_value": 10,
             "max": 15,
             "min": 2,
-            "step": 0,
+            "step": 1,
+            "display_precision": 0,
             "ehi_ver" : 298,
             "parent" : "ehi_other_show_floating_damage_popup_choice"
         },
@@ -218,8 +378,7 @@
             "type": "toggle",
             "id": "ehi_other_show_floating_damage_popup_my_damage_choice",
             "title": "ehi_other_show_floating_damage_popup_my_damage",
-            "callback": "SetOption",
-            "callback_arguments": "show_floating_damage_popup_my_damage",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup_my_damage",
             "default_value": true,
             "ehi_ver" : 298,
@@ -229,8 +388,7 @@
             "type": "toggle",
             "id": "ehi_other_show_floating_damage_popup_ai_damage_choice",
             "title": "ehi_other_show_floating_damage_popup_ai_damage",
-            "callback": "SetOption",
-            "callback_arguments": "show_floating_damage_popup_ai_damage",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup_ai_damage",
             "default_value": true,
             "ehi_ver" : 298,
@@ -240,12 +398,257 @@
             "type": "toggle",
             "id": "ehi_other_show_floating_damage_popup_crew_damage_choice",
             "title": "ehi_other_show_floating_damage_popup_crew_damage",
-            "callback": "SetOption",
-            "callback_arguments": "show_floating_damage_popup_crew_damage",
+            "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup_crew_damage",
             "default_value": true,
             "ehi_ver" : 298,
             "parent" : "ehi_other_show_floating_damage_popup_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_doctor_bag_choice",
+            "title": "ehi_other_show_use_left_doctor_bag",
+            "callback": "ehi_set_item_value",
+            "value": "show_use_left_doctor_bag",
+            "default_value": true,
+            "ehi_ver" : 267
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_ammo_bag_choice",
+            "title": "ehi_other_show_use_left_ammo_bag",
+            "callback": "ehi_set_item_value",
+            "value": "show_use_left_ammo_bag",
+            "default_value": true,
+            "ehi_ver" : 267
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_bodybags_bag_choice",
+            "title": "ehi_other_show_use_left_bodybags_bag",
+            "callback": "ehi_set_item_value",
+            "value": "show_use_left_bodybags_bag",
+            "default_value": true,
+            "ehi_ver" : 267
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_use_left_grenades_choice",
+            "title": "ehi_other_show_use_left_grenades",
+            "callback": "ehi_set_item_value",
+            "value": "show_use_left_grenades",
+            "default_value": true,
+            "ehi_ver" : 267
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_colored_bag_contour_choice",
+            "title": "ehi_other_show_colored_bag_contour",
+            "description": "ehi_other_show_colored_bag_contour_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_colored_bag_contour",
+            "default_value": true,
+            "children": [ "ehi_colors_bag_contour_light_choice", "ehi_colors_bag_contour_heavy_choice", "ehi_colors_bag_contour_body_choice" ],
+            "ehi_ver" : 279
+        },
+        {
+            "type": "color",
+            "id": "ehi_colors_bag_contour_light_choice",
+            "title": "ehi_colors_bag_contour_light",
+            "description": "ehi_colors_bag_contour_light_desc",
+            "value": "light",
+            "default_value": {
+                "r": 111,
+                "g": 255,
+                "b": 0
+            },
+            "callback": "ehi_modify_item_color",
+            "params" : {
+                "settings" : [ "bag_contour", "light" ]
+            },
+            "parent" : "ehi_other_show_colored_bag_contour_choice",
+            "ehi_ver" : 279
+        },
+        {
+            "type": "color",
+            "id": "ehi_colors_bag_contour_heavy_choice",
+            "title": "ehi_colors_bag_contour_heavy",
+            "description": "ehi_colors_bag_contour_heavy_desc",
+            "value": "heavy",
+            "default_value": {
+                "r": 255,
+                "g": 0,
+                "b": 40
+            },
+            "callback": "ehi_modify_item_color",
+            "params" : {
+                "settings" : [ "bag_contour", "heavy" ]
+            },
+            "parent" : "ehi_other_show_colored_bag_contour_choice",
+            "ehi_ver" : 279
+        },
+        {
+            "type": "color",
+            "id": "ehi_colors_bag_contour_body_choice",
+            "title": "ehi_colors_bag_contour_body",
+            "description": "ehi_colors_bag_contour_body_desc",
+            "value": "body",
+            "default_value": {
+                "r": 20,
+                "g": 80,
+                "b": 100
+            },
+            "callback": "ehi_modify_item_color",
+            "params" : {
+                "settings" : [ "bag_contour", "body" ]
+            },
+            "parent" : "ehi_other_show_colored_bag_contour_choice",
+            "ehi_ver" : 279
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_real_time_ingame_choice",
+            "title": "ehi_other_show_real_time_ingame",
+            "description": "ehi_other_show_real_time_ingame_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_real_time_ingame",
+            "default_value": false,
+            "ehi_ver" : 287
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_minion_colored_to_owner_choice",
+            "title": "ehi_other_show_minion_colored_to_owner",
+            "description": "ehi_other_show_minion_colored_to_owner_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_minion_colored_to_owner",
+            "default_value": true,
+            "ehi_ver" : 298
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_progress_reload_choice",
+            "title": "ehi_other_show_progress_reload",
+            "description": "ehi_other_show_progress_reload_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_progress_reload",
+            "default_value": false,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_progress_melee_choice",
+            "title": "ehi_other_show_progress_melee",
+            "description": "ehi_other_show_progress_melee_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_progress_melee",
+            "default_value": false,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_end_game_stats_choice",
+            "title": "ehi_other_show_end_game_stats",
+            "description": "ehi_other_show_end_game_stats_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_end_game_stats",
+            "children": [
+                "ehi_other_show_end_game_stats_kills_choice",
+                "ehi_other_show_end_game_stats_headshots_choice",
+                "ehi_other_show_end_game_stats_dps_choice",
+                "ehi_other_show_end_game_stats_kpm_choice",
+                "ehi_other_show_end_game_stats_acc_choice",
+                "ehi_other_show_end_game_stats_downs_choice"
+            ],
+            "default_value": false,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_other_show_end_game_stats_kills_choice",
+            "title": "ehi_other_show_end_game_stats_kills",
+            "callback": "ehi_set_item_value",
+            "items": [
+                "ehi_other_show_end_game_stats_kills_1",
+                "ehi_other_show_end_game_stats_kills_2",
+                "ehi_other_show_end_game_stats_kills_3",
+                "ehi_other_show_end_game_stats_kills_4",
+                "ehi_other_show_end_game_stats_kills_5"
+            ],
+            "value": "show_end_game_stats_kills",
+            "parent": "ehi_other_show_end_game_stats_choice",
+            "default_value": 4,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_end_game_stats_headshots_choice",
+            "title": "ehi_other_show_end_game_stats_headshots",
+            "callback": "ehi_set_item_value",
+            "value": "show_end_game_stats_headshots",
+            "parent": "ehi_other_show_end_game_stats_choice",
+            "default_value": true,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_end_game_stats_dps_choice",
+            "title": "ehi_other_show_end_game_stats_dps",
+            "callback": "ehi_set_item_value",
+            "value": "show_end_game_stats_dps",
+            "parent": "ehi_other_show_end_game_stats_choice",
+            "default_value": true,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_end_game_stats_kpm_choice",
+            "title": "ehi_other_show_end_game_stats_kpm",
+            "callback": "ehi_set_item_value",
+            "value": "show_end_game_stats_kpm",
+            "parent": "ehi_other_show_end_game_stats_choice",
+            "default_value": true,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_end_game_stats_acc_choice",
+            "title": "ehi_other_show_end_game_stats_acc",
+            "callback": "ehi_set_item_value",
+            "value": "show_end_game_stats_acc",
+            "parent": "ehi_other_show_end_game_stats_choice",
+            "default_value": true,
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_end_game_stats_downs_choice",
+            "title": "ehi_other_show_end_game_stats_downs",
+            "callback": "ehi_set_item_value",
+            "value": "show_end_game_stats_downs",
+            "parent": "ehi_other_show_end_game_stats_choice",
+            "default_value": true,
+            "ehi_ver" : 325
         }
     ]
 }

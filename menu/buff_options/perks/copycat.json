@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_copycat_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_copycat",
     "items": [
         {
@@ -8,10 +8,12 @@
             "id": "ehi_buffs_perks_tactical_reload_primary_choice",
             "title": "ehi_buffs_perks_tactical_reload_primary",
             "description": "ehi_buffs_skills_value",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "primary_reload_secondary" ],
+            "callback": "ehi_set_item_value",
             "value": "primary_reload_secondary",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "ehi_ver" : 349
         },
         {
@@ -19,21 +21,30 @@
             "id": "ehi_buffs_perks_tactical_reload_secondary_choice",
             "title": "ehi_buffs_perks_tactical_reload_secondary",
             "description": "ehi_buffs_skills_value",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "secondary_reload_primary" ],
+            "callback": "ehi_set_item_value",
             "value": "secondary_reload_primary",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "ehi_ver" : 349
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_copycat_head_games_cooldown_choice",
             "title": "ehi_buffs_perks_copycat_head_games_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "head_games_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "head_games_cooldown",
+            "child": "ehi_buffs_perks_copycat_head_games_cooldown_persistent_choice",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -41,22 +52,31 @@
             "id": "ehi_buffs_perks_copycat_head_games_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_copycat_head_games_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "head_games_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "head_games_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "parent": "ehi_buffs_perks_copycat_head_games_cooldown_choice",
             "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_copycat_grace_period_choice",
             "title": "ehi_buffs_perks_copycat_grace_period",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "grace_period" ],
+            "callback": "ehi_set_item_value",
             "value": "grace_period",
             "default_value": true,
+            "child": "ehi_buffs_perks_copycat_grace_period_persistent_choice",
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -64,22 +84,31 @@
             "id": "ehi_buffs_perks_copycat_grace_period_persistent_choice",
             "title": "ehi_buffs_perks_copycat_grace_period_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "grace_period_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "grace_period_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "parent": "ehi_buffs_perks_copycat_grace_period_choice",
             "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_copycat_grace_period_cooldown_choice",
             "title": "ehi_buffs_perks_copycat_grace_period_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "grace_period_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "grace_period_cooldown",
             "default_value": true,
+            "child": "ehi_buffs_perks_copycat_grace_period_cooldown_persistent_choice",
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -87,10 +116,12 @@
             "id": "ehi_buffs_perks_copycat_grace_period_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_copycat_grace_period_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "copycat", "grace_period_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "grace_period_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "copycat" ]
+            },
             "parent": "ehi_buffs_perks_copycat_grace_period_cooldown_choice",
             "ehi_ver" : 325
         }

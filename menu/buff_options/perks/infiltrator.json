@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_infiltrator_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_infiltrator",
     "items": [
         {
@@ -8,11 +8,13 @@
             "id": "ehi_buffs_perks_infiltrator_melee_cooldown_choice",
             "title": "ehi_buffs_perks_infiltrator_melee_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "infiltrator", "melee_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "melee_cooldown",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "infiltrator" ]
+            },
+            "child": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -20,10 +22,12 @@
             "id": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "infiltrator", "melee_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "melee_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "infiltrator" ]
+            },
             "parent": "ehi_buffs_perks_infiltrator_melee_cooldown_choice",
             "ehi_ver" : 325
         }

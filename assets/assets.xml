@@ -1,9 +1,6 @@
 <?xml version="1.0"?>
 <assets base_path="assets/" load="startup">
     <group name="guis/textures/pd2_mod_ehi/" path="assets/guis/textures/pd2_mod_ehi/">
-        <!-- Menu Icons-->
-        <file :name="menu_atlas.texture" :path="menu_atlas.texture"/>
-
         <!-- Custom tracker icons -->
         <file :name="icons_atlas.texture" :path="icons_atlas.texture"/>
 

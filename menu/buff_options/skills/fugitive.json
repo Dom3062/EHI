@@ -1,86 +1,94 @@
 {
     "menu_id": "ehi_buffs_skills_fugitive_menu",
-    "parent_menu" : "ehi_buffs_skills_menu",
+    "parent_menu_id" : "ehi_buffs_skills_menu",
     "title": "ehi_buffs_skills_fugitive_menu",
     "items": [
         {
-            "type" : "label",
+            "type" : "divider",
             "title" : "ehi_buffs_skills_fugitive_gunslinger_subclass",
-            "center" : true
+            "no_text" : false
         },
         {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_trigger_happy_choice",
-                    "title": "ehi_buffs_skills_fugitive_trigger_happy",
-                    "description": "ehi_buffs_skills_duration",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "trigger_happy",
-                    "value": "trigger_happy",
-                    "default_value": true,
-                    "is_parent": true,
-                    "ehi_ver" : 168
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_trigger_happy_persistent_choice",
-                    "title": "ehi_buffs_skills_fugitive_trigger_happy_persistent",
-                    "description": "ehi_buffs_skills_permanent",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "trigger_happy_persistent",
-                    "value": "trigger_happy_persistent",
-                    "default_value": false,
-                    "parent": "ehi_buffs_skills_fugitive_trigger_happy_choice",
-                    "ehi_ver" : 325
-                }
-            ]
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_trigger_happy_choice",
+            "title": "ehi_buffs_skills_fugitive_trigger_happy",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "trigger_happy",
+            "default_value": true,
+            "child": "ehi_buffs_skills_fugitive_trigger_happy_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 168
         },
         {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_desperado_choice",
-                    "title": "ehi_buffs_skills_fugitive_desperado",
-                    "description": "ehi_buffs_skills_duration",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "desperado",
-                    "value": "desperado",
-                    "default_value": true,
-                    "ehi_ver" : 168
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_desperado_persistent_choice",
-                    "title": "ehi_buffs_skills_fugitive_desperado_persistent",
-                    "description": "ehi_buffs_skills_permanent",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "desperado_persistent",
-                    "value": "desperado_persistent",
-                    "default_value": false,
-                    "parent": "ehi_buffs_skills_fugitive_desperado_choice",
-                    "ehi_ver" : 325
-                }
-            ]
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_trigger_happy_persistent_choice",
+            "title": "ehi_buffs_skills_fugitive_trigger_happy_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "trigger_happy_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_fugitive_trigger_happy_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_desperado_choice",
+            "title": "ehi_buffs_skills_fugitive_desperado",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "desperado",
+            "default_value": true,
+            "child": "ehi_buffs_skills_fugitive_desperado_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 168
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_desperado_persistent_choice",
+            "title": "ehi_buffs_skills_fugitive_desperado_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "desperado_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_fugitive_desperado_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
         },
         {
             "type": "divider",
             "size": 20
         },
         {
-            "type" : "label",
+            "type" : "divider",
             "title" : "ehi_buffs_skills_fugitive_revenant_subclass",
-            "center" : true
+            "no_text" : false
         },
-                {
+        {
             "type": "toggle",
             "id": "ehi_buffs_skills_fugitive_running_from_death_reload_choice",
             "title": "ehi_buffs_skills_fugitive_running_from_death_reload",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "running_from_death_reload",
+            "callback": "ehi_set_item_value",
             "value": "running_from_death_reload",
             "default_value": true,
+            "child": "ehi_buffs_skills_fugitive_running_from_death_reload_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -88,22 +96,31 @@
             "id": "ehi_buffs_skills_fugitive_running_from_death_reload_persistent_choice",
             "title": "ehi_buffs_skills_fugitive_running_from_death_reload_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "running_from_death_reload_persistent",
+            "callback": "ehi_set_item_value",
             "value": "running_from_death_reload_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_fugitive_running_from_death_reload_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_fugitive_running_from_death_swap_choice",
             "title": "ehi_buffs_skills_fugitive_running_from_death_swap",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "running_from_death_swap",
+            "callback": "ehi_set_item_value",
             "value": "running_from_death_swap",
             "default_value": true,
+            "child": "ehi_buffs_skills_fugitive_running_from_death_swap_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -111,22 +128,31 @@
             "id": "ehi_buffs_skills_fugitive_running_from_death_swap_persistent_choice",
             "title": "ehi_buffs_skills_fugitive_running_from_death_swap_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "running_from_death_swap_persistent",
+            "callback": "ehi_set_item_value",
             "value": "running_from_death_swap_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_fugitive_running_from_death_swap_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_fugitive_running_from_death_movement_choice",
             "title": "ehi_buffs_skills_fugitive_running_from_death_movement",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "running_from_death_movement",
+            "callback": "ehi_set_item_value",
             "value": "running_from_death_movement",
             "default_value": true,
+            "child": "ehi_buffs_skills_fugitive_running_from_death_movement_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -134,99 +160,117 @@
             "id": "ehi_buffs_skills_fugitive_running_from_death_movement_persistent_choice",
             "title": "ehi_buffs_skills_fugitive_running_from_death_movement_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "running_from_death_movement_persistent",
+            "callback": "ehi_set_item_value",
             "value": "running_from_death_movement_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_fugitive_running_from_death_movement_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
-            "table": [
-                {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_up_you_go_choice",
-                    "title": "ehi_buffs_skills_fugitive_up_you_go",
-                    "description": "ehi_buffs_skills_duration",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "up_you_go",
-                    "value": "up_you_go",
-                    "default_value": true,
-                    "is_parent": true,
-                    "ehi_ver" : 79
-                },        {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_up_you_go_persistent_choice",
-                    "title": "ehi_buffs_skills_fugitive_up_you_go_persistent",
-                    "description": "ehi_buffs_skills_permanent",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "up_you_go_persistent",
-                    "value": "up_you_go_persistent",
-                    "default_value": false,
-                    "parent": "ehi_buffs_skills_fugitive_up_you_go_choice",
-                    "ehi_ver" : 325
-                }
-            ]
+            "type": "divider",
+            "size": 10
         },
         {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_swan_song_choice",
-                    "title": "ehi_buffs_skills_fugitive_swan_song",
-                    "description": "ehi_buffs_skills_duration",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "swan_song",
-                    "value": "swan_song",
-                    "default_value": true,
-                    "is_parent": true,
-                    "ehi_ver" : 79
-                },
-                {
-                    "type": "toggle",
-                    "id": "ehi_buffs_skills_fugitive_swan_song_persistent_choice",
-                    "title": "ehi_buffs_skills_fugitive_swan_song_persistent",
-                    "description": "ehi_buffs_skills_permanent",
-                    "callback": "SetBuffOption",
-                    "callback_arguments": "swan_song_persistent",
-                    "value": "swan_song_persistent",
-                    "default_value": false,
-                    "parent": "ehi_buffs_skills_fugitive_swan_song_choice",
-                    "ehi_ver" : 325
-                }
-            ]
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_up_you_go_choice",
+            "title": "ehi_buffs_skills_fugitive_up_you_go",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "up_you_go",
+            "default_value": true,
+            "child": "ehi_buffs_skills_fugitive_up_you_go_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_up_you_go_persistent_choice",
+            "title": "ehi_buffs_skills_fugitive_up_you_go_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "up_you_go_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_fugitive_up_you_go_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_swan_song_choice",
+            "title": "ehi_buffs_skills_fugitive_swan_song",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "swan_song",
+            "default_value": true,
+            "child": "ehi_buffs_skills_fugitive_swan_song_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_fugitive_swan_song_persistent_choice",
+            "title": "ehi_buffs_skills_fugitive_swan_song_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "swan_song_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_fugitive_swan_song_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
         },
         {
             "type": "divider",
             "size": 20
         },
         {
-            "type" : "label",
+            "type" : "divider",
             "title" : "ehi_buffs_skills_fugitive_brawler_subclass",
-            "center" : true
+            "no_text" : false
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_fugitive_bloodthirst_choice",
             "title": "ehi_buffs_skills_fugitive_bloodthirst",
             "description": "ehi_buffs_skills_progress",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bloodthirst",
+            "callback": "ehi_set_item_value",
             "value": "bloodthirst",
-            "is_parent" : true,
             "default_value": true,
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_fugitive_bloodthirst_reload_choice",
             "title": "ehi_buffs_skills_fugitive_bloodthirst_reload",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bloodthirst_reload",
+            "callback": "ehi_set_item_value",
             "value": "bloodthirst_reload",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_fugitive_bloodthirst_reload_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -234,11 +278,13 @@
             "id": "ehi_buffs_skills_fugitive_bloodthirst_reload_persistent_choice",
             "title": "ehi_buffs_skills_fugitive_bloodthirst_reload_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bloodthirst_reload_persistent",
+            "callback": "ehi_set_item_value",
             "value": "bloodthirst_reload_persistent",
             "default_value": false,
             "parent" : "ehi_buffs_skills_fugitive_bloodthirst_reload_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -248,12 +294,14 @@
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_fugitive_berserker_choice",
-            "title": "ehi_buffs_skills_fugitive_berserker",
+            "title": "ehi_tracker_format",
             "description": "ehi_buffs_skills_progress",
-            "callback": "SetBuffOption",
-            "callback_arguments": "berserker",
+            "callback": "ehi_set_item_value",
             "value": "berserker",
-            "is_parent" : true,
+            "children" : [ "ehi_buffs_skills_fugitive_berserker_refresh_choice", "ehi_buffs_skills_fugitive_berserker_format_choice", "ehi_buffs_skills_fugitive_berserker_text_format_choice" ],
+            "params": {
+                "setting": "buff_option"
+            },
             "default_value": true,
             "ehi_ver" : 79
         },
@@ -262,14 +310,17 @@
             "id": "ehi_buffs_skills_fugitive_berserker_refresh_choice",
             "title": "ehi_buffs_skills_fugitive_berserker_refresh",
             "description": "ehi_buffs_skills_fugitive_berserker_refresh_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "berserker_refresh",
+            "callback": "ehi_set_item_value",
             "value": "berserker_refresh",
             "parent" : "ehi_buffs_skills_fugitive_berserker_choice",
             "default_value": 4,
             "max": 10,
             "min": 1,
-            "step": 0,
+            "step": 1,
+            "display_precision" : 0,
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -277,8 +328,7 @@
             "id": "ehi_buffs_skills_fugitive_berserker_format_choice",
             "title": "ehi_buffs_skills_fugitive_berserker_format",
             "description": "ehi_buffs_skills_fugitive_berserker_format_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "berserker_format",
+            "callback": "ehi_set_item_value",
             "items": [
                 "ehi_buffs_skills_fugitive_berserker_format_1",
                 "ehi_buffs_skills_fugitive_berserker_format_2"
@@ -286,6 +336,9 @@
             "value": "berserker_format",
             "parent": "ehi_buffs_skills_fugitive_berserker_choice",
             "default_value": 1,
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 182
         },
         {
@@ -293,8 +346,7 @@
             "id": "ehi_buffs_skills_fugitive_berserker_text_format_choice",
             "title": "ehi_buffs_skills_fugitive_berserker_text_format",
             "description": "ehi_buffs_skills_fugitive_berserker_text_format_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "berserker_text_format",
+            "callback": "ehi_set_item_value",
             "items": [
                 "ehi_buffs_skills_fugitive_berserker_text_format_1",
                 "ehi_buffs_skills_fugitive_berserker_text_format_2",
@@ -304,6 +356,9 @@
             "value": "berserker_text_format",
             "parent": "ehi_buffs_skills_fugitive_berserker_choice",
             "default_value": 1,
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 314
         }
     ]

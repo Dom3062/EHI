@@ -9,17 +9,10 @@
     "ehi_wrong_game_version_desc" : "Your game version is not compatible with this EHI version\nTo prevent unexpected crashes, EHI will disable itself from loading\nTo keep using EHI, please update your game",
 
     "ehi_menu_reset_to_default" : "$BTN_RESET Set to default",
-    "ehi_menu_large_steps" : "$BTN_STEP Large steps",
-    "ehi_menu_preview" : "$BTN_PREVIEW Preview",
 
     "ehi_level_restart_required" : "A level restart is required for options to take effect",
 
-    "ehi_item_depends_on" : "Option '$option;' must be enabled in order to work",
-
     "ehi_item_blocked_by" : "This option is blocked by:",
-    
-    "ehi_menu_next_page" : "Next Page -->",
-    "ehi_menu_previous_page" : "<-- Previous Page",
 
     "ehi_language" : "Language",
     "ehi_language_desc" : "Changes mod language. To take effect, a level restart is required.",
@@ -243,16 +236,19 @@
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Reset Color",
 
+    "ehi_tracker_format" : "Format",
+
     "ehi_preview" : "Preview (A map restart is required to take effect)\nRed corner indicates where the first tracker is going to appear",
+    "ehi_preview_text" : "Preview",
 
     "ehi_x_offset" : "X offset",
     "ehi_y_offset" : "Y offset",
 
     "ehi_text_scale" : "Text Scale",
-    "ehi_text_scale_desc" : "Sets text scale.\nThis feature is useful for players with modded in-game fonts",
+    "ehi_text_scale_desc" : "Sets text scale\nThis feature is useful for players with modded in-game fonts",
 
     "ehi_scale" : "Scale",
-    "ehi_scale_desc" : "Sets scale of trackers. The higher number the bigger trackers are and vice versa",
+    "ehi_scale_desc" : "Sets scale of trackers\nThe higher number the bigger trackers are and vice versa",
 
     "ehi_time_format" : "Time Format",
     "ehi_time_format_desc" : "Defines how timed tracker should be formated",
@@ -266,7 +262,7 @@
     "ehi_tracker_alignment_3" : "Horizontal; Left to Right",
     "ehi_tracker_alignment_4" : "Horizontal; Right to Left",
 
-    "ehi_tracker_vertical_w_anim" : "(Vertical) Panel Width Animation",
+    "ehi_tracker_vertical_w_anim" : "Panel Width Animation",
     "ehi_tracker_vertical_w_anim_desc" : "Sets panel animation direction when tracker's width changes",
     "ehi_tracker_vertical_w_anim_1" : "Left to Right",
     "ehi_tracker_vertical_w_anim_2" : "Right to Left",
@@ -299,9 +295,9 @@
     "ehi_show_tracker_hint_desc" : "Shows a description for the tracker if exists",
 
     "ehi_show_tracker_hint_t" : "Tracker Description (Time)",
-    "ehi_show_tracker_hint_t_desc" : "Defines how long the description will stay on the screen before it hides\n\nSetting this option to 0 makes the description permanently stay on the screen",
+    "ehi_show_tracker_hint_t_desc" : "Defines how long the description will stay on the screen before it hides\nSetting this option to 0 makes the description permanently stay on the screen",
 
-    "ehi_tracker_hint_position" : "Tracker Description Position",
+    "ehi_tracker_hint_position" : "Position",
     "ehi_tracker_hint_position_desc" : "Sets Tracker Description Position around of the tracker",
     "ehi_tracker_hint_position_1" : "(Vertical) Right / (Horizontal) Down",
     "ehi_tracker_hint_position_2" : "(Vertical) Left / (Horizontal) Up",
@@ -335,7 +331,7 @@
     "ehi_show_achievements_desc" : "Shows achievements on the screen\nSome heists may not have any achievements available",
 
     "ehi_show_achievement_description" : "Show Achievement Description",
-    "ehi_show_achievement_description_desc" : "Shows achievement description in the game chat\n\nThe description is only visible to you",
+    "ehi_show_achievement_description_desc" : "Shows achievement description in the game chat\nThe description is only visible to you",
 
     "ehi_show_achievements_mission" : "Show Achievements (Heist)",
     "ehi_show_achievements_mission_desc" : "Shows achievements that can be completed only in heists",
@@ -344,19 +340,19 @@
     "ehi_hide_unlocked_achievements_desc" : "When enabled, EHI will not show trackers for unlocked achievements (heist)\nWhen disabled, EHI will show all trackers for achievements (heist)",
 
     "ehi_show_achievements_weapon" : "Show Achievements (Weapons)",
-    "ehi_show_achievements_weapon_desc" : "Shows achievements that require you to kill enemies with weapons\n\nThe tracker will not be visible once the achievement is unlocked",
+    "ehi_show_achievements_weapon_desc" : "Shows achievements that require you to kill enemies with weapons\nThe tracker will not be visible once the achievement is unlocked",
 
     "ehi_show_achievements_melee" : "Show Achievements (Melee)",
-    "ehi_show_achievements_melee_desc" : "Shows achievements that require you to kill enemies with melee\n\nThe tracker will not be visible once the achievement is unlocked",
+    "ehi_show_achievements_melee_desc" : "Shows achievements that require you to kill enemies with melee\nThe tracker will not be visible once the achievement is unlocked",
 
     "ehi_show_achievements_grenade" : "Show Achievements (Throwables)",
-    "ehi_show_achievements_grenade_desc" : "Shows achievements that require you to kill enemies with throwables\n\nThe tracker will not be visible once the achievement is unlocked",
+    "ehi_show_achievements_grenade_desc" : "Shows achievements that require you to kill enemies with throwables\nThe tracker will not be visible once the achievement is unlocked",
 
     "ehi_show_achievements_vehicle" : "Show Achievements (Vehicle)",
-    "ehi_show_achievements_vehicle_desc" : "Shows achievements that require you to run over enemies with vehicles\n\nThe tracker will not be visible once the achievement is unlocked",
+    "ehi_show_achievements_vehicle_desc" : "Shows achievements that require you to run over enemies with vehicles\nThe tracker will not be visible once the achievement is unlocked",
 
     "ehi_show_achievements_other" : "Show Achievements (Other)",
-    "ehi_show_achievements_other_desc" : "Shows achievements that do not belong to any group above\n\nThe tracker will not be visible once the achievement is unlocked",
+    "ehi_show_achievements_other_desc" : "Shows achievements that do not belong to any group above\nThe tracker will not be visible once the achievement is unlocked",
 
     "ehi_show_achievement_failed_popup" : "Show 'Achievement Failed' Popup",
     "ehi_show_achievement_failed_popup_desc" : "Failed achievements will show as red in the popup",
@@ -368,7 +364,7 @@
     "ehi_show_trophies_desc" : "Shows trophies on the screen\nSome heists may not have any trophies available",
 
     "ehi_show_trophy_description" : "Show Trophy Description",
-    "ehi_show_trophy_description_desc" : "Shows trophy description in the game chat\n\nThe description is only visible to you",
+    "ehi_show_trophy_description_desc" : "Shows trophy description in the game chat\nThe description is only visible to you",
 
     "ehi_hide_unlocked_trophies" : "Don't Show Unlocked Trophies",
     "ehi_hide_unlocked_trophies_desc" : "When enabled, EHI will not show trackers for unlocked trophies\nWhen disabled, EHI will show all trackers for trophies",
@@ -380,10 +376,10 @@
     "ehi_show_trophy_started_popup_desc" : "Trophies that are now being tracked will show as green in the popup",
 
     "ehi_show_dailies" : "Show Daily Side Jobs",
-    "ehi_show_dailies_desc" : "Shows dailies on the screen if the are active\n\nCompleted dailies won't appear on the screen",
+    "ehi_show_dailies_desc" : "Shows dailies on the screen if the are active\nCompleted dailies won't appear on the screen",
 
     "ehi_show_daily_description" : "Show Daily Side Job Description",
-    "ehi_show_daily_description_desc" : "Shows daily side job description in the game chat\n\nThe description is only visible to you",
+    "ehi_show_daily_description_desc" : "Shows daily side job description in the game chat\nThe description is only visible to you",
 
     "ehi_show_daily_failed_popup" : "Show 'Daily Side Job Failed' Popup",
     "ehi_show_daily_failed_popup_desc" : "Failed dailies will show as red in the popup",
@@ -392,10 +388,10 @@
     "ehi_show_daily_started_popup_desc" : "Dailies that are now being tracked will show as green in the popup",
 
     "ehi_show_events" : "Show Event Missions",
-    "ehi_show_events_desc" : "Shows event missions on the screen if the are active\n\nCompleted events won't appear on the screen",
+    "ehi_show_events_desc" : "Shows event missions on the screen if the are active\nCompleted events won't appear on the screen",
 
     "ehi_show_event_description" : "Show Event Mission Description",
-    "ehi_show_event_description_desc" : "Shows event mission description in the game chat\n\nThe description is only visible to you",
+    "ehi_show_event_description_desc" : "Shows event mission description in the game chat\nThe description is only visible to you",
 
     "ehi_show_event_started_popup" : "Show 'Event Mission Started' Popup",
     "ehi_show_event_started_popup_desc" : "Events that are now being tracked will show as green in the popup",
@@ -429,13 +425,13 @@
     "ehi_show_trade_delay_option_1" : "Always",
     "ehi_show_trade_delay_option_2" : "In Custody",
 
-    "ehi_show_trade_delay_other_players_only": "Show Trade Delay Tracker For Other Players Only",
+    "ehi_show_trade_delay_other_players_only": "Show Tracker For Other Players Only",
     "ehi_show_trade_delay_other_players_only_desc": "When enabled, this tracker will not show how many civilians you killed but it will still show for other players.",
 
-    "ehi_show_trade_delay_suppress_in_stealth" : "Don't Show Trade Delay Tracker in Stealth",
+    "ehi_show_trade_delay_suppress_in_stealth" : "Don't Show Tracker in Stealth",
     "ehi_show_trade_delay_suppress_in_stealth_desc" : "Hides Trade Delay in stealth when enabled. Once the alarm goes off, the tracker appears with all accumulated delay.",
 
-    "ehi_show_trade_delay_amount_of_killed_civilians" : "Show in Trade Delay Tracker amount of killed civilians",
+    "ehi_show_trade_delay_amount_of_killed_civilians" : "Show in Tracker amount of killed civilians",
     "ehi_show_trade_delay_amount_of_killed_civilians_desc" : "Shows for each player how many civilians they killed",
 
     "ehi_show_timers" : "Show Timers",
@@ -473,7 +469,6 @@
     "ehi_equipment_menu" : "Equipment Menu",
     "ehi_equipment_menu_desc" : "",
 
-    "ehi_equipment_format" : "Equipment Format",
     "ehi_equipment_format_desc" : "Defines how equipment should be formated",
     "ehi_equipment_format_1" : "Uses (Bags placed)",
     "ehi_equipment_format_2" : "(Bags placed) Uses",
@@ -491,7 +486,7 @@
     "ehi_show_equipment_grenadecases" : "Show Grenade Crates Tracker",
     "ehi_show_equipment_grenadecases_desc" : "Shows a tracker for Grenade Crates",
 
-    "ehi_grenadecases_block_on_abilities_or_no_throwable" : "Block Grenade Crates Tracker on Abilities or no Throwable",
+    "ehi_grenadecases_block_on_abilities_or_no_throwable" : "Block Tracker on Abilities or no Throwable",
     "ehi_grenadecases_block_on_abilities_or_no_throwable_desc" : "Blocks Grenade Crates Tracker when you have equipped ability from perk deck or no throwable",
 
     "ehi_show_equipment_bodybags": "Show Body Bags Tracker",
@@ -527,7 +522,6 @@
     "ehi_show_minion_tracker" : "Show Converts Tracker",
     "ehi_show_minion_tracker_desc" : "Shows tracker for how many converted enemies are on the map",
 
-    "ehi_show_minion_option" : "Converts Format",
     "ehi_show_minion_option_1" : "Show Number of your Converts only",
     "ehi_show_minion_option_2" : "Show Total Number of Converts on the map",
     "ehi_show_minion_option_3" : "Show Number of Converts Per Player",
@@ -542,7 +536,7 @@
     "ehi_show_minion_killed_message_type_2" : "In hint panel",
 
     "ehi_show_difficulty_tracker" : "Show Difficulty Tracker",
-    "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficult the wave is\n\nIn Holdout game mode, this option will show enemy damage and health boost, respectively",
+    "ehi_show_difficulty_tracker_desc" : "Shows a tracker for how much difficult the wave is\nIn Holdout game mode, this option will show enemy damage and health boost, respectively",
 
     "ehi_show_drama_tracker" : "Show Drama Tracker",
     "ehi_show_drama_tracker_desc" : "Shows a tracker for accumulated drama (host only)",
@@ -565,10 +559,8 @@
     "ehi_show_enemy_count_show_pagers_desc" : "Shows enemies with pager on the left and enemies without the pager on the right\nOnce alarm sounds, only a number of enemies is visible",
 
     "ehi_show_civilian_count_tracker" : "Show Civilian Count Tracker",
-    "ehi_show_civilian_count_tracker_desc" : "Shows a tracker for how many civilians are on the map\n\nOnce there are no civilians on the map, tracker won't be visible",
+    "ehi_show_civilian_count_tracker_desc" : "Shows a tracker for how many civilians are on the map\nOnce there are no civilians on the map, tracker won't be visible",
 
-    "ehi_civilian_count_tracker_format" : "Civilian Count Tracker Format",
-    "ehi_civilian_count_tracker_format_desc" : "",
     "ehi_civilian_count_tracker_format_1" : "Total number of civilians",
     "ehi_civilian_count_tracker_format_2" : "Tied | Untied",
     "ehi_civilian_count_tracker_format_3" : "Untied | Tied",
@@ -576,8 +568,6 @@
     "ehi_show_hostage_count_tracker" : "Show Hostage Count Tracker",
     "ehi_show_hostage_count_tracker_desc" : "Shows a tracker for how many hostages are on the map",
 
-    "ehi_hostage_count_tracker_format" : "Civilian Count Tracker Format",
-    "ehi_hostage_count_tracker_format_desc" : "",
     "ehi_hostage_count_tracker_format_1" : "Total only",
     "ehi_hostage_count_tracker_format_2" : "Total | Police",
     "ehi_hostage_count_tracker_format_3" : "Police | Total",
@@ -588,16 +578,16 @@
     "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
 
     "ehi_show_assault_delay_tracker" : "Show Assault Delay Tracker",
-    "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    "ehi_show_assault_delay_tracker_desc" : "Shows a tracker for how long the assault delay will be\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
     "ehi_show_assault_time_tracker" : "Show Assault Duration Tracker",
-    "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\n\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
+    "ehi_show_assault_time_tracker_desc" : "Shows a tracker for how long the assault duration will be\nThe tracker won't show on clients when they drop-in after assault difficulty has been increased",
 
     "ehi_show_assault_diff_in_assault_trackers" : "Show Assault Difficulty in Assault Trackers",
-    "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\n\nIn other game modes, this option will show assault difficulty, in percent",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "In Holdout game mode, this option will show enemy damage and health boost, respectively\nIn other game modes, this option will show assault difficulty, in percent",
 
     "ehi_show_assault_enemy_count" : "Show Number of Enemies in Assault Trackers",
-    "ehi_show_assault_enemy_count_desc" : "This option will show current number of enemies on the map\n\nThis will also remove Enemy Counter tracker once Assault tracker is visible",
+    "ehi_show_assault_enemy_count_desc" : "This option will show current number of enemies on the map\nThis will also remove Enemy Counter tracker once Assault tracker is visible",
     
     "ehi_show_loot_counter" : "Show Loot Counter",
     "ehi_show_loot_counter_desc" : "Shows a tracker for how much loot is in heist",
@@ -606,10 +596,10 @@
     "ehi_show_all_loot_secured_popup_desc" : "Shows a popup when all loot on the map has been secured",
 
     "ehi_variable_random_loot_format" : "Variable Random Loot Format",
-    "ehi_variable_random_loot_format_desc" : "Defines how additional random loot should be formatted\n\nExample:16 guaranteed bags with 4 safes that may or not have loot; 9 bags secured\n\nOption 1:\n9/16-20?\n\nOption 2:\n9/20?\n\nOption 3:\n9/16+4?",
-    "ehi_variable_random_loot_format_1" : "Progress / Max - (Max + Random)?",
-    "ehi_variable_random_loot_format_2" : "Progress / (Max + Random)?",
-    "ehi_variable_random_loot_format_3" : "Progress / Max + Random?",
+    "ehi_variable_random_loot_format_desc" : "Defines how additional random loot should be formatted\nExample:16 guaranteed bags with 4 safes that may or not have loot; 9 bags secured",
+    "ehi_variable_random_loot_format_1" : "9/16+20?",
+    "ehi_variable_random_loot_format_2" : "9/20?",
+    "ehi_variable_random_loot_format_3" : "9/16+4?",
 
     "ehi_show_loot_max_xp_bags" : "Show XP Limited Max of Loot Bags",
     "ehi_show_loot_max_xp_bags_desc" : "When the gained experience from loot bags is limited in the mission script, show the maximum amount of loot bags you will get experience from\nIf the maximum is limited, the text will also be yellow",
@@ -638,7 +628,6 @@
     "ehi_show_money_tracker" : "Show Money Tracker",
     "ehi_show_money_tracker_desc" : "Shows how much money will get routed to Offshore and Spending account",
 
-    "ehi_money_tracker_format" : "Money Tracker Format",
     "ehi_money_tracker_format_desc" : "Defines how Money Tracker should be formatted",
     "ehi_money_tracker_format_1" : "Offshore / Spending",
     "ehi_money_tracker_format_2" : "Spending / Offshore",
@@ -661,7 +650,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
 
     "ehi_show_waypoints_mission" : "Show Waypoints For Heist Elements",
-    "ehi_show_waypoints_mission_desc" : "Shows a waypoint on heist elements\n\nNote: If element does not have waypoint defined, tracker will be shown instead",
+    "ehi_show_waypoints_mission_desc" : "Shows a waypoint on heist elements\nNote: If element does not have waypoint defined, tracker will be shown instead",
 
     "ehi_show_waypoints_mission_cheaty" : "Show Waypoints For Heist Elements - Remember or Find Information",
     "ehi_show_waypoints_mission_cheaty_desc" : "Shows a waypoint on heist elements that requires you to remember something or find information to progress\n\nExamples:\nColored codes\nCorrect sequence\n\nNote: If element does not have waypoint defined, tracker will be shown instead",
@@ -827,7 +816,6 @@
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "Berserker Refresh",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "Sets how often 'Berserker' gauge should be updated per second",
-    "ehi_buffs_skills_fugitive_berserker_format" : "Berserker Format",
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "Sets how to format Berserker buff, both ranged damage and melee damage\n\nMultiplier: 1.4x 2.6x\n\nPercent: 140% 260%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "Multiplier",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "Percent",
@@ -869,7 +857,6 @@
     "ehi_buffs_perks_yakuza_irezumi" : "Irezumi",
     "ehi_buffs_perks_yakuza_irezumi_refresh" : "Irezumi - Refresh",
     "ehi_buffs_perks_yakuza_irezumi_refresh_desc" : "Sets how often the buff should be updated per second",
-    "ehi_buffs_perks_yakuza_irezumi_format" : "Irezumi - Format",
     "ehi_buffs_perks_yakuza_irezumi_format_desc" : "Sets how to format buff, both armor regen speed and movement speed\n\nMultiplier: 1.6x 1.2x\n\nPercent: 160% 120%",
     "ehi_buffs_perks_yakuza_irezumi_text_format" : "Irezumi - Text Format",
     "ehi_buffs_perks_yakuza_irezumi_text_format_desc" : "Sets what text to show in the buff",
@@ -977,10 +964,10 @@
     "ehi_buffs_other_inspire_ai_persistent" : "Persistent Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Regen Throwable (AI)",
     "ehi_buffs_other_health" : "Your Health Value",
-    "ehi_buffs_other_health_check_sniper_damage" : "(Health) Color buff based on damage from Snipers",
-    "ehi_buffs_other_health_check_sniper_damage_desc" : "Colors buff if you will survive a hit from Sniper\n\nWhite: You will survive a hit\nOrange: You won't survive a hit, but with armor you will\nRed: You won't survive a hit",
-    "ehi_buffs_other_health_check_heavy_swat_ds_damage" : "(Health) Color buff based on damage from ZEAL Heavy SWAT on Death Sentence",
-    "ehi_buffs_other_health_check_heavy_swat_ds_damage_desc" : "Colors buff if you will survive a hit from ZEAL Heavy SWAT\n\nWhite: You will survive a hit\nRed: You won't survive a hit\n\nThis option works only on Death Sentence and has higher priority than 'Color buff based on damage from Snipers'",
+    "ehi_buffs_other_health_check_sniper_damage" : "Color buff based on damage from Snipers",
+    "ehi_buffs_other_health_check_sniper_damage_desc" : "Colors buff if you will survive a hit from Sniper\nWhite: You will survive a hit\nOrange: You won't survive a hit, but with armor you will\nRed: You won't survive a hit",
+    "ehi_buffs_other_health_check_heavy_swat_ds_damage" : "Color buff based on damage from ZEAL Heavy SWAT on Death Sentence",
+    "ehi_buffs_other_health_check_heavy_swat_ds_damage_desc" : "Colors buff if you will survive a hit from ZEAL Heavy SWAT\nWhite: You will survive a hit\nRed: You won't survive a hit\n\nThis option works only on Death Sentence and has higher priority than 'Color buff based on damage from Snipers'",
     "ehi_buffs_other_armor" : "Your Armor Value",
 
     "ehi_buffs_group_text_color" : "Text Color",
@@ -1118,27 +1105,26 @@
 
     "ehi_other_show_floating_health_bar" : "Show Floating Health Bar",
     "ehi_other_show_floating_health_bar_desc" : "Shows a floating health bar when you aim at someone",
-    "ehi_other_floating_health_bar_menu" : "Floating Health Bar",
 
-    "ehi_other_show_floating_health_bar_style" : "Floating Health Bar Style",
+    "ehi_other_show_floating_health_bar_style" : "Style",
     "ehi_other_show_floating_health_bar_style_1" : "PocoHud",
     "ehi_other_show_floating_health_bar_style_2" : "Circle",
     "ehi_other_show_floating_health_bar_style_3" : "Rectangle",
 
     "ehi_other_show_floating_health_bar_style_poco_blur" : "Show Background Blur",
 
-    "ehi_other_show_floating_health_bar_converts" : "Show Floating Health Bars for Converts",
-    "ehi_other_show_floating_health_bar_civilians" : "Show Floating Health Bars for Civilians",
-    "ehi_other_show_floating_health_bar_team_ai" : "Show Floating Health Bars for Team AI",
-    "ehi_other_show_floating_health_bar_regular_enemies" : "Show Floating Health Bars for Regular Enemies",
-    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Show Floating Health Bars for Bulldozers",
-    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Show Floating Health Bars for Shields",
-    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Show Floating Health Bars for Tasers",
-    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Show Floating Health Bars for Cloakers",
-    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Show Floating Health Bars for Snipers",
-    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Show Floating Health Bars for Medics",
-    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Show Floating Health Bars for Turrets",
-    "ehi_other_show_floating_health_bar_special_enemies_other" : "Show Floating Health Bars for other special enemies",
+    "ehi_other_show_floating_health_bar_converts" : "Show for Converts",
+    "ehi_other_show_floating_health_bar_civilians" : "Show for Civilians",
+    "ehi_other_show_floating_health_bar_team_ai" : "Show for Team AI",
+    "ehi_other_show_floating_health_bar_regular_enemies" : "Show for Regular Enemies",
+    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Show for Bulldozers",
+    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Show for Shields",
+    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Show for Tasers",
+    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Show for Cloakers",
+    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Show for Snipers",
+    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Show for Medics",
+    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Show for Turrets",
+    "ehi_other_show_floating_health_bar_special_enemies_other" : "Show for other special enemies",
     "ehi_other_show_floating_health_bar_special_enemies_other_desc" : "Shows a floating health bar for other special enemies that do not belong to the groups above, but are still tagged as 'special' in the game",
 
     "ehi_other_show_floating_damage_popup" : "Show Floating Damage Popup",
@@ -1162,7 +1148,7 @@
     "ehi_other_show_use_left_grenades" : "Show uses left for Grenade cases",
 
     "ehi_other_show_colored_bag_contour" : "Show Bag Outline color based on their weight",
-    "ehi_other_show_colored_bag_contour_desc" : "Sets custom bag outline color based on their weight\n\nTo set the color range, go to EHI Settings -> Colors",
+    "ehi_other_show_colored_bag_contour_desc" : "Sets custom bag outline color based on their weight",
 
     "ehi_other_show_real_time_ingame" : "Show Current Real Time In-game",
     "ehi_other_show_real_time_ingame_desc" : "Shows current real time in OS under heist time",
@@ -1240,13 +1226,16 @@
     "ehi_colors_trophy" : "Trophy",
     "ehi_colors_trophy_desc" : "Changes color of a tracker icon if it is tracking a trophy",
 
+    "ehi_colors_event" : "Event",
+    "ehi_colors_event_desc" : "Changes color of a tracker icon if it is tracking an event",
+
     "ehi_colors_bag_contour" : "Bag Outline",
 
     "ehi_colors_bag_contour_light" : "Light bag",
-    "ehi_colors_bag_contour_light_desc" : "Sets bag outline color of the lightest bag\n\nColor for other bags will linearly scale from light to heavy",
+    "ehi_colors_bag_contour_light_desc" : "Sets bag outline color of the lightest bag\nColor for other bags will linearly scale from light to heavy",
 
     "ehi_colors_bag_contour_heavy" : "Heavy bag",
-    "ehi_colors_bag_contour_heavy_desc" : "Sets bag outline color of the heaviest bag\n\nColor for other bags will linearly scale from light to heavy",
+    "ehi_colors_bag_contour_heavy_desc" : "Sets bag outline color of the heaviest bag\nColor for other bags will linearly scale from light to heavy",
 
     "ehi_colors_bag_contour_body" : "Bodybag",
     "ehi_colors_bag_contour_body_desc" : "Sets bag outline color for the body bags",

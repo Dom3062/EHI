@@ -9,17 +9,10 @@
     "ehi_wrong_game_version_desc" : "Tvoje verze hry není kompatibilní s touto verzí EHI\nAby se zabránilo nečekaným pádům hry, EHI se vypne a nebude se načítat se hrou\nProsím aktualizuj hru, aby jsi mohl dál používat EHI",
 
     "ehi_menu_reset_to_default" : "$BTN_RESET Nastavit výchozí hodnotu",
-    "ehi_menu_large_steps" : "$BTN_STEP Větší posunutí",
-    "ehi_menu_preview" : "$BTN_PREVIEW Ukázka",
 
     "ehi_level_restart_required" : "Aby se nastavení projevilo, je potřeba restartovat mapu",
 
-    "ehi_item_depends_on" : "Funkce '$option;' musí být zapnutá aby tato možnost fungovala",
-
     "ehi_item_blocked_by" : "Tuto možnost blokuje:",
-
-    "ehi_menu_next_page" : "Další stránka -->",
-    "ehi_menu_previous_page" : "<-- Předchozí stránka",
 
     "ehi_language" : "Jazyk",
     "ehi_language_desc" : "Mění jazyk modifikace. Aby se nový jazyk načetl, je potřeba restartovat mapu.",
@@ -243,13 +236,16 @@
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Obnovit barvy",
 
+    "ehi_tracker_format" : "Formát",
+
     "ehi_preview" : "Náhled (Pro aktualizaci je nutný restart mapy)\nČervený roh ukazuje místo, kde se objeví první sledovač.",
+    "ehi_preview_text" : "Náhled",
 
     "ehi_x_offset" : "Posun X",
     "ehi_y_offset" : "Posun Y",
 
     "ehi_text_scale" : "Měřítko textu",
-    "ehi_text_scale_desc" : "Nastavuje měřítko textu.\nTato funkce je užitečná pro hráče s modifikovaným písmem",
+    "ehi_text_scale_desc" : "Nastavuje měřítko textu\nTato funkce je užitečná pro hráče s modifikovaným písmem",
 
     "ehi_scale" : "Měřítko",
     "ehi_scale_desc" : "Nastavuje měřítko sledovačů. Čím větší číslo, tím jsou sledovače větší a naopak",
@@ -266,7 +262,7 @@
     "ehi_tracker_alignment_3" : "Vodorovně; Zleva doprava",
     "ehi_tracker_alignment_4" : "Vodorovně; Zprava doleva",
 
-    "ehi_tracker_vertical_w_anim" : "(Svisle) Animace šířky panelu",
+    "ehi_tracker_vertical_w_anim" : "Animace šířky panelu",
     "ehi_tracker_vertical_w_anim_desc" : "Nastavuje směr animace panelu při změně šířky sledovače",
     "ehi_tracker_vertical_w_anim_1" : "Zleva doprava",
     "ehi_tracker_vertical_w_anim_2" : "Zprava doleva",
@@ -299,9 +295,9 @@
     "ehi_show_tracker_hint_desc" : "Zobrazuje popis sledovače, pokud existuje",
 
     "ehi_show_tracker_hint_t" : "Popis sledovače (Čas)",
-    "ehi_show_tracker_hint_t_desc" : "Definuje jak dlouho popis zůstane na obrazovce než se skryje\n\nPopis zůstane na obrazovce, pokud se nastaví hodnota na 0",
+    "ehi_show_tracker_hint_t_desc" : "Definuje jak dlouho popis zůstane na obrazovce než se skryje\nPopis zůstane na obrazovce, pokud se nastaví hodnota na 0",
 
-    "ehi_tracker_hint_position" : "Pozice popisu sledovače",
+    "ehi_tracker_hint_position" : "Pozice",
     "ehi_tracker_hint_position_desc" : "Nastavuje pozici popisu okolo sledovače",
     "ehi_tracker_hint_position_1" : "(Vertikální) Vpravo / (Horizontální) Dole",
     "ehi_tracker_hint_position_2" : "(Vertikální) Vlevo / (Horizontální) Nahoře",
@@ -335,7 +331,7 @@
     "ehi_show_achievements_desc" : "Zobrazuje na obrazovce achievementy\nNěkteré loupeže nemusí mít achievementy",
 
     "ehi_show_achievement_description" : "Zobrazovat popis achievementu",
-    "ehi_show_achievement_description_desc" : "Zobrazuje popis achievementu v herním chatu\n\nPopis vidíš jenom ty",
+    "ehi_show_achievement_description_desc" : "Zobrazuje popis achievementu v herním chatu\nPopis vidíš jenom ty",
 
     "ehi_show_achievements_mission" : "Zobrazovat Achievementy (Loupež)",
     "ehi_show_achievements_mission_desc" : "Zobrazuje achievementy, které lze splnit pouzi v loupeži",
@@ -344,19 +340,19 @@
     "ehi_hide_unlocked_achievements_desc" : "Je-li povoleno, EHI nezobrazí již odemčené achievementy (loupež)\nJe-li zakázáno, EHI zobrazí všechny sledovače achievementů (loupež)",
 
     "ehi_show_achievements_weapon" : "Zobrazovat Achievementy (Zbraně)",
-    "ehi_show_achievements_weapon_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel zbraní\n\nPo splnění achievementu se sledovač už nezobrazí",
+    "ehi_show_achievements_weapon_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel zbraní\nPo splnění achievementu se sledovač už nezobrazí",
 
     "ehi_show_achievements_melee" : "Zobrazovat Achievementy (Melee)",
-    "ehi_show_achievements_melee_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel příruční zbraní na blízko\n\nPo splnění achievementu se sledovač už nezobrazí",
+    "ehi_show_achievements_melee_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel příruční zbraní na blízko\nPo splnění achievementu se sledovač už nezobrazí",
 
     "ehi_show_achievements_grenade" : "Zobrazovat Achievementy (Granáty a jiné hoditelné předměty)",
-    "ehi_show_achievements_grenade_desc" : "Zobrazuje achievementy které vyžadují zabití granátem či jiným hoditelným předmětem\n\nPo splnění achievementu se sledovač už nezobrazí",
+    "ehi_show_achievements_grenade_desc" : "Zobrazuje achievementy které vyžadují zabití granátem či jiným hoditelným předmětem\nPo splnění achievementu se sledovač už nezobrazí",
 
     "ehi_show_achievements_vehicle" : "Zobrazovat Achievementy (Vozidla)",
-    "ehi_show_achievements_vehicle_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel vozidlem\n\nPo splnění achievementu se sledovač už nezobrazí",
+    "ehi_show_achievements_vehicle_desc" : "Zobrazuje achievementy které vyžadují zabití nepřátel vozidlem\nPo splnění achievementu se sledovač už nezobrazí",
 
     "ehi_show_achievements_other" : "Zobrazovat Achievementy (Ostatní)",
-    "ehi_show_achievements_other_desc" : "Zobrazuje achievementy které nepatří do žádný ze skupin výše\n\nPo splnění achievementu se sledovač už nezobrazí",
+    "ehi_show_achievements_other_desc" : "Zobrazuje achievementy které nepatří do žádný ze skupin výše\nPo splnění achievementu se sledovač už nezobrazí",
 
     "ehi_show_achievement_failed_popup" : "Zobrazovat vyskakovací okno 'Achievement selhal'",
     "ehi_show_achievement_failed_popup_desc" : "Selhané achievementy se zobrazí ve vyskakocím okně červeně",
@@ -368,7 +364,7 @@
     "ehi_show_trophies_desc" : "Zobrazuje na obrazovce trofeje\nNěkteré loupeže nemusí mít trofeje",
 
     "ehi_show_trophy_description" : "Zobrazovat popis trofeje",
-    "ehi_show_trophy_description_desc" : "Zobrazuje popis trofeje v herním chatu\n\nPopis vidíš jenom ty",
+    "ehi_show_trophy_description_desc" : "Zobrazuje popis trofeje v herním chatu\nPopis vidíš jenom ty",
 
     "ehi_hide_unlocked_trophies" : "Neukazovat odemčené trofeje",
     "ehi_hide_unlocked_trophies_desc" : "Je-li povoleno, EHI nezobrazí již odemčené trofeje\nJe-li zakázáno, EHI zobrazí všechny sledovače trofejí",
@@ -380,10 +376,10 @@
     "ehi_show_trophy_started_popup_desc" : "Trofeje, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
 
     "ehi_show_dailies" : "Zobrazovat denní výzvy",
-    "ehi_show_dailies_desc" : "Zobrazuje na obrazovce denní výzvy, jsou-li aktivní\n\nDokončené denní výzvy se neobjeví na obrazovce",
+    "ehi_show_dailies_desc" : "Zobrazuje na obrazovce denní výzvy, jsou-li aktivní\nDokončené denní výzvy se neobjeví na obrazovce",
 
     "ehi_show_daily_description" : "Zobrazovat popis denní výzvy",
-    "ehi_show_daily_description_desc" : "Zobrazuje popis denní výzvy v herním chatu\n\nPopis vidíš jenom ty",
+    "ehi_show_daily_description_desc" : "Zobrazuje popis denní výzvy v herním chatu\nPopis vidíš jenom ty",
 
     "ehi_show_daily_failed_popup" : "Zobrazovat vyskakovací okno 'Denní výzva selhala'",
     "ehi_show_daily_failed_popup_desc" : "Selhané denní výzvy se zobrazí ve vyskakovacím okně červeně",
@@ -392,10 +388,10 @@
     "ehi_show_daily_started_popup_desc" : "Denní výzvy, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
 
     "ehi_show_events" : "Zobrazovat úkoly z herní události",
-    "ehi_show_events_desc" : "Zobrazuje na obrazovce úkoly, jsou-li aktivní\n\nDokončené úkoly se neobjeví na obrazovce",
+    "ehi_show_events_desc" : "Zobrazuje na obrazovce úkoly, jsou-li aktivní\nDokončené úkoly se neobjeví na obrazovce",
 
     "ehi_show_event_description" : "Zobrazovat popis úkolu",
-    "ehi_show_event_description_desc" : "Zobrazuje popis úkolu v herním chatu\n\nPopis vidíš jenom ty",
+    "ehi_show_event_description_desc" : "Zobrazuje popis úkolu v herním chatu\nPopis vidíš jenom ty",
 
     "ehi_show_event_started_popup" : "Zobrazovat vyskakovací okno 'Lze dokončit úkol z události'",
     "ehi_show_event_started_popup_desc" : "Úkoly, které jsou nyní sledované, se zobrazí ve vyskakovacím okně zeleně",
@@ -424,18 +420,18 @@
     "ehi_show_trade_delay" : "Zobrazovat sledovač s délkou pobytu ve vazbě",
     "ehi_show_trade_delay_desc" : "Zobrazuje sledovač když ty nebo tvůj spoluhráč zabijete civilistu",
 
-    "ehi_show_trade_delay_option" : "Kdy zobrazit sledovač s délkou pobytu",
+    "ehi_show_trade_delay_option" : "Kdy zobrazit sledovač",
     "ehi_show_trade_delay_option_desc": "Vždyčky: Vždycky zobrazit sledovač když ty nebo tvůj spoluhráč zabijete civilistu\nVe vazbě: Zobrazuje sledovač když ty nebo tvůj spoluhráč jste šli do vazby a zabili jste alespoň 1 civilistu",
     "ehi_show_trade_delay_option_1" : "Vždyčky",
     "ehi_show_trade_delay_option_2" : "Ve vazbě",
 
-    "ehi_show_trade_delay_other_players_only": "Zobrazovat sledovač s délkou pobytu pouze pro ostatní hráče",
+    "ehi_show_trade_delay_other_players_only": "Zobrazovat sledovač pouze pro ostatní hráče",
     "ehi_show_trade_delay_other_players_only_desc": "Je-li povoleno, sledovač nezobrazí kolik civilistů jsi zabil, ale zobrazí je pro ostatní hráče.",
 
-    "ehi_show_trade_delay_suppress_in_stealth" : "Nezobrazovat sledovač s délkou pobytu, když nenazněl alarm",
+    "ehi_show_trade_delay_suppress_in_stealth" : "Nezobrazovat sledovač, když nenazněl alarm",
     "ehi_show_trade_delay_suppress_in_stealth_desc" : "Je-li povoleno, sledovač bude skrytý. Jakmile zazní alarm, sledovač se ukáže se vším nahromaděným časem.",
 
-    "ehi_show_trade_delay_amount_of_killed_civilians" : "Zobrazovat ve sledovači s délkou pobytu počet zabitých civilistů",
+    "ehi_show_trade_delay_amount_of_killed_civilians" : "Zobrazovat ve sledovači počet zabitých civilistů",
     "ehi_show_trade_delay_amount_of_killed_civilians_desc" : "U každého hráče zobrazuje počet zabitých civilistů",
 
     "ehi_show_timers" : "Zobrazovat časovače",
@@ -473,7 +469,6 @@
     "ehi_equipment_menu" : "Menu vybavení",
     "ehi_equipment_menu_desc" : "",
 
-    "ehi_equipment_format" : "Formát",
     "ehi_equipment_format_desc" : "Nastavuje jak formátovat vybavení",
     "ehi_equipment_format_1" : "Počet použití (Počet položených)",
     "ehi_equipment_format_2" : "(Počet položených) Počet použití",
@@ -491,7 +486,7 @@
     "ehi_show_equipment_grenadecases" : "Zobrazovat sledovač pro granáty",
     "ehi_show_equipment_grenadecases_desc" : "Zobrazuje sledovač pro položené granáty v tašce či v samostatném pouzdře",
 
-    "ehi_grenadecases_block_on_abilities_or_no_throwable" : "Blokovat sledovač na granáty pro ability nebo žádný",
+    "ehi_grenadecases_block_on_abilities_or_no_throwable" : "Blokovat sledovač pro ability nebo žádný",
     "ehi_grenadecases_block_on_abilities_or_no_throwable_desc" : "Blokuje sledovač na granáty když máš abilitu z perk decku nebo žádný hoditelný předmět",
 
     "ehi_show_equipment_bodybags": "Zobrazovat sledovač pro tašku s pytlama na tělo",
@@ -527,7 +522,6 @@
     "ehi_show_minion_tracker" : "Zobrazovat sledovač převedenců",
     "ehi_show_minion_tracker_desc" : "Zobrazuje sledovač s počtem převedenců na mapě",
 
-    "ehi_show_minion_option" : "Jak formátovat převedence",
     "ehi_show_minion_option_1" : "Zobrazovat pouze počet tvých převedenců",
     "ehi_show_minion_option_2" : "Zobrazovat celkový počet převedenců na mapě",
     "ehi_show_minion_option_3" : "Zobrazovat počet převedenců na hráče",
@@ -542,7 +536,7 @@
     "ehi_show_minion_killed_message_type_2" : "V oznamovacím panelu",
 
     "ehi_show_difficulty_tracker" : "Zobrazovat sledovač s obtížností vlny",
-    "ehi_show_difficulty_tracker_desc" : "Zobrazuje sledovač, jak moc obtížná aktuální vlna je\n\nV herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí",
+    "ehi_show_difficulty_tracker_desc" : "Zobrazuje sledovač, jak moc obtížná aktuální vlna je\nV herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí",
 
     "ehi_show_drama_tracker" : "Zobrazovat sledovač ohledně Drama",
     "ehi_show_drama_tracker_desc" : "Zobrazuje sledovač, který ukazuje nahromaděné drama (pouze host)",
@@ -565,10 +559,8 @@
     "ehi_show_enemy_count_show_pagers_desc" : "Zobrazuje nepřátele s pagerem nalevo a nepřátele bez napravo\nJakmile zazní alarm, je zobrazen pouze počet nepřátel",
 
     "ehi_show_civilian_count_tracker" : "Zobrazovat sledovač s počtem civilistů",
-    "ehi_show_civilian_count_tracker_desc" : "Zobrazuje sledovač s počtem civilistů na mapě\n\nJakmile na mapě už nejsou žádní civilisté, sledovač nebude už viditelný",
+    "ehi_show_civilian_count_tracker_desc" : "Zobrazuje sledovač s počtem civilistů na mapě\nJakmile na mapě už nejsou žádní civilisté, sledovač nebude už viditelný",
 
-    "ehi_civilian_count_tracker_format" : "Formát sledovače s počtem civilistů",
-    "ehi_civilian_count_tracker_format_desc" : "",
     "ehi_civilian_count_tracker_format_1" : "Celkový počet civilistů",
     "ehi_civilian_count_tracker_format_2" : "Svázaní | Nesvázaní",
     "ehi_civilian_count_tracker_format_3" : "Nesvázaní | Svázaní",
@@ -576,8 +568,6 @@
     "ehi_show_hostage_count_tracker" : "Zobrazovat sledovač s počtem rukojmích",
     "ehi_show_hostage_count_tracker_desc" : "Zobrazuje sledovač s počtem rukojmích na mapě",
 
-    "ehi_hostage_count_tracker_format" : "Formát sledovače s počtem rukojmích",
-    "ehi_hostage_count_tracker_format_desc" : "",
     "ehi_hostage_count_tracker_format_1" : "Pouze celkem",
     "ehi_hostage_count_tracker_format_2" : "Celkem | Policie",
     "ehi_hostage_count_tracker_format_3" : "Policie | Celkem",
@@ -588,16 +578,16 @@
     "ehi_show_laser_tracker_desc" : "Zobrazuje sledovač na lasery, které cyklí každých pár vteřin",
 
     "ehi_show_assault_delay_tracker" : "Zobrazovat sledovač délky pauzy před dalším útokem",
-    "ehi_show_assault_delay_tracker_desc" : "Zobrazuje sledovač s délkou pauzy před dalším útokem\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
+    "ehi_show_assault_delay_tracker_desc" : "Zobrazuje sledovač s délkou pauzy před dalším útokem\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
 
     "ehi_show_assault_time_tracker" : "Zobrazovat sledovač délky útoku",
-    "ehi_show_assault_time_tracker_desc" : "Zobrazuje sledovač s délkou útoku\n\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
+    "ehi_show_assault_time_tracker_desc" : "Zobrazuje sledovač s délkou útoku\nSledovač se nezobrazí u hráčů, kteří se připojili do hry po policejní vlně a obtížnost vln se zvýšila",
 
     "ehi_show_assault_diff_in_assault_trackers" : "Zobrazovat obtížnost vlny ve sledovačích s útokem",
-    "ehi_show_assault_diff_in_assault_trackers_desc" : "V herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí\n\nV ostatních herních režimech tato možnost zobrazí obtížnost vlny v procentech",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "V herním režimu Holdout tato možnost zobrazí zvýšení uděleného poškození a zdraví nepřátel, v tomto pořadí\nV ostatních herních režimech tato možnost zobrazí obtížnost vlny v procentech",
 
     "ehi_show_assault_enemy_count" : "Zobrazovat počet nepřátel ve sledovačích s útokem",
-    "ehi_show_assault_enemy_count_desc" : "Zobrazuje aktuální počet nepřátel na mapě\n\nJakmile je sledovač útoku viditelný, samostatný sledovač s počtem nepřátel bude smazán",
+    "ehi_show_assault_enemy_count_desc" : "Zobrazuje aktuální počet nepřátel na mapě\nJakmile je sledovač útoku viditelný, samostatný sledovač s počtem nepřátel bude smazán",
     
     "ehi_show_loot_counter" : "Zobrazovat počet lupu",
     "ehi_show_loot_counter_desc" : "Zobrazuje sledovač s počtem lupu v loupeži",
@@ -606,10 +596,10 @@
     "ehi_show_all_loot_secured_popup_desc" : "Zobrazuje vyskakovací okno po zajištění všechny pytlů s lupem",
 
     "ehi_variable_random_loot_format" : "Formát náhodného lupu",
-    "ehi_variable_random_loot_format_desc" : "Nastavuje jak se má formátovat náhodný dodatečný lup\n\nPříklad:16 zaručených pytlů a 4 sejfy, které můžou a nebo nemusí mít lup; 9 pytlů zajištěno\n\nMožnost 1:\n9/16-20?\n\nMožnost 2:\n9/20?\n\nMožnost 3:\n9/16+4?",
-    "ehi_variable_random_loot_format_1" : "Postup / Max - (Max + Náhodně)?",
-    "ehi_variable_random_loot_format_2" : "Postup / (Max + Náhodně)?",
-    "ehi_variable_random_loot_format_3" : "Postup / Max + Náhodně?",
+    "ehi_variable_random_loot_format_desc" : "Nastavuje jak se má formátovat náhodný dodatečný lup\nPříklad:16 zaručených pytlů a 4 sejfy, které můžou a nebo nemusí mít lup; 9 pytlů zajištěno",
+    "ehi_variable_random_loot_format_1" : "9/16+20?",
+    "ehi_variable_random_loot_format_2" : "9/20?",
+    "ehi_variable_random_loot_format_3" : "9/16+4?",
 
     "ehi_show_loot_max_xp_bags" : "Zobrazovat limit maximum pytlů když jsou ZK limitované",
     "ehi_show_loot_max_xp_bags_desc" : "Pokud získané zkušenosti z pytů jsou limitované skriptem, zobrazí se maximum počet pytlů ze kterých dostaneš zkušenosti\nPokud je maximum limitované, text se také vybarví žlutě",
@@ -638,7 +628,6 @@
     "ehi_show_money_tracker" : "Zobrazovat sledovač peněz",
     "ehi_show_money_tracker_desc" : "Zobrazuje kolik peněz dostaneš po dokončení mise na Offshore a Spending účet",
 
-    "ehi_money_tracker_format" : "Formát sledovače peněz",
     "ehi_money_tracker_format_desc" : "Mění formát sledovače peněz",
     "ehi_money_tracker_format_1" : "Offshore / Spending",
     "ehi_money_tracker_format_2" : "Spending / Offshore",
@@ -661,7 +650,7 @@
     "ehi_show_waypoints_present_timer_desc" : "Nastavuje jak dlouho bude ukazatel na obrazovce než se 'přesune' do cílového místa",
 
     "ehi_show_waypoints_mission" : "Zobrazovat ukazatele pro elementy v misi",
-    "ehi_show_waypoints_mission_desc" : "Zobrazuje ukazatel pro elementy v misi\n\nPoznámka: Pokud element nemá nadefinovaný ukazatel, zobrazí se sledovač",
+    "ehi_show_waypoints_mission_desc" : "Zobrazuje ukazatel pro elementy v misi\nPoznámka: Pokud element nemá nadefinovaný ukazatel, zobrazí se sledovač",
 
     "ehi_show_waypoints_mission_cheaty" : "Zobrazovat ukazatele pro elementy v misi - Pamatovací nebo najít informaci",
     "ehi_show_waypoints_mission_cheaty_desc" : "Zobrazuje ukazetele pro elementy v misi které vyžadují zapamatování informace nebo nalezení určité informace k pokračování\n\nPříklady:\nBarevné kódy\nSprávná sekvence\n\nPoznámka: Pokud element nemá nadefinovaný ukazatel, zobrazí se sledovač",
@@ -827,7 +816,6 @@
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "Berserker - Aktualizace hodnoty",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
-    "ehi_buffs_skills_fugitive_berserker_format" : "Berserker - Formát",
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "Nastavuje jak formátovat buff Berserker, jak formátovat poškození zbraní či melee zbraní\n\nNásobitel: 1.4x 2.6x\n\nProcenta: 40% 160%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "Násobitel",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "Procenta",
@@ -869,7 +857,6 @@
     "ehi_buffs_perks_yakuza_irezumi" : "Irezumi",
     "ehi_buffs_perks_yakuza_irezumi_refresh" : "Irezumi - Aktualizace hodnoty",
     "ehi_buffs_perks_yakuza_irezumi_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
-    "ehi_buffs_perks_yakuza_irezumi_format" : "Irezumi - Formát",
     "ehi_buffs_perks_yakuza_irezumi_format_desc" : "Nastavuje jak formátovat buff, jak formátovat rychlost obnovy armoru a rychlost pohybu postavy\n\nNásobitel: 1.6x 1.2x\n\nProcenta: 160% 120%",
     "ehi_buffs_perks_yakuza_irezumi_text_format" : "Irezumi - Formát textu",
     "ehi_buffs_perks_yakuza_irezumi_text_format_desc" : "Nastavuje co za text se zobrazí v buffu",
@@ -977,10 +964,10 @@
     "ehi_buffs_other_inspire_ai_persistent" : "Neschovávat Inspire (AI)",
     "ehi_buffs_other_regen_throwable_ai" : "Obnovení granátu (AI)",
     "ehi_buffs_other_health" : "Tvoje hodnota zdraví",
-    "ehi_buffs_other_health_check_sniper_damage" : "(Zdraví) Změnit barvu buffu podle poškození od odstřelovačů",
-    "ehi_buffs_other_health_check_sniper_damage_desc" : "Mění barvu buffu pokud přežiješ zásah od odstřelovače\n\nBílá: Zásah přežiješ\nOranžová: Zásah nepřežiješ, ale s armorem přežiješ\nČervená: Zásah nepřežiješ",
-    "ehi_buffs_other_health_check_heavy_swat_ds_damage" : "(Zdraví) Změnit barvu buffu podle poškození od ZEAL Heavy SWAT na Death Sentence",
-    "ehi_buffs_other_health_check_heavy_swat_ds_damage_desc" : "Mění barvu buffu pokud přežiješ zásah od ZEAL Heavy SWAT\n\nBílá: Zásah přežiješ\nČervená: Zásah nepřežiješ\n\nTato možnost funguje pouze na obtížnosti Death Sentence a má větší prioritu než možnost 'Změnit barvu buffu podle poškození od odstřelovačů'",
+    "ehi_buffs_other_health_check_sniper_damage" : "Změnit barvu buffu podle poškození od odstřelovačů",
+    "ehi_buffs_other_health_check_sniper_damage_desc" : "Mění barvu buffu pokud přežiješ zásah od odstřelovače\nBílá: Zásah přežiješ\nOranžová: Zásah nepřežiješ, ale s armorem přežiješ\nČervená: Zásah nepřežiješ",
+    "ehi_buffs_other_health_check_heavy_swat_ds_damage" : "Změnit barvu buffu podle poškození od ZEAL Heavy SWAT na Death Sentence",
+    "ehi_buffs_other_health_check_heavy_swat_ds_damage_desc" : "Mění barvu buffu pokud přežiješ zásah od ZEAL Heavy SWAT\nBílá: Zásah přežiješ\nČervená: Zásah nepřežiješ\n\nTato možnost funguje pouze na obtížnosti Death Sentence a má větší prioritu než možnost 'Změnit barvu buffu podle poškození od odstřelovačů'",
     "ehi_buffs_other_armor" : "Tvoje hodnota armoru",
 
     "ehi_buffs_group_text_color" : "Barva textu",
@@ -1117,27 +1104,26 @@
 
     "ehi_other_show_floating_health_bar" : "Zobrazovat zdraví NPC",
     "ehi_other_show_floating_health_bar_desc" : "Zobrazuje zdraví NPC když na něho zamíříš",
-    "ehi_other_floating_health_bar_menu" : "Zdraví NPC",
 
-    "ehi_other_show_floating_health_bar_style" : "Styl zobrazování zdraví NPC",
+    "ehi_other_show_floating_health_bar_style" : "Styl",
     "ehi_other_show_floating_health_bar_style_1" : "PocoHud",
     "ehi_other_show_floating_health_bar_style_2" : "Kruh",
     "ehi_other_show_floating_health_bar_style_3" : "Obdélník",
 
     "ehi_other_show_floating_health_bar_style_poco_blur" : "Zobrazovat rozmazání pozadí",
 
-    "ehi_other_show_floating_health_bar_converts" : "Zobrazovat zdraví převedenců",
-    "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat zdraví civilistů",
-    "ehi_other_show_floating_health_bar_team_ai" : "Zobrazovat zdraví botů",
-    "ehi_other_show_floating_health_bar_regular_enemies" : "Zobrazovat zdraví normálních nepřátel",
-    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Zobrazovat zdraví Bulldozerů",
-    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Zobrazovat zdraví Štítů",
-    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Zobrazovat zdraví Taserů",
-    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Zobrazovat zdraví Cloakerů",
-    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Zobrazovat zdraví odstřelovačů",
-    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Zobrazovat zdraví Mediců",
-    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Zobrazovat zdraví Turretů",
-    "ehi_other_show_floating_health_bar_special_enemies_other" : "Zobrazovat zdraví ostatních speciálních nepřátel",
+    "ehi_other_show_floating_health_bar_converts" : "Zobrazovat pro převedence",
+    "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat pro civilisty",
+    "ehi_other_show_floating_health_bar_team_ai" : "Zobrazovat pro boty",
+    "ehi_other_show_floating_health_bar_regular_enemies" : "Zobrazovat pro normální nepřátele",
+    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Zobrazovat pro Bulldozery",
+    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Zobrazovat pro Štíty",
+    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Zobrazovat pro Tasery",
+    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Zobrazovat pro Cloakery",
+    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Zobrazovat pro odstřelovače",
+    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Zobrazovat pro Medicy",
+    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Zobrazovat pro Turrety",
+    "ehi_other_show_floating_health_bar_special_enemies_other" : "Zobrazovat pro ostatní speciální nepřátele",
     "ehi_other_show_floating_health_bar_special_enemies_other_desc" : "Zobrazí zdraví ostatních speciálních nepřátel, kteří nepatří do skupin výše, ale v herním kódu jsou označení s příznakem 'special'",
 
     "ehi_other_show_floating_damage_popup" : "Zobrazovat udělené poškození NPC",
@@ -1161,7 +1147,7 @@
     "ehi_other_show_use_left_grenades" : "Zobrazovat počet použití u kufříků s granáty",
 
     "ehi_other_show_colored_bag_contour" : "Zobrazovat barevné ohraničení pytlů podle jejich váhy",
-    "ehi_other_show_colored_bag_contour_desc" : "Nastavuje barvu ohračení pytle podle jeho váhy\n\nPro nastavení barevného rozsahu, jděte do Nastavení EHI -> Barvy",
+    "ehi_other_show_colored_bag_contour_desc" : "Nastavuje barvu ohračení pytle podle jeho váhy",
 
     "ehi_other_show_real_time_ingame" : "Zobrazovat aktuální čas ve hře",
     "ehi_other_show_real_time_ingame_desc" : "Zobrazuje aktuální reálný čas v OS pod časem loupeže",
@@ -1239,13 +1225,16 @@
     "ehi_colors_trophy" : "Trofej",
     "ehi_colors_trophy_desc" : "Mění barvu ikony sledovače pokud sleduje trofej",
 
+    "ehi_colors_event" : "Úkol z události",
+    "ehi_colors_event_desc" : "Mění barvu ikony sledovače pokud sleduje úkol z události",
+
     "ehi_colors_bag_contour" : "Ohraničení pytlů",
 
     "ehi_colors_bag_contour_light" : "Lehký pytel",
-    "ehi_colors_bag_contour_light_desc" : "Nastavuje barevné ohraničení pro nejlehčí pytle\n\nBarva pro ostatní pytle se lineárně škáluje od lehkých po těžké",
+    "ehi_colors_bag_contour_light_desc" : "Nastavuje barevné ohraničení pro nejlehčí pytle\nBarva pro ostatní pytle se lineárně škáluje od lehkých po těžké",
 
     "ehi_colors_bag_contour_heavy" : "Těžký pytel",
-    "ehi_colors_bag_contour_heavy_desc" : "Nastavuje barevné ohraničení pro nejtěžší pytle\n\nBarva pro ostatní pytle se lineárně škáluje od lehkých po těžké",
+    "ehi_colors_bag_contour_heavy_desc" : "Nastavuje barevné ohraničení pro nejtěžší pytle\nBarva pro ostatní pytle se lineárně škáluje od lehkých po těžké",
 
     "ehi_colors_bag_contour_body" : "Bodybag (pytel na mrtvolu)",
     "ehi_colors_bag_contour_body_desc" : "Nastavuje barevné ohraničení pro pytle na mrtvolu",

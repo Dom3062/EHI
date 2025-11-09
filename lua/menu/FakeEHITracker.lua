@@ -22,10 +22,8 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
         visible = config.bg_visible
     })
 
-    local corner_texture_rect = { 80, 150, 8, 8 }
     box_panel:bitmap({
-        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
-        texture_rect = corner_texture_rect,
+        texture = "guis/textures/pd2/hud_corner",
         name = "left_top",
         visible = corner_visible,
         layer = 0,
@@ -37,8 +35,7 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
         blend_mode = "add"
     })
     local left_bottom = box_panel:bitmap({
-        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
-        texture_rect = corner_texture_rect,
+        texture = "guis/textures/pd2/hud_corner",
         name = "left_bottom",
         visible = corner_visible,
         layer = 0,
@@ -52,8 +49,7 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
     })
     left_bottom:set_bottom(box_panel:h())
     local right_top = box_panel:bitmap({
-        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
-        texture_rect = corner_texture_rect,
+        texture = "guis/textures/pd2/hud_corner",
         name = "right_top",
         visible = corner_visible,
         layer = 0,
@@ -67,8 +63,7 @@ local function HUDBGBox_create(panel, params, config) -- Not available when call
     })
     right_top:set_right(box_panel:w())
     local right_bottom = box_panel:bitmap({
-        texture = "guis/textures/pd2_mod_ehi/menu_atlas",
-        texture_rect = corner_texture_rect,
+        texture = "guis/textures/pd2/hud_corner",
         name = "right_bottom",
         visible = corner_visible,
         layer = 0,
@@ -92,6 +87,7 @@ end
 ---@field _UPDATE_TIME_FORMAT_DISABLED boolean
 FakeEHITracker = class(EHITracker)
 FakeEHITracker._parent_class = FakeEHITrackerManager
+FakeEHITracker._format = FakeEHITrackerManager._tracker_format_data
 FakeEHITracker._gap = tweak_data.ehi.default.tracker.gap
 FakeEHITracker._icon_size = tweak_data.ehi.default.tracker.size_h
 FakeEHITracker._icon_gap_size = FakeEHITracker._icon_size + FakeEHITracker._gap
@@ -100,7 +96,6 @@ FakeEHITracker._selected_color = Color(255, 255, 165, 0) / 255
 ---@param params EHITracker.params
 function FakeEHITracker:init(panel, params)
     self:pre_init(params)
-    self._format = params.format
     self._first = params.first
     self._tracker_alignment = params.tracker_alignment
     self._tracker_vertical_anim_left = params.tracker_vertical_anim == 2
@@ -546,12 +541,10 @@ function FakeEHIMinionTracker:UpdateInternalFormat(format_key, format, repositio
         self._first_minion_health:set_w(w)
         self._first_minion_health:set_right(right)
         self:FitTheText(self._first_minion_health)
-        self._first_minion_health:set_color(self._selected_color)
         self._first_minion_health:set_visible(true)
         self._second_minion_health:set_w(w)
         self._second_minion_health:set_right(right - w)
         self:FitTheText(self._second_minion_health)
-        self._second_minion_health:set_color(self._selected_color)
         self._second_minion_health:set_visible(true)
         self._text:set_visible(false)
         self._minion_health_repositioned = true

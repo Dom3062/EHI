@@ -2,20 +2,25 @@ local EHI = EHI
 local Icon = EHI.Icons
 ---@class FakeEHITrackerManager
 FakeEHITrackerManager = {}
+FakeEHITrackerManager.AspectRatio =
+{
+    _16_10 = 1,
+    _4_3 = 2,
+    Other = 3
+}
 FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
 ---@param panel Panel
 ---@param aspect_ratio number
 function FakeEHITrackerManager:new(panel, aspect_ratio)
     self._tweak_data = tweak_data.ehi.default.tracker
-    dofile(EHI.LuaPath .. "menu/FakeEHITracker.lua")
-    self._panel = panel:panel({ alpha = 1 })
+    self._panel = panel:panel()
     if _G.IS_VR then
         self._scale = EHI:GetOption("vr_scale") --[[@as number]]
         self._x, self._y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
     else
         self._scale = EHI:GetOption("scale") --[[@as number]]
         local x_offset, y_offset = EHI:GetOption("x_offset"), EHI:GetOption("y_offset")
-        if aspect_ratio == EHIMenu.AspectRatio._4_3 then
+        if aspect_ratio == self.AspectRatio._4_3 then
             self._x, self._y = managers.gui_data:safe_to_full_16_9(x_offset, y_offset)
         else
             self._x, self._y = managers.gui_data:safe_to_full(x_offset, y_offset)
@@ -54,6 +59,7 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
     }
     self._trackers_enabled = EHI:GetOption("show_trackers") ---@type boolean
     self._trackers_visible = EHI:GetOption("show_preview_trackers") ---@type boolean
+    dofile(EHI.LuaPath .. "menu/FakeEHITracker.lua")
     self:_update_tracker_internal_data()
     self:AddFakeTrackers()
     return self
@@ -174,7 +180,6 @@ function FakeEHITrackerManager:CreateFakeTracker(params)
     params.icon_pos = self._icons_pos
     params.tracker_alignment = self._tracker_alignment
     params.tracker_vertical_anim = self._tracker_vertical_anim
-    params.format = self._tracker_format_data
     local tracker = _G[params.class or "FakeEHITracker"]:new(self._panel, params) --[[@as FakeEHITracker]]
     self._n_of_trackers = self._n_of_trackers + 1
     self._fake_trackers[self._n_of_trackers] = tracker
@@ -365,7 +370,7 @@ end
 
 ---@param format_key string
 ---@param tracker_id string
-function FakeEHITrackerManager:UpdateTrackerInternalFormat(format_key, tracker_id, value)
+function FakeEHITrackerManager:UpdateTrackerInternalFormat(value, format_key, tracker_id)
     self._tracker_format_data[format_key] = value
     local tracker = self:GetTracker(tracker_id)
     if tracker then
@@ -410,6 +415,9 @@ end
 ---@param x number
 function FakeEHITrackerManager:UpdateXOffset(x)
     local x_full, _ = managers.gui_data:safe_to_full(x, 0)
+    if self._x == x_full then
+        return
+    end
     self._x = x_full
     self:_update_x_offset_fast(x_full)
 end
@@ -423,6 +431,9 @@ end
 ---@param y number
 function FakeEHITrackerManager:UpdateYOffset(y)
     local _, y_full = managers.gui_data:safe_to_full(0, y)
+    if self._y == y_full then
+        return
+    end
     self._y = y_full
     self._vertical.x = self._x
     self._vertical.y = y_full
@@ -449,6 +460,9 @@ end
 
 ---@param scale number
 function FakeEHITrackerManager:UpdateTextScale(scale)
+    if self._text_scale == scale then
+        return
+    end
     self._text_scale = scale
     self:_update_tracker_internal_data()
     for _, tracker in ipairs(self._fake_trackers) do
@@ -458,6 +472,9 @@ end
 
 ---@param scale number
 function FakeEHITrackerManager:UpdateScale(scale)
+    if self._scale == scale then -- To stop flickering because menu is firing this up every frame even if the value match
+        return
+    end
     self._scale = scale
     self._panel_size = self._tweak_data.size_h * scale
     self._panel_offset = self._tweak_data.offset * scale

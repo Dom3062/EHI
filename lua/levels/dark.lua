@@ -100,7 +100,7 @@ if EHI:CanShowAchievement2("pim_2", "show_achievements_grenade") then -- Crouche
         end
         local progress = EHI:GetAchievementProgress("pim_2_stats")
         self:EHIAddAchievementTracker("pim_2", progress, 8, false, true, true)
-        EHI:Hook(AchievmentManager, "add_heist_success_award_progress", function(am, id)
+        Hooks:PostHook(AchievmentManager, "add_heist_success_award_progress", "EHI_AchievmentManager_add_heist_success_award_progress", function(am, id)
             if id == "pim_2_stats" then
                 progress = progress + 1
                 managers.ehi_tracker:SetProgress("pim_2", progress)

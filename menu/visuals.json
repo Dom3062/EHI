@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_visuals_menu",
-    "parent_menu": "ehi_menu",
+    "parent_menu_id": "ehi_menu",
     "title": "ehi_visuals_menu",
     "items": [
         {
@@ -8,11 +8,15 @@
             "id": "ehi_show_tracker_bg_choice",
             "title": "ehi_show_tracker_bg",
             "description": "ehi_show_tracker_bg_desc",
-            "callback": ["SetOption", "UpdateBGVisibility"],
-            "callback_arguments": "show_tracker_bg",
+            "callback": "ehi_set_item_value",
             "value": "show_tracker_bg",
-            "is_parent" : true,
             "default_value": true,
+            "child": "ehi_show_tracker_corners_choice",
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateBGVisibility"
+                }
+            },
             "ehi_ver" : 6
         },
         {
@@ -20,11 +24,15 @@
             "id": "ehi_show_tracker_corners_choice",
             "title": "ehi_show_tracker_corners",
             "description": "ehi_show_tracker_corners_desc",
-            "callback": ["SetOption", "UpdateCornerVisibility"],
-            "callback_arguments": "show_tracker_corners",
+            "callback": "ehi_set_item_value",
             "parent": "ehi_show_tracker_bg_choice",
             "value": "show_tracker_corners",
             "default_value": true,
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateCornerVisibility"
+                }
+            },
             "ehi_ver" : 78
         },
         {
@@ -32,10 +40,14 @@
             "id": "ehi_show_one_icon_choice",
             "title": "ehi_show_one_icon",
             "description": "ehi_show_one_icon_desc",
-            "callback": ["SetOption", "UpdateIconsVisibility"],
-            "callback_arguments": "show_one_icon",
+            "callback": "ehi_set_item_value",
             "value": "show_one_icon",
             "default_value": false,
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateIconsVisibility"
+                }
+            },
             "ehi_ver" : 6
         },
         {
@@ -43,14 +55,18 @@
             "id": "ehi_show_icon_position_choice",
             "title": "ehi_show_icon_position",
             "description": "ehi_show_icon_position_desc",
-            "callback": ["SetOption", "UpdateIconsPosition"],
-            "callback_arguments": "show_icon_position",
+            "callback": "ehi_set_item_value",
             "items": [
                 "ehi_show_icon_position_1",
                 "ehi_show_icon_position_2"
             ],
             "value": "show_icon_position",
             "default_value": 2,
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateIconsPosition"
+                }
+            },
             "ehi_ver" : 237
         },
         {
@@ -62,10 +78,9 @@
             "id": "ehi_show_tracker_hint_choice",
             "title": "ehi_show_tracker_hint",
             "description": "ehi_show_tracker_hint_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_tracker_hint",
+            "callback": "ehi_set_item_value",
             "value": "show_tracker_hint",
-            "is_parent" : true,
+            "children" : [ "ehi_show_tracker_hint_t_choice", "ehi_tracker_hint_position_choice" ],
             "default_value": true,
             "ehi_ver" : 191
         },
@@ -74,13 +89,13 @@
             "id": "ehi_show_tracker_hint_t_choice",
             "title": "ehi_show_tracker_hint_t",
             "description": "ehi_show_tracker_hint_t_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_tracker_hint_t",
+            "callback": "ehi_set_item_value",
             "value": "show_tracker_hint_t",
             "parent" : "ehi_show_tracker_hint_choice",
             "max": 120,
             "min": 0,
             "step": 1,
+            "display_precision": 1,
             "default_value": 15,
             "ehi_ver" : 191
         },
@@ -89,8 +104,7 @@
             "id": "ehi_tracker_hint_position_choice",
             "title": "ehi_tracker_hint_position",
             "description": "ehi_tracker_hint_position_desc",
-            "callback": "SetOption",
-            "callback_arguments": "tracker_hint_position",
+            "callback": "ehi_set_item_value",
             "items": [
                 "ehi_tracker_hint_position_1",
                 "ehi_tracker_hint_position_2"

@@ -9,14 +9,8 @@
     "ehi_wrong_game_version_desc" : "你的游戏版本与EHI不兼容\n为避免游戏崩溃，本次游戏中EHI未启用\n如果仍需使用EHI，请更新游戏",
 
     "ehi_menu_reset_to_default" : "$BTN_RESET;恢复默认",
-    "ehi_menu_large_steps" : "$BTN_STEP;大量调整",
 
     "ehi_level_restart_required" : "重启劫案以应用更改",
-
-    "ehi_item_depends_on" : "需要勾选'$option;'选项以正常使用",
-
-    "ehi_menu_next_page" : "下一页 -->",
-    "ehi_menu_previous_page" : "<-- 上一页",
 
     "ehi_language" : "语言(Language)",
     "ehi_language_desc" : "修改 EHI 的显示语言。重启劫案以生效",
@@ -246,7 +240,7 @@
     "ehi_tracker_alignment_3" : "水平; 从左至右",
     "ehi_tracker_alignment_4" : "水平; 从右至左",
 
-    "ehi_tracker_vertical_w_anim" : "(垂直)界面宽度变化动画",
+    "ehi_tracker_vertical_w_anim" : "界面宽度变化动画",
     "ehi_tracker_vertical_w_anim_desc" : "设置追踪器界面变化时动画的方向",
     "ehi_tracker_vertical_w_anim_1" : "从左至右",
     "ehi_tracker_vertical_w_anim_2" : "从右至左",
@@ -279,7 +273,7 @@
     "ehi_show_tracker_hint_desc" : "如果追踪器有简介则显示简介",
 
     "ehi_show_tracker_hint_t" : "简介显示时间",
-    "ehi_show_tracker_hint_t_desc" : "设置追踪器简介在屏幕上显示多久后隐藏\n\n若设置为0则永久显示",
+    "ehi_show_tracker_hint_t_desc" : "设置追踪器简介在屏幕上显示多久后隐藏\n若设置为0则永久显示",
 
     "ehi_show_trackers" : "显示追踪器",
 
@@ -299,7 +293,7 @@
     "ehi_show_achievements_desc" : "在屏幕上显示可追踪的成就\n某些劫案中没有可追踪的成就",
     
     "ehi_show_achievement_description" : "显示成就简介",
-    "ehi_show_achievement_description_desc" : "在聊天栏中显示成就的简介\n\n此简介仅你可见",
+    "ehi_show_achievement_description_desc" : "在聊天栏中显示成就的简介\n此简介仅你可见",
 
     "ehi_show_achievements_mission" : "显示成就 (劫案)",
     "ehi_show_achievements_mission_desc" : "显示仅限在劫案中完成的成就",
@@ -308,19 +302,19 @@
     "ehi_hide_unlocked_achievements_desc" : "启用后, EHI 将不再显示已完成的仅限在劫案中完成的成就的追踪器\n禁用后, EHI 将显示所有可解锁的仅限在劫案中完成的成就追踪器",
     
     "ehi_show_achievements_weapon" : "显示成就 (武器)",
-    "ehi_show_achievements_weapon_desc" : "显示需要你用武器击杀敌人的成就\n\n若完成成就，追踪器将自动隐藏",
+    "ehi_show_achievements_weapon_desc" : "显示需要你用武器击杀敌人的成就\n若完成成就，追踪器将自动隐藏",
 
     "ehi_show_achievements_melee" : "显示成就 (近战)",
-    "ehi_show_achievements_melee_desc" : "显示需要你用近战武器击杀敌人的成就\n\n若完成成就，追踪器将自动隐藏",
+    "ehi_show_achievements_melee_desc" : "显示需要你用近战武器击杀敌人的成就\n若完成成就，追踪器将自动隐藏",
 
     "ehi_show_achievements_grenade" : "显示成就 (投掷物)",
-    "ehi_show_achievements_grenade_desc" : "显示需要你用投掷物击杀敌人的成就\n\n若完成成就，追踪器将自动隐藏",
+    "ehi_show_achievements_grenade_desc" : "显示需要你用投掷物击杀敌人的成就\n若完成成就，追踪器将自动隐藏",
 
     "ehi_show_achievements_vehicle" : "显示成就 (载具)",
-    "ehi_show_achievements_vehicle_desc" : "显示需要你用载具碾压敌人的成就\n\n若完成成就，追踪器将自动隐藏",
+    "ehi_show_achievements_vehicle_desc" : "显示需要你用载具碾压敌人的成就\n若完成成就，追踪器将自动隐藏",
 
     "ehi_show_achievements_other" : "显示成就 (其它)",
-    "ehi_show_achievements_other_desc" : "显示达成条件不属于以上类型的成就\n\n若完成成就，追踪器将自动隐藏",
+    "ehi_show_achievements_other_desc" : "显示达成条件不属于以上类型的成就\n若完成成就，追踪器将自动隐藏",
     
     "ehi_show_achievement_failed_popup" : "显示 '挑战成就失败'提示",
     "ehi_show_achievement_failed_popup_desc" : "在成就条件无法完成时弹出标题为红色字体的窗口提示",
@@ -332,7 +326,7 @@
     "ehi_show_trophies_desc" : "在界面上显示安全屋的纪念品解锁追踪器\n有些劫案可能没有任何可进行解锁的纪念品",
 
     "ehi_show_trophy_description" : "显示纪念品简介",
-    "ehi_show_trophy_description_desc" : "在游戏聊天框中显示纪念品的简介\n\n此简介仅你可见",
+    "ehi_show_trophy_description_desc" : "在游戏聊天框中显示纪念品的简介\n此简介仅你可见",
     
     "ehi_hide_unlocked_trophies" : "不显示已解锁的挑战",
     "ehi_hide_unlocked_trophies_desc" : "启用后，EHI将不再显示已解锁的纪念品追踪器\n禁用后, EHI将显示当前所有可进行解锁的纪念品",
@@ -344,10 +338,10 @@
     "ehi_show_trophy_started_popup_desc" : "开始解锁纪念品后会弹出主题为绿色的窗口",
 
     "ehi_show_dailies" : "显示每日挑战",
-    "ehi_show_dailies_desc" : "当有可进行的每日挑战时会在界面上显示\n\n已经完成的每日挑战将不会显示",
+    "ehi_show_dailies_desc" : "当有可进行的每日挑战时会在界面上显示\n已经完成的每日挑战将不会显示",
 
     "ehi_show_daily_description" : "显示每日任务简介",
-    "ehi_show_daily_description_desc" : "在聊天框中显示每日任务的简介\n\n此简介仅你可见",
+    "ehi_show_daily_description_desc" : "在聊天框中显示每日任务的简介\n此简介仅你可见",
  
     "ehi_show_daily_failed_popup" : "显示 '每日挑战失败' 弹出窗口",
     "ehi_show_daily_failed_popup_desc" : "每日挑战失败时将弹出主题为红色的窗口",
@@ -428,7 +422,6 @@
     "ehi_equipment_menu" : "装备显示设置",
     "ehi_equipment_menu_desc" : "",
 
-    "ehi_equipment_format" : "装备显示格式",
     "ehi_equipment_format_desc" : "选择随身装备追踪器显示的格式",
     "ehi_equipment_format_1" : "可用次数 (已部署数量)",
     "ehi_equipment_format_2" : "(已部署数量) 可用次数",
@@ -482,7 +475,6 @@
     "ehi_show_minion_tracker" : "显示变节警察追踪器",
     "ehi_show_minion_tracker_desc" : "显示地图上已变节警察的数量追踪器",
 
-    "ehi_show_minion_option" : "变节警察显示方式",
     "ehi_show_minion_option_1" : "仅显示自己的变节警察",
     "ehi_show_minion_option_2" : "显示地图上变节警察总数",
     "ehi_show_minion_option_3" : "分别显示每个玩家的变节警察",
@@ -520,10 +512,8 @@
     "ehi_show_enemy_count_show_pagers_desc" : "在追踪器面板左侧显示装备有对讲机的敌人数量而在右侧显示未装备对讲机的敌人数量，强袭开始后追踪器只统计部分敌人",
 
     "ehi_show_civilian_count_tracker" : "显示平民追踪器",
-    "ehi_show_civilian_count_tracker_desc" : "显示劫案中的平民计数\n\n若已无平民则隐藏此追踪器",
-    
-    "ehi_civilian_count_tracker_format" : "平民追踪器显示格式",
-    "ehi_civilian_count_tracker_format_desc" : "",
+    "ehi_show_civilian_count_tracker_desc" : "显示劫案中的平民计数\n若已无平民则隐藏此追踪器",
+
     "ehi_civilian_count_tracker_format_1" : "平民总数",
     "ehi_civilian_count_tracker_format_2" : "已捆绑 | 未捆绑",
     "ehi_civilian_count_tracker_format_3" : "未捆绑 | 已捆绑",
@@ -531,8 +521,6 @@
     "ehi_show_hostage_count_tracker" : "显示人质计数追踪器",
     "ehi_show_hostage_count_tracker_desc" : "显示地图上人质数量的追踪器",
 
-    "ehi_hostage_count_tracker_format" : "人质追踪器显示格式",
-    "ehi_hostage_count_tracker_format_desc" : "",
     "ehi_hostage_count_tracker_format_1" : "人质总数",
     "ehi_hostage_count_tracker_format_2" : "总数 | 警察",
     "ehi_hostage_count_tracker_format_3" : "警察 | 总数",
@@ -543,16 +531,16 @@
     "ehi_show_laser_tracker_desc" : "显示地图上传感器镭射的循环时间追踪器",
 
     "ehi_show_assault_delay_tracker" : "显示突击延迟追踪器",
-    "ehi_show_assault_delay_tracker_desc" : "显示突击延迟的时间追踪器\n\n当客机中途加入后难度增加时追踪器将自动隐藏",
+    "ehi_show_assault_delay_tracker_desc" : "显示突击延迟的时间追踪器\n当客机中途加入后难度增加时追踪器将自动隐藏",
 
     "ehi_show_assault_time_tracker" : "显示突击持续时间追踪器",
-    "ehi_show_assault_time_tracker_desc" : "显示突击持续的时间\n\n若为客机中途加入游戏，此追踪器在突击难度提升后不再显示",
+    "ehi_show_assault_time_tracker_desc" : "显示突击持续的时间\n若为客机中途加入游戏，此追踪器在突击难度提升后不再显示",
 
     "ehi_show_assault_diff_in_assault_trackers" : "在突击追踪器中显示突击难度",
-    "ehi_show_assault_diff_in_assault_trackers_desc" : "此项在坚守模式时显示敌人血量及伤害提升\n\n在其它模式下显示本次突击的难度",
+    "ehi_show_assault_diff_in_assault_trackers_desc" : "此项在坚守模式时显示敌人血量及伤害提升\n在其它模式下显示本次突击的难度",
 
     "ehi_show_assault_enemy_count" : "在突击追踪器中显示敌人数量",
-    "ehi_show_assault_enemy_count_desc" : "此项将显示地图上敌人的数量\n\n当突击追踪器显示时，敌人计数追踪器将被删除",
+    "ehi_show_assault_enemy_count_desc" : "此项将显示地图上敌人的数量\n当突击追踪器显示时，敌人计数追踪器将被删除",
     
     "ehi_show_loot_counter" : "显示战利品追踪器",
     "ehi_show_loot_counter_desc" : "显示你已经劫获多少战利品",
@@ -561,10 +549,10 @@
     "ehi_show_all_loot_secured_popup_desc" : "显示劫获地图中所有战利品的弹出窗口",
 
     "ehi_variable_random_loot_format" : "随机战利品显示格式",
-    "ehi_variable_random_loot_format_desc" : "设置如何显示有可能获得的战利品\n\n例:地图中有16个固定刷新的战利品和4个可能空无一物的保险箱;你已经劫获9包战利品\n\n选项 1:\n9/16-20?\n\n选项 2:\n9/20?\n\n选项 3:\n9/16+4?",
-    "ehi_variable_random_loot_format_1" : "已劫获数 / 最大战利品数 - (最大战利品数 + 可能战利品数)?",
-    "ehi_variable_random_loot_format_2" : "已劫获数 / (最大战利品数 + 可能战利品数)?",
-    "ehi_variable_random_loot_format_3" : "已劫获数 / 最大战利品数 + 可能战利品数?",
+    "ehi_variable_random_loot_format_desc" : "设置如何显示有可能获得的战利品\n例:地图中有16个固定刷新的战利品和4个可能空无一物的保险箱;你已经劫获9包战利品",
+    "ehi_variable_random_loot_format_1" : "9/16+20?",
+    "ehi_variable_random_loot_format_2" : "9/20?",
+    "ehi_variable_random_loot_format_3" : "9/16+4?",
 
     "ehi_show_loot_max_xp_bags" : "显示战利品经验获取最大值",
     "ehi_show_loot_max_xp_bags_desc" : "当地图限制战利品获取的经验最大值时显示其值\n若已达最大值则文本变为黄色",
@@ -593,7 +581,6 @@
     "ehi_show_money_tracker" : "显示资金追踪器",
     "ehi_show_money_tracker_desc" : "显示资金分配至离岸账户和现金的数额",
 
-    "ehi_money_tracker_format" : "资金追踪器显示格式",
     "ehi_money_tracker_format_desc" : "设置资金追踪器的数值显示格式",
     "ehi_money_tracker_format_1" : "离岸账户 / 现金",
     "ehi_money_tracker_format_2" : "现金 / 离岸账户",
@@ -737,7 +724,6 @@
     "ehi_buffs_skills_fugitive_berserker" : "狂战士",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "狂战士刷新频率",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "设置每秒内刷新多少次”狂战士“伤害加成效果显示",
-    "ehi_buffs_skills_fugitive_berserker_format" : "狂战士显示格式",
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "显示狂战士近战于远程效果的显示格式\n\n倍数: 1.4x 2.6x\n\n百分比: 140% 260%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "倍数",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "百分比",
@@ -934,7 +920,6 @@
     
     "ehi_other_show_floating_health_bar" : "显示浮动血条",
     "ehi_other_show_floating_health_bar_desc" : "在你瞄向目标时显示其生命值",
-    "ehi_other_floating_health_bar_menu" : "浮动血条",
 
     "ehi_other_show_floating_health_bar_style" : "浮动血条显示样式",
     "ehi_other_show_floating_health_bar_style_1" : "PocoHud",
@@ -978,7 +963,7 @@
     "ehi_other_show_use_left_grenades" : "显示手雷箱剩余使用次数",
 
     "ehi_other_show_colored_bag_contour" : "根据重量显示战利品袋轮廓颜色",
-    "ehi_other_show_colored_bag_contour_desc" : "自定义根据战利品袋重量显示的轮廓颜色\n\n设置颜色请前往EHI设置->颜色选项卡",
+    "ehi_other_show_colored_bag_contour_desc" : "自定义根据战利品袋重量显示的轮廓颜色",
 
     "ehi_other_show_real_time_ingame" : "在游戏中显示实时时间",
     "ehi_other_show_real_time_ingame_desc" : "在劫案时间下方显示操作系统当前时间",
@@ -1038,10 +1023,10 @@
     "ehi_colors_bag_contour" : "战利品包轮廓",
 
     "ehi_colors_bag_contour_light" : "轻型",
-    "ehi_colors_bag_contour_light_desc" : "设置最轻的包裹轮廓颜色\n\n其他重量的包裹颜色将随重量提升线性加深",
+    "ehi_colors_bag_contour_light_desc" : "设置最轻的包裹轮廓颜色\n其他重量的包裹颜色将随重量提升线性加深",
 
     "ehi_colors_bag_contour_heavy" : "重型",
-    "ehi_colors_bag_contour_heavy_desc" : "设置最重的包裹轮廓颜色\n\n其他重量的包裹颜色将随重量降低线性变浅",
+    "ehi_colors_bag_contour_heavy_desc" : "设置最重的包裹轮廓颜色\n其他重量的包裹颜色将随重量降低线性变浅",
 
     "ehi_colors_bag_contour_body" : "尸体",
     "ehi_colors_bag_contour_body_desc" : "设置尸体袋包裹轮廓颜色",

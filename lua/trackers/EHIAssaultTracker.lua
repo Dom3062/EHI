@@ -501,7 +501,7 @@ function EHIAssaultTracker:AssaultEnd(diff)
     self._hostage_delay_disabled = nil
     self._assault = nil
     self:SetState(State.control)
-    EHI:Unhook("Assault_set_control_info")
+    Hooks:RemovePostHook("EHI_Assault_set_control_info")
     if self._SHOW_ASSAULT_DELAY then
         self._time = self:CalculateBreakTime() + (2 * math.random())
         self:ComputeHostageDelay()

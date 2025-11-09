@@ -124,6 +124,117 @@ end
 function io.load_as_json(path)
 end
 
+---@class MenuHelper
+MenuHelper = {}
+---Returns a registered menu
+---@param menu_id string @ID of the menu to get
+---@return table @Menu with `menu_id`
+function MenuHelper:GetMenu(menu_id)
+end
+
+---Registers a new menu that can have items added to it
+---@param menu_id string @Unique ID to use for this menu
+---@return table @The newly created menu
+function MenuHelper:NewMenu(menu_id)
+end
+
+---Loads a json-formatted text file and automatically parses and converts into a usable menu
+---@param file_path string @Path of the file to load and convert into a menu
+---@param parent_class any @Unused
+---@param data_table table @Table containing the data keys which various menu items can load their value from
+function MenuHelper:LoadFromJsonFile(file_path, parent_class, data_table)
+end
+
+---@class menu_item_data
+---@field menu_id string @Menu identifier of the menu to create this item on
+---@field id string? @Unique identifier for this item
+---@field title string @Title of the item, treated as localization key unless `localized` is set to `false`
+---@field desc string? @Description of the item, treated as localization key unless `localized` is set to `false`
+---@field disabled boolean? @Wether this item should be disabled, defaults to `false`
+---@field disabled_color Color? @Color of the item when disabled, defaults to `Color(0.25, 1, 1, 1)`
+---@field localized boolean? @Wether `title` and `desc` are treated as localization keys, defaults to `true`
+---@field priority number? @Sorting order of the item in the menu
+---@field callback string? @Function on `MenuCallbackHandler` to call when the item is changed
+
+---@class button_data: menu_item_data
+---@field next_node string? @Menu identifier of the menu to switch to when the item is clicked
+---@field back_callback string? @Function on `MenuCallbackHandler` to call when the menu of the item is left
+
+---Adds a button to the menu specified in `button_data`
+---@param button_data button_data @Settings for the button to be added
+---@return CoreMenuItem.Item @The created menu item
+function MenuHelper:AddButton(button_data)
+end
+
+---@class divider_data: menu_item_data
+---@field title string? @Title of the item, treated as localization key unless `localized` is set to `false`
+---@field size number? @The size of the item, defaults to `8`
+---@field no_text boolean? @Wether to display the divider as empty space, defaults to `true`
+
+---Adds a divider to the menu specified in `divider_data`
+---@param divider_data divider_data @Settings for the divider to be added
+---@return MenuItemDivider @The created menu item
+function MenuHelper:AddDivider(divider_data)
+end
+
+---@class toggle_data: menu_item_data
+---@field value boolean? @The initial value of the item, defaults to `false`
+---@field icon_by_text boolean? @Wether to place the checkbox to the right of its name, defaults to `false`
+
+---Adds a toggle button to the menu specified in `toggle_data`
+---@param toggle_data toggle_data @Settings for the toggle to be added
+---@return CoreMenuItemToggle.ItemToggle @The created menu item
+function MenuHelper:AddToggle(toggle_data)
+end
+
+---@class slider_data: menu_item_data
+---@field value number @The initial value of the item
+---@field min number? @Minimum allowed value of the item, defaults to `0`
+---@field max number? @Maximum allowed value of the item, defaults to `10`
+---@field step number? @Step size when the item is changed via arrow keys, defaults to `1`
+---@field show_value boolean? @Wether to show the item value on the slider, defaults to `false`
+---@field display_precision integer? @How many numbers to show after the decimal point, defaults to `2`
+---@field display_scale number? @Value to multiply the item value with for displaying it, defaults to `1`
+---@field is_percentage boolean? @Wether to show a percentage sign next to the item value, defaults to `false`
+
+---Adds a slider to the menu specified in `slider_data`
+---@param slider_data slider_data @Settings for the slider to be added
+---@return CoreMenuItemSlider.ItemSlider @The created menu item
+function MenuHelper:AddSlider(slider_data)
+end
+
+---@class multi_data: menu_item_data
+---@field value any? @The initial value of the item
+---@field items string[] @List of choices to display for the item
+---@field item_values any[]? @List of values for the options in `items`, defaults to the index of the choice
+---@field localized_items boolean? @Wether to treat the choices in `items` as localization keys, defaults to `true`
+
+---Adds a multiple choice item to the menu specified in `multi_data`
+---@param multi_data multi_data @Settings for the multiple choice item to be added
+---@return MenuItemMultiChoice @The created menu item
+function MenuHelper:AddMultipleChoice(multi_data)
+end
+
+---@class bind_data: menu_item_data
+---@field connection_name string @Unique identifier for the keybind
+---@field binding string? @Keyboard key that triggers this keybind
+---@field button string? @Mouse button that triggers this keybind
+
+---Adds a customizable keybinding to the menu specified in `bind_data`
+---@param bind_data bind_data @Settings for the keybinding to be added
+---@return MenuItemCustomizeController @The created menu item
+function MenuHelper:AddKeybinding(bind_data)
+end
+
+---@class inputdata: menu_item_data
+---@field value string? The initial value of the item
+
+---Adds an input box to the menu specified in `input_data`
+---@param input_data inputdata @Settings for the input box to be added
+---@return MenuItemInput @The created menu item
+function MenuHelper:AddInput(input_data)
+end
+
 -----------------------
 --- End of SuperBLT ---
 -----------------------

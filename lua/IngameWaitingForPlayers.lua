@@ -383,9 +383,9 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end)
                 Hooks:PostHook(AchievmentManager, "award", "EHI_ovk_3_award", function(am, id)
                     if id == "ovk_3" then
-                        EHI:Unhook("ovk_3_start_shooting")
-                        EHI:Unhook("ovk_3_stop_shooting")
-                        EHI:Unhook("ovk_3_award")
+                        Hooks:RemovePostHook("EHI_ovk_3_start_shooting")
+                        Hooks:RemovePostHook("EHI_ovk_3_stop_shooting")
+                        Hooks:RemovePostHook("EHI_ovk_3_award")
                     end
                 end)
             end
@@ -490,7 +490,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                                 if stat == "gage3_13_stats" then
                                     progress = progress + (value or 1)
                                     if progress >= 10 then
-                                        EHI:Unhook("gage3_13_AwardProgress")
+                                        Hooks:RemovePostHook("EHI_gage3_13_AwardProgress")
                                         return
                                     end
                                     ShowPopup("gage3_13", progress, 10)
@@ -579,7 +579,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if EHI:IsAchievementLocked2("turtles_1") and HasWeaponEquipped("wa2000") then -- "Names Are for Friends, so I Don't Need One" achievement
                 self:EHIAddAchievementTracker("turtles_1", 0, 11)
                 managers.ehi_hook:HookKillFunction("turtles_1", "wa2000", true)
-                EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
+                Hooks:PostHook(RaycastWeaponBase, "on_reload", "EHI_RaycastWeaponBase_on_reload", function(self, amount)
                     if self:get_name_id() == "wa2000" then
                         managers.ehi_tracker:SetProgress("turtles_1", 0)
                     end
@@ -599,7 +599,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if EHI:IsAchievementLocked2("grv_2") and HasWeaponEquipped("coal") then -- "Spray Control" achievement
                 self:EHIAddAchievementTracker("grv_2", 0, 32)
                 managers.ehi_hook:HookKillFunction("grv_2", "coal", true)
-                EHI:Hook(RaycastWeaponBase, "on_reload", function(self, amount)
+                Hooks:PostHook(RaycastWeaponBase, "on_reload", "EHI_RaycastWeaponBase_on_reload", function(self, amount)
                     if self:get_name_id() == "coal" then
                         managers.ehi_tracker:SetProgress("grv_2", 0)
                     end
@@ -642,7 +642,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     if primary_index and secondary_index then
                         ---@class EHItango_achieve_3Tracker : EHIAchievementProgressTracker
                         ---@field super EHIAchievementProgressTracker
-                        EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
+                        local EHItango_achieve_3Tracker = class(EHIAchievementProgressTracker)
                         EHItango_achieve_3Tracker._forced_icons = EHI:GetAchievementIcon("tango_achieve_3")
                         function EHItango_achieve_3Tracker:pre_init(...)
                             self._kills =
@@ -679,7 +679,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                             max = 200,
                             flash_times = 1,
                             show_finish_after_reaching_target = true,
-                            class = "EHItango_achieve_3Tracker"
+                            class_table = EHItango_achieve_3Tracker
                         })
                         managers.ehi_hook:HookKillFunction("tango_achieve_3", primary.weapon_id, true)
                         managers.ehi_hook:HookKillFunction("tango_achieve_3", secondary.weapon_id, true)
@@ -771,7 +771,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                             if stat == "gage_9_stats" then
                                 progress = progress + (value or 1)
                                 if progress >= 100 then
-                                    EHI:Unhook("gage_9_achievement")
+                                    Hooks:RemovePostHook("EHI_gage_9_AchievementManager_award_progress")
                                     return
                                 end
                                 ShowPopup("gage_9", progress, 100)

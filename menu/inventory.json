@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_inventory_menu",
-    "parent_menu" : "ehi_menu",
+    "parent_menu_id" : "ehi_menu",
     "title": "ehi_inventory_menu",
     "items": [
         {
@@ -8,11 +8,10 @@
             "id": "ehi_show_inventory_detailed_description_choice",
             "title": "ehi_show_inventory_detailed_description",
             "description": "ehi_show_inventory_detailed_description_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_inventory_detailed_description",
+            "callback": "ehi_set_item_value",
             "value": "show_inventory_detailed_description",
             "default_value": false,
-            "is_parent" : true,
+            "child": "ehi_hide_original_desc_choice",
             "ehi_ver" : 112
         },
         {
@@ -24,11 +23,10 @@
             "id": "ehi_hide_original_desc_choice",
             "title": "ehi_hide_original_desc",
             "description": "ehi_hide_original_desc_desc",
-            "callback": "SetOption",
-            "callback_arguments": "hide_original_desc",
+            "callback": "ehi_set_item_value",
             "value": "hide_original_desc",
             "default_value": true,
-            "parent" : "ehi_show_buffs_choice",
+            "parent": "ehi_show_inventory_detailed_description_choice",
             "ehi_ver" : 112
         }
     ]

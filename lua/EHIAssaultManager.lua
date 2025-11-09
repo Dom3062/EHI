@@ -211,7 +211,7 @@ function EHIAssaultManager:AnticipationStart()
         return
     end
     managers.ehi_tracker:CallFunction(self._assault_delay.name, self._anticipation_sync_f, 30)
-    EHI:Unhook("Assault_set_control_info")
+    Hooks:RemovePostHook("EHI_Assault_set_control_info")
 end
 
 function EHIAssaultManager:AssaultStart()
@@ -219,7 +219,7 @@ function EHIAssaultManager:AssaultStart()
         self._ignore_assault_start_count = self._ignore_assault_start_count - 1
         return
     end
-    EHI:Unhook("Assault_set_control_info")
+    Hooks:RemovePostHook("EHI_Assault_set_control_info")
     if self._assault_delay.hide_on_delete then
         managers.ehi_tracker:CallFunction(self._assault_delay.name, "Hide")
     end

@@ -1,37 +1,25 @@
 {
     "menu_id": "ehi_buffs_skills_mastermind_menu",
-    "parent_menu" : "ehi_buffs_skills_menu",
+    "parent_menu_id" : "ehi_buffs_skills_menu",
     "title": "ehi_buffs_skills_mastermind_menu",
     "items": [
         {
-            "type": "button",
-            "id": "ehi_mastermind_next_menu",
-            "title": "ehi_menu_next_page",
-            "next_menu": "ehi_buffs_skills_mastermind_2_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "buff_options/skills/mastermind_2.json",
-                "settings" : "buff_option"
-            }
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
-        {
-            "type" : "label",
+            "type" : "divider",
             "title" : "ehi_buffs_skills_mastermind_medic_subclass",
-            "center" : true
+            "no_text" : false
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_inspire_basic_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_basic",
             "description": "ehi_buffs_skills_mastermind_inspire_basic_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_basic",
+            "callback": "ehi_set_item_value",
             "value": "inspire_basic",
             "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_inspire_basic_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -39,22 +27,31 @@
             "id": "ehi_buffs_skills_mastermind_inspire_basic_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_basic_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_basic_persistent",
+            "callback": "ehi_set_item_value",
             "value": "inspire_basic_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_inspire_basic_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_inspire_ace_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_ace",
             "description": "ehi_buffs_skills_mastermind_inspire_ace_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_ace",
+            "callback": "ehi_set_item_value",
             "value": "inspire_ace",
             "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_inspire_ace_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -62,22 +59,31 @@
             "id": "ehi_buffs_skills_mastermind_inspire_ace_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_ace_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_ace_persistent",
+            "callback": "ehi_set_item_value",
             "value": "inspire_ace_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_inspire_ace_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
-                {
+        {
+            "type" : "divider",
+            "size" : 10
+        },
+        {
             "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_inspire_reload_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_reload",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_reload",
+            "callback": "ehi_set_item_value",
             "value": "inspire_reload",
             "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_inspire_reload_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -85,22 +91,31 @@
             "id": "ehi_buffs_skills_mastermind_inspire_reload_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_reload_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_reload_persistent",
+            "callback": "ehi_set_item_value",
             "value": "inspire_reload_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_inspire_reload_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
-                {
+        {
+            "type" : "divider",
+            "size" : 10
+        },
+        {
             "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_inspire_movement_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_movement",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_movement",
+            "callback": "ehi_set_item_value",
             "value": "inspire_movement",
             "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_inspire_movement_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -108,11 +123,13 @@
             "id": "ehi_buffs_skills_mastermind_inspire_movement_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_inspire_movement_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "inspire_movement_persistent",
+            "callback": "ehi_set_item_value",
             "value": "inspire_movement_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_inspire_movement_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -124,10 +141,12 @@
             "id": "ehi_buffs_skills_mastermind_uppers_choice",
             "title": "ehi_buffs_skills_mastermind_uppers",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffOption",
-            "callback_arguments": "uppers",
+            "callback": "ehi_set_item_value",
             "value": "uppers",
-            "is_parent" : true,
+            "child" : "ehi_buffs_skills_mastermind_uppers_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "default_value": true,
             "ehi_ver" : 79
         },
@@ -136,22 +155,30 @@
             "id": "ehi_buffs_skills_mastermind_uppers_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_uppers_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "uppers_persistent",
+            "callback": "ehi_set_item_value",
             "value": "uppers_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_uppers_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_uppers_range_choice",
             "title": "ehi_buffs_skills_mastermind_uppers_range",
             "description": "ehi_buffs_skills_mastermind_uppers_range_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "uppers_range",
+            "callback": "ehi_set_item_value",
             "value": "uppers_range",
-            "is_parent" : true,
+            "children" : [ "ehi_buffs_skills_mastermind_uppers_range_refresh_choice", "ehi_buffs_skills_mastermind_uppers_range_persistent_choice" ],
+            "params": {
+                "setting": "buff_option"
+            },
             "default_value": true,
             "ehi_ver" : 79
         },
@@ -160,14 +187,17 @@
             "id": "ehi_buffs_skills_mastermind_uppers_range_refresh_choice",
             "title": "ehi_buffs_skills_mastermind_uppers_range_refresh",
             "description": "ehi_buffs_skills_mastermind_uppers_range_refresh_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "uppers_range_refresh",
+            "callback": "ehi_set_item_value",
             "value": "uppers_range_refresh",
             "parent" : "ehi_buffs_skills_mastermind_uppers_range_choice",
             "default_value": 2,
             "max": 10,
             "min": 1,
-            "step": 0,
+            "step": 1,
+            "display_precision" : 0,
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -175,11 +205,13 @@
             "id": "ehi_buffs_skills_mastermind_uppers_range_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_uppers_range_persistent",
             "description": "ehi_buffs_skills_mastermind_uppers_range_persistent_desc",
-            "callback": "SetBuffOption",
-            "callback_arguments": "uppers_range_persistent",
+            "callback": "ehi_set_item_value",
             "value": "uppers_range_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_uppers_range_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -191,11 +223,13 @@
             "id": "ehi_buffs_skills_mastermind_quick_fix_choice",
             "title": "ehi_buffs_skills_mastermind_quick_fix",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffOption",
-            "callback_arguments": "quick_fix",
+            "callback": "ehi_set_item_value",
             "value": "quick_fix",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_mastermind_quick_fix_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -203,23 +237,31 @@
             "id": "ehi_buffs_skills_mastermind_quick_fix_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_quick_fix_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "quick_fix_persistent",
+            "callback": "ehi_set_item_value",
             "value": "quick_fix_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_quick_fix_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_painkillers_choice",
             "title": "ehi_buffs_skills_mastermind_painkillers",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffOption",
-            "callback_arguments": "painkillers",
+            "callback": "ehi_set_item_value",
             "value": "painkillers",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_mastermind_painkillers_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -227,23 +269,31 @@
             "id": "ehi_buffs_skills_mastermind_painkillers_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_painkillers_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "painkillers_persistent",
+            "callback": "ehi_set_item_value",
             "value": "painkillers_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_painkillers_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_combat_medic_choice",
             "title": "ehi_buffs_skills_mastermind_combat_medic",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffOption",
-            "callback_arguments": "combat_medic",
+            "callback": "ehi_set_item_value",
             "value": "combat_medic",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_mastermind_combat_medic_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -251,11 +301,151 @@
             "id": "ehi_buffs_skills_mastermind_combat_medic_persistent_choice",
             "title": "ehi_buffs_skills_mastermind_combat_medic_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "combat_medic_persistent",
+            "callback": "ehi_set_item_value",
             "value": "combat_medic_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_mastermind_combat_medic_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 20
+        },
+        {
+            "type" : "divider",
+            "title" : "ehi_buffs_skills_mastermind_controller_subclass",
+            "no_text" : false
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_hostage_taker_muscle_choice",
+            "title": "ehi_buffs_skills_mastermind_hostage_taker_muscle",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "hostage_taker_muscle",
+            "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_hostage_taker_muscle_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_hostage_taker_muscle_persistent_choice",
+            "title": "ehi_buffs_skills_mastermind_hostage_taker_muscle_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "hostage_taker_muscle_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_mastermind_hostage_taker_muscle_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_forced_friendship_choice",
+            "title": "ehi_buffs_skills_mastermind_forced_friendship",
+            "description": "ehi_buffs_skills_mastermind_forced_friendship_desc",
+            "callback": "ehi_set_item_value",
+            "value": "forced_friendship",
+            "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_forced_friendship_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_forced_friendship_persistent_choice",
+            "title": "ehi_buffs_skills_mastermind_forced_friendship_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "forced_friendship_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_mastermind_forced_friendship_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type" : "divider",
+            "title" : "ehi_buffs_skills_mastermind_sharpshooter_subclass",
+            "no_text" : false
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_ammo_efficiency_choice",
+            "title": "ehi_buffs_skills_mastermind_ammo_efficiency",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "ammo_efficiency",
+            "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_ammo_efficiency_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_ammo_efficiency_persistent_choice",
+            "title": "ehi_buffs_skills_mastermind_ammo_efficiency_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "ammo_efficiency_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_mastermind_ammo_efficiency_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_aggressive_reload_choice",
+            "title": "ehi_buffs_skills_mastermind_aggressive_reload",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "aggressive_reload",
+            "default_value": true,
+            "child": "ehi_buffs_skills_mastermind_aggressive_reload_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
+            "ehi_ver" : 79
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_skills_mastermind_aggressive_reload_persistent_choice",
+            "title": "ehi_buffs_skills_mastermind_aggressive_reload_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "aggressive_reload_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_skills_mastermind_aggressive_reload_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         }
     ]

@@ -1,16 +1,17 @@
 {
-    "menu_id": "ehi_menu",
-    "title": "ehi_mod_title",
-    "description": "ehi_mod_desc",
-    "items": [
+	"menu_id" : "ehi_menu",
+	"parent_menu_id" : "blt_options",
+	"title" : "ehi_mod_title",
+	"description" : "ehi_mod_desc",
+	"back_callback" : "ehi_save",
+	"focus_changed_callback" : "ehi_changed_focus",
+	"items" : [
         {
-            "type": "multiple_choice",
-            "id": "ehi_mod_language_choice",
-            "title": "ehi_language",
-            "description": "ehi_language_desc",
-            "callback": "SetOption",
-            "callback_arguments": "mod_language",
-            "items": [
+			"type": "multiple_choice",
+			"id": "ehi_mod_language_choice",
+			"title": "ehi_language",
+			"description": "ehi_language_desc",
+			"items": [
                 "ehi_language_1",
                 "ehi_language_2",
                 "ehi_language_3",
@@ -23,39 +24,45 @@
                 "ehi_language_10",
                 "ehi_language_11"
             ],
-            "value": "mod_language",
-            "default_value": 1
-        },
+			"callback" : "ehi_set_item_value",
+			"value": "mod_language",
+			"default_value": 1
+		},
         {
             "type" : "divider",
             "size" : 15
         },
-        {
+		{
             "vr" : [
                 {
                     "type": "slider",
                     "id": "ehi_x_offset",
                     "title": "ehi_vr_x_offset",
-                    "callback": "SetOption",
-                    "callback_arguments" : "vr_x_offset",
+                    "callback": "ehi_set_item_value",
                     "value": "vr_x_offset",
                     "default_value": 0,
                     "max": 1920,
-                    "min": 0,
-                    "step": 0,
+                    "min": -1920,
+                    "step": 1,
+                    "display_precision" : 0,
                     "ehi_ver" : 143
                 },
                 {
                     "type": "slider",
                     "id": "ehi_x_offset",
                     "title": "ehi_x_offset",
-                    "callback": ["SetOption", "UpdateXOffset"],
-                    "callback_arguments" : "x_offset",
+                    "callback": "ehi_set_item_value",
                     "value": "x_offset",
                     "default_value": 0,
                     "max": 1920,
                     "min": -1920,
-                    "step": 0
+                    "display_precision" : 0,
+                    "step": 1,
+                    "params": {
+                        "call_tracker_function": {
+                            "f": "UpdateXOffset"
+                        }
+                    }
                 }
             ]
         },
@@ -65,26 +72,31 @@
                     "type": "slider",
                     "id": "ehi_y_offset",
                     "title": "ehi_vr_y_offset",
-                    "callback": "SetOption",
-                    "callback_arguments": "vr_y_offset",
+                    "callback": "ehi_set_item_value",
                     "value": "vr_y_offset",
                     "default_value": 150,
                     "max": 1080,
-                    "min": 0,
-                    "step": 0,
+                    "min": -1080,
+                    "step": 1,
+                    "display_precision" : 0,
                     "ehi_ver" : 143
                 },
                 {
                     "type": "slider",
                     "id": "ehi_y_offset",
                     "title": "ehi_y_offset",
-                    "callback": ["SetOption", "UpdateYOffset"],
-                    "callback_arguments": "y_offset",
+                    "callback": "ehi_set_item_value",
                     "value": "y_offset",
                     "default_value": 150,
                     "max": 1080,
                     "min": -1080,
-                    "step": 0
+                    "step": 1,
+                    "display_precision" : 0,
+                    "params": {
+                        "call_tracker_function": {
+                            "f": "UpdateYOffset"
+                        }
+                    }
                 }
             ]
         },
@@ -93,14 +105,18 @@
             "id": "ehi_text_scale",
             "title": "ehi_text_scale",
             "description": "ehi_text_scale_desc",
-            "callback": ["SetOption", "UpdateTextScale"],
-            "callback_arguments": "text_scale",
+            "callback": "ehi_set_item_value",
             "value": "text_scale",
             "default_value": 1,
             "max": 2,
             "min": 0.5,
-            "step": 2,
-            "ehi_ver" : 16
+            "step": 0.01,
+            "ehi_ver" : 16,
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateTextScale"
+                }
+            }
         },
         {
             "vr" : [
@@ -109,26 +125,29 @@
                     "id": "ehi_vr_scale",
                     "title": "ehi_vr_scale",
                     "description": "ehi_scale_desc",
-                    "callback": "SetOption",
-                    "callback_arguments": "vr_scale",
+                    "callback": "ehi_set_item_value",
                     "value": "vr_scale",
                     "default_value": 1,
                     "max": 5,
                     "min": 0.5,
-                    "step": 2
+                    "step": 0.01
                 },
                 {
                     "type": "slider",
                     "id": "ehi_scale",
                     "title": "ehi_scale",
                     "description": "ehi_scale_desc",
-                    "callback": ["SetOption", "UpdateScale"],
-                    "callback_arguments": "scale",
+                    "callback": "ehi_set_item_value",
                     "value": "scale",
                     "default_value": 1,
                     "max": 2,
                     "min": 0.5,
-                    "step": 2
+                    "step": 0.01,
+                    "params": {
+                        "call_tracker_function": {
+                            "f": "UpdateScale"
+                        }
+                    }
                 }
             ]
         },
@@ -137,14 +156,18 @@
             "id": "ehi_time_format_choice",
             "title": "ehi_time_format",
             "description": "ehi_time_format_desc",
-            "callback": ["SetOption", "UpdateTimeFormat"],
-            "callback_arguments": "time_format",
+            "callback": "ehi_set_item_value",
             "items": [
                 "ehi_time_format_1",
                 "ehi_time_format_2"
             ],
             "value": "time_format",
-            "default_value": 2
+            "default_value": 2,
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateTimeFormat"
+                }
+            }
         },
         {
             "vr" : [
@@ -153,8 +176,7 @@
                     "id": "ehi_vr_tracker_alignment_choice",
                     "title": "ehi_vr_tracker_alignment",
                     "description": "ehi_tracker_alignment_desc",
-                    "callback": "SetOption",
-                    "callback_arguments": "vr_tracker_alignment",
+                    "callback": "ehi_set_item_value",
                     "items": [
                         "ehi_tracker_alignment_1",
                         "ehi_tracker_alignment_2",
@@ -163,6 +185,12 @@
                     ],
                     "value": "vr_tracker_alignment",
                     "default_value": 1,
+                    "child_compare": {
+                        "ehi_tracker_vertical_w_anim_choice": {
+                            "comparator": "<=",
+                            "value": 2
+                        }
+                    },
                     "ehi_ver" : 185
                 },
                 {
@@ -170,8 +198,7 @@
                     "id": "ehi_tracker_alignment_choice",
                     "title": "ehi_tracker_alignment",
                     "description": "ehi_tracker_alignment_desc",
-                    "callback": ["SetOption", "UpdateTrackerAlignment"],
-                    "callback_arguments": "tracker_alignment",
+                    "callback": "ehi_set_item_value",
                     "items": [
                         "ehi_tracker_alignment_1",
                         "ehi_tracker_alignment_2",
@@ -180,24 +207,72 @@
                     ],
                     "value": "tracker_alignment",
                     "default_value": 1,
+                    "params": {
+                        "call_tracker_function": {
+                            "f": "UpdateTrackerAlignment"
+                        }
+                    },
+                    "child_compare": {
+                        "ehi_tracker_vertical_w_anim_choice": {
+                            "comparator": "<=",
+                            "value": 2
+                        }
+                    },
                     "ehi_ver" : 185
                 }
             ]
         },
         {
-            "type": "multiple_choice",
-            "id": "ehi_tracker_vertical_w_anim_choice",
-            "title": "ehi_tracker_vertical_w_anim",
-            "description": "ehi_tracker_vertical_w_anim_desc",
-            "callback": ["SetOption", "UpdateTrackerVerticalAnim"],
-            "callback_arguments": "tracker_vertical_w_anim",
-            "items": [
-                "ehi_tracker_vertical_w_anim_1",
-                "ehi_tracker_vertical_w_anim_2"
-            ],
-            "value": "tracker_vertical_w_anim",
-            "default_value": 1,
-            "ehi_ver" : 232
+            "vr" : [
+                {
+                    "type": "multiple_choice",
+                    "id": "ehi_tracker_vertical_w_anim_choice",
+                    "title": "ehi_tracker_vertical_w_anim",
+                    "description": "ehi_tracker_vertical_w_anim_desc",
+                    "callback": "ehi_set_item_value",
+                    "items": [
+                        "ehi_tracker_vertical_w_anim_1",
+                        "ehi_tracker_vertical_w_anim_2"
+                    ],
+                    "value": "tracker_vertical_w_anim",
+                    "default_value": 1,
+                    "params": {
+                        "call_tracker_function": {
+                            "f": "UpdateTrackerVerticalAnim"
+                        }
+                    },
+                    "parent_compare": {
+                        "id": "ehi_vr_tracker_alignment_choice",
+                        "comparator": "<=",
+                        "value": 2
+                    },
+                    "ehi_ver" : 232
+                },
+                {
+                    "type": "multiple_choice",
+                    "id": "ehi_tracker_vertical_w_anim_choice",
+                    "title": "ehi_tracker_vertical_w_anim",
+                    "description": "ehi_tracker_vertical_w_anim_desc",
+                    "callback": "ehi_set_item_value",
+                    "items": [
+                        "ehi_tracker_vertical_w_anim_1",
+                        "ehi_tracker_vertical_w_anim_2"
+                    ],
+                    "value": "tracker_vertical_w_anim",
+                    "default_value": 1,
+                    "params": {
+                        "call_tracker_function": {
+                            "f": "UpdateTrackerVerticalAnim"
+                        }
+                    },
+                    "parent_compare": {
+                        "id": "ehi_tracker_alignment_choice",
+                        "comparator": "<=",
+                        "value": 2
+                    },
+                    "ehi_ver" : 232
+                }
+            ]
         },
         {
             "type": "button",
@@ -205,10 +280,7 @@
             "title": "ehi_visuals_menu",
             "description": "ehi_visuals_menu_desc",
             "next_menu": "ehi_visuals_menu",
-            "ehi_ver" : 336,
-            "load_menu" : {
-                "file_path": "visuals.json"
-            }
+            "ehi_ver" : 336
         },
         {
             "type" : "divider",
@@ -221,103 +293,83 @@
             "description": "ehi_shared_menu_desc",
             "next_menu": "ehi_shared_menu",
             "ehi_ver" : 314,
-            "parent_func" : "IsSharedMenuEnabled",
-            "load_menu" : {
-                "file_path" : "shared.json"
-            }
+            "disabled_from_start" : "ehi_is_shared_menu_available"
         },
         {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_trackers_choice",
-                    "title": "ehi_show_trackers",
-                    "callback": [ "SetOption", "UpdateTrackerState" ],
-                    "callback_arguments": "show_trackers",
-                    "value": "show_trackers",
-                    "default_value": true,
-                    "is_parent" : true,
-                    "ehi_ver" : 306
-                },
-                {
-                    "type": "button",
-                    "id": "ehi_trackers_menu",
-                    "title": "ehi_trackers_menu",
-                    "description": "ehi_trackers_menu_desc",
-                    "next_menu": "ehi_trackers_menu",
-                    "parent" : "ehi_show_trackers_choice",
-                    "ehi_ver" : 344,
-                    "load_menu" : {
-                        "file_path" : "trackers.json"
-                    }
+            "type": "toggle",
+            "id": "ehi_show_trackers_choice",
+            "title": "ehi_show_trackers",
+            "callback": "ehi_set_item_value",
+            "value": "show_trackers",
+            "default_value": true,
+            "children" : [ "ehi_trackers_menu", "ehi_show_preview_text_choice", "ehi_show_preview_trackers_choice" ],
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateTrackerState"
                 }
-            ]
+            },
+            "ehi_ver" : 306
         },
         {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_waypoints_choice",
-                    "title": "ehi_show_waypoints",
-                    "description": "ehi_show_waypoints_desc",
-                    "callback": "SetOption",
-                    "callback_arguments": "show_waypoints",
-                    "value": "show_waypoints",
-                    "default_value": true,
-                    "is_parent" : true,
-                    "ehi_ver" : 21
-                },
-                {
-                    "type": "button",
-                    "id": "ehi_waypoints_menu",
-                    "title": "ehi_waypoints_menu",
-                    "description": "ehi_waypoints_menu_desc",
-                    "next_menu": "ehi_waypoints_menu",
-                    "parent" : "ehi_show_waypoints_choice",
-                    "ehi_ver" : 325,
-                    "load_menu" : {
-                        "file_path" : "waypoints.json"
-                    }
-                }
-            ]
+            "type": "button",
+            "id": "ehi_trackers_menu",
+            "title": "ehi_trackers_menu",
+            "description": "ehi_trackers_menu_desc",
+            "next_menu": "ehi_trackers_menu",
+            "parent" : "ehi_show_trackers_choice",
+            "ehi_ver" : 344
         },
         {
-            "table" : [
-                {
-                    "type": "toggle",
-                    "id": "ehi_show_buffs_choice",
-                    "title": "ehi_show_buffs",
-                    "description": "ehi_show_buffs_desc",
-                    "callback": ["SetOption", "UpdateBuffsVisibility"],
-                    "callback_arguments": "show_buffs",
-                    "value": "show_buffs",
-                    "is_parent" : true,
-                    "default_value": true,
-                    "ehi_ver" : 58
-                },
-                {
-                    "type": "button",
-                    "id": "ehi_buffs_menu",
-                    "title": "ehi_buffs_menu",
-                    "description": "ehi_buffs_menu_desc",
-                    "next_menu": "ehi_buffs_menu",
-                    "parent" : "ehi_show_buffs_choice",
-                    "ehi_ver" : 349,
-                    "load_menu" : {
-                        "file_path" : "buffs.json"
-                    }
+            "type": "toggle",
+            "id": "ehi_show_waypoints_choice",
+            "title": "ehi_show_waypoints",
+            "description": "ehi_show_waypoints_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_waypoints",
+            "default_value": true,
+            "child" : "ehi_waypoints_menu",
+            "ehi_ver" : 21
+        },
+        {
+            "type": "button",
+            "id": "ehi_waypoints_menu",
+            "title": "ehi_waypoints_menu",
+            "description": "ehi_waypoints_menu_desc",
+            "next_menu": "ehi_waypoints_menu",
+            "parent" : "ehi_show_waypoints_choice",
+            "ehi_ver" : 325
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_buffs_choice",
+            "title": "ehi_show_buffs",
+            "description": "ehi_show_buffs_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_buffs",
+            "children" : [ "ehi_buffs_menu", "ehi_show_preview_buffs_choice" ],
+            "default_value": true,
+            "params": {
+                "call_buff_function": {
+                    "f": "UpdateBuffsVisibility"
                 }
-            ]
+            },
+            "ehi_ver" : 58
+        },
+        {
+            "type": "button",
+            "id": "ehi_buffs_menu",
+            "title": "ehi_buffs_menu",
+            "description": "ehi_buffs_menu_desc",
+            "next_menu": "ehi_buffs_menu",
+            "parent" : "ehi_show_buffs_choice",
+            "ehi_ver" : 349
         },
         {
             "type": "button",
             "id": "ehi_inventory_menu",
             "title": "ehi_inventory_menu",
             "next_menu": "ehi_inventory_menu",
-            "ehi_ver" : 112,
-            "load_menu" : {
-                "file_path" : "inventory.json"
-            }
+            "ehi_ver" : 112
         },
         {
             "type": "button",
@@ -325,41 +377,32 @@
             "title": "ehi_other_menu",
             "description": "ehi_other_menu_desc",
             "next_menu": "ehi_other_menu",
-            "ehi_ver" : 325,
-            "load_menu" : {
-                "file_path" : "other.json"
-            }
-        },
-        {
-            "type": "button",
-            "id": "ehi_colors_menu",
-            "title": "ehi_colors_menu",
-            "description": "ehi_colors_menu_desc",
-            "next_menu": "ehi_colors_menu",
-            "ehi_ver" : 344,
-            "load_menu" : {
-                "file_path" : "colors.json",
-                "settings" : "colors"
-            }
+            "ehi_ver" : 325
         },
         {
             "type" : "divider",
             "size" : 15
         },
         {
-            "type" : "label",
+            "type" : "divider",
             "id" : "ehi_menu_only",
-            "title" : "ehi_menu_only"
+            "title" : "ehi_menu_only",
+            "no_text" : false
         },
         {
             "type": "toggle",
             "id": "ehi_show_preview_text_choice",
             "title": "ehi_show_preview_text",
             "description": "ehi_show_preview_text_desc",
-            "callback": ["SetOption", "UpdatePreviewTextVisibility"],
-            "callback_arguments": "show_preview_text",
+            "callback": "ehi_set_item_value",
             "value": "show_preview_text",
             "default_value": true,
+            "parent": "ehi_show_trackers_choice",
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdatePreviewTextVisibility"
+                }
+            },
             "ehi_ver" : 58
         },
         {
@@ -367,11 +410,15 @@
             "id": "ehi_show_preview_trackers_choice",
             "title": "ehi_show_preview_trackers",
             "description": "ehi_show_preview_trackers_desc",
-            "callback": ["SetOption", "UpdateTrackerPreviewVisibility"],
-            "callback_arguments": "show_preview_trackers",
+            "callback": "ehi_set_item_value",
             "value": "show_preview_trackers",
             "parent" : "ehi_show_trackers_choice",
             "default_value": true,
+            "params": {
+                "call_tracker_function": {
+                    "f": "UpdateTrackerPreview"
+                }
+            },
             "ehi_ver" : 339
         },
         {
@@ -379,12 +426,16 @@
             "id": "ehi_show_preview_buffs_choice",
             "title": "ehi_show_preview_buffs",
             "description": "ehi_show_preview_buffs_desc",
-            "callback": ["SetOption", "UpdateBuffsPreviewVisibility"],
-            "callback_arguments": "show_preview_buffs",
+            "callback": "ehi_set_item_value",
             "value": "show_preview_buffs",
             "parent" : "ehi_show_buffs_choice",
             "default_value": true,
+            "params": {
+                "call_buff_function": {
+                    "f": "UpdatePreviewVisibility"
+                }
+            },
             "ehi_ver" : 339
         }
-    ]
+	]
 }

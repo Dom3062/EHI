@@ -52,7 +52,7 @@
             <!-- Menu code -->
             <post :hook_id="menumanager" :script_path="menu/FakeEHITrackerManager.lua" />
             <post :hook_id="menumanager" :script_path="menu/FakeEHIBuffManager.lua" />
-            <post :hook_id="menumanager" :script_path="menu/EHIMenu.lua" />
+            <post :hook_id="menumanager" :script_path="menu/EHIMenuItems.lua" />
             <post :hook_id="menumanager" :script_path="MenuManager.lua" />
             <group :hook_id="menu/">
                 <post :hook_id="achievementlistgui" :script_path="AchievementListGui.lua"/>

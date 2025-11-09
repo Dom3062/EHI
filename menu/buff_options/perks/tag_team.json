@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_tag_team_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_tag_team",
     "items": [
         {
@@ -8,11 +8,13 @@
             "id": "ehi_buffs_perks_tag_team_cooldown_choice",
             "title": "ehi_buffs_perks_tag_team_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "cooldown",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
+            "child": "ehi_buffs_perks_tag_team_cooldown_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -20,27 +22,31 @@
             "id": "ehi_buffs_perks_tag_team_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_tag_team_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
             "parent": "ehi_buffs_perks_tag_team_cooldown_choice",
             "ehi_ver" : 349
         },
         {
             "type" : "divider",
-            "size" : 20
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_tag_team_effect_choice",
             "title": "ehi_buffs_perks_tag_team_effect",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "effect" ],
+            "callback": "ehi_set_item_value",
             "value": "effect",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
+            "child": "ehi_buffs_perks_tag_team_effect_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -48,23 +54,31 @@
             "id": "ehi_buffs_perks_tag_team_effect_persistent_choice",
             "title": "ehi_buffs_perks_tag_team_effect_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "effect_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "effect_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
             "parent": "ehi_buffs_perks_tag_team_effect_choice",
             "ehi_ver" : 349
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_tag_team_absorption_choice",
             "title": "ehi_buffs_perks_tag_team_absorption",
             "description": "ehi_buffs_skills_value",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "absorption" ],
+            "callback": "ehi_set_item_value",
             "value": "absorption",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
+            "child": "ehi_buffs_perks_tag_team_absorption_persistent_choice",
             "ehi_ver" : 349
         },
         {
@@ -72,23 +86,31 @@
             "id": "ehi_buffs_perks_tag_team_absorption_persistent_choice",
             "title": "ehi_buffs_perks_tag_team_absorption_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "absorption_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "absorption_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
             "parent": "ehi_buffs_perks_tag_team_absorption_choice",
             "ehi_ver" : 349
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_tag_team_tagged_choice",
             "title": "ehi_buffs_perks_tag_team_tagged",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "tagged" ],
+            "callback": "ehi_set_item_value",
             "value": "tagged",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
+            "child": "ehi_buffs_perks_tag_team_tagged_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -96,10 +118,12 @@
             "id": "ehi_buffs_perks_tag_team_tagged_persistent_choice",
             "title": "ehi_buffs_perks_tag_team_tagged_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "tag_team", "tagged_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "tagged_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "tag_team" ]
+            },
             "parent": "ehi_buffs_perks_tag_team_tagged_choice",
             "ehi_ver" : 349
         }

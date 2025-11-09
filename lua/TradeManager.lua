@@ -68,7 +68,7 @@ end
 
 function TradeManager:init(...)
     original.init(self, ...)
-    EHI:Hook(self, "set_trade_countdown", function(_, enabled)
+    Hooks:PostHook(self, "set_trade_countdown", "EHI_TradeManager_init", function(_, enabled)
         managers.ehi_trade:SetTrade("normal", enabled, self._trade_counter_tick)
         if not enabled then
             for _, crim in ipairs(self._criminals_to_respawn) do

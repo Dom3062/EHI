@@ -6,14 +6,8 @@
     "ehi_save_data_corrupted_desc" : "ไฟล์ที่บันทึกไว้ในม็อด EHI เสียหายและไม่สามารถโหลดใช้งานได้\nม็อด EHI จะใช้ค่าดั้งเดิมเพื่อเพื่อไม่ให้เกมเด้ง",
 
     "ehi_menu_reset_to_default" : "$BTN_RESET รีเซ็ตเป็นค่าเดิม",
-    "ehi_menu_large_steps" : "$BTN_STEP เพิ่ม/ลดค่า",
     
     "ehi_level_restart_required" : "A level restart is required for options to take effect",
-
-    "ehi_item_depends_on" : "ตัวเลือก '$option;' ต้องถูกเปิดใช้งานเพื่อให้ตัวเลือกนี้เกิดผล",
-    
-    "ehi_menu_next_page" : "ไปที่หน้าถัดไป -->",
-    "ehi_menu_previous_page" : "<-- ย้อนกลับไปหน้าที่แล้ว",
 
     "ehi_language" : "ภาษา",
     "ehi_language_desc" : "เปลี่ยนภาษาของม็อด.\nจำเป็นต้องมีการรีสตาร์ทด่านเพื่อให้การเปลี่ยนแปลงนี้ส่งผลลัพธ์",
@@ -242,7 +236,7 @@
     "ehi_show_tracker_hint_desc" : "แสดงคำอธิบายสำหรับไอคอนติดตามในแต่ละด่าน",
 
     "ehi_show_tracker_hint_t" : "คำอธิบายไอคอนติดตาม (เเวลา)",
-    "ehi_show_tracker_hint_t_desc" : "กำหนดให้คำอธิบายปรากฎบนหน้าจอนานเท่าใดก่อนที่จะหายไป\n\nหากปรับตัวเลือกไปที่ 0 จะทำให้คำอธิบายแสดงบนจอตลอดเวลา",
+    "ehi_show_tracker_hint_t_desc" : "กำหนดให้คำอธิบายปรากฎบนหน้าจอนานเท่าใดก่อนที่จะหายไป\nหากปรับตัวเลือกไปที่ 0 จะทำให้คำอธิบายแสดงบนจอตลอดเวลา",
 
     "ehi_trackers_menu" : "ไอคอนติดตาม",
     "ehi_trackers_menu_desc" : "Trackers หรือ ไอคอนแสดงการติดตามเหตุการณ์ที่เกิดขึ้นอยู่หรือกำลังเกิดขึ้นในด่านนั้นๆ",
@@ -260,7 +254,7 @@
     "ehi_show_achievements_desc" : "Show achievement tracker เป็นการแสดงไอคอนติดตามรางวัลความสำเร็จที่เกี่ยวข้องกับเวลาหรือจำนวนในแต่ละด่าน\nบางด่านอาจไม่มีไอคอนติดตามรางวัลความสำเร็จปรากฎให้เห็น",
 
     "ehi_show_achievement_description" : "แสดงคำอธิบายรางวัลความสำเร็จ",
-    "ehi_show_achievement_description_desc" : "แสดงคำอธิบายรางวัลความสำเร็จผ่านกล่องข้อความในเกม\n\nมีแค่คุณที่จะเห็นคำอธิบาย",
+    "ehi_show_achievement_description_desc" : "แสดงคำอธิบายรางวัลความสำเร็จผ่านกล่องข้อความในเกม\nมีแค่คุณที่จะเห็นคำอธิบาย",
 
     "ehi_show_achievements_mission" : "แสดงรางวัลความสำเร็จ (ด่าน)",
     "ehi_show_achievements_mission_desc" : "แสดงรางวัลความสำเร็จที่สามารถทำได้เฉพาะในด่านนั้นๆ",
@@ -269,19 +263,19 @@
     "ehi_hide_unlocked_achievements_desc" : "เมื่อเลือก EHI จะไม่แสดงรางวัลความสำเร็จที่ถูกปลดล็อคแล้ว\nเมื่อไม่ได้เลือก EHI จะแสดงรางวัลความสำเร็จทุกอย่างในด่าน",    
 
     "ehi_show_achievements_weapon" : "แสดงรางวัลความสำเร็จ (อาวุธ)",
-    "ehi_show_achievements_weapon_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยอาวุธเฉพาะ\n\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
+    "ehi_show_achievements_weapon_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยอาวุธเฉพาะ\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
      
     "ehi_show_achievements_melee" : "แสดงรางวัลความสำเร็จ (โจมตี)",
-    "ehi_show_achievements_melee_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยอาวุธโจมตีระยะประชิด\n\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
+    "ehi_show_achievements_melee_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยอาวุธโจมตีระยะประชิด\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
      
     "ehi_show_achievements_grenade" : "แสดงรางวัลความสำเร็จ (อาวุธปา)",
-    "ehi_show_achievements_grenade_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยอาวุธปา\n\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
+    "ehi_show_achievements_grenade_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยอาวุธปา\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
      
     "ehi_show_achievements_vehicle" : "แสดงรางวัลความสำเร็จ (พาหนะ)",
-    "ehi_show_achievements_vehicle_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยยานพาหนะ\n\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
+    "ehi_show_achievements_vehicle_desc" : "แสดงรางวัลความสำเร็จที่เกี่ยวข้องกับการฆ่าศัตรูด้วยยานพาหนะ\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
      
     "ehi_show_achievements_other" : "แสดงรางวัลความสำเร็จ (อื่นๆ)",
-    "ehi_show_achievements_other_desc" : "แสดงรางวัลความสำเร็จที่ไม่อยู่ในกลุ่มที่ระบุไว้\n\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
+    "ehi_show_achievements_other_desc" : "แสดงรางวัลความสำเร็จที่ไม่อยู่ในกลุ่มที่ระบุไว้\nหากรางวัลความสำเร็จนี้ปลดล็อคไปแล้วไอคอนติดตามจะไม่แสดงให้เห็น",
     
     "ehi_show_achievement_failed_popup" : "แสดงหน้าต่าง 'ทำรางวัลความสำเร็จล้มเหลว' ",
     "ehi_show_achievement_failed_popup_desc" : "หน้าต่างทำรางวัลความสำเร็จล้มเหลวจะแสดงเป็นข้อความสีแดง",
@@ -291,9 +285,6 @@
 
     "ehi_show_trophies" : "แสดงไอคอนถ้วยรางวัล",
     "ehi_show_trophies_desc" : "แสดงไอคอนถ้วยรางวัลในเกม\nบางด่านอาจไม่มีถ้วยรางวัลใดๆ",
-
-    "ehi_show_trophy_description" : "Show Trophy Description",
-    "ehi_show_trophy_description_desc" : "Shows trophy description in the game chat\n\nThe description is only visible to you",
      
     "ehi_hide_unlocked_trophies" : "อย่าแสดงไอคอนถ้วยรางวัล",
     "ehi_hide_unlocked_trophies_desc" : "เมื่อเลือกตัวเลือกนี้ EHI จะไม่แสดงถ้วยรางวัลที่ถูกปลดล็อคแล้ว\nเมื่อไม่ได้เลือก EHI จะแสดงไอคอนติดตามสำหรับถ้วยรางวัลทั้งหมด",
@@ -305,10 +296,7 @@
     "ehi_show_trophy_started_popup_desc" : "แสดงหน้าต่างเริ่มล่าถ้วยรางวัลเป็นข้อความสีเขียว",
      
     "ehi_show_dailies" : "แสดงไอคอนรางวัลรายวัน",
-    "ehi_show_dailies_desc" : "แสดงหน้าต่างรางวัลรายวัน(Daily Side Job) ที่สามารถดำเนินการได้\n\nรางวัลรายวันที่ทำสำเร็จแล้วจะไม่แสดงให้เห็น",
-
-    "ehi_show_daily_description" : "Show Daily Side Job Description",
-    "ehi_show_daily_description_desc" : "Shows daily side job description in the game chat\n\nThe description is only visible to you",
+    "ehi_show_dailies_desc" : "แสดงหน้าต่างรางวัลรายวัน(Daily Side Job) ที่สามารถดำเนินการได้\nรางวัลรายวันที่ทำสำเร็จแล้วจะไม่แสดงให้เห็น",
      
     "ehi_show_daily_failed_popup" : "แสดงไอคอน 'ล่ารางวัลรายวันล้มเหลว'",
     "ehi_show_daily_failed_popup_desc" : "หน้าต่างล่ารางวัลรายวันล้มเหลวจะแสดงเป็นข้อความสีแดง",
@@ -379,7 +367,6 @@
     "ehi_equipment_menu" : "เมนูอุปกรณ์",
     "ehi_equipment_menu_desc" : "",
 
-    "ehi_equipment_format" : "รูปแบบการแสดงอุปกรณ์",
     "ehi_equipment_format_desc" : "กำหนดรูปแบบการแสดงอุปกรณ์",
     "ehi_equipment_format_1" : "จำนวนครั้งที่ใช้ได้ (จำนวนกระเป๋าที่ปรากฎในเกม)",
     "ehi_equipment_format_2" : "(จำนวนกระเป๋าที่ปรากฎในเกม) จำนวนครั้งที่ใช้ได้",
@@ -430,7 +417,6 @@
     "ehi_show_minion_tracker" : "แสดงไอคอนจำนวนพันธมิตร",
     "ehi_show_minion_tracker_desc" : "แสดงไอคอนจำนวนพันธมิตรที่เปลี่ยนมาอยู่ฝั่งเราในด่านนั้นๆ",
 
-    "ehi_show_minion_option" : "Converts Format",
     "ehi_show_minion_option_1" : "Show Number of your Converts only",
     "ehi_show_minion_option_2" : "Show Total Number of Converts on the map",
     "ehi_show_minion_option_3" : "แสดงไอคอนจำนวนพันธมิตรของแต่ละบุคคล",
@@ -460,16 +446,16 @@
     "ehi_show_enemy_count_show_pagers_desc" : "แสดงจำนวนศัตรูที่มีวิทยุติดตามตัว (Pager)ไว้ทางซ้ายและศัตรูที่ไม่มีวิทยุไว้ทางขวา\nเมื่อสัญญาณเตือนดังขึ้นในเกม จะแสดงแค่จำนวนศัตรูเท่านั้น",
 
     "ehi_show_civilian_count_tracker" : "แสดงจำนวนประชาชน",
-    "ehi_show_civilian_count_tracker_desc" : "แสดงจำนวนประชาชนทั้งหมดที่อยู่ในด่าน\n\nถ้าไม่มีประชาชนใดๆ ไอคอนติดตามนี้จะไม่แสดงให้เห็น",
+    "ehi_show_civilian_count_tracker_desc" : "แสดงจำนวนประชาชนทั้งหมดที่อยู่ในด่าน\nถ้าไม่มีประชาชนใดๆ ไอคอนติดตามนี้จะไม่แสดงให้เห็น",
 
     "ehi_show_laser_tracker" : "แสดงไอคอนติดตามเลเซอร์",
     "ehi_show_laser_tracker_desc" : "แสดงเวลาเลเซอร์ที่มีการเปลี่ยนสถานะกลับไปกลับมาได้",
 
     "ehi_show_assault_delay_tracker" : "แสดงไอคอนการหน่วงเวลาก่อนการจู่โจม",
-    "ehi_show_assault_delay_tracker_desc" : "แสดงหน้าต่างการหน่วงเวลาก่อนการจู่โจมรอบต่อไป\n\nหน้าต่างจะไม่แสดงให้เห็นกับผู้เล่นที่เข้าร่วมห้องที่ดำเนินการอยู่การจู่โจมมีการเปลี่ยนแปลง",
+    "ehi_show_assault_delay_tracker_desc" : "แสดงหน้าต่างการหน่วงเวลาก่อนการจู่โจมรอบต่อไป\nหน้าต่างจะไม่แสดงให้เห็นกับผู้เล่นที่เข้าร่วมห้องที่ดำเนินการอยู่การจู่โจมมีการเปลี่ยนแปลง",
 
     "ehi_show_assault_time_tracker" : "แสดงเวลาการจู่โจม",
-    "ehi_show_assault_time_tracker_desc" : "แสดงไอคอนเวลาการจู่โจม\n\nหน้าต่างจะไม่แสดงให้เห็นกับผู้เล่นที่เข้าร่วมห้องที่ดำเนินการอยู่การจู่โจมมีการเปลี่ยนแปลง",
+    "ehi_show_assault_time_tracker_desc" : "แสดงไอคอนเวลาการจู่โจม\nหน้าต่างจะไม่แสดงให้เห็นกับผู้เล่นที่เข้าร่วมห้องที่ดำเนินการอยู่การจู่โจมมีการเปลี่ยนแปลง",
     
     "ehi_show_loot_counter" : "แสดงจำนวนของที่ปล้นมาได้",
     "ehi_show_loot_counter_desc" : "แสดงจำนวนของที่ปล้นมาได้ทั้งหมดในด่านนั้นๆ",
@@ -478,10 +464,10 @@
     "ehi_show_all_loot_secured_popup_desc" : "แสดงหน้าต่างของที่ปล้นได้ทั้งหมดในด่าน",
 
     "ehi_variable_random_loot_format" : "วิธีการแสดงประเภทของปล้น",
-    "ehi_variable_random_loot_format_desc" : "เลือกวิธีการแสดงผลประเภทของปล้น\n\nตัวอย่าง:ของ 16 ชิ้นที่ปล้นได้แน่นอนและตู้เซฟที่อาจมีหรือไม่มีของที่สามารถปล้นได้ในนั้น; กระเป๋า 9 ใบที่ปล้นได้เรียบร้อย\n\nตัวเลือกที่ 1:\n9/16-20?\n\nตัวเลือกที่ 2:\n9/20?\n\nตัวเลือกที่ 3:\n9/16+4?",
-    "ehi_variable_random_loot_format_1" : "ของที่ปล้นได้แล้ว / ของทั้งหมด - (ของทั้งหมด + ของอาจมีหรือไม่มี)?",
-    "ehi_variable_random_loot_format_2" : "ของที่ปล้นได้แล้ว / (ของทั้งหมด + ของอาจมีหรือไม่มี)?",
-    "ehi_variable_random_loot_format_3" : "ของที่ปล้นได้แล้ว / ของทั้งหมด + ของอาจมีหรือไม่มี?",
+    "ehi_variable_random_loot_format_desc" : "เลือกวิธีการแสดงผลประเภทของปล้น\nตัวอย่าง:ของ 16 ชิ้นที่ปล้นได้แน่นอนและตู้เซฟที่อาจมีหรือไม่มีของที่สามารถปล้นได้ในนั้น; กระเป๋า 9 ใบที่ปล้นได้เรียบร้อย",
+    "ehi_variable_random_loot_format_1" : "9/16+20?",
+    "ehi_variable_random_loot_format_2" : "9/20?",
+    "ehi_variable_random_loot_format_3" : "9/16+4?",
 
     "ehi_show_bodybags_counter" : "แสดงจำนวนกระเป๋าใส่ศพ",
     "ehi_show_bodybags_counter_desc" : "แสดงจำนวนกระเป๋าใส่ศพที่มี",
@@ -612,7 +598,6 @@
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "อัพเดทค่า Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "กำหนดค่าเวลาเป็นวินาทีเพื่ออัพเดททักษะ 'Berserker' ",
-    "ehi_buffs_skills_fugitive_berserker_format" : "รูปแบบ Berserker",
     "ehi_buffs_skills_fugitive_berserker_format_desc" : "เลือกรูปแบบที่จะอัพเดทสถานะบัพ Berserker ทั้งจากการโจมตีระยะประชิดและจากการโจมตีระยะไกล\n\nตัวคูณ: 1.4x 2.6x\n\nเปอร์เซ็น: 140% 260%",
     "ehi_buffs_skills_fugitive_berserker_format_1" : "ตัวคูณ",
     "ehi_buffs_skills_fugitive_berserker_format_2" : "เปอร์เซ็น",

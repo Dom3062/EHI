@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_biker_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_biker",
     "items": [
         {
@@ -8,10 +8,12 @@
             "id": "ehi_buffs_perks_biker_kill_counter_choice",
             "title": "ehi_buffs_perks_biker_kill_counter",
             "description": "ehi_buffs_skills_value",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "biker", "kill_counter" ],
+            "callback": "ehi_set_item_value",
             "value": "kill_counter",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "biker" ]
+            },
             "ehi_ver" : 204
         }
     ]

@@ -2,17 +2,14 @@
     "ehi_mod_title" : "Extra Heist Info",
     "ehi_mod_desc" : "",
 
-    "ehi_item_depends_on" : "A opção '$option;' deve estar ativo para que possa funcionar",
-
-    "ehi_menu_next_page" : "Próxima página -->",
-    "ehi_menu_previous_page" : "<-- Página anterior",
-
     "ehi_language" : "Idioma",
     "ehi_language_desc" : "Mude o idioma do mod. Carregar um mapa é preciso para ter efeito.",
     "ehi_language_1" : "Auto detectação",
 
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Redefinir a cor",
+
+    "ehi_tracker_format" : "Formato",
 
     "ehi_preview" : "Prévia (É necessário recarregar o mapa para ter efeito)\nO canto vermelho indica onde o primeiro Tracker vai ser pocisionado",
 
@@ -86,7 +83,6 @@
     "ehi_equipment_menu" : "Menu de Equipamento",
     "ehi_equipment_menu_desc" : "",
 
-    "ehi_equipment_format" : "Formato do Equipamento",
 	"ehi_equipment_format_desc" : "Define como o equipamento deve ser exibido",
 	"ehi_equipment_format_1" : "Usos (Bolsas Colocadas)",
 	"ehi_equipment_format_2" : "(Bolsas Colocadas) Usos",

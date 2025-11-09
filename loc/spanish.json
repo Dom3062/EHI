@@ -7,11 +7,6 @@
 
     "ehi_level_restart_required" : "Se requiere un reinicio de nivel para que los cambios surtan efecto.",
 
-    "ehi_item_depends_on" : "(Requiere que actives la opción '$option;' para funcionar)",
-
-    "ehi_menu_next_page" : "Página siguiente -->",
-    "ehi_menu_previous_page" : "<-- Página anterior",
-
     "ehi_language" : "Idioma",
     "ehi_language_desc" : "Cambiar el idioma del mod.\n(Se requiere un reinicio de nivel para que los cambios surtan efecto)",
     "ehi_language_1" : "Detectar automáticamente",
@@ -56,6 +51,8 @@
 
     "ehi_button_ok" : "ACEPTAR",
     "ehi_color_reset" : "Restablecer color",
+
+    "ehi_tracker_format" : "Formato",
 
     "ehi_preview" : "VISTA PREVIA (Se requiere un reinicio de nivel para que los cambios surtan efecto)\nLa esquina roja indica donde aparecerá el primer contador.",
 
@@ -223,7 +220,6 @@
     "ehi_equipment_menu" : "Menú de equipamiento",
     "ehi_equipment_menu_desc" : "",
 
-    "ehi_equipment_format" : "Formato del equipamiento",
     "ehi_equipment_format_desc" : "Definir cómo se muestran los contadores de equipamiento.",
     "ehi_equipment_format_1" : "Usos (Equip. colocado)",
     "ehi_equipment_format_2" : "(Equip. colocado) Usos",
@@ -307,10 +303,10 @@
     "ehi_show_all_loot_secured_popup_desc" : "Mostrar / ocultar una ventana emergente al haber asegurado todas las bolsas del atraco.",
 
     "ehi_variable_random_loot_format" : "Formato del botín aleatorio",
-    "ehi_variable_random_loot_format_desc" : "Definir cómo se muestra el botín adicional aleatorio.\nPor ejemplo:16 bolsas garantizadas en el atraco y 4 cajas fuertes que podrían no tener botín; 9 bolsas ya fueron aseguradas.\n\nOpción 1:\n9 / 16 - ¿20?\n\nOpción 2:\n9 / ¿20?\n\nOpción 3:\n9 / ¿16 + 4?",
-    "ehi_variable_random_loot_format_1" : "Progreso / Max. - ¿(Max. + Aleatorio)?",
-    "ehi_variable_random_loot_format_2" : "Progreso / ¿(Max. + Aleatorio)?",
-    "ehi_variable_random_loot_format_3" : "Progreso / ¿Max. + Aleatorio?",
+    "ehi_variable_random_loot_format_desc" : "Definir cómo se muestra el botín adicional aleatorio.\nPor ejemplo:16 bolsas garantizadas en el atraco y 4 cajas fuertes que podrían no tener botín; 9 bolsas ya fueron aseguradas.",
+    "ehi_variable_random_loot_format_1" : "9/16+20?",
+    "ehi_variable_random_loot_format_2" : "9/20?",
+    "ehi_variable_random_loot_format_3" : "9/16+4?",
 
     "ehi_show_bodybags_counter" : "Mostrar contador de bolsas para cadáveres",
     "ehi_show_bodybags_counter_desc" : "Mostrar / ocultar un contador de cuántas bolsas para cadáveres te quedan.",

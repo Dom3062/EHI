@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_sicario_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_sicario",
     "items": [
         {
@@ -8,11 +8,13 @@
             "id": "ehi_buffs_perks_sicario_smoke_bomb_choice",
             "title": "ehi_buffs_perks_sicario_smoke_bomb",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "smoke_bomb" ],
+            "callback": "ehi_set_item_value",
             "value": "smoke_bomb",
             "default_value": true,
-            "is_parent" : true,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
+            "child" : "ehi_buffs_perks_sicario_smoke_bomb_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -20,23 +22,31 @@
             "id": "ehi_buffs_perks_sicario_smoke_bomb_persistent_choice",
             "title": "ehi_buffs_perks_sicario_smoke_bomb_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "smoke_bomb_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "smoke_bomb_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
             "parent": "ehi_buffs_perks_sicario_smoke_bomb_choice",
             "ehi_ver" : 349
+        },
+        {
+            "type": "divider",
+            "size": 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_choice",
             "title": "ehi_buffs_perks_sicario_smoke_bomb_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "smoke_bomb_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "smoke_bomb_cooldown",
             "default_value": true,
-            "is_parent" : true,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
+            "child" : "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -44,27 +54,31 @@
             "id": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "smoke_bomb_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "smoke_bomb_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
             "parent": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_choice",
             "ehi_ver" : 349
         },
         {
             "type" : "divider",
-            "size" : 20
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_sicario_twitch_choice",
             "title": "ehi_buffs_perks_sicario_twitch",
             "description": "ehi_buffs_skills_value",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "twitch" ],
+            "callback": "ehi_set_item_value",
             "value": "twitch",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
+            "child": "ehi_buffs_perks_sicario_twitch_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -72,23 +86,31 @@
             "id": "ehi_buffs_perks_sicario_twitch_persistent_choice",
             "title": "ehi_buffs_perks_sicario_twitch_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "twitch_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "twitch_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
             "parent": "ehi_buffs_perks_sicario_twitch_choice",
             "ehi_ver" : 349
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_perks_sicario_twitch_cooldown_choice",
             "title": "ehi_buffs_perks_sicario_twitch_cooldown",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "twitch_cooldown" ],
+            "callback": "ehi_set_item_value",
             "value": "twitch_cooldown",
             "default_value": true,
-            "is_parent": true,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
+            "child": "ehi_buffs_perks_sicario_twitch_cooldown_persistent_choice",
             "ehi_ver" : 204
         },
         {
@@ -96,10 +118,12 @@
             "id": "ehi_buffs_perks_sicario_twitch_cooldown_persistent_choice",
             "title": "ehi_buffs_perks_sicario_twitch_cooldown_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "sicario", "twitch_cooldown_persistent" ],
+            "callback": "ehi_set_item_value",
             "value": "twitch_cooldown_persistent",
             "default_value": false,
+            "params": {
+                "settings" : [ "buff_option", "sicario" ]
+            },
             "parent": "ehi_buffs_perks_sicario_twitch_cooldown_choice",
             "ehi_ver" : 349
         }

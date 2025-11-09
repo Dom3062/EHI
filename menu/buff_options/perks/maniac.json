@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_buffs_perks_maniac_menu",
-    "parent_menu" : "ehi_buffs_perks_menu",
+    "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_maniac",
     "items": [
         {
@@ -8,10 +8,12 @@
             "id": "ehi_buffs_perks_maniac_stack_choice",
             "title": "ehi_buffs_perks_maniac_stack",
             "description": "ehi_buffs_skills_progress",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "maniac", "stack" ],
+            "callback": "ehi_set_item_value",
             "value": "stack",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "maniac" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -19,10 +21,12 @@
             "id": "ehi_buffs_perks_maniac_stack_convert_rate_choice",
             "title": "ehi_buffs_perks_maniac_stack_convert_rate",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "maniac", "stack_convert_rate" ],
+            "callback": "ehi_set_item_value",
             "value": "stack_convert_rate",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "maniac" ]
+            },
             "ehi_ver" : 204
         },
         {
@@ -30,10 +34,12 @@
             "id": "ehi_buffs_perks_maniac_stack_decay_choice",
             "title": "ehi_buffs_perks_maniac_stack_decay",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffDeckOption",
-            "callback_arguments": [ "maniac", "stack_decay" ],
+            "callback": "ehi_set_item_value",
             "value": "stack_decay",
             "default_value": true,
+            "params": {
+                "settings" : [ "buff_option", "maniac" ]
+            },
             "ehi_ver" : 204
         }
     ]

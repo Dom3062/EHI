@@ -1,6 +1,6 @@
 {
     "menu_id": "ehi_waypoints_menu",
-    "parent_menu" : "ehi_menu",
+    "parent_menu_id" : "ehi_menu",
     "title": "ehi_waypoints_menu",
     "items": [
         {
@@ -8,13 +8,13 @@
             "id": "ehi_show_waypoints_present_timer_choice",
             "title": "ehi_show_waypoints_present_timer",
             "description": "ehi_show_waypoints_present_timer_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_present_timer",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_present_timer",
             "default_value": 2,
             "max": 5,
             "min": 0,
-            "step": 2,
+            "step": 0.01,
+            "display_precision": 2,
             "ehi_ver" : 21
         },
         {
@@ -26,11 +26,10 @@
             "id": "ehi_show_waypoints_mission_choice",
             "title": "ehi_show_waypoints_mission",
             "description": "ehi_show_waypoints_mission_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_mission",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_mission",
             "default_value" : true,
-            "is_parent" : true,
+            "child" : "ehi_show_waypoints_mission_cheaty_choice",
             "ehi_ver" : 153
         },
         {
@@ -38,8 +37,7 @@
             "id": "ehi_show_waypoints_mission_cheaty_choice",
             "title": "ehi_show_waypoints_mission_cheaty",
             "description": "ehi_show_waypoints_mission_cheaty_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_mission_cheaty",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_mission_cheaty",
             "default_value": true,
             "parent" : "ehi_show_waypoints_mission_choice",
@@ -54,8 +52,7 @@
             "id": "ehi_show_waypoints_escape_choice",
             "title": "ehi_show_waypoints_escape",
             "description": "ehi_show_waypoints_escape_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_escape",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_escape",
             "default_value": true,
             "ehi_ver" : 231
@@ -65,8 +62,7 @@
             "id": "ehi_show_waypoints_enemy_turret_choice",
             "title": "ehi_show_waypoints_enemy_turret",
             "description": "ehi_show_waypoints_enemy_turret_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_enemy_turret",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_enemy_turret",
             "default_value": true,
             "ehi_ver" : 21
@@ -76,8 +72,7 @@
             "id": "ehi_show_waypoints_timers_choice",
             "title": "ehi_show_waypoints_timers",
             "description": "ehi_show_waypoints_timers_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_timers",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_timers",
             "default_value": true,
             "ehi_ver" : 26
@@ -87,8 +82,7 @@
             "id": "ehi_show_waypoints_pager_choice",
             "title": "ehi_show_waypoints_pager",
             "description": "ehi_show_waypoints_pager_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_pager",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_pager",
             "default_value": true,
             "ehi_ver" : 26
@@ -98,8 +92,7 @@
             "id": "ehi_show_waypoints_cameras_choice",
             "title": "ehi_show_waypoints_cameras",
             "description": "ehi_show_waypoints_cameras_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_cameras",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_cameras",
             "default_value": true,
             "ehi_ver" : 35
@@ -109,8 +102,7 @@
             "id": "ehi_show_waypoints_zipline_choice",
             "title": "ehi_show_waypoints_zipline",
             "description": "ehi_show_waypoints_zipline_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_zipline",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_zipline",
             "default_value": true,
             "ehi_ver" : 55
@@ -120,8 +112,7 @@
             "id": "ehi_show_waypoints_ecmjammer_choice",
             "title": "ehi_show_waypoints_ecmjammer",
             "description": "ehi_show_waypoints_ecmjammer_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_ecmjammer",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_ecmjammer",
             "default_value": true,
             "ehi_ver" : 136
@@ -131,8 +122,7 @@
             "id": "ehi_show_waypoints_loot_counter_choice",
             "title": "ehi_show_waypoints_loot_counter",
             "description": "ehi_show_waypoints_loot_counter_desc",
-            "callback": "SetOption",
-            "callback_arguments": "show_waypoints_loot_counter",
+            "callback": "ehi_set_item_value",
             "value": "show_waypoints_loot_counter",
             "default_value": true,
             "ehi_ver" : 314

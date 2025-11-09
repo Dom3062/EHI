@@ -1,23 +1,25 @@
 {
     "menu_id": "ehi_buffs_skills_enforcer_menu",
-    "parent_menu" : "ehi_buffs_skills_menu",
+    "parent_menu_id" : "ehi_buffs_skills_menu",
     "title": "ehi_buffs_skills_enforcer_menu",
     "items": [
         {
-            "type" : "label",
+            "type" : "divider",
             "title" : "ehi_buffs_skills_enforcer_shotgunner_subclass",
-            "center" : true
+            "no_text" : false
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_enforcer_overkill_choice",
             "title": "ehi_buffs_skills_enforcer_overkill",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "overkill",
+            "callback": "ehi_set_item_value",
             "value": "overkill",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_enforcer_overkill_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -25,23 +27,31 @@
             "id": "ehi_buffs_skills_enforcer_overkill_persistent_choice",
             "title": "ehi_buffs_skills_enforcer_overkill_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "overkill_persistent",
+            "callback": "ehi_set_item_value",
             "value": "overkill_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_enforcer_overkill_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
+        },
+        {
+            "type" : "divider",
+            "size" : 10
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_enforcer_underdog_choice",
             "title": "ehi_buffs_skills_enforcer_underdog",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "underdog",
+            "callback": "ehi_set_item_value",
             "value": "underdog",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_enforcer_underdog_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -49,11 +59,13 @@
             "id": "ehi_buffs_skills_enforcer_underdog_persistent_choice",
             "title": "ehi_buffs_skills_enforcer_underdog_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "underdog_persistent",
+            "callback": "ehi_set_item_value",
             "value": "underdog_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_enforcer_underdog_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -61,20 +73,22 @@
             "size": 20
         },
         {
-            "type" : "label",
+            "type" : "divider",
             "title" : "ehi_buffs_skills_enforcer_tank_subclass",
-            "center" : true
+            "no_text" : false
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_enforcer_bullseye_choice",
             "title": "ehi_buffs_skills_enforcer_bullseye",
             "description": "ehi_buffs_skills_cooldown",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bullseye",
+            "callback": "ehi_set_item_value",
             "value": "bullseye",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_enforcer_bullseye_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -82,11 +96,13 @@
             "id": "ehi_buffs_skills_enforcer_bullseye_persistent_choice",
             "title": "ehi_buffs_skills_enforcer_bullseye_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bullseye_persistent",
+            "callback": "ehi_set_item_value",
             "value": "bullseye_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_enforcer_bullseye_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         },
         {
@@ -94,20 +110,22 @@
             "size": 20
         },
         {
-            "type" : "label",
+            "type" : "divider",
             "title" : "ehi_buffs_skills_enforcer_ammo_specialist_subclass",
-            "center" : true
+            "no_text" : false
         },
         {
             "type": "toggle",
             "id": "ehi_buffs_skills_enforcer_bulletstorm_choice",
             "title": "ehi_buffs_skills_enforcer_bulletstorm",
             "description": "ehi_buffs_skills_duration",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bulletstorm",
+            "callback": "ehi_set_item_value",
             "value": "bulletstorm",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_skills_enforcer_bulletstorm_persistent_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 79
         },
         {
@@ -115,11 +133,13 @@
             "id": "ehi_buffs_skills_enforcer_bulletstorm_persistent_choice",
             "title": "ehi_buffs_skills_enforcer_bulletstorm_persistent",
             "description": "ehi_buffs_skills_permanent",
-            "callback": "SetBuffOption",
-            "callback_arguments": "bulletstorm_persistent",
+            "callback": "ehi_set_item_value",
             "value": "bulletstorm_persistent",
             "default_value": false,
             "parent": "ehi_buffs_skills_enforcer_bulletstorm_choice",
+            "params": {
+                "setting": "buff_option"
+            },
             "ehi_ver" : 325
         }
     ]

@@ -26,9 +26,7 @@ function FakeEHIBuffsManager:new(panel)
         hint_visible = EHI:GetOption("buffs_show_upper_text")
     }
 	self._buffs = {} ---@type FakeEHIBuffTracker[]
-    self._panel = panel:panel({
-        alpha = 1
-    })
+    self._panel = panel:panel()
     self:SetScale(EHI:GetOption("buffs_scale"))
     self._x = EHI:GetOption("buffs_x_offset") --[[@as number]]
     self._y = EHI:GetOption("buffs_y_offset") --[[@as number]]
@@ -163,6 +161,9 @@ end
 
 ---@param x number
 function FakeEHIBuffsManager:UpdateXOffset(x)
+    if self._x == x then
+        return
+    end
 	self._x = x
 	if self._buffs_alignment == 2 then -- Center
 		return
@@ -172,12 +173,18 @@ end
 
 ---@param y number
 function FakeEHIBuffsManager:UpdateYOffset(y)
+    if self._y == y then
+        return
+    end
 	self._y = y
     self:UpdateBuffs("SetY", y)
 end
 
 ---@param scale number
 function FakeEHIBuffsManager:UpdateScale(scale)
+    if self._scale == scale then -- To stop flickering because menu is firing this up every frame even if the value match
+        return
+    end
     self:SetScale(scale)
     self:UpdateBuffs("destroy")
     self._buffs = {}
