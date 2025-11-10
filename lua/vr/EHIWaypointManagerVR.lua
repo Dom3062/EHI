@@ -1,7 +1,6 @@
 ---@class EHIWaypointManager
 local EHIWaypointManagerVR = ...
 local original = EHIWaypointManagerVR.SetPlayerHUD
----@param panel Panel
 ---@param gui Gui
 function EHIWaypointManagerVR:SetPlayerHUD(panel, saferect, gui)
     original(self, panel, saferect)
@@ -12,6 +11,7 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
     local vector_pos = data.position or data.unit and data.unit:position() or Vector3()
     local ws = self._gui:create_world_workspace(128, 64, vector_pos + Vector3(40, 0, 20), Vector3(-80, 0, 0), Vector3(0, 0, -40))
     ws:set_billboard(Workspace.BILLBOARD_Y)
+    local ws_panel = ws:panel()
     local waypoint_panel = self._panel
     local icon, texture_rect = self:_unpack_icon(data)
     local bitmap = waypoint_panel:bitmap({
@@ -36,7 +36,7 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         h = arrow_texture_rect[4],
         blend_mode = data.blend_mode
     })
-    local bitmap_world = ws:panel():bitmap({
+    local bitmap_world = ws_panel:bitmap({
         layer = 0,
         render_template = "OverlayText",
         depth_mode = "disabled",
@@ -48,12 +48,12 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         blend_mode = data.blend_mode
     })
 
-    bitmap_world:set_center_x(ws:panel():w() / 2)
+    bitmap_world:set_center_x(ws_panel:w() / 2)
 
     local distance = nil
 
     if data.distance then
-        distance = ws:panel():text({
+        distance = ws_panel:text({
             vertical = "center",
             h = 24,
             w = 128,
@@ -69,12 +69,12 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
             blend_mode = data.blend_mode
         })
 
-        distance:set_bottom(ws:panel():h())
-        distance:set_center_x(ws:panel():w() / 2)
+        distance:set_bottom(ws_panel:h())
+        distance:set_center_x(ws_panel:w() / 2)
         distance:set_visible(false)
     end
 
-    local timer = data.timer and ws:panel():text({
+    local timer = ws_panel:text({
         font_size = 32,
         h = 32,
         vertical = "center",
@@ -84,16 +84,13 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         depth_mode = "disabled",
         rotation = 360,
         layer = 0,
-        text = (math.round(data.timer) < 10 and "0" or "") .. math.round(data.timer),
+        text = "0",
         font = tweak_data.hud.medium_font_noshadow
     })
+    timer:set_bottom(ws_panel:h())
+    timer:set_center_x(ws_panel:w() / 2)
 
-    if timer then
-        timer:set_bottom(ws:panel():h())
-        timer:set_center_x(ws:panel():w() / 2)
-    end
-
-    local text = ws:panel():text({
+    local text = ws_panel:text({
         h = 24,
         vertical = "center",
         w = 512,
@@ -107,8 +104,8 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
     local _, _, w, _ = text:text_rect()
 
     text:set_w(w)
-    text:set_bottom(ws:panel():h())
-    text:set_center_x(ws:panel():w() / 2)
+    text:set_bottom(ws_panel:h())
+    text:set_center_x(ws_panel:w() / 2)
 
     local w, h = bitmap:size()
     local wp = {
@@ -122,11 +119,8 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
         text = text,
         distance = distance,
         timer_gui = timer,
-        timer = data.timer,
-        pause_timer = data.pause_timer or data.timer and 0,
         position = data.position,
         unit = data.unit,
-        no_sync = data.no_sync,
         radius = data.radius or 160,
         ws = ws,
         bitmap_world = bitmap_world
@@ -167,6 +161,12 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
     return wp
 end
 
+function EHIWaypointManagerVR:_remove_waypoint_data(wp)
+    self._panel:remove(wp.arrow)
+    self._panel:remove(wp.bitmap)
+    self._gui:destroy_workspace(wp.ws)
+end
+
 local wp_pos = Vector3()
 local wp_dir = Vector3()
 local wp_dir_normalized = Vector3()
@@ -185,7 +185,7 @@ function EHIWaypointManagerVR:update_position(t, dt)
 
     mrotation.y(cam_rot, wp_cam_forward)
 
-    for id, data in pairs(self._waypoints_data) do
+    for _, data in pairs(self._waypoints_data) do
         local panel = data.bitmap:parent()
         if data.state == "sneak_present" then
             data.current_position = Vector3(panel:center_x(), panel:center_y())

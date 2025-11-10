@@ -198,7 +198,7 @@ function EHIWaypointManager:_create_waypoint_data(data)
     })
     local distance = nil
 
-    if data.distance then
+    if data.distance or self._vanilla_waypoint_show_distance then
         distance = waypoint_panel:text({
             vertical = "center",
             h = 24,
@@ -212,7 +212,6 @@ function EHIWaypointManager:_create_waypoint_data(data)
             font_size = self._distance_font_size,
             blend_mode = data.blend_mode
         })
-
         distance:set_visible(false)
     end
 

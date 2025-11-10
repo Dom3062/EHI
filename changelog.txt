@@ -1,3 +1,6 @@
+r356 (10. 11. 2025):
+VR: Fixed crashes related to Waypoints
+
 r355 (09. 11. 2025):
 Menu: Redesigned options menu to use Vanilla style
 
