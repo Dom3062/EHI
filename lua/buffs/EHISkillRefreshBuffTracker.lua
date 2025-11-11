@@ -151,9 +151,9 @@ function EHIDodgeChanceBuffTracker:UpdateValue()
         return
     elseif self._persistent or total > 0 then
         self:SetRatio(total)
-        self:Activate()
+        self:ActivateNextFrame()
     else
-        self:Deactivate()
+        self:DeactivateNextFrame()
     end
     self._skill_value = total
 end
@@ -263,9 +263,9 @@ function EHIDamageAbsorptionBuffTracker:UpdateValue()
             end
         end
         self:SetRatio(total, absorption * 10)
-        self:Activate()
+        self:ActivateNextFrame()
     else
-        self:Deactivate()
+        self:DeactivateNextFrame()
     end
     self._skill_value = absorption
 end

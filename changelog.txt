@@ -1,3 +1,6 @@
+r357 (11. 11. 2025):
+Buffs: Attempt to fix buffs overlapping each other
+
 r356 (10. 11. 2025):
 VR: Fixed crashes related to Waypoints
 
