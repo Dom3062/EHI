@@ -1,3 +1,6 @@
+r358 (17. 11. 2025):
+Buffs: Fixed a crash in Hacker when Unseen Strike is disabled or vice versa
+
 r357 (11. 11. 2025):
 Buffs: Attempt to fix buffs overlapping each other
 
