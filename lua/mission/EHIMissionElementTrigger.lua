@@ -409,7 +409,7 @@ function EHIMissionElementTrigger:AddWaypoint(waypoint)
                 self._waypoints:RemoveWaypoint(self._params.id)
             end)
         elseif w.unit:base() and w.unit:base().add_destroy_listener then
-            w.unit:base():add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function() ---@diagnostic disable-line
+            w.unit:base():add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function()
                 self._waypoints:RemoveWaypoint(self._params.id)
             end)
         else

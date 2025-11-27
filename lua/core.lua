@@ -1522,7 +1522,6 @@ end
 
 function EHI:SaveOptions()
     self.settings.SaveDataVer = self.SaveDataVer
-    self.settings.ModVersion = tonumber(self.ModInstance:GetVersion())
     local file = io.open(self.SettingsSaveFilePath, "w+")
     if file then
         file:write(json.encode(self.settings) or "{}")
@@ -2185,12 +2184,12 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
             params.max_bags_for_level.objective_triggers = nil
         end
         params.no_sync_load = true
-        managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level)
+        managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, nil, nil, params.max_bags_for_level)
     else
         if not self:GetOption("show_loot_max_xp_bags") or _G.ch_settings then
             params.max_xp_bags = 0
         end
-        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max, nil, waypoint_params and waypoint_params.class)
+        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max, nil, params.loot_distribution, params.random_loot_distribution, waypoint_params and waypoint_params.class)
     end
     if params.load_sync then
         self.Trigger:AddLoadSyncFunction(params.load_sync)

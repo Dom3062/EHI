@@ -28,7 +28,7 @@ end
 local other_players_only = EHI:GetOption("show_trade_delay_other_players_only")
 local suppress_in_stealth = EHI:GetOption("show_trade_delay_suppress_in_stealth")
 
----@param peer_id number?
+---@param peer_id integer?
 local function AddTracker(peer_id)
     if not peer_id then
         return

@@ -166,6 +166,8 @@ _G.EHI.Unit = EHIMissionUnit
 ---@field max_xp_bags number Force maximum count if the heist limits maximum experience from loot bags
 ---@field no_triggers_if_max_xp_bags_gt_max boolean Disables triggers if provided `max_xp_bags` is greater than max
 ---@field carry_data { loot: boolean, no_loot: boolean, at_loot: boolean, no_at_loot: boolean } Enables tracking via `EHICarryData`, `EHINoCarryData`, `EHIATCarryData` and `EHIATNoCarryData` classes
+---@field loot_distribution table<string, number>
+---@field random_loot_distribution table<string, number>
 
 ---@class WaypointLootCounterTable
 ---@field element number|number[]

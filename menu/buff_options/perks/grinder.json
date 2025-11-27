@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_grinder_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_grinder",
+    "global_params": {
+        "settings" : [ "buff_option", "grinder" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -11,11 +14,7 @@
             "callback": "ehi_set_item_value",
             "value": "regen_duration",
             "default_value": true,
-            "child": "ehi_buffs_perks_grinder_regen_duration_persistent_choice",
-            "params": {
-                "settings" : [ "buff_option", "grinder" ]
-            },
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_grinder_regen_duration_persistent_choice"
         },
         {
             "type": "toggle",
@@ -24,11 +23,7 @@
             "description": "ehi_buffs_skills_permanent",
             "callback": "ehi_set_item_value",
             "value": "regen_duration_persistent",
-            "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "grinder" ]
-            },
-            "ehi_ver" : 325
+            "default_value": false
         },
         {
             "type": "divider",
@@ -42,11 +37,7 @@
             "callback": "ehi_set_item_value",
             "value": "stack_cooldown",
             "default_value": true,
-            "child": "ehi_buffs_perks_grinder_stack_cooldown_persistent_choice",
-            "params": {
-                "settings" : [ "buff_option", "grinder" ]
-            },
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_grinder_stack_cooldown_persistent_choice"
         },
         {
             "type": "toggle",
@@ -55,11 +46,7 @@
             "description": "ehi_buffs_skills_permanent",
             "callback": "ehi_set_item_value",
             "value": "stack_cooldown_persistent",
-            "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "grinder" ]
-            },
-            "ehi_ver" : 325
+            "default_value": false
         }
     ]
 }

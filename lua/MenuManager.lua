@@ -3,8 +3,6 @@ if EHI:CheckHook("MenuManager") then
     return
 end
 
-local menu_ver = tonumber(EHI.ModInstance:GetVersion()) or 1
-
 ---@type FakeEHITrackerManager, FakeEHIBuffsManager
 local tracker_preview, buff_preview
 local cache = {}
@@ -161,7 +159,7 @@ local function LoadFromJsonFile(file_path, data_table)
                         min = item.min or 0,
                         max = item.max or 1,
                         step = item.step or 0.1,
-                        show_value = item.show_value == nil and true or item.show_value,
+                        show_value = true,
                         display_precision = item.display_precision,
                         display_scale = item.display_scale,
                         is_percentage = item.is_percentage,
@@ -179,6 +177,7 @@ local function LoadFromJsonFile(file_path, data_table)
                         priority = priority,
                         no_text = item.no_text
                     })
+                    menu_item:set_parameter("color", Color.white)
                 elseif i_type == "keybind" then
                     local key = ""
                     if item.keybind_id then
@@ -226,18 +225,12 @@ local function LoadFromJsonFile(file_path, data_table)
                         localized_items = item.localized_items,
                         disabled = disabled
                     })
-                elseif i_type == "input" then
-                    menu_item = MenuHelper:AddInput({
-                        id = id,
-                        title = title,
-                        desc = desc,
-                        callback = callback,
-                        value = value,
-                        menu_id = menu_id,
-                        priority = priority,
-                        localized = localized,
-                        disabled = disabled
-                    })
+                    if item.items_need_color then
+                        for _, option in ipairs(menu_item._all_options) do
+                            local color, _ = tweak_data.ehi:GetBuffColorFromIndex(option:value())
+                            option:parameters().color = color
+                        end
+                    end
                 elseif i_type == "color" then
                     local settings_table = EHI.settings.colors
                     if item.params.setting then
@@ -297,8 +290,8 @@ local function LoadFromJsonFile(file_path, data_table)
                     if item.value then
                         menu_item:set_parameter("option", item.value)
                     end
-                    if item.params then
-                        for key, param_value in pairs(item.params) do
+                    if item.params or content.global_params then
+                        for key, param_value in pairs(item.params or content.global_params) do
                             menu_item:set_parameter(key, param_value)
                         end
                     end
@@ -353,13 +346,6 @@ local function LoadFromJsonFile(file_path, data_table)
                         local data = item.other_item_compare
                         previous_items[data.id]:set_enabled(check_value(data, value))
                     end
-                    if item.items_need_color and menu_item:type() == "multi_choice" then
-                        for _, option in ipairs(menu_item._all_options) do
-                            local color, _ = tweak_data.ehi:GetBuffColorFromIndex(option:value())
-                            option:parameters().color = color
-                        end
-                    end
-                    menu_item:set_parameter("ehi_ver", item.ehi_ver or 1)
                 end
             end
         end)
@@ -560,13 +546,13 @@ end
 function MenuCallbackHandler:ehi_set_item_color()
     local menu = managers.menu:active_menu()
     if not menu then
-        return false
+        return
     end
     if not menu.logic then
-        return false
+        return
     end
     if not menu.logic:selected_node() then
-        return false
+        return
     end
     local color, item = nil, nil
     local active_node_gui = menu.renderer:active_node_gui()
@@ -621,15 +607,27 @@ function MenuCallbackHandler:ehi_update_tracker_visibility(item)
     tracker_preview:Redraw()
 end
 
-function MenuCallbackHandler:ehi_are_assault_option_items_available()
+function MenuCallbackHandler.ehi_is_shared_menu_available()
+    return EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission")
+end
+
+function MenuCallbackHandler.ehi_is_shared_menu_available_1()
+    return EHI:GetOption("show_waypoints")
+end
+
+function MenuCallbackHandler.ehi_is_shared_menu_available_2()
+    return EHI:GetOption("show_trackers")
+end
+
+function MenuCallbackHandler.ehi_are_assault_option_items_available()
     return EHI:GetOption("show_assault_delay_tracker") or EHI:GetOption("show_assault_time_tracker")
 end
 
-function MenuCallbackHandler:ehi_are_assault_option_items_available_1()
+function MenuCallbackHandler.ehi_are_assault_option_items_available_1()
     return EHI:GetOption("show_assault_time_tracker")
 end
 
-function MenuCallbackHandler:ehi_are_assault_option_items_available_2()
+function MenuCallbackHandler.ehi_are_assault_option_items_available_2()
     return EHI:GetOption("show_assault_delay_tracker")
 end
 
@@ -658,10 +656,6 @@ function MenuCallbackHandler:ehi_preview_notification(item)
         end
         HudChallengeNotification.queue(params.n_id, managers.localization:text(params.n_desc), params.n_icon) --- HUDManager does not exist in Menu, needs to be called directly
     end
-end
-
-function MenuCallbackHandler:ehi_is_shared_menu_available()
-    return EHI:GetTrackerOrWaypointOption("show_mission_trackers", "show_waypoints_mission")
 end
 
 function MenuCallbackHandler.ehi_hide_unlocked_achievements_available_1()

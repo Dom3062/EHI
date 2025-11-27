@@ -44,8 +44,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 167
+            }
         },
         {
             "type": "color",
@@ -65,8 +64,7 @@
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }
-            },
-            "ehi_ver" : 245
+            }
         },
         {
             "type" : "divider",
@@ -86,8 +84,7 @@
             },
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -112,8 +109,7 @@
             },
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 10
+            }
         },
         {
             "type" : "divider",
@@ -130,8 +126,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -144,8 +139,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -158,8 +152,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -172,8 +165,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -186,8 +178,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -200,8 +191,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 68
+            }
         },
         {
             "type": "button",
@@ -227,8 +217,7 @@
             "parent" : "ehi_show_achievement_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 59
+            }
         },
         {
             "type": "button",
@@ -267,8 +256,7 @@
             ],
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -281,8 +269,7 @@
             "parent" : "ehi_show_trophies_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 191
+            }
         },
         {
             "type": "color",
@@ -303,8 +290,7 @@
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }
-            },
-            "ehi_ver" : 245
+            }
         },
         {
             "type": "toggle",
@@ -317,8 +303,7 @@
             "parent" : "ehi_show_trophies_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -331,8 +316,7 @@
             "parent" : "ehi_show_trophies_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "button",
@@ -358,8 +342,7 @@
             "parent" : "ehi_show_trophies_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "button",
@@ -397,8 +380,7 @@
             ],
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "toggle",
@@ -411,8 +393,7 @@
             "parent" : "ehi_show_dailies_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 191
+            }
         },
         {
             "type": "color",
@@ -432,8 +413,7 @@
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }
-            },
-            "ehi_ver" : 245
+            }
         },
         {
             "type": "toggle",
@@ -446,8 +426,7 @@
             "parent" : "ehi_show_dailies_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "button",
@@ -473,8 +452,7 @@
             "parent" : "ehi_show_dailies_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 84
+            }
         },
         {
             "type": "button",
@@ -510,8 +488,7 @@
             ],
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 344
+            }
         },
         {
             "type": "toggle",
@@ -524,8 +501,7 @@
             "parent" : "ehi_show_events_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 344
+            }
         },
         {
             "type": "color",
@@ -545,8 +521,7 @@
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }
-            },
-            "ehi_ver" : 344
+            }
         },
         {
             "type": "toggle",
@@ -559,8 +534,7 @@
             "parent" : "ehi_show_events_choice",
             "params": {
                 "setting": "unlockables"
-            },
-            "ehi_ver" : 344
+            }
         },
         {
             "type": "button",

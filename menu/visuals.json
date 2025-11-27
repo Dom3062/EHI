@@ -16,8 +16,7 @@
                 "call_tracker_function": {
                     "f": "UpdateBGVisibility"
                 }
-            },
-            "ehi_ver" : 6
+            }
         },
         {
             "type": "toggle",
@@ -32,8 +31,7 @@
                 "call_tracker_function": {
                     "f": "UpdateCornerVisibility"
                 }
-            },
-            "ehi_ver" : 78
+            }
         },
         {
             "type": "toggle",
@@ -47,8 +45,7 @@
                 "call_tracker_function": {
                     "f": "UpdateIconsVisibility"
                 }
-            },
-            "ehi_ver" : 6
+            }
         },
         {
             "type": "multiple_choice",
@@ -66,8 +63,7 @@
                 "call_tracker_function": {
                     "f": "UpdateIconsPosition"
                 }
-            },
-            "ehi_ver" : 237
+            }
         },
         {
             "type" : "divider",
@@ -81,8 +77,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_tracker_hint",
             "children" : [ "ehi_show_tracker_hint_t_choice", "ehi_tracker_hint_position_choice" ],
-            "default_value": true,
-            "ehi_ver" : 191
+            "default_value": true
         },
         {
             "type": "slider",
@@ -96,8 +91,7 @@
             "min": 0,
             "step": 1,
             "display_precision": 1,
-            "default_value": 15,
-            "ehi_ver" : 191
+            "default_value": 15
         },
         {
             "type": "multiple_choice",
@@ -110,8 +104,7 @@
                 "ehi_tracker_hint_position_2"
             ],
             "value": "tracker_hint_position",
-            "default_value": 1,
-            "ehi_ver" : 336
+            "default_value": 1
         }
     ]
 }

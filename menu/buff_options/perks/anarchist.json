@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_anarchist_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_anarchist",
+    "global_params": {
+        "settings" : [ "buff_option", "anarchist" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -11,11 +14,7 @@
             "callback": "ehi_set_item_value",
             "value": "continuous_armor_regen",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "child" : "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent_choice",
-            "ehi_ver" : 204
+            "child" : "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent_choice"
         },
         {
             "type": "toggle",
@@ -25,11 +24,7 @@
             "callback": "ehi_set_item_value",
             "value": "continuous_armor_regen_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "parent" : "ehi_buffs_perks_anarchist_continuous_armor_regen_choice",
-            "ehi_ver" : 314
+            "parent" : "ehi_buffs_perks_anarchist_continuous_armor_regen_choice"
         },
         {
             "type": "divider",
@@ -43,11 +38,7 @@
             "callback": "ehi_set_item_value",
             "value": "immunity",
             "child": "ehi_buffs_perks_anarchist_immunity_persistent_choice",
-            "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "ehi_ver" : 204
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -57,11 +48,7 @@
             "callback": "ehi_set_item_value",
             "value": "immunity_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "parent" : "ehi_buffs_perks_anarchist_immunity_choice",
-            "ehi_ver" : 319
+            "parent" : "ehi_buffs_perks_anarchist_immunity_choice"
         },
         {
             "type": "divider",
@@ -75,11 +62,7 @@
             "callback": "ehi_set_item_value",
             "value": "immunity_cooldown",
             "child": "ehi_buffs_perks_anarchist_immunity_cooldown_persistent_choice",
-            "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "ehi_ver" : 204
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -89,11 +72,7 @@
             "callback": "ehi_set_item_value",
             "value": "immunity_cooldown_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "parent" : "ehi_buffs_perks_anarchist_immunity_cooldown_choice",
-            "ehi_ver" : 319
+            "parent" : "ehi_buffs_perks_anarchist_immunity_cooldown_choice"
         },
         {
             "type": "divider",
@@ -107,11 +86,7 @@
             "callback": "ehi_set_item_value",
             "value": "kill_armor_regen_cooldown",
             "child": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent_choice",
-            "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "ehi_ver" : 204
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -121,11 +96,7 @@
             "callback": "ehi_set_item_value",
             "value": "kill_armor_regen_cooldown_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "anarchist" ]
-            },
-            "parent" : "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_choice",
-            "ehi_ver" : 319
+            "parent" : "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_choice"
         }
     ]
 }

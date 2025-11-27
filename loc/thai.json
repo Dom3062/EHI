@@ -4,8 +4,6 @@
 
     "ehi_save_data_corrupted" : "ไฟล์ที่บันทึกไว้ในม็อด EHI เสียหาย",
     "ehi_save_data_corrupted_desc" : "ไฟล์ที่บันทึกไว้ในม็อด EHI เสียหายและไม่สามารถโหลดใช้งานได้\nม็อด EHI จะใช้ค่าดั้งเดิมเพื่อเพื่อไม่ให้เกมเด้ง",
-
-    "ehi_menu_reset_to_default" : "$BTN_RESET รีเซ็ตเป็นค่าเดิม",
     
     "ehi_level_restart_required" : "A level restart is required for options to take effect",
 

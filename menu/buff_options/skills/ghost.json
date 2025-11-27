@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_skills_ghost_menu",
     "parent_menu_id" : "ehi_buffs_skills_menu",
     "title": "ehi_buffs_skills_ghost_menu",
+    "global_params": {
+        "setting": "buff_option"
+    },
     "items": [
         {
             "type" : "divider",
@@ -16,11 +19,7 @@
             "callback": "ehi_set_item_value",
             "value": "sixth_sense_initial",
             "default_value": true,
-            "child": "ehi_buffs_skills_ghost_sixth_sense_initial_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_skills_ghost_sixth_sense_initial_persistent_choice"
         },
         {
             "type": "toggle",
@@ -30,11 +29,7 @@
             "callback": "ehi_set_item_value",
             "value": "sixth_sense_initial_persistent",
             "default_value": false,
-            "parent": "ehi_buffs_skills_ghost_sixth_sense_initial_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_skills_ghost_sixth_sense_initial_choice"
         },
         {
             "type" : "divider",
@@ -48,11 +43,7 @@
             "callback": "ehi_set_item_value",
             "value": "sixth_sense_marked",
             "default_value": true,
-            "child": "ehi_buffs_skills_ghost_sixth_sense_marked_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_skills_ghost_sixth_sense_marked_persistent_choice"
         },
         {
             "type": "toggle",
@@ -62,11 +53,7 @@
             "callback": "ehi_set_item_value",
             "value": "sixth_sense_marked_persistent",
             "default_value": false,
-            "parent": "ehi_buffs_skills_ghost_sixth_sense_marked_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_skills_ghost_sixth_sense_marked_choice"
         },
         {
             "type" : "divider",
@@ -80,11 +67,7 @@
             "callback": "ehi_set_item_value",
             "value": "sixth_sense_refresh",
             "default_value": true,
-            "child": "ehi_buffs_skills_ghost_sixth_sense_refresh_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_skills_ghost_sixth_sense_refresh_persistent_choice"
         },
         {
             "type": "toggle",
@@ -94,11 +77,7 @@
             "callback": "ehi_set_item_value",
             "value": "sixth_sense_refresh_persistent",
             "default_value": false,
-            "parent": "ehi_buffs_skills_ghost_sixth_sense_refresh_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_skills_ghost_sixth_sense_refresh_choice"
         },
         {
             "type": "divider",
@@ -117,11 +96,7 @@
             "callback": "ehi_set_item_value",
             "value": "dire_need",
             "default_value": true,
-            "child": "ehi_buffs_skills_ghost_dire_need_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 100
+            "child": "ehi_buffs_skills_ghost_dire_need_persistent_choice"
         },
         {
             "type": "toggle",
@@ -131,11 +106,7 @@
             "callback": "ehi_set_item_value",
             "value": "dire_need_persistent",
             "default_value": false,
-            "parent": "ehi_buffs_skills_ghost_dire_need_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_skills_ghost_dire_need_choice"
         },
         {
             "type": "divider",
@@ -154,11 +125,7 @@
             "callback": "ehi_set_item_value",
             "value": "second_wind",
             "default_value": true,
-            "child": "ehi_buffs_skills_ghost_second_wind_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_skills_ghost_second_wind_persistent_choice"
         },
         {
             "type": "toggle",
@@ -168,11 +135,7 @@
             "callback": "ehi_set_item_value",
             "value": "second_wind_persistent",
             "default_value": false,
-            "parent": "ehi_buffs_skills_ghost_second_wind_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_skills_ghost_second_wind_choice"
         },
         {
             "type" : "divider",
@@ -186,11 +149,7 @@
             "callback": "ehi_set_item_value",
             "value": "unseen_strike",
             "default_value": true,
-            "child": "ehi_buffs_skills_ghost_unseen_strike_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_skills_ghost_unseen_strike_persistent_choice"
         },
         {
             "type": "toggle",
@@ -200,11 +159,7 @@
             "callback": "ehi_set_item_value",
             "value": "unseen_strike_persistent",
             "default_value": false,
-            "parent": "ehi_buffs_skills_ghost_unseen_strike_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_skills_ghost_unseen_strike_choice"
         },
         {
             "type" : "divider",
@@ -218,11 +173,7 @@
             "callback": "ehi_set_item_value",
             "value": "unseen_strike_initial",
             "default_value": true,
-            "child": "ehi_buffs_skills_ghost_unseen_strike_initial_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 141
+            "child": "ehi_buffs_skills_ghost_unseen_strike_initial_persistent_choice"
         },
         {
             "type": "toggle",
@@ -232,11 +183,7 @@
             "callback": "ehi_set_item_value",
             "value": "unseen_strike_initial_persistent",
             "default_value": false,
-            "parent": "ehi_buffs_skills_ghost_unseen_strike_initial_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_skills_ghost_unseen_strike_initial_choice"
         }
     ]
 }

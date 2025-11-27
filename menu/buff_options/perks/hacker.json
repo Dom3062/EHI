@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_hacker_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_hacker",
+    "global_params": {
+        "settings" : [ "buff_option", "hacker" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -11,11 +14,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_cooldown",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "child": "ehi_buffs_perks_hacker_pecm_cooldown_persistent_choice",
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_hacker_pecm_cooldown_persistent_choice"
         },
         {
             "type": "toggle",
@@ -25,11 +24,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_cooldown_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "parent": "ehi_buffs_perks_hacker_pecm_cooldown_choice",
-            "ehi_ver" : 349
+            "parent": "ehi_buffs_perks_hacker_pecm_cooldown_choice"
         },
         {
             "type" : "divider",
@@ -43,11 +38,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_dodge",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "child": "ehi_buffs_perks_hacker_pecm_dodge_persistent_choice",
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_hacker_pecm_dodge_persistent_choice"
         },
         {
             "type": "toggle",
@@ -57,11 +48,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_dodge_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "parent": "ehi_buffs_perks_hacker_pecm_dodge_choice",
-            "ehi_ver" : 349
+            "parent": "ehi_buffs_perks_hacker_pecm_dodge_choice"
         },
         {
             "type": "divider",
@@ -75,11 +62,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_jammer",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "child": "ehi_buffs_perks_hacker_pecm_jammer_persistent_choice",
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_hacker_pecm_jammer_persistent_choice"
         },
         {
             "type": "toggle",
@@ -89,11 +72,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_jammer_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "parent": "ehi_buffs_perks_hacker_pecm_jammer_choice",
-            "ehi_ver" : 349
+            "parent": "ehi_buffs_perks_hacker_pecm_jammer_choice"
         },
         {
             "type": "divider",
@@ -107,11 +86,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_feedback",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "child": "ehi_buffs_perks_hacker_pecm_feedback_persistent_choice",
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_hacker_pecm_feedback_persistent_choice"
         },
         {
             "type": "toggle",
@@ -121,11 +96,7 @@
             "callback": "ehi_set_item_value",
             "value": "pecm_feedback_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "hacker" ]
-            },
-            "parent": "ehi_buffs_perks_hacker_pecm_feedback_choice",
-            "ehi_ver" : 349
+            "parent": "ehi_buffs_perks_hacker_pecm_feedback_choice"
         }
     ]
 }

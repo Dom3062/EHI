@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_other_menu",
     "parent_menu_id" : "ehi_buffs_menu",
     "title": "ehi_buffs_other_menu",
+    "global_params": {
+        "setting": "buff_option"
+    },
     "items": [
         {
             "type": "toggle",
@@ -10,11 +13,7 @@
             "callback": "ehi_set_item_value",
             "value": "interact",
             "default_value": true,
-            "child": "ehi_buffs_other_interact_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_other_interact_persistent_choice"
         },
         {
             "type": "toggle",
@@ -24,11 +23,7 @@
             "callback": "ehi_set_item_value",
             "value": "interact_persistent",
             "default_value": false,
-            "parent" : "ehi_buffs_other_interact_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_interact_choice"
         },
         {
             "type": "toggle",
@@ -37,11 +32,7 @@
             "callback": "ehi_set_item_value",
             "value": "reload",
             "default_value": true,
-            "child": "ehi_buffs_other_reload_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_other_reload_persistent_choice"
         },
         {
             "type": "toggle",
@@ -51,11 +42,7 @@
             "callback": "ehi_set_item_value",
             "value": "reload_persistent",
             "default_value": false,
-            "parent" : "ehi_buffs_other_reload_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_reload_choice"
         },
         {
             "type": "toggle",
@@ -64,11 +51,7 @@
             "callback": "ehi_set_item_value",
             "value": "melee_charge",
             "default_value": true,
-            "child": "ehi_buffs_other_melee_charge_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_other_melee_charge_persistent_choice"
         },
         {
             "type": "toggle",
@@ -78,11 +61,7 @@
             "callback": "ehi_set_item_value",
             "value": "melee_charge_persistent",
             "default_value": false,
-            "parent" : "ehi_buffs_other_melee_charge_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_melee_charge_choice"
         },
         {
             "type": "toggle",
@@ -91,11 +70,7 @@
             "callback": "ehi_set_item_value",
             "value": "shield_regen",
             "default_value": true,
-            "child": "ehi_buffs_other_shield_regen_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "child": "ehi_buffs_other_shield_regen_persistent_choice"
         },
         {
             "type": "toggle",
@@ -105,11 +80,7 @@
             "callback": "ehi_set_item_value",
             "value": "shield_regen_persistent",
             "default_value": false,
-            "parent" : "ehi_buffs_other_shield_regen_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_shield_regen_choice"
         },
         {
             "type": "toggle",
@@ -117,11 +88,7 @@
             "title": "ehi_buffs_other_stamina",
             "callback": "ehi_set_item_value",
             "value": "stamina",
-            "default_value": true,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 98
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -130,11 +97,7 @@
             "callback": "ehi_set_item_value",
             "value": "weapon_swap",
             "default_value": true,
-            "child": "ehi_buffs_other_weapon_swap_persistent_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 298
+            "child": "ehi_buffs_other_weapon_swap_persistent_choice"
         },
         {
             "type": "toggle",
@@ -144,11 +107,7 @@
             "callback": "ehi_set_item_value",
             "value": "weapon_swap_persistent",
             "default_value": false,
-            "parent" : "ehi_buffs_other_weapon_swap_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_weapon_swap_choice"
         },
         {
             "type": "toggle",
@@ -157,11 +116,7 @@
             "callback": "ehi_set_item_value",
             "value": "carry_interaction_cooldown",
             "default_value": true,
-            "child": "ehi_buffs_other_carry_interaction_cooldown_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 327
+            "child": "ehi_buffs_other_carry_interaction_cooldown_choice"
         },
         {
             "type": "toggle",
@@ -171,11 +126,7 @@
             "callback": "ehi_set_item_value",
             "value": "carry_interaction_cooldown_persistent",
             "default_value": false,
-            "parent" : "ehi_buffs_other_carry_interaction_cooldown_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 327
+            "parent" : "ehi_buffs_other_carry_interaction_cooldown_choice"
         },
         {
             "type": "divider",
@@ -188,11 +139,7 @@
             "callback": "ehi_set_item_value",
             "value": "dodge",
             "children" : [ "ehi_buffs_other_dodge_refresh_choice", "ehi_buffs_other_dodge_persistent_choice" ],
-            "default_value": true,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "default_value": true
         },
         {
             "type": "slider",
@@ -206,11 +153,7 @@
             "max": 10,
             "min": 1,
             "step": 1,
-            "display_precision": 0,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "display_precision": 0
         },
         {
             "type": "toggle",
@@ -220,11 +163,7 @@
             "callback": "ehi_set_item_value",
             "value": "dodge_persistent",
             "parent" : "ehi_buffs_other_dodge_choice",
-            "default_value": false,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "default_value": false
         },
         {
             "type": "divider",
@@ -237,11 +176,7 @@
             "callback": "ehi_set_item_value",
             "value": "crit",
             "children" : [ "ehi_buffs_other_crit_refresh_choice", "ehi_buffs_other_crit_persistent_choice" ],
-            "default_value": true,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "default_value": true
         },
         {
             "type": "slider",
@@ -255,11 +190,7 @@
             "max": 10,
             "min": 1,
             "step": 1,
-            "display_precision": 0,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "display_precision": 0
         },
         {
             "type": "toggle",
@@ -269,11 +200,7 @@
             "callback": "ehi_set_item_value",
             "value": "crit_persistent",
             "parent" : "ehi_buffs_other_crit_choice",
-            "default_value": false,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "default_value": false
         },
         {
             "type": "divider",
@@ -286,11 +213,7 @@
             "callback": "ehi_set_item_value",
             "value": "damage_absorption",
             "children" : [ "ehi_buffs_other_damage_absorption_refresh_choice", "ehi_buffs_other_damage_absorption_persistent_choice" ],
-            "default_value": true,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 224
+            "default_value": true
         },
         {
             "type": "slider",
@@ -304,11 +227,7 @@
             "max": 10,
             "min": 1,
             "step": 1,
-            "display_precision": 0,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 224
+            "display_precision": 0
         },
         {
             "type": "toggle",
@@ -318,11 +237,7 @@
             "callback": "ehi_set_item_value",
             "value": "damage_absorption_persistent",
             "parent" : "ehi_buffs_other_damage_absorption_choice",
-            "default_value": false,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 224
+            "default_value": false
         },
         {
             "type": "divider",
@@ -335,11 +250,7 @@
             "callback": "ehi_set_item_value",
             "value": "damage_reduction",
             "children" : [ "ehi_buffs_other_damage_reduction_refresh_choice", "ehi_buffs_other_damage_reduction_persistent_choice" ],
-            "default_value": true,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 226
+            "default_value": true
         },
         {
             "type": "slider",
@@ -353,11 +264,7 @@
             "max": 10,
             "min": 1,
             "step": 1,
-            "display_precision": 0,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 226
+            "display_precision": 0
         },
         {
             "type": "toggle",
@@ -367,11 +274,7 @@
             "callback": "ehi_set_item_value",
             "value": "damage_reduction_persistent",
             "parent" : "ehi_buffs_other_damage_reduction_choice",
-            "default_value": false,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 226
+            "default_value": false
         },
         {
             "type": "divider",
@@ -385,11 +288,7 @@
             "callback": "ehi_set_item_value",
             "value": "inspire_ai",
             "child": "ehi_buffs_other_inspire_ai_persistent_choice",
-            "default_value": true,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 79
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -399,11 +298,7 @@
             "callback": "ehi_set_item_value",
             "value": "inspire_ai_persistent",
             "default_value": false,
-            "parent" : "ehi_buffs_other_inspire_ai_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_inspire_ai_choice"
         },
         {
             "type": "toggle",
@@ -412,11 +307,7 @@
             "description": "ehi_buffs_skills_progress",
             "callback": "ehi_set_item_value",
             "value": "regen_throwable_ai",
-            "default_value": true,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 87
+            "default_value": true
         },
         {
             "type": "divider",
@@ -430,11 +321,7 @@
             "callback": "ehi_set_item_value",
             "value": "health",
             "default_value": false,
-            "children" : [ "ehi_buffs_other_health_check_sniper_damage_choice", "ehi_buffs_other_health_check_heavy_swat_ds_damage_choice" ],
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 181
+            "children" : [ "ehi_buffs_other_health_check_sniper_damage_choice", "ehi_buffs_other_health_check_heavy_swat_ds_damage_choice" ]
         },
         {
             "type": "toggle",
@@ -444,11 +331,7 @@
             "callback": "ehi_set_item_value",
             "value": "health_check_sniper_damage",
             "default_value": true,
-            "parent" : "ehi_buffs_other_health_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_health_choice"
         },
         {
             "type": "toggle",
@@ -458,11 +341,7 @@
             "callback": "ehi_set_item_value",
             "value": "health_check_heavy_swat_ds_damage",
             "default_value": true,
-            "parent" : "ehi_buffs_other_health_choice",
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 325
+            "parent" : "ehi_buffs_other_health_choice"
         },
         {
             "type": "divider",
@@ -475,11 +354,7 @@
             "description": "ehi_buffs_skills_value",
             "callback": "ehi_set_item_value",
             "value": "armor",
-            "default_value": false,
-            "params": {
-                "setting": "buff_option"
-            },
-            "ehi_ver" : 181
+            "default_value": false
         }
     ]
 }

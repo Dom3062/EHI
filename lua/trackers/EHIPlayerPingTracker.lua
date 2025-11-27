@@ -8,7 +8,7 @@ EHIPlayerPingTracker._forced_hint_text = "ping"
 EHIPlayerPingTracker._ping_t_refresh = EHI:GetOption("show_ping_tracker_refresh_t") --[[@as number]]
 function EHIPlayerPingTracker:post_init(params)
     self._hide_on_delete = true
-    self._peers = {} ---@type table<number, { peer: NetworkPeer, label: Text }>
+    self._peers = {} ---@type table<integer, { peer: NetworkPeer, label: Text }>
     self._n_of_peers = 0
     self._update_callback = callback(self, self, "update")
     self:SetMovement(self._anim_params.PanelSizeIncreaseHalf)
@@ -83,7 +83,7 @@ function EHIPlayerPingTracker:AddPeer(peer)
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHIPlayerPingTracker:RemovePeer(peer_id)
     local peer = table.remove_key(self._peers, peer_id)
     if peer then

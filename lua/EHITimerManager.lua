@@ -313,7 +313,7 @@ function EHITimerManager:SetTimerUpgrades(timer_gui)
                 if self._groups[group] then
                     local visibility_data = timer_gui:GetVisibilityData()
                     local g_i_subgroup = self._groups[group][new_subgroup]
-                    local t = timer_gui._time_left
+                    local t = timer_gui._time_left or timer_gui._current_timer or 0
                     if g_i_subgroup then -- New subgroup exists, check to what tracker we can add it
                         local new_i_group = 0
                         for i, sub in ipairs(g_i_subgroup) do

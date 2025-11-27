@@ -14,8 +14,7 @@
             "max": 20,
             "min": 0,
             "step": 1,
-            "display_precision" : 0,
-            "ehi_ver" : 333
+            "display_precision" : 0
         },
         {
             "type": "multiple_choice",
@@ -28,8 +27,7 @@
                 "ehi_trackers_rc_horizontal_new_column_position_2"
             ],
             "value": "trackers_rc_horizontal_new_column_position",
-            "default_value": 1,
-            "ehi_ver" : 333
+            "default_value": 1
         },
         {
             "type": "divider",
@@ -54,8 +52,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_mission_trackers_cheaty",
             "default_value": true,
-            "parent": "ehi_show_mission_trackers_choice",
-            "ehi_ver" : 325
+            "parent": "ehi_show_mission_trackers_choice"
         },
         {
             "type": "divider",
@@ -70,8 +67,7 @@
             "focus_changed_callback" : "SetFocus",
             "value": "show_unlockables",
             "default_value": true,
-            "child" : "ehi_unlockables_menu",
-            "ehi_ver" : 84
+            "child" : "ehi_unlockables_menu"
         },
         {
             "type": "button",
@@ -79,8 +75,7 @@
             "title": "ehi_unlockables_menu",
             "description": "ehi_unlockables_menu_desc",
             "next_menu": "ehi_unlockables_menu",
-            "parent": "ehi_show_unlockables_choice",
-            "ehi_ver" : 344
+            "parent": "ehi_show_unlockables_choice"
         },
         {
             "type": "divider",
@@ -111,8 +106,7 @@
             ],
             "value": "total_xp_difference",
             "parent" : "ehi_show_gained_xp_choice",
-            "default_value": 2,
-            "ehi_ver" : 210
+            "default_value": 2
         },
         {
             "type": "multiple_choice",
@@ -126,7 +120,6 @@
                 "ehi_xp_format_3"
             ],
             "value": "xp_format",
-            "is_parent" : true,
             "parent" : "ehi_show_gained_xp_choice",
             "default_value": 3
         },
@@ -155,8 +148,7 @@
                         }
                     }
                 }
-            },
-            "ehi_ver" : 53
+            }
         },
         {
             "type": "divider",
@@ -205,8 +197,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_trade_delay_suppress_in_stealth",
             "parent": "ehi_show_trade_delay_choice",
-            "default_value": true,
-            "ehi_ver" : 29
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -222,8 +213,7 @@
                     "f": "UpdateTrackerInternalFormat",
                     "params": [ "killed_civilians", "show_trade_delay" ]
                 }
-            },
-            "ehi_ver" : 159
+            }
         },
         {
             "type": "divider",
@@ -252,8 +242,7 @@
             "min": 1,
             "step": 1,
             "display_precision": 0,
-            "parent" : "ehi_show_timers_choice",
-            "ehi_ver" : 226
+            "parent" : "ehi_show_timers_choice"
         },
         {
             "type": "divider",
@@ -267,8 +256,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_camera_loop",
-            "default_value": true,
-            "ehi_ver" : 74
+            "default_value": true
         },
         {
             "type": "divider",
@@ -282,8 +270,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_enemy_turret_trackers",
-            "default_value": true,
-            "ehi_ver" : 122
+            "default_value": true
         },
         {
             "type": "divider",
@@ -337,8 +324,7 @@
                         }
                     }
                 }
-            },
-            "ehi_ver" : 53
+            }
         },
         {
             "type": "divider",
@@ -362,8 +348,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_captain_spawn_chance",
-            "default_value": true,
-            "ehi_ver" : 224
+            "default_value": true
         },
         {
             "type": "divider",
@@ -402,8 +387,7 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_minion_tracker",
             "children" : [ "ehi_show_minion_option_choice", "ehi_show_minion_health_choice" ],
-            "default_value": true,
-            "ehi_ver" : 16
+            "default_value": true
         },
         {
             "type": "multiple_choice",
@@ -424,8 +408,7 @@
                     "f": "UpdateTrackerInternalFormat",
                     "params": [ "minion", "show_minion_tracker" ]
                 }
-            },
-            "ehi_ver" : 159
+            }
         },
         {
             "type": "toggle",
@@ -441,8 +424,7 @@
                     "custom_f": "SetMinionHealth",
                     "id": "show_minion_tracker"
                 }
-            },
-            "ehi_ver" : 273
+            }
         },
         {
             "type": "divider",
@@ -470,8 +452,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_drama_tracker",
-            "default_value": true,
-            "ehi_ver" : 10
+            "default_value": true
         },
         {
             "type": "divider",
@@ -495,9 +476,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_pager_callback",
-            "default_value": true,
-            "is_parent" : true,
-            "ehi_ver" : 13
+            "default_value": true
         },
         {
             "type": "divider",
@@ -512,8 +491,7 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_enemy_count_tracker",
             "child" : "ehi_show_enemy_count_show_pagers_choice",
-            "default_value": true,
-            "ehi_ver" : 6
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -530,8 +508,7 @@
                     "f": "UpdateTrackerInternalFormat",
                     "params": [ "show_alarm_enemies", "show_enemy_count_tracker" ]
                 }
-            },
-            "ehi_ver" : 115
+            }
         },
         {
             "type": "divider",
@@ -546,8 +523,7 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_civilian_count_tracker",
             "default_value": true,
-            "child": "ehi_civilian_count_tracker_format_choice",
-            "ehi_ver" : 183
+            "child": "ehi_civilian_count_tracker_format_choice"
         },
         {
             "type": "multiple_choice",
@@ -567,8 +543,7 @@
                     "f": "UpdateTrackerInternalFormat",
                     "params": [ "civilian_count", "show_civilian_count_tracker" ]
                 }
-            },
-            "ehi_ver" : 204
+            }
         },
         {
             "type" : "divider",
@@ -583,8 +558,7 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_hostage_count_tracker",
             "default_value": true,
-            "child": "ehi_hostage_count_tracker_format_choice",
-            "ehi_ver" : 243
+            "child": "ehi_hostage_count_tracker_format_choice"
         },
         {
             "type": "multiple_choice",
@@ -606,8 +580,7 @@
                     "f": "UpdateTrackerInternalFormat",
                     "params": [ "hostage_count", "show_hostage_count_tracker" ]
                 }
-            },
-            "ehi_ver" : 243
+            }
         },
         {
             "type" : "divider",
@@ -621,8 +594,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_laser_tracker",
-            "default_value": false,
-            "ehi_ver" : 10
+            "default_value": false
         },
         {
             "type" : "divider",
@@ -640,8 +612,7 @@
             "children_f_or": {
                 "ehi_show_assault_diff_in_assault_trackers_choice": "ehi_are_assault_option_items_available_1",
                 "ehi_show_assault_enemy_count_choice": "ehi_are_assault_option_items_available_1"
-            },
-            "ehi_ver" : 78
+            }
         },
         {
             "type": "toggle",
@@ -655,8 +626,7 @@
             "children_f_or": {
                 "ehi_show_assault_diff_in_assault_trackers_choice": "ehi_are_assault_option_items_available_2",
                 "ehi_show_assault_enemy_count_choice": "ehi_are_assault_option_items_available_2"
-            },
-            "ehi_ver" : 146
+            }
         },
         {
             "type": "toggle",
@@ -679,8 +649,7 @@
                         "value": true
                     }
                 }
-            },
-            "ehi_ver" : 243
+            }
         },
         {
             "type": "toggle",
@@ -703,8 +672,7 @@
                         "value": true
                     }
                 }
-            },
-            "ehi_ver" : 276
+            }
         },
         {
             "type": "divider",
@@ -718,9 +686,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_loot_counter",
-            "default_value": true,
-            "is_parent" : true,
-            "ehi_ver" : 80
+            "default_value": true
         },
         {
             "type": "divider",
@@ -734,8 +700,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_bodybags_counter",
-            "default_value": true,
-            "ehi_ver" : 83
+            "default_value": true
         },
         {
             "type": "divider",
@@ -749,8 +714,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_escape_chance",
-            "default_value": true,
-            "ehi_ver" : 84
+            "default_value": true
         },
         {
             "type": "divider",
@@ -774,8 +738,7 @@
                 "ehi_show_sniper_logic_end_popup_preview_choice",
                 "ehi_colors_sniper_chance_choice",
                 "ehi_colors_sniper_count_choice"
-            ],
-            "ehi_ver" : 168
+            ]
         },
         {
             "type": "toggle",
@@ -785,8 +748,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_sniper_spawned_popup",
             "default_value": true,
-            "parent" : "ehi_show_sniper_tracker_choice",
-            "ehi_ver" : 206
+            "parent" : "ehi_show_sniper_tracker_choice"
         },
         {
             "type": "button",
@@ -809,8 +771,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_sniper_logic_start_popup",
             "default_value": true,
-            "parent" : "ehi_show_sniper_tracker_choice",
-            "ehi_ver" : 239
+            "parent" : "ehi_show_sniper_tracker_choice"
         },
         {
             "type": "button",
@@ -833,8 +794,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_sniper_logic_end_popup",
             "default_value": true,
-            "parent" : "ehi_show_sniper_tracker_choice",
-            "ehi_ver" : 239
+            "parent" : "ehi_show_sniper_tracker_choice"
         },
         {
             "type": "button",
@@ -868,8 +828,7 @@
                     "f": "SetIconColor",
                     "tracker": "show_sniper_tracker"
                 }
-            },
-            "ehi_ver" : 258
+            }
         },
         {
             "type": "color",
@@ -890,8 +849,7 @@
                     "f": "SetIconColor",
                     "tracker": "show_sniper_tracker"
                 }
-            },
-            "ehi_ver" : 258
+            }
         },
         {
             "type": "divider",
@@ -905,8 +863,7 @@
             "callback": "ehi_set_item_value ehi_update_tracker_visibility",
             "focus_changed_callback": "SetFocus",
             "value": "show_marshal_initial_time",
-            "default_value": true,
-            "ehi_ver" : 287
+            "default_value": true
         },
         {
             "type": "divider",
@@ -921,8 +878,7 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_money_tracker",
             "child": "ehi_money_tracker_format_choice",
-            "default_value": false,
-            "ehi_ver" : 318
+            "default_value": false
         },
         {
             "type": "multiple_choice",
@@ -944,8 +900,7 @@
                     "f": "UpdateTrackerInternalFormat",
                     "params": [ "money", "show_money_tracker" ]
                 }
-            },
-            "ehi_ver" : 318
+            }
         },
         {
             "type": "divider",
@@ -960,8 +915,7 @@
             "focus_changed_callback": "SetFocus",
             "value": "show_ping_tracker",
             "default_value": true,
-            "child": "ehi_show_ping_tracker_refresh_t_offset_choice",
-            "ehi_ver" : 333
+            "child": "ehi_show_ping_tracker_refresh_t_offset_choice"
         },
         {
             "type": "slider",
@@ -975,8 +929,7 @@
             "min": 0,
             "step": 1,
             "display_precision": 1,
-            "parent": "ehi_show_ping_tracker_choice",
-            "ehi_ver" : 333
+            "parent": "ehi_show_ping_tracker_choice"
         }
     ]
 }

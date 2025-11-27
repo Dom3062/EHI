@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_infiltrator_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_infiltrator",
+    "global_params": {
+        "settings" : [ "buff_option", "infiltrator" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -11,11 +14,7 @@
             "callback": "ehi_set_item_value",
             "value": "melee_cooldown",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "infiltrator" ]
-            },
-            "child": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent_choice",
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent_choice"
         },
         {
             "type": "toggle",
@@ -25,11 +24,7 @@
             "callback": "ehi_set_item_value",
             "value": "melee_cooldown_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "infiltrator" ]
-            },
-            "parent": "ehi_buffs_perks_infiltrator_melee_cooldown_choice",
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_perks_infiltrator_melee_cooldown_choice"
         }
     ]
 }

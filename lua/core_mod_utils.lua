@@ -21,3 +21,25 @@ function EHI.ModUtils:SELH_GetModifiedPagerCount(pager_count)
     end
     return pager_count
 end
+
+---@param f fun(peer_id: integer, color: Color)
+function EHI.ModUtils:AddCustomNameColorSyncCallback(f)
+    if not (CustomNameColor and CustomNameColor.ModID) then
+        return
+    elseif not self._custom_color_sync_callback then
+        self._custom_color_sync_callback = CallbackEventHandler:new()
+        if not Global.game_settings.single_player then
+            managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_CustomNameColor_ColorSync", function(data, sender)
+                if data and data ~= "" then
+                    local col = NetworkHelper:StringToColour(data)
+                    self._custom_color_sync_callback:dispatch(sender, col)
+                end
+            end)
+        end
+        Hooks:PostHook(CustomNameColor, "SetLocalColors", "EHI_CustomNameColor_SetLocalColors", function(...)
+            local id = managers.network:session():local_peer():id()
+            self._custom_color_sync_callback:dispatch(id, tweak_data.chat_colors[id])
+        end)
+    end
+    self._custom_color_sync_callback:add(f)
+end

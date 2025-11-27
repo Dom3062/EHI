@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_maniac_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_maniac",
+    "global_params": {
+        "settings" : [ "buff_option", "maniac" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -10,11 +13,7 @@
             "description": "ehi_buffs_skills_progress",
             "callback": "ehi_set_item_value",
             "value": "stack",
-            "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "maniac" ]
-            },
-            "ehi_ver" : 204
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -23,11 +22,7 @@
             "description": "ehi_buffs_skills_duration",
             "callback": "ehi_set_item_value",
             "value": "stack_convert_rate",
-            "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "maniac" ]
-            },
-            "ehi_ver" : 204
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -36,11 +31,7 @@
             "description": "ehi_buffs_skills_duration",
             "callback": "ehi_set_item_value",
             "value": "stack_decay",
-            "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "maniac" ]
-            },
-            "ehi_ver" : 204
+            "default_value": true
         }
     ]
 }

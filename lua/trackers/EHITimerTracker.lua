@@ -168,9 +168,7 @@ end
 
 ---@param dt number
 function EHITimerGuiTracker:update(_, dt)
-    local dt_mod = self._timer_gui:get_timer_multiplier()
-    self._time = self._time - dt / dt_mod
-    local t = self._time * dt_mod
+    local t = self._timer_gui._time_left or self._timer_gui._current_timer or 0
     self._text:set_text(self:FormatTime(t))
     if t <= 10 and self._animate_warning and not self._anim_started then
         self._anim_started = true
@@ -435,9 +433,8 @@ end
 function EHITimerGuiGroupTracker:update(_, dt)
     for _, timer in pairs(self._timers) do
         if timer.is_running then
-            local dt_mod = timer.timer_gui:get_timer_multiplier()
-            timer.time = timer.time - dt / dt_mod
-            local t = timer.time * dt_mod
+            local t = timer.timer_gui._time_left or timer.timer_gui._current_timer or 0
+            timer.time = t
             timer.label:set_text(self:FormatTime(t))
             if t <= 10 and timer.animate_warning and not timer.anim_started then
                 self:AnimateColor(timer)

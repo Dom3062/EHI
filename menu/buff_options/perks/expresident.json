@@ -13,8 +13,7 @@
             "default_value": true,
             "params": {
                 "settings" : [ "buff_option", "expresident" ]
-            },
-            "ehi_ver" : 204
+            }
         }
     ]
 }

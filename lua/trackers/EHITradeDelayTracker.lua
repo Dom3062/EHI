@@ -8,7 +8,7 @@ EHITradeDelayTracker._init_create_text = false
 function EHITradeDelayTracker:post_init(params)
     self._pause_t = 0
     self._n_of_peers = 0
-    self._peers = {} ---@type table<number, { t: number, in_custody: boolean?, civilians_killed: number, label: Text }>
+    self._peers = {} ---@type table<integer, { t: number, in_custody: boolean?, civilians_killed: number, label: Text }>
     self._tick = 0
     if self._SIZE_INCREASE_NEEDED then
         self:SetBGSize(self._bg_box:w() / 2)
@@ -26,7 +26,7 @@ function EHITradeDelayTracker:SetTextPeerColor()
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param color Color
 function EHITradeDelayTracker:UpdateTextPeerColor(peer_id, color)
     if self._n_of_peers == 1 or not color then
@@ -52,7 +52,7 @@ function EHITradeDelayTracker:SetAnimFlash(state)
     self._anim_flash = state
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 ---@param civilians_killed number? Defaults to `1` if not provided
 ---@param in_custody boolean?
@@ -119,7 +119,7 @@ function EHITradeDelayTracker:Reorganize(addition)
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 ---@param civilians_killed number? If provided, sets the number of killed civilians. Otherwise it adds 1 more civilian killed to the counter
 function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed)
@@ -133,14 +133,14 @@ function EHITradeDelayTracker:SetPeerCustodyTime(peer_id, time, civilians_killed
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 function EHITradeDelayTracker:IncreasePeerCustodyTime(peer_id, time)
     local t = self:GetPeerData(peer_id, "t", 0) ---@cast t -boolean
     self:SetPeerCustodyTime(peer_id, t + time)
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 ---@param civilians_killed number?
 function EHITradeDelayTracker:UpdatePeerCustodyTime(peer_id, time, civilians_killed)
@@ -151,7 +151,7 @@ function EHITradeDelayTracker:UpdatePeerCustodyTime(peer_id, time, civilians_kil
     self:SetPeerCustodyTime(peer_id, time, civilians_killed)
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 ---@param civilians_killed number?
 ---@param in_custody boolean
@@ -190,7 +190,7 @@ function EHITradeDelayTracker:SetTradePause(t)
     self._pause_t = t
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
     if not self:PeerExists(peer_id) then
         return
@@ -216,7 +216,7 @@ function EHITradeDelayTracker:RemovePeerFromCustody(peer_id)
     self:Reorganize()
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHITradeDelayTracker:SetPeerInCustody(peer_id)
     if not self:PeerExists(peer_id) then
         return
@@ -224,13 +224,13 @@ function EHITradeDelayTracker:SetPeerInCustody(peer_id)
     self._peers[peer_id].in_custody = true
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHITradeDelayTracker:PeerExists(peer_id)
     return self._peers[peer_id] ~= nil
 end
 
 ---@generic T
----@param peer_id number
+---@param peer_id integer
 ---@param field_name string
 ---@param default_value T
 ---@return number|boolean|T

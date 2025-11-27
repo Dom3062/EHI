@@ -1497,7 +1497,7 @@ _G.MissionAssetsManager = {}
 ---@class MissionBriefingGui
 _G.MissionBriefingGui = {}
 ---@class MissionBriefingTabItem
----@field deselect fun()
+---@field deselect fun(self: self)
 _G.MissionBriefingTabItem = {}
 ---@class MissionDoor
 ---@field __ehi_use_me integer
@@ -1939,7 +1939,7 @@ end
 ---@field current_wave_number fun(self: self): number
 ---@field is_skirmish fun(self: self): boolean
 
----@class NetworkQOS
+---@class NetworkQoS
 ---@field packet_loss number?
 ---@field ping number
 
@@ -2069,11 +2069,11 @@ end
 
 ---@class tablelib
 ---@field size fun(tbl: table): number Returns number of elements in the table
----@field count fun(v: table, func: fun(item: any, key: any): boolean): number
+---@field count fun(v: table, func: fun(item: any, key: any): boolean): integer
 ---@field contains fun(v: table, e: any): boolean Returns `true` or `false` if `e` value exists in the table
 ---@field contains_any fun(v: table, e: any[]): boolean Returns `true` or `false` if any value from table `e` exists in the table
 ---@field index_of fun(v: table, e: string): integer Returns `index` of the element when found, otherwise `-1` is returned
----@field get_vector_index fun(v: table, e: any): number?
+---@field get_vector_index fun(v: table, e: any): integer?
 ---@field empty fun(v: table): boolean
 ---@field has fun(v: table, k: any): boolean Returns `true` or `false` if `k` key exists in the table
 
@@ -2162,7 +2162,7 @@ end
 ---@field active fun(self: self): boolean
 ---@field interact_position fun(self: self): Vector3
 
----@class PlayerBase
+---@class PlayerBase : UnitBase
 ---@field is_local_player boolean
 ---@field upgrade_value fun(self: self, category: string, upgrade: string): any|table|number|boolean
 
@@ -2457,6 +2457,10 @@ _G.CoreMenuNode.MenuNode = {}
 ---@field parameters fun(self: self): table
 ---@field type fun(self: self): string
 
+---@class CoreMenuItemOption.ItemOption
+---@field parameters fun(self: self): table
+---@field value fun(self: self): any
+
 ---@class MenuItemDivider : CoreMenuItem.Item
 
 ---@class CoreMenuItemToggle.ItemToggle : CoreMenuItem.Item
@@ -2469,6 +2473,7 @@ _G.CoreMenuNode.MenuNode = {}
 ---@field value_string fun(self: self): string
 
 ---@class MenuItemMultiChoice : CoreMenuItem.Item
+---@field _all_options CoreMenuItemOption.ItemOption[]
 ---@field value fun(self: self): integer
 
 ---@class MenuItemCustomizeController : CoreMenuItem.Item

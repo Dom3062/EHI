@@ -5,7 +5,7 @@ EHITradeManager._trade = {
     ai = false,
     normal = false
 }
-EHITradeManager._trade_delay = {} --[[@as table<number, { respawn_t: number, in_custody: boolean?, civilians_killed: number }>]]
+EHITradeManager._trade_delay = {} --[[@as table<integer, { respawn_t: number, in_custody: boolean?, civilians_killed: number }>]]
 ---@param type string
 ---@param pause boolean
 ---@param t number
@@ -24,7 +24,7 @@ function EHITradeManager:AddCustodyTimeTracker(anim_flash)
     })
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 ---@param civilians_killed number?
 ---@param in_custody boolean?
@@ -37,7 +37,7 @@ function EHITradeManager:AddCustodyTimeTrackerWithPeer(peer_id, time, civilians_
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param respawn_time_penalty number
 ---@param civilians_killed number?
 ---@param in_custody boolean?
@@ -45,7 +45,7 @@ function EHITradeManager:AddPeerCustodyTime(peer_id, respawn_time_penalty, civil
     self:CallFunction("AddPeerCustodyTime", peer_id, respawn_time_penalty, civilians_killed, in_custody)
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param respawn_penalty number
 ---@param civilians_killed number
 function EHITradeManager:AddOrUpdateCachedPeer(peer_id, respawn_penalty, civilians_killed)
@@ -56,7 +56,7 @@ function EHITradeManager:AddOrUpdateCachedPeer(peer_id, respawn_penalty, civilia
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param delay number
 ---@param tweak_respawn_penalty number
 function EHITradeManager:AddOrIncreaseCachedPeerCustodyTime(peer_id, delay, tweak_respawn_penalty)
@@ -67,7 +67,7 @@ function EHITradeManager:AddOrIncreaseCachedPeerCustodyTime(peer_id, delay, twea
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param respawn_penalty number
 ---@param civilians_killed number?
 ---@param in_custody boolean?
@@ -84,7 +84,7 @@ function EHITradeManager:AddToTradeDelayCache(peer_id, respawn_penalty, civilian
     }
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHITradeManager:SetCachedPeerInCustody(peer_id)
     local data = self._trade_delay[peer_id]
     if not data then
@@ -96,7 +96,7 @@ function EHITradeManager:SetCachedPeerInCustody(peer_id)
     data.in_custody = true
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 function EHITradeManager:IncreaseCachedPeerCustodyTime(peer_id, time)
     if not self._trade_delay[peer_id] then
@@ -113,7 +113,7 @@ function EHITradeManager:IncreaseCachedPeerCustodyTime(peer_id, time)
     data.civilians_killed = new_civies
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 ---@param civilians_killed number
 function EHITradeManager:SetCachedPeerCustodyTime(peer_id, time, civilians_killed)
@@ -128,7 +128,7 @@ function EHITradeManager:SetCachedPeerCustodyTime(peer_id, time, civilians_kille
     data.civilians_killed = civilians_killed or 1
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHITradeManager:CachedPeerInCustodyExists(peer_id)
     return self._trade_delay[peer_id] ~= nil
 end
@@ -146,7 +146,7 @@ function EHITradeManager:LoadFromTradeDelayCache()
     self._trade_processed_after_alarm = true
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param time number
 ---@param civilians_killed number?
 ---@param in_custody boolean?
@@ -177,13 +177,8 @@ function EHITradeManager:CallFunction(f, ...)
     managers.ehi_tracker:CallFunction(self._id, f, ...)
 end
 
-if EHI.IsClient and CustomNameColor and CustomNameColor.ModID then
-    managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_EHITradeManager", function(data, sender)
-        if data and data ~= "" then
-            local col = NetworkHelper:StringToColour(data)
-            EHITradeManager:CallFunction("UpdateTextPeerColor", sender, col)
-        end
-    end)
-end
+EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+    EHITradeManager:CallFunction("UpdateTextPeerColor", peer_id, color)
+end)
 
 return EHITradeManager

@@ -102,7 +102,7 @@ if not tweak_data.levels:IsStealthRequired() then
             local minion_class = (EHI:GetOption("show_minion_option") == 1 and EHI:GetOption("show_minion_health")) and "EHIMinionHealthOnlyTracker" or "EHIMinionTracker"
             ---@param key userdata
             ---@param amount number
-            ---@param peer_id number
+            ---@param peer_id integer
             ---@param local_peer boolean?
             UpdateTracker = function(key, amount, peer_id, local_peer)
                 if managers.ehi_tracker:DoesNotExist("Converts") and amount > 0 then
@@ -124,7 +124,7 @@ if not tweak_data.levels:IsStealthRequired() then
             end
             ---@param key userdata
             ---@param amount number
-            ---@param peer_id number
+            ---@param peer_id integer
             ---@param local_peer boolean?
             UpdateTracker = function(key, amount, peer_id, local_peer)
                 if managers.ehi_tracker:DoesNotExist("Converts") and amount > 0 then
@@ -163,6 +163,7 @@ if not tweak_data.levels:IsStealthRequired() then
         end)
     end
     if not tweak_data.levels:IsLevelSafehouse() and EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
+        local format_total = EHI:GetOption("hostage_count_tracker_format") == 1
         if EHI.IsHost then
             original.on_hostage_state = GroupAIStateBase.on_hostage_state
             function GroupAIStateBase:on_hostage_state(...)
@@ -172,17 +173,18 @@ if not tweak_data.levels:IsStealthRequired() then
                     managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountHost", self._hostage_headcount, self._police_hostage_headcount)
                 end
             end
-        else
+        elseif format_total then
             original.sync_hostage_headcount = GroupAIStateBase.sync_hostage_headcount
             function GroupAIStateBase:sync_hostage_headcount(...)
                 original.sync_hostage_headcount(self, ...)
-                managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCountClient", self._hostage_headcount)
+                managers.ehi_tracker:CallFunction("HostageCount", "SetHostageCount", self._hostage_headcount, 0)
             end
         end
         EHI:AddOnSpawnedCallback(function()
             local ai_state = managers.groupai:state()
             managers.ehi_tracker:AddTracker({
                 id = "HostageCount",
+                format_total = format_total,
                 total_hostages = ai_state:hostage_count(),
                 police_hostages = EHI.IsHost and ai_state:police_hostage_count(),
                 class = "EHIHostageCountTracker"
@@ -270,7 +272,7 @@ end
 
 ---@param unit UnitEnemy
 ---@param local_peer boolean
----@param peer_id number
+---@param peer_id integer
 function GroupAIStateBase:EHIAddConvert(unit, local_peer, peer_id)
     if not unit.key then
         EHI:Log("Convert does not have a 'key()' function! Aborting to avoid crashing the game.")

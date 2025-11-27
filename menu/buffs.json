@@ -147,7 +147,7 @@
             "callback": "ehi_set_item_value",
             "value": "buffs_show_progress",
             "default_value": true,
-            "is_parent": true,
+            "child": "ehi_buffs_invert_progress_choice",
             "params": {
                 "call_buff_function": {
                     "f": "UpdateBuffs",

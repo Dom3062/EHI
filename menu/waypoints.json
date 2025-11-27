@@ -14,8 +14,7 @@
             "max": 5,
             "min": 0,
             "step": 0.01,
-            "display_precision": 2,
-            "ehi_ver" : 21
+            "display_precision": 2
         },
         {
             "type": "divider",
@@ -29,8 +28,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_mission",
             "default_value" : true,
-            "child" : "ehi_show_waypoints_mission_cheaty_choice",
-            "ehi_ver" : 153
+            "child" : "ehi_show_waypoints_mission_cheaty_choice"
         },
         {
             "type": "toggle",
@@ -40,8 +38,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_mission_cheaty",
             "default_value": true,
-            "parent" : "ehi_show_waypoints_mission_choice",
-            "ehi_ver" : 325
+            "parent" : "ehi_show_waypoints_mission_choice"
         },
         {
             "type": "divider",
@@ -54,8 +51,7 @@
             "description": "ehi_show_waypoints_escape_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_escape",
-            "default_value": true,
-            "ehi_ver" : 231
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -64,8 +60,7 @@
             "description": "ehi_show_waypoints_enemy_turret_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_enemy_turret",
-            "default_value": true,
-            "ehi_ver" : 21
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -74,8 +69,7 @@
             "description": "ehi_show_waypoints_timers_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_timers",
-            "default_value": true,
-            "ehi_ver" : 26
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -84,8 +78,7 @@
             "description": "ehi_show_waypoints_pager_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_pager",
-            "default_value": true,
-            "ehi_ver" : 26
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -94,8 +87,7 @@
             "description": "ehi_show_waypoints_cameras_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_cameras",
-            "default_value": true,
-            "ehi_ver" : 35
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -104,8 +96,7 @@
             "description": "ehi_show_waypoints_zipline_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_zipline",
-            "default_value": true,
-            "ehi_ver" : 55
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -114,8 +105,7 @@
             "description": "ehi_show_waypoints_ecmjammer_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_ecmjammer",
-            "default_value": true,
-            "ehi_ver" : 136
+            "default_value": true
         },
         {
             "type": "toggle",
@@ -124,8 +114,7 @@
             "description": "ehi_show_waypoints_loot_counter_desc",
             "callback": "ehi_set_item_value",
             "value": "show_waypoints_loot_counter",
-            "default_value": true,
-            "ehi_ver" : 314
+            "default_value": true
         }
     ]
 }

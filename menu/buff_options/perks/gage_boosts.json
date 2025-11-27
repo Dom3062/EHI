@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_gage_boosts_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_gage_boosts",
+    "global_params": {
+        "settings" : [ "buff_option", "gage_boosts" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -11,11 +14,7 @@
             "callback": "ehi_set_item_value",
             "value": "life_steal",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "gage_boosts" ]
-            },
-            "child": "ehi_buffs_perks_gage_boosts_life_steal_persistent_choice",
-            "ehi_ver" : 272
+            "child": "ehi_buffs_perks_gage_boosts_life_steal_persistent_choice"
         },
         {
             "type": "toggle",
@@ -25,11 +24,7 @@
             "callback": "ehi_set_item_value",
             "value": "life_steal_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "gage_boosts" ]
-            },
-            "parent": "ehi_buffs_perks_gage_boosts_life_steal_choice",
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_perks_gage_boosts_life_steal_choice"
         },
         {
             "type": "divider",
@@ -43,11 +38,7 @@
             "callback": "ehi_set_item_value",
             "value": "melee_invulnerability",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "gage_boosts" ]
-            },
-            "child": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent_choice",
-            "ehi_ver" : 272
+            "child": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent_choice"
         },
         {
             "type": "toggle",
@@ -57,11 +48,7 @@
             "callback": "ehi_set_item_value",
             "value": "melee_invulnerability_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "gage_boosts" ]
-            },
-            "parent": "ehi_buffs_perks_gage_boosts_melee_invulnerability_choice",
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_perks_gage_boosts_melee_invulnerability_choice"
         }
     ]
 }

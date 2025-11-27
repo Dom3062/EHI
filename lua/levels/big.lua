@@ -169,6 +169,46 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:IsLootCounterVisible() then
+    other[106328] = EHI:AddLootCounter2(function()
+        -- 11 bags of money + 4 bags of gold
+        EHI:ShowLootCounterNoChecks({ max = 15, client_from_start = true })
+    end, { element = { 100233, 100008, 100020, 104531, 104545, 103405 } }, function(self)
+        self:Trigger()
+        self._loot:IncreaseLootCounterProgressMax(tweak_data.ehi.functions.GetNumberOfLootInADepositBoxesInWall({
+            102305, 102306, 102311, 102313, 102315, 102316, 102363
+        }))
+        self._loot:SyncSecuredLoot()
+    end, true)
+    ---@param max integer
+    local function IncreaseMax(max)
+        managers.ehi_loot:IncreaseLootCounterProgressMax(max)
+    end
+    -- Deposit boxes in the vault (the amount is predetermined after spawn)
+    -- There is no need to check if the wall of deposit boxes is visible because this is controlled by the mission script
+    -- The only thing that is hooked is the amount set (they won't run if the wall is hidden)
+    other[102418] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 3 }
+    other[102419] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
+    other[102421] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
+    other[102422] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 3 }
+    other[102425] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
+    other[102426] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
+    other[102440] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 3 }
+    other[102442] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
+    other[102445] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
+    other[102446] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 3 }
+    other[102447] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
+    other[102448] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
+    other[102449] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 3 }
+    other[102450] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
+    other[102452] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
+    other[102453] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 3 }
+    other[102455] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
+    other[102456] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
+    other[102457] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 3 }
+    other[102459] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
+    other[102460] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
+end
 
 EHI.Mission:ParseTriggers({
     mission = triggers,
@@ -240,7 +280,8 @@ EHI:AddXPBreakdown({
                     timelock_done = { min_max = 1 },
                     fs_secured_required_bags = { min_max = 1 }
                 },
-                bonus_xp = { min_max = 8000 }
+                bonus_xp = { min_max = 8000 },
+                loot_all = { min = 4, max = 25 }
             }
         }
     }

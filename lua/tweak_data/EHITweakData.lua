@@ -1583,6 +1583,15 @@ function EHITweakData:new(tweak_data)
         GetNumberOfDepositBoxesWithLoot2 = function(boxes)
             return table.list_count(boxes, self._count_loot_in_deposit)
         end,
+        ---Checks provided deposit boxes that are scripted to have loot
+        ---@param boxes number[]
+        GetNumberOfLootInADepositBoxesInWall = function(boxes)
+            local result = 0
+            for _, box in ipairs(boxes) do
+                result = result + self._count_amount_of_loot_in_deposit(box)
+            end
+            return result
+        end,
         ---@param truck_id number
         ---@param loot string[]?
         HookArmoredTransportUnit = function(truck_id, loot)
@@ -1805,14 +1814,23 @@ end
 function EHITweakData._count_other_loot(loot_id)
     local loot = managers.worlddefinition:get_unit(loot_id) --[[@as UnitCarry?]]
     local damage = loot and loot:damage()
-    return damage and damage._variables and damage._variables.var_hidden == 0
+    local variables = damage and damage._variables
+    return variables and variables.var_hidden == 0
 end
 
 ---@param deposit_id number
 function EHITweakData._count_loot_in_deposit(deposit_id)
     local deposit = managers.worlddefinition:get_unit(deposit_id) --[[@as UnitCarry?]]
     local damage = deposit and deposit:damage()
-    return damage and damage._variables and damage._variables.var_random == 0
+    local variables = damage and damage._variables
+    return variables and variables.var_random == 0
+end
+
+function EHITweakData._count_amount_of_loot_in_deposit(deposit_id)
+    local deposit = managers.worlddefinition:get_unit(deposit_id) --[[@as UnitCarry?]]
+    local damage = deposit and deposit:damage()
+    local variables = damage and damage._variables
+    return variables and variables.var_amount or 0
 end
 
 function EHITweakData:_populate_buff_color_table()

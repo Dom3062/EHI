@@ -1,17 +1,17 @@
 {
-	"menu_id" : "ehi_menu",
-	"parent_menu_id" : "blt_options",
-	"title" : "ehi_mod_title",
-	"description" : "ehi_mod_desc",
-	"back_callback" : "ehi_save",
-	"focus_changed_callback" : "ehi_changed_focus",
-	"items" : [
+    "menu_id" : "ehi_menu",
+    "parent_menu_id" : "blt_options",
+    "title" : "ehi_mod_title",
+    "description" : "ehi_mod_desc",
+    "back_callback" : "ehi_save",
+    "focus_changed_callback" : "ehi_changed_focus",
+    "items" : [
         {
-			"type": "multiple_choice",
-			"id": "ehi_mod_language_choice",
-			"title": "ehi_language",
-			"description": "ehi_language_desc",
-			"items": [
+            "type": "multiple_choice",
+            "id": "ehi_mod_language_choice",
+            "title": "ehi_language",
+            "description": "ehi_language_desc",
+            "items": [
                 "ehi_language_1",
                 "ehi_language_2",
                 "ehi_language_3",
@@ -24,15 +24,15 @@
                 "ehi_language_10",
                 "ehi_language_11"
             ],
-			"callback" : "ehi_set_item_value",
-			"value": "mod_language",
-			"default_value": 1
-		},
+            "callback" : "ehi_set_item_value",
+            "value": "mod_language",
+            "default_value": 1
+        },
         {
             "type" : "divider",
             "size" : 15
         },
-		{
+        {
             "vr" : [
                 {
                     "type": "slider",
@@ -44,8 +44,7 @@
                     "max": 1920,
                     "min": -1920,
                     "step": 1,
-                    "display_precision" : 0,
-                    "ehi_ver" : 143
+                    "display_precision" : 0
                 },
                 {
                     "type": "slider",
@@ -78,8 +77,7 @@
                     "max": 1080,
                     "min": -1080,
                     "step": 1,
-                    "display_precision" : 0,
-                    "ehi_ver" : 143
+                    "display_precision" : 0
                 },
                 {
                     "type": "slider",
@@ -111,7 +109,6 @@
             "max": 2,
             "min": 0.5,
             "step": 0.01,
-            "ehi_ver" : 16,
             "params": {
                 "call_tracker_function": {
                     "f": "UpdateTextScale"
@@ -190,8 +187,7 @@
                             "comparator": "<=",
                             "value": 2
                         }
-                    },
-                    "ehi_ver" : 185
+                    }
                 },
                 {
                     "type": "multiple_choice",
@@ -217,8 +213,7 @@
                             "comparator": "<=",
                             "value": 2
                         }
-                    },
-                    "ehi_ver" : 185
+                    }
                 }
             ]
         },
@@ -245,8 +240,7 @@
                         "id": "ehi_vr_tracker_alignment_choice",
                         "comparator": "<=",
                         "value": 2
-                    },
-                    "ehi_ver" : 232
+                    }
                 },
                 {
                     "type": "multiple_choice",
@@ -269,8 +263,7 @@
                         "id": "ehi_tracker_alignment_choice",
                         "comparator": "<=",
                         "value": 2
-                    },
-                    "ehi_ver" : 232
+                    }
                 }
             ]
         },
@@ -279,8 +272,7 @@
             "id": "ehi_visuals_menu",
             "title": "ehi_visuals_menu",
             "description": "ehi_visuals_menu_desc",
-            "next_menu": "ehi_visuals_menu",
-            "ehi_ver" : 336
+            "next_menu": "ehi_visuals_menu"
         },
         {
             "type" : "divider",
@@ -292,7 +284,6 @@
             "title": "ehi_shared_menu",
             "description": "ehi_shared_menu_desc",
             "next_menu": "ehi_shared_menu",
-            "ehi_ver" : 314,
             "disabled_from_start" : "ehi_is_shared_menu_available"
         },
         {
@@ -303,12 +294,12 @@
             "value": "show_trackers",
             "default_value": true,
             "children" : [ "ehi_trackers_menu", "ehi_show_preview_text_choice", "ehi_show_preview_trackers_choice" ],
+            "children_f_or" : "ehi_is_shared_menu_available_1",
             "params": {
                 "call_tracker_function": {
                     "f": "UpdateTrackerState"
                 }
-            },
-            "ehi_ver" : 306
+            }
         },
         {
             "type": "button",
@@ -316,8 +307,7 @@
             "title": "ehi_trackers_menu",
             "description": "ehi_trackers_menu_desc",
             "next_menu": "ehi_trackers_menu",
-            "parent" : "ehi_show_trackers_choice",
-            "ehi_ver" : 344
+            "parent" : "ehi_show_trackers_choice"
         },
         {
             "type": "toggle",
@@ -328,7 +318,7 @@
             "value": "show_waypoints",
             "default_value": true,
             "child" : "ehi_waypoints_menu",
-            "ehi_ver" : 21
+            "children_f_or" : "ehi_is_shared_menu_available_2"
         },
         {
             "type": "button",
@@ -336,8 +326,7 @@
             "title": "ehi_waypoints_menu",
             "description": "ehi_waypoints_menu_desc",
             "next_menu": "ehi_waypoints_menu",
-            "parent" : "ehi_show_waypoints_choice",
-            "ehi_ver" : 325
+            "parent" : "ehi_show_waypoints_choice"
         },
         {
             "type": "toggle",
@@ -352,8 +341,7 @@
                 "call_buff_function": {
                     "f": "UpdateBuffsVisibility"
                 }
-            },
-            "ehi_ver" : 58
+            }
         },
         {
             "type": "button",
@@ -361,23 +349,20 @@
             "title": "ehi_buffs_menu",
             "description": "ehi_buffs_menu_desc",
             "next_menu": "ehi_buffs_menu",
-            "parent" : "ehi_show_buffs_choice",
-            "ehi_ver" : 349
+            "parent" : "ehi_show_buffs_choice"
         },
         {
             "type": "button",
             "id": "ehi_inventory_menu",
             "title": "ehi_inventory_menu",
-            "next_menu": "ehi_inventory_menu",
-            "ehi_ver" : 112
+            "next_menu": "ehi_inventory_menu"
         },
         {
             "type": "button",
             "id": "ehi_other_menu",
             "title": "ehi_other_menu",
             "description": "ehi_other_menu_desc",
-            "next_menu": "ehi_other_menu",
-            "ehi_ver" : 325
+            "next_menu": "ehi_other_menu"
         },
         {
             "type" : "divider",
@@ -402,8 +387,7 @@
                 "call_tracker_function": {
                     "f": "UpdatePreviewTextVisibility"
                 }
-            },
-            "ehi_ver" : 58
+            }
         },
         {
             "type": "toggle",
@@ -418,8 +402,7 @@
                 "call_tracker_function": {
                     "f": "UpdateTrackerPreview"
                 }
-            },
-            "ehi_ver" : 339
+            }
         },
         {
             "type": "toggle",
@@ -434,8 +417,7 @@
                 "call_buff_function": {
                     "f": "UpdatePreviewVisibility"
                 }
-            },
-            "ehi_ver" : 339
+            }
         }
-	]
+    ]
 }

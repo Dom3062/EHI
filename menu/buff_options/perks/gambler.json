@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_gambler_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_gambler",
+    "global_params": {
+        "settings" : [ "buff_option", "gambler" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -11,11 +14,7 @@
             "callback": "ehi_set_item_value",
             "value": "regain_health_cooldown",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "gambler" ]
-            },
-            "child": "ehi_buffs_perks_gambler_regain_health_cooldown_persistent_choice",
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_gambler_regain_health_cooldown_persistent_choice"
         },
         {
             "type": "toggle",
@@ -25,11 +24,7 @@
             "callback": "ehi_set_item_value",
             "value": "regain_health_cooldown_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "gambler" ]
-            },
-            "parent": "ehi_buffs_perks_gambler_regain_health_cooldown_choice",
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_perks_gambler_regain_health_cooldown_choice"
         },
         {
             "type": "divider",
@@ -43,11 +38,7 @@
             "callback": "ehi_set_item_value",
             "value": "ammo_give_out_cooldown",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "gambler" ]
-            },
-            "child": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_persistent_choice",
-            "ehi_ver" : 204
+            "child": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_persistent_choice"
         },
         {
             "type": "toggle",
@@ -57,11 +48,7 @@
             "callback": "ehi_set_item_value",
             "value": "ammo_give_out_cooldown_persistent",
             "default_value": false,
-            "params": {
-                "settings" : [ "buff_option", "gambler" ]
-            },
-            "parent": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_choice",
-            "ehi_ver" : 325
+            "parent": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_choice"
         }
     ]
 }

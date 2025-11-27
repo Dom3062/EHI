@@ -115,7 +115,6 @@
             </group>
             <post :hook_id="civilians/logics/civilianlogicsurrender" :script_path="CivilianLogicSurrender.lua" />
             <post :hook_id="civilians/civiliandamage" :script_path="CivilianDamage.lua" />
-            <post :hook_id="civilians/huskciviliandamage" :script_path="HuskCivilianDamage.lua" />
             <post :hook_id="interactions/interactionext" :script_path="InteractionExt.lua" />
             <post :hook_id="enemies/cop/huskcopbrain" :script_path="HuskCopBrain.lua" />
             <group :hook_id="equipment/">

@@ -178,17 +178,12 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             self:_create_buff(params)
         end
     end
-    if CustomNameColor and CustomNameColor.ModID and not Global.game_settings.single_player then
-        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, function(data, sender)
-            if data and data ~= "" then
-                local buff = self._buffs["TagTeamTagged_" .. sender .. local_peer_id]
-                if buff then
-                    local col = NetworkHelper:StringToColour(data) ---@cast col -?
-                    buff._icon:set_color(col)
-                end
-            end
-        end)
-    end
+    EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+        local buff = self._buffs["TagTeamTagged_" .. peer_id .. local_peer_id]
+        if buff then
+            buff._icon:set_color(color)
+        end
+    end)
 end
 
 function EHIBuffManager:_init_buff_redirect()

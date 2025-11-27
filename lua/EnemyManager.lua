@@ -5,15 +5,17 @@ end
 
 ---@alias EnemyManager._civilian_data.Civilian { unit: UnitCivilian, char_tweak: CharacterTweakData._string_.Civilian }
 ---@alias EnemyManager._civilian_data table<string, EnemyManager._civilian_data.Civilian?>
+---@alias EnemyManager._enemy_data.Enemy { unit: UnitEnemy, char_tweak: CharacterTweakData._string_.Enemy }
+---@alias EnemyManager._enemy_data table<string, EnemyManager._enemy_data.Enemy?>
 
 ---@class EnemyManager
----@field _enemy_data table
+---@field _enemy_data { nr_units: integer, unit_data: EnemyManager._enemy_data }
 ---@field _civilian_data { unit_data: EnemyManager._civilian_data }
 ---@field all_civilians fun(self: self): EnemyManager._civilian_data
+---@field all_enemies fun(self: self): EnemyManager._enemy_data
 ---@field is_civilian fun(self: self, unit: Unit|UnitEnemy|UnitPlayer|UnitCivilian|UnitTeamAI): boolean
 ---@field is_enemy fun(self: self, unit: Unit|UnitEnemy|UnitPlayer|UnitCivilian|UnitTeamAI): boolean
 
----@return number
 function EnemyManager:GetNumberOfEnemies()
     return self._enemy_data.nr_units
 end
@@ -166,7 +168,7 @@ if EHI:CanShowCivilianCountTracker() then
             managers.ehi_tracker:DecreaseCount("CivilianCount", civilian_key) ---@diagnostic disable-line
         end
     end)
-    Hooks:PreHook(EnemyManager, "on_civilian_destroyed", "EHI_EnemyManager_on_civilian_died", function(self, civilian, ...) ---@param civilian UnitCivilian
+    Hooks:PreHook(EnemyManager, "on_civilian_destroyed", "EHI_EnemyManager_on_civilian_destroyed", function(self, civilian, ...) ---@param civilian UnitCivilian
         local civilian_data = self._civilian_data.unit_data
         local civilian_key = civilian:key()
         local unit_data = civilian_data[civilian_key]

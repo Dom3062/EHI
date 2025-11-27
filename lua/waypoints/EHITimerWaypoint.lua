@@ -109,9 +109,7 @@ end
 
 ---@param dt number
 function EHITimerGuiWaypoint:update(_, dt)
-    local dt_mod = self._timer_gui:get_timer_multiplier()
-    self._time = self._time - dt / dt_mod
-    local t = self._time * dt_mod
+    local t = self._timer_gui._time_left or self._timer_gui._current_timer or 0
     self._gui:set_text(self:FormatTime(t))
     if t <= 10 and self._warning and not self._anim_started then
         self._anim_started = true

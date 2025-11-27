@@ -2,6 +2,9 @@
     "menu_id": "ehi_buffs_perks_yakuza_menu",
     "parent_menu_id" : "ehi_buffs_perks_menu",
     "title": "ehi_buffs_perks_yakuza",
+    "global_params": {
+        "settings" : [ "buff_option", "yakuza" ]
+    },
     "items": [
         {
             "type": "toggle",
@@ -10,11 +13,7 @@
             "callback": "ehi_set_item_value",
             "value": "irezumi",
             "default_value": true,
-            "params": {
-                "settings" : [ "buff_option", "yakuza" ]
-            },
-            "children": [ "ehi_buffs_perks_yakuza_irezumi_refresh_choice", "ehi_buffs_perks_yakuza_irezumi_format_choice", "ehi_buffs_perks_yakuza_irezumi_text_format_choice" ],
-            "ehi_ver" : 325
+            "children": [ "ehi_buffs_perks_yakuza_irezumi_refresh_choice", "ehi_buffs_perks_yakuza_irezumi_format_choice", "ehi_buffs_perks_yakuza_irezumi_text_format_choice" ]
         },
         {
             "type": "slider",
@@ -28,11 +27,7 @@
             "max": 10,
             "min": 1,
             "step": 1,
-            "display_precision": 0,
-            "params": {
-                "settings" : [ "buff_option", "yakuza" ]
-            },
-            "ehi_ver" : 325
+            "display_precision": 0
         },
         {
             "type": "multiple_choice",
@@ -46,11 +41,7 @@
             ],
             "value": "irezumi_format",
             "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
-            "default_value": 1,
-            "params": {
-                "settings" : [ "buff_option", "yakuza" ]
-            },
-            "ehi_ver" : 325
+            "default_value": 1
         },
         {
             "type": "multiple_choice",
@@ -66,11 +57,7 @@
             ],
             "value": "irezumi_text_format",
             "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
-            "default_value": 1,
-            "params": {
-                "settings" : [ "buff_option", "yakuza" ]
-            },
-            "ehi_ver" : 325
+            "default_value": 1
         }
     ]
 }

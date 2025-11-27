@@ -1,3 +1,7 @@
+r359 (27. 11. 2025):
+Hostage Tracker: Fixed negative numbers
+Timers: Attempt to fix again incorrect time in the tracker and waypoint
+
 r358 (17. 11. 2025):
 Buffs: Fixed a crash in Hacker when Unseen Strike is disabled or vice versa
 

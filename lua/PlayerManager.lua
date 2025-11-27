@@ -228,15 +228,12 @@ end
 if EHI:GetBuffOption("inspire_ace") then
     original.disable_cooldown_upgrade = PlayerManager.disable_cooldown_upgrade
     function PlayerManager:disable_cooldown_upgrade(category, upgrade, ...)
+        original.disable_cooldown_upgrade(self, category, upgrade, ...)
         local upgrade_value = self:upgrade_value(category, upgrade)
         if upgrade_value == 0 then
             return
         end
-        original.disable_cooldown_upgrade(self, category, upgrade, ...)
-        if category ~= "cooldown" or upgrade ~= "long_dis_revive" then
-            return
-        end
-        managers.ehi_buff:AddBuff("long_dis_revive", upgrade_value[2])
+        managers.ehi_buff:AddBuff(upgrade, upgrade_value[2])
     end
 end
 

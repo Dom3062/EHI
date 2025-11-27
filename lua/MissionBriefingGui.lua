@@ -1685,7 +1685,7 @@ function XPBreakdownPanel:_add_xp_overview_text()
             font = tweak_data.menu.pd2_large_font,
             font_size = tweak_data.menu.pd2_small_font_size,
             color = tweak_data.lootdrop.global_values.infamy.color,
-            text = string.format("+%d%s", math.ehi_round(xp.infamy_bonus - 1, 0.01) * 100, percent_format),
+            text = string.format("+%d%s", (xp.infamy_bonus - 1) * 100, percent_format),
             layer = 10
         })
         self:make_fine_text(infamy_text)
@@ -2332,8 +2332,8 @@ end
 ---@param PreviousPlan number?
 function MissionBriefingGui:OnPlanChanged(index, PreviousPlan)
     local plan = PreviousPlan or PlanSelected
-    _panels[index]._panel:set_visible(true)
-    _panels[plan]._panel:set_visible(false)
+    _panels[index]._panel:show()
+    _panels[plan]._panel:hide()
     _buttons[plan]:Unselect()
     PlanSelected = index
 end

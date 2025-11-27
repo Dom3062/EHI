@@ -7,106 +7,91 @@
             "type": "button",
             "id": "ehi_buffs_perks_infiltrator_choice",
             "title": "ehi_buffs_perks_infiltrator",
-            "next_menu": "ehi_buffs_perks_infiltrator_menu",
-            "ehi_ver" : 325
+            "next_menu": "ehi_buffs_perks_infiltrator_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_gambler_choice",
             "title": "ehi_buffs_perks_gambler",
-            "next_menu": "ehi_buffs_perks_gambler_menu",
-            "ehi_ver" : 325
+            "next_menu": "ehi_buffs_perks_gambler_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_grinder_choice",
             "title": "ehi_buffs_perks_grinder",
-            "next_menu": "ehi_buffs_perks_grinder_menu",
-            "ehi_ver" : 325
+            "next_menu": "ehi_buffs_perks_grinder_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_maniac_choice",
             "title": "ehi_buffs_perks_maniac",
-            "next_menu" : "ehi_buffs_perks_maniac_menu",
-            "ehi_ver" : 204
+            "next_menu" : "ehi_buffs_perks_maniac_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_anarchist_choice",
             "title": "ehi_buffs_perks_anarchist",
-            "next_menu" : "ehi_buffs_perks_anarchist_menu",
-            "ehi_ver" : 319
+            "next_menu" : "ehi_buffs_perks_anarchist_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_yakuza_choice",
             "title": "ehi_buffs_perks_yakuza",
-            "next_menu" : "ehi_buffs_perks_yakuza_menu",
-            "ehi_ver" : 325
+            "next_menu" : "ehi_buffs_perks_yakuza_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_expresident_choice",
             "title": "ehi_buffs_perks_expresident",
-            "next_menu": "ehi_buffs_perks_expresident_menu",
-            "ehi_ver" : 204
+            "next_menu": "ehi_buffs_perks_expresident_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_biker_choice",
             "title": "ehi_buffs_perks_biker",
-            "next_menu": "ehi_buffs_perks_biker_menu",
-            "ehi_ver" : 204
+            "next_menu": "ehi_buffs_perks_biker_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_kingpin_choice",
             "title": "ehi_buffs_perks_kingpin",
-            "next_menu": "ehi_buffs_perks_kingpin_menu",
-            "ehi_ver" : 349
+            "next_menu": "ehi_buffs_perks_kingpin_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_sicario_choice",
             "title": "ehi_buffs_perks_sicario",
-            "next_menu": "ehi_buffs_perks_sicario_menu",
-            "ehi_ver" : 349
+            "next_menu": "ehi_buffs_perks_sicario_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_stoic_choice",
             "title": "ehi_buffs_perks_stoic",
-            "next_menu": "ehi_buffs_perks_stoic_menu",
-            "ehi_ver" : 349
+            "next_menu": "ehi_buffs_perks_stoic_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_tag_team_choice",
             "title": "ehi_buffs_perks_tag_team",
-            "next_menu": "ehi_buffs_perks_tag_team_menu",
-            "ehi_ver" : 349
+            "next_menu": "ehi_buffs_perks_tag_team_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_hacker_choice",
             "title": "ehi_buffs_perks_hacker",
-            "next_menu": "ehi_buffs_perks_hacker_menu",
-            "ehi_ver" : 349
+            "next_menu": "ehi_buffs_perks_hacker_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_leech_choice",
             "title": "ehi_buffs_perks_leech",
-            "next_menu": "ehi_buffs_perks_leech_menu",
-            "ehi_ver" : 349
+            "next_menu": "ehi_buffs_perks_leech_menu"
         },
         {
             "type": "button",
             "id": "ehi_buffs_perks_copycat_choice",
             "title": "ehi_buffs_perks_copycat",
-            "next_menu": "ehi_buffs_perks_copycat_menu",
-            "ehi_ver" : 349
+            "next_menu": "ehi_buffs_perks_copycat_menu"
         },
         {
             "type": "divider",
@@ -117,8 +102,7 @@
             "id": "ehi_buffs_perks_gage_boosts_choice",
             "title": "ehi_buffs_perks_gage_boosts",
             "description" : "ehi_buffs_perks_gage_boosts_desc",
-            "next_menu": "ehi_buffs_perks_gage_boosts_menu",
-            "ehi_ver" : 325
+            "next_menu": "ehi_buffs_perks_gage_boosts_menu"
         }
     ]
 }

@@ -10,7 +10,7 @@ EHIMinionTracker._init_create_text = false
 EHIMinionTracker._SHOW_MINION_HEALTH = EHI:GetOption("show_minion_health") --[[@as boolean]]
 function EHIMinionTracker:post_init(...)
     self._n_of_peers = 0
-    self._peers = {} ---@type table<number, EHIMinionTracker.PeerData>
+    self._peers = {} ---@type table<integer, EHIMinionTracker.PeerData>
 end
 
 function EHIMinionTracker:SetTextPeerColor()
@@ -98,7 +98,7 @@ function EHIMinionTracker:Reorganize(addition)
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHIMinionTracker:RemovePeer(peer_id)
     if not self._peers[peer_id] then
         return
@@ -143,7 +143,7 @@ function EHIMinionTracker:AddSecondLocalMinion(key)
 end
 
 ---@param key userdata
----@param peer_id number
+---@param peer_id integer
 ---@param local_peer boolean
 function EHIMinionTracker:AddMinion(key, peer_id, local_peer)
     if not key then
@@ -228,7 +228,7 @@ function EHIMinionTracker:RemoveMinion(key)
     end
 end
 
----@param peer_id number
+---@param peer_id integer
 ---@param color Color
 function EHIMinionTracker:UpdatePeerColor(peer_id, color)
     if self._n_of_peers == 1 or not color then
@@ -305,7 +305,7 @@ function EHITotalMinionTracker:AddMinion(key, peer_id, local_peer)
     self._peers[peer_id] = peer_data
 end
 
----@param peer_id number
+---@param peer_id integer
 function EHITotalMinionTracker:RemovePeer(peer_id)
     if not self._peers[peer_id] then
         return

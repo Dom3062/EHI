@@ -8,8 +8,6 @@
     "ehi_wrong_game_version": "Game version is not compatible with EHI",
     "ehi_wrong_game_version_desc" : "Your game version is not compatible with this EHI version\nTo prevent unexpected crashes, EHI will disable itself from loading\nTo keep using EHI, please update your game",
 
-    "ehi_menu_reset_to_default" : "$BTN_RESET Set to default",
-
     "ehi_level_restart_required" : "A level restart is required for options to take effect",
 
     "ehi_item_blocked_by" : "This option is blocked by:",

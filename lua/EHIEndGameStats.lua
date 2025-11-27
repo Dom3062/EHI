@@ -174,7 +174,7 @@ end
 ---@class EHIEndGamePeerStats
 ---@field new fun(self: self, peer_id: number): self
 EHIEndGamePeerStats = class()
----@param peer_id number
+---@param peer_id integer
 function EHIEndGamePeerStats:init(peer_id)
     self._peer_id = peer_id
     self._damage = 0

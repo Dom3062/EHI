@@ -8,8 +8,6 @@
     "ehi_wrong_game_version": "Verze hry není kompatibilní s EHI",
     "ehi_wrong_game_version_desc" : "Tvoje verze hry není kompatibilní s touto verzí EHI\nAby se zabránilo nečekaným pádům hry, EHI se vypne a nebude se načítat se hrou\nProsím aktualizuj hru, aby jsi mohl dál používat EHI",
 
-    "ehi_menu_reset_to_default" : "$BTN_RESET Nastavit výchozí hodnotu",
-
     "ehi_level_restart_required" : "Aby se nastavení projevilo, je potřeba restartovat mapu",
 
     "ehi_item_blocked_by" : "Tuto možnost blokuje:",

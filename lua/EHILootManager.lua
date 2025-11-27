@@ -70,8 +70,10 @@ end
 ---@param unknown_random boolean?
 ---@param no_max boolean?
 ---@param max_bags_for_level table?
+---@param loot_distribution table<string, number>?
+---@param random_loot_distribution table<string, number>?
 ---@param waypoint_class string?
-function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, unknown_random, no_max, max_bags_for_level, waypoint_class)
+function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, unknown_random, no_max, max_bags_for_level, loot_distribution, random_loot_distribution, waypoint_class)
     EHI:LoadMaster("EHILootSharedMaster")
     if max_bags_for_level then
         self._master = EHILootMaxSharedMaster:new({
@@ -93,6 +95,8 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
             max_xp_bags = max_xp_bags or 0,
             offset = offset or 0,
             unknown_random = unknown_random,
+            loot_distribution = loot_distribution,
+            random_loot_distribution = random_loot_distribution,
             tracking = managers.ehi_tracking
         })
     end

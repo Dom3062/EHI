@@ -6,7 +6,7 @@ end
 ---@class ECMJammerBase
 ---@field _feedback_duration number?
 ---@field _owner UnitPlayer
----@field _owner_id number
+---@field _owner_id integer
 ---@field _position Vector3
 ---@field _unit UnitECM
 ---@field battery_life_multiplier number[]
@@ -24,6 +24,7 @@ local original =
     set_server_information = ECMJammerBase.set_server_information,
     set_owner = ECMJammerBase.set_owner,
     sync_setup = ECMJammerBase.sync_setup,
+    load = ECMJammerBase.load,
     destroy = ECMJammerBase.destroy
 }
 
@@ -31,12 +32,12 @@ local original =
 ---@param rot Rotation
 ---@param battery_life_upgrade_lvl number
 ---@param owner NetworkPeer
----@param peer_id number
+---@param peer_id integer
 ---@return UnitECM
 function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     local unit = original.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id, ...)
     unit:base():SetPeerID(peer_id)
-    if show_tracker and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
+    if show_tracker and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then -- Host
         managers.ehi_tracker:PreloadTracker({
             id = "ECMFeedbackRetrigger",
             icons = { "ecm_feedback", "restarter" },
@@ -48,7 +49,7 @@ function ECMJammerBase.spawn(pos, rot, battery_life_upgrade_lvl, owner, peer_id,
     return unit
 end
 
----@param peer_id number
+---@param peer_id integer
 function ECMJammerBase:set_server_information(peer_id, ...)
     original.set_server_information(self, peer_id, ...)
     self:SetPeerID(peer_id)
@@ -64,7 +65,7 @@ function ECMJammerBase:set_owner(...)
     self:SetPeerID(self._owner_id or 0)
     managers.ehi_tracker:CallFunction("ECMJammer", "UpdateOwnerID", self._ehi_peer_id)
     managers.ehi_tracker:CallFunction("ECMFeedback", "UpdateOwnerID", self._ehi_peer_id)
-    if show_tracker and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then
+    if show_tracker and managers.ehi_tracker:CallFunction2("ECMFeedbackRetrigger", "AddUnit") and EHIECMFeedbackRefreshTracker then -- Client
         managers.ehi_tracker:PreloadTracker({
             id = "ECMFeedbackRetrigger",
             icons = { "ecm_feedback", "restarter" },
@@ -75,7 +76,7 @@ function ECMJammerBase:set_owner(...)
     end
 end
 
----@param peer_id number
+---@param peer_id integer?
 function ECMJammerBase:SetPeerID(peer_id)
     local id = peer_id or 0
     self._ehi_peer_id = id
@@ -171,6 +172,11 @@ if EHI:GetOption("show_ecmfeedback_refresh") then
             end
         end
     end)
+end
+
+function ECMJammerBase:load(data, ...)
+    self:SetPeerID(data.ECMJammerBase.owner_id or 0)
+    original.load(self, data, ...)
 end
 
 function ECMJammerBase:destroy(...)

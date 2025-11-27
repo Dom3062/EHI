@@ -77,12 +77,9 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({ max = 10, client_from_start = true }, { class = EHI.Waypoints.LootCounter.Timed })
     end, { element = { 103216, 103217, 103218, 103219, 104215 } }, true, function(self)
         local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
-        local jewelry_to_subtract = 0
-        for _, jewelry_id in ipairs(jewelry) do
-            if managers.game_play_central:IsMissionUnitDisabled(jewelry_id) then
-                jewelry_to_subtract = jewelry_to_subtract + 1
-            end
-        end
+        local jewelry_to_subtract = table.list_count(jewelry, function(id)
+            return managers.game_play_central:IsMissionUnitDisabled(id)
+        end)
         EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract, client_from_start = true }, { class = EHI.Waypoints.LootCounter.Timed })
         self._loot:SyncSecuredLoot()
     end, true)

@@ -8,8 +8,6 @@
     "ehi_wrong_game_version": "游戏版本与EHI不兼容",
     "ehi_wrong_game_version_desc" : "你的游戏版本与EHI不兼容\n为避免游戏崩溃，本次游戏中EHI未启用\n如果仍需使用EHI，请更新游戏",
 
-    "ehi_menu_reset_to_default" : "$BTN_RESET;恢复默认",
-
     "ehi_level_restart_required" : "重启劫案以应用更改",
 
     "ehi_language" : "语言(Language)",

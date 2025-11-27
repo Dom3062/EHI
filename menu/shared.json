@@ -23,8 +23,7 @@
             "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "tracker_waypoint", "inaccurate" ]
-            },
-            "ehi_ver" : 145
+            }
         },
         {
             "type": "color",
@@ -40,8 +39,7 @@
             "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "tracker_waypoint", "pause" ]
-            },
-            "ehi_ver" : 145
+            }
         },
         {
             "type": "color",
@@ -57,8 +55,7 @@
             "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "tracker_waypoint", "drill_autorepair" ]
-            },
-            "ehi_ver" : 145
+            }
         },
         {
             "type": "color",
@@ -74,8 +71,7 @@
             "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "tracker_waypoint", "drill_not_powered" ]
-            },
-            "ehi_ver" : 267
+            }
         },
         {
             "type": "color",
@@ -91,8 +87,7 @@
             "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "tracker_waypoint", "warning" ]
-            },
-            "ehi_ver" : 145
+            }
         },
         {
             "type": "color",
@@ -108,8 +103,7 @@
             "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "tracker_waypoint", "completion" ]
-            },
-            "ehi_ver" : 145
+            }
         },
         {
             "type" : "divider",
@@ -129,8 +123,7 @@
             "callback": "ehi_set_item_value",
             "focus_changed_callback": "SetFocus",
             "value": "show_all_loot_secured_popup",
-            "default_value": true,
-            "ehi_ver" : 82
+            "default_value": true
         },
         {
             "type": "button",
@@ -157,8 +150,7 @@
                 "ehi_variable_random_loot_format_3"
             ],
             "value": "variable_random_loot_format",
-            "default_value": 3,
-            "ehi_ver" : 82
+            "default_value": 3
         },
         {
             "type": "toggle",
@@ -167,8 +159,7 @@
             "description": "ehi_show_loot_max_xp_bags_desc",
             "callback": "ehi_set_item_value",
             "value": "show_loot_max_xp_bags",
-            "default_value": true,
-            "ehi_ver" : 234
+            "default_value": true
         },
         {
             "type" : "divider",
@@ -192,8 +183,7 @@
             ],
             "value": "show_pager_callback_answered_behavior",
             "parent": "ehi_show_pager_callback_trackers_choice",
-            "default_value": 1,
-            "ehi_ver" : 240
+            "default_value": 1
         }
     ]
 }

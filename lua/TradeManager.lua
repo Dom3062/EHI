@@ -40,7 +40,7 @@ local original =
     load = TradeManager.load
 }
 
----@param peer_id number
+---@param peer_id integer
 ---@param respawn_penalty number
 ---@param civilians_killed number?
 local function CreateTracker(peer_id, respawn_penalty, civilians_killed)

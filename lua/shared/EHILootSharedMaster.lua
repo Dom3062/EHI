@@ -18,6 +18,18 @@ function EHILootSharedMaster:init(params)
     self._loot_id = {}
     self._loot_check_delay = {} ---@type table<number, { t: number, callback: fun(id: number)? }>
     self._loot_check_n = 0
+    if params.loot_distribution then
+        self._loot_distribution = {} ---@type table<string, integer>
+        for key, value in pairs(params.loot_distribution) do
+            self._loot_distribution[key] = value
+        end
+    end
+    if params.random_loot_distribution then
+        self._random_loot_distribution = {} ---@type table<string, integer>
+        for key, value in pairs(params.loot_distribution) do
+            self._random_loot_distribution[key] = value
+        end
+    end
 end
 
 function EHILootSharedMaster:post_init()
@@ -27,13 +39,21 @@ function EHILootSharedMaster:GetListenerID()
     return self._achievement_id or self._id
 end
 
+function EHILootSharedMaster:_get_number_of_loot_in_random_distribution()
+    local result = 0
+    for _, value in pairs(self._random_loot_distribution) do
+        result = result + value
+    end
+    return result
+end
+
 if EHI:GetOption("variable_random_loot_format") == 1 then
     function EHILootSharedMaster:Format()
         if self._max_xp_bags > 0 then
             local max = math.min(self._max, self._max_xp_bags)
             return self._progress .. "/" .. max
-        elseif self._max_random > 0 then
-            local max = self._max + self._max_random
+        elseif self._max_random > 0 or self._random_loot_distribution then
+            local max = self._max + (self._random_loot_distribution and self:_get_number_of_loot_in_random_distribution() or self._max_random)
             if self._unknown_random then
                 return self._progress .. "/" .. self._max .. "-" .. max .. "?+?"
             else
@@ -49,8 +69,8 @@ elseif EHI:GetOption("variable_random_loot_format") == 2 then
         if self._max_xp_bags > 0 then
             local max = math.min(self._max, self._max_xp_bags)
             return self._progress .. "/" .. max
-        elseif self._max_random > 0 then
-            local max = self._max + self._max_random
+        elseif self._max_random > 0 or self._random_loot_distribution then
+            local max = self._max + (self._random_loot_distribution and self:_get_number_of_loot_in_random_distribution() or self._max_random)
             if self._unknown_random then
                 return self._progress .. "/" .. max .. "?+?"
             else
@@ -66,11 +86,12 @@ else
         if self._max_xp_bags > 0 then
             local max = math.min(self._max, self._max_xp_bags)
             return self._progress .. "/" .. max
-        elseif self._max_random > 0 then
+        elseif self._max_random > 0 or self._random_loot_distribution then
+            local max = self._random_loot_distribution and self:_get_number_of_loot_in_random_distribution() or self._max_random
             if self._unknown_random then
-                return self._progress .. "/" .. self._max .. "+" .. self._max_random .. "?+?"
+                return self._progress .. "/" .. self._max .. "+" .. max .. "?+?"
             else
-                return self._progress .. "/" .. self._max .. "+" .. self._max_random .. "?"
+                return self._progress .. "/" .. self._max .. "+" .. max .. "?"
             end
         elseif self._unknown_random then
             return self._progress .. "/" .. self._max .. "+?"
@@ -328,6 +349,45 @@ function EHILootSharedMaster:ExplosionInTransport()
         self:RandomLootDeclined(self._n_of_loot_in_one_transport)
         self._n_of_loot_in_one_transport = 0
     end
+end
+
+---@param id string
+---@param amount integer?
+function EHILootSharedMaster:RandomLootInDistributionSpawned(id, amount)
+    local value = self._random_loot_distribution and self._random_loot_distribution[id]
+    if not value then
+        return
+    end
+    local final_value = math.min(value, amount or 1)
+    local spawned
+    if final_value >= value then
+        self._random_loot_distribution[id] = nil
+        spawned = value
+    else
+        self._random_loot_distribution[id] = value - final_value
+        spawned = value - final_value
+    end
+    if not next(self._random_loot_distribution) then
+        self._random_loot_distribution = nil
+    end
+    self:IncreaseProgressMax(spawned)
+end
+
+function EHILootSharedMaster:RandomLootInDistributionDeclined(id, amount)
+    local value = self._random_loot_distribution and self._random_loot_distribution[id]
+    if not value then
+        return
+    end
+    local final_value = math.min(value, amount or 1)
+    if final_value >= value then
+        self._random_loot_distribution[id] = nil
+    else
+        self._random_loot_distribution[id] = value - final_value
+    end
+    if not next(self._random_loot_distribution) then
+        self._random_loot_distribution = nil
+    end
+    self:SetProgressMax(self._max)
 end
 
 ---Called during GameSetup:load()

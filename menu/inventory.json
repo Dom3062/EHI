@@ -11,8 +11,7 @@
             "callback": "ehi_set_item_value",
             "value": "show_inventory_detailed_description",
             "default_value": false,
-            "child": "ehi_hide_original_desc_choice",
-            "ehi_ver" : 112
+            "child": "ehi_hide_original_desc_choice"
         },
         {
             "type": "divider",
@@ -26,8 +25,7 @@
             "callback": "ehi_set_item_value",
             "value": "hide_original_desc",
             "default_value": true,
-            "parent": "ehi_show_inventory_detailed_description_choice",
-            "ehi_ver" : 112
+            "parent": "ehi_show_inventory_detailed_description_choice"
         }
     ]
 }

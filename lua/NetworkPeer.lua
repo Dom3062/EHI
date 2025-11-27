@@ -4,14 +4,14 @@ if EHI:CheckLoadHook("NetworkPeer") or EHI.IsHost then
 end
 
 ---@class NetworkPeer
----@field _id number
+---@field _id integer
 ---@field _unit UnitPlayer
----@field id fun(self: self): number
+---@field id fun(self: self): integer
 ---@field character fun(self: self): string
 ---@field name fun(self: self): string
 ---@field set_outfit_string fun(self: self, outfit_string: table)
 ---@field unit fun(self: self): UnitPlayer
----@field qos fun(self: self): NetworkQOS?
+---@field qos fun(self: self): NetworkQoS?
 
 local load = NetworkPeer.load
 function NetworkPeer:load(...)

@@ -12,10 +12,7 @@ end
 
 ---@param dt number
 function EHITimerGuiSharedMaster:update(_, dt)
-    local dt_mod = self._timer_gui:get_timer_multiplier()
-    self._time = self._time - dt / dt_mod
-    local t = self._time * dt_mod
-    self._parent:UpdateTimer(self._key, t)
+    self._parent:UpdateTimer(self._key, self._timer_gui._time_left or self._timer_gui._current_timer or 0)
 end
 
 function EHITimerGuiSharedMaster:AddToUpdate()
@@ -70,9 +67,8 @@ end
 function EHITimerGuiGroupSharedMaster:update(_, dt)
     for id, timer in pairs(self._timers) do
         if timer.is_running then
-            local dt_mod = timer.timer_gui:get_timer_multiplier()
-            timer.time = timer.time - dt / dt_mod
-            local t = timer.time * dt_mod
+            local t = timer.timer_gui._time_left or timer.timer_gui._current_timer or 0
+            timer.time = t
             self._parent:UpdateTimer(id, t)
         end
     end

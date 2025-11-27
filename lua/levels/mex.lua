@@ -53,6 +53,55 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102485] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[102480] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:IsLootCounterVisible() then
+    local arizona_meth = 4
+    other[100108] = EHI:AddLootCounter2(function()
+        EHI:ShowLootCounterNoChecks({
+            -- 41 extra loot in Mexico (final loot count determined when spawned in Mexico)
+            -- 4 meth bags in Arizona
+            max = 45,
+            max_random = 4, -- Achievement armor
+            client_from_start = true,
+            triggers =
+            {
+                [100109] = EHI:AddCustomCode(function(self)
+                    self._loot:RandomLootDeclined(4) -- Alarm
+                end)
+            },
+            hook_triggers = true
+        })
+    end, { element = { EHI:GetInstanceElementID(100017, 24850), EHI:GetInstanceElementID(100017, 25850) }})
+    other[101740] = EHI:AddCustomCode(function(self)
+        if arizona_meth > 0 then
+            self._loot:DecreaseLootCounterProgressMax(arizona_meth)
+            arizona_meth = 0 -- Set the number to zero to avoid subtracting it again after players left the Arizona
+        end
+    end, true) -- Explosion
+    other[102815] = other[101740] -- Left Arizona
+    for _, meth in ipairs({ 102023, 102054, 103556, 103557 }) do
+        managers.mission:add_runned_unit_sequence_trigger(meth, "interact", function(unit)
+            arizona_meth = arizona_meth - 1
+        end)
+    end
+    other[EHI:GetInstanceElementID(100022, 26850)] = EHI:AddCustomCode(function(self)
+        self._loot:RandomLootSpawned(4)
+    end) -- Vault opened
+    local function LootDespawned()
+        managers.ehi_loot:DecreaseLootCounterProgressMax()
+    end
+    for _, i in ipairs({
+        -- Money
+        100654, 100655, 100656, 100681, 100696, 100653, 100720, 100758, 100759, 100820, 100827, 100828, 100829, 100841,
+
+        -- Weapons
+        100919, 100920, 100930, 100938, 100943, 100947, 100950, 100951, 100952, 100961, 100964, 100968, 100971, 100973,
+
+        -- Cocaine
+        100982, 100984, 100990, 100994, 101001, 101003, 101089, 101260, 101261, 101262, 101265, 101266, 101267
+    }) do
+        other[i] = { special_function = SF.CustomCodeIfEnabled, f = LootDespawned, trigger_once = true }
+    end
+end
 
 EHI.Mission:ParseTriggers({
     mission = triggers,
@@ -60,6 +109,13 @@ EHI.Mission:ParseTriggers({
     other = other
 })
 
+local MinBags = EHI:GetValueBasedOnDifficulty({
+    normal = 4,
+    hard = 6,
+    veryhard = 6,
+    overkill = 8,
+    mayhem_or_above = 12
+})
 EHI:AddXPBreakdown({
     plan =
     {
@@ -76,7 +132,17 @@ EHI:AddXPBreakdown({
                 { amount = 3000, name = "mex1_hose_detached" },
                 { escape = 1000 },
             },
-            loot_all = 1000
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        loot_all = { min = MinBags, max = 43 }
+                    }
+                }
+            }
         },
         loud =
         {
@@ -91,7 +157,17 @@ EHI:AddXPBreakdown({
                 { amount = 2000, name = "mex1_hose_detached" },
                 { escape = 1000 },
             },
-            loot_all = 1000
+            loot_all = 1000,
+            total_xp_override =
+            {
+                params =
+                {
+                    min_max =
+                    {
+                        loot_all = { min = MinBags, max = 35 }
+                    }
+                }
+            }
         }
     }
 })

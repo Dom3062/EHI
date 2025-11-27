@@ -65,17 +65,12 @@ function EHITrackerManager:init_finalize()
             def.tracker:MissionEnd()
         end
     end)
-    if CustomNameColor and CustomNameColor.ModID and not Global.game_settings.single_player then
-        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_EHITrackerManager", function(data, sender)
-            if data and data ~= "" then
-                local col = NetworkHelper:StringToColour(data)
-                self:CallFunction("Converts", "UpdatePeerColor", sender, col)
-            end
-        end)
-    end
+    EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+        self:CallFunction("Converts", "UpdatePeerColor", peer_id, color)
+    end)
 end
 
----@param peer_id number?
+---@param peer_id integer?
 function EHITrackerManager:GetPeerColorByPeerID(peer_id)
     return peer_id and tweak_data.chat_colors[peer_id] or Color.white
 end
@@ -224,7 +219,7 @@ if EHITrackerManager._n_of_rc > 0 then
     EHITrackerManager._rc_params =
     {
         last_line = 1,
-        next_panel_offset = tweak_data.ehi.default.tracker.size_h + tweak_data.ehi.default.tracker.gap, --[[@as number]]
+        next_panel_offset = tweak_data.ehi.default.tracker.size_h + tweak_data.ehi.default.tracker.gap,
         gap_scaled = tweak_data.ehi.default.tracker.gap,
         horizontal_offset = 0
     }
