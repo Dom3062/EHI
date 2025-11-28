@@ -294,7 +294,9 @@
             "value": "show_trackers",
             "default_value": true,
             "children" : [ "ehi_trackers_menu", "ehi_show_preview_text_choice", "ehi_show_preview_trackers_choice" ],
-            "children_f_or" : "ehi_is_shared_menu_available_1",
+            "children_f_or" : {
+                "ehi_shared_menu": "ehi_is_shared_menu_available_1"
+            },
             "params": {
                 "call_tracker_function": {
                     "f": "UpdateTrackerState"
@@ -318,7 +320,9 @@
             "value": "show_waypoints",
             "default_value": true,
             "child" : "ehi_waypoints_menu",
-            "children_f_or" : "ehi_is_shared_menu_available_2"
+            "children_f_or" : {
+                "ehi_shared_menu": "ehi_is_shared_menu_available_2"
+            }
         },
         {
             "type": "button",

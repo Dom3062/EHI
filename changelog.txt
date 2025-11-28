@@ -1,3 +1,8 @@
+r360 (28. 11. 2025):
+Menu: Fixed a crash when trying to enable or disable trackers or waypoints
+Menu: Fixed an issue where some options were disabled when they should be enabled
+Santa's Workshop: Fixed a load crash
+
 r359 (27. 11. 2025):
 Hostage Tracker: Fixed negative numbers
 Timers: Attempt to fix again incorrect time in the tracker and waypoint

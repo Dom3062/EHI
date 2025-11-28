@@ -48,7 +48,6 @@
                 "g": 188,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "parent": "ehi_other_show_mission_xp_overview_choice",
             "params" : {
                 "settings" : [ "mission_briefing", "loot_secured" ]
@@ -65,7 +64,6 @@
                 "g": 255,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "parent": "ehi_other_show_mission_xp_overview_choice",
             "params" : {
                 "settings" : [ "mission_briefing", "total_xp" ]
@@ -82,7 +80,6 @@
                 "g": 209,
                 "b": 254
             },
-            "callback": "ehi_modify_item_color",
             "parent": "ehi_other_show_mission_xp_overview_choice",
             "params" : {
                 "settings" : [ "mission_briefing", "optional" ]
@@ -435,7 +432,6 @@
                 "g": 255,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "bag_contour", "light" ]
             },
@@ -452,7 +448,6 @@
                 "g": 0,
                 "b": 40
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "bag_contour", "heavy" ]
             },
@@ -469,7 +464,6 @@
                 "g": 80,
                 "b": 100
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "bag_contour", "body" ]
             },

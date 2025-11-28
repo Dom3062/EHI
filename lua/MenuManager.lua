@@ -31,13 +31,26 @@ local function ShowOrHideMenuStuff(show)
             PocoHud3.dbgLbl:hide()
         end
     end
+    local contract_gui = menu_component._contract_gui -- Lobby
+    if contract_gui then
+        contract_gui._panel:set_visible(show)
+        contract_gui._fullscreen_panel:set_visible(show)
+    end
+    local game_chat_gui = menu_component._game_chat_gui
+    if game_chat_gui then
+        game_chat_gui._hud_panel:set_visible(show)
+    end
     tracker_preview._panel:set_visible(not show)
     buff_preview._panel:set_visible(not show)
 end
 
 ---@param compare { comparator: string, value: integer }
----@param value integer
-local function check_value(compare, value)
+---@param value boolean|integer
+---@param type string?
+local function check_value(compare, value, type)
+    if type == "toggle" then
+        value = value == "on"
+    end
     local result = true
     local comparator = compare.comparator or "=="
     local value_to_compare = compare.value
@@ -270,7 +283,7 @@ local function LoadFromJsonFile(file_path, data_table)
                         name = id,
                         text_id = title,
                         help_id = desc,
-                        callback = callback,
+                        callback = "ehi_modify_item_color",
                         localize = localized,
                         localize_help = localized,
                         default_color = item.default_value
@@ -315,7 +328,7 @@ local function LoadFromJsonFile(file_path, data_table)
                     if item.parent_compare and item.parent_compare.id and previous_items[item.parent_compare.id] then
                         local data = item.parent_compare
                         local parent = previous_items[data.id]
-                        local result = check_value(data, parent:value())
+                        local result = check_value(data, parent:value(), parent:type())
                         if data.enabled then
                             result = result and parent:enabled()
                         end
@@ -325,7 +338,7 @@ local function LoadFromJsonFile(file_path, data_table)
                         if item.parents_compare.comparator == "and" then
                             for key, data in pairs(item.parents_compare.items) do
                                 local parent = previous_items[key]
-                                if parent and not check_value(data, parent:value()) then
+                                if parent and not check_value(data, parent:value(), parent:type()) then
                                     final_result = false
                                     break
                                 end
@@ -334,7 +347,7 @@ local function LoadFromJsonFile(file_path, data_table)
                             final_result = false
                             for key, data in pairs(item.parents_compare.items) do
                                 local parent = previous_items[key]
-                                if parent and check_value(data, parent:value()) then
+                                if parent and check_value(data, parent:value(), parent:type()) then
                                     final_result = true
                                     break
                                 end
@@ -371,6 +384,7 @@ local Languages =
 Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc)
     local language_filename = nil
     local lang = EHI:GetOption("mod_language")
+    local LocPath = EHI.ModPath .. "loc/"
     if lang == 1 then -- Autodetect
         local LanguageKey =
         {
@@ -385,7 +399,7 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
             end
         end
         if not language_filename then
-            for _, filename in ipairs(file.GetFiles(EHI.LocPath)) do
+            for _, filename in ipairs(file.GetFiles(LocPath)) do
                 local str = filename:match('^(.*).json$')
                 if str and Idstring(str) and Idstring(str):key() == SystemInfo:language():key() then
                     language_filename = str
@@ -394,15 +408,15 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
             end
         end
         if language_filename then
-            loc:load_localization_file(EHI.ModPath .. "loc/" .. language_filename .. ".json")
+            loc:load_localization_file(LocPath .. language_filename .. ".json")
         end
     else
-        loc:load_localization_file(EHI.ModPath .. "loc/" .. Languages[lang] .. ".json")
+        loc:load_localization_file(LocPath .. Languages[lang] .. ".json")
     end
     if lang ~= 2 or not language_filename then
-        loc:load_localization_file(EHI.ModPath .. "loc/english.json", false)
+        loc:load_localization_file(LocPath .. "english.json", false)
     end
-    loc:load_localization_file(EHI.ModPath .. "loc/languages.json")
+    loc:load_localization_file(LocPath .. "languages.json")
     EHI:RunOnLocalizationLoaded(loc, Languages[lang] or language_filename or "english")
 end)
 

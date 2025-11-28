@@ -169,7 +169,6 @@
                 "g": 0,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "equipment", "doctor_bag" ]
             },
@@ -186,7 +185,6 @@
                 "g": 255,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "equipment", "ammo_bag" ]
             },
@@ -203,7 +201,6 @@
                 "g": 255,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "equipment", "grenade_crate" ]
             },
@@ -220,7 +217,6 @@
                 "g": 102,
                 "b": 102
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "equipment", "first_aid_kit" ]
             },
@@ -237,7 +233,6 @@
                 "g": 204,
                 "b": 255
             },
-            "callback": "ehi_modify_item_color",
             "params" : {
                 "settings" : [ "equipment", "bodybags_bag" ]
             },

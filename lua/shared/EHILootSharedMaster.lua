@@ -26,7 +26,7 @@ function EHILootSharedMaster:init(params)
     end
     if params.random_loot_distribution then
         self._random_loot_distribution = {} ---@type table<string, integer>
-        for key, value in pairs(params.loot_distribution) do
+        for key, value in pairs(params.random_loot_distribution) do
             self._random_loot_distribution[key] = value
         end
     end

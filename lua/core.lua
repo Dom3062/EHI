@@ -656,8 +656,6 @@ _G.EHI =
     ModInstance = ModInstance,
     -- PAYDAY 2/mods/Extra Heist Info/
     ModPath = ModPath,
-    -- PAYDAY 2/mods/Extra Heist Info/loc/
-    LocPath = ModPath .. "loc/",
     -- PAYDAY 2/mods/Extra Heist Info/lua/
     LuaPath = ModPath .. "lua/",
     -- PAYDAY 2/mods/Extra Heist Info/menu/
@@ -2184,7 +2182,7 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
             params.max_bags_for_level.objective_triggers = nil
         end
         params.no_sync_load = true
-        managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, nil, nil, params.max_bags_for_level)
+        managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level, nil, nil, nil)
     else
         if not self:GetOption("show_loot_max_xp_bags") or _G.ch_settings then
             params.max_xp_bags = 0

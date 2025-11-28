@@ -820,7 +820,6 @@
                 "g": 255,
                 "b": 255
             },
-            "callback": "ehi_modify_item_color",
             "parent" : "ehi_show_sniper_tracker_choice",
             "params" : {
                 "settings" : [ "tracker_waypoint", "sniper_chance" ],
@@ -841,7 +840,6 @@
                 "g": 165,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "parent" : "ehi_show_sniper_tracker_choice",
             "params" : {
                 "settings" : [ "tracker_waypoint", "sniper_count" ],

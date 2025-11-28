@@ -57,7 +57,6 @@
                 "g": 184,
                 "b": 78
             },
-            "callback": "ehi_modify_item_color",
             "parent": "ehi_show_achievement_choice",
             "params" : {
                 "settings" : [ "unlockables", "achievement" ],
@@ -282,7 +281,6 @@
                 "g": 116,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "color_type" : "unlockables",
             "parent": "ehi_show_trophies_choice",
             "params" : {
@@ -406,7 +404,6 @@
                 "g": 206,
                 "b": 235
             },
-            "callback": "ehi_modify_item_color",
             "parent": "ehi_show_dailies_choice",
             "params" : {
                 "settings" : [ "unlockables", "sidejob" ],
@@ -514,7 +511,6 @@
                 "g": 168,
                 "b": 0
             },
-            "callback": "ehi_modify_item_color",
             "parent": "ehi_show_events_choice",
             "params" : {
                 "settings" : [ "unlockables", "event" ],
