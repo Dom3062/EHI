@@ -1029,6 +1029,8 @@ local function LoadDefaultValues(self)
             inspire_ace_persistent = false,
             inspire_reload = true,
             inspire_reload_persistent = false,
+            inspire_movement = true,
+            inspire_movement_persistent = false,
             uppers = true,
             uppers_persistent = false,
             uppers_range = true,

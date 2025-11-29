@@ -1,3 +1,9 @@
+r361 (29. 11. 2025):
+Buffs: Fixed an issue where options Inspire (Reload) and Inspire (Movement) do not work correctly
+Converts Tracker: Fixed an issue where convert count for each player could be misaligned
+Jewelry Store: Fixed an issue where loot count does not match (client only)
+Ukrainian Job: Fixed an issue where loot count does not match after drop-in (client only)
+
 r360 (28. 11. 2025):
 Menu: Fixed a crash when trying to enable or disable trackers or waypoints
 Menu: Fixed an issue where some options were disabled when they should be enabled

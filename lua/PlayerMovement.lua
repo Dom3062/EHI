@@ -33,8 +33,8 @@ if (EHI:GetBuffOption("inspire_reload") or EHI:GetBuffOption("inspire_movement")
     function PlayerMovement:on_morale_boost(...)
         original.on_morale_boost(self, ...)
         local t = tweak_data.upgrades.morale_boost_time
-        managers.ehi_buff:AddBuff("inspire_reload", t)
-        managers.ehi_buff:AddBuff("inspire_movement", t)
+        managers.ehi_buff:AddBuff("morale_boost_reload", t)
+        managers.ehi_buff:AddBuff("morale_boost_movement", t)
     end
 end
 

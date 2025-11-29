@@ -272,6 +272,16 @@ function EHIMinionHealthOnlyTracker:RemovePeer(peer_id)
     self:delete()
 end
 
+function EHIMinionHealthOnlyTracker:UpdatePeerColor(peer_id, color)
+    if peer_id ~= managers.network:session():local_peer():id() or not color then
+        return
+    end
+    local peer_data = self._peers[peer_id]
+    if peer_data then
+        peer_data.label:set_color(color)
+    end
+end
+
 ---@class EHITotalMinionTracker : EHIMinionTracker
 ---@field super EHIMinionTracker
 EHITotalMinionTracker = class(EHIMinionTracker)
@@ -323,4 +333,7 @@ end
 function EHITotalMinionTracker:FormatUnique(peer_data)
     self._n_of_minions = self._n_of_minions - 1
     self._text:set_text(tostring(self._n_of_minions))
+end
+
+function EHITotalMinionTracker:UpdatePeerColor(peer_id, color)
 end

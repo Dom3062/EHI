@@ -38,10 +38,10 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103219 } }
 end
 if EHI:IsLootCounterVisible() then
-    local jewelry = { 102948, 102949, 102950, 100005, 100006, 100013, 100014, 100007, 100008 }
-    other[100073] = EHI:AddLootCounter2(function()
-        local jewelry_to_subtract = table.list_count(jewelry, function(id)
-            return managers.game_play_central:IsMissionUnitDisabled(id)
+    local jewelry_sequence = { 101207, 101203, 101213, 101195, 101193, 101185, 101189, 100031, 100602 }
+    other[100073] = EHI:AddLootCounter3(function(self)
+        local jewelry_to_subtract = table.list_count(jewelry_sequence, function(id)
+            return self._utils:IsMissionElementDisabled(id)
         end)
         EHI:ShowLootCounterNoChecks({
             max = 10 - jewelry_to_subtract,

@@ -147,14 +147,11 @@ end
 ---@param o Text
 ---@param target_x number
 ---@param target_w number
----@param fit_the_text_after_anim boolean
+---@param fit_the_text_after_anim boolean?
 ---@param self EHITracker
-local function icon_move_x_w(o, target_x, target_w, fit_the_text_after_anim, self)
-    local TOTAL_T = 0.18
+local function text_move_x_w(o, target_x, target_w, fit_the_text_after_anim, self)
+    local t, TOTAL_T = 0, 0.18
     local from_x, from_w = o:x(), o:w()
-    local t_x = (1 - math.abs(from_x - target_x) / math.abs(from_x - target_x)) * TOTAL_T
-    local t_w = (1 - math.abs(from_w - target_w) / math.abs(from_w - target_w)) * TOTAL_T
-    local t = math.max(t_x, t_w)
     while TOTAL_T > t do
         local dt = coroutine.yield()
         t = math.min(t + dt, TOTAL_T)
@@ -609,7 +606,7 @@ function EHITracker:AnimateTextPosition(target_x, target_w, text, fit_the_text_a
     if self.__text_anims[key] then
         text:stop(self.__text_anims[key])
     end
-    text:animate(icon_move_x_w, target_x, target_w, fit_the_text_after_anim, self)
+    self.__text_anims[key] = text:animate(text_move_x_w, target_x, target_w, fit_the_text_after_anim, self)
 end
 
 ---@param previous_icon Bitmap?
