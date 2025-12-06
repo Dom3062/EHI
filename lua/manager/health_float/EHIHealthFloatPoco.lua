@@ -167,25 +167,20 @@ function EHIHealthFloatPoco:draw(t)
         self:delete()
         return
     end
-    if not alive(self._pnl) then
-        return
-    end
     local unit = self._unit
     if not alive(unit) then
         return
     end
-    local dx, dy, d, pDist, ww, hh = 0, 0, 1, 0, self._parent._ww, self._parent._hh
+    if not alive(self._pnl) then
+        return
+    end
     local pos = self._parent:_pos(unit)
     local nl_dir = pos - self._parent._camPos
     mvector3.normalize(nl_dir)
     local dot_visible = mvector3.dot(self._parent._nl_cam_forward, nl_dir) > 0
-    local pPos = self._parent:_v2p(pos) ---@cast pPos -false
-    dx = pPos.x - ww / 2
-    dy = pPos.y - hh / 2
-    pDist = dx * dx + dy * dy
     self._pnl:set_visible(dot_visible)
     if dot_visible then
-        local isADS = self._parent.ADS
+        local d = 1
         local base = unit:base() ---@cast base -PlayerBase|HuskPlayerBase|SentryGunBase|UnitBase
         local character_damage = unit:character_damage()
         local cHealth = character_damage and character_damage._health and character_damage._health * 10 or 0
@@ -234,6 +229,10 @@ function EHIHealthFloatPoco:draw(t)
             local txts = {}
             local m = self._margin
             local color = isEnemy and math.lerp(self._color_end, self._color_start, prog) or self._color_friendly
+            local pPos = self._parent:_v2p(pos) ---@cast pPos -false
+            local dx = pPos.x - self._parent._ww / 2
+            local dy = pPos.y - self._parent._hh / 2
+            local pDist = dx * dx + dy * dy
             if pDist <= 100000 and cHealth > 0 then
                 txts[1] = { round(cHealth) .. '/' .. round(fHealth), color }
             end
@@ -252,7 +251,7 @@ function EHIHealthFloatPoco:draw(t)
             self._pnl:set_size(m * 2 + (w > 0 and w + m + 1 or 0) + size, h + 2 * m)
             self.bg:set_size(self._pnl:size())
             self._pnl:set_center(pPos.x, pPos.y)
-            d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
+            d = self._parent.ADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
             d = math.min(d, self._opacity)
             if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then
                 d = math.min(d, self._parent:_visibility(pos))
@@ -299,7 +298,6 @@ end
 function EHIHealthFloatPoco:destroy()
     local pnl = self._pnl
     if alive(pnl) then
-        pnl:stop()
         pnl:parent():remove(pnl)
     end
     self._parent._floats[self._key] = nil
@@ -353,18 +351,13 @@ function EHIReusableHealthFloatPoco:draw(t)
     if not alive(unit) then
         return
     end
-    local dx, dy, d, pDist, ww, hh = 0, 0, 1, 0, self._parent._ww, self._parent._hh
     local pos = self._parent:_pos(unit)
     local nl_dir = pos - self._parent._camPos
     mvector3.normalize(nl_dir)
     local dot_visible = mvector3.dot(self._parent._nl_cam_forward, nl_dir) > 0
-    local pPos = self._parent:_v2p(pos) ---@cast pPos -false
-    dx = pPos.x - ww / 2
-    dy = pPos.y - hh / 2
-    pDist = dx * dx + dy * dy
     self._pnl:set_visible(dot_visible)
     if dot_visible then
-        local isADS = self._parent.ADS
+        local d = 1
         local character_damage = unit:character_damage()
         local cHealth = character_damage and character_damage._health and character_damage._health * 10 or 0
         local fHealth = cHealth > 0 and (character_damage._HEALTH_INIT * 10) or 1 ---@diagnostic disable-line
@@ -373,6 +366,10 @@ function EHIReusableHealthFloatPoco:draw(t)
             local size = self._size
             local txts = {}
             local m = self._margin
+            local pPos = self._parent:_v2p(pos) ---@cast pPos -false
+            local dx = pPos.x - self._parent._ww / 2
+            local dy = pPos.y - self._parent._hh / 2
+            local pDist = dx * dx + dy * dy
             if pDist <= 100000 and cHealth > 0 then
                 local color = self._UNIT_IS_FRIENDLY and self._color_friendly or math.lerp(self._color_end, self._color_start, prog)
                 txts[1] = { round(cHealth) .. '/' .. round(fHealth), color }
@@ -392,7 +389,7 @@ function EHIReusableHealthFloatPoco:draw(t)
             self._pnl:set_size(m * 2 + (w > 0 and w + m + 1 or 0) + size, h + 2 * m)
             self.bg:set_size(self._pnl:size())
             self._pnl:set_center(pPos.x, pPos.y)
-            d = isADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
+            d = self._parent.ADS and math.clamp((pDist - 1000) / 2000, 0.4, 1) or 1
             d = math.min(d, self._opacity)
             if not (unit and unit:contour() and next(unit:contour()._contour_list or {})) then
                 d = math.min(d, self._parent:_visibility(pos))

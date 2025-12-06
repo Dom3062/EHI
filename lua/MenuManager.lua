@@ -9,7 +9,7 @@ local cache = {}
 ---@param show boolean
 local function ShowOrHideMenuStuff(show)
     local menu_component = managers.menu_component
-    local blt_notifications = menu_component._blt_notifications
+    local blt_notifications = menu_component:blt_notifications_gui()
     if blt_notifications then
         blt_notifications._panel:set_visible(show)
         if blt_notifications._beardlib_panel then
@@ -682,6 +682,10 @@ end
 
 function MenuCallbackHandler.ehi_show_floating_health_bar_style_poco_blur_available_1()
     return EHI:GetOption("show_floating_health_bar_style") == 1 -- Poco style
+end
+
+function MenuCallbackHandler.ehi_show_floating_text_throwables_block_on_abilities_choice_1()
+    return EHI:GetOption("show_floating_text_throwables")
 end
 
 function MenuCallbackHandler:ehi_update_buff_text_color(item)

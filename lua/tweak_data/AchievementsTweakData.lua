@@ -134,7 +134,7 @@ local achievements = {
 ---@class AchievementsTweakData
 ---@field tags { progress: string[] }
 ---@field persistent_stat_unlocks table<string, { [1]: { award: string, at: number } }>
----@field visual table<string, { icon_id: string, tags: string[] }>
+---@field visual table<string, { icon_id: string, tags: string[], unlock_icons: { texture: string }[] }>
 
 local original = AchievementsTweakData._init_visual
 function AchievementsTweakData:_init_visual(...)

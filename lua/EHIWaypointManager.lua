@@ -25,6 +25,7 @@ end
 
 function EHIWaypointManager:init_finalize()
     if self._enabled then
+        self._scale_offset_multiplier = EHI:GetOption("show_waypoints_offset_multiplier")
         self._update_waypoint_position_callback = callback(self, self, "update_position")
         EHI:AddOnAlarmCallback(function(dropin)
             for _, waypoint in pairs(self._waypoints) do
@@ -501,8 +502,9 @@ function EHIWaypointManager:update_position(t, dt)
 
     mrotation.y(cam_rot, wp_cam_forward)
 
+    local panel = self._panel
+
     for _, data in pairs(self._waypoints_data) do
-        local panel = self._panel
         if data.state == "sneak_present" then
             data.current_position = Vector3(panel:center_x(), panel:center_y())
 
@@ -583,7 +585,7 @@ function EHIWaypointManager:update_position(t, dt)
                 mvector3.set_static(direction, wp_pos.x - panel_center_x, wp_pos.y - panel_center_y, 0)
                 mvector3.normalize(direction)
 
-                local distance = data.radius * tweak_data.scale.hud_crosshair_offset_multiplier
+                local distance = data.radius * self._scale_offset_multiplier
                 local target_pos = wp_onscreen_target_pos
 
                 mvector3.set_static(target_pos, panel_center_x + mvector3.x(direction) * distance, panel_center_y + mvector3.y(direction) * distance, 0)
@@ -746,7 +748,6 @@ do
     dofile(path .. "EHIWaypoint.lua")
     dofile(path .. "EHIWarningWaypoint.lua")
     dofile(path .. "EHIPausableWaypoint.lua")
-    dofile(path .. "EHITimerWaypoint.lua")
     dofile(path .. "EHIProgressWaypoint.lua")
     dofile(path .. "EHIChanceWaypoint.lua")
     dofile(path .. "EHIInaccurateWaypoints.lua")

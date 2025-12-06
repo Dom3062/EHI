@@ -45,13 +45,13 @@ Hooks:PostHook(AchievementListGui, "update_detail", "EHI_AchievementListGui_upda
         local placer = canvas:placer()
         local pre, table_to_iterate
         if id == "xm20_1" then
-            pre = "Missing mask in the following heist(s):"
+            pre = managers.localization:text("menu_achievements_progress_ehi_xm20_1")
             table_to_iterate = xm20_1
         elseif id == "pent_11" then
-            pre = "Missing teaset in the following heist(s):"
+            pre = managers.localization:text("menu_achievements_progress_ehi_pent_11")
             table_to_iterate = pent_11
         else
-            pre = "Missing recording in the following heist(s):"
+            pre = managers.localization:text("menu_achievements_progress_ehi_lrfo_1")
             table_to_iterate = lrfo_1
         end
         placer:add_row(canvas:fine_text({
@@ -86,13 +86,13 @@ Hooks:PostHook(AchievementDetailGui, "init", "EHI_AchievementDetailGui_init", fu
         local placer = canvas:placer()
         local pre, table_to_iterate
         if self._id == "xm20_1" then
-            pre = "Missing mask in the following heist(s):"
+            pre = managers.localization:text("menu_achievements_progress_ehi_xm20_1")
             table_to_iterate = xm20_1
         elseif self._id == "pent_11" then
-            pre = "Missing teaset in the following heist(s):"
+            pre = managers.localization:text("menu_achievements_progress_ehi_pent_11")
             table_to_iterate = pent_11
         else
-            pre = "Missing recording in the following heist(s):"
+            pre = managers.localization:text("menu_achievements_progress_ehi_lrfo_1")
             table_to_iterate = lrfo_1
         end
         placer:add_row(canvas:fine_text({

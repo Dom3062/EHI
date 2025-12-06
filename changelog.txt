@@ -1,3 +1,8 @@
+r362 (06. 12. 2025):
+Added text float for deployables
+Achievement "Hammertime" will show progress in popup instead of in tracker
+Improved memory consumption by deferring loading of TimerGui, DigitalGui and SecurityLockGui waypoints until they are needed
+
 r361 (29. 11. 2025):
 Buffs: Fixed an issue where options Inspire (Reload) and Inspire (Movement) do not work correctly
 Converts Tracker: Fixed an issue where convert count for each player could be misaligned

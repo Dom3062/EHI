@@ -1,7 +1,6 @@
 ---@class EHIDeployableManager
 local EHIDeployableManager = {}
 EHIDeployableManager._all_deployables_tracker = EHI:GetOption("show_equipment_aggregate_all") and "Deployables"
-EHIDeployableManager._block_abilities_or_no_throwable = EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") --[[@as boolean]]
 EHIDeployableManager._equipment_map =
 {
     doctor = "doctor_bag",
@@ -15,12 +14,12 @@ function EHIDeployableManager:post_init()
     EHI:AddOnAlarmCallback(function(dropin)
         self:AddEquipmentToIgnore(self._equipment_map.bodybag)
     end)
-    EHI:AddOnSpawnedCallback(function()
-        if self._block_abilities_or_no_throwable and not managers.blackmarket:equipped_grenade_allows_pickups() then
+    if EHI:GetOption("grenadecases_block_on_abilities_or_no_throwable") then
+        EHI.PlayerUtils:AddGrenadeDoesNotAllowPickupsCallback(function()
             self:AddEquipmentToIgnore(self._equipment_map.grenade)
             managers.ehi_tracker:ForceRemoveTracker("GrenadeCases")
-        end
-    end)
+        end)
+    end
     if self._all_deployables_tracker then
         EHI:LoadTracker("EHIAggregatedEquipmentTracker")
     else

@@ -96,7 +96,7 @@ function EHITweakData:new(tweak_data)
         ecm_jammer = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {64, 256, 64, 64} },
         ecm_feedback = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 128, 64, 64} },
 
-        hoxton_character = { texture = "guis/dlcs/trk/textures/pd2/old_hoxton_unlock_icon" },
+        hoxton_character = { texture = tweak_data.achievement.visual.bulldog_1.unlock_icons[1].texture },
 
         daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} },
 
@@ -1163,6 +1163,7 @@ function EHITweakData:new(tweak_data)
             deck = true,
             x = 3,
             y = 7,
+            text = "Stored",
             group = "health_regen",
             deck_option =
             {

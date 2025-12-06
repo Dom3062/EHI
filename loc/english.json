@@ -647,34 +647,37 @@
     "ehi_show_waypoints_present_timer" : "Present Timer",
     "ehi_show_waypoints_present_timer_desc" : "Sets how long the waypoint will stay on your screen before it will 'move' to its destination",
 
-    "ehi_show_waypoints_mission" : "Show Waypoints For Heist Elements",
+    "ehi_show_waypoints_offset_multiplier" : "Offset Multiplier",
+    "ehi_show_waypoints_offset_multiplier_desc" : "Sets how close the waypoint should be to the center\nLower number than 1 moves it closer, higher number moves it away",
+
+    "ehi_show_waypoints_mission" : "Heist Elements",
     "ehi_show_waypoints_mission_desc" : "Shows a waypoint on heist elements\nNote: If element does not have waypoint defined, tracker will be shown instead",
 
-    "ehi_show_waypoints_mission_cheaty" : "Show Waypoints For Heist Elements - Remember or Find Information",
+    "ehi_show_waypoints_mission_cheaty" : "Heist Elements - Remember or Find Information",
     "ehi_show_waypoints_mission_cheaty_desc" : "Shows a waypoint on heist elements that requires you to remember something or find information to progress\n\nExamples:\nColored codes\nCorrect sequence\n\nNote: If element does not have waypoint defined, tracker will be shown instead",
 
-    "ehi_show_waypoints_escape" : "Show Waypoints for Escape Vehicles",
+    "ehi_show_waypoints_escape" : "Escape Vehicles",
     "ehi_show_waypoints_escape_desc" : "Shows a waypoint where escape vehicles will arrive (no timer)",
 
-    "ehi_show_waypoints_enemy_turret" : "Show Waypoints For Enemy Turret",
+    "ehi_show_waypoints_enemy_turret" : "Enemy Turret",
     "ehi_show_waypoints_enemy_turret_desc" : "Shows a waypoint on the enemy turret when it is reloading or repairing",
 
-    "ehi_show_waypoints_timers" : "Show Waypoints For Timers",
+    "ehi_show_waypoints_timers" : "Timers",
     "ehi_show_waypoints_timers_desc" : "Shows a waypoint on a visible timer (hacking, drilling, sawing, etc ...)",
 
-    "ehi_show_waypoints_pager" : "Show Waypoints For Pagers",
+    "ehi_show_waypoints_pager" : "Pagers",
     "ehi_show_waypoints_pager_desc" : "Shows a waypoint on a pager that needs to be answered",
 
-    "ehi_show_waypoints_cameras" : "Show Waypoints for Looped Cameras",
+    "ehi_show_waypoints_cameras" : "Looped Cameras",
     "ehi_show_waypoints_cameras_desc" : "Shows a waypoint on a camera that is currently being looped",
 
-    "ehi_show_waypoints_zipline" : "Show Waypoints for Ziplines",
+    "ehi_show_waypoints_zipline" : "Ziplines",
     "ehi_show_waypoints_zipline_desc" : "Shows a waypoint on a zipline that is in motion\nOnly the reset time is shown",
 
-    "ehi_show_waypoints_ecmjammer" : "Show Waypoints for ECM Jammer",
+    "ehi_show_waypoints_ecmjammer" : "ECM Jammer",
     "ehi_show_waypoints_ecmjammer_desc" : "Shows a waypoint on active ECM Jammer",
 
-    "ehi_show_waypoints_loot_counter" : "Show Waypoints for Loot Counter",
+    "ehi_show_waypoints_loot_counter" : "Loot Counter",
     "ehi_show_waypoints_loot_counter_desc" : "Shows a waypoint on active loot area\n\nThis option replaces vanilla loot area waypoint\nIf the loot icon is not visible, waypoint may use a different icon",
 
     "ehi_shared_menu" : "Shared options between Trackers and Waypoints",
@@ -1101,7 +1104,7 @@
     "ehi_other_show_mission_xp_overview" : "Show Mission XP Overview",
     "ehi_other_show_mission_xp_overview_desc" : "Shows a panel in Mission Briefing with possible XP you can get",
 
-    "ehi_other_show_floating_health_bar" : "Show Floating Health Bar",
+    "ehi_other_show_floating_health_bar" : "Floating Health Bar",
     "ehi_other_show_floating_health_bar_desc" : "Shows a floating health bar when you aim at someone",
 
     "ehi_other_show_floating_health_bar_style" : "Style",
@@ -1109,23 +1112,23 @@
     "ehi_other_show_floating_health_bar_style_2" : "Circle",
     "ehi_other_show_floating_health_bar_style_3" : "Rectangle",
 
-    "ehi_other_show_floating_health_bar_style_poco_blur" : "Show Background Blur",
+    "ehi_other_show_floating_health_bar_style_poco_blur" : "Background Blur",
 
-    "ehi_other_show_floating_health_bar_converts" : "Show for Converts",
-    "ehi_other_show_floating_health_bar_civilians" : "Show for Civilians",
-    "ehi_other_show_floating_health_bar_team_ai" : "Show for Team AI",
-    "ehi_other_show_floating_health_bar_regular_enemies" : "Show for Regular Enemies",
-    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Show for Bulldozers",
-    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Show for Shields",
-    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Show for Tasers",
-    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Show for Cloakers",
-    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Show for Snipers",
-    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Show for Medics",
-    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Show for Turrets",
-    "ehi_other_show_floating_health_bar_special_enemies_other" : "Show for other special enemies",
+    "ehi_other_show_floating_health_bar_converts" : "Converts",
+    "ehi_other_show_floating_health_bar_civilians" : "Civilians",
+    "ehi_other_show_floating_health_bar_team_ai" : "Team AI",
+    "ehi_other_show_floating_health_bar_regular_enemies" : "Regular Enemies",
+    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Bulldozers",
+    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Shields",
+    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Tasers",
+    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Cloakers",
+    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Snipers",
+    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Medics",
+    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Turrets",
+    "ehi_other_show_floating_health_bar_special_enemies_other" : "Other special enemies",
     "ehi_other_show_floating_health_bar_special_enemies_other_desc" : "Shows a floating health bar for other special enemies that do not belong to the groups above, but are still tagged as 'special' in the game",
 
-    "ehi_other_show_floating_damage_popup" : "Show Floating Damage Popup",
+    "ehi_other_show_floating_damage_popup" : "Floating Damage Popup",
     "ehi_other_show_floating_damage_popup_desc" : "Shows a floating damage popup of how much damage you have done to someone",
 
     "ehi_other_show_floating_damage_popup_accumulate" : "Accumulate Damage",
@@ -1136,9 +1139,20 @@
     "ehi_other_show_floating_damage_popup_time_on_screen" : "Time on Screen",
     "ehi_other_show_floating_damage_popup_time_on_screen_desc" : "Changes how long the damage popup will stay on the screen",
 
-    "ehi_other_show_floating_damage_popup_my_damage" : "Show My Damage",
-    "ehi_other_show_floating_damage_popup_ai_damage" : "Show AI Damage",
-    "ehi_other_show_floating_damage_popup_crew_damage" : "Show Crew Damage",
+    "ehi_other_show_floating_damage_popup_my_damage" : "My Damage",
+    "ehi_other_show_floating_damage_popup_ai_damage" : "AI Damage",
+    "ehi_other_show_floating_damage_popup_crew_damage" : "Crew Damage",
+
+    "ehi_other_show_floating_text" : "Floating Text",
+    "ehi_other_show_floating_text_desc" : "",
+
+    "ehi_other_show_floating_text_distance" : "Distance",
+    "ehi_other_show_floating_text_distance_desc" : "Sets how much max distance (in meters) you have to be in floating text view range to be visible",
+
+    "ehi_other_show_floating_text_throwables" : "Throwables",
+    "ehi_other_show_floating_text_throwables_desc" : "",
+    "ehi_other_show_floating_text_throwables_block_on_abilities" : "Block throwables on abilities or no throwable",
+    "ehi_other_show_floating_text_throwables_block_on_abilities_desc" : "Floating text for throwables won't show up if you have equipped abilities from perk decks or no throwable selected",
 
     "ehi_other_show_use_left_ammo_bag" : "Show uses left for Ammo Bags",
     "ehi_other_show_use_left_doctor_bag" : "Show uses left for Doctor Bags",
@@ -1705,5 +1719,9 @@
     "ehi_experience_custom_removed_gps_tracker" : "Removed GPS tracker",
 
     "menu_achievements_progress_ehi_tracked" : "Tracked in EHI",
-    "menu_achievements_progress_ehi_secret" : "The Secret"
+    "menu_achievements_progress_ehi_secret" : "The Secret",
+
+    "menu_achievements_progress_ehi_xm20_1" : "Missing mask in the following heist(s):",
+    "menu_achievements_progress_ehi_pent_11" : "Missing teaset in the following heist(s):",
+    "menu_achievements_progress_ehi_lrfo_1" : "Missing recording in the following heist(s):"
 }

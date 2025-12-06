@@ -313,10 +313,10 @@
     "ehi_trackers_rc_horizontal_new_column_position_1" : "Nahoře",
     "ehi_trackers_rc_horizontal_new_column_position_2" : "Dole",
 
-    "ehi_show_mission_trackers": "Zobrazovat sledovače (Loupež)",
+    "ehi_show_mission_trackers": "Sledovače (Loupež)",
     "ehi_show_mission_trackers_desc": "Zobrazuje sledovače v misi (příklad: Čas do příjezdu auta/přiletu helikoptéry, za jak dlouho se spustí další úkol a tak dále...)\n\nTato funkce taky funguje na neoficiálních misí\nPokud jsou podporovány",
 
-    "ehi_show_mission_trackers_cheaty": "Zobrazovat sledovače (Loupež) - Pamatovací nebo najít informaci",
+    "ehi_show_mission_trackers_cheaty": "Sledovače (Loupež) - Pamatovací nebo najít informaci",
     "ehi_show_mission_trackers_cheaty_desc": "Zobrazuje sledovače v misi které vyžadují zapamatování informace nebo nalezení určité informace k pokračování\n\nPříklady:\nBarevné kódy\nSprávná sekvence",
 
     "ehi_show_unlockables" : "Zobrazovat odemykatelné",
@@ -647,34 +647,37 @@
     "ehi_show_waypoints_present_timer" : "Čas na přesun",
     "ehi_show_waypoints_present_timer_desc" : "Nastavuje jak dlouho bude ukazatel na obrazovce než se 'přesune' do cílového místa",
 
-    "ehi_show_waypoints_mission" : "Zobrazovat ukazatele pro elementy v misi",
+    "ehi_show_waypoints_offset_multiplier" : "Měřítko posunutí",
+    "ehi_show_waypoints_offset_multiplier_desc" : "Nastavuje jak ukazatel má být blízko středu\nČíslo menší než 1 ho posune blíže, vyšší číslo ho oddálí",
+
+    "ehi_show_waypoints_mission" : "Elementy v misi",
     "ehi_show_waypoints_mission_desc" : "Zobrazuje ukazatel pro elementy v misi\nPoznámka: Pokud element nemá nadefinovaný ukazatel, zobrazí se sledovač",
 
-    "ehi_show_waypoints_mission_cheaty" : "Zobrazovat ukazatele pro elementy v misi - Pamatovací nebo najít informaci",
+    "ehi_show_waypoints_mission_cheaty" : "Elementy v misi - Pamatovací nebo najít informaci",
     "ehi_show_waypoints_mission_cheaty_desc" : "Zobrazuje ukazetele pro elementy v misi které vyžadují zapamatování informace nebo nalezení určité informace k pokračování\n\nPříklady:\nBarevné kódy\nSprávná sekvence\n\nPoznámka: Pokud element nemá nadefinovaný ukazatel, zobrazí se sledovač",
 
-    "ehi_show_waypoints_escape" : "Zobrazovat ukazatele pro úniková vozidla",
+    "ehi_show_waypoints_escape" : "Úniková vozidla",
     "ehi_show_waypoints_escape_desc" : "Zobrazuje ukazatel kam únikové vozidlo přijede (bez zbývajícího času)",
 
-    "ehi_show_waypoints_enemy_turret" : "Zobrazovat ukazatele pro nepřátelské střílny",
+    "ehi_show_waypoints_enemy_turret" : "Nepřátelské střílny",
     "ehi_show_waypoints_enemy_turret_desc" : "Zobrazuje ukazatel pro nepřátelskou střílku když se opravuje nebo nabíjí",
 
-    "ehi_show_waypoints_timers" : "Zobrazovat ukazatele pro časovače",
+    "ehi_show_waypoints_timers" : "Časovače",
     "ehi_show_waypoints_timers_desc" : "Zobrazuje ukazatel na viditelný časovač (hackování, vrtání, řezání, atd...)",
 
-    "ehi_show_waypoints_pager" : "Zobrazovat ukazatele pro pagery",
+    "ehi_show_waypoints_pager" : "Pagery",
     "ehi_show_waypoints_pager_desc" : "Zobrazuje ukazatel na pager, na který se musí odpovědět",
 
-    "ehi_show_waypoints_cameras" : "Zobrazovat ukazatele pro kamery ve zpětné smyčce",
+    "ehi_show_waypoints_cameras" : "Kamery ve zpětné smyčce",
     "ehi_show_waypoints_cameras_desc" : "Zobrazuje ukazatel na kamaře, která je právě ve zpětné smyčce",
 
-    "ehi_show_waypoints_zipline" : "Zobrazovat ukazatele na Zipliny",
+    "ehi_show_waypoints_zipline" : "Zipline",
     "ehi_show_waypoints_zipline_desc" : "Zobrazuje ukazatel na ziplině, která je v pohybu\nUkazatel ukazuje pouze čas, kdy bude ziplina znovu použitelná",
 
-    "ehi_show_waypoints_ecmjammer" : "Zobrazovat ukazatele pro ECM Jammery",
+    "ehi_show_waypoints_ecmjammer" : "ECM Jammer",
     "ehi_show_waypoints_ecmjammer_desc" : "Zobrazuje ukazatel pro aktivní ECM Jammer",
 
-    "ehi_show_waypoints_loot_counter" : "Zobrazovat ukazatele pro počet lupu",
+    "ehi_show_waypoints_loot_counter" : "Počet lupu",
     "ehi_show_waypoints_loot_counter_desc" : "Zobrazuje ukazatel pro aktivní zónu k zajištění lupu\n\nTato možnost nahrazuje původní ukazatel ve hře\nPokud ikona lupu není viditelná, ukazatel může použít jinou ikonu",
 
     "ehi_shared_menu" : "Sdílené nastavení pro Sledovače a Ukazatele",
@@ -1008,6 +1011,7 @@
     "ehi_buffs_hint_reload_increase" : "Rld+",
     "ehi_buffs_hint_movement_increase" : "Mov+",
     "ehi_buffs_hint_regen" : "Regen",
+    "ehi_buffs_hint_immunity" : "Immunity",
     "ehi_buffs_hint_cooldown" : "Cooldown",
 
     "ehi_inventory_menu" : "Inventory",
@@ -1100,7 +1104,7 @@
     "ehi_other_show_mission_xp_overview" : "Zobrazovat přehled ZK v misi",
     "ehi_other_show_mission_xp_overview_desc" : "Zobrazuje panel v briefingu před loupeží s možnými ZK, které lze získat",
 
-    "ehi_other_show_floating_health_bar" : "Zobrazovat zdraví NPC",
+    "ehi_other_show_floating_health_bar" : "Zdraví NPC",
     "ehi_other_show_floating_health_bar_desc" : "Zobrazuje zdraví NPC když na něho zamíříš",
 
     "ehi_other_show_floating_health_bar_style" : "Styl",
@@ -1108,23 +1112,23 @@
     "ehi_other_show_floating_health_bar_style_2" : "Kruh",
     "ehi_other_show_floating_health_bar_style_3" : "Obdélník",
 
-    "ehi_other_show_floating_health_bar_style_poco_blur" : "Zobrazovat rozmazání pozadí",
+    "ehi_other_show_floating_health_bar_style_poco_blur" : "Rozmazání pozadí",
 
-    "ehi_other_show_floating_health_bar_converts" : "Zobrazovat pro převedence",
-    "ehi_other_show_floating_health_bar_civilians" : "Zobrazovat pro civilisty",
-    "ehi_other_show_floating_health_bar_team_ai" : "Zobrazovat pro boty",
-    "ehi_other_show_floating_health_bar_regular_enemies" : "Zobrazovat pro normální nepřátele",
-    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Zobrazovat pro Bulldozery",
-    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Zobrazovat pro Štíty",
-    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Zobrazovat pro Tasery",
-    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Zobrazovat pro Cloakery",
-    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Zobrazovat pro odstřelovače",
-    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Zobrazovat pro Medicy",
-    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Zobrazovat pro Turrety",
-    "ehi_other_show_floating_health_bar_special_enemies_other" : "Zobrazovat pro ostatní speciální nepřátele",
+    "ehi_other_show_floating_health_bar_converts" : "Převedenci",
+    "ehi_other_show_floating_health_bar_civilians" : "Civilisté",
+    "ehi_other_show_floating_health_bar_team_ai" : "Boti",
+    "ehi_other_show_floating_health_bar_regular_enemies" : "Normální nepřátelé",
+    "ehi_other_show_floating_health_bar_special_enemies_tank" : "Bulldozer",
+    "ehi_other_show_floating_health_bar_special_enemies_shield" : "Štít",
+    "ehi_other_show_floating_health_bar_special_enemies_taser" : "Taser",
+    "ehi_other_show_floating_health_bar_special_enemies_cloaker" : "Cloaker",
+    "ehi_other_show_floating_health_bar_special_enemies_sniper" : "Odstřelovač",
+    "ehi_other_show_floating_health_bar_special_enemies_medic" : "Medic",
+    "ehi_other_show_floating_health_bar_special_enemies_turret" : "Turret",
+    "ehi_other_show_floating_health_bar_special_enemies_other" : "Ostatní speciální nepřátelé",
     "ehi_other_show_floating_health_bar_special_enemies_other_desc" : "Zobrazí zdraví ostatních speciálních nepřátel, kteří nepatří do skupin výše, ale v herním kódu jsou označení s příznakem 'special'",
 
-    "ehi_other_show_floating_damage_popup" : "Zobrazovat udělené poškození NPC",
+    "ehi_other_show_floating_damage_popup" : "Udělené poškození NPC",
     "ehi_other_show_floating_damage_popup_desc" : "Zobrazuje udělené poškození, když někoho trefíš",
 
     "ehi_other_show_floating_damage_popup_accumulate" : "Sčítat udělené poškození",
@@ -1135,9 +1139,20 @@
     "ehi_other_show_floating_damage_popup_time_on_screen" : "Čas na obrazovce",
     "ehi_other_show_floating_damage_popup_time_on_screen_desc" : "Mění jak dlouho poškození zůstane na obrazovce",
 
-    "ehi_other_show_floating_damage_popup_my_damage" : "Zobrazovat moje poškození",
-    "ehi_other_show_floating_damage_popup_ai_damage" : "Zobrazovat poškození od AI",
-    "ehi_other_show_floating_damage_popup_crew_damage" : "Zobrazovat poškození spoluhráčů",
+    "ehi_other_show_floating_damage_popup_my_damage" : "Moje poškození",
+    "ehi_other_show_floating_damage_popup_ai_damage" : "Poškození od AI",
+    "ehi_other_show_floating_damage_popup_crew_damage" : "Poškození od spoluhráčů",
+
+    "ehi_other_show_floating_text" : "Plovoucí text",
+    "ehi_other_show_floating_text_desc" : "",
+
+    "ehi_other_show_floating_text_distance" : "Vzdálenost",
+    "ehi_other_show_floating_text_distance_desc" : "Nastavuje, jak maximálně daleko (v metrech) musíš být v rozsahu zobrazení plovoucího textu, aby byl viditelný",
+
+    "ehi_other_show_floating_text_throwables" : "Hoditelné 'granáty'",
+    "ehi_other_show_floating_text_throwables_desc" : "",
+    "ehi_other_show_floating_text_throwables_block_on_abilities" : "Blokovat hoditelné 'granáty' na abilitu nebo žádný",
+    "ehi_other_show_floating_text_throwables_block_on_abilities_desc" : "Plovoucí text se nezobrazí pokud máš vybranou abilitu z perku nebo nemáš vybraný žádný hoditelný 'granát'",
 
     "ehi_other_show_use_left_ammo_bag" : "Zobrazovat počet použití u Ammo Bagů",
     "ehi_other_show_use_left_doctor_bag" : "Zobrazovat počet použití u Doctor Bagů",
@@ -1704,5 +1719,9 @@
     "ehi_experience_custom_removed_gps_tracker" : "Odstraněn sledovač GPS",
 
     "menu_achievements_progress_ehi_tracked" : "Sledováno v EHI",
-    "menu_achievements_progress_ehi_secret" : "The Secret"
+    "menu_achievements_progress_ehi_secret" : "The Secret",
+
+    "menu_achievements_progress_ehi_xm20_1" : "Chybějící maska v loupeži:",
+    "menu_achievements_progress_ehi_pent_11" : "Chybějící čajový servis v loupeži:",
+    "menu_achievements_progress_ehi_lrfo_1" : "Chybějící nahrávka v loupeži:"
 }

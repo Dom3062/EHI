@@ -55,6 +55,9 @@ function TimerGui:init(unit, ...)
     if self.__EHI_SHOW_TRACKER then
         EHI:OptionAndLoadTracker("show_timers")
     end
+    if self.__EHI_SHOW_WAYPOINT then
+        EHI:OptionAndLoadWaypoint("show_timers")
+    end
 end
 
 function TimerGui:GetVisibilityData()

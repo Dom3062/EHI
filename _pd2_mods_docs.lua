@@ -235,6 +235,10 @@ end
 function MenuHelper:AddInput(input_data)
 end
 
+---@class BLTNotificationsGui
+---@field _panel Panel
+---@field _beardlib_panel Panel? Panel from BeardLib
+BLTNotificationsGui = {}
 -----------------------
 --- End of SuperBLT ---
 -----------------------

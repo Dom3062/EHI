@@ -66,6 +66,13 @@ _G.EHI =
             file = "EHIPlayerPingTracker"
         }
     },
+    OptionWaypoint =
+    {
+        show_timers =
+        {
+            file = "EHITimerWaypoint"
+        }
+    },
 
     _hooks = {},
 
@@ -967,6 +974,7 @@ local function LoadDefaultValues(self)
         -- Waypoints
         show_waypoints = true,
         show_waypoints_present_timer = 2,
+        show_waypoints_offset_multiplier = 1,
         show_waypoints_mission = true,
         show_waypoints_mission_cheaty = true,
         show_waypoints_escape = true,
@@ -1287,6 +1295,14 @@ local function LoadDefaultValues(self)
         show_floating_damage_popup_my_damage = true,
         show_floating_damage_popup_ai_damage = true,
         show_floating_damage_popup_crew_damage = true,
+        show_floating_text = true,
+        show_floating_text_distance = 25,
+        show_floating_text_ammo_bag = true,
+        show_floating_text_bodybags_bag = true,
+        show_floating_text_doctor_bag = true,
+        show_floating_text_first_aid_kit = true,
+        show_floating_text_throwables = true,
+        show_floating_text_throwables_block_on_abilities = true,
         show_use_left_ammo_bag = true,
         show_use_left_doctor_bag = true,
         show_use_left_bodybags_bag = true,
@@ -1576,6 +1592,18 @@ end
 ---@param filename string
 function EHI:LoadTracker(filename)
     dofile(string.format("%s%s%s.lua", self.LuaPath, "trackers/", filename))
+end
+
+---@param option string
+function EHI:OptionAndLoadWaypoint(option)
+    if self.OptionWaypoint[option] then
+        local wp = self.OptionWaypoint[option]
+        wp.count = (wp.count or 1) - 1
+        if wp.count == 0 then
+            self:LoadWaypoint(wp.file)
+            self.OptionWaypoint[option] = nil
+        end
+    end
 end
 
 ---@param filename string

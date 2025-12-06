@@ -7,6 +7,12 @@ FakeEHIBuffsManager._filter_hint_buff = function(value, key)
     end
     return value.text ~= nil or value.text_localize ~= nil
 end
+FakeEHIBuffsManager._filter_allowed_buff = function(value, key)
+    if value.dont_show_in_menu then
+        return false
+    end
+    return true
+end
 ---@param panel Panel
 function FakeEHIBuffsManager:new(panel)
     self._tweak_data = tweak_data.ehi.default.buff
@@ -67,6 +73,7 @@ function FakeEHIBuffsManager:_add_fake_buffs()
     local max_hints = self:_get_max_hints(max)
     local buffs = tweak_data.ehi.buff
     local buffs_with_hint = table.filter(buffs, self._filter_hint_buff)
+    local allowed_buffs = table.filter(buffs, self._filter_allowed_buff)
     local visible_buffs = {}
     local saferect_x, saferect_y = managers.gui_data:full_to_safe(self._panel:w(), self._panel:h())
     saferect_x = (self._panel:w() - saferect_x + 0.5) * 2
@@ -80,11 +87,11 @@ function FakeEHIBuffsManager:_add_fake_buffs()
         end
     until visible == max_hints
     repeat
-        local key = table.random_key(buffs)
+        local key = table.random_key(allowed_buffs)
         if not visible_buffs[key] then
             visible_buffs[key] = true
             visible = visible + 1
-            self:_add_fake_buff(self:_create_buff_params(buffs[key], saferect_x, saferect_y), self:_get_position(visible - max_hints) + 1)
+            self:_add_fake_buff(self:_create_buff_params(allowed_buffs[key], saferect_x, saferect_y), self:_get_position(visible - max_hints) + 1)
         end
     until visible == max
 end

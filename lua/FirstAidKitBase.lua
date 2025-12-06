@@ -18,6 +18,8 @@ local original =
 
 ---@class FirstAidKitBase
 ---@field _empty boolean
+---@field _damage_reduction_upgrade boolean
+---@field _min_distance number
 ---@field _unit UnitFAKDeployable
 ---@field List { obj: UnitFAKDeployable, pos: Vector3, min_distance: number }[]
 

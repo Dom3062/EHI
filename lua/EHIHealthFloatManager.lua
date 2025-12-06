@@ -34,11 +34,11 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         self._resolution_changed_clbk = managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
         self._floats = {} ---@type table<userdata, EHIHealthFloatPoco>
         self._smokes = {} ---@type table<userdata, Vector3>
-        Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_detonate", function(base, ...)
+        Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_EHIHealthFloatManager_detonate", function(base, ...)
             local unit = base._unit
             self._smokes[unit:key()] = unit:position()
         end)
-        Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_destroy", function(base, ...)
+        Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_EHIHealthFloatManager_destroy", function(base, ...)
             self._smokes[base._unit:key()] = nil
         end)
         Hooks:PreHook(TeamAIBase, "_register", "EHI_TeamAIBase_register", function(base, ...)
@@ -246,7 +246,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             end
             if unit and unit:movement() then
                 local cHealth = unit:character_damage() and unit:character_damage()._health
-                if cHealth and cHealth > 0 and not Global.hud_disabled then
+                if cHealth and cHealth > 0 then
                     self:Float(unit, t)
                 end
             end
@@ -307,7 +307,7 @@ else
             end
             if unit and unit:movement() then
                 local cHealth = unit:character_damage() and unit:character_damage()._health
-                if cHealth and not Global.hud_disabled then
+                if cHealth then
                     self._float:SetUnit(unit, t)
                 end
             end

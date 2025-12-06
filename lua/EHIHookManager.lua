@@ -157,7 +157,7 @@ function EHIHookManager:AddShotWithAWeaponListener(f)
         self._shot_with_weapon_listener = CallbackEventHandler:new()
         local my_peer_id = managers.network:session():local_peer():id()
         Hooks:PreHook(HUDTeammate, "set_ammo_amount_by_type", "EHI_EHIHookManager_HUDTeammate_set_ammo_amount_by_type", function(hud, type, max_clip, current_clip, current_left, ...)
-            local clip = "__last_clip_" .. type
+            local clip = "__ehi_last_clip_" .. type
             local cc = hud[clip] or 0
             if current_clip < cc then
                 self._shot_with_weapon_listener:dispatch(hud._peer_id or my_peer_id or 0, cc - current_clip)
@@ -165,8 +165,8 @@ function EHIHookManager:AddShotWithAWeaponListener(f)
             hud[clip] = current_clip
         end)
         Hooks:PostHook(HUDTeammate, "remove_panel", "EHI_EHIHookManager_HUDTeammate_remove_panel", function(hud, ...)
-            hud["__last_clip_primary"] = 0
-            hud["__last_clip_secondary"] = 0
+            hud["__ehi_last_clip_primary"] = 0
+            hud["__ehi_last_clip_secondary"] = 0
         end)
     end
     self._shot_with_weapon_listener:add(f)

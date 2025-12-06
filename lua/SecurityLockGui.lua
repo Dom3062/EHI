@@ -25,6 +25,9 @@ function SecurityLockGui:init(unit, ...)
     if show_tracker then
         EHI:OptionAndLoadTracker("show_timers")
     end
+    if show_waypoint then
+        EHI:OptionAndLoadWaypoint("show_timers")
+    end
 end
 
 function SecurityLockGui:_start(...)

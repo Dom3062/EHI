@@ -312,7 +312,7 @@ end
 ---@class EHIDamageFloat
 ---@field new fun(self: self, data: table): self
 EHIDamageFloat = class()
-EHIDamageFloat.owner = EHIDamageFloatManager
+EHIDamageFloat._parent = EHIDamageFloatManager
 EHIDamageFloat._size = EHI:GetOption("show_floating_damage_popup_size") --[[@as number]]
 EHIDamageFloat._text_color = Color(1, 43/51, 0)
 EHIDamageFloat._bg_color = Color(0, 0, 0)
@@ -320,7 +320,7 @@ EHIDamageFloat._bg_color = Color(0, 0, 0)
 function EHIDamageFloat:init(data)
     self.data = data
     self.data.et = data.t
-    self.ppnl = self.owner._panel
+    self.ppnl = self._parent._panel
     local size = self._size
     local pnl = self.ppnl:panel({ x = 0, y = 0, w = 200, h = 100 })
     if data.crit then
@@ -357,25 +357,25 @@ end
 ---@param dt number
 function EHIDamageFloat:draw(dt)
     if alive(self.pnl) then
-        local camPos = self.owner._camPos
+        local camPos = self._parent._camPos
         local data = self.data
         data.et = data.et - dt
-        local prog = 1 - (data.et / data.t)
         local pos = data.pos + Vector3()
         local nl_dir = pos - camPos
         mvector3.normalize(nl_dir)
-        local dot = mvector3.dot(self.owner._nl_cam_forward, nl_dir)
+        local dot = mvector3.dot(self._parent._nl_cam_forward, nl_dir)
         self.pnl:set_visible(dot > 0)
         if dot > 0 then
-            local pPos = self.owner:_v2p(pos) ---@cast pPos -false
+            local prog = 1 - (data.et / data.t)
+            local pPos = self._parent:_v2p(pos) ---@cast pPos -false
             mvector3.set_y(pPos,pPos.y - math.lerp(100,0, math.pow(1-prog,7)))
 
             if prog >= 1 then
                 self.dead = true
             else
-                local dx,dy,d,ww,hh = 0,0,1,self.owner._ww,self.owner._hh
+                local dx,dy,d,ww,hh = 0,0,1,self._parent._ww,self._parent._hh
                 self.pnl:set_center(pPos.x,pPos.y)
-                if self.owner.ADS then
+                if self._parent.ADS then
                     dx = pPos.x - ww/2
                     dy = pPos.y - hh/2
                     d = math.clamp((dx*dx+dy*dy)/1000,0,1)
@@ -425,13 +425,13 @@ end
 function EHIDamageFloat:destroy(key)
     self.ppnl:remove(self.pnl)
     if key then
-        self.owner.pops[key] = nil
+        self._parent.pops[key] = nil
     end
 end
 
 function EHIDamageFloat:destroy2(key)
     self.ppnl:remove(self.pnl)
     if key then
-        self.owner.pops[self.data.pid][key] = nil
+        self._parent.pops[self.data.pid][key] = nil
     end
 end

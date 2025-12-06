@@ -356,7 +356,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     EHI:CallCallbackOnce("Spawned2", self, managers.job:current_real_job_id(), level, from_beginning)
     if level == "safehouse" or level == "chill" then
         if EHI:GetUnlockableAndOption("show_achievements") and EHI:GetUnlockableOption("show_achievements_other") then
-            if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") and (level == "chill" or level == "safehouse") then -- "Oh, That's How You Do It" achievement
+            if EHI:IsAchievementLocked("ovk_3") and HasWeaponEquipped("m134") then -- "Oh, That's How You Do It" achievement
                 -- Only tracked in Safehouse to prevent tracker spam in heists
                 ---@class EHIovk3Tracker : EHIAchievementUnlockTracker
                 ---@field super EHIAchievementUnlockTracker
@@ -722,7 +722,13 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 self:EHIAddAchievementTrackerFromStat("halloween_7_stats", true)
             end
             if EHI:IsAchievementLocked2("gage5_8") and self:EHIHasMeleeEquipped("dingdong") then -- "Hammertime" achievement
-                self:EHIAddAchievementTrackerFromStat("gage5_8_stats")
+                local progress = EHI:GetAchievementProgress("gage5_8_stats")
+                managers.ehi_hook:HookAchievementAwardProgress("gage5_8", function(am, stat, value)
+                    if stat == "gage5_8_stats" and progress < 25 then
+                        progress = progress + (value or 1)
+                        ShowPopup("gage5_8", progress, 25)
+                    end
+                end)
             end
             if EHI:IsAchievementLocked2("eagle_2") and self:EHIHasMeleeEquipped("fairbair") and is_stealth then -- "Special Operations Execution" achievement
                 self:EHIAddAchievementTrackerFromStat("eagle_2_stats", true)

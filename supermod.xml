@@ -7,6 +7,7 @@
         <pre hook_id="core/lib/utils/coreapp" :script_path="core.lua"/>
         <pre hook_id="core/lib/utils/coreapp" :script_path="core_mod_utils.lua"/>
         <pre hook_id="core/lib/utils/coreapp" :script_path="core_tracker_utils.lua"/>
+        <pre hook_id="core/lib/utils/coreapp" :script_path="core_player_utils.lua"/>
 
         <post hook_id="core/lib/managers/coreworldinstancemanager" :script_path="CoreWorldInstanceManager.lua"/>
 

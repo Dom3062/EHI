@@ -33,8 +33,13 @@ local level_id = Global.game_settings.level_id
 function DigitalGui:init(unit, ...)
     original.init(self, unit, ...)
     self._ehi_key = tostring(unit:key())
-    if self:is_timer() and self.__EHI_SHOW_TRACKER then
-        EHI:OptionAndLoadTracker("show_timers")
+    if self:is_timer() then
+        if self.__EHI_SHOW_TRACKER then
+            EHI:OptionAndLoadTracker("show_timers")
+        end
+        if self.__EHI_SHOW_WAYPOINT then
+            EHI:OptionAndLoadWaypoint("show_timers")
+        end
     end
 end
 

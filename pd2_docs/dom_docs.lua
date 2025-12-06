@@ -1879,6 +1879,7 @@ end
 ---@class MenuComponentManager
 ---@field _mission_briefing_gui MissionBriefingGui
 ---@field _ws Workspace
+---@field blt_notifications_gui fun(self: self): BLTNotificationsGui? SBLT Gui Window
 ---@field post_event fun(self: self, event: string, unique: boolean?)
 
 ---@class BaseModifier

@@ -16,46 +16,50 @@ local original =
 Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_player_info_hud_pd2", function(hud, ...)
     local server = EHI.IsHost
     local panel = hud:script(PlayerBase.PLAYER_INFO_HUD_PD2).panel
-    hud._ehi_tracker = managers.ehi_tracker
-    hud._ehi_waypoint = managers.ehi_waypoint
+    local trackers = managers.ehi_tracker
+    local waypoints = managers.ehi_waypoint
     managers.ehi_assault:init_hud(hud)
-    hud._ehi_tracking = managers.ehi_tracking
+    local tracking = managers.ehi_tracking
     local show_mission_triggers = EHI.Mission._SHOW_MISSION_TRIGGERS
     local level_id = Global.game_settings.level_id
     local trackers_visible = EHI:GetOption("show_trackers")
     local waypoints_visible = EHI:GetOption("show_waypoints")
     if waypoints_visible then
-        hud._ehi_waypoint:SetPlayerHUD(panel, hud._saferect, hud._gui)
+        waypoints:SetPlayerHUD(panel, hud._saferect, hud._gui)
     end
     if server or EHI.HeistTimerIsInverted then
         if (trackers_visible and waypoints_visible) or show_mission_triggers then
-            hud:AddEHIUpdator("EHITracking_Update", hud._ehi_tracking)
+            hud:AddEHIUpdator("EHITracking_Update", tracking)
         elseif waypoints_visible then
-            hud:AddEHIUpdator("EHIWaypoints_Update", hud._ehi_waypoint, "update2")
+            hud:AddEHIUpdator("EHIWaypoints_Update", waypoints, "update2")
         elseif trackers_visible then
-            hud:AddEHIUpdator("EHITrackers_Update", hud._ehi_tracker)
+            hud:AddEHIUpdator("EHITrackers_Update", trackers)
         end
     else
         original.feed_heist_time = hud.feed_heist_time
         if (trackers_visible and waypoints_visible) or show_mission_triggers then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
-                self._ehi_tracking:update_client(time) ---@diagnostic disable-line
+                tracking:update_client(time)
             end
         elseif waypoints_visible then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
-                self._ehi_waypoint:update_client(time) ---@diagnostic disable-line
+                waypoints:update_client(time)
             end
         elseif trackers_visible then
             function HUDManager:feed_heist_time(time, ...)
                 original.feed_heist_time(self, time, ...)
-                self._ehi_tracker:update_client(time) ---@diagnostic disable-line
+                trackers:update_client(time)
             end
         end
     end
+    function HUDManager:destroy(...)
+        tracking:destroy()
+        original.destroy(self, ...)
+    end
     if _G.IS_VR and (trackers_visible or show_mission_triggers) then
-        hud._ehi_tracker:SetPanel(panel)
+        trackers:SetPanel(panel)
     end
     if EHI:GetOption("show_buffs") then
         managers.ehi_buff = blt.vm.dofile(EHI.LuaPath .. "EHIBuffManager.lua")
@@ -70,7 +74,7 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
                 for _, value in ipairs(base) do
                     if value > 0 and value < 1 then
                         -- Random Chance
-                        hud._ehi_tracker:AddTracker({
+                        trackers:AddTracker({
                             id = "PagersChance",
                             chance = math.ehi_round_chance(base[1] or 0),
                             icons = { EHI.Icons.Pager },
@@ -89,7 +93,7 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
                 end
             end
             if max > 0 then
-                hud._ehi_tracker:AddTracker({
+                trackers:AddTracker({
                     id = "Pagers",
                     max = EHI.ModUtils:SELH_GetModifiedPagerCount(max),
                     icons = { EHI.Icons.Pager },
@@ -101,14 +105,14 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
                 if _G.ch_settings then
                     EHI:AddOnSpawnedCallback(function()
                         if managers.player:has_category_upgrade("player", "corpse_alarm_pager_bluff") then
-                            hud._ehi_tracker:IncreaseProgressMax("Pagers", 2)
+                            trackers:IncreaseProgressMax("Pagers", 2)
                         end
                     end)
                 end
             end
         end
         if EHI:GetOption("show_bodybags_counter") then
-            hud._ehi_tracker:AddTracker({
+            trackers:AddTracker({
                 id = "BodybagsCounter",
                 icons = { "equipment_body_bag" },
                 hint = "bodybags_counter",
@@ -125,12 +129,16 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
         dofile(EHI.LuaPath .. "EHIDamageFloatManager.lua")
         EHIDamageFloatManager:new(hud)
     end
+    if EHI:GetOption("show_floating_text") then
+        dofile(EHI.LuaPath .. "EHITextFloatManager.lua")
+        EHITextFloatManager:new(panel, hud._saferect)
+    end
     if EHI:GetOption("show_end_game_stats") and not Global.game_settings.single_player then
         dofile(EHI.LuaPath .. "EHIEndGameStats.lua")
         EHIEndGameStats:new()
     end
     if not Global.game_settings.single_player and EHI:GetOptionAndLoadTracker("show_ping_tracker") then
-        hud._ehi_tracker:PreloadTracker({
+        trackers:PreloadTracker({
             id = "PlayerPing",
             class = "EHIPlayerPingTracker"
         })
@@ -183,11 +191,6 @@ end
 function HUDManager:set_enabled(...)
     original.set_enabled(self, ...)
     EHI:CallCallback(EHI.CallbackMessage.HUDVisibilityChanged, true)
-end
-
-function HUDManager:destroy(...)
-    self._ehi_tracking:destroy() ---@diagnostic disable-line
-    original.destroy(self, ...)
 end
 
 if EHI:GetOption("show_assault_delay_tracker") then

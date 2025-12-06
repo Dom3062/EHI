@@ -29,6 +29,7 @@ local original =
 
 ---@class AmmoBagBase
 ---@field _ammo_amount number
+---@field _bullet_storm_level integer?
 ---@field _max_ammo_amount number
 ---@field _unit UnitAmmoDeployable
 

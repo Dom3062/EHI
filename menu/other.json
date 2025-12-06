@@ -373,6 +373,106 @@
         },
         {
             "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_choice",
+            "title": "ehi_other_show_floating_text",
+            "description": "ehi_other_show_floating_text_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text",
+            "default_value": true,
+            "children" : [
+                "ehi_other_show_floating_text_distance_choice",
+                "ehi_other_show_floating_text_ammo_bag_choice",
+                "ehi_other_show_floating_text_bodybags_bag_choice",
+                "ehi_other_show_floating_text_doctor_bag_choice",
+                "ehi_other_show_floating_text_first_aid_kit_choice",
+                "ehi_other_show_floating_text_throwables_choice"
+            ],
+            "children_f" : {
+                "ehi_other_show_floating_text_throwables_block_on_abilities_choice": "ehi_show_floating_text_throwables_block_on_abilities_choice_1"
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_other_show_floating_text_distance_choice",
+            "title": "ehi_other_show_floating_text_distance",
+            "description": "ehi_other_show_floating_text_distance_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_distance",
+            "default_value": 25,
+            "max": 100,
+            "min": 1,
+            "step": 0.01,
+            "display_precision": 2,
+            "parent" : "ehi_other_show_floating_text_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_ammo_bag_choice",
+            "title": "ehi_ammo_bag",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_ammo_bag",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_text_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_bodybags_bag_choice",
+            "title": "ehi_bodybags_bag",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_bodybags_bag",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_text_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_doctor_bag_choice",
+            "title": "ehi_doctor_bag",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_doctor_bag",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_text_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_first_aid_kit_choice",
+            "title": "ehi_first_aid_kit",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_first_aid_kit",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_text_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_throwables_choice",
+            "title": "ehi_other_show_floating_text_throwables",
+            "description": "ehi_other_show_floating_text_throwables_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_throwables",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_text_choice",
+            "child" : "ehi_other_show_floating_text_throwables_block_on_abilities_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_throwables_block_on_abilities_choice",
+            "title": "ehi_other_show_floating_text_throwables_block_on_abilities",
+            "description": "ehi_other_show_floating_text_throwables_block_on_abilities_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_throwables_block_on_abilities",
+            "default_value": true,
+            "parent_compare" : {
+                "id": "ehi_other_show_floating_text_throwables_choice",
+                "comparator": "==",
+                "value": true,
+                "enabled": true
+            }
+        },
+        {
+            "type": "divider",
             "size": 20
         },
         {

@@ -3,11 +3,12 @@ local EHI = EHI
 ---@class EHIEndGameStats
 EHIEndGameStats = {}
 function EHIEndGameStats:new()
-    self._icons = { Skull = 57364, Ghost = 57363, LC=139, RC=155 }
-    for k, v in pairs(self._icons) do
-        self._icons[k] = utf8.char(v) ---@diagnostic disable-line
+    self._icons = {}
+    for k, v in pairs({ Skull = 57364, Ghost = 57363, LC = 139, RC = 155 }) do
+        self._icons[k] = utf8.char(v)
     end
     self._end_stats_format = ""
+    EHIEndGamePeerStats._GHOST_ICON = utf8.char(57363)
     if EHI:GetOption("show_end_game_stats_kills") > 1 then -- Kills
         if EHI:GetOption("show_end_game_stats_kills") == 2 then -- All kills only
             self._end_stats_format = "$kills;" .. self._icons.Skull
@@ -97,7 +98,7 @@ function EHIEndGameStats:new()
                         dps = peer:DPS(t),
                         kpm = peer:KPM(t),
                         acc = peer:ACC(),
-                        downs = peer:Downs(self._icons.Ghost --[[@as string]])
+                        downs = peer:Downs()
                     }), Color.white)
                 end
             end
@@ -107,7 +108,30 @@ function EHIEndGameStats:new()
         self._peers[peer_id]:Disconnected()
     end)
     if EHI:GetOption("show_end_game_stats_kills") > 1 or EHI:GetOption("show_end_game_stats_headshots") or EHI:GetOption("show_end_game_stats_dps") or EHI:GetOption("show_end_game_stats_kpm") or EHI:GetOption("show_end_game_stats_acc") then
-        managers.ehi_hook:AddCopDamageListener("EndGameStats", callback(self, self, "damage_callback"))
+        managers.ehi_hook:AddCopDamageListener("EndGameStats", function(c_dmg, damage_info, attacker_unit, damage)
+            local pid = self:_pid(attacker_unit)
+            local peer_stats = self._peers[pid]
+            local rDamage = damage >= 0 and damage or -damage
+            if damage < 0 and c_dmg._HEALTH_INIT then
+                rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
+            end
+            peer_stats:DamageDealt(rDamage)
+            if damage_info.variant == "bullet" or damage_info.variant == "fire" or damage_info.variant == "explosion" or damage_info.variant == "melee" then
+                peer_stats:HitMade()
+            end
+            if c_dmg._dead then
+                peer_stats:KillConfirmed(damage_info.headshot)
+                local unit = c_dmg._unit
+                if unit then
+                    local base = alive(unit) and unit:base() ---@cast base -false
+                    local unitTweak = base and base._tweak_table
+                    local statsTweak = unitTweak and base._stats_name or ""
+                    if unitTweak and base.has_tag and base:has_tag("special") or self._special_units_id[statsTweak] then
+                        peer_stats:SpecialKillConfirmed()
+                    end
+                end
+            end
+        end)
     end
     if EHI:GetOption("show_end_game_stats_downs") then
         managers.player:add_listener("EHIEndGameStats_bleed_out", "bleed_out", function()
@@ -132,35 +156,6 @@ function EHIEndGameStats:new()
         Hooks:PostHook(GamePlayCentralManager, "load", "EHI_EndGameStats_GamePlayCentralManager_load", function(gpcm, ...)
             self.__dropin_offset_t = gpcm._heist_timer.offset_time
         end)
-    end
-end
-
----@param c_dmg CopDamage
----@param damage_info CopDamage.AttackData
----@param realAttacker UnitPlayer|UnitTeamAI
----@param damage number
-function EHIEndGameStats:damage_callback(c_dmg, damage_info, realAttacker, damage)
-    local pid = self:_pid(realAttacker)
-    local peer_stats = self._peers[pid]
-    local rDamage = damage >= 0 and damage or -damage
-    if damage < 0 and c_dmg._HEALTH_INIT then
-        rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
-    end
-    peer_stats:DamageDealt(rDamage)
-    if damage_info.variant == "bullet" or damage_info.variant == "fire" or damage_info.variant == "explosion" or damage_info.variant == "melee" then
-        peer_stats:HitMade()
-    end
-    if c_dmg._dead then
-        peer_stats:KillConfirmed(damage_info.headshot)
-        local unit = c_dmg._unit
-        if unit then
-            local base = alive(unit) and unit:base() ---@cast base -false
-            local unitTweak = base and base._tweak_table
-            local statsTweak = unitTweak and base._stats_name or ""
-            if unitTweak and base.has_tag and base:has_tag("special") or self._special_units_id[statsTweak] then
-                peer_stats:SpecialKillConfirmed()
-            end
-        end
     end
 end
 
@@ -287,10 +282,9 @@ function EHIEndGamePeerStats:ACC()
     return string.format("Acc:%d%%", math.floor(self._hits / self._shots * 100))
 end
 
----@param ghost string
-function EHIEndGamePeerStats:Downs(ghost)
+function EHIEndGamePeerStats:Downs()
     if self._downs > 0 or self._downs_incapacitated > 0 then
-        return string.format("%d|%d%s", self._downs, self._downs_incapacitated, ghost)
+        return string.format("%d|%d%s", self._downs, self._downs_incapacitated, self._GHOST_ICON)
     end
     return ""
 end
