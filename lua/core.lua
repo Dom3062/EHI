@@ -1296,6 +1296,7 @@ local function LoadDefaultValues(self)
         show_floating_damage_popup_ai_damage = true,
         show_floating_damage_popup_crew_damage = true,
         show_floating_text = true,
+        show_floating_text_icon = true,
         show_floating_text_distance = 25,
         show_floating_text_ammo_bag = true,
         show_floating_text_bodybags_bag = true,

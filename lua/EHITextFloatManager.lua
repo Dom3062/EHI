@@ -5,19 +5,25 @@ end
 
 ---@class EHITextFloatManager
 EHITextFloatManager = {}
+EHITextFloatManager._SETTINGS =
+{
+    icon_alpha = EHI:GetOption("show_floating_text_icon") and 1 or 0
+}
 EHITextFloatManager._equipment =
 {
     ["8f59e19e1e45a05e"] =
     {
         name = "Ammo Bag",
-        icon = "equipment_ammo_bag",
+        texture = "guis/textures/pd2/skilltree/icons_atlas",
+        texture_rect = { 64, 0, 64, 64 },
         format = "%.2fx",
         check_upgrades_f = function(base) ---@param base AmmoBagBase
             if base._bullet_storm_level then
                 if base._bullet_storm_level == 1 then
                     return "Bullet+"
+                elseif base._bullet_storm_level == 2 then
+                    return "Bullet++"
                 end
-                return "Bullet++"
             end
             return ""
         end
@@ -25,7 +31,8 @@ EHITextFloatManager._equipment =
     ["43ed278b1faf89b3"] =
     {
         name = "Doctor Bag",
-        icon = "equipment_doctor_bag",
+        texture = "guis/textures/pd2/skilltree/icons_atlas",
+        texture_rect = { 128, 448, 64, 64 },
         check_upgrades_f = function(base) ---@param base DoctorBagBase
             if base._damage_reduction_upgrade then
                 return "Dmg-"
@@ -36,12 +43,14 @@ EHITextFloatManager._equipment =
     a163786a6ddb0291 =
     {
         name = "Bodybags Bag",
-        icon = "equipment_bodybags_bag"
+        texture = "guis/textures/pd2/skilltree/icons_atlas",
+        texture_rect = { 320, 704, 64, 64 }
     },
     e1474cdfd02aa274 =
     {
         name = "First Aid Kit",
-        icon = "equipment_first_aid_kit",
+        texture = "guis/textures/pd2/skilltree/icons_atlas",
+        texture_rect = { 192, 640, 64, 64 },
         check_upgrades_f = function(base) ---@param base FirstAidKitBase
             local str = ""
             if base._damage_reduction_upgrade then
@@ -61,12 +70,14 @@ EHITextFloatManager._equipment =
     f6001ca4eb64a74c =
     {
         name = "Grenade Case",
-        icon = "equipment_bg"
+        texture = "guis/dlcs/big_bank/textures/pd2/pre_planning/preplan_icon_types",
+        texture_rect = { 48, 0, 48, 48 }
     },
     e166f63494083d58 =
     {
         name = "Ordnance Bag",
-        icon = "equipment_grenade_crate"
+        texture = "guis/dlcs/big_bank/textures/pd2/pre_planning/preplan_icon_types",
+        texture_rect = { 48, 0, 48, 48 }
     },
     default =
     {
@@ -124,8 +135,14 @@ function EHITextFloatManager:new(panel, saferect)
                 blend_mode = "normal",
                 visible = false
             })
-            local default_icon = tweak_data.ehi.icons.default
-            local texture, texture_rect = tweak_data.hud_icons:get_icon_or(eq_data.icon or "pd2_question", default_icon.texture, default_icon.texture_rect)
+            local texture, texture_rect
+            if eq_data.texture then
+                texture = eq_data.texture
+                texture_rect = eq_data.texture_rect
+            else
+                local default_icon = tweak_data.ehi.icons.default
+                texture, texture_rect = tweak_data.hud_icons:get_icon_or(eq_data.icon or "pd2_question", default_icon.texture, default_icon.texture_rect)
+            end
             local icon = self._panel:bitmap({
                 layer = 0,
                 rotation = 360,
@@ -134,6 +151,7 @@ function EHITextFloatManager:new(panel, saferect)
                 w = 16,
                 h = 16,
                 blend_mode = "normal",
+                alpha = self._SETTINGS.icon_alpha,
                 visible = false
             })
             self._floats[key] = {

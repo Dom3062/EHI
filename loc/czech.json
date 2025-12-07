@@ -1144,13 +1144,13 @@
     "ehi_other_show_floating_damage_popup_crew_damage" : "Poškození od spoluhráčů",
 
     "ehi_other_show_floating_text" : "Plovoucí text",
-    "ehi_other_show_floating_text_desc" : "",
+
+    "ehi_other_show_floating_text_icon" : "Plovoucí ikona",
 
     "ehi_other_show_floating_text_distance" : "Vzdálenost",
     "ehi_other_show_floating_text_distance_desc" : "Nastavuje, jak maximálně daleko (v metrech) musíš být v rozsahu zobrazení plovoucího textu, aby byl viditelný",
 
     "ehi_other_show_floating_text_throwables" : "Hoditelné 'granáty'",
-    "ehi_other_show_floating_text_throwables_desc" : "",
     "ehi_other_show_floating_text_throwables_block_on_abilities" : "Blokovat hoditelné 'granáty' na abilitu nebo žádný",
     "ehi_other_show_floating_text_throwables_block_on_abilities_desc" : "Plovoucí text se nezobrazí pokud máš vybranou abilitu z perku nebo nemáš vybraný žádný hoditelný 'granát'",
 

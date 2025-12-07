@@ -1,3 +1,8 @@
+r363 (07. 12. 2025):
+Added "Float Icon" option
+Float Text: Fixed detected bulletstorm in Ammo Bags when player does not have that skill equipped
+Float Text: Fixed icons visibility
+
 r362 (06. 12. 2025):
 Added text float for deployables
 Achievement "Hammertime" will show progress in popup instead of in tracker

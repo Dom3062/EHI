@@ -1144,13 +1144,13 @@
     "ehi_other_show_floating_damage_popup_crew_damage" : "Crew Damage",
 
     "ehi_other_show_floating_text" : "Floating Text",
-    "ehi_other_show_floating_text_desc" : "",
+
+    "ehi_other_show_floating_text_icon" : "Float Icon",
 
     "ehi_other_show_floating_text_distance" : "Distance",
     "ehi_other_show_floating_text_distance_desc" : "Sets how much max distance (in meters) you have to be in floating text view range to be visible",
 
     "ehi_other_show_floating_text_throwables" : "Throwables",
-    "ehi_other_show_floating_text_throwables_desc" : "",
     "ehi_other_show_floating_text_throwables_block_on_abilities" : "Block throwables on abilities or no throwable",
     "ehi_other_show_floating_text_throwables_block_on_abilities_desc" : "Floating text for throwables won't show up if you have equipped abilities from perk decks or no throwable selected",
 
