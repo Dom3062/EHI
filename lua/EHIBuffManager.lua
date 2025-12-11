@@ -45,7 +45,7 @@ function EHIBuffManager:init_finalize(hud, panel)
         end
     end)
     EHI:AddOnAlarmCallback(function(dropin)
-        for _, buff in pairs(self._buffs) do
+        for id, buff in pairs(self._buffs) do
             if not self._buffs_redirect[id] then
                 buff:SwitchToLoudMode()
             end
@@ -141,18 +141,21 @@ end
 ---@param scale number
 function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     if not EHI:GetBuffDeckOption("tag_team", "tagged") then
-        if EHI:GetBuffDeckOption("tag_team", "effect") then
-            return
-        end
-        _G.EHITagTeamBuffTracker = nil
         return
     end
     local local_peer_id = EHI.IsHost and 1 or EHI._cache.LocalPeerID
     if Global.game_settings.single_player or not local_peer_id then
         return
     end
-    local Effect = tweak_data.ehi.buff.TagTeamEffect
-    local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(Effect)
+    local Tagged = class(EHIAbilityBuffTracker)
+    Tagged.SkillCheck = EHIAbilityBuffTracker.super.SkillCheck
+    function Tagged:post_init(params)
+        if params.permanent then
+            self._text:set_text("0")
+            self._persistent = true
+        end
+        self:SetAbilityIcon("tag_team")
+    end
     local permanent = EHI:GetBuffDeckOption("tag_team", "tagged_persistent")
     for i = 1, HUDManager.PLAYER_PANEL, 1 do
         if i ~= local_peer_id then -- You cannot tag yourself...
@@ -163,25 +166,29 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             params.w = buff_w
             params.h = buff_h
             params.text = "Paired"
-            params.texture = texture
-            params.texture_rect = texture_rect
             params.icon_color = tweak_data.chat_colors[i] or Color.white
             params.scale = scale
-            if permanent then
-                params.class_to_load = Effect.permanent.class_to_load
-                params.skill_check_after_spawn = true
-                params.check_buff_on_spawn = true
-                params.show_on_trigger = true
-            else
-                params.class = "EHITagTeamBuffTracker"
-            end
-            self:_create_buff(params)
+            params.permanent = permanent
+            self:_create_buff(params, nil, nil, Tagged)
         end
     end
     EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
         local buff = self._buffs["TagTeamTagged_" .. peer_id .. local_peer_id]
         if buff then
             buff._icon:set_color(color)
+        end
+    end)
+    Hooks:Add("BaseNetworkSessionOnPeerRemoved", "BaseNetworkSessionOnPeerRemoved_EHIBuffManager", function(peer, peer_id, reason)
+        local buff = self._buffs["TagTeamTagged_" .. peer_id .. local_peer_id]
+        if buff then
+            -- CriminalsManager.on_peer_left runs first than our BaseNetworkSession hook
+            buff._icon:set_color(tweak_data.chat_colors[peer_id] or Color.white)
+            if buff._active then
+                buff._persistent = nil -- Flip the persistent state to deactivate the buff
+                buff:Deactivate()
+                buff._persistent = permanent -- Return it back
+                buff._text:set_text("0")
+            end
         end
     end)
 end
@@ -196,7 +203,8 @@ end
 ---@param params table
 ---@param persistent string?
 ---@param deck_option table?
-function EHIBuffManager:_create_buff(params, persistent, deck_option)
+---@param class EHIBuffTracker?
+function EHIBuffManager:_create_buff(params, persistent, deck_option, class)
     local buff
     if params.class_to_load then
         if params.class_to_load.prerequisite and not _G[params.class_to_load.prerequisite] then
@@ -205,9 +213,9 @@ function EHIBuffManager:_create_buff(params, persistent, deck_option)
         if params.class_to_load.load_class then
             EHI:LoadBuff(params.class_to_load.load_class)
         end
-        buff = _G[params.class_to_load.class]:new(self._panel, params) --[[@as EHIBuffTracker]]
+        buff = (class or _G[params.class_to_load.class]):new(self._panel, params)
     else
-        buff = _G[params.class or "EHIBuffTracker"]:new(self._panel, params) --[[@as EHIBuffTracker]]
+        buff = (class or _G[params.class or "EHIBuffTracker"]):new(self._panel, params)
     end
     self._buffs[params.id] = buff
     if params.skill_check_after_spawn then

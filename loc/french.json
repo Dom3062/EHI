@@ -34,7 +34,6 @@
     "ehi_vr_scale": "Échelle VR",
 
     "ehi_visuals_menu" : "Visuels",
-    "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "Montre le fond du moniteur",
     "ehi_show_tracker_bg_desc" : "Montre le fond du moniteur\nQuand désactivé, le fond est caché et l’animation n’est pas visible.",
@@ -43,7 +42,6 @@
     "ehi_show_one_icon_desc" : "Montre une icône dans le moniteur quand activé\nToutes les icônes sont visibles quand cette option est désactivée.",
 
     "ehi_trackers_menu": "Moniteurs",
-    "ehi_trackers_menu_desc": "",
 
     "ehi_show_achievements" : "Show Achievement Tracker",
     "ehi_show_achievements_desc" : "Shows on the screen achievements\nSome heists may not have any achievements available",
@@ -61,7 +59,6 @@
     "ehi_xp_format_3": "Montre la valeur multiplée avec tous les bonus d’EXP",
     
     "ehi_xp_panel": "Comment montrer l’EXP gagné",
-    "ehi_xp_panel_desc": "",
     "ehi_xp_panel_1": "Montre le panneau pour chaque EXP gagné",
     "ehi_xp_panel_2": "Montre le total d’EXP gagné durant le braquage",
     
@@ -94,7 +91,6 @@
     "ehi_show_equipment_tracker_desc": "Montre un moniteur séparé pour les sacs de soins, sacs de munitions, sacs mortuaires et kit de premiers soins",
     
     "ehi_equipment_menu": "Menu d’Équipement",
-    "ehi_equipment_menu_desc": "",
 
     "ehi_equipment_format_desc" : "Définit comment l’équipement doit être formatté.",
     "ehi_equipment_format_1" : "Charges (Sacs placés)",
@@ -159,7 +155,6 @@
     "ehi_show_laser_tracker_desc" : "Shows a tracker for lasers that cycle every few seconds",
 
     "ehi_waypoints_menu" : "Waypoints",
-    "ehi_waypoints_menu_desc" : "",
 
     "ehi_show_waypoints" : "Show Waypoints",
     "ehi_show_waypoints_desc" : "Show waypoints in the game world",

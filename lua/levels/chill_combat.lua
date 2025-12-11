@@ -46,7 +46,10 @@ EHI.Mission:ParseTriggers({
     other = other,
     assault = { diff = 1 }
 })
-EHI.Unit:UpdateUnits({
+-- These units do not spawn if user has Celer mod installed
+-- Confirmed this host side, probably same thing on client too
+-- However, this code needs to stay for players that do not have Celer
+EHI.Unit:UpdateUnitsNoCheck({
     --units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo
     [100751] = { f = "IgnoreDeployable" },
     [101242] = { f = "IgnoreDeployable" }

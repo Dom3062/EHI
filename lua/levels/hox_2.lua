@@ -218,8 +218,12 @@ local tbl =
 
     --levels/instances/unique/hox_fbi_forensic_device
     --units/pd2_dlc_old_hoxton/equipment/stn_interactable_computer_forensics/stn_interactable_computer_forensics
-    [EHI:GetInstanceUnitID(100018, 2650)] = { remove_vanilla_waypoint_overriden = { id = 101559, waypoint = "ForensicsMatchChanceWaypoint" }, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance" },
-
+    [EHI:GetInstanceUnitID(100018, 2650)] = { remove_vanilla_waypoint_overriden = { id = 101559, waypoint = "ForensicsMatchChanceWaypoint" }, restore_waypoint_on_done = true, tracker_merge_id = "ForensicsMatchChance" }
+}
+EHI.Unit:UpdateUnits(tbl)
+---@type ParseUnitsTable
+local tbl2 =
+{
     --levels/instances/unique/hox_fbi_armory
     --units/pd2_dlc2/architecture/gov_d_int/gov_d_int_door_b/001
     [EHI:GetInstanceUnitID(100003, 6840)] = { f = function(...)
@@ -288,15 +292,15 @@ local tbl =
 -- Armory
 -- Ammo
 for i = 100004, 100007, 1 do
-    tbl[EHI:GetInstanceUnitID(i, 6840)] = { f = "IgnoreChildDeployable" }
+    tbl2[EHI:GetInstanceUnitID(i, 6840)] = { f = "IgnoreChildDeployable" }
 end
 -- Grenades
-tbl[EHI:GetInstanceUnitID(100019, 6840)] = { f = "IgnoreChildDeployable" }
-tbl[EHI:GetInstanceUnitID(100020, 6840)] = { f = "IgnoreChildDeployable" }
+tbl2[EHI:GetInstanceUnitID(100019, 6840)] = { f = "IgnoreChildDeployable" }
+tbl2[EHI:GetInstanceUnitID(100020, 6840)] = { f = "IgnoreChildDeployable" }
 for i = 100024, 100030, 1 do
-    tbl[EHI:GetInstanceUnitID(i, 6840)] = { f = "IgnoreChildDeployable" }
+    tbl2[EHI:GetInstanceUnitID(i, 6840)] = { f = "IgnoreChildDeployable" }
 end
-EHI.Unit:UpdateUnits(tbl)
+EHI.Unit:UpdateUnitsNoCheck(tbl2)
 
 EHI:SetMissionDoorData({
     -- Evidence

@@ -89,11 +89,28 @@ local achievements =
             local counter_armor = managers.loot:GetSecuredBagsTypeAmount("samurai_suit")
             local counter_loot = managers.loot:GetSecuredBagsAmount()
             if counter_loot < 16 or counter_armor < 4 then
-                self._unlockable:AddAchievementProgressTracker("kosugi_5", 0, 0, nil, "EHIkosugi_5Tracker")
-                self._trackers:CallFunction("kosugi_5", "AddFromSync", {
-                    { progress = math.min(counter_loot, 16), max = 16, id = "bags" },
-                    { progress = math.min(counter_armor, 4), max = 4, id = "armor" }
-                })
+                local kosugi_5
+                local spawn = self._all_triggers[102700]
+                if spawn then
+                    if spawn._params.id == "kosugi_5" then
+                        kosugi_5 = spawn._params.class_table
+                    elseif spawn:GetSpecialFunction() == self.SF.Trigger then
+                        for _, i in ipairs(spawn._params.data or {}) do
+                            local trigger = self._all_triggers[i]
+                            if trigger and trigger._params.id == "kosugi_5" then
+                                kosugi_5 = trigger._params.class_table
+                                break
+                            end
+                        end
+                    end
+                end
+                if kosugi_5 then
+                    self._unlockable:AddAchievementProgressTracker("kosugi_5", 0, 0, nil, kosugi_5)
+                    self._trackers:CallFunction("kosugi_5", "AddFromSync", {
+                        { progress = math.min(counter_loot, 16), max = 16, id = "bags" },
+                        { progress = math.min(counter_armor, 4), max = 4, id = "armor" }
+                    })
+                end
             end
         end,
         preparse_callback = function(data)

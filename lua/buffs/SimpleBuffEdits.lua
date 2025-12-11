@@ -310,15 +310,6 @@ function EHIManiacBuffTracker:UpdateStack(amount)
     end
 end
 
----@class EHITagTeamBuffTracker : EHIBuffTracker
----@field super EHIBuffTracker
-EHITagTeamBuffTracker = class(EHIBuffTracker)
----@param t number
----@param max number
-function EHITagTeamBuffTracker:AddTimeCeil(t, max)
-    self._time = math.min(self._time + t, max)
-end
-
 ---@class EHIAbilityBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 ---@field _ABILITY_COOLDOWN boolean
@@ -349,10 +340,17 @@ function EHIAbilityBuffTracker:Extend(t)
     end
 end
 
+---@param t number
+---@param max number
+function EHIAbilityBuffTracker:AddTimeCeil(t, max)
+    self._time = math.min(self._time + t, max)
+end
+
 function EHIAbilityBuffTracker:Deactivate()
     if self._persistent then
         self:RemoveBuffFromUpdate()
         self._update = false
+        self._text:set_text("0")
         return
     end
     EHIAbilityBuffTracker.super.Deactivate(self)
@@ -373,6 +371,8 @@ function EHIAbilityBuffTracker:SetAbilityIcon(ability)
             icon_params.x = 2 -- 128px
             self._duration_override = managers.player:upgrade_value("player", "damage_control_auto_shrug") --[[@as number]]
         end
+    elseif ability == "tag_team" and not self._ABILITY_COOLDOWN then
+        icon_params.y = 1
     end
     self:UpdateIcon(tweak_data.ehi.default.buff.get_icon(icon_params))
 end

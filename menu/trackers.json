@@ -73,7 +73,6 @@
             "type": "button",
             "id": "ehi_unlockables_menu",
             "title": "ehi_unlockables_menu",
-            "description": "ehi_unlockables_menu_desc",
             "next_menu": "ehi_unlockables_menu",
             "parent": "ehi_show_unlockables_choice"
         },
@@ -127,7 +126,6 @@
             "type": "multiple_choice",
             "id": "ehi_xp_panel_choice",
             "title": "ehi_xp_panel",
-            "description": "ehi_xp_panel_desc",
             "callback": "ehi_set_item_value",
             "items": [
                 "ehi_xp_panel_1",
@@ -305,7 +303,6 @@
             "type": "multiple_choice",
             "id": "ehi_gage_tracker_panel_choice",
             "title": "ehi_gage_tracker_panel",
-            "description": "ehi_gage_tracker_panel_desc",
             "callback": "ehi_set_item_value",
             "items": [
                 "ehi_gage_tracker_panel_1",
@@ -369,7 +366,6 @@
             "type": "button",
             "id": "ehi_equipment_menu",
             "title": "ehi_equipment_menu",
-            "description": "ehi_equipment_menu_desc",
             "next_menu": "ehi_equipment_menu",
             "parent": "ehi_show_equipment_tracker_choice",
             "focus_changed_callback" : "fcc_equipment_tracker"

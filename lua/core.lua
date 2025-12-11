@@ -1298,12 +1298,14 @@ local function LoadDefaultValues(self)
         show_floating_text = true,
         show_floating_text_icon = true,
         show_floating_text_distance = 25,
+        show_floating_text_format = 1, -- 1 = Multiplier; 2 = Percent
+        show_floating_text_compact_mode = false,
         show_floating_text_ammo_bag = true,
         show_floating_text_bodybags_bag = true,
         show_floating_text_doctor_bag = true,
         show_floating_text_first_aid_kit = true,
         show_floating_text_throwables = true,
-        show_floating_text_throwables_block_on_abilities = true,
+        show_floating_text_throwables_block_on_abilities_or_no_throwable = true,
         show_use_left_ammo_bag = true,
         show_use_left_doctor_bag = true,
         show_use_left_bodybags_bag = true,
@@ -1895,7 +1897,7 @@ end
 ---@param loc LocalizationManager
 ---@param lang_name string
 function EHI:RunOnLocalizationLoaded(loc, lang_name)
-    self._cache.LocLoaded = true
+    self._cache.LocLoaded = lang_name
     self:CallCallbackOnce("LocLoaded", loc, lang_name)
 end
 

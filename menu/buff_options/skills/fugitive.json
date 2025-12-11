@@ -253,7 +253,7 @@
         {
             "type": "multiple_choice",
             "id": "ehi_buffs_skills_fugitive_berserker_format_choice",
-            "title": "ehi_tracker_format",
+            "title": "ehi_tracker_value_format",
             "description": "ehi_buffs_skills_fugitive_berserker_format_desc",
             "callback": "ehi_set_item_value",
             "items": [

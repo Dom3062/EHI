@@ -187,7 +187,7 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
     --units/pd2_dlc_sand/vehicles/anim_vehicle_skidsteerloader/anim_vehicle_skidsteerloader/013
     tbl[104308] = { f = f, trigger_id = 104305 }
 end
-EHI.Unit:UpdateUnits(tbl)
+EHI.Unit:UpdateUnitsNoCheck(tbl)
 EHI:AddXPBreakdown({
     plan =
     {

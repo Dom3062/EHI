@@ -219,7 +219,6 @@
     "ehi_vr_tracker_alignment" : "จัดตำแหน่งไอคอนติดตาม VR",
 	
     "ehi_visuals_menu" : "ภาพไอคอน",
-    "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "แสดงพื้นหลังไอคอนติดตาม",
     "ehi_show_tracker_bg_desc" : "Shows tracker background:\nเมื่อปิดตัวเลือกนี้ พื้นหลังของไอคอนติดตามจะถูกซ่อนและไม่มีการแสดงแอนิเมชันใดๆ ",
@@ -237,7 +236,6 @@
     "ehi_show_tracker_hint_t_desc" : "กำหนดให้คำอธิบายปรากฎบนหน้าจอนานเท่าใดก่อนที่จะหายไป\nหากปรับตัวเลือกไปที่ 0 จะทำให้คำอธิบายแสดงบนจอตลอดเวลา",
 
     "ehi_trackers_menu" : "ไอคอนติดตาม",
-    "ehi_trackers_menu_desc" : "Trackers หรือ ไอคอนแสดงการติดตามเหตุการณ์ที่เกิดขึ้นอยู่หรือกำลังเกิดขึ้นในด่านนั้นๆ",
 
     "ehi_show_mission_trackers": "แสดงไอคอนติดตามจากแต่ละด่าน",
     "ehi_show_mission_trackers_desc": "แสดงไอคอนติดตามจากแต่ละด่านบนหน้าจอ (ตย. : เวลาที่รถตู้/คอปเตอร์ มาถึง, เวลารอที่จะถึงภารกิจถัดไป ฯลฯ)\n\nตัวเลือกนี้ยังมีผลไปถึงด่านที่ชุมชนสร้างขึ้นมาด้วย\nถ้าด่านเหล่านั้นรองรับ EHI",
@@ -246,7 +244,6 @@
     "ehi_show_unlockables_desc" : "แสดงรางวัลความสำเร็จ, ถ้วยรางวัลและรางวัลรายวัน บนหน้าจอ",
     
     "ehi_unlockables_menu" : "การปลดล็อค",
-    "ehi_unlockables_menu_desc" : "",
     
     "ehi_show_achievements" : "แสดงไอคอนติดตามรางวัลความสำเร็จ",
     "ehi_show_achievements_desc" : "Show achievement tracker เป็นการแสดงไอคอนติดตามรางวัลความสำเร็จที่เกี่ยวข้องกับเวลาหรือจำนวนในแต่ละด่าน\nบางด่านอาจไม่มีไอคอนติดตามรางวัลความสำเร็จปรากฎให้เห็น",
@@ -312,7 +309,6 @@
     "ehi_xp_format_3" : "แสดงค่าประสบการณ์คูณด้วยค่าประสบการณ์เพิ่มเติมที่ได้รับ",
 
     "ehi_xp_panel" : "เลือกวิธีการแสดงค่าประสบการณ์ที่ได้รับ",
-    "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "แสดงค่าประสบการณ์ที่ได้รับแยกกันในแต่ละไอคอนติดตาม",
     "ehi_xp_panel_2" : "แสดงค่าประสบการณ์ทั้งหมดที่ได้รับจากด่านนั้นๆ",
     "ehi_xp_panel_3" : "แสดงหน้าต่างค่าประสบการณ์ที่ได้รับแต่ละครั้งและที่ได้รับทั้งหมด",
@@ -352,7 +348,6 @@
     "ehi_show_gage_tracker_desc" : "แสดงไอคอนติดตามจำนวน Gage Packagesที่มีในด่านนั้นๆ\nหากด่านนั้นไม่อนุญาตให้มี Gage Packages ปรากฎในด่าน ไอคอนติดตามนี้จะไม่แสดงค่าให้เห็น",
 
     "ehi_gage_tracker_panel" : "แสดงไอคอนติดตาม Gage Packages",
-    "ehi_gage_tracker_panel_desc" : "แสดงไอคอนติดตามจำนวน Gage Packagesที่มีในด่านนั้นๆ",
     "ehi_gage_tracker_panel_1" : "ในไอคอนติดตาม",
     "ehi_gage_tracker_panel_2" : "ในหน้าต่าง",
 
@@ -363,7 +358,6 @@
     "ehi_show_equipment_tracker_desc" : "ไอคอนแสดงค่าอุปกรณ์ที่ปรากฎอยู่บนด่านหรือจากผู้เล่น เช่น กระเป๋าแพทย์, กระเป๋ากระสุน, กระเป๋าอาวุธขว้างปา, กระเป๋าใส่ศพ และกล่องปฐมพยาบาล",
 
     "ehi_equipment_menu" : "เมนูอุปกรณ์",
-    "ehi_equipment_menu_desc" : "",
 
     "ehi_equipment_format_desc" : "กำหนดรูปแบบการแสดงอุปกรณ์",
     "ehi_equipment_format_1" : "จำนวนครั้งที่ใช้ได้ (จำนวนกระเป๋าที่ปรากฎในเกม)",
@@ -395,7 +389,6 @@
     "ehi_show_equipment_ecmjammer_desc" : "แสดงไอคอนติดตามระยะเวลาที่เหลือของอุปกรณ์ตัดสัญญาณอิเล็กโทรนิคชั่วคราว หรือ แจมเมอร์ (ECM Jammer)\nแจมเมอร์ทีมีระยะเวลานานที่สุดจะถูกแสดงผลก่อนเสมอ",
 
     "ehi_ecmjammer_block_ecm_without_pager_delay" : "ไม่แสดงเวลาเครื่องรบกวนการสื่อสารที่ไม่กระทบกับการตอบวิทยุ",
-    "ehi_ecmjammer_block_ecm_without_pager_delay_desc" : "",
     
     "ehi_show_equipment_ecmfeedback" : "ไอคอนติดตามระยะเวลาการแสดงผลคลื่นกวนสัญญาณจากอุปกรณ์แจมเมอร์",
     "ehi_show_equipment_ecmfeedback_desc" : "แสดงไอคอนติดตามระยะเวลาที่เหลือของการเปิดใช้คลื่นรบกวนสัญญาณชั่วคราวจากอุปกรณ์ แจมเมอร์ (ECM Feedback)\nคลื่นรบกวนสัญญาณที่มีระยะเวลานานที่สุดจะถูกแสดงผลก่อนเสมอ (เฉพาะโฮสเท่านั้น)",
@@ -477,7 +470,6 @@
     "ehi_show_sniper_tracker_desc" : "แสดงจำนวนสไนเปอร์ตามสคริปที่ปรากฎในด่าน\n\nหมายเหตุ:\nสไนเปอร์มาร์แชลไม่ได้ถูกนับรวม\nแต่ละด่านมีสคริปสไนเปอร์แตกต่างกัน (ถ้ามี) หน้าต่างติดตามอาจแสดงต่างกันด้วย",
 
     "ehi_waypoints_menu" : "จุดอ้างอิง",
-    "ehi_waypoints_menu_desc" : "จุดอ้างอิง (Waypoints) เป็นไอคอนในเกมที่แสดงที่วัตถุนั้นๆ โดยตรง",
     
     "ehi_show_waypoints" : "แสดงจุดอ้างอิง",
     "ehi_show_waypoints_desc" : "แสดงจุดอ้างอิงในเกม",
@@ -507,7 +499,6 @@
     "ehi_show_waypoints_ecmjammer_desc" : "แสดงไอคอนสำหรับเครื่องรบกวนสัญญาณที่กำลังทำงานอยู่",
     
     "ehi_buffs_menu" : "ทักษะ",
-    "ehi_buffs_menu_desc" : "Buffs หรือทักษะที่ถูกใช้งานในเกม แสดงในรูปไอคอน",
 
     "ehi_show_buffs" : "แสดงทักษะ",
     "ehi_show_buffs_desc": "แสดงไอคอนทักษะที่กำลังถูกใช้งานหรือมีผลในเกมรวมถึงค่าคูลดาวน์จากทักษะและจากทักษะติดตัวพิเศษ หรือ Perk Deck",
@@ -596,9 +587,9 @@
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "อัพเดทค่า Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "กำหนดค่าเวลาเป็นวินาทีเพื่ออัพเดททักษะ 'Berserker' ",
-    "ehi_buffs_skills_fugitive_berserker_format_desc" : "เลือกรูปแบบที่จะอัพเดทสถานะบัพ Berserker ทั้งจากการโจมตีระยะประชิดและจากการโจมตีระยะไกล\n\nตัวคูณ: 1.4x 2.6x\n\nเปอร์เซ็น: 140% 260%",
-    "ehi_buffs_skills_fugitive_berserker_format_1" : "ตัวคูณ",
-    "ehi_buffs_skills_fugitive_berserker_format_2" : "เปอร์เซ็น",
+    "ehi_buffs_skills_fugitive_berserker_format_desc" : "เลือกรูปแบบที่จะอัพเดทสถานะบัพ Berserker ทั้งจากการโจมตีระยะประชิดและจากการโจมตีระยะไกล",
+    "ehi_buffs_skills_fugitive_berserker_format_1" : "ตัวคูณ (1.4x 2.6x)",
+    "ehi_buffs_skills_fugitive_berserker_format_2" : "เปอร์เซ็น (140% 260%)",
 
     "ehi_buffs_perks_menu" : "ทักษะติดตัวพิเศษ",
     "ehi_buffs_perks_infiltrator" : "Infiltrator",

@@ -235,6 +235,7 @@
     "ehi_color_reset" : "Reset Color",
 
     "ehi_tracker_format" : "Format",
+    "ehi_tracker_value_format" : "Value Format",
 
     "ehi_preview" : "Preview (A map restart is required to take effect)\nRed corner indicates where the first tracker is going to appear",
     "ehi_preview_text" : "Preview",
@@ -273,7 +274,6 @@
     "ehi_vr_tracker_alignment" : "VR Tracker Alignment",
 
     "ehi_visuals_menu" : "Visuals",
-    "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "Show Tracker Background",
     "ehi_show_tracker_bg_desc" : "Shows tracker background\nWhen disabled, the background is hidden and animation is not visible",
@@ -303,7 +303,6 @@
     "ehi_show_trackers" : "Show Trackers",
 
     "ehi_trackers_menu" : "Trackers",
-    "ehi_trackers_menu_desc" : "",
 
     "ehi_trackers_n_of_rc" : "Number of Trackers in Rows/Columns",
     "ehi_trackers_n_of_rc_desc" : "Sets how many trackers will appear in a row/column before another one will be created\n\nIf Vertical alignment is selected, it will show the number of trackers in a row up to selected value before creating a new one\nIf Horizontal alignment, it will show the number of trackers in a column up to selected value creating a new one\n\nTo disable this feature, set the value to '0'",
@@ -323,7 +322,6 @@
     "ehi_show_unlockables_desc" : "Shows on the screen tracker for achievements, trophies and daily mission",
 
     "ehi_unlockables_menu" : "Unlockables",
-    "ehi_unlockables_menu_desc" : "",
 
     "ehi_show_achievements" : "Show Achievements",
     "ehi_show_achievements_desc" : "Shows achievements on the screen\nSome heists may not have any achievements available",
@@ -404,7 +402,6 @@
     "ehi_xp_format_3" : "Show value multiplied with all XP bonuses",
 
     "ehi_xp_panel" : "How to show gained XP",
-    "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "Show panel for every XP gained",
     "ehi_xp_panel_2" : "Show total XP gained from the heist",
     "ehi_xp_panel_3" : "Show popup for every XP gained and total XP",
@@ -451,7 +448,6 @@
     "ehi_show_gage_tracker_desc" : "Shows tracker for Gage Packages on the map.\nIf the map does not allow Gage Packages, the tracker will not show",
 
     "ehi_gage_tracker_panel" : "Show Progress for Gage Packages",
-    "ehi_gage_tracker_panel_desc" : "",
     "ehi_gage_tracker_panel_1" : "In tracker",
     "ehi_gage_tracker_panel_2" : "In popup",
 
@@ -465,7 +461,6 @@
     "ehi_show_equipment_tracker_desc" : "Shows a separate tracker for deployed Doctor Bags, Ammo Bags, Grenade Cases, Body Bags and First Aid Kits",
 
     "ehi_equipment_menu" : "Equipment Menu",
-    "ehi_equipment_menu_desc" : "",
 
     "ehi_equipment_format_desc" : "Defines how equipment should be formated",
     "ehi_equipment_format_1" : "Uses (Bags placed)",
@@ -497,7 +492,6 @@
     "ehi_show_equipment_ecmjammer_desc" : "Shows a tracker for the remaining duration of an ECM Jammer\nAn ECM Jammer with the longest duration is shown in the tracker",
 
     "ehi_ecmjammer_block_ecm_without_pager_delay" : "Don't show ECM Jammer that won't delay pagers",
-    "ehi_ecmjammer_block_ecm_without_pager_delay_desc" : "",
 
     "ehi_show_equipment_ecmfeedback" : "Show ECM Feedback Duration Tracker",
     "ehi_show_equipment_ecmfeedback_desc" : "Shows a tracker for the remaining duration of an ECM Feedback\nAn ECM Feedback with the longest duration is shown in the tracker (host only)",
@@ -639,7 +633,6 @@
     "ehi_show_ping_tracker_refresh_t_desc" : "Sets how much time has to pass for Player Ping tracker to update ping for each player",
     
     "ehi_waypoints_menu" : "Waypoints",
-    "ehi_waypoints_menu_desc" : "",
 
     "ehi_show_waypoints" : "Show Waypoints",
     "ehi_show_waypoints_desc" : "Show waypoints in the game world",
@@ -681,14 +674,12 @@
     "ehi_show_waypoints_loot_counter_desc" : "Shows a waypoint on active loot area\n\nThis option replaces vanilla loot area waypoint\nIf the loot icon is not visible, waypoint may use a different icon",
 
     "ehi_shared_menu" : "Shared options between Trackers and Waypoints",
-    "ehi_shared_menu_desc" : "",
 
     "ehi_shared_loot_counter" : "Loot Counter",
 
     "ehi_shared_pagers" : "Pagers",
 
     "ehi_buffs_menu" : "Buffs",
-    "ehi_buffs_menu_desc" : "",
 
     "ehi_show_buffs" : "Show Buffs",
     "ehi_show_buffs_desc": "Shows on the screen buffs and cooldowns from skills and perks",
@@ -817,9 +808,9 @@
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "Berserker Refresh",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "Sets how often 'Berserker' gauge should be updated per second",
-    "ehi_buffs_skills_fugitive_berserker_format_desc" : "Sets how to format Berserker buff, both ranged damage and melee damage\n\nMultiplier: 1.4x 2.6x\n\nPercent: 140% 260%",
-    "ehi_buffs_skills_fugitive_berserker_format_1" : "Multiplier",
-    "ehi_buffs_skills_fugitive_berserker_format_2" : "Percent",
+    "ehi_buffs_skills_fugitive_berserker_format_desc" : "Sets how to format Berserker buff, both ranged damage and melee damage",
+    "ehi_buffs_skills_fugitive_berserker_format_1" : "Multiplier (1.4x 2.6x)",
+    "ehi_buffs_skills_fugitive_berserker_format_2" : "Percent (140% 260%)",
     "ehi_buffs_skills_fugitive_berserker_text_format" : "Berserker Text Format",
     "ehi_buffs_skills_fugitive_berserker_text_format_desc" : "Sets what text to show in Berserker buff",
     "ehi_buffs_skills_fugitive_berserker_text_format_1" : "Weapon Damage | Melee / Saw Damage",
@@ -858,8 +849,7 @@
     "ehi_buffs_perks_yakuza_irezumi" : "Irezumi",
     "ehi_buffs_perks_yakuza_irezumi_refresh" : "Irezumi - Refresh",
     "ehi_buffs_perks_yakuza_irezumi_refresh_desc" : "Sets how often the buff should be updated per second",
-    "ehi_buffs_perks_yakuza_irezumi_format_desc" : "Sets how to format buff, both armor regen speed and movement speed\n\nMultiplier: 1.6x 1.2x\n\nPercent: 160% 120%",
-    "ehi_buffs_perks_yakuza_irezumi_text_format" : "Irezumi - Text Format",
+    "ehi_buffs_perks_yakuza_irezumi_format_desc" : "Sets how to format buff, both armor regen speed and movement speed",
     "ehi_buffs_perks_yakuza_irezumi_text_format_desc" : "Sets what text to show in the buff",
     "ehi_buffs_perks_yakuza_irezumi_text_format_1" : "Armor Regen Speed | Movement Speed",
     "ehi_buffs_perks_yakuza_irezumi_text_format_2" : "Movement Speed | Armor Regen Speed",
@@ -1150,31 +1140,37 @@
     "ehi_other_show_floating_text_distance" : "Distance",
     "ehi_other_show_floating_text_distance_desc" : "Sets how much max distance (in meters) you have to be in floating text view range to be visible",
 
+    "ehi_other_show_floating_text_format_1" : "Multiplier (1.45x)",
+    "ehi_other_show_floating_text_format_2" : "Percent (145%)",
+
+    "ehi_other_show_floating_text_compact_mode" : "Compact Mode",
+    "ehi_other_show_floating_text_compact_mode_desc" : "Reduces floating text size by omitting deployable name and placing icon on the same line as the text",
+
     "ehi_other_show_floating_text_throwables" : "Throwables",
-    "ehi_other_show_floating_text_throwables_block_on_abilities" : "Block throwables on abilities or no throwable",
-    "ehi_other_show_floating_text_throwables_block_on_abilities_desc" : "Floating text for throwables won't show up if you have equipped abilities from perk decks or no throwable selected",
+    "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable" : "Block throwables on abilities or no throwable",
+    "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_desc" : "Floating text for throwables won't show up if you have equipped abilities from perk decks or no throwable selected",
 
     "ehi_other_show_use_left_ammo_bag" : "Show uses left for Ammo Bags",
     "ehi_other_show_use_left_doctor_bag" : "Show uses left for Doctor Bags",
     "ehi_other_show_use_left_bodybags_bag" : "Show uses left for Bodybag Bags",
     "ehi_other_show_use_left_grenades" : "Show uses left for Grenade cases",
 
-    "ehi_other_show_colored_bag_contour" : "Show Bag Outline color based on their weight",
+    "ehi_other_show_colored_bag_contour" : "Bag Outline color based on their weight",
     "ehi_other_show_colored_bag_contour_desc" : "Sets custom bag outline color based on their weight",
 
     "ehi_other_show_real_time_ingame" : "Show Current Real Time In-game",
     "ehi_other_show_real_time_ingame_desc" : "Shows current real time in OS under heist time",
 
-    "ehi_other_show_minion_colored_to_owner" : "Show Converts Colored to its Owner",
+    "ehi_other_show_minion_colored_to_owner" : "Converts Colored to its Owner",
     "ehi_other_show_minion_colored_to_owner_desc" : "Sets convert's contour color to its owner",
 
-    "ehi_other_show_progress_reload" : "Show reload as interact",
+    "ehi_other_show_progress_reload" : "Reload as interact",
     "ehi_other_show_progress_reload_desc" : "Shows interact circle (or progress) when you reload your weapons",
 
-    "ehi_other_show_progress_melee" : "Show melee as interact",
+    "ehi_other_show_progress_melee" : "Melee as interact",
     "ehi_other_show_progress_melee_desc" : "Shows interact circle (or progress) when you charge your melee",
 
-    "ehi_other_show_end_game_stats" : "Show end game stats",
+    "ehi_other_show_end_game_stats" : "End game stats",
     "ehi_other_show_end_game_stats_desc" : "Shows end game stats (kills/special kills, headshots, damage per minute, kills per minute, accuracy, downs) for each player in the heist\n\nStats will show up if at least one of the player made a kill\nPlayer needs to make at least one kill to appear in the stats\nStats won't appear in Single Player mode",
 
     "ehi_other_show_end_game_stats_kills" : "Kills",

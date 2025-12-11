@@ -251,7 +251,6 @@
     "ehi_vr_tracker_alignment" : "VR追踪器对齐",
 
     "ehi_visuals_menu" : "显示设置",
-    "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "追踪器背景",
     "ehi_show_tracker_bg_desc" : "显示追踪器的底色与边框\n取消勾选后，追踪器的底色与边框将被隐藏且动画不会生效",
@@ -276,7 +275,6 @@
     "ehi_show_trackers" : "显示追踪器",
 
     "ehi_trackers_menu" : "追踪器",
-    "ehi_trackers_menu_desc" : "",
 
     "ehi_show_mission_trackers": "显示任务追踪器",
     "ehi_show_mission_trackers_desc": "显示当前任务目标的追踪器 (例如: 撤离车/飞机抵达时间,距离下一个目标触发时间, 诸如此类。。。)\n\n此选项可兼容自定义劫案\n如果该地图支持EHI",
@@ -285,7 +283,6 @@
     "ehi_show_unlockables_desc" : "在玩家界面上显示纪念品、安全屋每日挑战、成就等追踪器",
 
     "ehi_unlockables_menu" : "可解锁内容",
-    "ehi_unlockables_menu_desc" : "",
     
     "ehi_show_achievements" : "显示成就追踪器",
     "ehi_show_achievements_desc" : "在屏幕上显示可追踪的成就\n某些劫案中没有可追踪的成就",
@@ -357,7 +354,6 @@
     "ehi_xp_format_3" : "计算所有经验加成",
 
     "ehi_xp_panel" : "经验显示模式",
-    "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "在每次获得经验时显示面板",
     "ehi_xp_panel_2" : "显示劫案中总共获得的经验",
     "ehi_xp_panel_3" : "获得经验时弹出窗口",
@@ -404,7 +400,6 @@
     "ehi_show_gage_tracker_desc" : "显示追踪地图上的盖奇包裹\n若地图上没有盖奇包裹，此追踪器会自动隐藏",
 
     "ehi_gage_tracker_panel" : "显示盖奇包收集进度方式",
-    "ehi_gage_tracker_panel_desc" : "",
     "ehi_gage_tracker_panel_1" : "追踪器",
     "ehi_gage_tracker_panel_2" : "弹出窗口",
 
@@ -418,7 +413,6 @@
     "ehi_show_equipment_tracker_desc" : "为医疗箱，急救包，弹药包，手雷箱，尸体袋箱等随身装备显示追踪器",
 
     "ehi_equipment_menu" : "装备显示设置",
-    "ehi_equipment_menu_desc" : "",
 
     "ehi_equipment_format_desc" : "选择随身装备追踪器显示的格式",
     "ehi_equipment_format_1" : "可用次数 (已部署数量)",
@@ -450,7 +444,6 @@
     "ehi_show_equipment_ecmjammer_desc" : "显示ECM干扰持续时间追踪器\n默认显示结束时间最晚的ECM时间",
 
     "ehi_ecmjammer_block_ecm_without_pager_delay" : "忽略不能屏蔽对讲机的ECM",
-    "ehi_ecmjammer_block_ecm_without_pager_delay_desc" : "",
 
     "ehi_show_equipment_ecmfeedback" : "显示ECM啸叫时间追踪器",
     "ehi_show_equipment_ecmfeedback_desc" : "显示ECM啸叫持续时间追踪器\n默认显示结束时间最晚的ECM时间",
@@ -586,7 +579,6 @@
     "ehi_money_tracker_format_4" : "仅现金",
  
     "ehi_waypoints_menu" : "路径导航",
-    "ehi_waypoints_menu_desc" : "",
 
     "ehi_show_waypoints" : "显示路径导航点",
     "ehi_show_waypoints_desc" : "在游戏中显示路径导航点",
@@ -622,14 +614,12 @@
     "ehi_show_waypoints_loot_counter_desc" : "在激活的战利品劫获区域显示导航点\n\n此选项将替换原版战利品劫获区域导航点\n若战利品图标不可见，导航点可能会使用其他图标",
 
     "ehi_shared_menu" : "追踪器与导航点通用设置",
-    "ehi_shared_menu_desc" : "",
 
     "ehi_shared_loot_counter" : "战利品计数",
 
     "ehi_shared_pagers" : "对讲机",
 
     "ehi_buffs_menu" : "技能/天赋效果",
-    "ehi_buffs_menu_desc" : "",
 
     "ehi_show_buffs" : "显示效果追踪器",
     "ehi_show_buffs_desc": "在屏幕上显示技能和天赋的增益与冷却时间",
@@ -722,9 +712,9 @@
     "ehi_buffs_skills_fugitive_berserker" : "狂战士",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "狂战士刷新频率",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "设置每秒内刷新多少次”狂战士“伤害加成效果显示",
-    "ehi_buffs_skills_fugitive_berserker_format_desc" : "显示狂战士近战于远程效果的显示格式\n\n倍数: 1.4x 2.6x\n\n百分比: 140% 260%",
-    "ehi_buffs_skills_fugitive_berserker_format_1" : "倍数",
-    "ehi_buffs_skills_fugitive_berserker_format_2" : "百分比",
+    "ehi_buffs_skills_fugitive_berserker_format_desc" : "显示狂战士近战于远程效果的显示格式",
+    "ehi_buffs_skills_fugitive_berserker_format_1" : "倍数 (1.4x 2.6x)",
+    "ehi_buffs_skills_fugitive_berserker_format_2" : "百分比 (140% 260%)",
     "ehi_buffs_skills_fugitive_berserker_text_format" : "狂战士文本显示格式",
     "ehi_buffs_skills_fugitive_berserker_text_format_desc" : "设置狂战士增益效果中的文本如何显示",
     "ehi_buffs_skills_fugitive_berserker_text_format_1" : "武器伤害 | 近战武器/电锯伤害",

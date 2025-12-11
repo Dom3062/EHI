@@ -7,6 +7,10 @@ EHI.Trigger = EHIMissionElementTrigger:__post_init()
 EHI.Element = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementOverride.lua")
 EHI.Waypoint = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementWaypoint.lua")
 EHI.Unit = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionUnit.lua")
+if EHI:GetOption("show_floating_text") then
+    dofile(EHI.LuaPath .. "EHITextFloatManager.lua")
+    EHITextFloatManager:new()
+end
 
 local redirect =
 {

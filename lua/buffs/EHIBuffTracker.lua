@@ -47,6 +47,7 @@ local function set_right(o, x)
     o:set_right(target_right)
 end
 ---@class EHIBuffTracker
+---@field new fun(self: self, panel: Panel, params: table): self
 ---@field _parent_class EHIBuffManager Added when `EHIBuffManager` class is created
 ---@field _inverted_progress boolean
 ---@field _DELETE_BUFF_ON_FALSE_SKILL_CHECK boolean

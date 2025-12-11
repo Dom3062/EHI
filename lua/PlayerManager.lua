@@ -268,7 +268,7 @@ if EHI:GetBuffDeckSelectedOptions("tag_team", "effect", "absorption") then
                 local valid_player = damage_info.attacker_unit == owner or damage_info.attacker_unit == tagged
                 if was_killed and valid_player then
                     end_time = math.min(end_time + kill_extension, timer:time() + duration)
-                    managers.ehi_buff:CallFunction("TagTeamEffect", "AddTimeCeil", kill_extension, duration)
+                    managers.ehi_buff:CallFunction("tag_team_effect", "AddTimeCeil", kill_extension, duration)
                     if absorption_bonus then
                         absorption = math.min(absorption + absorption_bonus.kill_gain, absorption_bonus.max)
                         managers.ehi_buff:AddGauge("TagTeamAbsorption", absorption / absorption_bonus.max, absorption)
@@ -295,7 +295,7 @@ if EHI:GetBuffDeckSelectedOptions("tag_team", "effect", "absorption") then
             if not duration then -- No duration ? How ?
                 return
             end
-            managers.ehi_buff:AddBuff("TagTeamEffect", duration)
+            managers.ehi_buff:AddBuff("tag_team_effect", duration)
             local args = self._coroutine_mgr._buffer.tag_team.arg
             local tagged, owner = unpack(args)
             self:add_coroutine("tag_team_EHI", Effect, tagged, owner)

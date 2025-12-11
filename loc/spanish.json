@@ -85,7 +85,6 @@
     "ehi_vr_tracker_alignment" : "Alineación en VR",
 
     "ehi_visuals_menu" : "Aspecto visual",
-    "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "Mostrar fondo del contador",
     "ehi_show_tracker_bg_desc" : "Mostrar / ocultar el fondo de los contadores.\nAl desactivar esta opción, los fondos y animaciones no se mostrarán.",
@@ -97,7 +96,6 @@
     "ehi_show_one_icon_desc" : "Mostrar solo 1 icono junto a los contadores.\nAl desactivar esta opción, todos los iconos serán visibles.",
 
     "ehi_trackers_menu" : "Contadores",
-    "ehi_trackers_menu_desc" : "",
 
     "ehi_show_mission_trackers": "Mostrar contadores de misión",
     "ehi_show_mission_trackers_desc": "Mostrar / ocultar los contadores de misión en pantalla.\n(Por ejemplo: tiempo restante para la huida, el siguiente objetivo, etc.)\nEsta opción también funciona en mapas personalizados (de ser soportados).",
@@ -106,7 +104,6 @@
     "ehi_show_unlockables_desc" : "Mostrar / ocultar contadores para logros, trofeos y trabajos diarios.",
 
     "ehi_unlockables_menu" : "Desbloqueables",
-    "ehi_unlockables_menu_desc" : "",
 
     "ehi_show_achievements" : "Mostrar logros",
     "ehi_show_achievements_desc" : "Mostrar / ocultar los logros en pantalla.\nAlgunos atracos pueden no tener ningún logro disponible.",
@@ -169,7 +166,6 @@
     "ehi_xp_format_3" : "Valor multiplicado por bonific. de EXP",
 
     "ehi_xp_panel" : "Cómo mostrar la EXP obtenida",
-    "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "En un contador por cada EXP obtenida",
     "ehi_xp_panel_2" : "En un contador por EXP total de la misión",
     "ehi_xp_panel_3" : "En una ventana por cada EXP obtenida y EXP total",
@@ -207,7 +203,6 @@
     "ehi_show_gage_tracker_desc" : "Mostrar / ocultar un contador para los 'Paquetes de Gage' en el mapa.\nSi el mapa no permite estos paquetes, el contador no se mostrará.",
 
     "ehi_gage_tracker_panel" : "Mostrar 'Paquetes de Gage' encontrados",
-    "ehi_gage_tracker_panel_desc" : "",
     "ehi_gage_tracker_panel_1" : "En un contador",
     "ehi_gage_tracker_panel_2" : "En ventana emergente",
 
@@ -218,7 +213,6 @@
     "ehi_show_equipment_tracker_desc" : "Mostrar / ocultar contadores separados para todos los equipamientos.",
 
     "ehi_equipment_menu" : "Menú de equipamiento",
-    "ehi_equipment_menu_desc" : "",
 
     "ehi_equipment_format_desc" : "Definir cómo se muestran los contadores de equipamiento.",
     "ehi_equipment_format_1" : "Usos (Equip. colocado)",
@@ -315,7 +309,6 @@
     "ehi_show_escape_chance_desc" : "Mostrar / ocultar un contador con la posibilidad de huida actual.",
     
     "ehi_waypoints_menu" : "Indicadores de ruta",
-    "ehi_waypoints_menu_desc" : "",
 
     "ehi_show_waypoints" : "Mostrar indicadores de ruta",
     "ehi_show_waypoints_desc" : "Mostrar / ocultar los indicadores de ruta en los mapas.",
@@ -339,7 +332,6 @@
     "ehi_show_waypoints_zipline_desc" : "Mostrar / ocultar un indicador de ruta en una tirolina que esté en uso.\nSolo se mostrará su tiempo de reinicio.",
 
     "ehi_buffs_menu" : "Bonificaciones",
-    "ehi_buffs_menu_desc" : "",
 
     "ehi_show_buffs" : "Mostrar bonificaciones",
     "ehi_show_buffs_desc": "Mostrar / ocultar las bonificaciones y tiempos de espera de habilidades y talentos.",

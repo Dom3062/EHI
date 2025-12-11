@@ -39,7 +39,6 @@
     "ehi_vr_tracker_alignment" : "Allineamento Tracciatore VR",
  
     "ehi_visuals_menu" : "Aspetto visivo",
-    "ehi_visuals_menu_desc" : "",
  
     "ehi_show_tracker_bg" : "Mostra Sfondo Tracciatore",
     "ehi_show_tracker_bg_desc" : "Mostra lo sfondo del tracciatore\nQuando disattivato, lo sfondo è nascosto e l'animazione non è visibile",
@@ -48,7 +47,6 @@
     "ehi_show_one_icon_desc" : "Quando attivato, mostra 1 icona nel tracciatore\nQuando disattivato, tutte l'icone saranno visibili",
  
     "ehi_trackers_menu" : "Tracciatori",
-    "ehi_trackers_menu_desc" : "",
  
     "ehi_show_achievements" : "Mostra Tracciatore Achievement",
     "ehi_show_achievements_desc" : "Mostra achievement sullo schermo\nAlcuni colpi potrebbero non essere disponibili",
@@ -66,7 +64,6 @@
     "ehi_xp_format_3" : "Mostra il valore moltiplicato per i bonus PE",
  
     "ehi_xp_panel" : "Come Mostrare i PE Guadagnati",
-    "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "Mostra pannello per ogni PE guadagnato",
     "ehi_xp_panel_2" : "Mostra PE totali guadagnati dal colpo",
 	"ehi_xp_panel_3" : "Mostra una notifica per tutti i PE guadagnati ed i PE totali",
@@ -98,7 +95,6 @@
     "ehi_show_gage_tracker_desc" : "Mostra il tracciatore per i pacchetti Gage sulla mappa.\nSe la mappa non consente i pacchetti di Gage, il tracciatore non verrà visualizzato",
  
     "ehi_gage_tracker_panel" : "Mostra progressi per i pacchetti di Gage",
-    "ehi_gage_tracker_panel_desc" : "",
     "ehi_gage_tracker_panel_1" : "Tracciatore",
     "ehi_gage_tracker_panel_2" : "Notifica",
  
@@ -109,7 +105,6 @@
     "ehi_show_equipment_tracker_desc" : "Mostra un tracciatore separato per borse mediche, borse di munizioni, custodie per granate, sacchi per cadaveri e kit di pronto soccorso",
  
     "ehi_equipment_menu" : "Menu Equipaggiamento",
-    "ehi_equipment_menu_desc" : "",
  
     "ehi_equipment_format_desc" : "Definisce il formato dell'attrezzatura",
     "ehi_equipment_format_1" : "Utilizzi (Borse piazzate)",
@@ -176,7 +171,6 @@
     "ehi_show_laser_tracker_desc" : "Mostra un tracciatore per i laser che cambino ogni paio di secondi",
  
     "ehi_waypoints_menu" : "Punti di Riferimento",
-    "ehi_waypoints_menu_desc" : "",
  
     "ehi_show_waypoints" : "Mostra Punti di Riferimento",
     "ehi_show_waypoints_desc" : "Mostra le punti di riferimento nel mondo di gioco",

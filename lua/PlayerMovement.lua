@@ -48,6 +48,6 @@ if EHI:GetBuffOption("stamina") then
     original._change_stamina = PlayerMovement._change_stamina
     function PlayerMovement:_change_stamina(...)
         original._change_stamina(self, ...)
-        managers.ehi_buff:AddGauge("Stamina", self._stamina)
+        managers.ehi_buff:CallFunction("Stamina", "SetRatio", self._stamina)
     end
 end

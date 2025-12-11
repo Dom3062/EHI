@@ -197,6 +197,9 @@ function EHIMissionUnit:IgnoreDeployable(unit_id, unit_data, unit)
     if base and base.SetIgnore then
         base:SetIgnore()
     end
+    if EHITextFloatManager then
+        EHITextFloatManager:IgnoreDeployable(unit)
+    end
 end
 
 ---@param unit_id number

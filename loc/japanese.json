@@ -74,7 +74,6 @@
   "ehi_vr_tracker_alignment": "VRのトラッカーの整列",
 
   "ehi_visuals_menu": "ビジュアル",
-  "ehi_visuals_menu_desc": "",
 
   "ehi_show_tracker_bg": "トラッカーの背景を表示",
   "ehi_show_tracker_bg_desc": "トラッカーの背景を表示します。\n無効化すると背景は非表示になり、アニメーションが無効化されます",
@@ -83,7 +82,6 @@
   "ehi_show_one_icon_desc": "有効化するとトラッカー1つにつき1つのアイコンしか表示されなくなります。\n無効化すると全てのアイコンが表示されるようになります。",
 
   "ehi_trackers_menu": "トラッカー",
-  "ehi_trackers_menu_desc": "",
 
   "ehi_show_mission_trackers": "ミッショントラッカーを表示",
   "ehi_show_mission_trackers_desc": "ミッショントラッカーを表示します。（例: バン/ヘリ到着時間、次の目的地待ち時間等）\n\nこのオプションはEHIでサポートされている場合に限り、\nカスタムミッションにも適用されます。",
@@ -110,7 +108,6 @@
   "ehi_xp_format_3": "全XPボーナスと掛けた値を表示",
 
   "ehi_xp_panel": "取得したXPの表示方法",
-  "ehi_xp_panel_desc": "",
   "ehi_xp_panel_1": "取得するごとにパネルを表示",
   "ehi_xp_panel_2": "Heistで得たXPの合計を表示",
   "ehi_xp_panel_3": "取得するごとにポップアップを表示し、合計XPを表示する",
@@ -144,7 +141,6 @@
   "ehi_show_gage_tracker_desc": "マップ上のGageパッケージのトラッカーを表示します。\nマップ上にパッケージが存在していない場合はトラッカーは表示されません。",
 
   "ehi_gage_tracker_panel": "パッケージの進捗",
-  "ehi_gage_tracker_panel_desc": "",
   "ehi_gage_tracker_panel_1": "トラッカー内",
   "ehi_gage_tracker_panel_2": "ポップアップ内",
 
@@ -155,7 +151,6 @@
   "ehi_show_equipment_tracker_desc": "Doctor Bag、Ammo Bag、Grenade Case、Body Bag Case、First Aid Kitの配置状況を個別に表示します。",
 
   "ehi_equipment_menu": "携帯アイテムメニュー",
-  "ehi_equipment_menu_desc": "",
 
   "ehi_equipment_format_desc": "携帯アイテムのフォーマットを定義します。",
   "ehi_equipment_format_1": "使用可能回数 (配置数)",
@@ -228,7 +223,6 @@
   "ehi_show_laser_tracker_desc": "数秒ごとに周期を変えるレーザーのトラッカーを表示します。",
 
   "ehi_waypoints_menu": "ウェイポイント",
-  "ehi_waypoints_menu_desc": "",
 
   "ehi_show_waypoints": "ウェイポイントを表示",
   "ehi_show_waypoints_desc": "ゲーム内ワールドにウェイポイントを表示します。",
@@ -252,7 +246,6 @@
   "ehi_show_waypoints_zipline_desc": "動作中のジップラインのリセット時間のウェイポイントを表示します。",
 
   "ehi_buffs_menu": "バフ",
-  "ehi_buffs_menu_desc": "",
 
   "ehi_show_buffs": "バフを表示",
   "ehi_show_buffs_desc": "スキルやPerkのバフやクールダウンを表示します。",

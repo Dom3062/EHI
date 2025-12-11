@@ -30,7 +30,6 @@
     "ehi_vr_scale": "Tamanho no VR",
 
     "ehi_visuals_menu" : "Visuais",
-    "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "Mostrar o fundo do Tracker",
 	"ehi_show_tracker_bg_desc" : "Mostra o fundo do Tracker\nQuando desativado, o fundo é escondido e a animação não é visível",
@@ -39,7 +38,6 @@
 	"ehi_show_one_icon_desc" : "Mostra 1 ícone no Tracker quando ativado\nTodos os ícones são visíveis quando essa opção está desativado",
 
     "ehi_trackers_menu" : "Trackers",
-    "ehi_trackers_menu_desc" : "",
 
     "ehi_show_gained_xp" : "Mostrar XP Ganho",
     "ehi_show_gained_xp_desc" : "Mostra o XP Ganho em uma missão.\nEsse Tracker é desativado em Crime Spree.",
@@ -51,7 +49,6 @@
     "ehi_xp_format_3" : "Mostra o valor multiplicado com todos os bônus de XP",
 
     "ehi_xp_panel" : "Como mostra o XP Ganho",
-    "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "Mostra o Tracker para cada XP Ganho",
     "ehi_xp_panel_2" : "Mostra o XP Total Ganho da missão",
 
@@ -81,7 +78,6 @@
     "ehi_show_equipment_tracker_desc" : "Mostra um Tracker separado para Doctor Bags, Ammo Bags, Grenade Cases, Body Bags e First Aid Kits",
 
     "ehi_equipment_menu" : "Menu de Equipamento",
-    "ehi_equipment_menu_desc" : "",
 
 	"ehi_equipment_format_desc" : "Define como o equipamento deve ser exibido",
 	"ehi_equipment_format_1" : "Usos (Bolsas Colocadas)",
@@ -165,7 +161,6 @@
     "ehi_show_pager_callback_trackers_desc" : "Mostra um Tracker de Pagers que precisam ser respondidas",
 
     "ehi_waypoints_menu" : "Waypoints",
-    "ehi_waypoints_menu_desc" : "",
 
     "ehi_show_waypoints" : "Mostrar Waypoints",
     "ehi_show_waypoints_desc" : "Mostra waypoints no mapa do jogo",

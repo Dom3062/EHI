@@ -383,8 +383,10 @@
             "value": "show_floating_text",
             "default_value": true,
             "children" : [
-                "ehi_other_show_floating_text_distance_choice",
                 "ehi_other_show_floating_text_icon_choice",
+                "ehi_other_show_floating_text_distance_choice",
+                "ehi_other_show_floating_text_format_choice",
+                "ehi_other_show_floating_text_compact_mode_choice",
                 "ehi_other_show_floating_text_ammo_bag_choice",
                 "ehi_other_show_floating_text_bodybags_bag_choice",
                 "ehi_other_show_floating_text_doctor_bag_choice",
@@ -392,7 +394,7 @@
                 "ehi_other_show_floating_text_throwables_choice"
             ],
             "children_f" : {
-                "ehi_other_show_floating_text_throwables_block_on_abilities_choice": "ehi_show_floating_text_throwables_block_on_abilities_choice_1"
+                "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice": "ehi_show_floating_text_throwables_block_on_abilities_choice_1"
             }
         },
         {
@@ -416,6 +418,28 @@
             "min": 1,
             "step": 0.01,
             "display_precision": 2,
+            "parent" : "ehi_other_show_floating_text_choice"
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_other_show_floating_text_format_choice",
+            "title": "ehi_tracker_value_format",
+            "items": [
+                "ehi_other_show_floating_text_format_1",
+                "ehi_other_show_floating_text_format_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "show_floating_text_format",
+            "default_value": 1
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_compact_mode_choice",
+            "title": "ehi_other_show_floating_text_compact_mode",
+            "description": "ehi_other_show_floating_text_compact_mode_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_compact_mode",
+            "default_value": false,
             "parent" : "ehi_other_show_floating_text_choice"
         },
         {
@@ -462,15 +486,15 @@
             "value": "show_floating_text_throwables",
             "default_value": true,
             "parent" : "ehi_other_show_floating_text_choice",
-            "child" : "ehi_other_show_floating_text_throwables_block_on_abilities_choice"
+            "child" : "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice"
         },
         {
             "type": "toggle",
-            "id": "ehi_other_show_floating_text_throwables_block_on_abilities_choice",
-            "title": "ehi_other_show_floating_text_throwables_block_on_abilities",
-            "description": "ehi_other_show_floating_text_throwables_block_on_abilities_desc",
+            "id": "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice",
+            "title": "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable",
+            "description": "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_desc",
             "callback": "ehi_set_item_value",
-            "value": "show_floating_text_throwables_block_on_abilities",
+            "value": "show_floating_text_throwables_block_on_abilities_or_no_throwable",
             "default_value": true,
             "parent_compare" : {
                 "id": "ehi_other_show_floating_text_throwables_choice",

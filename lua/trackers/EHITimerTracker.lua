@@ -381,8 +381,8 @@ end
 function EHITimerGroupTracker:SetAutorepair(state, id)
     local timer = self._timers[id]
     if timer then
-        if timer.jammed or timer.not_powered then
-            if state then
+        if timer.jammed then
+            if state and not timer.anim_autorepair_started then
                 self:AnimateColor(timer, false, self._autorepair_color, self._paused_color, true)
             end
         elseif timer.anim_autorepair_started then

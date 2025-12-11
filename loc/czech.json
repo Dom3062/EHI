@@ -235,6 +235,7 @@
     "ehi_color_reset" : "Obnovit barvy",
 
     "ehi_tracker_format" : "Formát",
+    "ehi_tracker_value_format" : "Formát hodnoty",
 
     "ehi_preview" : "Náhled (Pro aktualizaci je nutný restart mapy)\nČervený roh ukazuje místo, kde se objeví první sledovač.",
     "ehi_preview_text" : "Náhled",
@@ -273,7 +274,6 @@
     "ehi_vr_tracker_alignment" : "Zarovnání sledovačů (VR)",
 
     "ehi_visuals_menu" : "Vizuální zobrazení",
-    "ehi_visuals_menu_desc" : "",
 
     "ehi_show_tracker_bg" : "Zobrazovat pozadí ve sledovači",
     "ehi_show_tracker_bg_desc" : "Zobrazuje pozadí\nJe-li tato funkce vypnutá, pozadí je skryté a animace nejsou viditelné",
@@ -303,7 +303,6 @@
     "ehi_show_trackers" : "Zobrazovat sledovače",
 
     "ehi_trackers_menu" : "Sledovače",
-    "ehi_trackers_menu_desc" : "",
 
     "ehi_trackers_n_of_rc" : "Počet sledovačů na řádku/ve sloupci",
     "ehi_trackers_n_of_rc_desc" : "Nastavuje počet sledovačů, které se objeví na řádku či sloupci, než se vytvoří další\n\nPokud je vybráno Vertikální zarovnání, zobrazí se počet sledovačů ve sloupci až do vybrané hodnoty, než se vytvoří nový\nPokud je vybráno Horizontální zarovnání, zobrazí se počet sledovačů v řádku až do vybrané hodnoty, než se vytvoří nový\n\nChcete-li tuto funkci zakázat, nastavte hodnotu na '0'",
@@ -323,7 +322,6 @@
     "ehi_show_unlockables_desc" : "Zobrazuje sledovače pro achievementy, trofeje a denní výzvy",
 
     "ehi_unlockables_menu" : "Odemykatelné",
-    "ehi_unlockables_menu_desc" : "",
 
     "ehi_show_achievements" : "Zobrazovat Achievementy",
     "ehi_show_achievements_desc" : "Zobrazuje na obrazovce achievementy\nNěkteré loupeže nemusí mít achievementy",
@@ -404,7 +402,6 @@
     "ehi_xp_format_3" : "Zobrazit hodnotu vynásobenou všechny ZK bonusy",
 
     "ehi_xp_panel" : "Jak zobrazit ZK",
-    "ehi_xp_panel_desc" : "",
     "ehi_xp_panel_1" : "Zobrazit sledovač za každé získané ZK",
     "ehi_xp_panel_2" : "Zobrazit sledovač s celkovou hodnotou ZK v loupeži",
     "ehi_xp_panel_3" : "Zobrazit vyskakovací okno za každé získané ZK a celkovou hodnotu",
@@ -451,7 +448,6 @@
     "ehi_show_gage_tracker_desc" : "Zobrazuje sledovač pro Gage balíčky na mapě\nPokud je mapa neumožňuje, sledovač nebude viditelný",
 
     "ehi_gage_tracker_panel" : "Zobrazovat postup pro Gage balíčky",
-    "ehi_gage_tracker_panel_desc" : "",
     "ehi_gage_tracker_panel_1" : "Ve sledovači",
     "ehi_gage_tracker_panel_2" : "Ve vyskakovacím okně",
 
@@ -465,7 +461,6 @@
     "ehi_show_equipment_tracker_desc" : "Zobrazuje samostatný sledovač pro položenou lékárničku, náboje, granáty, taška s pytlema na těla a 'záchranné jednohubky' (First Aid Kit neboli FAK)",
 
     "ehi_equipment_menu" : "Menu vybavení",
-    "ehi_equipment_menu_desc" : "",
 
     "ehi_equipment_format_desc" : "Nastavuje jak formátovat vybavení",
     "ehi_equipment_format_1" : "Počet použití (Počet položených)",
@@ -497,7 +492,6 @@
     "ehi_show_equipment_ecmjammer_desc" : "Zobrazuje sledovač pro zbývající dobu trvání ECM Jammer\nVe sledovači je zobrazen ECM Jammer s nejdelší dobou trvání",
 
     "ehi_ecmjammer_block_ecm_without_pager_delay" : "Nezobrazovat ECM Jammer který neoddálí pagery",
-    "ehi_ecmjammer_block_ecm_without_pager_delay_desc" : "",
     
     "ehi_show_equipment_ecmfeedback" : "Zobrazovat sledovač pro ECM Feedback (zpětná vazba)",
     "ehi_show_equipment_ecmfeedback_desc" : "Zobrazuje sledovač pro zbývající dobu trvání ECM Feedback\nVe sledovači je zobrazen ECM Feedback s nejdelší dobou trvání (Pouze host)",
@@ -639,7 +633,6 @@
     "ehi_show_ping_tracker_refresh_t_desc" : "Nastavuje, kolik času musí uplynout, než sledovač aktualizuje odezvu pro každého hráče",
     
     "ehi_waypoints_menu" : "Ukazatele",
-    "ehi_waypoints_menu_desc" : "",
 
     "ehi_show_waypoints" : "Zobrazovat ukazatele",
     "ehi_show_waypoints_desc" : "Zobrazuje ukazatele v herním světě",
@@ -681,14 +674,12 @@
     "ehi_show_waypoints_loot_counter_desc" : "Zobrazuje ukazatel pro aktivní zónu k zajištění lupu\n\nTato možnost nahrazuje původní ukazatel ve hře\nPokud ikona lupu není viditelná, ukazatel může použít jinou ikonu",
 
     "ehi_shared_menu" : "Sdílené nastavení pro Sledovače a Ukazatele",
-    "ehi_shared_menu_desc" : "",
 
     "ehi_shared_loot_counter" : "Počet lupu",
 
     "ehi_shared_pagers" : "Pagery",
     
     "ehi_buffs_menu" : "Buffy",
-    "ehi_buffs_menu_desc" : "",
 
     "ehi_show_buffs" : "Zobrazovat Buffy",
     "ehi_show_buffs_desc": "Zobrazuje na obrazovce buffy, které ukazují aktivní skilly, perky, jejich hodnotu či aktivní čas",
@@ -817,9 +808,9 @@
     "ehi_buffs_skills_fugitive_berserker" : "Berserker",
     "ehi_buffs_skills_fugitive_berserker_refresh" : "Berserker - Aktualizace hodnoty",
     "ehi_buffs_skills_fugitive_berserker_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
-    "ehi_buffs_skills_fugitive_berserker_format_desc" : "Nastavuje jak formátovat buff Berserker, jak formátovat poškození zbraní či melee zbraní\n\nNásobitel: 1.4x 2.6x\n\nProcenta: 40% 160%",
-    "ehi_buffs_skills_fugitive_berserker_format_1" : "Násobitel",
-    "ehi_buffs_skills_fugitive_berserker_format_2" : "Procenta",
+    "ehi_buffs_skills_fugitive_berserker_format_desc" : "Nastavuje jak formátovat buff Berserker, jak formátovat poškození zbraní či melee zbraní",
+    "ehi_buffs_skills_fugitive_berserker_format_1" : "Násobitel (1.4x 2.6x)",
+    "ehi_buffs_skills_fugitive_berserker_format_2" : "Procenta (140% 260%)",
     "ehi_buffs_skills_fugitive_berserker_text_format" : "Berserker - Formát textu",
     "ehi_buffs_skills_fugitive_berserker_text_format_desc" : "Nastavuje co za text zobrazit v buffu Berserker",
     "ehi_buffs_skills_fugitive_berserker_text_format_1" : "Poškození zbraní | Poškození melee / pily",
@@ -858,8 +849,7 @@
     "ehi_buffs_perks_yakuza_irezumi" : "Irezumi",
     "ehi_buffs_perks_yakuza_irezumi_refresh" : "Irezumi - Aktualizace hodnoty",
     "ehi_buffs_perks_yakuza_irezumi_refresh_desc" : "Nastavuje jak často se má buff aktualizovat za sekundu",
-    "ehi_buffs_perks_yakuza_irezumi_format_desc" : "Nastavuje jak formátovat buff, jak formátovat rychlost obnovy armoru a rychlost pohybu postavy\n\nNásobitel: 1.6x 1.2x\n\nProcenta: 160% 120%",
-    "ehi_buffs_perks_yakuza_irezumi_text_format" : "Irezumi - Formát textu",
+    "ehi_buffs_perks_yakuza_irezumi_format_desc" : "Nastavuje jak formátovat buff, jak formátovat rychlost obnovy armoru a rychlost pohybu postavy",
     "ehi_buffs_perks_yakuza_irezumi_text_format_desc" : "Nastavuje co za text se zobrazí v buffu",
     "ehi_buffs_perks_yakuza_irezumi_text_format_1" : "Rychlost obnovy armoru | Rychlost pohybu postavy",
     "ehi_buffs_perks_yakuza_irezumi_text_format_2" : "Rychlost pohybu postavy | Rychlost obnovy armoru",
@@ -1150,31 +1140,37 @@
     "ehi_other_show_floating_text_distance" : "Vzdálenost",
     "ehi_other_show_floating_text_distance_desc" : "Nastavuje, jak maximálně daleko (v metrech) musíš být v rozsahu zobrazení plovoucího textu, aby byl viditelný",
 
+    "ehi_other_show_floating_text_format_1" : "Násobitel (1.45x)",
+    "ehi_other_show_floating_text_format_2" : "Procenta (145 %)",
+
+    "ehi_other_show_floating_text_compact_mode" : "Kompaktní zobrazení",
+    "ehi_other_show_floating_text_compact_mode_desc" : "Zmenšuje velikost plovoucího textu vynecháním jména výbavy a umístí ikonu na stejný řádek jako text",
+
     "ehi_other_show_floating_text_throwables" : "Hoditelné 'granáty'",
-    "ehi_other_show_floating_text_throwables_block_on_abilities" : "Blokovat hoditelné 'granáty' na abilitu nebo žádný",
-    "ehi_other_show_floating_text_throwables_block_on_abilities_desc" : "Plovoucí text se nezobrazí pokud máš vybranou abilitu z perku nebo nemáš vybraný žádný hoditelný 'granát'",
+    "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable" : "Blokovat hoditelné 'granáty' na abilitu nebo žádný",
+    "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_desc" : "Plovoucí text se nezobrazí pokud máš vybranou abilitu z perku nebo nemáš vybraný žádný hoditelný 'granát'",
 
     "ehi_other_show_use_left_ammo_bag" : "Zobrazovat počet použití u Ammo Bagů",
     "ehi_other_show_use_left_doctor_bag" : "Zobrazovat počet použití u Doctor Bagů",
     "ehi_other_show_use_left_bodybags_bag" : "Zobrazovat počet použití u Bodybagů",
     "ehi_other_show_use_left_grenades" : "Zobrazovat počet použití u kufříků s granáty",
 
-    "ehi_other_show_colored_bag_contour" : "Zobrazovat barevné ohraničení pytlů podle jejich váhy",
+    "ehi_other_show_colored_bag_contour" : "Barevné ohraničení pytlů podle jejich váhy",
     "ehi_other_show_colored_bag_contour_desc" : "Nastavuje barvu ohračení pytle podle jeho váhy",
 
     "ehi_other_show_real_time_ingame" : "Zobrazovat aktuální čas ve hře",
     "ehi_other_show_real_time_ingame_desc" : "Zobrazuje aktuální reálný čas v OS pod časem loupeže",
 
-    "ehi_other_show_minion_colored_to_owner" : "Zobrazovat barvu převedence podle vlastníka",
+    "ehi_other_show_minion_colored_to_owner" : "Barva převedence podle vlastníka",
     "ehi_other_show_minion_colored_to_owner_desc" : "Nastavuje barvu ohraničení převedence podle jeho vlastníka",
     
-    "ehi_other_show_progress_reload" : "Zobrazovat nabití zbraně jako interakci",
+    "ehi_other_show_progress_reload" : "Nabití zbraně jako interakci",
     "ehi_other_show_progress_reload_desc" : "Zobrazuje interakci (nebo postup) kdykoliv nabíjíš svoje zbraně",
 
-    "ehi_other_show_progress_melee" : "Zobrazovat nabití melee jako interakci",
+    "ehi_other_show_progress_melee" : "Nabití melee jako interakci",
     "ehi_other_show_progress_melee_desc" : "Zobrazuje interakci (nebo postup) kdykoliv nabíjíš švih melee",
 
-    "ehi_other_show_end_game_stats" : "Zobrazovat na konci hry statistiky",
+    "ehi_other_show_end_game_stats" : "Statistiky na konci hry",
     "ehi_other_show_end_game_stats_desc" : "Zobrazuje statistiky (zabití/zabití speciálů, počet headshotů, poškození za minutu, zabití za minutu, přesnost, pády) na konci hry za každého hráče ve hře\n\nStatistiky se zobrazí pokud alespoň jeden z hráčů zabil nepřítele\nHráč musí mít alespoň jedno zabití aby se objevil ve statistikách\nStatistiky se nezobrazí v režimu pro jednoho hráče",
 
     "ehi_other_show_end_game_stats_kills" : "Zabití",

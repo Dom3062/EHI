@@ -1,3 +1,13 @@
+r364 (11. 12. 2025):
+Buffs: Fixed an issue where Tag Team Paired buff does not reset its custom color after client disconnected
+Buffs: Fixed an issue where active Tag Team Paired buff does not hide after client disconnected
+Buffs: Possible fix for Stamina buff randomly appearing and staying stuck when disabled
+Float Text: Added "Compact Mode" and "Value Format"
+Float Text: Float text for Bodybags is removed after alarm
+Float Text: Fixed visible float text in places where players have no access
+Shadow Raid: Fixed a crash after drop-in
+Timers: Fixed an issue where autorestart animation is not stopped when drill/saw is manually restarted
+
 r363 (07. 12. 2025):
 Added "Float Icon" option
 Float Text: Fixed detected bulletstorm in Ammo Bags when player does not have that skill equipped

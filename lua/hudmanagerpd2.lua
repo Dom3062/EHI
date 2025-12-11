@@ -129,9 +129,8 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
         dofile(EHI.LuaPath .. "EHIDamageFloatManager.lua")
         EHIDamageFloatManager:new(hud)
     end
-    if EHI:GetOption("show_floating_text") then
-        dofile(EHI.LuaPath .. "EHITextFloatManager.lua")
-        EHITextFloatManager:new(panel, hud._saferect)
+    if EHITextFloatManager then
+        EHITextFloatManager:init_hud(panel, hud._saferect)
     end
     if EHI:GetOption("show_end_game_stats") and not Global.game_settings.single_player then
         dofile(EHI.LuaPath .. "EHIEndGameStats.lua")

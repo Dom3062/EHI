@@ -106,7 +106,6 @@
             "type": "toggle",
             "id": "ehi_ecmjammer_block_ecm_without_pager_delay_choice",
             "title": "ehi_ecmjammer_block_ecm_without_pager_delay",
-            "description": "ehi_ecmjammer_block_ecm_without_pager_delay_desc",
             "callback": "ehi_set_item_value",
             "value": "ecmjammer_block_ecm_without_pager_delay",
             "default_value": false

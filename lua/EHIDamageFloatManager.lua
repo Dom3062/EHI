@@ -367,23 +367,22 @@ function EHIDamageFloat:draw(dt)
         self.pnl:set_visible(dot > 0)
         if dot > 0 then
             local prog = 1 - (data.et / data.t)
-            local pPos = self._parent:_v2p(pos) ---@cast pPos -false
-            mvector3.set_y(pPos,pPos.y - math.lerp(100,0, math.pow(1-prog,7)))
-
             if prog >= 1 then
                 self.dead = true
             else
+                local pPos = self._parent:_v2p(pos) ---@cast pPos -false
+                mvector3.set_y(pPos, pPos.y - math.lerp(100, 0, math.pow(1 - prog, 7)))
                 local dx,dy,d,ww,hh = 0,0,1,self._parent._ww,self._parent._hh
                 self.pnl:set_center(pPos.x,pPos.y)
                 if self._parent.ADS then
-                    dx = pPos.x - ww/2
-                    dy = pPos.y - hh/2
-                    d = math.clamp((dx*dx+dy*dy)/1000,0,1)
+                    dx = pPos.x - ww / 2
+                    dy = pPos.y - hh / 2
+                    d = math.clamp((dx * dx + dy * dy) / 1000, 0, 1)
                 else
-                    d = 1-math.pow(prog,5)
+                    d = 1 - math.pow(prog, 5)
                 end
                 d = math.min(d, 1 - math.min(0.9, managers.environment_controller._current_flashbang))
-                self.pnl:set_alpha(math.min(1-prog,d))
+                self.pnl:set_alpha(math.min(1 - prog, d))
             end
         end
     end

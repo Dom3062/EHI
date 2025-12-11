@@ -116,6 +116,7 @@ function EHITweakData:new(tweak_data)
                 chico_injector = { deck_option = { deck = "kingpin", option = "injector" } },
                 smoke_screen_grenade = { deck_option = { deck = "sicario", option = "smoke_bomb" } },
                 damage_control = { deck_option = { deck = "stoic", option = "duration" } },
+                tag_team = { deck_option = { deck = "tag_team", option = "effect" } },
                 copr_ability = { deck_option = { deck = "leech", option = "ampule" } }
             },
             prepopulate_options_permanent =
@@ -123,6 +124,7 @@ function EHITweakData:new(tweak_data)
                 chico_injector = { deck_option = { deck = "kingpin", option = "injector_persistent" } },
                 smoke_screen_grenade = { deck_option = { deck = "sicario", option = "smoke_bomb_persistent" } },
                 damage_control = { deck_option = { deck = "stoic", option = "duration_persistent" } },
+                tag_team = { deck_option = { deck = "tag_team", option = "effect_persistent" } },
                 copr_ability = { deck_option = { deck = "leech", option = "ampule_persistent" } }
             }
         },
@@ -1201,35 +1203,33 @@ function EHITweakData:new(tweak_data)
                 }
             }
         },
-        TagTeamEffect =
+        TagTeamAbsorption =
         {
             deck = true,
             folder = "ecp",
-            text = "Ability",
-            y = 1,
+            text = "Absorption",
+            x = 2,
+            group = "player_damage_absorption",
             deck_option =
             {
                 deck = "tag_team",
-                option = "effect"
+                option = "absorption"
             },
-            class = "EHITagTeamBuffTracker",
+            format = "damage",
+            class = "EHIGaugeBuffTracker",
             permanent =
             {
                 deck_option =
                 {
                     deck = "tag_team",
-                    option = "effect_persistent"
+                    option = "absorption_persistent"
                 },
                 skill_check =
                 {
                     category = "player",
-                    upgrade = "tag_team_base"
+                    upgrade = "tag_team_damage_absorption"
                 },
-                class_to_load =
-                {
-                    prerequisite = "EHIPermanentTagTeamBuffTracker",
-                    class = "EHIPermanentTagTeamBuffTracker"
-                }
+                class = "EHIPermanentGaugeBuffTracker"
             }
         },
         pocket_ecm_kill_dodge =
@@ -1456,14 +1456,14 @@ function EHITweakData:new(tweak_data)
     self.buff.reload_weapon_faster.group = "increased_weapon_reload"
     self.buff.reload_weapon_faster.option = "running_from_death_reload"
     self.buff.reload_weapon_faster.permanent.option = "running_from_death_reload_persistent"
-    self.buff.TagTeamAbsorption = deep_clone(self.buff.TagTeamEffect)
+    --[[self.buff.TagTeamAbsorption = deep_clone(self.buff.TagTeamEffect)
     self.buff.TagTeamAbsorption.group = "player_damage_absorption"
     self.buff.TagTeamAbsorption.deck_option.option = "absorption"
     self.buff.TagTeamAbsorption.x = 2
     self.buff.TagTeamAbsorption.y = 0
     self.buff.TagTeamAbsorption.text = "Absorption"
     self.buff.TagTeamAbsorption.format = "damage"
-    self.buff.TagTeamAbsorption.class = "EHIGaugeBuffTracker"
+    self.buff.TagTeamAbsorption.class = "EHIGaugeBuffTracker"]]
     self.buff.mrwi_health_invulnerable_cooldown = deep_clone(self.buff.mrwi_health_invulnerable)
     self.buff.mrwi_health_invulnerable_cooldown.group = "cooldown"
     self.buff.mrwi_health_invulnerable_cooldown.text_localize = "ehi_buffs_hint_cooldown"
@@ -1479,7 +1479,7 @@ function EHITweakData:new(tweak_data)
         chico_injector = "Ability", -- Kingpin Injector
         smoke_screen_grenade = "Ability", -- Sicario Smoke Bomb
         damage_control = "Ability", -- Stoic's Hip Flask
-        --tag_team = "Ability", -- Gas Dispenser
+        tag_team_effect = "Ability", -- Gas Dispenser
         copr_ability = "Ability" -- Leech Ampule
     }
     self.functions =
@@ -1777,6 +1777,9 @@ function EHITweakData:new(tweak_data)
             percent = function()
                 return "%"
             end,
+            percent_format = function()
+                return "%%"
+            end,
             equipment = function()
                 ---@param charges number
                 return function(charges)
@@ -1788,6 +1791,9 @@ function EHITweakData:new(tweak_data)
         {
             percent = function()
                 return " %"
+            end,
+            percent_format = function()
+                return " %%"
             end,
             equipment = function()
                 ---@param charges number

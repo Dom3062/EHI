@@ -32,7 +32,7 @@
         {
             "type": "multiple_choice",
             "id": "ehi_buffs_perks_yakuza_irezumi_format_choice",
-            "title": "ehi_tracker_format",
+            "title": "ehi_tracker_value_format",
             "description": "ehi_buffs_perks_yakuza_irezumi_format_desc",
             "callback": "ehi_set_item_value",
             "items": [
@@ -46,7 +46,7 @@
         {
             "type": "multiple_choice",
             "id": "ehi_buffs_perks_yakuza_irezumi_text_format_choice",
-            "title": "ehi_buffs_perks_yakuza_irezumi_text_format",
+            "title": "ehi_tracker_format",
             "description": "ehi_buffs_perks_yakuza_irezumi_text_format_desc",
             "callback": "ehi_set_item_value",
             "items": [

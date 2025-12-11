@@ -35,15 +35,16 @@ end
 ---@param max number
 ---@param progress number?
 ---@param show_finish_after_reaching_target boolean?
----@param class string?
-function EHIUnlockableManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class)
+---@param class_table EHITracker?
+function EHIUnlockableManager:AddAchievementProgressTracker(id, max, progress, show_finish_after_reaching_target, class_table)
     managers.ehi_tracker:AddTracker({
         id = id,
         progress = progress,
         max = max,
         icons = self:GetAchievementIcon(id),
         show_finish_after_reaching_target = show_finish_after_reaching_target,
-        class = class or EHI.Trackers.Achievement.Progress
+        class_table = class_table,
+        class = EHI.Trackers.Achievement.Progress
     })
 end
 
