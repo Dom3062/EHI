@@ -6,21 +6,22 @@ end
 ---@class EHITextFloatManager
 EHITextFloatManager = {}
 function EHITextFloatManager:new()
-    self._floats = {} ---@type table<userdata, { class: EHITextFloat, state: string, position: Vector3, name_key: string }?>
-    self._deferred_floats = {} ---@type table<userdata, UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable>
+    self._floats = {} ---@type table<userdata, { class: EHITextFloat, state: string, position: Vector3, name_key: string, peer_id: integer }?>
+    self._deferred_floats = {} ---@type table<userdata, { unit: UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable, peer_id: integer }>
     self._unit_blocked = {} ---@type table<userdata, boolean>
     self._n_of_equipment = 0
     self._distance = EHI:GetOption("show_floating_text_distance") * 100
+    self._angle = EHI:GetOption("show_floating_text_angle")
     Hooks:PreHook(PlayerMovement, "pre_destroy", "EHI_PlayerMovement_EHITextFloatManager_pre_destroy", function(...)
-        self._spawned = nil
         self:_remove_update_loop(true)
+        self._player_camera = nil
         for _, float in pairs(self._floats) do
             float.class:Hide()
             float.state = "offscreen"
         end
     end)
-    Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHITextFloatManager_init", function(...)
-        self._spawned = true
+    Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHITextFloatManager_init", function(base, ...)
+        self._player_camera = base._camera_object
         self:_add_update_loop()
     end)
     ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
@@ -28,10 +29,33 @@ function EHITextFloatManager:new()
         local key = unit:key()
         if not (self._floats[key] or self._unit_blocked[key]) then
             if not self._panel then
-                self._deferred_floats[key] = unit
+                self._deferred_floats[key] = { unit = unit, peer_id = 0 }
                 return
             end
             self:_add_float(key, unit)
+        end
+    end
+    ---@param equipment AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
+    ---@param peer_id integer?
+    local function server_update_peer_information(equipment, peer_id, ...)
+        local key = equipment._unit:key()
+        local id = peer_id or 0
+        if self._deferred_floats[key] then
+            self._deferred_floats[key].peer_id = id
+        elseif self._floats[key] then
+            self._floats[key].class:UpdatePeerColor(tweak_data.chat_colors[id] or Color.white)
+        end
+    end
+    ---@param equipment AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
+    ---@param peer_id integer?
+    local function client_update_peer_information(equipment, _, peer_id, ...)
+        server_update_peer_information(equipment, peer_id)
+    end
+    ---@param peer_id integer?
+    local function from_spawn_update_peer_information(_, _, _, peer_id, ...)
+        local unit = Hooks:GetReturn()
+        if unit then
+            server_update_peer_information(unit:base(), peer_id)
         end
     end
     ---@param equipment AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
@@ -61,7 +85,10 @@ function EHITextFloatManager:new()
         end
     end
     if EHI:GetOption("show_floating_text_ammo_bag") then
+        Hooks:PostHook(AmmoBagBase, "spawn", "EHI_AmmoBagBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
         Hooks:PreHook(AmmoBagBase, "init", "EHI_AmmoBagBase_EHITextFloatManager_init", init_equipment)
+        Hooks:PostHook(AmmoBagBase, "set_server_information", "EHI_AmmoBagBase_EHITextFloatManager_set_server_information", server_update_peer_information)
+        Hooks:PostHook(AmmoBagBase, "sync_setup", "EHI_AmmoBagBase_EHITextFloatManager_sync_setup", client_update_peer_information)
         Hooks:PostHook(AmmoBagBase, "_set_visual_stage", "EHI_AmmoBagBase_EHITextFloatManager__set_visual_stage", set_visual_stage_equipment)
         Hooks:PreHook(AmmoBagBase, "_set_empty", "EHI_AmmoBagBase_EHITextFloatManager__set_empty", destroy_equipment)
         Hooks:PostHook(AmmoBagBase, "destroy", "EHI_AmmoBagBase_EHITextFloatManager_destroy", destroy_equipment)
@@ -69,13 +96,19 @@ function EHITextFloatManager:new()
         Hooks:PostHook(AmmoBagInteractionExt, "set_active", "EHI_AmmoBagInteractionExt_EHITextFloatManager_set_active", set_alpha)
     end
     if EHI:GetOption("show_floating_text_bodybags_bag") then
+        Hooks:PostHook(BodyBagsBagBase, "spawn", "EHI_BodyBagsBagBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
         Hooks:PostHook(BodyBagsBagBase, "init", "EHI_BodyBagsBagBase_EHITextFloatManager_init", init_equipment)
+        Hooks:PostHook(BodyBagsBagBase, "set_server_information", "EHI_BodyBagsBagBase_EHITextFloatManager_set_server_information", server_update_peer_information)
+        Hooks:PostHook(BodyBagsBagBase, "sync_setup", "EHI_BodyBagsBagBase_EHITextFloatManager_sync_setup", client_update_peer_information)
         Hooks:PostHook(BodyBagsBagBase, "_set_visual_stage", "EHI_BodyBagsBagBase_EHITextFloatManager__set_visual_stage", set_visual_stage_equipment)
         Hooks:PreHook(BodyBagsBagBase, "_set_empty", "EHI_BodyBagsBagBase_EHITextFloatManager__set_empty", destroy_equipment)
         Hooks:PostHook(BodyBagsBagBase, "destroy", "EHI_BodyBagsBagBase_EHITextFloatManager_destroy", destroy_equipment)
         Hooks:PostHook(BodyBagsBagInteractionExt, "set_active", "EHI_BodyBagsBagInteractionExt_EHITextFloatManager_set_active", set_alpha)
         EHI:AddOnAlarmCallback(function(dropin)
+            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_spawn")
             Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_init")
+            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_set_server_information")
+            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_sync_setup")
             Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager__set_visual_stage")
             Hooks:RemovePreHook("EHI_BodyBagsBagBase_EHITextFloatManager__set_empty")
             Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_destroy")
@@ -90,14 +123,20 @@ function EHITextFloatManager:new()
         end)
     end
     if EHI:GetOption("show_floating_text_doctor_bag") then
+        Hooks:PostHook(DoctorBagBase, "spawn", "EHI_DoctorBagBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
         Hooks:PreHook(DoctorBagBase, "init", "EHI_DoctorBagBase_EHITextFloatManager_init", init_equipment)
+        Hooks:PostHook(DoctorBagBase, "set_server_information", "EHI_DoctorBagBase_EHITextFloatManager_set_server_information", server_update_peer_information)
+        Hooks:PostHook(DoctorBagBase, "sync_setup", "EHI_DoctorBagBase_EHITextFloatManager_sync_setup", client_update_peer_information)
         Hooks:PostHook(DoctorBagBase, "_set_visual_stage", "EHI_DoctorBagBase_EHITextFloatManager__set_visual_stage", set_visual_stage_equipment)
         Hooks:PreHook(DoctorBagBase, "_set_empty", "EHI_DoctorBagBase_EHITextFloatManager__set_empty", destroy_equipment)
         Hooks:PostHook(DoctorBagBase, "destroy", "EHI_DoctorBagBase_EHITextFloatManager_destroy", destroy_equipment)
         Hooks:PostHook(CustomDoctorBagBase, "_set_empty", "EHI_CustomDoctorBagBase_EHITextFloatManager__set_empty", destroy_equipment)
     end
     if EHI:GetOption("show_floating_text_first_aid_kit") then
+        Hooks:PostHook(FirstAidKitBase, "spawn", "EHI_FirstAidKitBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
         Hooks:PostHook(FirstAidKitBase, "init", "EHI_FirstAidKitBase_EHITextFloatManager_init", init_equipment)
+        Hooks:PostHook(FirstAidKitBase, "set_server_information", "EHI_FirstAidKitBase_EHITextFloatManager_set_server_information", server_update_peer_information)
+        Hooks:PostHook(FirstAidKitBase, "sync_setup", "EHI_FirstAidKitBase_EHITextFloatManager_sync_setup", client_update_peer_information)
         Hooks:PostHook(FirstAidKitBase, "setup", "EHI_FirstAidKitBase_EHITextFloatManager_setup", set_visual_stage_equipment)
         Hooks:PreHook(FirstAidKitBase, "_set_empty", "EHI_FirstAidKitBase_EHITextFloatManager__set_empty", destroy_equipment)
         Hooks:PostHook(FirstAidKitBase, "destroy", "EHI_FirstAidKitBase_EHITextFloatManager_destroy", destroy_equipment)
@@ -113,6 +152,7 @@ function EHITextFloatManager:new()
         Hooks:PostHook(GrenadeCrateBase, "destroy", "EHI_GrenadeCrateBase_EHITextFloatManager_destroy", destroy_equipment)
         Hooks:PreHook(CustomGrenadeCrateBase, "init", "EHI_CustomGrenadeCrateBase_EHITextFloatManager_init", init_equipment)
         Hooks:PostHook(CustomGrenadeCrateBase, "_set_empty", "EHI_CustomGrenadeCrateBase_EHITextFloatManager__set_empty", destroy_equipment)
+        Hooks:PostHook(GrenadeCrateDeployableBase, "set_server_information", "EHI_GrenadeCrateDeployableBase_EHITextFloatManager_set_server_information", server_update_peer_information)
         Hooks:PreHook(GrenadeCrateDeployableBase, "_set_empty", "EHI_CustomGrenadeCrateDeployableBase_EHITextFloatManager__set_empty", destroy_equipment)
         if EHI:GetOption("show_floating_text_throwables_block_on_abilities_or_no_throwable") then
             EHI.PlayerUtils:AddGrenadeDoesNotAllowPickupsCallback(function()
@@ -122,6 +162,7 @@ function EHITextFloatManager:new()
                 Hooks:RemovePostHook("EHI_GrenadeCrateBase_EHITextFloatManager_destroy")
                 Hooks:RemovePreHook("EHI_CustomGrenadeCrateBase_EHITextFloatManager_init")
                 Hooks:RemovePostHook("EHI_CustomGrenadeCrateBase_EHITextFloatManager__set_empty")
+                Hooks:RemovePostHook("EHI_GrenadeCrateDeployableBase_EHITextFloatManager_set_server_information")
                 Hooks:RemovePreHook("EHI_CustomGrenadeCrateDeployableBase_EHITextFloatManager__set_empty")
                 for key, data in pairs(self._floats) do
                     if data.name_key == "f6001ca4eb64a74c" or data.name_key == "e166f63494083d58" then
@@ -133,6 +174,13 @@ function EHITextFloatManager:new()
             end)
         end
     end
+    EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+        for _, float in pairs(self._floats) do
+            if float.peer_id == peer_id then
+                float.class:UpdatePeerColor(color)
+            end
+        end
+    end)
 end
 
 ---@param panel Panel
@@ -141,8 +189,8 @@ function EHITextFloatManager:init_hud(panel, saferect)
     self._panel = panel
     self._saferect = saferect
     EHITextFloat._panel = panel
-    for key, unit in pairs(self._deferred_floats) do
-        self:_add_float(key, unit, true)
+    for key, def in pairs(self._deferred_floats) do
+        self:_add_float(key, def.unit, true, def.peer_id)
     end
     self._deferred_floats = {}
 end
@@ -160,7 +208,7 @@ function EHITextFloatManager:IgnoreDeployable(unit)
 end
 
 function EHITextFloatManager:_add_update_loop()
-    if self._spawned and self._n_of_equipment > 0 and not self._update_added then
+    if self._player_camera and self._n_of_equipment > 0 and not self._update_added then
         self._update_added = true
         managers.hud:AddEHIUpdator("EHI_FloatText_Update", self)
     end
@@ -177,12 +225,14 @@ end
 ---@param key userdata
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
 ---@param from_defer boolean?
-function EHITextFloatManager:_add_float(key, unit, from_defer)
+---@param peer_id integer?
+function EHITextFloatManager:_add_float(key, unit, from_defer, peer_id)
     self._floats[key] = {
-        class = EHITextFloat:new(unit, from_defer),
+        class = EHITextFloat:new(unit, from_defer, peer_id),
         state = "offscreen",
         position = unit:position(),
-        name_key = unit:name():key()
+        name_key = unit:name():key(),
+        peer_id = peer_id or 0
     }
     self._n_of_equipment = self._n_of_equipment + 1
     self:_add_update_loop()
@@ -196,35 +246,26 @@ end
 
 local wp_pos = Vector3()
 local wp_dir = Vector3()
-local wp_dir_normalized = Vector3()
-local wp_cam_forward = Vector3()
+local nl_dir = Vector3()
 ---@param t number
 ---@param dt number
 function EHITextFloatManager:update(t, dt)
-    local cam = managers.viewport:get_current_camera()
-
-    if not cam then
-        return
-    end
-
-    local cam_pos = managers.viewport:get_current_camera_position()
-    local cam_rot = managers.viewport:get_current_camera_rotation()
-
-    mrotation.y(cam_rot, wp_cam_forward)
+    local camPos = self._player_camera:position()
+    local nl_cam_forward = self._player_camera:rotation():y()
 
     local panel = self._panel
 
     for _, data in pairs(self._floats) do
-        mvector3.set(wp_pos, self._saferect:world_to_screen(cam, data.position))
+        mvector3.set(wp_pos, self._saferect:world_to_screen(self._player_camera, data.position))
         mvector3.set(wp_dir, data.position)
-        mvector3.subtract(wp_dir, cam_pos)
-        mvector3.set(wp_dir_normalized, wp_dir)
-        mvector3.normalize(wp_dir_normalized)
+        mvector3.subtract(wp_dir, camPos)
+        mvector3.set(nl_dir, wp_dir)
+        mvector3.normalize(nl_dir)
 
-        local dot = mvector3.dot(wp_cam_forward, wp_dir_normalized)
-
+        local dot = mvector3.dot(nl_cam_forward, nl_dir)
+        local angle = math.acos(dot)
         local x, y = mvector3.x(wp_pos), mvector3.y(wp_pos)
-        if dot < 0 or panel:outside(x, y) or wp_dir:length() > self._distance then
+        if angle > self._angle or panel:outside(x, y) or wp_dir:length() > self._distance then
             if data.state ~= "offscreen" then
                 data.state = "offscreen"
                 data.class:Offscreen()
@@ -240,7 +281,7 @@ function EHITextFloatManager:update(t, dt)
 end
 
 ---@class EHITextFloat
----@field new fun(self: self, unit: UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable, from_defer: boolean?): self
+---@field new fun(self: self, unit: UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable, from_defer: boolean?, peer_id: integer?): self
 EHITextFloat = class()
 EHITextFloat._SETTINGS =
 {
@@ -248,6 +289,7 @@ EHITextFloat._SETTINGS =
     -- 1 = multiplier; 2 = percent
     format = EHI:GetOption("show_floating_text_format") --[[@as 1|2]],
     compact_mode = EHI:GetOption("show_floating_text_compact_mode"),
+    color_peer_equipment = EHI:GetOption("show_floating_text_color_peer_equipment"),
     percent_format = "",
     short_percent_format = ""
 }
@@ -344,7 +386,8 @@ EHITextFloat._EQUIPMENT.e166f63494083d58 = deep_clone(EHITextFloat._EQUIPMENT.f6
 EHITextFloat._EQUIPMENT.e166f63494083d58.name = "Ordnance Bag"
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
 ---@param from_defer boolean?
-function EHITextFloat:init(unit, from_defer)
+---@param peer_id integer?
+function EHITextFloat:init(unit, from_defer, peer_id)
     local name_key = unit:name():key()
     local eq_data = self._EQUIPMENT[name_key] or self._EQUIPMENT.default
     local text
@@ -404,6 +447,9 @@ function EHITextFloat:init(unit, from_defer)
         alpha = self._SETTINGS.icon_alpha,
         visible = false
     })
+    if self._SETTINGS.color_peer_equipment then
+        self._icon:set_color(tweak_data.chat_colors[peer_id or 0] or Color.white)
+    end
     self._eq_data = eq_data
     if from_defer then
         self:UpdateAmount(unit:base())
@@ -419,7 +465,9 @@ function EHITextFloat:_report_in_console(editor_id, name_key)
     EHI:Log("[EHIFloatText] Missing equipment data! name_key: " .. tostring(name_key))
     EHI:Log("[EHIFloatText] editor_id: " .. tostring(editor_id))
     if editor_id < 100000 then
-        EHI:Log("[EHIFloatText] editor is still 0, no useful data will be printed")
+        EHI:Log("[EHIFloatText] editor_id is still 0")
+        EHI:Log("[EHIFloatText] level_id: " .. tostring(Global.game_settings.level_id))
+        EHI:Log("[EHIFloatText] ----------separator----------")
         return
     end
     if editor_id >= 130000 then
@@ -546,6 +594,17 @@ else
     function EHITextFloat:SetCenter(x, y)
         self._amount:set_center(x, y)
         self._icon:set_center(x, y - 16)
+    end
+end
+
+if EHITextFloat._SETTINGS.color_peer_equipment then
+    ---@param color Color
+    function EHITextFloat:UpdatePeerColor(color)
+        self._icon:set_color(color)
+    end
+else
+    ---@param color Color
+    function EHITextFloat:UpdatePeerColor(color)
     end
 end
 

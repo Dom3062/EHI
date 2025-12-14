@@ -49,6 +49,11 @@
     "ehi_status_objective" : "OBJETIVO",
     "ehi_status_fail" : "FALLIDO",
 
+    "ehi_color_r" : "R",
+    "ehi_color_g" : "V",
+    "ehi_color_b" : "Az",
+    "ehi_color_y" : "Am",
+
     "ehi_button_ok" : "ACEPTAR",
     "ehi_color_reset" : "Restablecer color",
 
@@ -453,6 +458,7 @@
     "ehi_buffs_group_color_red" : "Rojo",
     "ehi_buffs_group_color_green" : "Verde",
     "ehi_buffs_group_color_blue" : "Azul",
+    "ehi_buffs_group_color_yellow" : "Amarillo",
     
     "ehi_inventory_menu" : "Inventario",
 

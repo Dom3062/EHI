@@ -5,6 +5,11 @@
     "ehi_language" : "Lingua",
     "ehi_language_desc" : "Cambia la lingua della mod. È necessario un caricamento per rendere effettive le modifiche.",
     "ehi_language_1" : "Rileva automaticamente",
+
+    "ehi_color_r" : "R",
+    "ehi_color_g" : "V",
+    "ehi_color_b" : "B",
+    "ehi_color_y" : "G",
  
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Ripristina Colore",
@@ -192,5 +197,6 @@
 
     "ehi_buffs_group_color_red" : "Rosso",
     "ehi_buffs_group_color_green" : "Verde",
-    "ehi_buffs_group_color_blue" : "Blu"
+    "ehi_buffs_group_color_blue" : "Blu",
+    "ehi_buffs_group_color_yellow" : "Giallo"
 }

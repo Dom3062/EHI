@@ -1137,6 +1137,9 @@
 
     "ehi_other_show_floating_text_icon" : "Float Icon",
 
+    "ehi_other_show_floating_text_angle" : "Angle",
+    "ehi_other_show_floating_text_angle_desc" : "Sets max visible angle (in degrees) for floating text to be visible",
+
     "ehi_other_show_floating_text_distance" : "Distance",
     "ehi_other_show_floating_text_distance_desc" : "Sets how much max distance (in meters) you have to be in floating text view range to be visible",
 
@@ -1145,6 +1148,9 @@
 
     "ehi_other_show_floating_text_compact_mode" : "Compact Mode",
     "ehi_other_show_floating_text_compact_mode_desc" : "Reduces floating text size by omitting deployable name and placing icon on the same line as the text",
+
+    "ehi_other_show_floating_text_color_peer_equipment" : "Color Icon By Peer",
+    "ehi_other_show_floating_text_color_peer_equipment_desc" : "Sets teammate's color to equipment's icon (if available)",
 
     "ehi_other_show_floating_text_throwables" : "Throwables",
     "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable" : "Block throwables on abilities or no throwable",

@@ -1137,6 +1137,9 @@
 
     "ehi_other_show_floating_text_icon" : "Plovoucí ikona",
 
+    "ehi_other_show_floating_text_angle" : "Úhel",
+    "ehi_other_show_floating_text_angle_desc" : "Nastavuje maximální viditelný úhel (ve stupních), pod kterým bude plovoucí text viditelný",
+
     "ehi_other_show_floating_text_distance" : "Vzdálenost",
     "ehi_other_show_floating_text_distance_desc" : "Nastavuje, jak maximálně daleko (v metrech) musíš být v rozsahu zobrazení plovoucího textu, aby byl viditelný",
 
@@ -1145,6 +1148,9 @@
 
     "ehi_other_show_floating_text_compact_mode" : "Kompaktní zobrazení",
     "ehi_other_show_floating_text_compact_mode_desc" : "Zmenšuje velikost plovoucího textu vynecháním jména výbavy a umístí ikonu na stejný řádek jako text",
+
+    "ehi_other_show_floating_text_color_peer_equipment" : "Barva ikony podle spoluhráče",
+    "ehi_other_show_floating_text_color_peer_equipment_desc" : "Nastavuje barvu ikony podle barvy spoluhráče (pokud existuje)",
 
     "ehi_other_show_floating_text_throwables" : "Hoditelné 'granáty'",
     "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable" : "Blokovat hoditelné 'granáty' na abilitu nebo žádný",

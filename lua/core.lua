@@ -1297,9 +1297,11 @@ local function LoadDefaultValues(self)
         show_floating_damage_popup_crew_damage = true,
         show_floating_text = true,
         show_floating_text_icon = true,
+        show_floating_text_angle = 35, -- 0 - 90
         show_floating_text_distance = 25,
         show_floating_text_format = 1, -- 1 = Multiplier; 2 = Percent
         show_floating_text_compact_mode = false,
+        show_floating_text_color_peer_equipment = true,
         show_floating_text_ammo_bag = true,
         show_floating_text_bodybags_bag = true,
         show_floating_text_doctor_bag = true,

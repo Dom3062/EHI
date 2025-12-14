@@ -1,8 +1,11 @@
+r365 (14. 12. 2025):
+Float Text: Added "Angle" and "Color Icon By Peer" options
+
 r364 (11. 12. 2025):
 Buffs: Fixed an issue where Tag Team Paired buff does not reset its custom color after client disconnected
 Buffs: Fixed an issue where active Tag Team Paired buff does not hide after client disconnected
 Buffs: Possible fix for Stamina buff randomly appearing and staying stuck when disabled
-Float Text: Added "Compact Mode" and "Value Format"
+Float Text: Added "Compact Mode" and "Value Format" options
 Float Text: Float text for Bodybags is removed after alarm
 Float Text: Fixed visible float text in places where players have no access
 Shadow Raid: Fixed a crash after drop-in

@@ -384,9 +384,11 @@
             "default_value": true,
             "children" : [
                 "ehi_other_show_floating_text_icon_choice",
+                "ehi_other_show_floating_text_angle_choice",
                 "ehi_other_show_floating_text_distance_choice",
                 "ehi_other_show_floating_text_format_choice",
                 "ehi_other_show_floating_text_compact_mode_choice",
+                "ehi_other_show_floating_text_color_peer_equipment_choice",
                 "ehi_other_show_floating_text_ammo_bag_choice",
                 "ehi_other_show_floating_text_bodybags_bag_choice",
                 "ehi_other_show_floating_text_doctor_bag_choice",
@@ -394,7 +396,8 @@
                 "ehi_other_show_floating_text_throwables_choice"
             ],
             "children_f" : {
-                "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice": "ehi_show_floating_text_throwables_block_on_abilities_choice_1"
+                "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice": "ehi_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice_1",
+                "ehi_other_show_floating_text_color_peer_equipment_choice" : "ehi_show_floating_text_color_peer_equipment_choice_1"
             }
         },
         {
@@ -404,6 +407,21 @@
             "callback": "ehi_set_item_value",
             "value": "show_floating_text_icon",
             "default_value": true,
+            "parent" : "ehi_other_show_floating_text_choice",
+            "child" : "ehi_other_show_floating_text_color_peer_equipment_choice"
+        },
+        {
+            "type": "slider",
+            "id": "ehi_other_show_floating_text_angle_choice",
+            "title": "ehi_other_show_floating_text_angle",
+            "description": "ehi_other_show_floating_text_angle_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_angle",
+            "default_value": 35,
+            "max": 90,
+            "min": 0,
+            "step": 1,
+            "display_precision": 0,
             "parent" : "ehi_other_show_floating_text_choice"
         },
         {
@@ -440,6 +458,16 @@
             "callback": "ehi_set_item_value",
             "value": "show_floating_text_compact_mode",
             "default_value": false,
+            "parent" : "ehi_other_show_floating_text_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_color_peer_equipment_choice",
+            "title": "ehi_other_show_floating_text_color_peer_equipment",
+            "description": "ehi_other_show_floating_text_color_peer_equipment_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_color_peer_equipment",
+            "default_value": true,
             "parent" : "ehi_other_show_floating_text_choice"
         },
         {

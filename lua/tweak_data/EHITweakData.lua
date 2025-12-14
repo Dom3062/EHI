@@ -1456,14 +1456,6 @@ function EHITweakData:new(tweak_data)
     self.buff.reload_weapon_faster.group = "increased_weapon_reload"
     self.buff.reload_weapon_faster.option = "running_from_death_reload"
     self.buff.reload_weapon_faster.permanent.option = "running_from_death_reload_persistent"
-    --[[self.buff.TagTeamAbsorption = deep_clone(self.buff.TagTeamEffect)
-    self.buff.TagTeamAbsorption.group = "player_damage_absorption"
-    self.buff.TagTeamAbsorption.deck_option.option = "absorption"
-    self.buff.TagTeamAbsorption.x = 2
-    self.buff.TagTeamAbsorption.y = 0
-    self.buff.TagTeamAbsorption.text = "Absorption"
-    self.buff.TagTeamAbsorption.format = "damage"
-    self.buff.TagTeamAbsorption.class = "EHIGaugeBuffTracker"]]
     self.buff.mrwi_health_invulnerable_cooldown = deep_clone(self.buff.mrwi_health_invulnerable)
     self.buff.mrwi_health_invulnerable_cooldown.group = "cooldown"
     self.buff.mrwi_health_invulnerable_cooldown.text_localize = "ehi_buffs_hint_cooldown"
@@ -1533,7 +1525,7 @@ function EHITweakData:new(tweak_data)
                         check_type = EHI.Const.LootCounter.CheckType.ValueOfBags
                     }
                 })
-            end,
+            end
         },
         ShowNumberOfLootbagsOnTheGround = function()
             local max = EHI.Mission._utils:CountLootbagsOnTheGround()

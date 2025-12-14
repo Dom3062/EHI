@@ -6,6 +6,11 @@
     "ehi_language_desc" : "Change le langage du mod. Pour que cela prenne effet, un redémarrage du niveau est nécessaire.",
     "ehi_language_1" : "Détecte automatiquement",
 
+    "ehi_color_r" : "R",
+    "ehi_color_g" : "V",
+    "ehi_color_b" : "B",
+    "ehi_color_y" : "J",
+
     "ehi_button_ok" : "OK",
     "ehi_color_reset" : "Réinitialiser la couleur",
 
@@ -239,5 +244,6 @@
 
     "ehi_buffs_group_color_red" : "Rouge",
     "ehi_buffs_group_color_green" : "Vert",
-    "ehi_buffs_group_color_blue" : "Bleu"
+    "ehi_buffs_group_color_blue" : "Bleu",
+    "ehi_buffs_group_color_yellow" : "Jaune"
 }

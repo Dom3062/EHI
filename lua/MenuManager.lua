@@ -36,10 +36,30 @@ local function ShowOrHideMenuStuff(show)
         contract_gui._panel:set_visible(show)
         contract_gui._fullscreen_panel:set_visible(show)
     end
-    local game_chat_gui = menu_component._game_chat_gui
+    local game_chat_gui = menu_component._game_chat_gui -- Lobby
     if game_chat_gui then
         game_chat_gui._hud_panel:set_visible(show)
     end
+    local crime_spree_missions = menu_component._crime_spree_missions -- Lobby
+    if crime_spree_missions then
+        crime_spree_missions._panel:set_visible(show)
+        crime_spree_missions._fullscreen_panel:set_visible(show)
+    end
+    local crime_spree_details = menu_component._crime_spree_details -- Lobby
+    if crime_spree_details then
+        crime_spree_details._panel:set_visible(show)
+        crime_spree_details._fullscreen_panel:set_visible(show)
+        crime_spree_details._ws:panel():set_visible(show) -- WalletGuiObject
+    end
+    --[[local ingame_contract = menu_component._ingame_contract_gui
+    if ingame_contract then
+        local job_data = managers.job:current_job_data()
+        if job_data and managers.job:current_job_id() == "safehouse" and Global.mission_manager.saved_job_values.playedSafeHouseBefore or managers.job:current_job_id() == "chill" then
+            ingame_contract._panel:set_visible(false)
+        else
+            ingame_contract._panel:set_visible(show)
+        end
+    end]]
     tracker_preview._panel:set_visible(not show)
     buff_preview._panel:set_visible(not show)
 end
@@ -599,15 +619,24 @@ function MenuCallbackHandler.ehi_changed_focus(node, focus)
         local AspectRatio = FakeEHITrackerManager.AspectRatio
         local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
         local _1_33 = 4 / 3
-        local AspectRatioEnum, ws
+        local AspectRatioEnum, ws, layer
         if aspect_ratio == 1.6 or aspect_ratio == _1_33 then -- 16:10 or 4:3
             AspectRatioEnum = aspect_ratio == 1.6 and AspectRatio._16_10 or AspectRatio._4_3
             ws = managers.gui_data:create_fullscreen_16_9_workspace()
+            --[[if not managers.menu._is_start_menu then
+                layer = tweak_data.gui.MENU_COMPONENT_LAYER + 1
+            end]]
         else
             AspectRatioEnum = AspectRatio.Other
             ws = managers.gui_data:create_fullscreen_workspace()
+            --[[if not managers.menu._is_start_menu then
+                layer = tweak_data.gui.MENU_COMPONENT_LAYER + 1
+            end]]
         end
         local panel = ws:panel():panel()
+        if layer then
+            panel:set_layer(layer)
+        end
         tracker_preview = FakeEHITrackerManager:new(panel, AspectRatioEnum)
         buff_preview = FakeEHIBuffsManager:new(panel)
     end
@@ -684,8 +713,12 @@ function MenuCallbackHandler.ehi_show_floating_health_bar_style_poco_blur_availa
     return EHI:GetOption("show_floating_health_bar_style") == 1 -- Poco style
 end
 
-function MenuCallbackHandler.ehi_show_floating_text_throwables_block_on_abilities_choice_1()
+function MenuCallbackHandler.ehi_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice_1()
     return EHI:GetOption("show_floating_text_throwables")
+end
+
+function MenuCallbackHandler.ehi_show_floating_text_color_peer_equipment_choice_1()
+    return EHI:GetOption("show_floating_text_icon")
 end
 
 function MenuCallbackHandler:ehi_update_buff_text_color(item)

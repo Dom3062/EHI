@@ -775,6 +775,7 @@ _G.tweak_data.equipments = {
 ---@field get_num_assignment_units fun(self: self): number
 _G.tweak_data.gage_assignment = {}
 ---@class GuiTweakData
+---@field MENU_COMPONENT_LAYER 300
 ---@field stats_present_multiplier number
 _G.tweak_data.gui = {}
 ---@class GroupAITweakData
@@ -1872,6 +1873,7 @@ end
 ---@class MenuInput : CoreMenuInput
 
 ---@class MenuManager : CoreMenuManager
+---@field _is_start_menu boolean
 ---@field back fun(self: self)
 ---@field is_pc_controller fun(self: self): boolean Returns `true` if the game was started by mouse or keyboard
 ---@field open_node fun(self: self, node_name: string, parameter_list: any[]?)
