@@ -183,7 +183,8 @@ function EHIWaypointManager:_create_waypoint_data(data)
         texture_rect = texture_rect,
         w = self._bitmap_w,
         h = self._bitmap_h,
-        blend_mode = data.blend_mode
+        blend_mode = data.blend_mode,
+        color = data.color
     })
     local arrow_icon, arrow_texture_rect = tweak_data.hud_icons:get_icon_data("wp_arrow")
     local arrow = waypoint_panel:bitmap({
@@ -225,7 +226,8 @@ function EHIWaypointManager:_create_waypoint_data(data)
         rotation = 360,
         layer = 0,
         text = "0",
-        font = self._font
+        font = self._font,
+        color = data.color
     })
     local text = waypoint_panel:text({
         h = 24,

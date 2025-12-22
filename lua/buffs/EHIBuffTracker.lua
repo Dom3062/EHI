@@ -3,12 +3,8 @@ local circle_shape = EHI:GetOption("buffs_shape") == 2
 local invert = EHI:GetOption("buffs_invert_progress") --[[@as boolean]]
 local show_hint = EHI:GetOption("buffs_show_upper_text") --[[@as boolean]]
 local color_buff_text = EHI:GetOption("buffs_group_text_color") --[[@as boolean]]
-local rect = { 32, 0, -32, 32 }
-local frame = "sframe"
-if circle_shape then
-    rect = { 128, 0, -128, 128 }
-    frame = "cframe"
-end
+local rect =  circle_shape and { 128, 0, -128, 128 } or { 32, 0, -32, 32 }
+local frame = circle_shape and "cframe" or "sframe"
 if invert then
     rect[1] = 0
     rect[3] = -rect[3]
@@ -52,6 +48,7 @@ end
 ---@field _inverted_progress boolean
 ---@field _DELETE_BUFF_ON_FALSE_SKILL_CHECK boolean
 ---@field _DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK boolean
+---@field _UNHOOK_BUFF boolean
 EHIBuffTracker = class()
 ---@param o Panel
 EHIBuffTracker._show = function(o)
@@ -348,7 +345,7 @@ function EHIBuffTracker:SkillCheck()
 end
 
 function EHIBuffTracker:CanDeleteOnFalseSkillCheck()
-    return self._DELETE_BUFF_ON_FALSE_SKILL_CHECK or self._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK
+    return self._DELETE_BUFF_ON_FALSE_SKILL_CHECK or self._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK or self._UNHOOK_BUFF
 end
 
 ---@param state boolean
@@ -447,6 +444,9 @@ function EHIBuffTracker:delete_with_class()
     self:delete()
     local buff = tweak_data.ehi.buff[self._id]
     _G[buff.class_to_load and buff.class_to_load.class or buff.class] = nil
+end
+
+function EHIBuffTracker:unhook()
 end
 
 EHIBuffTracker.DeactivateAndReset = EHIBuffTracker.Deactivate

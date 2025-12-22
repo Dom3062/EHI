@@ -305,7 +305,7 @@
     "ehi_trackers_menu" : "Trackers",
 
     "ehi_trackers_n_of_rc" : "Number of Trackers in Rows/Columns",
-    "ehi_trackers_n_of_rc_desc" : "Sets how many trackers will appear in a row/column before another one will be created\n\nIf Vertical alignment is selected, it will show the number of trackers in a row up to selected value before creating a new one\nIf Horizontal alignment, it will show the number of trackers in a column up to selected value creating a new one\n\nTo disable this feature, set the value to '0'",
+    "ehi_trackers_n_of_rc_desc" : "Sets how many trackers will appear in a row/column before another one will be created\nTo disable this feature, set the value to '0'",
 
     "ehi_trackers_rc_horizontal_new_column_position" : "(Horizontal) New row position",
     "ehi_trackers_rc_horizontal_new_column_position_desc" : "Where the new row should appear once the number of trackers in a previous row is full",

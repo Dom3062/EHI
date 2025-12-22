@@ -7,7 +7,7 @@ if tweak_data.levels:IsLevelSkirmish() then
     if EHI:GetTrackerOption("show_difficulty_tracker") and not ((EHI:CombineAssaultDelayAndAssaultTime() or EHI:GetTrackerOption("show_assault_time_tracker")) and EHI:GetOption("show_assault_diff_in_assault_trackers")) then
         ---@class EHIWaveDifficultyTracker : EHIProgressTracker
         ---@field super EHIProgressTracker
-        EHIWaveDifficultyTracker = class(EHIProgressTracker)
+        local EHIWaveDifficultyTracker = class(EHIProgressTracker)
         EHIWaveDifficultyTracker._forced_icons = { "crime_spree_assault_extender" }
         EHIWaveDifficultyTracker._forced_hint_text = "diff"
         EHIWaveDifficultyTracker._SKIRMISH_WAVE_DATA = tweak_data.skirmish:GetWaveData()
@@ -53,7 +53,7 @@ if tweak_data.levels:IsLevelSkirmish() then
             EHI:AddOnSpawnedCallback(function()
                 managers.ehi_tracker:AddTracker({
                     id = "AssaultDiff",
-                    class = "EHIWaveDifficultyTracker"
+                    class_table = EHIWaveDifficultyTracker
                 })
             end)
         else -- On client, wait until HUDManager data is synced from host
@@ -63,7 +63,7 @@ if tweak_data.levels:IsLevelSkirmish() then
                     id = "AssaultDiff",
                     progress = math.max(0, state.assault_number or 1),
                     in_assault = state.in_assault,
-                    class = "EHIWaveDifficultyTracker"
+                    class_table = EHIWaveDifficultyTracker
                 })
             end)
         end

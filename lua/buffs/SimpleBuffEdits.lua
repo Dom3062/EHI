@@ -25,6 +25,7 @@ end
 ---@class EHIHealthRegenBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIHealthRegenBuffTracker = class(EHIBuffTracker)
+EHIHealthRegenBuffTracker._UNHOOK_BUFF = true
 function EHIHealthRegenBuffTracker:post_init(...)
     local x, y, w, h = self._icon:shape() -- Hostage Taker regen
     self._icon2 = self._panel:bitmap({ -- Muscle regen
@@ -137,17 +138,17 @@ function EHIHealthRegenBuffTracker:SetIcon(buff)
     if self._buff == buff then
         return
     elseif buff == "hostage_taker" then
-        self._icon:set_visible(true)
-        self._icon2:set_visible(false)
-        self._icon3:set_visible(false)
+        self._icon:show()
+        self._icon2:hide()
+        self._icon3:hide()
     elseif buff == "muscle" then
-        self._icon2:set_visible(true)
-        self._icon:set_visible(false)
-        self._icon3:set_visible(false)
+        self._icon2:show()
+        self._icon:hide()
+        self._icon3:hide()
     else -- AIRegen
-        self._icon3:set_visible(true)
-        self._icon2:set_visible(false)
-        self._icon:set_visible(false)
+        self._icon3:show()
+        self._icon2:hide()
+        self._icon:hide()
     end
     self._buff = buff
 end
@@ -177,12 +178,20 @@ function EHIHealthRegenBuffTracker:SetPersistent()
     self._text:set_text("0")
 end
 
+function EHIHealthRegenBuffTracker:SkillCheck()
+    return not self._persistent or (self._player_manager:has_category_upgrade("player", "hostage_health_regen_addend") or self._player_manager:has_category_upgrade("player", "passive_health_regen"))
+end
+
 function EHIHealthRegenBuffTracker:delete()
+    self:unhook()
+    EHIHealthRegenBuffTracker.super.delete(self)
+end
+
+function EHIHealthRegenBuffTracker:unhook()
     managers.ehi_hook:RemovePlayerSpawnedListener(self._id)
     managers.ehi_hook:RemovePlayerDespawnedListener(self._id)
     self:RemoveBuffFromUpdate2()
     self._character_damage = nil
-    EHIHealthRegenBuffTracker.super.delete(self)
 end
 
 ---@class EHIStaminaBuffTracker : EHIGaugeBuffTracker
@@ -535,15 +544,15 @@ if EHIHealthBuffTracker._CHECK_HEAVY_SWAT_DS_DAMAGE then
         if self._icon_visible ~= new_icon then
             self._icon_visible = new_icon
             if new_icon == 1 then
-                self._icon:set_visible(true)
-                self._progress:set_visible(true)
-                self._icon_red:set_visible(false)
-                self._progress_red:set_visible(false)
+                self._icon:show()
+                self._progress:show()
+                self._icon_red:hide()
+                self._progress_red:hide()
             else
-                self._icon_red:set_visible(true)
-                self._progress_red:set_visible(true)
-                self._icon:set_visible(false)
-                self._progress:set_visible(false)
+                self._icon_red:show()
+                self._progress_red:show()
+                self._icon:hide()
+                self._progress:hide()
             end
         end
         self._progress_red:stop()
@@ -562,26 +571,26 @@ elseif EHIHealthBuffTracker._CHECK_SNIPER_DAMAGE then
         if self._icon_visible ~= new_icon then
             self._icon_visible = new_icon
             if new_icon == 1 then
-                self._icon:set_visible(true)
-                self._progress:set_visible(true)
-                self._icon_orange:set_visible(false)
-                self._progress_orange:set_visible(false)
-                self._icon_red:set_visible(false)
-                self._progress_red:set_visible(false)
+                self._icon:show()
+                self._progress:show()
+                self._icon_orange:hide()
+                self._progress_orange:hide()
+                self._icon_red:hide()
+                self._progress_red:hide()
             elseif new_icon == 2 then
-                self._icon_orange:set_visible(true)
-                self._progress_orange:set_visible(true)
-                self._icon:set_visible(false)
-                self._progress:set_visible(false)
-                self._icon_red:set_visible(false)
-                self._progress_red:set_visible(false)
+                self._icon_orange:show()
+                self._progress_orange:show()
+                self._icon:hide()
+                self._progress:hide()
+                self._icon_red:hide()
+                self._progress_red:hide()
             else
-                self._icon_red:set_visible(true)
-                self._progress_red:set_visible(true)
-                self._icon:set_visible(false)
-                self._progress:set_visible(false)
-                self._icon_orange:set_visible(false)
-                self._progress_orange:set_visible(false)
+                self._icon_red:show()
+                self._progress_red:show()
+                self._icon:hide()
+                self._progress:hide()
+                self._icon_orange:hide()
+                self._progress_orange:hide()
             end
         end
         self._progress_orange:stop()

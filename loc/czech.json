@@ -305,7 +305,7 @@
     "ehi_trackers_menu" : "Sledovače",
 
     "ehi_trackers_n_of_rc" : "Počet sledovačů na řádku/ve sloupci",
-    "ehi_trackers_n_of_rc_desc" : "Nastavuje počet sledovačů, které se objeví na řádku či sloupci, než se vytvoří další\n\nPokud je vybráno Vertikální zarovnání, zobrazí se počet sledovačů ve sloupci až do vybrané hodnoty, než se vytvoří nový\nPokud je vybráno Horizontální zarovnání, zobrazí se počet sledovačů v řádku až do vybrané hodnoty, než se vytvoří nový\n\nChcete-li tuto funkci zakázat, nastavte hodnotu na '0'",
+    "ehi_trackers_n_of_rc_desc" : "Nastavuje počet sledovačů, které se objeví na řádku či sloupci, než se vytvoří další\nChcete-li tuto funkci zakázat, nastavte hodnotu na '0'",
 
     "ehi_trackers_rc_horizontal_new_column_position" : "(Horizontální) Nová pozice řádku",
     "ehi_trackers_rc_horizontal_new_column_position_desc" : "Kde se nový řádek má objevit jakmile počet sledovačů v předchozím řádku je rovný nastavenýmu počtu",

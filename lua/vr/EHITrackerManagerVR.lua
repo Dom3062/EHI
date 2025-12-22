@@ -35,26 +35,26 @@ end
 ---@param f function
 ---@param add boolean?
 function EHITrackerManagerVR:AddToLoadQueue(key, data, f, add)
-    local load_cbk = self._load_callback[key]
-    local new_cbk = { data = data, f = f }
+    local load_clbk = self._load_callback[key]
+    local new_clbk = { data = data, f = f }
     if add then
-        if load_cbk then
-            if load_cbk.table then
-                table.insert(load_cbk.table, new_cbk)
+        if load_clbk then
+            if load_clbk.table then
+                table.insert(load_clbk.table, new_clbk)
             else
                 self._load_callback[key] = { table = {
-                    load_cbk,
-                    new_cbk
+                    load_clbk,
+                    new_clbk
                 }}
             end
         else
-            self._load_callback[key] = { table = { new_cbk } }
+            self._load_callback[key] = { table = { new_clbk } }
         end
-    elseif load_cbk then -- Update the existing data when it already exists
-        load_cbk.data = data
-        load_cbk.f = f
+    elseif load_clbk then -- Update the existing data when it already exists
+        load_clbk.data = data
+        load_clbk.f = f
     else
-        self._load_callback[key] = new_cbk
+        self._load_callback[key] = new_clbk
     end
 end
 

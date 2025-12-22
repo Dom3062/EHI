@@ -89,9 +89,9 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
     EHI:AddOnAlarmCallback(function()
         Hooks:RemovePostHook("EHI_pager_init")
         Hooks:RemovePostHook("EHI_pager_set_tweak_data")
-        Hooks:RemovePostHook("EHI_pager_interact")
+        Hooks:RemovePreHook("EHI_pager_interact")
         Hooks:RemovePostHook("EHI_pager_at_interact_start")
-        Hooks:RemovePostHook("EHI_pager_sync_interacted")
+        Hooks:RemovePreHook("EHI_pager_sync_interacted")
     end)
 end
 
@@ -124,7 +124,7 @@ if EHI:GetOption("show_enemy_count_tracker") and EHI:GetOption("show_enemy_count
     end)
     EHI:AddOnAlarmCallback(function()
         Hooks:RemovePostHook("EHI_EnemyCounter_pager_at_interact_start")
-        Hooks:RemovePostHook("EHI_EnemyCounter_pager_sync_interacted")
+        Hooks:RemovePreHook("EHI_EnemyCounter_pager_sync_interacted")
     end)
 end
 

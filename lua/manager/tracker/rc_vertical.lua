@@ -28,6 +28,7 @@ function EHITrackerManager:_tracker_created(tracker, pos, w)
         end
     elseif pos_line ~= self._rc_params.last_line then -- Our new (smaller) tracker has not been created on the last line, update every RC Line internal data to stay accurate (because some bigger trackers could have moved to other lines)
         self:_rearrange_rc_data(pos_line)
+        self:_rearrange_trackers(pos, 0, 0)
     end
 end
 

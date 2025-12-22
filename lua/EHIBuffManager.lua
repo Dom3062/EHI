@@ -12,7 +12,6 @@ function EHIBuffManager:init_finalize(hud, panel)
     self._update_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
     self._visible_buffs = setmetatable({}, { __mode = "k" }) ---@type table<string, EHIBuffTracker?>
     self._n_visible = 0
-    self._gap = tweak_data.gap
     self._x = EHI:GetOption(_G.IS_VR and "buffs_vr_x_offset" or "buffs_x_offset") --[[@as number]]
     local path = EHI.LuaPath .. "buffs/"
     dofile(path .. "EHIBuffTracker.lua")
@@ -279,8 +278,10 @@ function EHIBuffManager:ActivateUpdatingBuffs()
         elseif buff:CanDeleteOnFalseSkillCheck() then
             if buff._DELETE_BUFF_ON_FALSE_SKILL_CHECK then
                 buff:delete()
-            else
+            elseif buff._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK then
                 buff:delete_with_class()
+            else
+                buff:unhook()
             end
         end
     end

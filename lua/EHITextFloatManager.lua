@@ -6,7 +6,7 @@ end
 ---@class EHITextFloatManager
 EHITextFloatManager = {}
 function EHITextFloatManager:new()
-    self._floats = {} ---@type table<userdata, { class: EHITextFloat, state: string, position: Vector3, name_key: string, peer_id: integer }?>
+    self._floats = {} ---@type table<userdata, { class: EHITextFloat, state: "onscreen"|"offscreen", position: Vector3, name_key: string, peer_id: integer }?>
     self._deferred_floats = {} ---@type table<userdata, { unit: UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable, peer_id: integer }>
     self._unit_blocked = {} ---@type table<userdata, boolean>
     self._n_of_equipment = 0

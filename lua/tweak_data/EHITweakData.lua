@@ -1132,17 +1132,9 @@ function EHITweakData:new(tweak_data)
             y = 10,
             group = "health_regen",
             option = "hostage_taker_muscle",
+            persistent = "hostage_taker_muscle_persistent",
             skill_check_after_spawn = true,
-            class = "EHIHealthRegenBuffTracker",
-            permanent =
-            {
-                option = "hostage_taker_muscle_persistent",
-                class_to_load =
-                {
-                    load_class = "EHIPermanentHealthRegenBuffTracker",
-                    class = "EHIPermanentHealthRegenBuffTracker"
-                }
-            }
+            class = "EHIHealthRegenBuffTracker"
         },
         crew_throwable_regen =
         {

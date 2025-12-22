@@ -51,15 +51,15 @@ local function ShowOrHideMenuStuff(show)
         crime_spree_details._fullscreen_panel:set_visible(show)
         crime_spree_details._ws:panel():set_visible(show) -- WalletGuiObject
     end
-    --[[local ingame_contract = menu_component._ingame_contract_gui
+    local ingame_contract = menu_component._ingame_contract_gui
     if ingame_contract then
-        local job_data = managers.job:current_job_data()
-        if job_data and managers.job:current_job_id() == "safehouse" and Global.mission_manager.saved_job_values.playedSafeHouseBefore or managers.job:current_job_id() == "chill" then
-            ingame_contract._panel:set_visible(false)
+        -- If the ingame contract gui exists, hide the entire Workspace because the panel gets recreated everytime player visits a menu/sub-menu
+        if show then
+            menu_component._ws:show()
         else
-            ingame_contract._panel:set_visible(show)
+            menu_component._ws:hide()
         end
-    end]]
+    end
     tracker_preview._panel:set_visible(not show)
     buff_preview._panel:set_visible(not show)
 end
@@ -90,7 +90,7 @@ local function check_value(compare, value, type)
     return result
 end
 
----Copy of BLT's MenuHelper with EHI specific changes
+---Copy of BLT's MenuHelper with EHI specific changes  
 ---Loads a json-formatted text file and automatically parses and converts into a usable menu
 ---@param file_path string @Path of the file to load and convert into a menu
 ---@param data_table table? @Table containing the data keys which various menu items can load their value from
@@ -313,7 +313,7 @@ local function LoadFromJsonFile(file_path, data_table)
                     menu_item:set_value(value)
                     menu_item._priority = priority
                     if disabled then
-                        menu_item:set_enabled(not disabled)
+                        menu_item:set_enabled(false)
                     end
                     menu._items_list = menu._items_list or {}
                     table.insert(menu._items_list, menu_item)
@@ -623,15 +623,15 @@ function MenuCallbackHandler.ehi_changed_focus(node, focus)
         if aspect_ratio == 1.6 or aspect_ratio == _1_33 then -- 16:10 or 4:3
             AspectRatioEnum = aspect_ratio == 1.6 and AspectRatio._16_10 or AspectRatio._4_3
             ws = managers.gui_data:create_fullscreen_16_9_workspace()
-            --[[if not managers.menu._is_start_menu then
+            if not managers.menu._is_start_menu then
                 layer = tweak_data.gui.MENU_COMPONENT_LAYER + 1
-            end]]
+            end
         else
             AspectRatioEnum = AspectRatio.Other
             ws = managers.gui_data:create_fullscreen_workspace()
-            --[[if not managers.menu._is_start_menu then
+            if not managers.menu._is_start_menu then
                 layer = tweak_data.gui.MENU_COMPONENT_LAYER + 1
-            end]]
+            end
         end
         local panel = ws:panel():panel()
         if layer then

@@ -1,3 +1,6 @@
+r366 (22. 12. 2025):
+Number of Trackers in Rows/Columns: (Vertical) Fixed an issue with offset if the biggest tracker moved to another column
+
 r365 (14. 12. 2025):
 Float Text: Added "Angle" and "Color Icon By Peer" options
 

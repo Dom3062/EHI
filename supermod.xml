@@ -125,7 +125,6 @@
                 <post :hook_id="ecm_jammer/ecmjammerbase" :script_path="ECMJammerBase.lua" />
                 <post :hook_id="grenade_crate/grenadecratebase" :script_path="GrenadeCrateBase.lua" />
                 <post :hook_id="first_aid_kit/firstaidkitbase" :script_path="FirstAidKitBase.lua" />
-                <!--<post :hook_id="sentry_gun/sentrygundamage" :script_path="SentryGunDamage.lua" />-->
                 <post :hook_id="sentry_gun/sentrygunmovement" :script_path="SentryGunMovement.lua" />
             </group>
             <post :hook_id="player_team/teamaibase" :script_path="TeamAIBase.lua" />

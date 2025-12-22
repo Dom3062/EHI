@@ -3,17 +3,6 @@ if EHI:CheckLoadHook("SmokeScreenEffect") then
 end
 local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_mission_trackers", "show_waypoints_mission")
 local buffs = EHI:GetBuffAndBuffDeckOption("sicario", "smoke_bomb")
-
-if show_waypoint then
-    EHI:AddCallback(EHI.CallbackMessage.InitManagers, function(managers)
-        ---@class EHISmokeBombWaypoint : EHIWaypoint
-        EHISmokeBombWaypoint = class(EHIWaypoint)
-        function EHISmokeBombWaypoint:post_init(params)
-            self:SetColor(params.color)
-        end
-    end)
-end
-
 local original_init = SmokeScreenEffect.init
 ---@param position Vector3
 ---@param normal number math.UP
@@ -31,9 +20,10 @@ function SmokeScreenEffect:init(position, normal, time, has_dodge_bonus, grenade
         key = "ThrowerUnitInCustody_" .. TimerManager:game():time()
         color_id = #tweak_data.chat_colors
     end
-    if show_tracker then
+    local id = "SmokeScreenGrenade_" .. key
+    if show_tracker and managers.ehi_tracker:CallFunction2(id, "SetTime", time) then
         managers.ehi_tracker:AddTracker({
-            id = "SmokeScreenGrenade_" .. key,
+            id = id,
             time = time,
             icons = {
                 {
@@ -44,13 +34,12 @@ function SmokeScreenEffect:init(position, normal, time, has_dodge_bonus, grenade
             hint = "sicario_smoke_bomb"
         })
     end
-    if show_waypoint then
-        managers.ehi_waypoint:AddWaypoint("SmokeScreenGrenade_" .. key, {
+    if show_waypoint and managers.ehi_waypoint:CallFunction2(id, "SetTime", time) then
+        managers.ehi_waypoint:AddWaypoint(id, {
             time = time,
             icon = "smoke",
             position = position,
-            color = tweak_data.chat_colors[color_id or 0] or Color.white,
-            class = "EHISmokeBombWaypoint"
+            color = tweak_data.chat_colors[color_id or 0]
         })
     end
     if self._mine and buffs then

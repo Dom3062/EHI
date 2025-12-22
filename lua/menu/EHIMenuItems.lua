@@ -24,6 +24,7 @@ function EHIMenuItemColor:setup_gui(node, row_item)
         w = node.item_panel:w()
     })
     row_item.gui_text = node:_text_item_part(row_item, row_item.gui_panel, right_align, row_item.align)
+    row_item.gui_text:set_layer(tweak_data.gui.MENU_COMPONENT_LAYER + 6)
 
     row_item.gui_text:set_wrap(true)
     row_item.gui_text:set_word_wrap(true)
@@ -31,11 +32,11 @@ function EHIMenuItemColor:setup_gui(node, row_item)
     row_item.gui_color_border = row_item.gui_panel:rect({
         w = 48,
         color = Color.white,
-        layer = 4
+        layer = tweak_data.gui.MENU_COMPONENT_LAYER + 4
     })
     row_item.gui_color = row_item.gui_panel:rect({
         color = Color.red,
-        layer = 5
+        layer = tweak_data.gui.MENU_COMPONENT_LAYER + 5
     })
 
     self:_layout(node, row_item)
