@@ -56,7 +56,7 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[103610] = EHI:AddLootCounter2(function()
-        EHI:ShowLootCounterNoChecks({ max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot(103625, 103684), client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot(103625, 103684) })
     end, nil, function(self)
         self:Trigger()
         self._loot:SyncSecuredLoot()

@@ -6,10 +6,10 @@ local triggers = {
     [103712] = { time = 25, id = "HeliTrade", icons = Icon.HeliLootDrop, hint = EHI.Hints.Wait }
 }
 
-local other =
-{
-    [101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = 104450 }, nil, nil, true)
-}
+local other = {}
+if EHI.TrackerUtils:IsLootCounterVisible({ element = 104450 }) then
+    other[101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = 104450 }, nil, nil, true)
+end
 
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104318] = { id = "Snipers", count = 2, chance_success = true, class = TT.Sniper.TimedChanceOnce }

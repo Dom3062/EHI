@@ -61,7 +61,6 @@ if EHI:IsLootCounterVisible() then
             -- 4 meth bags in Arizona
             max = 45,
             max_random = 4, -- Achievement armor
-            client_from_start = true,
             triggers =
             {
                 [100109] = EHI:AddCustomCode(function(self)

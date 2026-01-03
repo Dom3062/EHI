@@ -9,8 +9,7 @@ if EHI:IsLootCounterVisible() then
     other[100107] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = 6,
-            max_random = 7,
-            client_from_start = true
+            max_random = 7
         })
     end, { element = 100008 }, nil, true)
     other[100109] = EHI:AddCustomCode(function(self)
@@ -44,6 +43,7 @@ EHI.Unit:UpdateUnits({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "bob_4",
+    job_pass = managers.job:current_job_id() == "election_day",
     max = 6,
     counter =
     {

@@ -131,6 +131,7 @@ end
 
 EHI:ShowAchievementLootCounter({
     achievement = "deep_11",
+    job_pass = managers.job:current_job_id() == "deep",
     max = 4,
     silent_max = 8,
     triggers =
@@ -147,7 +148,7 @@ EHI:ShowAchievementLootCounter({
         if managers.preplanning:IsAssetBought(102474) then
             self:RunTrigger(101084)
         end
-        self._loot:SyncSecuredLoot("deep_11")
+        self._loot:SyncSecuredLootInAchievement("deep_11")
     end,
     loot_counter_load_sync = function(self)
         if managers.preplanning:IsAssetBought(102474) then

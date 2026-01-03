@@ -589,10 +589,6 @@ function EHIMissionElementTrigger:LoadSync()
     end
 end
 
-function EHIMissionElementTrigger:RemoveLoadSync()
-    self._params.load_sync = nil
-end
-
 ---@param data ElementTrigger
 function EHIMissionElementTrigger:_parse_vanilla_waypoint_trigger(data)
     data.data.distance = true
@@ -684,7 +680,7 @@ end
 function EHIMissionElementTrigger:RegisterCustomSyncedSF(f)
     local f_id = (self._SyncedSFFUsed or self.SF.CustomSyncedSF) + 1
     self._SFF[f_id] = f
-    if self.IsHost then -- Syncing happens in `EHIManager:load()` and `EHIManager:save()`
+    if self.IsHost then -- Syncing happens in `EHI.Trigger:load()` and `EHI.Trigger:save()`
         self._mission.SyncFunctions[f_id] = true
     end
     self._SyncedSFFUsed = f_id
@@ -720,7 +716,7 @@ function EHIMissionElementTrigger:__HookElements(elements_to_hook)
                         Mission Placed instances are preloaded and all elements are not cached until
                         ElementInstancePoint is called
                         These instances are synced when you join
-                        Delay the hook until the sync is complete (see: EHIManager:SyncLoad())
+                        Delay the hook until the sync is complete (see: EHI.Trigger:SyncLoad())
                     ]]
                     self._HookOnLoad[id] = trigger
                 end
@@ -831,7 +827,7 @@ end
 function EHIMissionElementTrigger:__full_sync()
     for _, element in pairs(self._all_triggers) do
         element:sync_load()
-        element:RemoveLoadSync()
+        element._params.load_sync = nil
     end
     self.LoadSyncHandler:clear()
     self.LoadSyncHandler = nil
@@ -856,7 +852,6 @@ function EHIMissionElementTrigger:save(data)
             state.SyncedSFF[key] = value
         end
         data.EHIMissionElementTrigger = state
-        data.EHIManager = state -- Backwards compatibility
     end
 end
 
@@ -1209,7 +1204,9 @@ function EHIMissionHolder:new()
     {
         [self.Trackers.Code] = { tracker = "EHICodesTracker", waypoint = "EHICodesWaypoint", also_remove = self.Trackers.ColoredCodes },
         [self.Trackers.ColoredCodes] = { tracker = "EHICodesTracker", waypoint = "EHICodesWaypoint", also_remove = self.Trackers.Code },
-        [self.Trackers.TimePreSync] = { tracker = self.Trackers.TimePreSync, waypoint = self.Waypoints.TimePreSync }
+        [self.Trackers.CorrectCables] = { tracker = self.Trackers.CorrectCables },
+        [self.Trackers.TimePreSync] = { tracker = self.Trackers.TimePreSync, waypoint = self.Waypoints.TimePreSync },
+        [self.Trackers.Name] = { tracker = self.Trackers.Name }
     }
     if EHI.IsClient then
         self.ClientSyncFunctions = deep_clone(self.SyncFunctions)
@@ -1243,6 +1240,48 @@ function EHIMissionHolder:init_finalize()
                 end
             end
         end)
+    end
+end
+
+---@generic T: EHITracker
+---@param class string
+---@return T?
+function EHIMissionHolder:ForceLoadTracker(class)
+    local load = class and self._ConditionalLoad[class]
+    if load then
+        EHI:LoadTracker(load.tracker)
+        self._ConditionalLoad[class] = nil
+        if load.also_remove then
+            self._ConditionalLoad[load.also_remove] = nil
+        end
+        return _G[load.tracker]
+    end
+end
+
+---@param class string
+function EHIMissionHolder:LoadTracker(class)
+    local load = class and self._ConditionalLoad[class]
+    if load then
+        EHI:LoadTracker(load.tracker)
+        self._ConditionalLoad[class] = nil
+        if load.also_remove then
+            self._ConditionalLoad[load.also_remove] = nil
+        end
+    end
+end
+
+---@param class string
+function EHIMissionHolder:LoadClass(class)
+    local load = class and self._ConditionalLoad[class]
+    if load then
+        EHI:LoadTracker(load.tracker)
+        if load.waypoint then
+            EHI:LoadWaypoint(load.waypoint)
+        end
+        self._ConditionalLoad[class] = nil
+        if load.also_remove then
+            self._ConditionalLoad[load.also_remove] = nil
+        end
     end
 end
 
@@ -1400,7 +1439,7 @@ function EHIMissionHolder:ParseTriggers(new_triggers, trigger_id_all, trigger_ic
                 end
             end
             for id, data in pairs(new_triggers.achievement) do
-                if data.difficulty_pass ~= false and IsAchievementLocked(data, id) then
+                if data.difficulty_pass ~= false and data.job_pass ~= false and IsAchievementLocked(data, id) then
                     Parser(data, id)
                 else
                     Cleanup(data)
@@ -1550,15 +1589,7 @@ function EHIMissionHolder:ParseMissionTriggers(mission_triggers, trigger_id_all,
             if self._GroupingTrackers[data.class] then
                 data.tracker_group = true
             end
-            if self._ConditionalLoad[data.class] then
-                local load = self._ConditionalLoad[data.class]
-                EHI:LoadTracker(load.tracker)
-                EHI:LoadWaypoint(load.waypoint)
-                self._ConditionalLoad[data.class] = nil
-                if load.also_remove then
-                    self._ConditionalLoad[load.also_remove] = nil
-                end
-            end
+            self:LoadClass(data.class)
         end
         if data.client and self.ClientSyncFunctions[data.special_function or 0] then
             data.additional_time = (data.additional_time or 0) + data.client.time

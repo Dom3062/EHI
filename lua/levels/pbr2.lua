@@ -130,6 +130,7 @@ for i = 103252, 103339, 3 do
 end
 EHI:ShowAchievementLootCounter({
     achievement = "voff_4",
+    job_pass = managers.job:current_job_id() == "pbr2",
     max = 9,
     triggers = voff_4_triggers,
     load_sync = function(self)

@@ -50,7 +50,7 @@ end
 function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     local visibility = {}
     for _, icon in ipairs(self._icons) do
-        icon:set_visible(false)
+        icon:hide()
     end
     local visible_icons = 0
     for i, id in ipairs(self._ids) do
@@ -63,7 +63,7 @@ function EHIAggregatedHealthEquipmentTracker:UpdateIconsVisibility()
     for i, _ in pairs(visibility) do
         local icon = self._icons[i]
         if icon then
-            icon:set_visible(true)
+            icon:show()
             icon:set_x(self:GetIconPosition(icons, visible_icons, i))
             icons = icons + 1
         end

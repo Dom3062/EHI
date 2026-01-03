@@ -345,7 +345,7 @@ end
 
 ---@param o Panel
 function EHIHealthFloatRect._anim_visible(o)
-    o:set_visible(true)
+    o:show()
     over(0.25, function(lerp, t)
         o:set_alpha(math.lerp(o:alpha(), 1, lerp))
     end)
@@ -359,7 +359,7 @@ function EHIHealthFloatRect._anim_hidden(o)
     over(1.5, function(lerp, t)
         o:set_alpha(math.lerp(o:alpha(), 0, lerp))
     end)
-    o:set_visible(false)
+    o:hide()
 end
 
 ---@param o Bitmap

@@ -15,7 +15,7 @@ function EHIStopwatchTracker:update(dt)
     self._text:set_text(self:Format())
 end
 
-if EHI:GetOption("time_format") == 1 then
+if EHIStopwatchTracker._TIME_FORMAT == 1 then
     EHIStopwatchTracker.Format = function(self)
         local t = math.floor(self._time * 10) / 10
         if t < 0 then

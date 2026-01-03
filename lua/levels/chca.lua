@@ -20,8 +20,7 @@ local triggers = {
     [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape }
 }
 if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
-    EHI:LoadTracker("EHICodesTracker")
-    EHI:LoadWaypoint("EHICodesWaypoint")
+    EHI.Mission:LoadClass("EHICodeTracker")
     triggers[101073] = EHI:AddCustomCode(function(self)
         if self._cache.chca_C4Route or self._cache.chca_CodeUsed or self._cache.chca_CodeSeen then
             return
@@ -239,8 +238,7 @@ if EHI:IsLootCounterVisible() then
                 [103761] = { special_function = C4Plan },
                 [EHI:GetInstanceElementID(100065, 15470)] = { special_function = LootLeftInVault } -- Ink (Stealth) / Burn (Loud)
             },
-            hook_triggers = true,
-            client_from_start = true
+            hook_triggers = true
         })
         if managers.game_play_central:IsMissionUnitEnabled(103818) then
             self._cache.chca_TeasetInMeetingRoom = true

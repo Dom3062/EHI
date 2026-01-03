@@ -59,7 +59,7 @@ local triggers = {
     [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = Icon.BoatLootDrop, waypoint_f = waypoint_f, hint = Hints.Loot },
 
     [100124] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIMissionElementTrigger
-        local bags = self._utils:CountLootbagsOnTheGround(10)
+        local bags = managers.job:get_memory("EHI_SavedLoot") or self._utils:CountLootbagsOnTheGround(10)
         if bags % 4 == 0 then -- 4/8/12
             local trigger = bags - 3
             self._loot:AddListener("watchdogs_2", function(loot)
@@ -93,7 +93,7 @@ local achievements =
         difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL),
         elements =
         {
-            [100124] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+            [100124] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status, special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
                 local bags = self._utils:CountLootbagsOnTheGround(10)
                 if bags == 12 then
                     self:CreateTracking()
@@ -113,10 +113,6 @@ local AddToCache = EHI.Trigger:RegisterCustomSyncedSF(function(self, trigger, ..
 end)
 local other =
 {
-    [100124] = EHI:AddLootCounter(function()
-        local bags = EHI.Mission._utils:CountLootbagsOnTheGround(10)
-        EHI:ShowLootCounterNoChecks({ max = bags, client_from_start = true })
-    end, { element = { 100425, 100467, 100468 } }),
     [100220] = EHI:AddAssaultDelay({ control = 5 + 15 }),
 
     [100474] = { special_function = SetBoatPosDirectlyOrFromElement, pos = 7 },
@@ -134,6 +130,12 @@ local other =
     [101149] = { special_function = GetFromCache, hint = Hints.Loot },
     [101150] = { special_function = GetFromCache, hint = Hints.Loot }
 }
+if EHI.TrackerUtils:IsLootCounterVisible({ element = { 100425, 100467, 100468 } }) then
+    other[100124] = EHI:AddLootCounter3(function(self)
+        local bags = self._utils:CountLootbagsOnTheGround(10)
+        EHI:ShowLootCounterNoChecks({ max = bags })
+    end, { element = { 100425, 100467, 100468 } })
+end
 if EHI.Mission._SHOW_MISSION_WAYPOINTS then
     other[101148].icons = Icon.BoatLootDrop
     other[101148].waypoint_f = waypoint_f

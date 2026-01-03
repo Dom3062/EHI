@@ -22,7 +22,7 @@ function EHIMissionElementOverride:OverrideElements()
                         Mission Placed instances are preloaded and all elements are not cached until
                         ElementInstancePoint is called
                         These instances are synced when you join
-                        Delay the hook until the sync is complete (see: EHIManager:SyncLoad())
+                        Delay the hook until the sync is complete (see: EHI.Trigger:SyncLoad())
                     ]]
                 end
             end

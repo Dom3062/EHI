@@ -98,10 +98,20 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[100107] = EHI:AddLootCounter2(function()
-        EHI:ShowLootCounterNoChecks({ max = 6, client_from_start = true })
-    end, { element = { 101542, 100260, 100305, 100306 } })
+        EHI:ShowLootCounterNoChecks({ max = 6 })
+    end, { element = { 101542, 100260, 100305, 100306 } }, function(self)
+        local loot = 0
+        for _, bag in ipairs({ 100740, 100744, 100766, 101112, 101115, 101116 }) do
+            local unit = managers.worlddefinition:get_unit(bag)
+            if unit and unit:body("body_static"):enabled() then
+                loot = loot + 1
+            end
+        end
+        self:CreateTracking()
+        self._loot:SyncSecuredLoot(loot)
+    end)
     other[100037] = EHI:AddCustomCode(function(self)
-        self._loot:SecuredMissionLoot() -- Secured diamonds at Mr. Blonde or in a Van
+        self._loot:IncreaseLootCounterProgress() -- Secured diamonds at Mr. Blonde or in a Van
     end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then

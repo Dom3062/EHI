@@ -36,10 +36,7 @@ local achievements =
 local other = {}
 if EHI:IsLootCounterVisible() then
     other[100482] = EHI:AddLootCounter2(function()
-        EHI:ShowLootCounterNoChecks({
-            max = 9,
-            client_from_start = true
-        })
+        EHI:ShowLootCounterNoChecks({ max = 9 })
     end, { element = 100337 })
 end
 

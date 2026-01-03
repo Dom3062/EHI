@@ -169,8 +169,7 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({
             -- 1 flipped wagon crate; guaranteed to have gold or 2x money (15% chance); possible to not spawn at all; if spawned maximum is increased in the Trigger above (first 4)
             -- If second money bundle spawns, the maximum is increased in the Trigger above (last 4)
-            max = 4, -- 4 Bomb parts
-            client_from_start = true
+            max = 4 -- 4 Bomb parts
         })
     end, { element = { 101525, 101568, 100058, 101569, 100274, 101607 } })
     local RandomLootSpawnedCheck = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)

@@ -83,6 +83,7 @@ EHI.Mission:ParseTriggers({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "berry_2",
+    job_pass = managers.job:current_job_id() == "pbr",
     max = 10,
     show_loot_counter = true,
     triggers =

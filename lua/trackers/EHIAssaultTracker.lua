@@ -20,10 +20,6 @@ local tweak_values = assault_values.delay
 local hostage_values = assault_values.hostage_hesitation_delay
 ---@class EHIAssaultTracker : EHIWarningTracker, EHIChanceTracker, EHIProgressTracker, EHICountTracker
 ---@field super EHIWarningTracker
----@field _cs_assault_extender boolean
----@field _cs_max_hostages number
----@field _cs_duration number
----@field _cs_deduction number
 EHIAssaultTracker = class(EHIWarningTracker)
 EHIAssaultTracker._forced_icons = { { icon = "assaultbox", color = Control } }
 EHIAssaultTracker._is_client = EHI.IsClient
@@ -389,7 +385,7 @@ function EHIAssaultTracker:AssaultStart(diff)
     self:SetState(State.build)
     self._assault = true
     self.update = self.update_assault
-    if self._cs_assault_extender then
+    if self._CRIME_SPREE then
         self:SetHook()
     end
     if self._control_state_block then
@@ -410,7 +406,7 @@ function EHIAssaultTracker:CalculateAssaultTime()
     local fade = assault_values.fade_duration
     self._assault_t = build + sustain
     self._sustain_original_t = sustain
-    if self._cs_assault_extender then
+    if self._CRIME_SPREE then
         sustain = self:CalculateCSSustainTime(sustain)
     end
     if self._is_client then
@@ -440,8 +436,8 @@ end
 function EHIAssaultTracker:CalculateCSSustainTime(sustain, n_of_hostages)
     n_of_hostages = n_of_hostages or managers.groupai:state():hostage_count()
     local n_of_jokers = managers.groupai:state():get_amount_enemies_converted_to_criminals()
-    local n = math.min(n_of_hostages + n_of_jokers, self._cs_max_hostages)
-    local new_sustain = sustain + self._sustain_original_t * (self._cs_duration - (self._cs_deduction * n))
+    local n = math.min(n_of_hostages + n_of_jokers, self._CRIME_SPREE.max_hostages)
+    local new_sustain = sustain + self._sustain_original_t * (self._CRIME_SPREE.duration - (self._CRIME_SPREE.deduction * n))
     return new_sustain
 end
 
@@ -474,7 +470,7 @@ function EHIAssaultTracker:OnEnterSustain(t, sustain_t, already_extended)
     self._time = sustain_t + assault_values.fade_duration
     self:SetState(State.sustain)
     self._next_state = State.fade
-    if self._cs_assault_extender and not already_extended then
+    if self._CRIME_SPREE and not already_extended then
         self:UpdateSustainTime(self:CalculateCSSustainTime(self._assault_t))
     end
     if self.update == self.update_negative then

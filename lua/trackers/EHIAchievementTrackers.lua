@@ -82,7 +82,7 @@ function EHIAchievementUnlockTracker:Refresh()
 end
 
 ---@class EHIAchievementProgressTracker : EHIUnlockableProgressTracker, EHIAchievementTracker
----@field super EHIProgressTracker
+---@field super EHIUnlockableProgressTracker
 EHIAchievementProgressTracker = ehi_achievement_class(EHIUnlockableProgressTracker)
 function EHIAchievementProgressTracker:init(panel, params)
     self._beardlib = params.beardlib
@@ -98,6 +98,7 @@ function EHIAchievementProgressTracker:AddLootListener(counter)
 end
 
 function EHIAchievementProgressTracker:pre_destroy()
+    EHIAchievementProgressTracker.super.pre_destroy(self)
     if self._loot_listener then
         managers.ehi_loot:RemoveListener(self._id)
     end
@@ -343,9 +344,9 @@ function EHIAchievementLootCounterTracker:SetStarted()
         self:UpdateHint("achievement_" .. self._id)
     end
     self:ShowStartedPopup()
-    self._icons[1]:set_visible(true)
+    self._icons[1]:show()
     if self._icons[2] then
-        self._icons[2]:set_visible(true)
+        self._icons[2]:show()
         self:SetMovement(self._anim_params.IconCreated)
     else
         self:SetIconColor(self._forced_icon_color[1])

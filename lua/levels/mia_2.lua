@@ -113,7 +113,7 @@ if EHI:IsLootCounterVisible() then
             max_xp_bags = 10,
             triggers = loot_triggers,
             hook_triggers = true,
-            client_from_start = true
+            skip_offset = true
         })
     end, { element = { 101340, 101856 }, disable_waypoint_removal = true })
     local CokeDestroyedTrigger = EHI:AddCustomCode(function(self)

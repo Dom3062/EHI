@@ -295,7 +295,7 @@ function EHIHealthFloatCircle:set_visible(visible)
         if visible then
             self._no_target = false
             self._circle_health_panel:stop()
-            self._circle_health_panel:set_visible(true)
+            self._circle_health_panel:show()
             self._circle_health_panel:set_alpha(1)
         end
     elseif not visible then
@@ -315,7 +315,7 @@ function EHIHealthFloatCircle._animate_hide_decay(o, self)
         o:set_alpha(t / fadeout)
     end
     if self._no_target then
-        o:set_visible(false)
+        o:hide()
     end
     o:set_alpha(1)
 end

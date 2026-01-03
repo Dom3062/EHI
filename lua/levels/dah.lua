@@ -97,6 +97,7 @@ local achievements =
     dah_8 =
     {
         difficulty_pass = OVKorAbove,
+        job_pass = managers.job:current_job_id() == "dah",
         elements =
         {
             [103969] = { special_function = SF.CustomCode, f = dah_8 },

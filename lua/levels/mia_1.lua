@@ -1,11 +1,3 @@
----@class EHIThugsProgress : EHIProgressTracker
----@field super EHIProgressTracker
-local EHIThugsProgress = class(EHIProgressTracker)
-function EHIThugsProgress:pre_init(params)
-    params.max = managers.enemy:GetNumberOfEnemies()
-    EHIThugsProgress.super.pre_init(self, params)
-end
-
 local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
@@ -30,34 +22,43 @@ local triggers = {
     [101389] = { time = 10.5 + 8, id = "SecondCall", icons = { Icon.Phone }, hint = Hints.Wait },
     [103385] = { time = 8.5 + 5, id = "LastCall", icons = { Icon.Phone }, hint = Hints.Wait },
 
-    [101218] = { id = "ThugsKill", icons = { Icon.Kill }, class_table = EHIThugsProgress, hint = Hints.Kills },
+    [101218] = { id = "ThugsKill", icons = { Icon.Kill }, class = TT.Progress, hint = Hints.Kills, special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
+        trigger.max = managers.enemy:GetNumberOfEnemies()
+        self:CreateTracking()
+    end) },
     [105158] = { id = "ThugsKill", special_function = SF.IncreaseProgressMax },
     [105206] = { id = "ThugsKill", special_function = SF.IncreaseProgress }
 }
 if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
-    EHI:LoadTracker("EHICodesTracker")
-    ---@class EHIDistrictTracker : EHICodeTracker
-    ---@field super EHICodeTracker
-    local EHIDistrictTracker = class(EHICodeTracker)
-    EHIDistrictTracker._forced_hint_text = "mia_1_location"
-    EHIDistrictTracker._forced_icons = { "sidebar_question" } -- Map with question mark icon (unused in-game)
-    function EHIDistrictTracker:post_init(params)
-        self:SetCode(params.area)
+    EHI.Mission:LoadTracker("EHINameTracker")
+    ---@param self EHIMissionElementTrigger
+    ---@param area_name string
+    local function AddTracker(self, area_name)
+        if self._trackers:DoesNotExist("District") then
+            self._trackers:AddTracker({
+                id = "District",
+                name = area_name,
+                icons = { "sidebar_question" }, -- Map with question mark icon (unused in-game)
+                hint = "mia_1_location",
+                half_size = true,
+                class = "EHINameTracker"
+            })
+        end
     end
     -- After third call
-    triggers[100396] = { id = "District", area = "Downtown", class_table = EHIDistrictTracker }
-    triggers[100551] = { id = "District", area = "Georgetown", class_table = EHIDistrictTracker }
-    triggers[100558] = { id = "District", area = "West End", class_table = EHIDistrictTracker }
-    triggers[100559] = { id = "District", area = "Foggy Bottom", class_table = EHIDistrictTracker }
-    triggers[100642] = { id = "District", area = "Shaw", class_table = EHIDistrictTracker }
+    triggers[100396] = { arg = "Downtown", special_function = SF.CustomCode2, f = AddTracker }
+    triggers[100551] = { arg = "Georgetown", special_function = SF.CustomCode2, f = AddTracker }
+    triggers[100558] = { arg = "West End", special_function = SF.CustomCode2, f = AddTracker }
+    triggers[100559] = { arg = "Foggy Bottom", special_function = SF.CustomCode2, f = AddTracker }
+    triggers[100642] = { arg = "Shaw", special_function = SF.CustomCode2, f = AddTracker }
     triggers[105065] = { id = "District", special_function = SF.RemoveTracker }
     if EHI.IsClient then
         -- Reminder
-        triggers[101779] = { id = "District", area = "Downtown", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
-        triggers[101780] = { id = "District", area = "Georgetown", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
-        triggers[101781] = { id = "District", area = "West End", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
-        triggers[101782] = { id = "District", area = "Foggy Bottom", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
-        triggers[101783] = { id = "District", area = "Shaw", class_table = EHIDistrictTracker, special_function = SF.AddTrackerIfDoesNotExist }
+        triggers[101779] = { arg = "Downtown", special_function = SF.CustomCode2, f = AddTracker }
+        triggers[101780] = { arg = "Georgetown", special_function = SF.CustomCode2, f = AddTracker }
+        triggers[101781] = { arg = "West End", special_function = SF.CustomCode2, f = AddTracker }
+        triggers[101782] = { arg = "Foggy Bottom", special_function = SF.CustomCode2, f = AddTracker }
+        triggers[101783] = { arg = "Shaw", special_function = SF.CustomCode2, f = AddTracker }
     end
 end
 if EHI.IsClient then
@@ -109,12 +110,11 @@ if EHI:IsLootCounterVisible() then
         Methbags = GetNumberOfMethBags()
         EHI:ShowLootCounterNoChecks({
             max = money + Methbags,
-             -- 19 + 2 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 2 cars with possible loot
+            -- 19 + 2 // 19 boxes of contrabant, that can spawn chemicals (up to 4); 2 cars with possible loot
             max_random = 19 + 2,
-            unknown_random = true,
-            client_from_start = true
+            unknown_random = true
         })
-    end, { element = { 100168, 100245 }, present_timer = 0 })
+    end, { element = { 100168, 100245, 100459, 100609 }, present_timer = 0 })
     -- Basement
     local UnknownRandomLootSpawned = EHI:AddCustomCode(function(self)
         self._loot:IncreaseLootCounterProgressMax()

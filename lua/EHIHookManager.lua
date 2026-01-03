@@ -58,16 +58,14 @@ end
 ---@param icon string
 function EHIHookManager:HookSecuredBag(id, trophy, icon)
     local progress, max = EHI:GetSHSideJobProgressAndMax(id)
-    local current_progress = progress
-    managers.ehi_loot:AddListener(id, function(loot)
-        local new_current_progress = progress + loot:GetSecuredBagsTypeAmount(trophy.carry_id)
-        if current_progress == new_current_progress then
-            return
-        elseif new_current_progress < max then
-            managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(new_current_progress) .. "/" .. tostring(max), icon)
-            current_progress = new_current_progress
-        else
-            managers.ehi_loot:RemoveListener(id)
+    managers.ehi_loot:AddBagListener(id, function(carry_id)
+        if (type(trophy.carry_id) == "string" and trophy.carry_id == carry_id) or (type(trophy.carry_id) == "table" and table.contains(trophy.carry_id, carry_id)) then ---@diagnostic disable-line
+            progress = progress + 1
+            if progress < max then
+                managers.hud:custom_ingame_popup_text(managers.localization:to_upper_text(id), tostring(progress) .. "/" .. tostring(max), icon)
+            else
+                managers.ehi_loot:RemoveBagListener(id)
+            end
         end
     end)
 end

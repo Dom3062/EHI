@@ -128,7 +128,6 @@ if EHI:IsLootCounterVisible() then
     other[105762] = EHI:AddLootCounter2(function()
         EHI:ShowLootCounterNoChecks({
             max = tweak_data.ehi.functions.GetNumberOfDepositBoxesWithLoot2(deposit_boxes),
-            client_from_start = true,
             unknown_random = has_random_bags
         })
     end, { element = { 101060, 100510, 101065 } })

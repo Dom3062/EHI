@@ -69,8 +69,7 @@ local other =
             {
                 at_loot = true,
                 no_at_loot = true
-            },
-            client_from_start = true
+            }
         })
         managers.ehi_loot:SetCountOfArmoredTransports(1)
     end, { element = EHI:GetInstanceElementID(100023, 6500) })

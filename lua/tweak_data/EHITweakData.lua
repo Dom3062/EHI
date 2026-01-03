@@ -661,22 +661,18 @@ function EHITweakData:new(tweak_data)
             x = 10,
             y = 11,
             option = "unseen_strike",
-            parent_buff = "CritChance",
-            class = "EHIForceUpdateParentBuffTracker",
-            permanent =
+            persistent = "unseen_strike_persistent",
+            parent_buff =
             {
-                option = "unseen_strike_persistent",
+                parent = "CritChance",
                 skill_check =
                 {
                     category = "player",
                     upgrade = "unseen_increased_crit_chance"
-                },
-                class_to_load =
-                {
-                    prerequisite = "EHIPermanentForceUpdateParentBuffTracker",
-                    class = "EHIPermanentForceUpdateParentBuffTracker"
                 }
-            }
+            },
+            skill_check_after_spawn = true,
+            class = "EHIForceUpdateParentBuffTracker"
         },
         unseen_strike_initial =
         {
@@ -1231,30 +1227,22 @@ function EHITweakData:new(tweak_data)
             group = "dodge",
             x = 3,
             text_localize = "ehi_buffs_hint_dodge_increase",
-            parent_buff = "DodgeChance",
+            parent_buff =
+            {
+                parent = "DodgeChance",
+                skill_check =
+                {
+                    category = "temporary",
+                    upgrade = "pocket_ecm_kill_dodge"
+                }
+            },
+            skill_check_after_spawn = true,
             class = "EHIForceUpdateParentBuffTracker",
             deck_option =
             {
                 deck = "hacker",
                 option = "pecm_dodge",
-            },
-            permanent =
-            {
-                deck_option =
-                {
-                    deck = "hacker",
-                    option = "pecm_dodge_persistent",
-                    class_to_load =
-                    {
-                        prerequisite = "EHIPermanentForceUpdateParentBuffTracker",
-                        class = "EHIPermanentForceUpdateParentBuffTracker"
-                    },
-                    skill_check =
-                    {
-                        category = "temporary",
-                        upgrade = "pocket_ecm_kill_dodge"
-                    }
-                }
+                persistent = "pecm_dodge_persistent"
             }
         },
         HackerJammerEffect =
@@ -1522,7 +1510,7 @@ function EHITweakData:new(tweak_data)
         ShowNumberOfLootbagsOnTheGround = function()
             local max = EHI.Mission._utils:CountLootbagsOnTheGround()
             if max > 0 then
-                EHI:ShowLootCounterNoCheck({ max = max, client_from_start = true })
+                EHI:ShowLootCounterNoCheck({ max = max })
             end
         end,
         ---Checks if graphic group `grp_wpn` is set (mission script calls both `state_visible` and `state_hide` during level init)

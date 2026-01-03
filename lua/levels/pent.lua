@@ -80,7 +80,7 @@ end
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 local loot_triggers = {}
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
-    if EHI:CanShowAchievement("pent_12") then
+    if EHI:CanShowAchievement("pent_12") and managers.job:current_job_id() == "pent" then
         EHI:AddOnAlarmCallback(function()
             EHI:ShowAchievementLootCounterNoCheck({
                 achievement = "pent_12",

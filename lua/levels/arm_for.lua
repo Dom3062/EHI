@@ -60,6 +60,7 @@ EHI.Mission:ParseTriggers({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "armored_1",
+    job_pass = managers.job:current_job_id() == "arm_for",
     max = 20,
     counter =
     {

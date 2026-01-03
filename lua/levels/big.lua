@@ -135,19 +135,8 @@ local sidejob =
             if dropin or not managers.preplanning:IsAssetBought(104305) then -- Default Heli escape (Loud)
                 return
             end
-            local offset = managers.loot:GetSecuredBagsAmount()
-            managers.ehi_unlockable:AddSHDailyProgressTracker("daily_helicopter", 16)
-            managers.ehi_loot:AddAchievementListener({
-                achievement = "daily_helicopter",
-                counter = {
-                    f = function(loot)
-                        local secured = loot:GetSecuredBagsAmount() - offset
-                        managers.ehi_tracker:SetProgress("daily_helicopter", secured)
-                        if secured >= 16 then
-                            managers.ehi_loot:RemoveListener("daily_helicopter")
-                        end
-                end }
-            }, 0)
+            managers.ehi_unlockable:AddSHDailyProgressTracker("daily_helicopter", 16, 0, true)
+            managers.ehi_loot:AddSimpleBagListener("daily_helicopter")
         end
     }
 }
@@ -172,7 +161,7 @@ end
 if EHI:IsLootCounterVisible() then
     other[106328] = EHI:AddLootCounter2(function()
         -- 11 bags of money + 4 bags of gold
-        EHI:ShowLootCounterNoChecks({ max = 15, client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = 15 })
     end, { element = { 100233, 100008, 100020, 104531, 104545, 103405 } }, function(self)
         self:Trigger()
         self._loot:IncreaseLootCounterProgressMax(tweak_data.ehi.functions.GetNumberOfLootInADepositBoxesInWall({
@@ -218,6 +207,7 @@ EHI.Mission:ParseTriggers({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",
+    job_pass = managers.job:current_job_id() == "big",
     max = 16,
     show_finish_after_reaching_target = true
 })

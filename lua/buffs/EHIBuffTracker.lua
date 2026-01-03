@@ -166,9 +166,8 @@ function EHIBuffTracker:init(panel, params)
     if self._inverted_progress then
         self._progress:set_texture_rect(invert and rect[4] or 0, rect[2], -rect[3], rect[4])
     end
-    local panel_w = self._panel:w()
-    self._panel_w_gap = panel_w + 6
-    self._panel_move_gap = (panel_w / 2) + 3 -- add only half of the gap
+    self._panel_w_gap = params.w + 6
+    self._panel_move_gap = (params.w / 2) + 3 -- add only half of the gap
     self._remove_on_alarm = params.remove_on_alarm
     self:post_init(params)
 end
@@ -189,16 +188,6 @@ end
 function EHIBuffTracker:SetPersistent()
     self._persistent = true
     self:Activate()
-end
-
----@param texture string
----@param texture_rect number[]?
-function EHIBuffTracker:UpdateIcon(texture, texture_rect)
-    if texture_rect then
-        self._icon:set_image(texture, unpack(texture_rect))
-    else
-        self._icon:set_image(texture)
-    end
 end
 
 ---@param t number? Required

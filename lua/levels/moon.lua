@@ -71,6 +71,7 @@ EHI.Waypoint:DisableTimerWaypoints({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "moon_5",
+    job_pass = managers.job:current_job_id() == "moon",
     max = 9,
     counter =
     {

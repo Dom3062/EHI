@@ -291,14 +291,14 @@ function EHISniperTimedCountTracker:SetRespawnTime(t)
     self._check_anim_progress = t <= 10
     self._time_warning = false
     self:AddTrackerToUpdate()
-    self._text:set_visible(true)
-    self._count_text:set_visible(false)
+    self._text:show()
+    self._count_text:hide()
 end
 
 function EHISniperTimedCountTracker:Refresh()
     self:RemoveTrackerFromUpdate()
-    self._count_text:set_visible(true)
-    self._text:set_visible(false)
+    self._count_text:show()
+    self._text:hide()
     self._text:stop()
     self:SetTextColor()
     if self._count_on_refresh then
@@ -372,9 +372,9 @@ function EHISniperTimedChanceTracker:OverridePanel()
 end
 
 function EHISniperTimedChanceTracker:SniperSpawnsSuccess()
-    self._count_text:set_visible(true)
-    self._chance_text:set_visible(false)
-    self._text:set_visible(false)
+    self._count_text:show()
+    self._chance_text:hide()
+    self._text:hide()
     self:RemoveTrackerFromUpdate()
     self:AnimateBG()
     self:SniperSpawned()
@@ -382,14 +382,14 @@ end
 
 ---@param t number?
 function EHISniperTimedChanceTracker:SnipersKilled(t)
-    self._count_text:set_visible(false)
+    self._count_text:hide()
     if self._max_chance_reached then
         self._time = self._delay_on_max_chance
     else
         self._time = t or self._recheck_t
-        self._chance_text:set_visible(true)
+        self._chance_text:show()
     end
-    self._text:set_visible(true)
+    self._text:show()
     self:AddTrackerToUpdate()
     self:AnimateBG()
 end
@@ -413,7 +413,7 @@ function EHISniperTimedChanceTracker:SetChance(amount)
         self._text:set_w(self._bg_box:w())
         self._text:set_x(0)
         self:SetTimeNoAnim(self._delay_on_max_chance)
-        self._chance_text:set_visible(false)
+        self._chance_text:hide()
     elseif self._anim_chance then
         self._chance_text:stop()
         self._chance_text:animate(self._anim_chance, self)
@@ -541,8 +541,8 @@ function EHISniperLoopTracker:RequestRemoval()
     end
     self.SetCount = self.SetCountRemovalCheck
     self.SetChance = self.DisableChanceUpdate
-    self._chance_text:set_visible(false)
-    self._text:set_visible(false)
+    self._chance_text:hide()
+    self._text:hide()
     self:RemoveTrackerFromUpdate()
     self:AnimateMovement(self._anim_params.PanelSizeDecreaseHalf)
     self._count_text:set_w(self._bg_box:w())
@@ -743,15 +743,15 @@ function EHISniperHeliTracker:post_init(params)
     if self._time <= 0 then
         self._needs_update = false
         self._count_text:set_text("0")
-        self._count_text:set_visible(true)
-        self._text:set_visible(false)
+        self._count_text:show()
+        self._text:hide()
     end
 end
 
 function EHISniperHeliTracker:SniperRespawn()
     self._time = self._refresh_t
-    self._text:set_visible(true)
-    self._count_text:set_visible(false)
+    self._text:show()
+    self._count_text:hide()
     self:AddTrackerToUpdate()
     self:AnimateBG()
 end
@@ -765,8 +765,8 @@ end
 function EHISniperHeliTracker:Refresh()
     self._sniper_spawned = true
     self._count_text:set_text("1")
-    self._count_text:set_visible(true)
-    self._text:set_visible(false)
+    self._count_text:show()
+    self._text:hide()
     self:RemoveTrackerFromUpdate()
     self:AnimateBG()
     self:SniperSpawned()
@@ -774,8 +774,8 @@ end
 
 function EHISniperHeliTracker:NormalSniperSpawned()
     self._count_text:set_text("1")
-    self._count_text:set_visible(true)
-    self._text:set_visible(false)
+    self._count_text:show()
+    self._text:hide()
     self:AnimateBG()
     self._popup_icon = "EHI_Sniper"
     self:SniperSpawned()
@@ -810,7 +810,7 @@ function EHISniperHeliTimedChanceTracker:SniperSpawnsSuccess(t)
     self._time = t
     self._sniper_incoming = true
     if not self._max_chance_reached then
-        self._chance_text:set_visible(false)
+        self._chance_text:hide()
         self._text:set_w(self._bg_box:w())
         self._text:set_x(0)
         self:FitTheText()

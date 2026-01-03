@@ -71,7 +71,7 @@ function EHIWaypointManagerVR:_create_waypoint_data(data)
 
         distance:set_bottom(ws_panel:h())
         distance:set_center_x(ws_panel:w() / 2)
-        distance:set_visible(false)
+        distance:hide()
     end
 
     local timer = ws_panel:text({
@@ -196,7 +196,7 @@ function EHIWaypointManagerVR:update_position(t, dt)
             data.target_scale = 1
 
             if data.distance then
-                data.distance:set_visible(true)
+                data.distance:show()
             end
         elseif data.state == "present" then
             data.current_position = Vector3(panel:center_x() + data.slot_x, panel:center_y() + panel:center_y() / 2)
@@ -210,7 +210,7 @@ function EHIWaypointManagerVR:update_position(t, dt)
                 data.target_scale = 1
 
                 if data.distance then
-                    data.distance:set_visible(true)
+                    data.distance:show()
                 end
             end
         else
@@ -234,20 +234,20 @@ function EHIWaypointManagerVR:update_position(t, dt)
                 if data.state ~= "offscreen" then
                     data.state = "offscreen"
 
-                    data.arrow:set_visible(true)
-                    data.bitmap_world:set_visible(false)
-                    data.bitmap:set_visible(true)
+                    data.arrow:show()
+                    data.bitmap_world:hide()
+                    data.bitmap:show()
                     data.bitmap:set_alpha(0.75)
 
                     data.off_timer = 0 - (1 - data.in_timer)
                     data.target_scale = 0.75
 
                     if data.distance then
-                        data.distance:set_visible(false)
+                        data.distance:hide()
                     end
 
                     if data.timer_gui then
-                        data.timer_gui:set_visible(false)
+                        data.timer_gui:hide()
                     end
                 end
 
@@ -302,20 +302,20 @@ function EHIWaypointManagerVR:update_position(t, dt)
                 if data.state == "offscreen" then
                     data.state = "onscreen"
 
-                    data.arrow:set_visible(false)
-                    data.bitmap:set_visible(false)
-                    data.bitmap_world:set_visible(true)
+                    data.arrow:hide()
+                    data.bitmap:hide()
+                    data.bitmap_world:show()
                     data.bitmap_world:set_alpha(1)
 
                     data.in_timer = 0 - (1 - data.off_timer)
                     data.target_scale = 1
 
                     if data.distance then
-                        data.distance:set_visible(true)
+                        data.distance:show()
                     end
 
                     if data.timer_gui then
-                        data.timer_gui:set_visible(true)
+                        data.timer_gui:show()
                     end
                 end
 

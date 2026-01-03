@@ -92,6 +92,7 @@ _G.EHI.Unit = EHIMissionUnit
 ---@class ParseAchievementDefinitionTable
 ---@field beardlib boolean If the achievement is from Beardlib
 ---@field difficulty_pass boolean Difficulty check, setting this to `false` will disable the achievement to show on the screen
+---@field job_pass boolean Job check
 ---@field elements table<number, ElementTrigger> Elements to hook
 ---@field failed_on_alarm boolean Fails the achievement on alarm
 ---@field load_sync fun(self: EHIMissionElementTrigger) Function to run if client drops-in to the game
@@ -154,9 +155,7 @@ _G.EHI.Unit = EHIMissionUnit
 ---@field unknown_random boolean Defines if heist will spawn additional random loot during gameplay
 ---@field load_sync fun(self: EHIMissionElementTrigger)|nil|false Synchronizes secured bags in Loot Counter, automatically sets `no_sync_load` to true and you have to sync the progress manually via `self._loot:SyncSecuredLoot()`
 ---@field no_sync_load boolean Prevents Loot Counter from sync after joining
----@field skip_offset boolean Skip offset calculation if mission resets all secured bags
----@field client_from_start boolean If client is playing from mission briefing; does not do anything on host
----@field offset integer Used in multi-day heists if loot is brought to next days; Provided via `EHI:ShowLootCounterOffset()`; DO NOT PROVIDE IT
+---@field needs_client_from_start boolean Loot Counter created during level load needs this to stay accurate on client
 ---@field triggers table If loot is manipulated via Mission Script, also see field `hook_triggers`
 ---@field hook_triggers boolean If Loot Counter is created during spawn or gameplay, triggers must be hooked in order to work
 ---@field sequence_triggers table<number, LootCounterTable.SequenceTriggersTable> Used for random loot spawning via sequences (forces syncing via BLT and GameSetup)
@@ -202,6 +201,7 @@ _G.EHI.Unit = EHIMissionUnit
 ---@field no_counting boolean Prevents standard counting
 ---@field counter AchievementCounterTable Modifies counter checks
 ---@field difficulty_pass boolean?
+---@field job_pass boolean?
 ---@field loot_counter_on_fail boolean? If the achievement loot counter should switch to `EHILootCounter` class when failed
 ---@field silent_failed_on_alarm boolean Fails achievement silently and switches to Loot Counter (only for dropins that are currently syncing and after the achievement has failed); Depends on Loot Counter to be visible in order to work
 ---@field start_silent boolean? If the achievement loot counter should start as `EHILootCounter` first; When achievement really starts, call `EHIAchievementLootCounterTracker:SetStarted()`

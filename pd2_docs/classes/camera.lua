@@ -30,7 +30,9 @@ function Camera:local_position(...) end
 
 function Camera:local_rotation(...) end
 
-function Camera:m_position(...) end
+---Sets position to provided vector
+---@param pos Vector3
+function Camera:m_position(pos) end
 
 function Camera:m_rotation(...) end
 

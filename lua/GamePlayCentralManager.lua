@@ -22,14 +22,22 @@ else
     end
 end
 
-function GamePlayCentralManager:load(...)
-    original.load(self, ...)
+function GamePlayCentralManager:load(data, ...)
+    local state = data.GamePlayCentralManager
+    EHI._cache.DisabledUnits = nil
+    EHI._cache.DisabledUnits = {}
+    if state.mission_disabled_units then
+        for id, _ in pairs(state.mission_disabled_units) do
+            EHI._cache.DisabledUnits[id] = true
+        end
+    end
+    original.load(self, data, ...)
     managers.ehi_tracking:LoadTime(self._heist_timer.offset_time or 0)
 end
 
 ---@param id number
 function GamePlayCentralManager:IsMissionUnitDisabled(id)
-    return self._mission_disabled_units[id]
+    return EHI._cache.DisabledUnits[id]
 end
 
 ---@param id number

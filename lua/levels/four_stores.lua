@@ -77,7 +77,7 @@ if EHI:IsEscapeChanceEnabled() then
 end
 if EHI:IsLootCounterVisible() then
     other[101479] = EHI:AddLootCounter3(function(self)
-        EHI:ShowLootCounterNoChecks({ max = 1, client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = 1 })
         self._loot:WaypointFunctionCheck() -- Loot bag is present on the map, show the Loot Waypoint once escape is available (overrides default behavior down below); will also work during load sync
     end, { element = { 101006, 103234 }, check_function = function(progress, max)
         return false -- Return false because the loot bag is random => to not show Loot Waypoint once escape is available (default behavior)

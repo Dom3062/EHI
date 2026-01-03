@@ -78,7 +78,7 @@ if EHI.IsClient then
     local function SyncBagsCooked(self)
         EHI.Trigger._cache.BagsCooked = math.max(self:GetSecuredBagsAmount(), EHI.Trigger._cache.BagsCooked or 0)
         if EHI.Trigger._cache.BagsCooked >= 7 then
-            EHI.Trigger._trackers:ForceRemoveTracker("CookChance")
+            EHI.Trigger._trackers:ForceRemoveTracker("CookingChance")
             EHI.Trigger:UnhookTrigger(100721)
             EHI.Trigger:UnhookTrigger(100724)
             EHI.Trigger._loot:RemoveListener("alex_1")
@@ -110,6 +110,7 @@ EHI.Mission:ParseTriggers({
 }, "Van", Icon.CarEscape)
 EHI:ShowAchievementLootCounter({
     achievement = "halloween_2",
+    job_pass = managers.job:current_job_id() == "alex",
     max = 7,
     triggers =
     {

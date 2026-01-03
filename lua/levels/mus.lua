@@ -66,7 +66,7 @@ if EHI:IsLootCounterVisible() then
                     EHI:LogFast("Unit is a bag; interaction: " .. tostring(unit:interaction().tweak_data)) ---@diagnostic disable-line
                     count = count + 1
                 else
-                    EHI:LogFast("Unit with ID '" .. tostring(unit_id) .. "' ignored") ---@diagnostic disable-line
+                    EHI:LogFast("Unit with ID '" .. tostring(unit_id) .. "' ignored")
                 end
             end
         end
@@ -74,7 +74,7 @@ if EHI:IsLootCounterVisible() then
     end
 
     other[100840] = EHI:AddLootCounter2(function()
-        EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1, client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1 })
     end, { element = { 100020, 102644, 102650, EHI:GetInstanceElementID(100028, 7200) } })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
@@ -97,6 +97,7 @@ EHI.Mission:ParseTriggers({
 }, "Escape", Icon.HeliEscape)
 EHI:ShowAchievementLootCounter({
     achievement = "bat_3",
+    job_pass = managers.job:current_job_id() == "mus",
     max = 10,
     show_finish_after_reaching_target = true,
     counter =

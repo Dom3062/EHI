@@ -22,12 +22,12 @@ local achievements =
     }
 }
 
-local other =
-{
-    [100968] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } }),
-    [100969] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround), -- No need to copy Waypoint elements, it will just spam BLT log
-    [100970] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround)
-}
+local other = {}
+if EHI.TrackerUtils:IsLootCounterVisible({ element = { 100309, 100364, 101272 } }) then
+    other[100968] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround, { element = { 100309, 100364, 101272 } })
+    other[100969] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround) -- No need to copy Waypoint elements, it will just spam BLT log
+    other[100970] = EHI:AddLootCounter(ehi_functions.ShowNumberOfLootbagsOnTheGround)
+end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100154] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100318 } }
     other[100157] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100314 } }

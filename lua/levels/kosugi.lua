@@ -195,8 +195,7 @@ if EHI:IsLootCounterVisible() then
                 end)
             },
             hook_triggers = true,
-            no_triggers_if_max_xp_bags_gt_max = true,
-            client_from_start = true
+            no_triggers_if_max_xp_bags_gt_max = true
         })
     end, { element = { 100233, 100020, 103764, 103767, 103768, 103769, 103770 } })
     -- Not included bugged loot, this is checked after spawn -> 102700
@@ -213,10 +212,12 @@ EHI.Mission:ParseTriggers({
 
 EHI:ShowAchievementLootCounter({
     achievement = "kosugi_1",
+    job_pass = managers.job:current_job_id() == "kosugi",
     max = 4
 })
 EHI:ShowAchievementLootCounter({
     achievement = "kosugi_4",
+    job_pass = managers.job:current_job_id() == "kosugi",
     max = 4,
     counter =
     {

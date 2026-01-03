@@ -63,10 +63,11 @@ end
 
 EHI:ShowAchievementLootCounter({
     achievement = "chas_10",
+    job_pass = managers.job:current_job_id() == "chas",
     max = 15,
     show_finish_after_reaching_target = true,
     load_sync = function(self)
-        self._loot:SyncSecuredLoot("chas_10")
+        self._loot:SyncSecuredLootInAchievement("chas_10")
     end,
     show_loot_counter = true,
     loot_counter_on_fail = true,

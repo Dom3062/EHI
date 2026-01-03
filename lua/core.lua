@@ -165,6 +165,7 @@ _G.EHI =
     _cache =
     {
         AchievementsDisabled = false,
+        DisabledUnits = {}, ---@type table<number, boolean>
         Mod = {} ---@type { [string]: true|false }
     },
 
@@ -253,7 +254,7 @@ _G.EHI =
         SetTrackerAccurate = 27,
         -- Autosets tracker class to `EHIInaccurateTracker`  
         -- Requires `data (table of numbers)`  
-        ---@see EHIManager.ParseMissionTriggers
+        ---@see EHI.Trigger.ParseMissionTriggers
         SetRandomTime = 32,
         -- Requires `id` and `amount`
         DecreaseChance = 34,
@@ -593,6 +594,8 @@ _G.EHI =
         Code = "EHICodeTracker",
         -- Loaded on demand; load it manually if created in registered custom function or other trackers need it
         ColoredCodes = "EHIColoredCodesTracker",
+        CorrectCables = "EHICorrectCablesTracker",
+        Name = "EHINameTracker",
         Inaccurate = "EHIInaccurateTracker",
         InaccurateWarning = "EHIInaccurateWarningTracker",
         InaccuratePausable = "EHIInaccuratePausableTracker",
@@ -674,7 +677,7 @@ _G.EHI =
 
 ---@param self table
 local function LoadDefaultValues(self)
-    self.settings =
+    local tbl =
     {
         mod_language = 1, -- Auto (default)
 
@@ -1325,6 +1328,9 @@ local function LoadDefaultValues(self)
         show_end_game_stats_acc = true,
         show_end_game_stats_downs = true
     }
+    self.settings = tbl
+    Global.EHI_MOD = Global.EHI_MOD or {}
+    Global.EHI_MOD.settings = tbl
 end
 
 local function Load()
@@ -1332,38 +1338,42 @@ local function Load()
     if self._cache.__loaded then
         return
     end
-    LoadDefaultValues(self)
-    local file = io.open(self.SettingsSaveFilePath, "r")
-    if file then
-        local table
-        local success, _ = pcall(function()
-            table = json.decode(file:read("*all"))
-        end)
-        file:close()
-        if success then
-            if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
-                local function LoadValues(settings_table, file_table)
-                    if settings_table == nil then
-                        return
-                    end
-                    for k, v in pairs(file_table) do
-                        if settings_table[k] ~= nil then
-                            if type(v) == "table" then -- Load subtables in table and calls itself to load subtables or values in that subtable
-                                LoadValues(settings_table[k], v)
-                            elseif type(settings_table[k]) == type(v) then -- Load values to the table if the type is the same
-                                settings_table[k] = v
+    if Global.EHI_MOD and self.SaveDataVer == (Global.EHI_MOD.settings and Global.EHI_MOD.settings.SaveDataVer or 1) then
+        self.settings = Global.EHI_MOD.settings
+    else -- Load default settings if they don't exist or Save Data ver does not match
+        LoadDefaultValues(self)
+        local file = io.open(self.SettingsSaveFilePath, "r")
+        if file then
+            local table
+            local success, _ = pcall(function()
+                table = json.decode(file:read("*all"))
+            end)
+            file:close()
+            if success then
+                if table.SaveDataVer and table.SaveDataVer == self.SaveDataVer then
+                    local function LoadValues(settings_table, file_table)
+                        if settings_table == nil then
+                            return
+                        end
+                        for k, v in pairs(file_table) do
+                            if settings_table[k] ~= nil then
+                                if type(v) == "table" then -- Load subtables in table and calls itself to load subtables or values in that subtable
+                                    LoadValues(settings_table[k], v)
+                                elseif type(settings_table[k]) == type(v) then -- Load values to the table if the type is the same
+                                    settings_table[k] = v
+                                end
                             end
                         end
                     end
+                    LoadValues(self.settings, table)
+                else
+                    self._cache.SaveDataNotCompatible = true
+                    self:Save()
                 end
-                LoadValues(self.settings, table)
-            else
-                self._cache.SaveDataNotCompatible = true
-                self:Save()
+            else -- Save File got corrupted, use default values
+                self._cache.SaveFileCorrupted = true
+                self:Save() -- Resave the data
             end
-        else -- Save File got corrupted, use default values
-            self._cache.SaveFileCorrupted = true
-            self:Save() -- Resave the data
         end
     end
     self._cache.__loaded = true
@@ -2081,15 +2091,7 @@ function EHI:AddLootCounter(f, wp_params, check, load_sync, trigger_once)
     elseif not self:GetTrackerOrWaypointOption("show_loot_counter", "show_waypoints_loot_counter") then
         return nil
     end
-    local tbl =
-    {
-        special_function = self.SpecialFunctions.CustomCode,
-        f = f,
-        trigger_once = trigger_once,
-        load_sync = self.IsClient and load_sync
-    }
-    self:ShowLootCounterWaypoint(wp_params)
-    return tbl
+    return self:AddLootCounter2(f, wp_params, load_sync, trigger_once)
 end
 
 ---Creates trigger as `SF.CustomCode`
@@ -2121,7 +2123,7 @@ function EHI:AddLootCounter3(f, wp_params, load_sync, trigger_once)
     return trigger
 end
 
----Creates trigger as custom trigger function in `EHIManager`
+---Creates trigger as custom trigger function in `EHIMissionElementTrigger`
 ---@param f fun(self: EHIMissionElementTrigger, trigger: ElementTrigger, element: MissionScriptElement, enabled: boolean) Loot counter function
 ---@param wp_params WaypointLootCounterTable? Waypoint params for the Loot Counter
 ---@param trigger_once boolean? Should the trigger run once?
@@ -2185,22 +2187,15 @@ end
 ---@param waypoint_params WaypointLootCounterTable?
 function EHI:ShowLootCounterNoChecks(params, waypoint_params)
     params = params or {}
-    local offset = params.offset or 0
-    if not params.skip_offset and managers.job:IsPlayingMultidayHeist() then
-        if self.IsHost or params.client_from_start then
-            offset = managers.loot:GetSecuredBagsAmount()
-        else
-            managers.ehi_sync:AddFullSyncFunction(function()
-                params.skip_offset = true
-                params.offset = managers.loot:GetSecuredBagsAmount()
-                params.hook_triggers = params.triggers ~= nil
-                self:ShowLootCounterNoChecks(params, waypoint_params)
-            end)
-            return
-        end
+    if params.needs_client_from_start and self.IsClient then
+        managers.ehi_sync:AddFullSyncFunction(function()
+            params.hook_triggers = params.triggers ~= nil
+            self:ShowLootCounterNoChecks(params, waypoint_params)
+        end)
+        return
     end
     if params.sequence_triggers or params.is_synced then
-        managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random, offset)
+        managers.ehi_loot:SyncShowLootCounter(params.max, params.max_random)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
     elseif params.max_bags_for_level and self:IsXPTrackerEnabled() and not _G.ch_settings then
         if params.max_bags_for_level.objective_triggers then
@@ -2217,12 +2212,12 @@ function EHI:ShowLootCounterNoChecks(params, waypoint_params)
             params.max_bags_for_level.objective_triggers = nil
         end
         params.no_sync_load = true
-        managers.ehi_loot:ShowLootCounter(0, 0, 0, 0, false, false, params.max_bags_for_level, nil, nil, nil)
+        managers.ehi_loot:ShowLootCounter(0, 0, 0, false, false, params.max_bags_for_level, nil, nil, nil)
     else
         if not self:GetOption("show_loot_max_xp_bags") or _G.ch_settings then
             params.max_xp_bags = 0
         end
-        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, offset, params.unknown_random, params.no_max, nil, params.loot_distribution, params.random_loot_distribution, waypoint_params and waypoint_params.class)
+        managers.ehi_loot:ShowLootCounter(params.max, params.max_random, params.max_xp_bags, params.unknown_random, params.no_max, nil, params.loot_distribution, params.random_loot_distribution, waypoint_params and waypoint_params.class)
     end
     if params.load_sync then
         self.Trigger:AddLoadSyncFunction(params.load_sync)
@@ -2337,8 +2332,7 @@ function EHI:ShowLootCounterSynced(params, waypoint_params)
         managers.ehi_loot:AddSequenceTriggers(params.sequence_triggers)
         managers.ehi_loot:SetSyncData({
             max = params.max or 0,
-            max_random = params.max_random or 0,
-            offset = params.offset and managers.loot:GetSecuredBagsAmount()
+            max_random = params.max_random or 0
         })
         return
     end
@@ -2348,7 +2342,7 @@ end
 
 ---@param params AchievementLootCounterTable
 function EHI:ShowAchievementLootCounter(params)
-    if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false then
+    if self._cache.UnlockablesAreDisabled or self._cache.AchievementsDisabled or self:IsAchievementUnlocked(params.achievement) or params.difficulty_pass == false or params.job_pass == false then
         if params.show_loot_counter then
             self:ShowLootCounter({ max = params.max, triggers = params.loot_counter_triggers, load_sync = params.loot_counter_load_sync }, params.waypoint_loot_counter)
         elseif params.triggers then

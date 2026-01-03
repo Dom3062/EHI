@@ -451,13 +451,6 @@ function FakeEHITrackerManager:UpdateYOffset(y)
     self:SetPreviewTextPosition()
 end
 
----@param id string
-function FakeEHITrackerManager:SetSelected(id)
-    for _, tracker in ipairs(self._fake_trackers) do
-        tracker:SetSelected(id)
-    end
-end
-
 ---@param scale number
 function FakeEHITrackerManager:UpdateTextScale(scale)
     if self._text_scale == scale then

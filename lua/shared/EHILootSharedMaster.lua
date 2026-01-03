@@ -10,7 +10,6 @@ function EHILootSharedMaster:init(params)
     self._max = params.max or 0
     self._progress = params.progress or 0
     self._mission_loot = 0
-    self._offset = params.offset or 0
     self._max_random = params.max_random or 0
     self._stay_on_screen = self._max_random > 0
     self._max_xp_bags = params.max_xp_bags or 0
@@ -165,10 +164,14 @@ function EHILootSharedMaster:AddDelayedLootDeclinedCheck(id, callback)
     self._loot_check_n = self._loot_check_n + 1
 end
 
+function EHILootSharedMaster:IncreaseProgress()
+    self:SetProgress(self._progress + 1)
+end
+
 ---@param progress number
 ---@param silent_update boolean?
 function EHILootSharedMaster:SetProgress(progress, silent_update)
-    local fixed_progress = progress + self._mission_loot - self._offset
+    local fixed_progress = progress + self._mission_loot
     local original_max = self._max
     if self._max_xp_bags > 0 then
         self._max = math.min(self._max, self._max_xp_bags)
@@ -305,12 +308,6 @@ function EHILootSharedMaster:SetUnknownRandomLoot(state)
     self:DispatchUpdate()
 end
 
-function EHILootSharedMaster:SecuredMissionLoot()
-    local progress = self._progress - self._mission_loot + self._offset
-    self._mission_loot = self._mission_loot + 1
-    self:SetProgress(progress)
-end
-
 ---@param count number
 function EHILootSharedMaster:SetCountOfArmoredTransports(count)
     self._n_of_loot_in_transports = count * 9
@@ -443,14 +440,6 @@ function EHILootMaxSharedMaster:init(params)
     end)
 end
 
-function EHILootMaxSharedMaster:post_init()
-    if EHI.IsClient then
-        self._loot:AddSyncListener(function(loot)
-            self._offset = loot:GetSecuredBagsAmount()
-        end)
-    end
-end
-
 function EHILootMaxSharedMaster:update(dt)
     if self._refresh_max then
         self._refresh_max = self._refresh_max - dt
@@ -490,7 +479,7 @@ function EHILootMaxSharedMaster:Refresh()
     local xp_remaining_to_max = self._xp_player_limit - xp_mission
     local new_max = math.ceil(xp_remaining_to_max / xp_per_bags)
     if new_max ~= self._max then
-        current_secured_bags = math.clamp((current_secured_bags or managers.loot:GetSecuredBagsAmount()) - self._offset, 0, math.huge)
+        current_secured_bags = math.clamp(current_secured_bags or managers.loot:GetSecuredBagsAmount(), 0, math.huge)
         local max_secured_bags = new_max
         if new_max < self._max and self._progress > max_secured_bags then
             current_secured_bags = new_max

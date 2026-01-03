@@ -365,7 +365,8 @@ function EHITracker:OverridePanel()
 end
 
 ---@param anim_type EHITracker.AnimParams
-function EHITracker:SetMovement(anim_type)
+---@param adjust_text_w boolean?
+function EHITracker:SetMovement(anim_type, adjust_text_w)
     if anim_type == self._anim_params.IconCreated then
         self:_set_icons_x()
         if self._ICON_LEFT_SIDE_START and not self._VERTICAL_ANIM_W_LEFT then
@@ -393,6 +394,10 @@ function EHITracker:SetMovement(anim_type)
         elseif not (self._VERTICAL_ANIM_W_LEFT and self._VERTICAL_HINT_POS_RIGHT) then
             self:AdjustHintX(self._VERTICAL_HINT_POS_LEFT and -size or size)
         end
+        if adjust_text_w then
+            self._text:set_w(self._bg_box:w())
+            self:FitTheText()
+        end
     elseif anim_type == self._anim_params.PanelSizeDecrease or anim_type == self._anim_params.PanelSizeDecreaseHalf then
         local size = anim_type == self._anim_params.PanelSizeDecrease and self._default_bg_size or self._default_bg_size_half
         self:SetBGSize(size, "sub")
@@ -406,6 +411,10 @@ function EHITracker:SetMovement(anim_type)
             self:AdjustHintX(size)
         elseif not (self._VERTICAL_ANIM_W_LEFT and self._VERTICAL_HINT_POS_RIGHT) then
             self:AdjustHintX(self._VERTICAL_HINT_POS_LEFT and size or -size)
+        end
+        if adjust_text_w then
+            self._text:set_w(self._bg_box:w())
+            self:FitTheText()
         end
     end
 end
@@ -463,7 +472,7 @@ function EHITracker:RemoveIconAndAnimateMovement(i, set_next_icon_visible)
         if set_next_icon_visible then
             local next_icon = self._icons[i]
             if next_icon then
-                next_icon:set_visible(true)
+                next_icon:show()
             end
         end
         self:AnimateMovement(self._anim_params.IconDeleted)

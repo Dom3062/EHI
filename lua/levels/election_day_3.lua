@@ -75,7 +75,7 @@ if EHI:IsLootCounterVisible() then
     other[103293] = EHI:AddLootCounter4(function(self, ...)
         local count = self._utils:CountInteractionAvailable("money_wrap")
         if count > 0 then
-            EHI:ShowLootCounterNoChecks({ max = count, client_from_start = true })
+            EHI:ShowLootCounterNoChecks({ max = count })
         end
     end, { element = { 103525, 103532, 104721 } }, true)
 end

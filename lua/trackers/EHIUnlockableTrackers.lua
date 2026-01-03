@@ -106,6 +106,7 @@ end
 EHIUnlockableProgressTracker = ehi_unlockable_class(EHIProgressTracker)
 function EHIUnlockableProgressTracker:post_init(params)
     self._no_failure = params.no_failure
+    self._remove_bag_listener = params.remove_bag_listener
     EHIUnlockableProgressTracker.super.post_init(self, params)
     EHIUnlockableTracker.post_init(self, params)
 end
@@ -121,6 +122,12 @@ function EHIUnlockableProgressTracker:SetFailed()
         self._achieved_popup_showed = nil
     end
     self:ShowFailedPopup()
+end
+
+function EHIUnlockableProgressTracker:pre_destroy()
+    if self._remove_bag_listener then
+        managers.ehi_loot:RemoveBagListener(self._id)
+    end
 end
 
 ---@class EHIUnlockableTimedProgressTracker : EHITimedProgressTracker, EHIUnlockableTracker

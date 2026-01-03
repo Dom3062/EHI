@@ -214,7 +214,7 @@ function EHIWaypointManager:_create_waypoint_data(data)
             font_size = self._distance_font_size,
             blend_mode = data.blend_mode
         })
-        distance:set_visible(false)
+        distance:hide()
     end
 
     local timer = waypoint_panel:text({
@@ -521,7 +521,7 @@ function EHIWaypointManager:update_position(t, dt)
             data.target_scale = 1
 
             if data.distance then
-                data.distance:set_visible(true)
+                data.distance:show()
             end
         elseif data.state == "present" then
             data.current_position = Vector3(panel:center_x() + data.slot_x, panel:center_y() + panel:center_y() / 2)
@@ -542,7 +542,7 @@ function EHIWaypointManager:update_position(t, dt)
                 data.target_scale = 1
 
                 if data.distance then
-                    data.distance:set_visible(true)
+                    data.distance:show()
                 end
             end
         else
@@ -566,18 +566,18 @@ function EHIWaypointManager:update_position(t, dt)
                 if data.state ~= "offscreen" then
                     data.state = "offscreen"
 
-                    data.arrow:set_visible(true)
+                    data.arrow:show()
                     data.bitmap:set_alpha(0.75)
 
                     data.off_timer = 0 - (1 - data.in_timer)
                     data.target_scale = 0.75
 
                     if data.distance then
-                        data.distance:set_visible(false)
+                        data.distance:hide()
                     end
 
                     if data.timer_gui then
-                        data.timer_gui:set_visible(false)
+                        data.timer_gui:hide()
                     end
                 end
 
@@ -629,18 +629,18 @@ function EHIWaypointManager:update_position(t, dt)
                 if data.state == "offscreen" then
                     data.state = "onscreen"
 
-                    data.arrow:set_visible(false)
+                    data.arrow:hide()
                     data.bitmap:set_alpha(1)
 
                     data.in_timer = 0 - (1 - data.off_timer)
                     data.target_scale = 1
 
                     if data.distance then
-                        data.distance:set_visible(true)
+                        data.distance:show()
                     end
 
                     if data.timer_gui then
-                        data.timer_gui:set_visible(true)
+                        data.timer_gui:show()
                     end
                 end
 

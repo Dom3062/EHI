@@ -40,7 +40,7 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) then
     triggers[101393] = { id = "TearGasOfficeChance", special_function = SF.RemoveTracker }
 end
 if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
-    EHI:LoadTracker("EHICorrectCablesTracker")
+    EHI.Mission:LoadTracker("EHICorrectCablesTracker")
     triggers[101692] = EHI:AddCustomCode(function(self)
         local gate_box = managers.worlddefinition:get_unit(EHI:GetInstanceUnitID(100018, 4550))
         if not gate_box then -- Oh no, something happened and our required unit does not exist; skip

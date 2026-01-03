@@ -17,9 +17,15 @@ local original =
     sync_load = LootManager.sync_load
 }
 
-function LootManager:sync_secure_loot(...)
-    original.sync_secure_loot(self, ...)
+function LootManager:sync_secure_loot(carry_id, multiplier_level, ...)
+    original.sync_secure_loot(self, carry_id, multiplier_level, ...)
     managers.ehi_loot:Call(self)
+    if tweak_data.carry.small_loot[carry_id] then
+        local multiplier = managers.player:upgrade_value_by_level("player", "small_loot_multiplier", multiplier_level, 1)
+        managers.ehi_loot:CallSmallLoot(managers.money:get_bag_value(carry_id, multiplier))
+    else
+        managers.ehi_loot:CallBag(carry_id)
+    end
 end
 
 function LootManager:sync_load(...)

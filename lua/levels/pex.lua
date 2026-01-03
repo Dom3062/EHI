@@ -39,6 +39,7 @@ end
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowAchievementLootCounter({ -- Loot
     achievement = "pex_10",
+    job_pass = managers.job:current_job_id() == "pex",
     max = 6,
     show_loot_counter = true,
     triggers =
@@ -50,6 +51,7 @@ EHI:ShowAchievementLootCounter({ -- Loot
 })
 EHI:ShowAchievementLootCounter({ -- Medals
     achievement = "pex_11",
+    job_pass = managers.job:current_job_id() == "pex",
     max = 7,
     triggers =
     {

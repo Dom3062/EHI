@@ -63,3 +63,23 @@ function EHI.TrackerUtils:CheckIfCodeIsVisible(codes, bg, unit, color)
     end
     return nil -- Has not been interacted yet
 end
+
+---@param wp_params WaypointLootCounterTable?
+---@param max_offset_f? fun(n_of_loot: integer): integer
+function EHI.TrackerUtils:IsLootCounterVisible(wp_params, max_offset_f)
+    if managers.job:IsAnyDayAnyHeistModActive() then
+        return true
+    elseif self.super:IsPlayingCrimeSpree() then
+        return false
+    elseif self.super:IsLootCounterVisible() and managers.job:get_memory("EHI_SavedLoot") then
+        local max = managers.job:get_memory("EHI_SavedLoot")
+        if max > 0 then
+            self.super:ShowLootCounter({
+                max = max + (max_offset_f and max_offset_f(max) or 0),
+                skip_offset = true
+            }, wp_params)
+            return false
+        end
+    end
+    return true
+end

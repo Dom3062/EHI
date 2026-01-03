@@ -87,6 +87,7 @@ function EHIHealthRegenBuffTracker:post_init(...)
         self._character_damage = nil
         self._max_health = 0
     end)
+    self._update_health_regen = callback(self, self, "update_health_regen")
 end
 
 function EHIHealthRegenBuffTracker:Extend(...)
@@ -166,7 +167,7 @@ function EHIHealthRegenBuffTracker:PreUpdate()
 end
 
 function EHIHealthRegenBuffTracker:AddBuffToUpdate2()
-    managers.hud:add_updator(self._id, callback(self, self, "update_health_regen"))
+    managers.hud:add_updator(self._id, self._update_health_regen)
 end
 
 function EHIHealthRegenBuffTracker:RemoveBuffFromUpdate2()
@@ -228,8 +229,10 @@ end
 ---@class EHIForceUpdateParentBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIForceUpdateParentBuffTracker = class(EHIBuffTracker)
+EHIForceUpdateParentBuffTracker._DELETE_BUFF_ON_FALSE_SKILL_CHECK = true
 function EHIForceUpdateParentBuffTracker:post_init(params)
-    self._parent_buff = params.parent_buff
+    self._parent_buff = params.parent_buff.parent
+    self._skill_check = params.parent_buff.skill_check
 end
 
 function EHIForceUpdateParentBuffTracker:Activate(...)
@@ -237,9 +240,41 @@ function EHIForceUpdateParentBuffTracker:Activate(...)
     self._parent_class:CallFunction(self._parent_buff, "ForceUpdate")
 end
 
+function EHIForceUpdateParentBuffTracker:Extend(...)
+    EHIForceUpdateParentBuffTracker.super.Extend(self, ...)
+    if self._persistent and not self._updating then
+        self._parent_class:CallFunction(self._parent_buff, "ForceUpdate")
+        self:AddBuffToUpdate()
+        self._updating = true
+    end
+end
+
 function EHIForceUpdateParentBuffTracker:Deactivate()
-    EHIForceUpdateParentBuffTracker.super.Deactivate(self)
     self._parent_class:CallFunction(self._parent_buff, "ForceUpdate")
+    if self._persistent then
+        self:RemoveBuffFromUpdate()
+        self._updating = false
+        return
+    end
+    EHIForceUpdateParentBuffTracker.super.Deactivate(self)
+end
+
+function EHIForceUpdateParentBuffTracker:SetPersistent()
+    self._persistent = true
+    self._text:set_text("0")
+end
+
+function EHIForceUpdateParentBuffTracker:SkillCheck()
+    return not self._persistent or managers.player:has_category_upgrade(self._skill_check.category, self._skill_check.upgrade)
+end
+
+function EHIForceUpdateParentBuffTracker:PreUpdate()
+    self._skill_check = nil
+    if self._persistent then
+        self._updating = false
+        self._active = true
+        self:ActivateSoft()
+    end
 end
 
 ---@class EHIExPresidentBuffTracker : EHIGaugeBuffTracker
@@ -383,7 +418,8 @@ function EHIAbilityBuffTracker:SetAbilityIcon(ability)
     elseif ability == "tag_team" and not self._ABILITY_COOLDOWN then
         icon_params.y = 1
     end
-    self:UpdateIcon(tweak_data.ehi.default.buff.get_icon(icon_params))
+    local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(icon_params)
+    self._icon:set_image(texture, unpack(texture_rect))
 end
 
 function EHIAbilityBuffTracker:SkillCheck()
@@ -440,14 +476,14 @@ end
 
 function EHIAbilityRefreshBuffTracker:SetAbilityIcon(ability)
     EHIAbilityRefreshBuffTracker.super.SetAbilityIcon(self, ability)
-    Hooks:PreHook(PlayerManager, "speed_up_grenade_cooldown", "EHI_AbilityRefreshBuff_speed_up_grenade_cooldown", function(pm, time, ...) ---@param time number
+    Hooks:PreHook(PlayerManager, "speed_up_grenade_cooldown", "EHI_AbilityRefreshBuff_PlayerManager_speed_up_grenade_cooldown", function(pm, time, ...) ---@param time number
         if pm._timers.replenish_grenades then
             self._time = self._time - time
         end
     end)
     local projectile = tweak_data.blackmarket.projectiles[ability] or {}
     if (projectile.max_amount or 0) > 1 then
-        Hooks:PreHook(PlayerManager, "add_grenade_amount", "EHI_Replenish_Throwable", function(pm, amount, ...) ---@param amount number
+        Hooks:PreHook(PlayerManager, "add_grenade_amount", "EHI_AbilityRefreshBuff_PlayerManager_add_grenade_amount", function(pm, amount, ...) ---@param amount number
             if amount ~= 0 then
                 self:ReplenishCountChanged(amount < 0)
             end

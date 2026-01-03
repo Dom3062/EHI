@@ -41,7 +41,7 @@ local achievements =
                     unit_ids = { 102873, 102874, 102875 }
                 }
             }, { no_mission_check = true, tracker_name = "corp_9" })
-            EHI:LoadTracker("EHICodesTracker")
+            EHI.Mission:LoadTracker("EHICodeTracker")
             ---@class corp_9 : EHIColoredCodesTracker, EHIAchievementTracker
             ---@field super EHIColoredCodesTracker
             local corp_9 = ehi_achievement_class(EHIColoredCodesTracker)
@@ -59,19 +59,19 @@ local achievements =
                     h = self._icon_size_scaled,
                     color = Color.yellow
                 })
-                self._colors.red:set_visible(false)
-                self._colors.green:set_visible(false)
-                self._colors.blue:set_visible(false)
+                self._colors.red:hide()
+                self._colors.green:hide()
+                self._colors.blue:hide()
             end
             function corp_9:LaptopInteracted()
                 self:SetStatusText("push", self._find)
                 self:AnimateBG()
             end
             function corp_9:FindCodesStarted()
-                self._colors.red:set_visible(true)
-                self._colors.green:set_visible(true)
-                self._colors.blue:set_visible(true)
-                self._find:set_visible(false)
+                self._colors.red:show()
+                self._colors.green:show()
+                self._colors.blue:show()
+                self._find:hide()
                 self:AnimateBG()
             end
             function corp_9:SetCompleted()

@@ -1510,6 +1510,11 @@ _G.MissionScriptElement = {}
 ---@class ModifiersManager
 _G.ModifiersManager = {}
 ---@class MoneyManager
+---@field get_bag_value fun(self: self, carry_id: string, multiplier: number): number
+---@field get_civilian_deduction fun(self: self): number
+---@field get_money_by_job fun(self: self, job_id: string, difficulty: number): payout: number, base_payout: number, risk_payout: number
+---@field get_preplanning_total_cost fun(self: self): number
+---@field get_secured_bonus_bag_value fun(self: self, carry_id: string, multiplier: number): number
 _G.MoneyManager = {}
 ---@class mvector3
 ---@field distance fun(vec1: Vector3, vec2: Vector3): number
@@ -1890,12 +1895,6 @@ end
 
 ---@class BaseMutator
 ---@field _type string
-
----@class MoneyManager
----@field get_civilian_deduction fun(self: self): number
----@field get_money_by_job fun(self: self, job_id: string, difficulty: number): payout: number, base_payout: number, risk_payout: number
----@field get_preplanning_total_cost fun(self: self): number
----@field get_secured_bonus_bag_value fun(self: self, carry_id: string, multiplier: number): number
 
 ---@param job_stars number
 ---@param risk_stars number
@@ -2369,11 +2368,7 @@ end
 ---@field segment_state fun(self: self, state: Idstring): Idstring
 
 ---@class Workspace
----@field show fun(self: self)
----@field hide fun(self: self)
----@field panel fun(self: self): Panel
 ---@field connect_keyboard fun(self: self, keyboard: userdata)
----@field world_to_screen fun(self: self, cam: Camera, pos: Vector3): Vector3
 
 ---@class NetworkBaseExtension_Player : NetworkBaseExtension
 ---@field _unit UnitPlayer

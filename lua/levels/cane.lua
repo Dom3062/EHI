@@ -55,6 +55,7 @@ local achievements =
     },
     cane_5 =
     {
+        job_pass = managers.job:current_job_id() == "cane",
         elements =
         {
             [100544] = { special_function = SF.CustomCode, f = function()
@@ -104,6 +105,7 @@ EHI.Mission:ParseTriggers({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "cane_3",
+    job_pass = managers.job:current_job_id() == "cane",
     max = 100,
     show_finish_after_reaching_target = true,
     difficulty_pass = ovk_and_up

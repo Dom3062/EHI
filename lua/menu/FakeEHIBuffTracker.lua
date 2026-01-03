@@ -4,6 +4,7 @@ end
 
 ---@class FakeEHIBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
+---@field _FORCE_INVERT boolean
 FakeEHIBuffTracker = class(EHIBuffTracker)
 FakeEHIBuffTracker._rect_circle = { 128, 0, -128, 128 }
 FakeEHIBuffTracker._rect_square = { 32, 0, -32, 32 }
@@ -93,7 +94,7 @@ function FakeEHIBuffTracker:init(panel, params)
         visible = params.hint_visible
     })
     self:FitTheText(self._hint)
-    self._time = math.random(0, 100)
+    self:SetProgressRatio()
     self._text = self._panel:text({
         text = self:Format(),
         w = self._panel:w(),
@@ -119,23 +120,62 @@ function FakeEHIBuffTracker:init(panel, params)
         local size = 24 * self._scale
         local move = 4 * self._scale
         self._icon:set_size(size, size)
-        self._icon:set_x(self._icon:x() + move)
-        self._icon:set_y(self._icon:y() + move)
+        self._icon:move(move, move)
     end
-    local panel_w = self._panel:w()
-    self._panel_w_gap = panel_w + self._gap
-    self._panel_w_move = (panel_w / 2) + 3
+    self._panel_w_gap = buff_w + self._gap
+    self._panel_w_move = (buff_w / 2) + 3
+    if self._FORCE_INVERT then
+        self:InvertProgress()
+    end
+end
+
+---@param scale number
+---@param buff_w number
+---@param buff_h number
+function FakeEHIBuffTracker:Rescale(scale, buff_w, buff_h)
+    local buff_w_half = buff_w / 2
+    self._scale = scale
+    self._panel:set_size(buff_w, buff_h)
+    self._icon:set_position(0, buff_w_half)
+    self._icon:set_size(buff_w, buff_w)
+    self._panel:child("bg_square"):set_y(buff_w_half)
+    self._panel:child("bg_square"):set_size(buff_w, buff_w)
+    self._panel:child("bg_circle"):set_y(buff_w_half)
+    self._panel:child("bg_circle"):set_size(buff_w, buff_w)
+    self._panel:child("progress_square"):set_y(buff_w_half)
+    self._panel:child("progress_square"):set_size(buff_w, buff_w)
+    self._panel:child("progress_circle"):set_y(buff_w_half)
+    self._panel:child("progress_circle"):set_size(buff_w, buff_w)
+    self._hint:set_size(buff_w, buff_w_half)
+    self._hint:set_font_size(buff_w_half)
+    self:FitTheText(self._hint)
+    self._text:set_size(buff_w, buff_h - buff_w - buff_w_half)
+    self._text:set_font_size(buff_w_half)
+    self._text:set_y(buff_w + buff_w_half)
+    self:FitTheText(self._text)
+    if self._show_progress then
+        local size = 24 * scale
+        local move = 4 * scale
+        self._icon:set_size(size, size)
+        self._icon:move(move, move)
+    end
+    self._panel_w_gap = buff_w + self._gap
+    self._panel_w_move = (buff_w / 2) + 3
+end
+
+function FakeEHIBuffTracker:SetProgressRatio()
+    self._value = math.random(0, 100)
 end
 
 function FakeEHIBuffTracker:SetProgress()
     local c = Color(1, self:GetProgress(), 1, 1)
-    self._panel:child("progress_circle"):set_color(c)
-    self._panel:child("progress_square"):set_color(c)
+    self._panel:child("progress_circle"):set_color(c) ---@diagnostic disable-line
+    self._panel:child("progress_square"):set_color(c) ---@diagnostic disable-line
 end
 
 ---@return number
 function FakeEHIBuffTracker:GetProgress()
-    return self._time / 100
+    return self._value / 100
 end
 
 ---@param visibility boolean
@@ -190,14 +230,14 @@ end
 ---@param shape number
 function FakeEHIBuffTracker:UpdateBuffShape(shape)
     if shape == 1 then -- Square
-        self._panel:child("bg_square"):set_visible(true)
+        self._panel:child("bg_square"):show()
         self._panel:child("progress_square"):set_visible(self._show_progress)
-        self._panel:child("bg_circle"):set_visible(false)
-        self._panel:child("progress_circle"):set_visible(false)
+        self._panel:child("bg_circle"):hide()
+        self._panel:child("progress_circle"):hide()
     else -- Circle
-        self._panel:child("bg_square"):set_visible(false)
-        self._panel:child("progress_square"):set_visible(false)
-        self._panel:child("bg_circle"):set_visible(true)
+        self._panel:child("bg_square"):hide()
+        self._panel:child("progress_square"):hide()
+        self._panel:child("bg_circle"):show()
         self._panel:child("progress_circle"):set_visible(self._show_progress)
     end
     self._shape = shape
@@ -216,13 +256,11 @@ function FakeEHIBuffTracker:UpdateProgressVisibility(visibility, dont_force)
         local size = 24 * self._scale
         local move = 4 * self._scale
         icon:set_size(size, size)
-        icon:set_x(icon:x() + move)
-        icon:set_y(icon:y() + move)
+        icon:move(move, move)
     else
         local size = 32 * self._scale
         icon:set_size(size, size)
-        icon:set_x(0)
-        icon:set_y(self._panel:w() / 2)
+        icon:set_position(0, self._panel:w() / 2)
     end
 end
 
@@ -246,7 +284,7 @@ function FakeEHIBuffTracker:UpdateHintVisibility(visibility)
 end
 
 function FakeEHIBuffTracker:Format()
-    return self._time .. "s"
+    return self._value .. "s"
 end
 
 function FakeEHIBuffTracker:destroy()
@@ -258,17 +296,15 @@ end
 ---@class FakeEHIGaugeBuffTracker : FakeEHIBuffTracker
 ---@field super FakeEHIBuffTracker
 FakeEHIGaugeBuffTracker = class(FakeEHIBuffTracker)
-function FakeEHIGaugeBuffTracker:init(...)
-    self._ratio = math.random()
-    FakeEHIGaugeBuffTracker.super.init(self, ...)
-    self:InvertProgress()
+FakeEHIGaugeBuffTracker._FORCE_INVERT = true
+function FakeEHIGaugeBuffTracker:SetProgressRatio()
+    self._value = math.random()
 end
 
----@return number
 function FakeEHIGaugeBuffTracker:GetProgress()
-    return self._ratio
+    return self._value
 end
 
 function FakeEHIGaugeBuffTracker:Format()
-    return math.floor(self._ratio * 100) .. "%"
+    return math.floor(self._value * 100) .. "%"
 end

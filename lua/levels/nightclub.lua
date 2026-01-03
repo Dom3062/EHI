@@ -149,7 +149,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         self._loops_running = 0
         self:SetBGSize(self._bg_box:w() / 2)
         self._text:set_w(self._bg_box:w())
-        self._text:set_visible(false)
+        self._text:hide()
         self:FitTheText()
         self._count_text = self:CreateText({
             text = "1",
@@ -186,8 +186,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             if data.running then
                 data.t = data.t - dt
                 if data.t <= 0 then
-                    data.text:set_visible(false)
-                    data.count:set_visible(true)
+                    data.text:hide()
+                    data.count:show()
                     data.running = false
                     self:SniperSpawned()
                     self._loops_running = self._loops_running - 1
@@ -206,8 +206,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     function EHIMultipleSniperLoopsTracker:RestartLoop(t, id)
         local loop = self._loops[id]
         loop.t = t
-        loop.count:set_visible(false)
-        loop.text:set_visible(true)
+        loop.count:hide()
+        loop.text:show()
         loop.running = true
         self:SetAndFitTheText(self:FormatTime(t), loop.text)
         self._loops_running = self._loops_running + 1

@@ -67,13 +67,12 @@ local achievements =
             end
         end,
         parsed_callback = function()
-            ---@class EHIameno_3Tracker : EHIAchievementTracker, EHINeededValueTracker, EHIAchievementProgressTracker
+            ---@class EHIameno_3Tracker : EHIAchievementTracker, EHINeededValueTracker
             ---@field super EHIAchievementTracker
             EHIameno_3Tracker = class(EHIAchievementTracker)
             EHIameno_3Tracker.FormatNumber = EHINeededValueTracker.Format
             EHIameno_3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
             EHIameno_3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
-            EHIameno_3Tracker.AddLootListener = EHIAchievementProgressTracker.AddLootListener
             ---@param class EHIameno_3Tracker
             EHIameno_3Tracker._anim_warning = function(o, old_color, color, start_t, class)
                 local c = Color(old_color.r, old_color.g, old_color.b)
@@ -108,12 +107,12 @@ local achievements =
                     FitTheText = true
                 })
                 self._text:set_left(self._money_text:right())
-                self:AddLootListener({
-                    counter =
-                    {
-                        check_type = EHI.Const.LootCounter.CheckType.ValueOfSmallLoot
-                    }
-                })
+                managers.ehi_loot:AddSmallLootListener(self._id, function(amount)
+                    self:IncreaseProgress(amount)
+                    if self._progress >= self._max then
+                        managers.ehi_loot:RemoveSmallLootListener(self._id)
+                    end
+                end)
             end
             function EHIameno_3Tracker:SetProgress(progress)
                 if self._progress ~= progress and not self._disable_counting then
@@ -139,7 +138,7 @@ local achievements =
             end
             function EHIameno_3Tracker:pre_destroy()
                 EHIameno_3Tracker.super.pre_destroy(self)
-                managers.ehi_loot:RemoveListener("ameno_3")
+                managers.ehi_loot:RemoveSmallLootListener(self._id)
             end
         end
     },
@@ -184,13 +183,13 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     function EHIMallcrasherSniperTracker:StartLoop(t)
         self._time = t
         self:AddTrackerToUpdate()
-        self._text:set_visible(true)
-        self._count_text:set_visible(false)
+        self._text:show()
+        self._count_text:hide()
         self:AnimateBG()
     end
     function EHIMallcrasherSniperTracker:Refresh()
-        self._text:set_visible(false)
-        self._count_text:set_visible(true)
+        self._text:hide()
+        self._count_text:show()
         self:RemoveTrackerFromUpdate()
         self:AnimateBG()
         self:SniperSpawned()

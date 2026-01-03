@@ -26,9 +26,7 @@ end
 function EHIXPTracker:OverridePanel()
     if self._xp and math.abs(self._xp) >= 1000000 then
         self._size_increased = true
-        self:SetMovement(self._anim_params.PanelSizeIncreaseHalf)
-        self._text:set_w(self._bg_box:w())
-        self:SetAndFitTheText()
+        self:SetMovement(self._anim_params.PanelSizeIncreaseHalf, true)
     end
 end
 

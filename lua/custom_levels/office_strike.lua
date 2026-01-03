@@ -91,7 +91,7 @@ local other =
 if EHI:IsLootCounterVisible() then
     other[200106] = EHI:AddLootCounter2(function()
         local servers = EHI:IsMayhemOrAbove() and 2 or 1
-        EHI:ShowLootCounterNoChecks({ max = servers + 18, client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = servers + 18 })
     end, { element = { 200178, 200541 } })
     for i = 200502, 200519, 1 do
         other[i] = EHI:AddCustomCode(function(self)

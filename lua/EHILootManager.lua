@@ -10,6 +10,8 @@ function EHILootManager:init_finalize()
     self._show_tracker, self._show_waypoint = EHI:GetShowTrackerAndWaypoint("show_loot_counter", "show_waypoints_loot_counter")
     self._delay_sync = true
     self._listener = ListenerHolder:new()
+    self._small_loot_listener = ListenerHolder:new()
+    self._bag_listener = ListenerHolder:new()
     if EHI.IsClient then
         self._sync_listener = CallbackEventHandler:new()
     end
@@ -19,7 +21,7 @@ function EHILootManager:init_finalize()
     if EHI.IsClient and (self._show_tracker or self._show_waypoint) then
         managers.ehi_sync:AddReceiveHook(self._sync_lm_add_loot_counter, function(data, sender)
             local params = json.decode(data)
-            self:ShowLootCounter(params.max, params.max_random, 0, params.offset)
+            self:ShowLootCounter(params.max, params.max_random)
             self:AddLootListener(true)
         end)
         managers.ehi_sync:AddReceiveHook(self._sync_lm_update_loot_counter, function(data, sender)
@@ -39,6 +41,18 @@ function EHILootManager:init_finalize()
     if self._show_waypoint then
         EHI:LoadWaypoint("EHILootWaypoint")
     end
+    if Global.game_settings.gamemode == "standard" and not managers.skirmish:is_skirmish() then
+        local previous_state = managers.job:get_memory("EHI_SavedLoot")
+        self:AddListener("SavedLoot", function(loot)
+            managers.job:set_memory("EHI_SavedLoot", loot:GetSecuredBagsAmount())
+        end)
+        EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
+            if not success then
+                managers.job:set_memory("EHI_SavedLoot", previous_state)
+                self:RemoveListener("SavedLoot")
+            end
+        end)
+    end
 end
 
 ---@param id string
@@ -47,8 +61,30 @@ function EHILootManager:AddListener(id, f)
     self._listener:add(id, f)
 end
 
+---@param id string
+---@param f fun(amount: number)
+function EHILootManager:AddSmallLootListener(id, f)
+    self._small_loot_listener:add(id, f)
+end
+
+---@param id string
+---@param f fun(carry_id: string)
+function EHILootManager:AddBagListener(id, f)
+    self._bag_listener:add(id, f)
+end
+
 function EHILootManager:Call(...)
     self._listener:call(...)
+end
+
+---@param amount number
+function EHILootManager:CallSmallLoot(amount)
+    self._small_loot_listener:call(amount)
+end
+
+---@param carry_id string
+function EHILootManager:CallBag(carry_id)
+    self._bag_listener:call(carry_id)
 end
 
 ---@param id string
@@ -57,8 +93,18 @@ function EHILootManager:RemoveListener(id)
 end
 
 ---@param id string
+function EHILootManager:RemoveSmallLootListener(id)
+    self._small_loot_listener:remove(id)
+end
+
+---@param id string
+function EHILootManager:RemoveBagListener(id)
+    self._bag_listener:remove(id)
+end
+
+---@param id string
 function EHILootManager:RemoveLootMaster(id)
-    self:RemoveListener(id)
+    self:RemoveBagListener(id)
     self._master = nil
 end
 
@@ -66,14 +112,13 @@ end
 ---@param max number?
 ---@param max_random number?
 ---@param max_xp_bags number?
----@param offset number?
 ---@param unknown_random boolean?
 ---@param no_max boolean?
 ---@param max_bags_for_level table?
 ---@param loot_distribution table<string, number>?
 ---@param random_loot_distribution table<string, number>?
 ---@param waypoint_class string?
-function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, unknown_random, no_max, max_bags_for_level, loot_distribution, random_loot_distribution, waypoint_class)
+function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, unknown_random, no_max, max_bags_for_level, loot_distribution, random_loot_distribution, waypoint_class)
     EHI:LoadMaster("EHILootSharedMaster")
     if max_bags_for_level then
         self._master = EHILootMaxSharedMaster:new({
@@ -85,7 +130,6 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
             max = math.huge,
             max_random = max_random or 0,
             max_xp_bags = max_xp_bags or 0,
-            offset = offset or 0,
             tracking = managers.ehi_tracking
         })
     else
@@ -93,7 +137,6 @@ function EHILootManager:ShowLootCounter(max, max_random, max_xp_bags, offset, un
             max = max or 0,
             max_random = max_random or 0,
             max_xp_bags = max_xp_bags or 0,
-            offset = offset or 0,
             unknown_random = unknown_random,
             loot_distribution = loot_distribution,
             random_loot_distribution = random_loot_distribution,
@@ -193,7 +236,12 @@ end
 function EHILootManager:IsMasterActive()
     if self._master then
         local listener_id = self._master:GetListenerID()
-        return self._listener._listeners and self._listener._listeners[listener_id] ~= nil
+        if self._listener._listeners and self._listener._listeners[listener_id] then
+            return true
+        end
+        if self._bag_listener._listeners and self._bag_listener._listeners[listener_id] then
+            return true
+        end
     end
     return false
 end
@@ -289,13 +337,11 @@ end
 ---Shows Loot Counter, needs to be hooked to count correctly
 ---@param max number?
 ---@param max_random number?
----@param offset number?
-function EHILootManager:SyncShowLootCounter(max, max_random, offset)
-    self:ShowLootCounter(max, max_random, 0, offset)
+function EHILootManager:SyncShowLootCounter(max, max_random)
+    self:ShowLootCounter(max, max_random)
     self:SetSyncData({
         max = max or 0,
-        max_random = max_random or 0,
-        offset = offset or 0
+        max_random = max_random or 0
     })
     if not self._delay_sync then
         managers.ehi_sync:SyncTable(self._sync_lm_add_loot_counter, self._loot_counter_sync_data)
@@ -304,19 +350,18 @@ end
 
 ---@param no_sync_load boolean?
 function EHILootManager:AddLootListener(no_sync_load)
-    if not (self._listener._listeners and self._listener._listeners.LootCounter) then
-        local BagsOnly = EHI.Const.LootCounter.CheckType.BagsOnly
-        self:AddListener(self._id, function(loot)
+    if not (self._bag_listener._listeners and self._bag_listener._listeners.LootCounter) then
+        self:AddBagListener(self._id, function(carry_id)
             if self._master then -- Just in case
-                self._master:SetProgress(loot:EHIReportProgress(BagsOnly))
+                self._master:IncreaseProgress()
             end
         end)
-        -- If sync load is disabled, the counter needs to be updated via `EHIManager:AddLoadSyncFunction()` to properly show number of secured loot
+        -- If sync load is disabled, the counter needs to be updated via `EHI.Trigger:AddLoadSyncFunction()` to properly show number of secured loot
         -- Usually done in heists which have additional loot that spawns depending on random chance; example: Red Diamond in Diamond Heist (Classic)
         if EHI.IsClient and not no_sync_load then
             self:AddSyncListener(function(loot)
                 if self._master then -- Just in case
-                    self._master:SetSyncData(loot:EHIReportProgress(BagsOnly))
+                    self._master:SetSyncData(loot:GetSecuredBagsAmount())
                 end
             end)
         end
@@ -382,6 +427,15 @@ function EHILootManager:AddAchievementListener(params, max, endless_counter)
     end
 end
 
+---Adds a bag secured listener  
+---Once the max has been reached, the tracker or other master has to remove the listener
+---@param id string
+function EHILootManager:AddSimpleBagListener(id)
+    self:AddBagListener(id, function(carry_id)
+        managers.ehi_tracker:IncreaseProgress(id)
+    end)
+end
+
 ---@param f fun(loot: LootManager)
 function EHILootManager:AddSyncListener(f)
     if self._sync_listener then
@@ -398,17 +452,19 @@ function EHILootManager:CallSyncListeners(loot)
     end
 end
 
-function EHILootManager:SecuredMissionLoot()
+---@param secured integer?
+function EHILootManager:SyncSecuredLoot(secured)
     if self._master then
-        self._master:SecuredMissionLoot()
+        secured = secured or managers.loot:GetSecuredBagsAmount()
+        self._master:SetSyncData(secured)
     end
 end
 
----@param tracker_id string? Defaults to `LootCounter` if not provided
-function EHILootManager:SyncSecuredLoot(tracker_id)
+---@param id string
+function EHILootManager:SyncSecuredLootInAchievement(id)
     local secured = managers.loot:GetSecuredBagsAmount()
-    managers.ehi_tracker:SetSyncData(tracker_id or self._id, secured)
-    managers.ehi_waypoint:CallFunction(self._id, "SetSyncData", secured)
+    self:SyncSecuredLoot(secured)
+    managers.ehi_tracker:SetSyncData(id, secured)
 end
 
 ---@param id number
@@ -416,6 +472,12 @@ end
 function EHILootManager:AddDelayedLootDeclinedCheck(id, callback)
     if self._master then
         self._master:AddDelayedLootDeclinedCheck(id, callback)
+    end
+end
+
+function EHILootManager:IncreaseLootCounterProgress()
+    if self._master then
+        self._master:IncreaseProgress()
     end
 end
 
@@ -608,7 +670,6 @@ end
 function EHILootManager:load(data)
     local load_data = data.EHILootManager
     if load_data and EHI:IsLootCounterVisible() then
-        load_data.client_from_start = true
         load_data.no_sync_load = true
         EHI:ShowLootCounterNoChecks(load_data)
         self:SyncSecuredLoot()

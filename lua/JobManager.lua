@@ -14,6 +14,13 @@ function JobManager:IsPlayingMultidayHeist()
     return self._global.current_job.stages >= 2
 end
 
+function JobManager:IsAnyDayAnyHeistModActive()
+    if not self._global.current_job then
+        return false
+    end
+    return string.sub(self._global.current_job.job_id, 1, -4) == "dayselect_random_"
+end
+
 local original =
 {
     activate_job = JobManager.activate_job

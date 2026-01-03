@@ -25,7 +25,7 @@ local triggers = {
     -- Handled in CoreWorldInstanceManager
 }
 if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
-    EHI:LoadTracker("EHICorrectCablesTracker")
+    EHI.Mission:LoadTracker("EHICorrectCablesTracker")
     triggers[102225] = EHI:AddCustomCode(function(self)
         local gate_box = managers.worlddefinition:get_unit(EHI:GetInstanceUnitID(100018, 3800))
         if not gate_box then -- Oh no, something happened and our required unit does not exist; skip
@@ -106,14 +106,14 @@ local achievements =
                             local progress = loot:GetSecuredBagsAmount()
                             self:SetProgress(progress, "bags")
                             if progress >= self._counters_table.bags.max then
-                                managers.ehi_loot:RemoveListener(self._id)
+                                managers.ehi_loot:RemoveBagListener(self._id)
                             end
                         end
                     }
                 })
             end
             function bex_11:pre_destroy()
-                managers.ehi_loot:RemoveListener(self._id)
+                managers.ehi_loot:RemoveBagListener(self._id)
             end
             function bex_11:CountersDone()
                 self:AnimateBG()

@@ -96,6 +96,7 @@ if ovk_and_up then
     max, pig = 10, 1
     EHI:ShowAchievementLootCounter({
         achievement = "farm_6",
+        job_pass = managers.job:current_job_id() == "dinner",
         max = 1,
         show_finish_after_reaching_target = true,
         counter =

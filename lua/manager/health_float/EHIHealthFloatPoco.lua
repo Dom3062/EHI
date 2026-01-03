@@ -52,7 +52,6 @@ function EHIHealthFloatPoco:init(key, unit, t)
     })
     self._pnl = pnl
     self.bg = pnl:bitmap({
-        name = 'blur',
         texture = 'guis/textures/test_blur_df',
         render_template = 'VertexColorTexturedBlur3D',
         layer = -1,
@@ -73,7 +72,6 @@ function EHIHealthFloatPoco:init(key, unit, t)
     })
     self.pie._circle:set_texture_rect(128, 0, -128, 128)
     self.pieBg = pnl:bitmap({
-        name = "pieBg",
         texture = "guis/textures/pd2/hud_progress_active",
         w = size,
         h = size,
@@ -238,7 +236,7 @@ function EHIHealthFloatPoco:draw(t)
             end
             pPos = pPos:with_y(pPos.y - size * 2)
             self.pie:set_current(prog)
-            self.pieBg:set_visible(true)
+            self.pieBg:show()
             local x = 2 * m + size
             self.lbl:set_x(x)
             self:__shadow(x)
@@ -258,11 +256,11 @@ function EHIHealthFloatPoco:draw(t)
             end
         else
             self.pie:set_visible(false)
-            self.pieBg:set_visible(false)
-            self.lbl:set_visible(false)
-            self.bg:set_visible(false)
-            self.lblShadow1:set_visible(false)
-            self.lblShadow2:set_visible(false)
+            self.pieBg:hide()
+            self.lbl:hide()
+            self.bg:hide()
+            self.lblShadow1:hide()
+            self.lblShadow2:hide()
             d = 0
         end
         if not self._dying then
@@ -309,7 +307,7 @@ end
 ---@param done_cb function?
 function EHIHealthFloatPoco._fade(o, lastD, seconds, done_cb)
     if lastD > 0 then
-        o:set_visible(true)
+        o:show()
         o:set_alpha(lastD)
         local t = seconds
         while t > 0 do
@@ -317,7 +315,7 @@ function EHIHealthFloatPoco._fade(o, lastD, seconds, done_cb)
             t = t - dt
             o:set_alpha(lastD * t / seconds)
         end
-        o:set_visible(false)
+        o:hide()
     end
     if done_cb then
         done_cb()
@@ -376,7 +374,7 @@ function EHIReusableHealthFloatPoco:draw(t)
             end
             pPos = pPos:with_y(pPos.y - size * 2)
             self.pie:set_current(prog)
-            self.pieBg:set_visible(true)
+            self.pieBg:show()
             local x = 2 * m + size
             self.lbl:set_x(x)
             self:__shadow(x)
@@ -396,11 +394,11 @@ function EHIReusableHealthFloatPoco:draw(t)
             end
         else
             self.pie:set_visible(false)
-            self.pieBg:set_visible(false)
-            self.lbl:set_visible(false)
-            self.bg:set_visible(false)
-            self.lblShadow1:set_visible(false)
-            self.lblShadow2:set_visible(false)
+            self.pieBg:hide()
+            self.lbl:hide()
+            self.bg:hide()
+            self.lblShadow1:hide()
+            self.lblShadow2:hide()
             d = 0
         end
         if not self._dying then

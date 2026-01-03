@@ -59,7 +59,7 @@ if EHI:IsLootCounterVisible() then
     local OtherLoot = { 100739, 101779, 101804, 102711, 102712, 102713, 102714, 102715, 102716, 102721, 102723, 102725 }
     local FilterIsOk = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementFilter
         if element:_check_difficulty() then
-            self._loot:SecuredMissionLoot() -- Server secured
+            self._loot:IncreaseLootCounterProgress() -- Server secured
         end
     end) }
     other[107124] = EHI:AddLootCounter2(function()
@@ -74,10 +74,9 @@ if EHI:IsLootCounterVisible() then
                 [100249] = FilterIsOk, -- N-OVK
                 [100251] = FilterIsOk -- MH+
             },
-            hook_triggers = true,
-            client_from_start = true
+            hook_triggers = true
         })
-    end, { element = 105191 })
+    end, { element = 105191, 102971 })
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local class = EHI.TrackerUtils:EnableSniperClassTracking(TT.Sniper.TimedCountOnce, TT.Sniper.Warning)

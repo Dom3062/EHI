@@ -100,9 +100,13 @@ if _G.ch_settings then
     table.insert(jobs, "watchdogs_wrapper_prof")
 end
 if table.contains(jobs, managers.job:current_job_id()) then -- Check if we are playing the Vanilla Watchdogs job
-    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
-        if success then
-            managers.job:set_memory("ehi_watchdogs_saved_bags", managers.loot:GetSecuredBagsAmount())
+    managers.ehi_loot:AddListener("ehi_watchdogs_saved_bags", function(loot)
+        managers.job:set_memory("ehi_watchdogs_saved_bags", loot:GetSecuredBagsAmount())
+    end)
+    managers.ehi_loot:AddSyncListener(function(loot)
+        local amount = loot:GetSecuredBagsAmount()
+        if amount > 0 then
+            managers.job:set_memory("ehi_watchdogs_saved_bags", amount)
         end
     end)
 end

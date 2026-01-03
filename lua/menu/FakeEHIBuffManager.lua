@@ -69,7 +69,7 @@ function FakeEHIBuffsManager:_get_max_hints(max_buffs)
 end
 
 function FakeEHIBuffsManager:_add_fake_buffs()
-    local visible, max = 0, math.random(3, 7)
+    local visible, max = 0, math.random(5, 7)
     local max_hints = self:_get_max_hints(max)
     local buffs = tweak_data.ehi.buff
     local buffs_with_hint = table.filter(buffs, self._filter_hint_buff)
@@ -193,10 +193,8 @@ function FakeEHIBuffsManager:UpdateScale(scale)
         return
     end
     self:SetScale(scale)
-    self:UpdateBuffs("destroy")
-    self._buffs = {}
-    self._n_visible = 0
-    self:_add_fake_buffs()
+    self:UpdateBuffs("Rescale", scale, self._buff_w, self._buff_h)
+    self:UpdateBuffs("SetY", self._y)
     self:_organize_buffs()
 end
 

@@ -122,11 +122,13 @@ end
 ---@param id string
 ---@param max number
 ---@param progress number?
-function EHIUnlockableManager:AddSHDailyProgressTracker(id, max, progress)
+---@param remove_bag_listener boolean?
+function EHIUnlockableManager:AddSHDailyProgressTracker(id, max, progress, remove_bag_listener)
     managers.ehi_tracker:AddTracker({
         id = id,
         progress = progress,
         max = max,
+        remove_bag_listener = remove_bag_listener,
         icons = { EHI.Icons.Trophy },
         class = EHI.Trackers.SideJob.Progress
     })

@@ -38,6 +38,7 @@
             <group :hook_id="mission/" :script_path="elements/">
                 <post :hook_id="elementaiglobalevent" :script_path="ElementAiGlobalEvent.lua" />
                 <post :hook_id="elementdifficulty" :script_path="ElementDifficulty.lua" />
+                <post :hook_id="elementenableunit" :script_path="ElementEnabledUnit.lua" />
                 <post :hook_id="elementexperience" :script_path="ElementExperience.lua" />
                 <post :hook_id="elementheisttimer" :script_path="ElementHeistTimer.lua" />
                 <post :hook_id="elementjobvalue" :script_path="ElementJobValue.lua" />

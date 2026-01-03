@@ -56,6 +56,7 @@ if Global.game_settings.level_id == "gallery" then
 else -- Framing Frame Day 1
     EHI:ShowAchievementLootCounter({
         achievement = "pink_panther",
+        job_pass = managers.job:current_job_id() == "framing_frame",
         max = 9,
         show_finish_after_reaching_target = true,
         silent_failed_on_alarm = true,
@@ -74,7 +75,7 @@ else -- Framing Frame Day 1
                 return
             end
             self._trackers:CallFunction("pink_panther", "SetStarted")
-            self._loot:SyncSecuredLoot("pink_panther")
+            self._loot:SyncSecuredLootInAchievement("pink_panther")
         end,
         loot_counter_load_sync = LootCounterSyncFunction,
         add_to_counter = true,
@@ -152,9 +153,13 @@ if _G.ch_settings then
     table.insert(jobs, "framing_frame_prof")
 end
 if table.contains(jobs, managers.job:current_job_id()) then -- Check if we are playing the Vanilla Framing Frame job
-    EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
-        if success then
-            managers.job:set_memory("ehi_ff_saved_bags", managers.loot:GetSecuredBagsAmount())
+    managers.ehi_loot:AddListener("ehi_ff_saved_bags", function(loot)
+        managers.job:set_memory("ehi_ff_saved_bags", loot:GetSecuredBagsAmount())
+    end)
+    managers.ehi_loot:AddSyncListener(function(loot)
+        local amount = loot:GetSecuredBagsAmount()
+        if amount > 0 then
+            managers.job:set_memory("ehi_ff_saved_bags", amount)
         end
     end)
 end

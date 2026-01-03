@@ -164,6 +164,9 @@ if EHI:GetBuffOption("sixth_sense_initial") or EHI:GetBuffOption("sixth_sense_re
     local target_resense_delay = tweak_data.player.omniscience.target_resense_t or 15
     local sense_latch, latch_t = false, 0
     EHI:AddOnSpawnedCallback(function()
+        if PlayerStandard._update_omniscience == original._update_omniscience then -- Don't do anything if alarm has been raised before players had a chance to spawn
+            return
+        end
         local playermanager = managers.player
         local ContourExt = ContourExt
         local tmp = ContourExt._types

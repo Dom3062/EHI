@@ -53,12 +53,7 @@ local sidejob =
         {
             [100108] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
                 local trophy = tweak_data.achievement.loot_cash_achievements.daily_mortage.secured
-                self._trackers:AddTracker({
-                    id = trigger.id,
-                    max = trophy.total_amount,
-                    icons = { EHI.Icons.Trophy },
-                    class = TT.SideJob.Progress
-                })
+                self._unlockable:AddSHDailyProgressTracker(trigger.id, trophy.total_amount)
                 self._loot:AddListener(trigger.id, function(loot)
                     local progress = loot:GetSecuredBagsTypeAmount(trophy.carry_id)
                     self._trackers:SetProgress(trigger.id, progress)
@@ -82,8 +77,7 @@ local other =
             {
                 loot = true,
                 no_loot = true
-            },
-            client_from_start = true
+            }
         })
     end, { element = { 100233, 101119, 101284, 101285, 101286 } })
 }

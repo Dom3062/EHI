@@ -74,13 +74,13 @@ local other =
 }
 if EHI:IsLootCounterVisible() then
     other[100073] = EHI:AddLootCounter(function()
-        EHI:ShowLootCounterNoChecks({ max = 10, client_from_start = true }, { class = EHI.Waypoints.LootCounter.Timed })
+        EHI:ShowLootCounterNoChecks({ max = 10 }, { class = EHI.Waypoints.LootCounter.Timed })
     end, { element = { 103216, 103217, 103218, 103219, 104215 } }, true, function(self)
         local jewelry_sequence = { 101207, 101203, 101213, 101195, 101193, 101185, 101189, 100031, 100602 }
         local jewelry_to_subtract = table.list_count(jewelry_sequence, function(id)
             return self._utils:IsMissionElementDisabled(id)
         end)
-        EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract, client_from_start = true }, { class = EHI.Waypoints.LootCounter.Timed })
+        EHI:ShowLootCounterNoChecks({ max = 10 - jewelry_to_subtract }, { class = EHI.Waypoints.LootCounter.Timed })
         self._loot:SyncSecuredLoot()
     end, true)
     local DecreaseProgressMax = EHI.Trigger:RegisterCustomSF(function(self, ...)

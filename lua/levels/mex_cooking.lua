@@ -55,6 +55,7 @@ EHI.Mission:ParseTriggers({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "mex2_9",
+    job_pass = managers.job:current_job_id() == "mex_cooking",
     max = 25,
     show_finish_after_reaching_target = true,
     difficulty_pass = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)

@@ -34,8 +34,7 @@ if EHI:IsLootCounterVisible() then
             {
                 at_loot = true,
                 no_at_loot = true
-            },
-            client_from_start = true
+            }
         })
         managers.ehi_loot:SetCountOfArmoredTransports(count)
     end

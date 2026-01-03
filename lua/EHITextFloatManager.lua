@@ -244,13 +244,14 @@ function EHITextFloatManager:_remove_float(float)
     self._n_of_equipment = self._n_of_equipment - 1
 end
 
+local cam_pos = Vector3()
 local wp_pos = Vector3()
 local wp_dir = Vector3()
 local nl_dir = Vector3()
 ---@param t number
 ---@param dt number
 function EHITextFloatManager:update(t, dt)
-    local camPos = self._player_camera:position()
+    self._player_camera:m_position(cam_pos)
     local nl_cam_forward = self._player_camera:rotation():y()
 
     local panel = self._panel
@@ -258,7 +259,7 @@ function EHITextFloatManager:update(t, dt)
     for _, data in pairs(self._floats) do
         mvector3.set(wp_pos, self._saferect:world_to_screen(self._player_camera, data.position))
         mvector3.set(wp_dir, data.position)
-        mvector3.subtract(wp_dir, camPos)
+        mvector3.subtract(wp_dir, cam_pos)
         mvector3.set(nl_dir, wp_dir)
         mvector3.normalize(nl_dir)
 

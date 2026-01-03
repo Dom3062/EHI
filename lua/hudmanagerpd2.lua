@@ -132,15 +132,17 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
     if EHITextFloatManager then
         EHITextFloatManager:init_hud(panel, hud._saferect)
     end
-    if EHI:GetOption("show_end_game_stats") and not Global.game_settings.single_player then
-        dofile(EHI.LuaPath .. "EHIEndGameStats.lua")
-        EHIEndGameStats:new()
-    end
-    if not Global.game_settings.single_player and EHI:GetOptionAndLoadTracker("show_ping_tracker") then
-        trackers:PreloadTracker({
-            id = "PlayerPing",
-            class = "EHIPlayerPingTracker"
-        })
+    if not Global.game_settings.single_player then
+        if EHI:GetOption("show_end_game_stats") then
+            dofile(EHI.LuaPath .. "EHIEndGameStats.lua")
+            EHIEndGameStats:new()
+        end
+        if EHI:GetOptionAndLoadTracker("show_ping_tracker") then
+            trackers:PreloadTracker({
+                id = "PlayerPing",
+                class = "EHIPlayerPingTracker"
+            })
+        end
     end
 end)
 

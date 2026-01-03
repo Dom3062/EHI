@@ -78,12 +78,13 @@ function EHIAssaultManager:init_finalize()
         -- Crime Spree
         EHI:AddOnSpawnedCallback(function()
             local modifier = managers.modifiers:GetModifier("ModifierAssaultExtender", "crime_spree")
-            if modifier then
-                local tracker = EHIAssaultTracker or {}
-                tracker._cs_duration = modifier:value("duration") * 0.01
-                tracker._cs_deduction = modifier:value("deduction") * 0.01
-                tracker._cs_max_hostages = modifier:value("max_hostages")
-                tracker._cs_assault_extender = true
+            if modifier and EHIAssaultTracker then
+                EHIAssaultTracker._CRIME_SPREE =
+                {
+                    duration = modifier:value("duration") * 0.01,
+                    deduction = modifier:value("deduction") * 0.01,
+                    max_hostages = modifier:value("max_hostages")
+                }
                 local function f()
                     managers.ehi_tracker:CallFunction(self._assault_time.name, "OnMinionCountChanged")
                 end
@@ -114,13 +115,17 @@ function EHIAssaultManager:init_finalize()
         if not self._assault_delay.blocked then
             managers.ehi_sync:AddReceiveHook(self._sync_anticipation_start, function(data, sender)
                 local tbl = json.decode(data)
-                self:AnticipationStartHost(tbl.t)
+                if tbl and tbl.t then
+                    self:AnticipationStartHost(tbl.t)
+                end
             end)
         end
         if not self._is_skirmish and (not self._assault_time.blocked or EHI:GetOption("show_captain_spawn_chance")) then
             managers.ehi_sync:AddReceiveHook(self._sync_sustain_start, function(data, sender)
                 local tbl = json.decode(data)
-                self._on_sustain_listener:call(tbl.t)
+                if tbl and tbl.t then
+                    self._on_sustain_listener:call(tbl.t)
+                end
             end)
         end
         managers.ehi_sync:AddReceiveHook(self._sync_endless_stop, function(data, sender)

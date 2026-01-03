@@ -224,6 +224,7 @@ EHI.Mission:ParseTriggers({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "halloween_2",
+    job_pass = managers.job:current_job_id() == "rat",
     max = 7,
     difficulty_pass = ovk_and_up
 })

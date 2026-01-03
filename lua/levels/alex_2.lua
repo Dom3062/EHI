@@ -11,7 +11,9 @@ local other =
     [1045351] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }), -- 30s
     [1045352] = { special_function = SF.RemoveTrigger, data = { 104488, 104489 } }
 }
-if EHI:IsLootCounterVisible() then
+if EHI.TrackerUtils:IsLootCounterVisible({ element = 104445 }, function(n_of_loot)
+    return math.max(0, n_of_loot - 3)
+end) then
     local loot_trigger = EHI:AddLootCounter4(function(self, trigger, element, ...) ---@param element ElementJobValue
         local spawned = element._values.value
         EHI:ShowLootCounterNoChecks({

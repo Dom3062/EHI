@@ -19,7 +19,7 @@ local achievements =
 }
 
 local other = {}
-if EHI:IsLootCounterVisible() then
+if EHI.TrackerUtils:IsLootCounterVisible({ element = { 101999, 102000, 101442 } }) then
     other[104263] = EHI:AddLootCounter4(function(self, ...)
         if not self._cache.CreateCounter then
             EHI:ShowLootCounterNoChecks({ skip_offset = true })

@@ -107,6 +107,7 @@ local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.va
 local loot_value = managers.money:get_secured_bonus_bag_value("counterfeit_money", 1)
 EHI:ShowAchievementLootCounter({
     achievement = "pal_2",
+    job_pass = managers.job:current_job_id() == "pal",
     max = math.ceil(value_max / loot_value)
 })
 EHI:ShowLootCounter({

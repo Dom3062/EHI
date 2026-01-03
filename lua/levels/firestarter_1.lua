@@ -18,9 +18,11 @@ local other =
 {
     -- This needs to be delayed because the number of required weapons is decided upon spawn
     [103240] = { special_function = SF.CustomCodeDelayed, t = 5, f = function()
+        local is_playing_firestarter = managers.job:current_job_id() == "firestarter"
         local n_of_weapons = tweak_data.ehi.functions.GetNumberOfVisibleWeapons(Weapons)
         EHI:ShowAchievementLootCounter({
             achievement = "lord_of_war",
+            job_pass = is_playing_firestarter,
             max = n_of_weapons,
             triggers =
             {
@@ -31,6 +33,7 @@ local other =
         })
         EHI:ShowAchievementLootCounter({
             achievement = "ovk_10",
+            job_pass = is_playing_firestarter,
             max = n_of_weapons,
             triggers =
             {
@@ -54,15 +57,14 @@ local other =
                 [104472] = { special_function = SF.CustomCode, f = DecreaseLootCounterProgressMax }, -- Money destroyed
                 [104473] = { special_function = SF.CustomCode, f = DecreaseLootCounterProgressMax } -- Money destroyed
             },
-            hook_triggers = true,
-            client_from_start = true
+            hook_triggers = true
         })
     end },
 
     [100531] = EHI:AddAssaultDelay({}) -- 30s
 }
 if EHI:IsLootCounterVisible() then
-    EHI:ShowLootCounterWaypoint({ element = 103215 })
+    EHI:ShowLootCounterWaypoint({ element = 103215, 103218 })
 end
 
 EHI.Mission:ParseTriggers({

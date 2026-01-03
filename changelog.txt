@@ -1,3 +1,13 @@
+r367 (03. 01. 2026):
+Fixed a case where disabled objects in the world are not properly cached (client only)
+Missions that respawns loot from previous day (escape or trade) will reuse number of secured of loot (if available) without checking it again
+Save data are persistent across game loads; reduces a file reload needed from the drive
+Reworked counting of loot in trackers and waypoint
+Mission Briefing: Fixed a case of incorrect secured lootbags in Day 1 in Watchdogs Day 2 and Framing Frame Day 2
+Mission Briefing: Fixed a case of incorrect secured lootbags if players did not secure any bag after dropin in Day 1 in Watchdogs Day 2 and Framing Frame Day 2
+Menu: Buffs are reused when scale is changed and no longer recreated
+Reservoir Dogs Day 1: Fixed missing difficulty check for achievement "Waste Not, Want Not"
+
 r366 (22. 12. 2025):
 Number of Trackers in Rows/Columns: (Vertical) Fixed an issue with offset if the biggest tracker moved to another column
 

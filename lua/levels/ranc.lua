@@ -111,8 +111,7 @@ if EHI:IsLootCounterVisible() then
             end
         end
         EHI:ShowLootCounterNoChecks({
-            max = math.min(barrels, stocks, receivers) + tweak_data.ehi.functions.GetNumberOfVisibleWeapons2(103574, 103588),
-            client_from_start = true
+            max = math.min(barrels, stocks, receivers) + tweak_data.ehi.functions.GetNumberOfVisibleWeapons2(103574, 103588)
         })
         managers.ehi_loot:SyncSecuredLoot()
     end, { element = { 100233, 100008, 100020 } }, 5, function(self)
@@ -141,6 +140,7 @@ for i = 28600, 29300, 50 do
 end
 EHI:ShowAchievementLootCounter({
     achievement = "ranc_10",
+    job_pass = managers.job:current_job_id() == "ranc",
     max = 5,
     triggers = ranc_10_triggers,
     load_sync = function(self)

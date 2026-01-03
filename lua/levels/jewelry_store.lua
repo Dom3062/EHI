@@ -47,8 +47,7 @@ if EHI:IsLootCounterVisible() then
             max = 10 - jewelry_to_subtract,
             -- If a drawer is missing, then a safe is here (random on Very Hard / OVERKILL, 100% chance on Mayhem+)
             -- 50% chance for other difficulties (also for Very Hard / OVERKILL if the first initial chance did not succeed) is in element 102029
-            max_random = managers.game_play_central:IsMissionUnitDisabled(102186) and 2 or 0,
-            client_from_start = true
+            max_random = managers.game_play_central:IsMissionUnitDisabled(102186) and 2 or 0
         })
     end, { element = { 103216, 103217, 103218, 103219, 101155 } }, nil, true)
     other[102029] = EHI:AddCustomCode(function(self)

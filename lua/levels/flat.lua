@@ -157,7 +157,7 @@ local other =
 if EHI:IsLootCounterVisible() then
     other[102741] = EHI:AddLootCounter4(function(self, ...)
         local max = self._utils:CountInteractionAvailable("gen_pku_cocaine")
-        EHI:ShowLootCounterNoChecks({ max = max + 1, client_from_start = true })
+        EHI:ShowLootCounterNoChecks({ max = max + 1 })
     end, { element = { 104303, 104306 }, present_timer = 0 })
 end
 

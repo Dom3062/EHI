@@ -144,21 +144,21 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
             end
         end)
     end
+    EHI:ShowAchievementLootCounter({
+        achievement = "rvd_11",
+        job_pass = managers.job:current_job_id() == "rvd",
+        max = 19,
+        counter =
+        {
+            loot_type = { "diamonds_dah", "diamonds" }
+        }
+    })
 end
-
 
 EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,
     sync_triggers = { element = element_sync_triggers }
-})
-EHI:ShowAchievementLootCounter({
-    achievement = "rvd_11",
-    max = 19,
-    counter =
-    {
-        loot_type = { "diamonds_dah", "diamonds" }
-    }
 })
 
 local DisableWaypoints =

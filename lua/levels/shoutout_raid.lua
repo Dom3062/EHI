@@ -51,6 +51,7 @@ EHI.Mission:ParseTriggers({
 })
 EHI:ShowAchievementLootCounter({
     achievement = "melt_3",
+    job_pass = managers.job:current_job_id() == "shoutout_raid",
     max = 8,
     counter =
     {
