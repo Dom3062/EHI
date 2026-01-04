@@ -240,7 +240,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask)
         end
         local unit = r and r.unit
-        if unit then
+        if type(unit) == "userdata" then
             if unit:in_slot(8) and alive(unit:parent()) then
                 unit = unit:parent() --[[@as UnitObject ]]
             end
@@ -301,7 +301,7 @@ else
             r = World:raycast("ray", from, to, "slot_mask", self._unit_slot_mask) --[[@as { unit: UnitObject? }]]
         end
         local unit = r and r.unit
-        if unit then
+        if type(unit) == "userdata" then
             if unit:in_slot(8) and alive(unit:parent()) then
                 unit = unit:parent() --[[@as UnitEnemy?]]
             end

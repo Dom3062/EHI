@@ -1,3 +1,6 @@
+r368 (04. 01. 2026):
+Health Float: Fixed a very rare engine crash that sometimes returns number instead of Unit when aimed at
+
 r367 (03. 01. 2026):
 Fixed a case where disabled objects in the world are not properly cached (client only)
 Missions that respawns loot from previous day (escape or trade) will reuse number of secured of loot (if available) without checking it again
