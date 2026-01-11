@@ -166,7 +166,7 @@ function EHITweakData:new(tweak_data)
         },
         Armor =
         {
-            u100skill = true,
+            skills = true,
             x = 2,
             y = 12,
             class = "EHIGaugeBuffTracker",
@@ -189,7 +189,7 @@ function EHITweakData:new(tweak_data)
         },
         DodgeChance =
         {
-            u100skill = true,
+            skills = true,
             x = 1,
             y = 12,
             group = "dodge",
@@ -206,7 +206,7 @@ function EHITweakData:new(tweak_data)
         },
         CritChance =
         {
-            u100skill = true,
+            skills = true,
             x = 0,
             y = 12,
             group = "crit",
@@ -277,7 +277,7 @@ function EHITweakData:new(tweak_data)
         },
         ArmorRegenDelay =
         {
-            u100skill = true,
+            skills = true,
             group = "cooldown",
             text_localize = "ehi_buffs_hint_regen",
             x = 2,

@@ -1,3 +1,5 @@
+---@alias EHITextFloatManager.Float { class: EHITextFloat, state: "onscreen"|"offscreen", position: Vector3, name_key: string, peer_id: integer }
+
 local EHI = EHI
 if EHI:CheckLoadHook("EHITextFloatManager") then
     return
@@ -6,7 +8,7 @@ end
 ---@class EHITextFloatManager
 EHITextFloatManager = {}
 function EHITextFloatManager:new()
-    self._floats = {} ---@type table<userdata, { class: EHITextFloat, state: "onscreen"|"offscreen", position: Vector3, name_key: string, peer_id: integer }?>
+    self._floats = {} ---@type table<userdata, EHITextFloatManager.Float?>
     self._deferred_floats = {} ---@type table<userdata, { unit: UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable, peer_id: integer }>
     self._unit_blocked = {} ---@type table<userdata, boolean>
     self._n_of_equipment = 0
@@ -95,7 +97,7 @@ function EHITextFloatManager:new()
         Hooks:PostHook(CustomAmmoBagBase, "_set_empty", "EHI_CustomAmmoBagBase_EHITextFloatManager__set_empty", destroy_equipment)
         Hooks:PostHook(AmmoBagInteractionExt, "set_active", "EHI_AmmoBagInteractionExt_EHITextFloatManager_set_active", set_alpha)
     end
-    if EHI:GetOption("show_floating_text_bodybags_bag") then
+    if EHI:GetOption("show_floating_text_bodybags_bag") and tweak_data.levels:IsStealthAvailable() then
         Hooks:PostHook(BodyBagsBagBase, "spawn", "EHI_BodyBagsBagBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
         Hooks:PostHook(BodyBagsBagBase, "init", "EHI_BodyBagsBagBase_EHITextFloatManager_init", init_equipment)
         Hooks:PostHook(BodyBagsBagBase, "set_server_information", "EHI_BodyBagsBagBase_EHITextFloatManager_set_server_information", server_update_peer_information)
@@ -131,6 +133,7 @@ function EHITextFloatManager:new()
         Hooks:PreHook(DoctorBagBase, "_set_empty", "EHI_DoctorBagBase_EHITextFloatManager__set_empty", destroy_equipment)
         Hooks:PostHook(DoctorBagBase, "destroy", "EHI_DoctorBagBase_EHITextFloatManager_destroy", destroy_equipment)
         Hooks:PostHook(CustomDoctorBagBase, "_set_empty", "EHI_CustomDoctorBagBase_EHITextFloatManager__set_empty", destroy_equipment)
+        Hooks:PostHook(DoctorBagBaseInteractionExt, "set_active", "EHI_DoctorBagBaseInteractionExt_EHITextFloatManager_set_active", set_alpha)
     end
     if EHI:GetOption("show_floating_text_first_aid_kit") then
         Hooks:PostHook(FirstAidKitBase, "spawn", "EHI_FirstAidKitBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
@@ -140,8 +143,6 @@ function EHITextFloatManager:new()
         Hooks:PostHook(FirstAidKitBase, "setup", "EHI_FirstAidKitBase_EHITextFloatManager_setup", set_visual_stage_equipment)
         Hooks:PreHook(FirstAidKitBase, "_set_empty", "EHI_FirstAidKitBase_EHITextFloatManager__set_empty", destroy_equipment)
         Hooks:PostHook(FirstAidKitBase, "destroy", "EHI_FirstAidKitBase_EHITextFloatManager_destroy", destroy_equipment)
-    end
-    if EHI:GetOption("show_floating_text_doctor_bag") or EHI:GetOption("show_floating_text_first_aid_kit") then
         Hooks:PostHook(DoctorBagBaseInteractionExt, "set_active", "EHI_DoctorBagBaseInteractionExt_EHITextFloatManager_set_active", set_alpha)
     end
     if EHI:GetOption("show_floating_text_throwables") then
@@ -165,7 +166,7 @@ function EHITextFloatManager:new()
                 Hooks:RemovePostHook("EHI_GrenadeCrateDeployableBase_EHITextFloatManager_set_server_information")
                 Hooks:RemovePreHook("EHI_CustomGrenadeCrateDeployableBase_EHITextFloatManager__set_empty")
                 for key, data in pairs(self._floats) do
-                    if data.name_key == "f6001ca4eb64a74c" or data.name_key == "e166f63494083d58" then
+                    if data.name_key == "f6001ca4eb64a74c" or data.name_key == "e166f63494083d58" or data.name_key == "02a3ade37a633a71" or data.name_key == "fc520601b50186e4" then
                         self:_remove_float(data)
                         self._floats[key] = nil
                     end
@@ -238,7 +239,7 @@ function EHITextFloatManager:_add_float(key, unit, from_defer, peer_id)
     self:_add_update_loop()
 end
 
----@param float { class: EHITextFloat, state: string, position: Vector3, name_key: string }
+---@param float EHITextFloatManager.Float
 function EHITextFloatManager:_remove_float(float)
     float.class:destroy()
     self._n_of_equipment = self._n_of_equipment - 1

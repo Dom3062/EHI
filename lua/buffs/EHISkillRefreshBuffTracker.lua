@@ -262,7 +262,7 @@ function EHIDamageAbsorptionBuffTracker:UpdateValue()
                 total = absorption / max_health
             end
         end
-        self:SetRatio(total, absorption * 10)
+        self:SetRatio(total, math.floor(absorption * 10))
         self:ActivateNextFrame()
     else
         self:DeactivateNextFrame()
