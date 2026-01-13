@@ -1127,8 +1127,8 @@ function EHITweakData:new(tweak_data)
             x = 2,
             y = 10,
             group = "health_regen",
-            option = "hostage_taker_muscle",
-            persistent = "hostage_taker_muscle_persistent",
+            option = "health_regen",
+            persistent = "health_regen_persistent",
             skill_check_after_spawn = true,
             class = "EHIHealthRegenBuffTracker"
         },

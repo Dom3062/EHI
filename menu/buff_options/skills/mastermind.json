@@ -248,30 +248,6 @@
         },
         {
             "type": "toggle",
-            "id": "ehi_buffs_skills_mastermind_hostage_taker_muscle_choice",
-            "title": "ehi_buffs_skills_mastermind_hostage_taker_muscle",
-            "description": "ehi_buffs_skills_duration",
-            "callback": "ehi_set_item_value",
-            "value": "hostage_taker_muscle",
-            "default_value": true,
-            "child": "ehi_buffs_skills_mastermind_hostage_taker_muscle_persistent_choice"
-        },
-        {
-            "type": "toggle",
-            "id": "ehi_buffs_skills_mastermind_hostage_taker_muscle_persistent_choice",
-            "title": "ehi_buffs_skills_mastermind_hostage_taker_muscle_persistent",
-            "description": "ehi_buffs_skills_permanent",
-            "callback": "ehi_set_item_value",
-            "value": "hostage_taker_muscle_persistent",
-            "default_value": false,
-            "parent": "ehi_buffs_skills_mastermind_hostage_taker_muscle_choice"
-        },
-        {
-            "type" : "divider",
-            "size" : 10
-        },
-        {
-            "type": "toggle",
             "id": "ehi_buffs_skills_mastermind_forced_friendship_choice",
             "title": "ehi_buffs_skills_mastermind_forced_friendship",
             "description": "ehi_buffs_skills_mastermind_forced_friendship_desc",

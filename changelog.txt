@@ -1,8 +1,18 @@
+r370 (13. 01. 2026):
+Replaced buff option "Hostage Taker / Muscle" with "Health Regen Delay"
+Civilians Tracker: Disabled in Rats Day 2, Firestarter Day 1 and The Biker Heist Day 2
+Civilians Tracker: Cached result of tracker visibility to improve mission load speed
+Drama Tracker: Disabled in The Biker Heist Day 2
+Health Regen Buff: Fixed other icons not properly colored
+Health Regen Buff: Fixed incorrect icon on spawn when you have Muscle only equipped
+Health Regen Buff: Fixed incorrect health regen value on spawn when you have Muscle only equipped
+Health Regen Buff: Fixed an issue where health regen value do not get updated when switched from Hostage Taker to Muscle and vice versa
+
 r369 (11. 01. 2026):
 Buffs: Fixed an issue where some buffs do not have icon properly centered
 Damage Absorption Buff: Fixed a rounding issue
 Float Text: Float text for Bodybags will load only if stealth is available
-Float Text: Fixed an issue where floats for grenades are visible if you do not have grenades equipped and option is enabled
+Float Text: Fixed an issue where floats for single grenades are visible if you do not have grenades equipped and option is enabled
 
 r368 (04. 01. 2026):
 Health Float: Fixed a very rare engine crash that sometimes returns number instead of Unit when aimed at

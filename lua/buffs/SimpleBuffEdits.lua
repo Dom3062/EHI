@@ -28,10 +28,11 @@ EHIHealthRegenBuffTracker = class(EHIBuffTracker)
 EHIHealthRegenBuffTracker._UNHOOK_BUFF = true
 function EHIHealthRegenBuffTracker:post_init(...)
     local x, y, w, h = self._icon:shape() -- Hostage Taker regen
+    local color = self._icon:color():with_alpha(1) -- Color returned from object has alpha set to 0 (not visible)
     self._icon2 = self._panel:bitmap({ -- Muscle regen
         texture = "guis/textures/pd2/specialization/icons_atlas",
         texture_rect = { 4 * 64, 64, 64, 64 },
-        color = Color.white,
+        color = color,
         x = x,
         y = y,
         w = w,
@@ -40,7 +41,7 @@ function EHIHealthRegenBuffTracker:post_init(...)
     self._icon3 = self._panel:bitmap({
         texture = tweak_data.hud_icons.skill_5.texture,
         texture_rect = tweak_data.hud_icons.skill_5.texture_rect,
-        color = Color.white,
+        color = color,
         x = x,
         y = y,
         w = w,
@@ -122,9 +123,13 @@ function EHIHealthRegenBuffTracker:GetHealthRegen(max_health)
     if self._minion_count <= 0 then
         local ai_state = managers.groupai:state()
         local original_hostage_count = ai_state:hostage_count()
-        ai_state._hostage_headcount = ai_state._hostage_headcount + 1 -- Temporarily increase hostage count to get health regen
-        regen = self._player_manager:health_regen()
-        ai_state._hostage_headcount = original_hostage_count -- Set original hostage count to restore the original value
+        if (self._muscle_equipped and original_hostage_count <= 0) or (self._muscle_equipped and not self._hostage_taker_equipped) then
+            regen = self._player_manager:health_regen() -- Return health regen if you have Muscle equipped
+        else
+            ai_state._hostage_headcount = ai_state._hostage_headcount + 1 -- Temporarily increase hostage count to get health regen
+            regen = self._player_manager:health_regen()
+            ai_state._hostage_headcount = original_hostage_count -- Set original hostage count to restore the original value
+        end
     else
         regen = self._player_manager:health_regen()
     end
@@ -142,10 +147,18 @@ function EHIHealthRegenBuffTracker:SetIcon(buff)
         self._icon:show()
         self._icon2:hide()
         self._icon3:hide()
+        if self._character_damage and self._perform_update_from_spawn then -- Force health regen value refresh
+            self._max_health = 0
+            self:AddBuffToUpdate2()
+        end
     elseif buff == "muscle" then
         self._icon2:show()
         self._icon:hide()
         self._icon3:hide()
+        if self._character_damage and self._perform_update_from_spawn then -- Force health regen value refresh
+            self._max_health = 0
+            self:AddBuffToUpdate2()
+        end
     else -- AIRegen
         self._icon3:show()
         self._icon2:hide()
@@ -155,15 +168,20 @@ function EHIHealthRegenBuffTracker:SetIcon(buff)
 end
 
 function EHIHealthRegenBuffTracker:PreUpdate()
+    self._muscle_equipped = self._player_manager:has_category_upgrade("player", "passive_health_regen")
+    self._hostage_taker_equipped = self._player_manager:has_category_upgrade("player", "hostage_health_regen_addend")
     self._healing_reduction = self._player_manager:upgrade_value("player", "healing_reduction", 1)
+    if self._muscle_equipped and managers.groupai:state():hostage_count() <= 0 then
+        self:SetIcon("muscle")
+    end
     if self._character_damage then
         self:AddBuffToUpdate2()
     end
-    self._perform_update_from_spawn = true
     if self._persistent then
         self:ActivateSoft()
         self._active = true
     end
+    self._perform_update_from_spawn = true
 end
 
 function EHIHealthRegenBuffTracker:AddBuffToUpdate2()

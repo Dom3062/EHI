@@ -65,6 +65,26 @@
         },
         {
             "type": "toggle",
+            "id": "ehi_buffs_other_health_regen_choice",
+            "title": "ehi_buffs_other_health_regen",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "health_regen",
+            "default_value": true,
+            "child": "ehi_buffs_other_health_regen_persistent_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_health_regen_persistent_choice",
+            "title": "ehi_buffs_other_health_regen_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "health_regen_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_other_health_regen_choice"
+        },
+        {
+            "type": "toggle",
             "id": "ehi_buffs_other_shield_regen_choice",
             "title": "ehi_buffs_other_shield_regen",
             "callback": "ehi_set_item_value",

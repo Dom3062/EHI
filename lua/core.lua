@@ -183,9 +183,9 @@ _G.EHI =
         -- Provides `managers` (a global table with all managers)
         InitManagers = "InitManagers",
         InitFinalize = "InitFinalize",
-        -- Provides `unit` (a UnitEnemy value), `local_peer` (a boolean value) and `peer_id` (a number value)
+        -- Provides `unit` (a UnitEnemy value), `local_peer` (a boolean value) and `peer_id` (an integer value)
         OnMinionAdded = "OnMinionAdded",
-        -- Provides `key` (a unit key; not put through `tostring`), `local_peer` (a boolean value) and `peer_id` (a number value)
+        -- Provides `key` (a unit key; userdata), `local_peer` (a boolean value) and `peer_id` (an integer value)
         OnMinionKilled = "OnMinionKilled",
         -- Provides `skill` (a string value) and `operation` (a string value -> `add`, `remove`)
         TeamAISkillChange = "TeamAISkillChanged",
@@ -1053,8 +1053,6 @@ local function LoadDefaultValues(self)
             painkillers_persistent = false,
             combat_medic = true,
             combat_medic_persistent = false,
-            hostage_taker_muscle = true,
-            hostage_taker_muscle_persistent = false,
             forced_friendship = true,
             forced_friendship_persistent = false,
             ammo_efficiency = true,
@@ -1240,6 +1238,8 @@ local function LoadDefaultValues(self)
             reload_persistent = false,
             melee_charge = true,
             melee_charge_persistent = false,
+            health_regen = true,
+            health_regen_persistent = false,
             shield_regen = true,
             shield_regen_persistent = false,
             stamina = true,
@@ -1368,11 +1368,11 @@ local function Load()
                     LoadValues(self.settings, table)
                 else
                     self._cache.SaveDataNotCompatible = true
-                    self:Save()
+                    self:SaveOptions()
                 end
             else -- Save File got corrupted, use default values
                 self._cache.SaveFileCorrupted = true
-                self:Save() -- Resave the data
+                self:SaveOptions() -- Resave the data
             end
         end
     end
@@ -1960,7 +1960,11 @@ end
 
 ---@return boolean
 function EHI:ShowDramaTracker()
-    return self.IsHost and self:GetTrackerOption("show_drama_tracker") and Global.game_settings.level_id ~= "haunted" and Global.game_settings.level_id ~= "hvh"
+    return self.IsHost and self:GetTrackerOption("show_drama_tracker") and not table.has({
+        haunted = true, -- Safehouse Nightmare
+        hvh = true, -- Cursed Killroom
+        chew = true -- The Biker Heist Day 2
+    }, Global.game_settings.level_id)
 end
 
 ---@return boolean
@@ -2643,13 +2647,21 @@ function EHI:SetDeployableIgnorePos(type, pos)
 end
 
 function EHI:CanShowCivilianCountTracker()
-    return self:GetTrackerOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.has({
+    if self._cache.can_show_civilian_tracker ~= nil then -- Function is called several times, cache the result from the first call and return it everytime to speed up game execution
+        return self._cache.can_show_civilian_tracker
+    end
+    local result = self:GetTrackerOption("show_civilian_count_tracker") and not tweak_data.levels:IsLevelSafehouse() and not tweak_data.levels:IsLevelSkirmish() and not table.has({
         alex_1 = true, -- Rats Day 1
+        alex_2 = true, -- Rats Day 2
+        firestarter_1 = true, -- Firestarter Day 1
         haunted = true, -- Safehouse Nightmare
         man = true, -- Undercover
         bph = true, -- Hell's Island
-        chill_combat = true -- Safehouse Raid
+        chill_combat = true, -- Safehouse Raid
+        chew = true -- The Biker Heist Day 2
     }, Global.game_settings.level_id)
+    self._cache.can_show_civilian_tracker = result
+    return result
 end
 
 ---@param color_table { ["red"]: number|boolean|EHI.ColorTable.Color, ["blue"]: number|boolean|EHI.ColorTable.Color, ["green"]: number|boolean|EHI.ColorTable.Color }

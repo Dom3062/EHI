@@ -82,7 +82,7 @@ end
 --//////////////////////////////--
 --//  Muscle / Hostage Taker  //--
 --//////////////////////////////--
-if EHI:GetBuffOption("hostage_taker_muscle") then
+if EHI:GetBuffOption("health_regen") then
     local TeamAIHealthRegen = false
     EHI:AddCallback(EHI.CallbackMessage.TeamAISkillChange, function(skill, operation)
         if skill == "crew_regen" then

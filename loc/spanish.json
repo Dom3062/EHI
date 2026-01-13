@@ -380,7 +380,6 @@
     "ehi_buffs_skills_mastermind_painkillers" : "'Analgésicos'",
     "ehi_buffs_skills_mastermind_combat_medic" : "'Médico combatiente'",
     "ehi_buffs_skills_mastermind_controller_subclass" : "Controlador",
-    "ehi_buffs_skills_mastermind_hostage_taker_muscle" : "'Secuestrador'",
     "ehi_buffs_skills_mastermind_forced_friendship" : "'Amistad forzada' (Absorción)",
     "ehi_buffs_skills_mastermind_forced_friendship_desc" : "Mostrar / ocultar un indicador con la absorción de daño acumulada por la habilidad.",
     "ehi_buffs_skills_mastermind_sharpshooter_subclass" : "Tirador",
