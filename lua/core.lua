@@ -674,6 +674,19 @@ _G.EHI =
     SettingsSaveFilePath = BLTModManager.Constants:SavesDirectory() .. "ehi.json",
     SaveDataVer = 1
 }
+for _, update in ipairs(ModInstance:GetUpdates()) do
+    update._run_update_callback_original = update._run_update_callback
+    update._run_update_callback = function(self, clbk, requires_update, error_reason)
+        if requires_update then
+            if Global and Global.EHI_MOD then
+                Global.EHI_MOD.data_invalid = true
+            else
+                EHI._cache.load_data_invalid = true
+            end
+        end
+        update._run_update_callback_original(self, clbk, requires_update, error_reason)
+    end
+end
 
 ---@param self table
 local function LoadDefaultValues(self)
@@ -1331,6 +1344,7 @@ local function LoadDefaultValues(self)
     self.settings = tbl
     Global.EHI_MOD = Global.EHI_MOD or {}
     Global.EHI_MOD.settings = tbl
+    Global.EHI_MOD.data_invalid = self._cache.load_data_invalid
 end
 
 local function Load()
@@ -1338,9 +1352,9 @@ local function Load()
     if self._cache.__loaded then
         return
     end
-    if Global.EHI_MOD and self.SaveDataVer == (Global.EHI_MOD.settings and Global.EHI_MOD.settings.SaveDataVer or 1) then
+    if Global.EHI_MOD and self.SaveDataVer == (Global.EHI_MOD.settings and Global.EHI_MOD.settings.SaveDataVer or 1) and not Global.EHI_MOD.data_invalid then
         self.settings = Global.EHI_MOD.settings
-    else -- Load default settings if they don't exist or Save Data ver does not match
+    else -- Load default settings if they don't exist, Save Data ver does not match or data were tagged as invalid due to update
         LoadDefaultValues(self)
         local file = io.open(self.SettingsSaveFilePath, "r")
         if file then
