@@ -30,16 +30,16 @@ function EHIDamageFloatManager:new(hud)
     Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHIDamageFloatManager_init", function(base, ...)
         self._player_camera = base._camera_object
         hud:AddEHIUpdator("EHIDamageFloatManager", self)
+        base._unit:base():add_destroy_listener("EHIDamageFloatManager", function(unit)
+            hud:RemoveEHIUpdator("EHIDamageFloatManager")
+            self._player_movement = nil
+            self._player_camera = nil
+            if self.pops then
+                self:update_last()
+            end
+        end)
         if not managers.ehi_hook:HasCopDamageListener(self._cop_damage_hook) then
             managers.ehi_hook:AddCopDamageListener(self._cop_damage_hook, callback(self, self, "damage_callback"))
-        end
-    end)
-    Hooks:PreHook(PlayerMovement, "pre_destroy", "EHI_PlayerMovement_EHIDamageFloatManager_pre_destroy", function(...)
-        self._player_movement = nil
-        self._player_camera = nil
-        if self.pops then
-            hud:RemoveEHIUpdator("EHIDamageFloatManager")
-            self:update_last()
         end
     end)
     EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility) ---@param visibility boolean

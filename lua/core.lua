@@ -1122,6 +1122,8 @@ local function LoadDefaultValues(self)
             -- Perks
             infiltrator =
             {
+                overdog = true,
+                overdog_persistent = false,
                 melee_cooldown = true,
                 melee_cooldown_persistent = false
             },

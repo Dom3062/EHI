@@ -1,3 +1,7 @@
+r372 (01. 02. 2026):
+Added "Infiltrator - OVERDOG" buff option
+Floats: Fixed a possible crash when you are taken into custody or quit the game
+
 r371 (28. 01. 2026):
 Fixed a possible crash that could happen after updating EHI in-game and then loading a heist
 
@@ -14,8 +18,8 @@ Health Regen Buff: Fixed an issue where health regen value do not get updated wh
 r369 (11. 01. 2026):
 Buffs: Fixed an issue where some buffs do not have icon properly centered
 Damage Absorption Buff: Fixed a rounding issue
-Float Text: Float text for Bodybags will load only if stealth is available
-Float Text: Fixed an issue where floats for single grenades are visible if you do not have grenades equipped and option is enabled
+Text Float: Text for Bodybags will load only if stealth is available
+Text Float: Fixed an issue where floats for single grenades are visible if you do not have grenades equipped and option is enabled
 
 r368 (04. 01. 2026):
 Health Float: Fixed a very rare engine crash that sometimes returns number instead of Unit when aimed at
@@ -34,22 +38,22 @@ r366 (22. 12. 2025):
 Number of Trackers in Rows/Columns: (Vertical) Fixed an issue with offset if the biggest tracker moved to another column
 
 r365 (14. 12. 2025):
-Float Text: Added "Angle" and "Color Icon By Peer" options
+Text Float: Added "Angle" and "Color Icon By Peer" options
 
 r364 (11. 12. 2025):
 Buffs: Fixed an issue where Tag Team Paired buff does not reset its custom color after client disconnected
 Buffs: Fixed an issue where active Tag Team Paired buff does not hide after client disconnected
 Buffs: Possible fix for Stamina buff randomly appearing and staying stuck when disabled
-Float Text: Added "Compact Mode" and "Value Format" options
-Float Text: Float text for Bodybags is removed after alarm
-Float Text: Fixed visible float text in places where players have no access
+Text Float: Added "Compact Mode" and "Value Format" options
+Text Float: Float text for Bodybags is removed after alarm
+Text Float: Fixed visible float text in places where players have no access
 Shadow Raid: Fixed a crash after drop-in
 Timers: Fixed an issue where autorestart animation is not stopped when drill/saw is manually restarted
 
 r363 (07. 12. 2025):
 Added "Float Icon" option
-Float Text: Fixed detected bulletstorm in Ammo Bags when player does not have that skill equipped
-Float Text: Fixed icons visibility
+Text Float: Fixed detected bulletstorm in Ammo Bags when player does not have that skill equipped
+Text Float: Fixed icons visibility
 
 r362 (06. 12. 2025):
 Added text float for deployables

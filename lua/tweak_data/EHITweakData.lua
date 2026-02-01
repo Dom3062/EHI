@@ -485,14 +485,22 @@ function EHITweakData:new(tweak_data)
             text_localize = "ehi_buffs_hint_damage_decrease",
             x = 5,
             y = 4,
-            option = "underdog",
+            deck_option =
+            {
+                deck = "infiltrator",
+                option = "overdog"
+            },
             permanent =
             {
-                option = "underdog_persistent",
+                deck_option =
+                {
+                    deck = "infiltrator",
+                    option = "overdog_persistent"
+                },
                 skill_check =
                 {
-                    category = "player",
-                    upgrade = "dmg_multiplier_outnumbered"
+                    category = "temporary",
+                    upgrade = "dmg_dampener_close_contact"
                 }
             }
         },
@@ -1837,7 +1845,7 @@ function EHITweakData._populate_buff_group_table()
     return { "cooldown", "weapon_damage_increase", "melee_damage_increase", "player_damage_reduction", "player_damage_absorption", "increased_weapon_reload", "player_movement_increase", "dodge", "crit", "health_regen" }
 end
 
----@param i number
+---@param i integer?
 function EHITweakData:GetBuffColorFromIndex(i)
     self.__buffs_color = self.__buffs_color or self:_populate_buff_color_table()
     local entry = i and self.__buffs_color[i - 1]

@@ -12,12 +12,6 @@ function EHIHealthFloatManager:new(hud, hud_panel)
     if EHI:GetOption("show_floating_health_bar_civilians") then -- +Slot mask 21
         self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
     end
-    Hooks:PreHook(PlayerMovement, "pre_destroy", "EHI_PlayerMovement_EHIHealthFloatManager_pre_destroy", function(...)
-        hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
-        self._player_movement = nil
-        self._player_camera = nil
-        self:update_last()
-    end)
     self:post_init(hud, hud_panel)
 end
 
@@ -122,6 +116,12 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHIHealthFloatManager_init", function(base, ...)
             self._player_camera = base._camera_object
             hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+            base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
+                hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+                self._player_movement = nil
+                self._player_camera = nil
+                self:update_last()
+            end)
         end)
         EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility) ---@param visibility boolean
             if visibility then
@@ -268,6 +268,11 @@ else
             end)
             Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIHealthFloatManager_init", function(base, ...)
                 self._player_movement = base
+                base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
+                    hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+                    self._player_movement = nil
+                    self:update_last()
+                end)
                 hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
             end)
         end
@@ -282,6 +287,11 @@ else
             end)
             Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIHealthFloatManager_init", function(base, ...)
                 self._player_movement = base
+                base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
+                    hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+                    self._player_movement = nil
+                    self:update_last()
+                end)
                 hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
             end)
         end

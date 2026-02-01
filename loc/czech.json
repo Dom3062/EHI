@@ -819,6 +819,8 @@
 
     "ehi_buffs_perks_menu" : "Perky",
     "ehi_buffs_perks_infiltrator" : "Infiltrator",
+    "ehi_buffs_perks_infiltrator_overdog" : "OVERDOG",
+    "ehi_buffs_perks_infiltrator_overdog_persistent" : "Persistent OVERDOG",
     "ehi_buffs_perks_infiltrator_melee_cooldown" : "Life Drain",
     "ehi_buffs_perks_infiltrator_melee_cooldown_persistent" : "Persistent Life Drain",
     "ehi_buffs_perks_gambler" : "Gambler",

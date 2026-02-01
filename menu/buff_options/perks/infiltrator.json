@@ -8,6 +8,26 @@
     "items": [
         {
             "type": "toggle",
+            "id": "ehi_buffs_perks_infiltrator_overdog_choice",
+            "title": "ehi_buffs_perks_infiltrator_overdog",
+            "description": "ehi_buffs_skills_duration",
+            "callback": "ehi_set_item_value",
+            "value": "overdog",
+            "default_value": true,
+            "child": "ehi_buffs_perks_infiltrator_overdog_persistent_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_perks_infiltrator_overdog_persistent_choice",
+            "title": "ehi_buffs_perks_infiltrator_overdog_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "overdog_persistent",
+            "default_value": false,
+            "parent": "ehi_buffs_perks_infiltrator_overdog_choice"
+        },
+        {
+            "type": "toggle",
             "id": "ehi_buffs_perks_infiltrator_melee_cooldown_choice",
             "title": "ehi_buffs_perks_infiltrator_melee_cooldown",
             "description": "ehi_buffs_skills_cooldown",
