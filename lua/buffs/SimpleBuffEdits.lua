@@ -22,6 +22,47 @@ function EHIBloodthirstBuffTracker:PreUpdate()
     self._parent_class:AddBuffNoUpdate(self._id)
 end
 
+---@class EHITriggerHappyBuffTracker : EHIBuffTracker
+---@field super EHIBuffTracker
+EHITriggerHappyBuffTracker = class(EHIBuffTracker)
+EHITriggerHappyBuffTracker._DELETE_BUFF_AND_CLASS_ON_FALSE_SKILL_CHECK = true
+function EHITriggerHappyBuffTracker:Extend(t)
+    EHITriggerHappyBuffTracker.super.Extend(self, t)
+    if self._persistent and not self._running then
+        self._running = true
+        self:AddBuffToUpdate()
+    end
+end
+
+function EHITriggerHappyBuffTracker:SkillCheck()
+    return not self._persistent or managers.player:has_category_upgrade("pistol", "stacking_hit_damage_multiplier")
+end
+
+function EHITriggerHappyBuffTracker:SetPersistent()
+    self._persistent = true
+    self._text:set_text("0")
+end
+
+function EHITriggerHappyBuffTracker:PreUpdate()
+    if self._persistent then
+        self:ActivateSoft()
+        self._active = true
+    end
+end
+
+function EHITriggerHappyBuffTracker:Deactivate()
+    if self._persistent then
+        self:RemoveBuffFromUpdate()
+        self._running = false
+        self._text:set_text("0")
+        self._progress_bar.red = 0
+        self._progress:set_color(self._progress_bar)
+        return
+    end
+    EHITriggerHappyBuffTracker.super.Deactivate(self)
+end
+EHITriggerHappyBuffTracker.DeactivateAndReset = EHITriggerHappyBuffTracker.Deactivate
+
 ---@class EHIHealthRegenBuffTracker : EHIBuffTracker
 ---@field super EHIBuffTracker
 EHIHealthRegenBuffTracker = class(EHIBuffTracker)

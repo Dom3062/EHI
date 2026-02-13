@@ -581,15 +581,9 @@ function EHITweakData:new(tweak_data)
             x = 11,
             y = 2,
             option = "trigger_happy",
-            permanent =
-            {
-                option = "trigger_happy_persistent",
-                skill_check =
-                {
-                    category = "pistol",
-                    upgrade = "stacking_hit_damage_multiplier"
-                }
-            }
+            persistent = "trigger_happy_persistent",
+            skill_check_after_spawn = true,
+            class = "EHITriggerHappyBuffTracker"
         },
         desperado =
         {

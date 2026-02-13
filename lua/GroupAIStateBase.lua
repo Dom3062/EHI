@@ -191,27 +191,26 @@ if not tweak_data.levels:IsStealthRequired() then
             })
         end)
     end
-    if EHI:GetTrackerOption("show_marshal_initial_time") then
-        EHI:AddOnAlarmCallback(function(drop)
-            if drop or EHI._cache.PlayingDevMap then
-                return
-            end
-            local level_data = tweak_data.levels[Global.game_settings.level_id] or {}
-            if level_data.ai_marshal_spawns_disabled then
-                return
-            end
-            local marshal_spawn_group = tweak_data.group_ai.enemy_spawn_groups and tweak_data.group_ai.enemy_spawn_groups.marshal_squad
-            local t = marshal_spawn_group and (marshal_spawn_group.initial_spawn_delay or marshal_spawn_group.spawn_cooldown or 0) or 0
-            if t > 0 then
-                managers.ehi_tracker:AddTracker({
-                    id = "Marshals",
-                    time = t,
-                    icons = { "equipment_sheriff_star" },
-                    hint = "marshal",
-                    class = EHI.Trackers.Warning
-                })
-            end
-        end)
+    if EHI:GetTrackerOption("show_marshal_initial_time") and EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
+        local level_data = tweak_data.levels[Global.game_settings.level_id] or {}
+        if not level_data.ai_marshal_spawns_disabled then
+            EHI:AddOnAlarmCallback(function(drop)
+                if drop or EHI._cache.PlayingDevMap then
+                    return
+                end
+                local marshal_spawn_group = tweak_data.group_ai.enemy_spawn_groups and tweak_data.group_ai.enemy_spawn_groups.marshal_squad
+                local t = marshal_spawn_group and (marshal_spawn_group.initial_spawn_delay or marshal_spawn_group.spawn_cooldown or 0) or 0
+                if t > 0 then
+                    managers.ehi_tracker:AddTracker({
+                        id = "Marshals",
+                        time = t,
+                        icons = { "equipment_sheriff_star" },
+                        hint = "marshal",
+                        class = EHI.Trackers.Warning
+                    })
+                end
+            end)
+        end
     end
 end
 

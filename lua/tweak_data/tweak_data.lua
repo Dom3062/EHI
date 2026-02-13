@@ -2,7 +2,7 @@ local EHI = EHI
 if EHI:CheckHook("tweak_data") then
     return
 end
-if not DOTTweakData and not Global.load_level then -- 1.143.240 version check
+if not math.rand_bool and not Global.load_level then -- 1.146.252 version check
     EHI._cache.GameVersionNotCompatible = true
 end
 dofile(EHI.LuaPath .. "tweak_data/EHITweakData.lua")

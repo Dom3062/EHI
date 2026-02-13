@@ -450,7 +450,7 @@ if EHI:GetBuffDeckOption("maniac", "stack") then
     original.update_synced_cocaine_stacks_to_peers = PlayerManager.update_synced_cocaine_stacks_to_peers
     function PlayerManager:update_synced_cocaine_stacks_to_peers(amount, ...)
         managers.ehi_buff:CallFunction("ManiacAccumulatedStacks", "UpdateStack", amount)
-        original.update_synced_cocaine_stacks_to_peers(self, amount)
+        original.update_synced_cocaine_stacks_to_peers(self, amount, ...)
     end
 end
 

@@ -1,3 +1,6 @@
+r373 (13. 02. 2026):
+Updated to U242.1
+
 r372 (01. 02. 2026):
 Added "Infiltrator - OVERDOG" buff option
 Floats: Fixed a possible crash when you are taken into custody or quit the game
