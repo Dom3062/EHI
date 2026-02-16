@@ -426,21 +426,20 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack_decay", "stack_convert_rate")
     local ShowManiacDecayTicks = EHI:GetBuffDeckOption("maniac", "stack_decay")
     original._update_damage_dealt = PlayerManager._update_damage_dealt
     function PlayerManager:_update_damage_dealt(t, ...)
-        local previousstack = self._damage_dealt_to_cops_t or 0
-        local previousdecay = self._damage_dealt_to_cops_decay_t or 0
-
         original._update_damage_dealt(self, t, ...)
 
-        if not self:has_category_upgrade("player", "cocaine_stacking") or self._damage_dealt_to_cops_t == nil or self._damage_dealt_to_cops_decay_t == nil then
+        if not self:has_category_upgrade("player", "cocaine_stacking") then
             return
         end
 
         -- t here is identical to the timestamp returned by PlayerManager:player_timer():time() so do not bother calling the latter
-        if t >= previousstack and ShowManiacStackTicks then
+        if self._ehi_damage_dealth_to_cops_t ~= self._damage_dealt_to_cops_t and ShowManiacStackTicks then
+            self._ehi_damage_dealth_to_cops_t = self._damage_dealt_to_cops_t
             managers.ehi_buff:AddBuff2("ManiacStackTicks", self._damage_dealt_to_cops_t - t)
         end
 
-        if t >= previousdecay and ShowManiacDecayTicks then
+        if self._ehi_damage_dealt_to_cops_decay_t ~= self._damage_dealt_to_cops_decay_t and ShowManiacDecayTicks then
+            self._ehi_damage_dealt_to_cops_decay_t = self._damage_dealt_to_cops_decay_t
             managers.ehi_buff:AddBuff2("ManiacDecayTicks", self._damage_dealt_to_cops_decay_t - t)
         end
     end

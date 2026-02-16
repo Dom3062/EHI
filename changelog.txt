@@ -1,3 +1,6 @@
+r374 (16. 02. 2026):
+Maniac: Fixed an issue where Hysteria Decay buff is overlapping with other buffs if you do not have any hysteria accumulated
+
 r373 (13. 02. 2026):
 Updated to U242.1
 
