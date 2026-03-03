@@ -28,8 +28,8 @@ function EHITextFloatManager:new()
     end)
     ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
     local function init_equipment(_, unit)
-        local key = unit:key()
-        if not (self._floats[key] or self._unit_blocked[key]) then
+        local key = unit.key and unit:key()
+        if key and not (self._floats[key] or self._unit_blocked[key]) then
             if not self._panel then
                 self._deferred_floats[key] = { unit = unit, peer_id = 0 }
                 return
@@ -228,15 +228,17 @@ end
 ---@param from_defer boolean?
 ---@param peer_id integer?
 function EHITextFloatManager:_add_float(key, unit, from_defer, peer_id)
-    self._floats[key] = {
-        class = EHITextFloat:new(unit, from_defer, peer_id),
-        state = "offscreen",
-        position = unit:position(),
-        name_key = unit:name():key(),
-        peer_id = peer_id or 0
-    }
-    self._n_of_equipment = self._n_of_equipment + 1
-    self:_add_update_loop()
+    if key and unit and alive(unit) then -- Check if the provided unit is still valid, as players may place it at the same frame when the game ended, leading to crash
+        self._floats[key] = {
+            class = EHITextFloat:new(unit, from_defer, peer_id),
+            state = "offscreen",
+            position = unit:position(),
+            name_key = unit:name():key(),
+            peer_id = peer_id or 0
+        }
+        self._n_of_equipment = self._n_of_equipment + 1
+        self:_add_update_loop()
+    end
 end
 
 ---@param float EHITextFloatManager.Float
@@ -386,6 +388,8 @@ EHITextFloat._EQUIPMENT.fc520601b50186e4 = EHITextFloat._EQUIPMENT.f6001ca4eb64a
 ---units/pd2_dlc_mxm/equipment/gen_equipment_grenade_crate/gen_equipment_grenade_crate
 EHITextFloat._EQUIPMENT.e166f63494083d58 = deep_clone(EHITextFloat._EQUIPMENT.f6001ca4eb64a74c)
 EHITextFloat._EQUIPMENT.e166f63494083d58.name = "Ordnance Bag"
+EHITextFloat._EQUIPMENT.e166f63494083d58.texture = "guis/dlcs/mxm/textures/pd2/blackmarket/icons/deployables/outline/grenade_crate"
+EHITextFloat._EQUIPMENT.e166f63494083d58.texture_rect = { 0, 0, 128, 128 }
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
 ---@param from_defer boolean?
 ---@param peer_id integer?

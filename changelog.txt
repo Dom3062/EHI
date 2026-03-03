@@ -1,3 +1,6 @@
+r375 (03. 03. 2026):
+Text Float: Fixed a possible crash when deployables are created at the same frame when the game ended
+
 r374 (16. 02. 2026):
 Maniac: Fixed an issue where Hysteria Decay buff is overlapping with other buffs if you do not have any hysteria accumulated
 
