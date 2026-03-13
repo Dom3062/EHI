@@ -67,6 +67,7 @@ local achievements =
             cac_33.IncreaseProgress = EHIProgressTracker.IncreaseProgress
             cac_33.FormatProgress = EHIProgressTracker.FormatProgress
             cac_33.SetProgress = EHIProgressTracker.SetProgress
+            cac_33.Completed = EHIProgressTracker.Completed
             function cac_33:post_init(params)
                 cac_33.super.post_init(self, params)
                 self._progress = 0
@@ -109,12 +110,15 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100156] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100148] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100146] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    other[100070] = { id = 100161, special_function = SF.RemoveTrigger } -- All players in the sewers
+    other[101516] = { id = "Snipers", special_function = SF.RemoveTracker } -- All players in the sewers
 end
 if EHI:GetOption("show_captain_spawn_chance") then
     other[103489] = EHI:AddCustomCode(function(self)
         self._trackers:ForceRemoveTracker("CaptainChance")
     end)
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     achievement = achievements,

@@ -30,7 +30,7 @@ function EHITrackerManagerVR:IsLoading()
     return self._is_loading
 end
 
----@param key string
+---@param key AnyExceptNil
 ---@param data table
 ---@param f function
 ---@param add boolean?

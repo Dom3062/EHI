@@ -1,0 +1,619 @@
+{
+    "menu_id": "ehi_hudlist_left_list_menu",
+    "parent_menu_id" : "ehi_hudlist_menu",
+    "global_params": {
+        "settings" : [ "hudlist", "left_list" ]
+    },
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_timers_choice",
+            "title": "ehi_show_timers",
+            "description": "ehi_show_timers_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_timers",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_left_list_show_timers_progress_choice",
+                "ehi_hudlist_left_list_show_timers_top_text_choice",
+                "ehi_hudlist_left_list_show_timers_jammed_choice",
+                "ehi_hudlist_left_list_show_timers_not_powered_choice",
+                "ehi_hudlist_left_list_show_timers_autorepair_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "Timer" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_timers_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "timer_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_timers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressBitmap",
+                    "params": [ "Timer", "left" ]
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_timers_top_text_choice",
+            "title": "ehi_hudlist_left_list_show_timers_top_text",
+            "callback": "ehi_set_item_value",
+            "value": "timer_top_text",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_timers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemTopText", "Timer" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_timers_jammed_choice",
+            "title": "ehi_hudlist_left_list_show_timers_jammed",
+            "callback": "ehi_set_item_value",
+            "items": [
+                "ehi_buffs_group_color_white",
+                "ehi_buffs_group_color_red",
+                "ehi_buffs_group_color_orange",
+                "ehi_buffs_group_color_green",
+                "ehi_buffs_group_color_yellow",
+                "ehi_buffs_group_color_blue",
+                "ehi_buffs_group_color_cyan",
+                "ehi_buffs_group_color_pink",
+                "ehi_buffs_group_color_purple",
+                "ehi_buffs_group_color_violet",
+                "ehi_buffs_group_color_magenta",
+                "ehi_buffs_group_color_azure",
+                "ehi_buffs_group_color_brown",
+                "ehi_buffs_group_color_crimson",
+                "ehi_buffs_group_color_salmon",
+                "ehi_buffs_group_color_gold",
+                "ehi_buffs_group_color_turquoise"
+            ],
+            "default_value": 2,
+            "items_need_color": true,
+            "value": "timer_jammed",
+            "parent": "ehi_hudlist_left_list_show_timers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressColor",
+                    "params": [ "Timer", 2 ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_timers_not_powered_choice",
+            "title": "ehi_hudlist_left_list_show_timers_not_powered",
+            "callback": "ehi_set_item_value",
+            "items": [
+                "ehi_buffs_group_color_white",
+                "ehi_buffs_group_color_red",
+                "ehi_buffs_group_color_orange",
+                "ehi_buffs_group_color_green",
+                "ehi_buffs_group_color_yellow",
+                "ehi_buffs_group_color_blue",
+                "ehi_buffs_group_color_cyan",
+                "ehi_buffs_group_color_pink",
+                "ehi_buffs_group_color_purple",
+                "ehi_buffs_group_color_violet",
+                "ehi_buffs_group_color_magenta",
+                "ehi_buffs_group_color_azure",
+                "ehi_buffs_group_color_brown",
+                "ehi_buffs_group_color_crimson",
+                "ehi_buffs_group_color_salmon",
+                "ehi_buffs_group_color_gold",
+                "ehi_buffs_group_color_turquoise"
+            ],
+            "default_value": 3,
+            "items_need_color": true,
+            "value": "timer_not_powered",
+            "parent": "ehi_hudlist_left_list_show_timers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressColor",
+                    "params": [ "Timer", 3 ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_timers_autorepair_choice",
+            "title": "ehi_hudlist_left_list_show_timers_autorepair",
+            "callback": "ehi_set_item_value",
+            "items": [
+                "ehi_buffs_group_color_white",
+                "ehi_buffs_group_color_red",
+                "ehi_buffs_group_color_orange",
+                "ehi_buffs_group_color_green",
+                "ehi_buffs_group_color_yellow",
+                "ehi_buffs_group_color_blue",
+                "ehi_buffs_group_color_cyan",
+                "ehi_buffs_group_color_pink",
+                "ehi_buffs_group_color_purple",
+                "ehi_buffs_group_color_violet",
+                "ehi_buffs_group_color_magenta",
+                "ehi_buffs_group_color_azure",
+                "ehi_buffs_group_color_brown",
+                "ehi_buffs_group_color_crimson",
+                "ehi_buffs_group_color_salmon",
+                "ehi_buffs_group_color_gold",
+                "ehi_buffs_group_color_turquoise"
+            ],
+            "default_value": 7,
+            "items_need_color": true,
+            "value": "timer_autorepair",
+            "parent": "ehi_hudlist_left_list_show_timers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressColor",
+                    "params": [ "Timer", 4 ]
+                }
+            }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_minions_choice",
+            "title": "ehi_hudlist_left_list_show_minions",
+            "callback": "ehi_set_item_value",
+            "value": "show_minions",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_left_list_show_minions_option_choice",
+                "ehi_hudlist_left_list_show_minions_health_choice",
+                "ehi_hudlist_left_list_show_minions_top_text_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "Minion" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_minions_option_choice",
+            "title": "ehi_hudlist_left_list_show_minions_option",
+            "items": [
+                "ehi_hudlist_left_list_show_minions_option_1",
+                "ehi_hudlist_left_list_show_minions_option_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "minions_option",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_minions_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "left",
+                        "id": "Minion",
+                        "f": "SetOtherMinionsVisible"
+                    }
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_minions_health_choice",
+            "title": "ehi_hudlist_left_list_show_minions_health",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2",
+                "ehi_hudlist_left_list_show_minions_health_3"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "minions_health",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_minions_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressBitmap",
+                    "params": [ "Minion", "left" ]
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_minions_top_text_choice",
+            "title": "ehi_hudlist_left_list_show_minions_top_text",
+            "callback": "ehi_set_item_value",
+            "value": "minions_top_text",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_minions_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemTopText", "Minion" ]
+                }
+            }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_choice",
+            "title": "ehi_hudlist_left_list_show_deployables",
+            "callback": "ehi_set_item_value",
+            "value": "show_deployables",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_left_list_show_deployables_progress_choice",
+                "ehi_hudlist_left_list_show_deployables_top_text_choice",
+                "ehi_hudlist_left_list_show_deployables_text_format_choice",
+                "ehi_hudlist_left_list_show_deployables_aggregate_choice",
+                "ehi_hudlist_left_list_show_deployables_doctor_choice",
+                "ehi_hudlist_left_list_show_deployables_ammo_choice",
+                "ehi_hudlist_left_list_show_deployables_grenades_choice",
+                "ehi_hudlist_left_list_show_deployables_fak_choice",
+                "ehi_hudlist_left_list_show_deployables_bodybags_choice"
+            ],
+            "children_f": {
+                "ehi_hudlist_left_list_show_deployables_aggregate_single_grenades_choice": "ehi_hudlist_left_list_show_deployables_aggregate_single_grenades_1",
+                "ehi_hudlist_left_list_show_deployables_grenades_block_on_ability_or_no_throwable_choice" : "ehi_hudlist_left_list_show_deployables_grenades_block_on_ability_or_no_throwable_1"
+            },
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "Deployable" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_deployables_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "deployable_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressBitmap",
+                    "params": [ "Deployable", "left" ]
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_top_text_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_top_text",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_top_text",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemTopText", "Deployable" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_deployables_text_format_choice",
+            "title": "ehi_tracker_value_format",
+            "items": [
+                "ehi_other_show_floating_text_format_1",
+                "ehi_other_show_floating_text_format_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "deployable_format",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "left",
+                        "id": "Deployable",
+                        "f": "UpdateFormat"
+                    }
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_aggregate_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_aggregate",
+            "description": "ehi_hudlist_left_list_show_deployables_aggregate_desc",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_aggregate",
+            "default_value": false,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice",
+            "child": "ehi_hudlist_left_list_show_deployables_aggregate_single_grenades_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "left",
+                        "id": "Deployable",
+                        "f": "SetAggregateDeployables"
+                    }
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_aggregate_single_grenades_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_aggregate_single_grenades",
+            "description": "ehi_hudlist_left_list_show_deployables_aggregate_single_grenades_desc",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_aggregate_single_grenades",
+            "default_value": false,
+            "parent": "ehi_hudlist_left_list_show_deployables_aggregate_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_doctor_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_doctor",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_show_doctor",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_ammo_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_ammo",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_show_ammo",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_grenades_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_grenades",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_show_grenades",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice",
+            "child": "ehi_hudlist_left_list_show_deployables_grenades_block_on_ability_or_no_throwable_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_grenades_block_on_ability_or_no_throwable_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_grenades_block_on_ability_or_no_throwable",
+            "description": "ehi_hudlist_left_list_show_deployables_grenades_block_on_ability_or_no_throwable_desc",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_grenades_block_on_ability_or_no_throwable",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_fak_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_fak",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_show_fak",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_deployables_bodybags_choice",
+            "title": "ehi_hudlist_left_list_show_deployables_bodybags",
+            "description": "ehi_hudlist_left_list_show_deployables_bodybags_desc",
+            "callback": "ehi_set_item_value",
+            "value": "deployable_show_bodybags",
+            "default_value": true,
+            "parent": "ehi_hudlist_left_list_show_deployables_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_pagers_choice",
+            "title": "ehi_show_enemy_count_show_pagers",
+            "callback": "ehi_set_item_value",
+            "value": "show_enemy_pagers",
+            "default_value": true,
+            "children": [ "ehi_hudlist_left_list_show_pagers_progress_choice" ],
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "Pager" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_pagers_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "enemy_pager_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_pagers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressBitmap",
+                    "params": [ "Pager", "left" ]
+                }
+            }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_jammers_choice",
+            "title": "ehi_hudlist_left_list_show_jammers",
+            "callback": "ehi_set_item_value",
+            "value": "show_jammers",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_left_list_show_jammers_progress_choice",
+                "ehi_hudlist_left_list_show_jammers_unaffected_pagers"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "Jammer" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_jammers_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "jammer_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_jammers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressBitmap",
+                    "params": [ "Jammer", "left" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_jammers_affects_pagers_choice",
+            "title": "ehi_hudlist_left_list_show_jammers_affects_pagers",
+            "description": "ehi_hudlist_left_list_show_jammers_affects_pagers_desc",
+            "callback": "ehi_set_item_value",
+            "items": [
+                "ehi_buffs_group_color_white",
+                "ehi_buffs_group_color_red",
+                "ehi_buffs_group_color_orange",
+                "ehi_buffs_group_color_green",
+                "ehi_buffs_group_color_yellow",
+                "ehi_buffs_group_color_blue",
+                "ehi_buffs_group_color_cyan",
+                "ehi_buffs_group_color_pink",
+                "ehi_buffs_group_color_purple",
+                "ehi_buffs_group_color_violet",
+                "ehi_buffs_group_color_magenta",
+                "ehi_buffs_group_color_azure",
+                "ehi_buffs_group_color_brown",
+                "ehi_buffs_group_color_crimson",
+                "ehi_buffs_group_color_salmon",
+                "ehi_buffs_group_color_gold",
+                "ehi_buffs_group_color_turquoise"
+            ],
+            "default_value": 16,
+            "items_need_color": true,
+            "value": "jammer_affects_pager",
+            "parent": "ehi_hudlist_left_list_show_jammers_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressColor",
+                    "params": [ "Jammer", 2 ]
+                }
+            }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_ecm_retrigger_choice",
+            "title": "ehi_hudlist_left_list_show_ecm_retrigger",
+            "callback": "ehi_set_item_value",
+            "value": "show_ecm_retrigger",
+            "default_value": true,
+            "children": [ "ehi_hudlist_left_list_show_ecm_retrigger_progress_choice" ],
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "JammerRetrigger" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_ecm_retrigger_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "ecm_retrigger_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_ecm_retrigger_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressBitmap",
+                    "params": [ "JammerRetrigger", "left" ]
+                }
+            }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_camera_loop_choice",
+            "title": "ehi_hudlist_left_list_show_camera_loop",
+            "callback": "ehi_set_item_value",
+            "value": "show_camera_loop",
+            "default_value": true,
+            "disabled_from_start": "ehi_is_classic_heisting_mod_installed",
+            "children": [ "ehi_hudlist_left_list_show_camera_loop_progress_choice" ],
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "Camera" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_left_list_show_camera_loop_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "camera_loop_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_left_list_show_camera_loop_choice",
+            "disabled_from_start": "ehi_is_classic_heisting_mod_installed",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetItemProgressBitmap",
+                    "params": [ "Camera", "left" ]
+                }
+            }
+        }
+    ]
+}

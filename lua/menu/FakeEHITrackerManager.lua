@@ -1,14 +1,14 @@
+if Global.editor_mode then -- Please, do not spam log in editor mode
+    return
+end
 local EHI = EHI
 local Icon = EHI.Icons
 ---@class FakeEHITrackerManager
 FakeEHITrackerManager = {}
-FakeEHITrackerManager.AspectRatio =
-{
-    _16_10 = 1,
-    _4_3 = 2,
-    Other = 3
-}
 FakeEHITrackerManager.make_fine_text = BlackMarketGui.make_fine_text
+FakeEHITrackerManager._convert_safe_rect_to_full = tweak_data.ehi.shared.ConvertSafeRectToFull
+FakeEHITrackerManager._get_local_peer_color = tweak_data.ehi.functions.GetLocalPeerColor
+FakeEHITrackerManager._get_other_peer_color = tweak_data.ehi.functions.GetOtherPeerColor
 ---@param panel Panel
 ---@param aspect_ratio number
 function FakeEHITrackerManager:new(panel, aspect_ratio)
@@ -17,14 +17,11 @@ function FakeEHITrackerManager:new(panel, aspect_ratio)
     if _G.IS_VR then
         self._scale = EHI:GetOption("vr_scale") --[[@as number]]
         self._x, self._y = managers.gui_data:safe_to_full(EHI:GetOption("vr_x_offset"), EHI:GetOption("vr_y_offset"))
+        self._aspect_ratio = 1
     else
         self._scale = EHI:GetOption("scale") --[[@as number]]
-        local x_offset, y_offset = EHI:GetOption("x_offset"), EHI:GetOption("y_offset")
-        if aspect_ratio == self.AspectRatio._4_3 then
-            self._x, self._y = managers.gui_data:safe_to_full_16_9(x_offset, y_offset)
-        else
-            self._x, self._y = managers.gui_data:safe_to_full(x_offset, y_offset)
-        end
+        self._x, self._y = self._convert_safe_rect_to_full(EHI:GetOption("x_offset"), EHI:GetOption("y_offset"), aspect_ratio)
+        self._aspect_ratio = aspect_ratio
     end
     self._text_scale = EHI:GetOption("text_scale") --[[@as number]]
     self._bg_visibility = EHI:GetOption("show_tracker_bg")
@@ -104,7 +101,7 @@ function FakeEHITrackerManager:AddFakeTrackers()
             self:AddFakeTracker({ id = "show_gained_xp", icons = { "xp" }, extend_half = xp_panel == 2, class = "FakeEHIXPTracker" })
         end
     end
-    self:AddFakeTracker({ id = "show_trade_delay", icons = { { icon = "mugshot_in_custody", color = self:GetLocalPeerColor() } }, extend_half = EHI:GetOption("show_trade_delay_amount_of_killed_civilians"), class = "FakeEHITradeDelayTracker" })
+    self:AddFakeTracker({ id = "show_trade_delay", icons = { { icon = "mugshot_in_custody", color = self._get_local_peer_color() } }, extend_half = EHI:GetOption("show_trade_delay_amount_of_killed_civilians"), class = "FakeEHITradeDelayTracker" })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 240), icons = { Icon.Drill, Icon.Wait, "silent", Icon.Loop } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack } })
     self:AddFakeTracker({ id = "show_timers", time = math.random(60, 120), icons = { Icon.PCHack }, extend = true, class = "FakeEHITimerTracker" })
@@ -209,31 +206,6 @@ function FakeEHITrackerManager:_update_border_color(bg_box)
 end
 ---@diagnostic enable
 
-function FakeEHITrackerManager:GetLocalPeerColor()
-    if CustomNameColor and CustomNameColor.GetOwnColor then
-        return CustomNameColor:GetOwnColor()
-    end
-    local i = 1
-    local session = managers.network and managers.network:session()
-    local local_peer = session and session:local_peer()
-    if local_peer then
-        i = local_peer:id()
-    end
-    return tweak_data.chat_colors[i] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white
-end
-
-function FakeEHITrackerManager:GetOtherPeerColor()
-    local colors = deep_clone(tweak_data.chat_colors)
-    local i = 1
-    local session = managers.network and managers.network:session()
-    local local_peer = session and session:local_peer()
-    if local_peer then
-        i = local_peer:id()
-    end
-    table.remove(colors, i)
-    return colors[math.random(#colors - 1)] or Color.white
-end
-
 ---@param state boolean
 function FakeEHITrackerManager:UpdateTrackerState(state)
     if self._trackers_enabled == state then
@@ -255,9 +227,7 @@ function FakeEHITrackerManager:UpdateTrackerPreview(visibility)
     end
     self._trackers_visible = visibility
     if self._n_of_trackers > 0 then
-        for _, tracker in ipairs(self._fake_trackers) do
-            tracker:SetPanelVisible(visibility)
-        end
+        self._panel:set_visible(visibility)
     elseif visibility then
         self:AddFakeTrackers()
     end
@@ -265,7 +235,7 @@ end
 
 function FakeEHITrackerManager:AddPreviewText()
     if self._n_of_trackers == 0 then
-        self:UpdatePreviewTextVisibility(false)
+        self:UpdatePreviewTextVisibility(false, true)
         return
     elseif not self._preview_text then
         self._preview_text = self._panel:text({
@@ -295,8 +265,9 @@ function FakeEHITrackerManager:SetPreviewTextPosition()
 end
 
 ---@param visibility boolean
-function FakeEHITrackerManager:UpdatePreviewTextVisibility(visibility)
-    if self._preview_text and self._n_of_trackers > 0 then
+---@param force_visibility boolean?
+function FakeEHITrackerManager:UpdatePreviewTextVisibility(visibility, force_visibility)
+    if self._preview_text and (force_visibility or self._n_of_trackers > 0) then
         self._preview_text:set_visible(visibility)
     end
 end
@@ -414,7 +385,7 @@ end
 
 ---@param x number
 function FakeEHITrackerManager:UpdateXOffset(x)
-    local x_full, _ = managers.gui_data:safe_to_full(x, 0)
+    local x_full, _ = self._convert_safe_rect_to_full(x, 0, self._aspect_ratio)
     if self._x == x_full then
         return
     end
@@ -430,7 +401,7 @@ end
 
 ---@param y number
 function FakeEHITrackerManager:UpdateYOffset(y)
-    local _, y_full = managers.gui_data:safe_to_full(0, y)
+    local _, y_full = self._convert_safe_rect_to_full(0, y, self._aspect_ratio)
     if self._y == y_full then
         return
     end
@@ -453,11 +424,11 @@ end
 
 ---@param scale number
 function FakeEHITrackerManager:UpdateTextScale(scale)
-    if self._text_scale == scale then
+    if self._text_scale == scale then -- To stop flickering because menu is firing this up every frame even if the value match
         return
     end
     self._text_scale = scale
-    self:_update_tracker_internal_data()
+    FakeEHITracker._text_scale = scale
     for _, tracker in ipairs(self._fake_trackers) do
         tracker:UpdateTextScale()
     end

@@ -66,6 +66,7 @@ if EHI.IsClient then
     other[EHI:GetInstanceElementID(100026, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 4 + 10 })
     other[EHI:GetInstanceElementID(100179, 7950)] = EHI:ClientCopyTrigger(original, { control_additional_time = 10 })
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

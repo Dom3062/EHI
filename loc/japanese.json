@@ -44,7 +44,6 @@
   "ehi_status_objective" : "OBJECTIVE",
   "ehi_status_fail": "FAIL",
 
-  "ehi_button_ok": "OK",
   "ehi_color_reset": "色をリセット",
 
   "ehi_preview": "プレビュー（反映にはマップの再起動が必要です）\n赤い角は最初のトラッカーが表示される場所を示します",

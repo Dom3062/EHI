@@ -154,6 +154,7 @@ if EHI:IsLootCounterVisible() then
         other[104594] = LootVisible
     end
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

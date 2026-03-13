@@ -1,0 +1,323 @@
+{
+    "menu_id": "ehi_hudlist_menu",
+    "parent_menu_id" : "ehi_menu",
+    "global_params": {
+        "setting": "hudlist"
+    },
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_show_left_list_choice",
+            "title": "ehi_hudlist_show_left_list",
+            "callback": "ehi_set_item_value",
+            "value": "show_left_list",
+            "default_value": true,
+            "children": [
+                "ehi_left_list_x_offset_choice",
+                "ehi_left_list_y_offset_choice",
+                "ehi_left_list_scale_choice",
+                "ehi_left_list_bg_alpha_choice",
+                "ehi_left_list_bg_color_choice",
+                "ehi_left_list_progress_visibility_choice",
+                "ehi_left_list_choice"
+            ],
+            "children_f": {
+                "ehi_left_list_progress_static_choice" : "ehi_left_list_progress_static_1"
+            },
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateListEnabled" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_left_list_x_offset_choice",
+            "title": "ehi_x_offset",
+            "callback": "ehi_set_item_value",
+            "value": "left_list_x",
+            "default_value": 0,
+            "max": 1920,
+            "min": -1920,
+            "step": 1,
+            "display_precision" : 0,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateX" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_left_list_y_offset_choice",
+            "title": "ehi_y_offset",
+            "callback": "ehi_set_item_value",
+            "value": "left_list_y",
+            "default_value": 80,
+            "max": 1080,
+            "min": -1080,
+            "step": 1,
+            "display_precision" : 0,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateY" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_left_list_scale_choice",
+            "title": "ehi_scale",
+            "callback": "ehi_set_item_value",
+            "value": "left_list_scale",
+            "default_value": 1,
+            "max": 2,
+            "min": 0.5,
+            "step": 0.01,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateScale" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_left_list_bg_alpha_choice",
+            "title": "ehi_hudlist_bg_alpha",
+            "callback": "ehi_set_item_value",
+            "value": "left_list_bg_alpha",
+            "default_value": 1,
+            "max": 1,
+            "min": 0,
+            "step": 0.01,
+            "display_precision": 2,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateBGAlpha" ]
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_left_list_bg_color_choice",
+            "title": "ehi_hudlist_bg_color",
+            "value": "left_list_bg_color",
+            "default_value": {
+                "r": 0,
+                "g": 0,
+                "b": 0
+            },
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "settings" : [ "hudlist", "left_list_bg_color" ],
+                "call_hudlist_function": {
+                    "list": "left",
+                    "f": "UpdateBGColor"
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_left_list_progress_visibility_choice",
+            "title": "ehi_buffs_show_progress",
+            "callback": "ehi_set_item_value",
+            "value": "left_list_progress_visibility",
+            "default_value": true,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "child": "ehi_left_list_progress_static_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateProgressVisibility" ]
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_left_list_progress_static_choice",
+            "title": "ehi_hudlist_progress_static",
+            "callback": "ehi_set_item_value",
+            "value": "left_list_progress_static",
+            "default_value": false,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateProgressStatic" ]
+                }
+            }
+        },
+        {
+            "type": "button",
+            "id": "ehi_left_list_choice",
+            "title": "ehi_hudlist_left_list",
+            "next_menu": "ehi_hudlist_left_list_menu",
+            "parent": "ehi_hudlist_show_left_list_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_show_right_list_choice",
+            "title": "ehi_hudlist_show_right_list",
+            "callback": "ehi_set_item_value",
+            "value": "show_right_list",
+            "default_value": true,
+            "children": [
+                "ehi_right_list_x_offset_choice",
+                "ehi_right_list_y_offset_choice",
+                "ehi_right_list_scale_choice",
+                "ehi_right_list_bg_alpha_choice",
+                "ehi_right_list_bg_color_choice",
+                "ehi_right_list_progress_visibility_choice",
+                "ehi_right_list_choice"
+            ],
+            "children_f": {
+                "ehi_right_list_progress_static_choice" : "ehi_right_list_progress_static_1"
+            },
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateListEnabled" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_right_list_x_offset_choice",
+            "title": "ehi_x_offset",
+            "callback": "ehi_set_item_value",
+            "value": "right_list_x",
+            "default_value": 0,
+            "max": 1920,
+            "min": -1920,
+            "step": 1,
+            "display_precision" : 0,
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateX" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_right_list_y_offset_choice",
+            "title": "ehi_y_offset",
+            "callback": "ehi_set_item_value",
+            "value": "right_list_y",
+            "default_value": 90,
+            "max": 1080,
+            "min": -1080,
+            "step": 1,
+            "display_precision" : 0,
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateY" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_right_list_scale_choice",
+            "title": "ehi_scale",
+            "callback": "ehi_set_item_value",
+            "value": "right_list_scale",
+            "default_value": 1,
+            "max": 2,
+            "min": 0.5,
+            "step": 0.01,
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateScale" ]
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_right_list_bg_alpha_choice",
+            "title": "ehi_hudlist_bg_alpha",
+            "callback": "ehi_set_item_value",
+            "value": "right_list_bg_alpha",
+            "default_value": 1,
+            "max": 1,
+            "min": 0,
+            "step": 0.01,
+            "display_precision": 2,
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateBGAlpha" ]
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_right_list_bg_color_choice",
+            "title": "ehi_hudlist_bg_color",
+            "value": "right_list_bg_color",
+            "default_value": {
+                "r": 0,
+                "g": 0,
+                "b": 0
+            },
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list_bg_color" ],
+                "call_hudlist_function": {
+                    "list": "right",
+                    "f": "UpdateBGColor"
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_right_list_progress_visibility_choice",
+            "title": "ehi_buffs_show_progress",
+            "callback": "ehi_set_item_value",
+            "value": "right_list_progress_visibility",
+            "default_value": true,
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "child": "ehi_right_list_progress_static_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateProgressVisibility" ]
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_right_list_progress_static_choice",
+            "title": "ehi_hudlist_progress_static",
+            "callback": "ehi_set_item_value",
+            "value": "right_list_progress_static",
+            "default_value": false,
+            "parent": "ehi_hudlist_show_right_list_choice"
+        },
+        {
+            "type": "button",
+            "id": "ehi_right_list_choice",
+            "title": "ehi_hudlist_right_list",
+            "next_menu": "ehi_hudlist_right_list_menu",
+            "parent": "ehi_hudlist_show_right_list_choice"
+        }
+    ]
+}

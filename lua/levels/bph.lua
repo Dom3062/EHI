@@ -59,6 +59,12 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:GetHudlistAndListOption("right_list", "show_units") then
+    managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+    other[100995] = EHI:AddCustomCode(function(self)
+        managers.ehi_hudlist:CallRightListItemFunction("Unit", "IgnoreEnemyTurret") -- After opening the door and meeting up with Bain
+    end)
+end
 
 -- 101399 units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer/001 (2050, -10250, 639.67)
 EHI.Unit:UpdateUnits({ [101399] = { icons = { "C_Locke_H_HellsIsland_Another" }, hint = Hints.Wait } })

@@ -1,0 +1,455 @@
+{
+    "menu_id": "ehi_hudlist_right_list_unit_enemy_types_dozer_menu",
+    "parent_menu_id" : "ehi_hudlist_right_list_unit_enemy_types_menu",
+    "global_params": {
+        "settings" : [ "hudlist", "right_list", "unit_types" ]
+    },
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_hw_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_hw",
+            "description": "ehi_hudlist_right_list_unit_types_dozer_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_hw",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_dozer_count_hw_color_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_hw_pos_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_hw_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "dozer_hw"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_hw_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "dozer_count_hw_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_hw_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "dozer_hw"
+                    }
+                }
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_hw_choice"
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_hw_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "dozer_count_hw_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 5,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_hw_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_hw_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_hw_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_hw_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_medic_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_medic",
+            "description": "ehi_hudlist_right_list_unit_types_dozer_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_medic",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_dozer_count_medic_color_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_medic_pos_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_medic_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "dozer_medic"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_medic_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "dozer_count_medic_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_medic_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "dozer_medic"
+                    }
+                }
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_medic_choice"
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_medic_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "dozer_count_medic_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 6,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_medic_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_medic_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_medic_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_medic_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_mini_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_mini",
+            "description": "ehi_hudlist_right_list_unit_types_dozer_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_mini",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_dozer_count_mini_color_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_mini_pos_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_mini_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "dozer_mini"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_mini_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "dozer_count_mini_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_mini_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "dozer_mini"
+                    }
+                }
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_mini_choice"
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_mini_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "dozer_count_mini_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 7,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_mini_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_mini_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_mini_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_mini_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_skull_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_skull",
+            "description": "ehi_hudlist_right_list_unit_types_dozer_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_skull",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_dozer_count_skull_color_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_skull_pos_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_skull_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "dozer_skull"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_skull_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "dozer_count_skull_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_skull_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "dozer_skull"
+                    }
+                }
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_skull_choice"
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_skull_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "dozer_count_skull_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 8,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_skull_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_skull_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_skull_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_skull_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_black_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_black",
+            "description": "ehi_hudlist_right_list_unit_types_dozer_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_black",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_dozer_count_black_color_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_black_pos_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_black_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "dozer_black"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_black_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "dozer_count_black_color",
+            "default_value": {
+                "r": 128,
+                "g": 128,
+                "b": 128
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_black_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_black_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "dozer_black"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_black_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "dozer_count_black_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 9,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_black_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_black_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_black_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_black_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_green_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_green",
+            "description": "ehi_hudlist_right_list_unit_types_dozer_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_green",
+            "children": [
+                "ehi_hudlist_right_list_unit_types_dozer_count_green_color_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_green_pos_choice",
+                "ehi_hudlist_right_list_unit_types_dozer_count_green_persistent_choice"
+            ],
+            "default_value": true,
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "dozer_green"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_green_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "dozer_count_green_color",
+            "default_value": {
+                "r": 0,
+                "g": 255,
+                "b": 0
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_green_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_green_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "dozer_green"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_green_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "dozer_count_green_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 10,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_green_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_green_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_green_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_green_choice"
+        }
+    ]
+}

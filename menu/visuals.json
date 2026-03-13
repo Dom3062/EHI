@@ -1,7 +1,6 @@
 {
     "menu_id": "ehi_visuals_menu",
     "parent_menu_id": "ehi_menu",
-    "title": "ehi_visuals_menu",
     "items": [
         {
             "type": "toggle",
@@ -104,7 +103,8 @@
                 "ehi_tracker_hint_position_2"
             ],
             "value": "tracker_hint_position",
-            "default_value": 1
+            "default_value": 1,
+            "parent" : "ehi_show_tracker_hint_choice"
         }
     ]
 }

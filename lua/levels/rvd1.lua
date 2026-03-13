@@ -145,6 +145,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         managers.hud:remove_waypoint("EscapeWP") -- Removes EHI Escape WP once the van is ready, vanilla waypoints are dynamic based on how much secured loot you have
     end }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

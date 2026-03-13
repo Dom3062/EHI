@@ -1,7 +1,6 @@
 {
     "menu_id": "ehi_buffs_menu",
     "parent_menu_id" : "ehi_menu",
-    "title": "ehi_buffs_menu",
     "items": [
         {
             "vr" : [
@@ -170,6 +169,14 @@
                     "params": [ "InvertProgress" ]
                 }
             }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_hide_in_custody_choice",
+            "title": "ehi_buffs_hide_in_custody",
+            "callback": "ehi_set_item_value",
+            "value": "buffs_hide_in_custody",
+            "default_value": false
         },
         {
             "type": "toggle",

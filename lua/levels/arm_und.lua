@@ -51,6 +51,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[100216] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100008 } }
 end
 tweak_data.ehi.functions.achievements.armored_4()
+EHI.Unit:IgnoreCarryInHudlist(101237, 101238, 101239, 101240, 103835, 103836, 103837, 103838) -- 8x Money bundles under the map
 EHI.Mission:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,

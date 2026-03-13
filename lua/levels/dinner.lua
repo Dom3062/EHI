@@ -84,6 +84,7 @@ end)
 for i = 2850, 3050, 100 do
     other[EHI:GetInstanceElementID(100028, i)] = { special_function = CacheEscapePos, index = i }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

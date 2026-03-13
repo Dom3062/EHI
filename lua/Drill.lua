@@ -9,7 +9,7 @@
 ---@field is_saw boolean
 ---@field get_skill_upgrades fun(self: self): table
 
-if EHI:CheckLoadHook("Drill") or not EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
+if EHI:CheckLoadHook("Drill") then
     return
 end
 local highest_id = 0
@@ -25,6 +25,7 @@ local original = {}
 ---@param autorepair boolean
 local function SetAutorepair(unit_key, autorepair)
     managers.ehi_timer:SetAutorepair(unit_key, autorepair)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetAutorepair", unit_key, autorepair)
 end
 
 if EHI.IsHost then

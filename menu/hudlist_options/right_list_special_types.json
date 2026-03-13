@@ -1,0 +1,92 @@
+{
+    "menu_id": "ehi_hudlist_right_list_special_types_menu",
+    "parent_menu_id" : "ehi_hudlist_right_list_menu",
+    "global_params": {
+        "settings" : [ "hudlist", "right_list", "special_items_type" ]
+    },
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_special_types_small_loot_choice",
+            "title": "ehi_hudlist_right_list_special_types_small_loot",
+            "description": "ehi_hudlist_right_list_special_types_small_loot_desc",
+            "callback": "ehi_set_item_value",
+            "value": "small_loot",
+            "default_value": true
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_special_types_gage_packages_choice",
+            "title": "ehi_hudlist_right_list_special_types_gage_packages",
+            "callback": "ehi_set_item_value",
+            "value": "gage_packages",
+            "default_value": true
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_special_types_crowbar_choice",
+            "title": "ehi_hudlist_right_list_special_types_crowbar",
+            "callback": "ehi_set_item_value",
+            "value": "crowbar",
+            "default_value": true
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_special_types_keycard_choice",
+            "title": "ehi_hudlist_right_list_special_types_keycard",
+            "callback": "ehi_set_item_value",
+            "value": "keycard",
+            "default_value": true
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_special_types_planks_choice",
+            "title": "ehi_hudlist_right_list_special_types_planks",
+            "callback": "ehi_set_item_value",
+            "value": "planks",
+            "default_value": true
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_special_types_mission_equipment_choice",
+            "title": "ehi_hudlist_right_list_special_types_mission_equipment",
+            "description": "ehi_hudlist_right_list_special_types_mission_equipment_desc",
+            "callback": "ehi_set_item_value",
+            "value": "mission_equipment",
+            "default_value": true
+        },
+        {
+            "type": "divider",
+            "size": 10
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_special_types_collectables_choice",
+            "title": "ehi_hudlist_right_list_special_types_collectables",
+            "description": "ehi_hudlist_right_list_special_types_collectables_desc",
+            "callback": "ehi_set_item_value",
+            "value": "collectables",
+            "default_value": true
+        }
+    ]
+}

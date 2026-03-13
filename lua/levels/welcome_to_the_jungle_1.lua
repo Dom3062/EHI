@@ -17,6 +17,8 @@ local achievements =
         }
     }
 }
+EHI.Unit:IgnoreCarryInHudlist(100886, 100872) -- Money and gold behind abandoned factory (blocked entrance)
+EHI.Unit:IgnoreInteractInHudlist(100866, 100867, 100868) -- Gold bar, gold coins and jewelry (same place as above)
 
 EHI.Mission:ParseTriggers({
     achievement = achievements,
@@ -29,8 +31,8 @@ EHI:AddXPBreakdown({
         { amount = 6000, name = "twh_safe_open", times = 1 },
         { escape = {
             { amount = 6000, stealth = true, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() },
-            { amount = 6000, loud = true },
-        }}
+            { amount = 6000, loud = true }
+        } }
     },
     total_xp_override =
     {
@@ -43,7 +45,7 @@ EHI:AddXPBreakdown({
                     big_oil_intel_pickup = { min = 0, max = 3 },
                     twh_safe_open = { min_max = 1 }
                 },
-                bonus_xp = { min_max = 6000 }
+                escape = 6000
             }
         }
     }

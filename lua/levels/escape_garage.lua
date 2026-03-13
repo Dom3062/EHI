@@ -22,13 +22,14 @@ local other = {}
 if EHI.TrackerUtils:IsLootCounterVisible({ element = { 101999, 102000, 101442 } }) then
     other[104263] = EHI:AddLootCounter4(function(self, ...)
         if not self._cache.CreateCounter then
-            EHI:ShowLootCounterNoChecks({ skip_offset = true })
+            EHI:ShowLootCounterNoChecks({})
             self._cache.CreateCounter = true
         end
         self._loot:IncreaseLootCounterProgressMax()
     end, { element = { 101999, 102000, 101442 } })
 end
 
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 tweak_data.ehi.functions.achievements.armored_4()
 EHI.Mission:ParseTriggers({
     achievement = achievements,

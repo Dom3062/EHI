@@ -17,11 +17,11 @@ local original =
 ---@field _hud_mission_briefing HUDMissionBriefing
 ---@field _gui Gui VR
 ---@field _saferect Workspace
----@field PLAYER_PANEL number
+---@field PLAYER_PANEL integer
 ---@field add_waypoint fun(self: self, id: number|string, params: table)
 ---@field remove_waypoint fun(self: self, id: number|string)
 ---@field get_waypoint_data fun(self: self, id: number|string): Waypoint?
----@field add_updator fun(self: self, id: string, cb: function)
+---@field add_updator fun(self: self, id: string, cb: fun(t: number, dt: number))
 ---@field remove_updator fun(self: self, id: string)
 ---@field script fun(self: self, name: string): { panel: Panel }
 ---@field custom_ingame_popup_text fun(self: self, title: string?, text: string, icon_id: string?)

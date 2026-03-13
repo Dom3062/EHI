@@ -47,6 +47,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[102485] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[102480] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

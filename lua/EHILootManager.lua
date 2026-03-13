@@ -182,7 +182,7 @@ function EHILootManager:_create_waypoint_tracker(id, max)
             max = max,
             max_random = 0,
             max_xp_bags = 0,
-            class = "EHILootWaypoint"
+            class = EHI.Waypoints.LootCounter.Base
         })
         self:_adjust_waypoint()
         self._master:DispatchUpdate()
@@ -200,7 +200,6 @@ function EHILootManager:_adjust_master()
     end
     EHILootSharedMaster._loot = self
     EHILootSharedMaster._id = self._id
-    self._master:post_init()
 end
 
 function EHILootManager:_adjust_waypoint()

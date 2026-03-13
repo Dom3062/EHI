@@ -162,7 +162,7 @@ if not tweak_data.levels:IsStealthRequired() then
             UpdateTracker(key, 0, peer_id)
         end)
     end
-    if not tweak_data.levels:IsLevelSafehouse() and EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
+    if not tweak_data.levels:IsLevelSafehouse() and EHI:CanShowHostageCountTracker() and EHI:GetOptionAndLoadTracker("show_hostage_count_tracker") then
         local format_total = EHI:GetOption("hostage_count_tracker_format") == 1
         if EHI.IsHost then
             original.on_hostage_state = GroupAIStateBase.on_hostage_state

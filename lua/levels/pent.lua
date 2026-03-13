@@ -76,6 +76,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 local loot_triggers = {}
@@ -104,6 +105,7 @@ EHI:ShowLootCounter({
     triggers = loot_triggers
 }, { element = { 101958, 102013 } })
 
+EHI.Unit:IgnoreCarryInHudlist(500849, 500608) -- 2x un-baggable swords (artifacts) in the top
 EHI.Unit:UpdateUnits({
     --units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer
     [102452] = { f = function(unit_id, unit_data, unit) ---@param unit UnitDigitalTimer

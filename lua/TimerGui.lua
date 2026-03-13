@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("TimerGui") or not EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
+if EHI:CheckLoadHook("TimerGui") or not EHI:GetTrackerWaypointHudlistOption("show_timers", "show_waypoints_timers", "show_timers") then
     return
 end
 
@@ -20,7 +20,7 @@ end
 
 local Icon = EHI.Icons
 
-TimerGui.__EHI_SHOW_TRACKER, TimerGui.__EHI_SHOW_WAYPOINT = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
+TimerGui.__EHI_SHOW_TRACKER, TimerGui.__EHI_SHOW_WAYPOINT, TimerGui.__EHI_SHOW_HUDLIST = EHI:GetShowTrackerWaypointAndHudlist("show_timers", "show_waypoints_timers", "show_timers")
 ---@type { [string]: number|MissionDoorTable? }
 TimerGui._ehi_MissionDoor = {}
 TimerGui._ehi_MissionDoor_clbk = ListenerHolder:new()
@@ -46,7 +46,8 @@ local original =
 ---@param unit UnitTimer
 function TimerGui:init(unit, ...)
     original.init(self, unit, ...)
-    self._ehi_key = tostring(unit:key())
+    self._original_ehi_key = tostring(unit:key())
+    self._ehi_key = self._original_ehi_key
     local base = unit:base()
     local icon = base.is_drill and Icon.Drill or base.is_hacking_device and Icon.PCHack or base.is_saw and "pd2_generic_saw" or Icon.Wait
     self._ehi_icon = { { icon = icon } }
@@ -193,6 +194,16 @@ function TimerGui:_start(...)
         end
     end
     self:AddWaypoint(t, autorepair)
+    if self.__EHI_SHOW_HUDLIST then
+        local upgrades, skills = self:GetUpgrades()
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "AddTimer", {
+            id = self._original_ehi_key,
+            time = t,
+            icon = self._icons or self._ehi_icon[1].icon,
+            hint = self._ehi_hint,
+            timer_gui = self
+        })
+    end
     self:PostStartTimer()
 end
 
@@ -224,8 +235,10 @@ end
 Hooks:PreHook(TimerGui, "_set_jammed", "EHI_TimerGui_set_jammed", function(self, jammed, ...) ---@param jammed boolean
     if jammed == true and self._power_status_override then
         managers.ehi_timer:SetPowered(self._ehi_key, true)
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetPowered", self._original_ehi_key, true)
     end
     managers.ehi_timer:SetJammed(self._ehi_key, jammed)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetJammed", self._original_ehi_key, jammed)
 end)
 
 ---@param powered boolean
@@ -234,6 +247,7 @@ function TimerGui:_set_powered(powered, ...)
         self:RemoveTracker()
     end
     managers.ehi_timer:SetPowered(self._ehi_key, powered)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetPowered", self._original_ehi_key, powered)
     original._set_powered(self, powered, ...)
 end
 
@@ -270,6 +284,7 @@ function TimerGui:RemoveTracker(destroy)
         managers.ehi_timer:RemoveTimer(self._ehi_key)
     end
     self._ehi_MissionDoor_clbk:remove(self._ehi_key)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "RemoveTimer", self._original_ehi_key)
 end
 
 function TimerGui:OnAlarm()
@@ -319,6 +334,7 @@ function TimerGui:SetJammedStatusOverridePoweredStatus()
     self._power_status_override = true
     if self._started and self._jammed and not self._powered then
         managers.ehi_timer:SetPowered(self._ehi_key, true)
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetPowered", self._original_ehi_key, true)
     end
 end
 
@@ -392,6 +408,7 @@ end
 function TimerGui:SetHint(hint)
     self._ehi_hint = hint
     managers.ehi_tracker:UpdateHint(self._ehi_key, hint)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateHint", self._original_ehi_key, hint)
 end
 
 function TimerGui:Finalize()
@@ -400,6 +417,7 @@ function TimerGui:Finalize()
         return
     elseif self._icons then
         managers.ehi_tracking:SetIcon(self._ehi_key, self._icons[1])
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateIcon", self._original_ehi_key, self._icons[1])
 	end
     if self._started and not self._done and self._unit:mission_door_device() then
         self:PostStartTimer()

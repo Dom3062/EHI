@@ -214,6 +214,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101982] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101281 } }
     other[101128] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101454 } }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

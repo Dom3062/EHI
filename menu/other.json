@@ -1,7 +1,6 @@
 {
     "menu_id": "ehi_other_menu",
     "parent_menu_id" : "ehi_menu",
-    "title": "ehi_other_menu",
     "items": [
         {
             "type": "toggle",

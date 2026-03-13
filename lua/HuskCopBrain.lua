@@ -1,4 +1,4 @@
-if EHI:CheckLoadHook("HuskCopBrain") or EHI.IsHost or not (EHI:CanShowCivilianCountTracker() or EHI:GetTrackerOption("show_hostage_count_tracker")) or (EHI:GetOption("civilian_count_tracker_format") == 1 and EHI:GetOption("hostage_count_tracker_format") == 1) then
+if EHI:CheckLoadHook("HuskCopBrain") or EHI.IsHost or not (EHI:CanShowCivilianCountTracker() or EHI:CanShowHostageCountTracker() or EHI:GetTrackerOption("show_hostage_count_tracker")) or (EHI:GetOption("civilian_count_tracker_format") == 1 and EHI:GetOption("hostage_count_tracker_format") == 1) then
     return
 end
 

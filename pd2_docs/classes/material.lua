@@ -32,7 +32,9 @@ function Material:set_render_template(...) end
 
 function Material:set_time(...) end
 
-function Material:set_variable(...) end
+---@param material_name Idstring
+---@param value any
+function Material:set_variable(material_name, value) end
 
 function Material:stop(...) end
 

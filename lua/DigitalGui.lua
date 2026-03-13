@@ -1,5 +1,5 @@
 local EHI = EHI
-if EHI:CheckLoadHook("DigitalGui") or not EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
+if EHI:CheckLoadHook("DigitalGui") or not EHI:GetTrackerWaypointHudlistOption("show_timers", "show_waypoints_timers", "show_timers") then
     return
 end
 
@@ -13,7 +13,7 @@ end
 
 local Icon = EHI.Icons
 
-DigitalGui.__EHI_SHOW_TRACKER, DigitalGui.__EHI_SHOW_WAYPOINT = EHI:GetShowTrackerAndWaypoint("show_timers", "show_waypoints_timers")
+DigitalGui.__EHI_SHOW_TRACKER, DigitalGui.__EHI_SHOW_WAYPOINT, DigitalGui.__EHI_SHOW_HUDLIST = EHI:GetShowTrackerWaypointAndHudlist("show_timers", "show_waypoints_timers", "show_timers")
 
 local original =
 {
@@ -73,6 +73,14 @@ function DigitalGui:TimerStartCountDown()
             class = "EHITimerWaypoint"
         })
     end
+    if self.__EHI_SHOW_HUDLIST then
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "AddTimer", {
+            id = self._ehi_key,
+            time = self._timer,
+            icon = self._icons or Icon.PCHack,
+            hint = self._ehi_hint or "timelock"
+        })
+    end
     self:HideWaypoint()
 end
 
@@ -98,8 +106,8 @@ if level_id == "shoutout_raid" then
             if self.__EHI_SHOW_TRACKER then
                 managers.ehi_tracker:AddTracker({
                     id = self._ehi_key,
-                    class = "EHIVaultTemperatureTracker",
-                    hint = "timer"
+                    hint = "timer",
+                    class = "EHIVaultTemperatureTracker"
                 })
             end
             if self.__EHI_SHOW_WAYPOINT then
@@ -110,14 +118,37 @@ if level_id == "shoutout_raid" then
                     class = "EHIVaultTemperatureWaypoint"
                 })
             end
+            if self.__EHI_SHOW_HUDLIST then
+                managers.ehi_hudlist:CallLeftListItemFunction("Timer", "AddVaultTimer", self._ehi_key)
+            end
         end
         old_time = timer
-        managers.ehi_tracking:Call(self._ehi_key, "CheckTime", math.ehi_round(timer, 0.1))
+        local t = math.ehi_round(timer, 0.1)
+        managers.ehi_tracking:Call(self._ehi_key, "CheckTime", t)
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "CheckTime", self._ehi_key, t)
     end
 else
-    if DigitalGui.__EHI_SHOW_TRACKER and DigitalGui.__EHI_SHOW_WAYPOINT then
+    if DigitalGui.__EHI_SHOW_TRACKER and DigitalGui.__EHI_SHOW_WAYPOINT and DigitalGui.__EHI_SHOW_HUDLIST then
         function DigitalGui:_update_timer_text(...)
             managers.ehi_timer:UpdateTimer(self._ehi_key, self._timer)
+            managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateTimer", self._ehi_key, self._timer)
+            original._update_timer_text(self, ...)
+        end
+    elseif DigitalGui.__EHI_SHOW_TRACKER and DigitalGui.__EHI_SHOW_WAYPOINT then
+        function DigitalGui:_update_timer_text(...)
+            managers.ehi_timer:UpdateTimer(self._ehi_key, self._timer)
+            original._update_timer_text(self, ...)
+        end
+    elseif DigitalGui.__EHI_SHOW_TRACKER and DigitalGui.__EHI_SHOW_HUDLIST then
+        function DigitalGui:_update_timer_text(...)
+            managers.ehi_timer:SetTimerTime(self._ehi_key, self._timer)
+            managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateTimer", self._ehi_key, self._timer)
+            original._update_timer_text(self, ...)
+        end
+    elseif DigitalGui.__EHI_SHOW_WAYPOINT and DigitalGui.__EHI_SHOW_HUDLIST then
+        function DigitalGui:_update_timer_text(...)
+            managers.ehi_waypoint:SetTime(self._ehi_key, self._timer)
+            managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateTimer", self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     elseif DigitalGui.__EHI_SHOW_WAYPOINT then
@@ -125,9 +156,14 @@ else
             managers.ehi_waypoint:SetTime(self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
-    else
+    elseif DigitalGui.__EHI_SHOW_TRACKER then
         function DigitalGui:_update_timer_text(...)
             managers.ehi_timer:SetTimerTime(self._ehi_key, self._timer)
+            original._update_timer_text(self, ...)
+        end
+    else
+        function DigitalGui:_update_timer_text(...)
+            managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateTimer", self._ehi_key, self._timer)
             original._update_timer_text(self, ...)
         end
     end
@@ -136,6 +172,7 @@ else
         original.timer_set(self, timer, ...)
         managers.ehi_timer:SetTimerTime(self._ehi_key, timer)
         managers.ehi_waypoint:SetTime(self._ehi_key, timer)
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateTimer", self._ehi_key, timer)
     end
 end
 
@@ -164,8 +201,10 @@ else
             self:RemoveTracker()
         else
             managers.ehi_timer:SetJammed(self._ehi_key, true)
+            managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetJammed", self._ehi_key, true)
             if self._icon_on_pause then
                 managers.ehi_tracking:SetIcon(self._ehi_key, self._icon_on_pause)
+                managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateIcon", self._ehi_key, self._icon_on_pause)
             end
         end
     end
@@ -174,6 +213,7 @@ end
 function DigitalGui:timer_resume(...)
     original.timer_resume(self, ...)
     managers.ehi_timer:SetJammed(self._ehi_key, false)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetJammed", self._ehi_key, false)
 end
 
 function DigitalGui:_timer_stop(...)
@@ -193,6 +233,7 @@ end
 
 function DigitalGui:RemoveTracker()
     managers.ehi_timer:RemoveTimer(self._ehi_key)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "RemoveTimer", self._ehi_key)
 end
 
 ---@param data table
@@ -277,6 +318,7 @@ end
 function DigitalGui:SetHint(hint)
     self._ehi_hint = hint
     managers.ehi_tracker:UpdateHint(self._ehi_key, hint)
+    managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateHint", self._ehi_key, hint)
 end
 
 function DigitalGui:SetIgnoreWaypoint()
@@ -289,7 +331,9 @@ function DigitalGui:Finalize()
         self:RemoveTracker()
     elseif self._icon_on_pause and self._timer_paused then
         managers.ehi_tracking:SetIcon(self._ehi_key, self._icon_on_pause)
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateIcon", self._ehi_key, self._icon_on_pause)
     elseif self._icons then
         managers.ehi_tracking:SetIcon(self._ehi_key, self._icons[1])
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateIcon", self._ehi_key, self._icons[1])
     end
 end

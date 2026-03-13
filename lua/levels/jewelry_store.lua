@@ -62,6 +62,7 @@ if EHI:IsLootCounterVisible() then
         self._loot:RandomLootSpawned(2)
     end)
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 ---@type ParseAchievementTable
 local achievements =
@@ -79,6 +80,7 @@ local achievements =
     }
 }
 tweak_data.ehi.functions.achievements.eng_X("eng_1") -- "The only one that is true" achievement
+EHI.Unit:IgnoreCarryInHudlist(102052, 102402) -- 2x money under the ground
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

@@ -3,6 +3,12 @@
 EHINeededValueTracker = class(EHIProgressTracker)
 function EHINeededValueTracker:pre_init(params)
     EHINeededValueTracker.super.pre_init(self, params)
+    if params.small_loot_listener then
+        managers.ehi_loot:AddSmallLootListener(params.id, function(amount)
+            self:IncreaseProgress(amount)
+        end)
+        self._remove_small_loot_listener = true
+    end
     if params.short_format then
         self.FormatNumber = self.FormatNumberShort
         self._cash_sign = managers.localization:text("cash_sign")
@@ -55,10 +61,21 @@ function EHINeededValueTracker:SetProgress(progress)
     end
 end
 
+function EHINeededValueTracker:Completed()
+    if self._remove_small_loot_listener then
+        managers.ehi_loot:RemoveSmallLootListener(self._id)
+        self._remove_small_loot_listener = nil
+    end
+end
+
 function EHINeededValueTracker:RemoveTrackerIfProgressNotMet()
     if self._progress < self._max then
         self:delete()
         return true
     end
+end
+
+function EHINeededValueTracker:pre_destroy()
+    self:Completed()
 end
 EHINeededValueTracker.FormatProgress = EHINeededValueTracker.Format

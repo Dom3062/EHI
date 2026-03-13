@@ -108,6 +108,9 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103181] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 103192 } }
     other[101770] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 101776 } }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.Unit:IgnoreInteractInHudlist(100033, 100034) -- 2 necklaces under the map
+EHI.Unit:IgnoreCarryInHudlist(101514, 102052, 102402) -- 3x money under the ground
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

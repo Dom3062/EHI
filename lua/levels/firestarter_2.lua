@@ -62,10 +62,10 @@ if EHI:IsLootCounterVisible() then
             self._loot:IncreaseLootCounterProgress() -- Server secured
         end
     end) }
+    local max = EHI:IsMayhemOrAbove() and 2 or 1
+    local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
     other[107124] = EHI:AddLootCounter2(function()
         local ef = tweak_data.ehi.functions
-        local max = EHI:IsMayhemOrAbove() and 2 or 1
-        local goat = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) and 1 or 0
         local random_loot = ef.GetNumberOfVisibleWeapons(Weapons) + ef.GetNumberOfVisibleOtherLoot(OtherLoot)
         EHI:ShowLootCounterNoChecks({
             max = max + random_loot + goat,
@@ -76,7 +76,12 @@ if EHI:IsLootCounterVisible() then
             },
             hook_triggers = true
         })
-    end, { element = 105191, 102971 })
+    end, { element = { 105191, 102971 } }, function(self)
+        local fence_door = managers.worlddefinition:get_unit(102077)
+        if fence_door and fence_door:body("hitbox"):enabled() then -- If the metal fence in the evidence room is not opened, show loot counter
+            self:Trigger()
+        end
+    end)
 end
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local class = EHI.TrackerUtils:EnableSniperClassTracking(TT.Sniper.TimedCountOnce, TT.Sniper.Warning)
@@ -93,6 +98,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         other[105718] = EHI:ClientCopyTrigger(other[105717], { time = 120 }, true)
     end
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.Unit:IgnoreInteractInHudlist(107208) -- Keycard out of the playable area, near main room area (with a lot of displays)
 
 EHI.Mission:ParseTriggers({
     achievement = achievement,

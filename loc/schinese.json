@@ -209,10 +209,9 @@
     "ehi_hint_sand_revive" : "救治概率",
     "ehi_hint_sand_heli_turret_timer" : "直升机炮塔计时",
     "ehi_hint_trai_crane" : "起重机断开概率",
-    "ehi_hint_trat_loco_start" : "机车启动概率",
+    "ehi_hint_trai_loco_start" : "机车启动概率",
     "ehi_hint_vit_teargas" : "催泪弹概率",
     
-    "ehi_button_ok" : "确认",
     "ehi_color_reset" : "重置颜色",
 
     "ehi_preview" : "预览 (重启劫案以应用更改)\n带有红色角标的窗口为第一个追踪器出现的位置",

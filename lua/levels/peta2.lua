@@ -107,6 +107,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100007, 8400)] = trigger
     other[EHI:GetInstanceElementID(100007, 8550)] = trigger
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

@@ -1,0 +1,1182 @@
+{
+    "menu_id": "ehi_hudlist_right_list_unit_types_menu",
+    "parent_menu_id" : "ehi_hudlist_right_list_menu",
+    "global_params": {
+        "settings" : [ "hudlist", "right_list", "unit_types" ]
+    },
+    "items": [
+        {
+            "type": "button",
+            "id": "ehi_hudlist_right_list_unit_types_set_aggregated_choice",
+            "title": "ehi_hudlist_right_list_unit_types_set_aggregated",
+            "description": "ehi_hudlist_right_list_unit_types_set_aggregated_desc",
+            "callback": "ehi_right_list_units_set_aggregated"
+        },
+        {
+            "type": "button",
+            "id": "ehi_hudlist_right_list_unit_types_set_all_units_choice",
+            "title": "ehi_hudlist_right_list_unit_types_set_all_units",
+            "description": "ehi_hudlist_right_list_unit_types_set_all_units_desc",
+            "callback": "ehi_right_list_units_set_all_units"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_regular_color_choice",
+            "title": "ehi_other_show_floating_health_bar_regular_enemies",
+            "value": "regular_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "regular_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "regular"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_regular_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "regular_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 1
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_converts_count_choice",
+            "title": "ehi_other_show_floating_health_bar_converts",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "converts_count",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_converts_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_converts_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_converts_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "converts"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_converts_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "converts_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_converts_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "converts_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "converts"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_converts_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "converts_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 2,
+            "parent": "ehi_hudlist_right_list_unit_types_converts_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_converts_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "converts_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_converts_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_enemy_tied_count_choice",
+            "title": "ehi_hudlist_right_list_unit_types_enemy_tied_count",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "enemy_tied_count",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_enemy_tied_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_enemy_tied_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_enemy_tied_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "enemy_tied"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_enemy_tied_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "enemy_tied_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_enemy_tied_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "enemy_tied_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "converts"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_enemy_tied_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "enemy_tied_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 3,
+            "parent": "ehi_hudlist_right_list_unit_types_enemy_tied_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_enemy_tied_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "enemy_tied_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_enemy_tied_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_tank",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count",
+            "default_value": false,
+            "child": "ehi_hudlist_right_list_unit_types_dozer_count_separate_choice",
+            "children_f": {
+                "ehi_hudlist_right_list_unit_types_dozer_count_color_choice" : "ehi_right_list_units_dozer_count_1",
+                "ehi_hudlist_right_list_unit_types_dozer_count_pos_choice" : "ehi_right_list_units_dozer_count_1",
+                "ehi_hudlist_right_list_unit_types_dozer_count_persistent_choice" : "ehi_right_list_units_dozer_count_1",
+                "ehi_hudlist_right_list_unit_types_dozer_count_separate_menu_choice" : "ehi_right_list_units_dozer_count_2"
+            },
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetDozerItemEnabled"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "dozer_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "dozer"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "dozer_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 4
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_persistent",
+            "default_value": false
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_separate_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_separate",
+            "callback": "ehi_set_item_value",
+            "value": "dozer_count_separate",
+            "default_value": true,
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_choice",
+            "child": "ehi_hudlist_right_list_unit_types_dozer_count_separate_menu_choice",
+            "other_items_compare" : {
+                "ehi_hudlist_right_list_unit_types_dozer_count_color_choice" : {
+                    "comparator": "<>",
+                    "value": true
+                },
+                "ehi_hudlist_right_list_unit_types_dozer_count_pos_choice" : {
+                    "comparator": "<>",
+                    "value": true
+                },
+                "ehi_hudlist_right_list_unit_types_dozer_count_persistent_choice": {
+                    "comparator": "<>",
+                    "value": true
+                }
+            },
+            "child_compare": {
+                "ehi_hudlist_right_list_unit_types_dozer_count_color_choice": {
+                    "comparator": "<>",
+                    "value": true
+                },
+                "ehi_hudlist_right_list_unit_types_dozer_count_pos_choice" : {
+                    "comparator": "<>",
+                    "value": true
+                },
+                "ehi_hudlist_right_list_unit_types_dozer_count_persistent_choice": {
+                    "comparator": "<>",
+                    "value": true
+                }
+            },
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetDozerCountSeparate"
+                    }
+                }
+            }
+        },
+        {
+            "type": "button",
+            "id": "ehi_hudlist_right_list_unit_types_dozer_count_separate_menu_choice",
+            "title": "ehi_hudlist_right_list_unit_types_dozer_count_separate_menu",
+            "next_menu": "ehi_hudlist_right_list_unit_enemy_types_dozer_menu",
+            "parent": "ehi_hudlist_right_list_unit_types_dozer_count_separate_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_sniper_count_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_sniper",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "sniper_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_sniper_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_sniper_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_sniper_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "sniper"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_sniper_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "sniper_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_sniper_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "sniper_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "sniper"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_sniper_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "sniper_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 11,
+            "parent": "ehi_hudlist_right_list_unit_types_sniper_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_sniper_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "sniper_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_sniper_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice",
+            "title": "ehi_hudlist_right_list_unit_types_marshal_sniper_count",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "marshal_sniper_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_marshal_sniper_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_marshal_sniper_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_marshal_sniper_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "marshal_sniper"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "marshal_sniper_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "marshal_sniper_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "marshal_sniper"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "marshal_sniper_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 12,
+            "parent": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "marshal_sniper_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_taser_count_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_taser",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "taser_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_taser_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_taser_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_taser_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "taser"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_taser_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "taser_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_taser_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "taser_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "taser"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_taser_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "taser_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 13,
+            "parent": "ehi_hudlist_right_list_unit_types_taser_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_taser_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "taser_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_taser_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_medic_count_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_medic",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "medic_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_medic_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_medic_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_medic_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "medic"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_medic_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "medic_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_medic_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "medic_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "medic"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_medic_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "medic_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 14,
+            "parent": "ehi_hudlist_right_list_unit_types_medic_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_medic_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "medic_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_medic_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_cloaker_count_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_cloaker",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "cloaker_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_cloaker_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_cloaker_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_cloaker_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "cloaker"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_cloaker_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "cloaker_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_cloaker_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "cloaker_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "cloaker"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_cloaker_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "cloaker_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 15,
+            "parent": "ehi_hudlist_right_list_unit_types_cloaker_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_cloaker_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "cloaker_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_cloaker_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_shield_count_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_shield",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "shield_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_shield_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_shield_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_shield_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "shield"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_shield_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "shield_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_shield_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "shield_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "shield"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_shield_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "shield_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 16,
+            "parent": "ehi_hudlist_right_list_unit_types_shield_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_shield_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "shield_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_shield_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_shield_count_choice",
+            "title": "ehi_hudlist_right_list_unit_types_marshal_shield_count",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "marshal_shield_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_marshal_shield_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_marshal_shield_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_marshal_shield_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "marshal_shield"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_shield_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "marshal_shield_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_marshal_shield_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "marshal_shield_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "marshal_shield"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_shield_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "marshal_shield_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 17,
+            "parent": "ehi_hudlist_right_list_unit_types_marshal_shield_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_marshal_shield_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "marshal_shield_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_marshal_shield_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_captain_count_choice",
+            "title": "ehi_hudlist_right_list_unit_types_captain_count",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "captain_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_captain_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_captain_count_pos_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "captain"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_captain_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "captain_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_captain_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "captain_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "captain"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_captain_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "captain_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 18,
+            "parent": "ehi_hudlist_right_list_unit_types_captain_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_phalanx_count_choice",
+            "title": "ehi_hudlist_right_list_unit_types_phalanx_count",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "phalanx_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_phalanx_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_phalanx_count_pos_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "phalanx"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_phalanx_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "phalanx_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_phalanx_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "phalanx_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "phalanx"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_phalanx_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "phalanx_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 19,
+            "parent": "ehi_hudlist_right_list_unit_types_phalanx_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_turret_count_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_turret",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "turret_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_turret_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_turret_count_pos_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "turret"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_turret_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "turret_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_turret_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "turret_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "turret"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_turret_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "turret_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 20,
+            "parent": "ehi_hudlist_right_list_unit_types_turret_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_civilian_count_choice",
+            "title": "ehi_other_show_floating_health_bar_civilians",
+            "callback": "ehi_set_item_value",
+            "value": "civilian_count",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_civilian_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_civilian_count_pos_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "civilians"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_civilian_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "civilian_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_civilian_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "civilian_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "civilians"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_civilian_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "civilian_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 21,
+            "parent": "ehi_hudlist_right_list_unit_types_civilian_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_civilian_tied_count_choice",
+            "title": "ehi_hudlist_right_list_unit_types_civilians_tied_count",
+            "callback": "ehi_set_item_value",
+            "value": "civilian_tied_count",
+            "default_value": true,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_civilian_tied_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_civilian_tied_count_pos_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "civilians_tied"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_civilian_tied_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "civilian_tied_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_civilian_tied_count_choice",
+            "params": {
+                "settings" : [ "hudlist", "right_list", "unit_types", "civilian_tied_count_color" ],
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "civilians_tied"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_civilian_tied_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "civilian_tied_count_pos",
+            "min": 1,
+            "max": 21,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 22,
+            "parent": "ehi_hudlist_right_list_unit_types_civilian_tied_count_choice"
+        }
+    ]
+}

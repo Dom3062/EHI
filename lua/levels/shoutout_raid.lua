@@ -44,6 +44,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 20 + 60 })
 }
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     other = other,

@@ -101,6 +101,7 @@ if EHI:IsLootCounterVisible() then
         other[i] = { special_function = SF.CustomCodeIfEnabled, f = LootDespawned, trigger_once = true }
     end
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

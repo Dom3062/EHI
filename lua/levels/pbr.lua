@@ -75,6 +75,42 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end) }
     other[EHI:GetInstanceElementID(100021, 10950)] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+other[101139] = EHI.TrackerUtils.Deployables:AddDeployablesIgnoreCheck({
+    shapes = { 100965 },
+    element_area_id = 100965 -- ´kill_ai_trigger´ ElementAreaTrigger 100965
+})
+if EHI:GetHudlistAndListOption("right_list", "show_units") then
+    other[100968] = EHI:AddCustomCode(function(self)
+        managers.ehi_hudlist:CallRightListItemFunction("Unit", "IgnoreEnemyTurret") -- Inside the airlock
+    end)
+end
+if EHI:GetHudlistAndListOption("right_list", "show_loot") then
+    -- Disables green crates as potentional loot, crates on top are still counted as they have loot
+    -- Start area (find breaching charges and tools)
+    local tbl = {}
+    local f = { f = "IgnorePotentionalCarry" }
+    for i = 20550, 21450, 100 do
+        tbl[EHI:GetInstanceUnitID(100008, i)] = f
+    end
+    for i = 21750, 22150, 100 do
+        tbl[EHI:GetInstanceUnitID(100008, i)] = f
+    end
+    tbl[EHI:GetInstanceUnitID(100008, 1150)] = f
+    tbl[EHI:GetInstanceUnitID(100008, 1250)] = f
+    tbl[EHI:GetInstanceUnitID(100008, 1700)] = f
+    tbl[EHI:GetInstanceUnitID(100008, 1800)] = f
+    tbl[EHI:GetInstanceUnitID(100008, 25800)] = f
+    tbl[EHI:GetInstanceUnitID(100008, 25900)] = f
+    -- Vaults (find prototype)
+    local vault_crates = { 100032, 100034, 100035, 100239, 100244, 100245 }
+    for i = 17050, 19550, 500 do
+        for _, crate in ipairs(vault_crates) do
+            tbl[EHI:GetInstanceUnitID(crate, i)] = f
+        end
+    end
+    EHI.Unit:UpdateHudlistUnitsNoCheck(tbl)
+end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

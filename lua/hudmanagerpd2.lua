@@ -119,6 +119,9 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
                 remove_on_alarm = true,
                 class = EHI.Trackers.Counter
             })
+            Hooks:PostHook(PlayerManager, "_set_body_bags_amount", "EHI_PlayerManager_set_body_bags_amount", function(self, ...)
+                trackers:SetCount("BodybagsCounter", self._local_player_body_bags)
+            end)
         end
     end
     if EHI:GetOption("show_floating_health_bar") then

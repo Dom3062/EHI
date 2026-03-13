@@ -23,8 +23,7 @@ end) then
             {
                 loot = true,
                 no_loot = true
-            },
-            skip_offset = true
+            }
         })
     end, { element = 104445 })
     for i = 103715, 103724, 1 do
@@ -49,6 +48,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end)}
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     other = other

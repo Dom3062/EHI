@@ -177,7 +177,7 @@ function EHITradeManager:CallFunction(f, ...)
     managers.ehi_tracker:CallFunction(self._id, f, ...)
 end
 
-EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+EHI.ModUtils:AddCustomNameColorSyncCallback("EHITradeManager", function(peer_id, color)
     EHITradeManager:CallFunction("UpdateTextPeerColor", peer_id, color)
 end)
 

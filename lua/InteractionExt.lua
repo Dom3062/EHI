@@ -3,9 +3,9 @@ if EHI:CheckLoadHook("InteractionExt") then
     return
 end
 
-if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager") then
+if EHI:GetTrackerWaypointHudlistOption("show_pager_callback", "show_waypoints_pager", "show_enemy_pagers") then
     local answered_behavior = EHI:GetOption("show_pager_callback_answered_behavior") --[[@as 1|2]]
-    local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_pager_callback", "show_waypoints_pager")
+    local show_tracker, show_waypoint, show_hudlist = EHI:GetShowTrackerWaypointAndHudlist("show_pager_callback", "show_waypoints_pager", "show_enemy_pagers")
     if show_tracker then
         ---@class EHIPagerTracker : EHIWarningTracker
         ---@field super EHIWarningTracker
@@ -52,6 +52,9 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
                     class = "EHIPagerWaypoint"
                 })
             end
+            if show_hudlist then
+                managers.ehi_hudlist:CallLeftListItemFunction("Pager", "AddPager", self._ehi_key)
+            end
             self.__ehi_pager_has_run = true
         end
     end)
@@ -59,6 +62,7 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
     Hooks:PreHook(IntimitateInteractionExt, "interact", "EHI_pager_interact", function(self, ...)
         if self.tweak_data == "corpse_alarm_pager" then
             managers.ehi_tracking:Remove(self._ehi_key)
+            managers.ehi_hudlist:CallLeftListItemFunction("Pager", "RemovePager", self._ehi_key)
         end
     end)
 
@@ -66,8 +70,10 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
         if self.tweak_data == "corpse_alarm_pager" then
             if answered_behavior == 1 then
                 managers.ehi_tracking:Call(self._ehi_key, "SetAnswered")
+                managers.ehi_hudlist:CallLeftListItemFunction("Pager", "SetAnswered", self._ehi_key)
             else
                 managers.ehi_tracking:Remove(self._ehi_key)
+                managers.ehi_hudlist:CallLeftListItemFunction("Pager", "RemovePager", self._ehi_key)
             end
         end
     end)
@@ -77,11 +83,14 @@ if EHI:GetTrackerOrWaypointOption("show_pager_callback", "show_waypoints_pager")
             if status == "started" or status == 1 then
                 if answered_behavior == 1 then
                     managers.ehi_tracking:Call(self._ehi_key, "SetAnswered")
+                    managers.ehi_hudlist:CallLeftListItemFunction("Pager", "SetAnswered", self._ehi_key)
                 else
                     managers.ehi_tracking:Remove(self._ehi_key)
+                    managers.ehi_hudlist:CallLeftListItemFunction("Pager", "RemovePager", self._ehi_key)
                 end
             else -- complete or interrupted
                 managers.ehi_tracking:Remove(self._ehi_key)
+                managers.ehi_hudlist:CallLeftListItemFunction("Pager", "RemovePager", self._ehi_key)
             end
         end
     end)
@@ -115,7 +124,7 @@ if EHI:GetOption("show_enemy_count_tracker") and EHI:GetOption("show_enemy_count
             self._unit:character_damage():add_listener(CallbackKey, { "death" }, PagerEnemyKilled)
         end
     end)
-    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_EnemyCounter_pager_sync_interacted", function(self, peer, player, status, ...)
+    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_EnemyCounter_pager_sync_interacted", function(self, peer, player, status, ...) ---@param status string|number
         if self.tweak_data == "corpse_alarm_pager" and (status == "started" or status == 1) and not self._unit:character_damage():dead() then
             managers.ehi_tracker:CallFunction(Tracker, "AlarmEnemyPagerAnswered")
             self._unit:base():add_destroy_listener(CallbackKey, PagerEnemyDestroyed)

@@ -1,43 +1,953 @@
-{
-    "menu_id": "ehi_buffs_skills_menu",
-    "parent_menu_id" : "ehi_buffs_menu",
-    "title": "ehi_buffs_skills_menu",
-    "items": [
-        {
-            "type": "button",
-            "id": "ehi_buffs_skills_mastermind_menu",
-            "title": "ehi_buffs_skills_mastermind_menu",
-            "next_menu": "ehi_buffs_skills_mastermind_menu"
+[
+    {
+        "menu_id": "ehi_buffs_skills_menu",
+        "parent_menu_id" : "ehi_buffs_menu",
+        "items": [
+            {
+                "type": "button",
+                "id": "ehi_buffs_skills_mastermind_menu",
+                "title": "ehi_buffs_skills_mastermind_menu",
+                "next_menu": "ehi_buffs_skills_mastermind_menu"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_skills_enforcer_menu",
+                "title": "ehi_buffs_skills_enforcer_menu",
+                "next_menu": "ehi_buffs_skills_enforcer_menu"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_skills_ghost_menu",
+                "title": "ehi_buffs_skills_ghost_menu",
+                "next_menu": "ehi_buffs_skills_ghost_menu"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_skills_fugitive_menu",
+                "title": "ehi_buffs_skills_fugitive_menu",
+                "next_menu": "ehi_buffs_skills_fugitive_menu"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_skills_mastermind_menu",
+        "parent_menu_id" : "ehi_buffs_skills_menu",
+        "global_params": {
+            "setting": "buff_option"
         },
-        {
-            "type": "divider",
-            "size": 20
+        "items": [
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_mastermind_medic_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_basic_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_basic",
+                "description": "ehi_buffs_skills_mastermind_inspire_basic_desc",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_basic",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_inspire_basic_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_basic_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_basic_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_basic_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_inspire_basic_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_ace_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_ace",
+                "description": "ehi_buffs_skills_mastermind_inspire_ace_desc",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_ace",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_inspire_ace_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_ace_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_ace_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_ace_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_inspire_ace_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_reload_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_reload",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_reload",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_inspire_reload_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_reload_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_reload_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_reload_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_inspire_reload_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_movement_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_movement",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_movement",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_inspire_movement_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_inspire_movement_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_inspire_movement_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "inspire_movement_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_inspire_movement_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_uppers_choice",
+                "title": "ehi_buffs_skills_mastermind_uppers",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "uppers",
+                "child" : "ehi_buffs_skills_mastermind_uppers_persistent_choice",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_uppers_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_uppers_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "uppers_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_uppers_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_uppers_range_choice",
+                "title": "ehi_buffs_skills_mastermind_uppers_range",
+                "description": "ehi_buffs_skills_mastermind_uppers_range_desc",
+                "callback": "ehi_set_item_value",
+                "value": "uppers_range",
+                "children" : [ "ehi_buffs_skills_mastermind_uppers_range_refresh_choice", "ehi_buffs_skills_mastermind_uppers_range_persistent_choice" ],
+                "default_value": true
+            },
+            {
+                "type": "slider",
+                "id": "ehi_buffs_skills_mastermind_uppers_range_refresh_choice",
+                "title": "ehi_buffs_skills_mastermind_uppers_range_refresh",
+                "description": "ehi_buffs_skills_mastermind_uppers_range_refresh_desc",
+                "callback": "ehi_set_item_value",
+                "value": "uppers_range_refresh",
+                "parent" : "ehi_buffs_skills_mastermind_uppers_range_choice",
+                "default_value": 2,
+                "max": 10,
+                "min": 1,
+                "step": 1,
+                "display_precision" : 0
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_uppers_range_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_uppers_range_persistent",
+                "description": "ehi_buffs_skills_mastermind_uppers_range_persistent_desc",
+                "callback": "ehi_set_item_value",
+                "value": "uppers_range_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_uppers_range_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_quick_fix_choice",
+                "title": "ehi_buffs_skills_mastermind_quick_fix",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "quick_fix",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_quick_fix_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_quick_fix_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_quick_fix_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "quick_fix_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_quick_fix_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_painkillers_choice",
+                "title": "ehi_buffs_skills_mastermind_painkillers",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "painkillers",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_painkillers_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_painkillers_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_painkillers_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "painkillers_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_painkillers_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_combat_medic_choice",
+                "title": "ehi_buffs_skills_mastermind_combat_medic",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "combat_medic",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_combat_medic_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_combat_medic_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_combat_medic_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "combat_medic_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_combat_medic_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_mastermind_controller_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_forced_friendship_choice",
+                "title": "ehi_buffs_skills_mastermind_forced_friendship",
+                "description": "ehi_buffs_skills_mastermind_forced_friendship_desc",
+                "callback": "ehi_set_item_value",
+                "value": "forced_friendship",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_forced_friendship_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_forced_friendship_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_forced_friendship_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "forced_friendship_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_forced_friendship_choice"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_mastermind_sharpshooter_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_ammo_efficiency_choice",
+                "title": "ehi_buffs_skills_mastermind_ammo_efficiency",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "ammo_efficiency",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_ammo_efficiency_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_ammo_efficiency_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_ammo_efficiency_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "ammo_efficiency_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_ammo_efficiency_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_aggressive_reload_choice",
+                "title": "ehi_buffs_skills_mastermind_aggressive_reload",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "aggressive_reload",
+                "default_value": true,
+                "child": "ehi_buffs_skills_mastermind_aggressive_reload_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_mastermind_aggressive_reload_persistent_choice",
+                "title": "ehi_buffs_skills_mastermind_aggressive_reload_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "aggressive_reload_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_mastermind_aggressive_reload_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_skills_enforcer_menu",
+        "parent_menu_id" : "ehi_buffs_skills_menu",
+        "global_params": {
+            "setting": "buff_option"
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_skills_enforcer_menu",
-            "title": "ehi_buffs_skills_enforcer_menu",
-            "next_menu": "ehi_buffs_skills_enforcer_menu"
+        "items": [
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_enforcer_shotgunner_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_overkill_choice",
+                "title": "ehi_buffs_skills_enforcer_overkill",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "overkill",
+                "default_value": true,
+                "child": "ehi_buffs_skills_enforcer_overkill_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_overkill_persistent_choice",
+                "title": "ehi_buffs_skills_enforcer_overkill_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "overkill_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_enforcer_overkill_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_underdog_choice",
+                "title": "ehi_buffs_skills_enforcer_underdog",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "underdog",
+                "default_value": true,
+                "child": "ehi_buffs_skills_enforcer_underdog_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_underdog_persistent_choice",
+                "title": "ehi_buffs_skills_enforcer_underdog_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "underdog_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_enforcer_underdog_choice"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_enforcer_tank_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_bullseye_choice",
+                "title": "ehi_buffs_skills_enforcer_bullseye",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "bullseye",
+                "default_value": true,
+                "child": "ehi_buffs_skills_enforcer_bullseye_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_bullseye_persistent_choice",
+                "title": "ehi_buffs_skills_enforcer_bullseye_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "bullseye_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_enforcer_bullseye_choice"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_enforcer_ammo_specialist_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_bulletstorm_choice",
+                "title": "ehi_buffs_skills_enforcer_bulletstorm",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "bulletstorm",
+                "default_value": true,
+                "child": "ehi_buffs_skills_enforcer_bulletstorm_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_enforcer_bulletstorm_persistent_choice",
+                "title": "ehi_buffs_skills_enforcer_bulletstorm_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "bulletstorm_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_enforcer_bulletstorm_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_skills_ghost_menu",
+        "parent_menu_id" : "ehi_buffs_skills_menu",
+        "global_params": {
+            "setting": "buff_option"
         },
-        {
-            "type": "divider",
-            "size": 20
+        "items": [
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_ghost_shinobi_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_sixth_sense_initial_choice",
+                "title": "ehi_buffs_skills_ghost_sixth_sense_initial",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "sixth_sense_initial",
+                "default_value": true,
+                "child": "ehi_buffs_skills_ghost_sixth_sense_initial_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_sixth_sense_initial_persistent_choice",
+                "title": "ehi_buffs_skills_ghost_sixth_sense_initial_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "sixth_sense_initial_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_ghost_sixth_sense_initial_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_sixth_sense_marked_choice",
+                "title": "ehi_buffs_skills_ghost_sixth_sense_marked",
+                "description": "ehi_buffs_skills_ghost_sixth_sense_marked_desc",
+                "callback": "ehi_set_item_value",
+                "value": "sixth_sense_marked",
+                "default_value": true,
+                "child": "ehi_buffs_skills_ghost_sixth_sense_marked_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_sixth_sense_marked_persistent_choice",
+                "title": "ehi_buffs_skills_ghost_sixth_sense_marked_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "sixth_sense_marked_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_ghost_sixth_sense_marked_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_sixth_sense_refresh_choice",
+                "title": "ehi_buffs_skills_ghost_sixth_sense_refresh",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "sixth_sense_refresh",
+                "default_value": true,
+                "child": "ehi_buffs_skills_ghost_sixth_sense_refresh_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_sixth_sense_refresh_persistent_choice",
+                "title": "ehi_buffs_skills_ghost_sixth_sense_refresh_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "sixth_sense_refresh_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_ghost_sixth_sense_refresh_choice"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_ghost_artful_dodger_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_dire_need_choice",
+                "title": "ehi_buffs_skills_ghost_dire_need",
+                "description": "",
+                "callback": "ehi_set_item_value",
+                "value": "dire_need",
+                "default_value": true,
+                "child": "ehi_buffs_skills_ghost_dire_need_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_dire_need_persistent_choice",
+                "title": "ehi_buffs_skills_ghost_dire_need_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "dire_need_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_ghost_dire_need_choice"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_ghost_silent_killer_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_second_wind_choice",
+                "title": "ehi_buffs_skills_ghost_second_wind",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "second_wind",
+                "default_value": true,
+                "child": "ehi_buffs_skills_ghost_second_wind_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_second_wind_persistent_choice",
+                "title": "ehi_buffs_skills_ghost_second_wind_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "second_wind_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_ghost_second_wind_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_unseen_strike_choice",
+                "title": "ehi_buffs_skills_ghost_unseen_strike",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "unseen_strike",
+                "default_value": true,
+                "child": "ehi_buffs_skills_ghost_unseen_strike_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_unseen_strike_persistent_choice",
+                "title": "ehi_buffs_skills_ghost_unseen_strike_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "unseen_strike_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_ghost_unseen_strike_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_unseen_strike_initial_choice",
+                "title": "ehi_buffs_skills_ghost_unseen_strike_initial",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "unseen_strike_initial",
+                "default_value": true,
+                "child": "ehi_buffs_skills_ghost_unseen_strike_initial_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_ghost_unseen_strike_initial_persistent_choice",
+                "title": "ehi_buffs_skills_ghost_unseen_strike_initial_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "unseen_strike_initial_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_ghost_unseen_strike_initial_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_skills_fugitive_menu",
+        "parent_menu_id" : "ehi_buffs_skills_menu",
+        "global_params": {
+            "setting": "buff_option"
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_skills_ghost_menu",
-            "title": "ehi_buffs_skills_ghost_menu",
-            "next_menu": "ehi_buffs_skills_ghost_menu"
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
-        {
-            "type": "button",
-            "id": "ehi_buffs_skills_fugitive_menu",
-            "title": "ehi_buffs_skills_fugitive_menu",
-            "next_menu": "ehi_buffs_skills_fugitive_menu"
-        }
-    ]
-}
+        "items": [
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_fugitive_gunslinger_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_trigger_happy_choice",
+                "title": "ehi_buffs_skills_fugitive_trigger_happy",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "trigger_happy",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_trigger_happy_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_trigger_happy_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_trigger_happy_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "trigger_happy_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_fugitive_trigger_happy_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_desperado_choice",
+                "title": "ehi_buffs_skills_fugitive_desperado",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "desperado",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_desperado_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_desperado_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_desperado_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "desperado_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_fugitive_desperado_choice"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_fugitive_revenant_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_running_from_death_reload_choice",
+                "title": "ehi_buffs_skills_fugitive_running_from_death_reload",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "running_from_death_reload",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_running_from_death_reload_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_running_from_death_reload_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_running_from_death_reload_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "running_from_death_reload_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_fugitive_running_from_death_reload_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_running_from_death_swap_choice",
+                "title": "ehi_buffs_skills_fugitive_running_from_death_swap",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "running_from_death_swap",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_running_from_death_swap_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_running_from_death_swap_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_running_from_death_swap_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "running_from_death_swap_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_fugitive_running_from_death_swap_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_running_from_death_movement_choice",
+                "title": "ehi_buffs_skills_fugitive_running_from_death_movement",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "running_from_death_movement",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_running_from_death_movement_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_running_from_death_movement_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_running_from_death_movement_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "running_from_death_movement_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_fugitive_running_from_death_movement_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_up_you_go_choice",
+                "title": "ehi_buffs_skills_fugitive_up_you_go",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "up_you_go",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_up_you_go_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_up_you_go_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_up_you_go_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "up_you_go_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_fugitive_up_you_go_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_swan_song_choice",
+                "title": "ehi_buffs_skills_fugitive_swan_song",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "swan_song",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_swan_song_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_swan_song_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_swan_song_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "swan_song_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_skills_fugitive_swan_song_choice"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type" : "divider",
+                "title" : "ehi_buffs_skills_fugitive_brawler_subclass",
+                "no_text" : false
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_bloodthirst_choice",
+                "title": "ehi_buffs_skills_fugitive_bloodthirst",
+                "description": "ehi_buffs_skills_progress",
+                "callback": "ehi_set_item_value",
+                "value": "bloodthirst",
+                "default_value": true
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_bloodthirst_reload_choice",
+                "title": "ehi_buffs_skills_fugitive_bloodthirst_reload",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "bloodthirst_reload",
+                "default_value": true,
+                "child": "ehi_buffs_skills_fugitive_bloodthirst_reload_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_bloodthirst_reload_persistent_choice",
+                "title": "ehi_buffs_skills_fugitive_bloodthirst_reload_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "bloodthirst_reload_persistent",
+                "default_value": false,
+                "parent" : "ehi_buffs_skills_fugitive_bloodthirst_reload_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_skills_fugitive_berserker_choice",
+                "title": "ehi_buffs_skills_fugitive_berserker",
+                "description": "ehi_buffs_skills_progress",
+                "callback": "ehi_set_item_value",
+                "value": "berserker",
+                "children" : [ "ehi_buffs_skills_fugitive_berserker_refresh_choice", "ehi_buffs_skills_fugitive_berserker_format_choice", "ehi_buffs_skills_fugitive_berserker_text_format_choice" ],
+                "default_value": true
+            },
+            {
+                "type": "slider",
+                "id": "ehi_buffs_skills_fugitive_berserker_refresh_choice",
+                "title": "ehi_buffs_skills_fugitive_berserker_refresh",
+                "description": "ehi_buffs_skills_fugitive_berserker_refresh_desc",
+                "callback": "ehi_set_item_value",
+                "value": "berserker_refresh",
+                "parent" : "ehi_buffs_skills_fugitive_berserker_choice",
+                "default_value": 4,
+                "max": 10,
+                "min": 1,
+                "step": 1,
+                "display_precision" : 0
+            },
+            {
+                "type": "multiple_choice",
+                "id": "ehi_buffs_skills_fugitive_berserker_format_choice",
+                "title": "ehi_tracker_value_format",
+                "description": "ehi_buffs_skills_fugitive_berserker_format_desc",
+                "callback": "ehi_set_item_value",
+                "items": [
+                    "ehi_buffs_skills_fugitive_berserker_format_1",
+                    "ehi_buffs_skills_fugitive_berserker_format_2"
+                ],
+                "value": "berserker_format",
+                "parent": "ehi_buffs_skills_fugitive_berserker_choice",
+                "default_value": 1
+            },
+            {
+                "type": "multiple_choice",
+                "id": "ehi_buffs_skills_fugitive_berserker_text_format_choice",
+                "title": "ehi_buffs_skills_fugitive_berserker_text_format",
+                "description": "ehi_buffs_skills_fugitive_berserker_text_format_desc",
+                "callback": "ehi_set_item_value",
+                "items": [
+                    "ehi_buffs_skills_fugitive_berserker_text_format_1",
+                    "ehi_buffs_skills_fugitive_berserker_text_format_2",
+                    "ehi_buffs_skills_fugitive_berserker_text_format_3",
+                    "ehi_buffs_skills_fugitive_berserker_text_format_4"
+                ],
+                "value": "berserker_text_format",
+                "parent": "ehi_buffs_skills_fugitive_berserker_choice",
+                "default_value": 1
+            }
+        ]
+    }
+]

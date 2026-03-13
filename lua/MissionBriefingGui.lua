@@ -1061,6 +1061,13 @@ function XPBreakdownPanel:_params_minmax(o_params)
                 end
             end
         end
+        if o_params.escape then
+            if type(o_params.escape) == "number" then
+                o_min.escape = o_params.escape
+                o_max.escape = o_params.escape
+            else
+            end
+        end
         local random = o_params.objectives.random or {}
         min = min + self:_sum_objectives(o_min, random.min, true)
         max = max + self:_sum_objectives(o_max, random.max)
@@ -1537,6 +1544,8 @@ function XPBreakdownPanel:_sum_objectives(override_objectives, random_objectives
         if data.escape then
             if type(data.escape) == "number" then
                 xp = xp + data.escape
+            elseif type(override_objectives.escape) == "number" then
+                xp = xp + override_objectives.escape
             else
                 EHI:LogWithCurrentLine("Unknown type for escape!")
             end

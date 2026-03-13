@@ -3,11 +3,13 @@ local Icon = EHI.Icons
 
 ---@class EHIMissionUnit
 local EHIMissionUnit = {}
-EHIMissionUnit._option_check = EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers")
+EHIMissionUnit._hudlist_option_check = EHI:GetHudlistOption("show_right_list") and EHI:GetHudlistListOption("right_list", "show_loot")
+EHIMissionUnit._timers_option_check = EHI:GetTrackerWaypointHudlistOption("show_timers", "show_waypoints_timers", "show_timers")
 EHIMissionUnit._world = {} ---@type table<number, UnitUpdateDefinition>
 EHIMissionUnit._mission = {} ---@type table<number, UnitUpdateDefinition>
 EHIMissionUnit._instance = {} ---@type table<number, UnitUpdateDefinition>
 EHIMissionUnit._instance_mission = {} ---@type table<number, UnitUpdateDefinition>
+EHIMissionUnit._hudlist = {} ---@type table<number, UnitUpdateDefinition>
 
 -- Broken units to be "fixed" during mission load
 ---@type table<string, UnitUpdateDefinition>
@@ -129,11 +131,12 @@ function EHIMissionUnit:FinalizeUnitsClient()
     self:FinalizeUnits(self._mission)
     self:FinalizeUnits(self._instance)
     self:FinalizeUnits(self._instance_mission)
+    self:FinalizeUnits(self._hudlist)
 end
 
 ---@param tbl table<number, UnitUpdateDefinition>
 function EHIMissionUnit:UpdateUnits(tbl)
-    if self._option_check then
+    if self._timers_option_check then
         self:UpdateUnitsNoCheck(tbl)
     end
 end
@@ -149,7 +152,7 @@ end
 ---@param tbl table<number, UnitUpdateDefinition>
 ---@param skip_finalize boolean
 function EHIMissionUnit:UpdateInstanceMissionUnits(tbl, skip_finalize)
-    if not self._option_check then
+    if not self._timers_option_check then
         return
     elseif not skip_finalize then
         self:FinalizeUnits(tbl)
@@ -163,7 +166,7 @@ end
 ---@param instance_start_index number
 ---@param instance_continent_index number? Defaults to `100000` if not provided
 function EHIMissionUnit:UpdateInstanceUnits(tbl, instance_start_index, instance_continent_index)
-    if self._option_check then
+    if self._timers_option_check then
         self:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, instance_continent_index)
     end
 end
@@ -189,17 +192,71 @@ function EHIMissionUnit:UpdateInstanceUnitsNoCheck(tbl, instance_start_index, in
     end
 end
 
+---@param ... number
+function EHIMissionUnit:IgnoreCarryInHudlist(...)
+    if self._hudlist_option_check then
+        local tbl = {}
+        local f = { f = "IgnoreCarry" }
+        for _, id in ipairs({ ... }) do
+            tbl[id] = f
+        end
+        self:FinalizeUnits(tbl)
+        for id, data in pairs(tbl) do
+            self._hudlist[id] = data
+        end
+    end
+end
+
+---@param ... number
+function EHIMissionUnit:IgnorePotentionalCarryInHudlist(...)
+    if self._hudlist_option_check then
+        local tbl = {}
+        local f = { f = "IgnorePotentionalCarry" }
+        for _, id in ipairs({ ... }) do
+            tbl[id] = f
+        end
+        self:FinalizeUnits(tbl)
+        for id, data in pairs(tbl) do
+            self._hudlist[id] = data
+        end
+    end
+end
+
+function EHIMissionUnit:IgnoreInteractInHudlist(...)
+    if self._hudlist_option_check then
+        local tbl = {}
+        local f = { f = "IgnoreInteract" }
+        for _, id in ipairs({ ... }) do
+            tbl[id] = f
+        end
+        self:FinalizeUnits(tbl)
+        for id, data in pairs(tbl) do
+            self._hudlist[id] = data
+        end
+    end
+end
+
+---@param tbl table<number, UnitUpdateDefinition>
+function EHIMissionUnit:UpdateHudlistUnitsNoCheck(tbl)
+    self:FinalizeUnits(tbl)
+    for id, data in pairs(tbl) do
+        self._hudlist[id] = data
+    end
+end
+
 ---@param unit_id number
 ---@param unit_data UnitUpdateDefinition
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable
 function EHIMissionUnit:IgnoreDeployable(unit_id, unit_data, unit)
+    local key = unit:key()
     local base = unit:base()
     if base and base.SetIgnore then
         base:SetIgnore()
     end
     if EHITextFloatManager then
-        EHITextFloatManager:IgnoreDeployable(unit)
+        EHITextFloatManager:IgnoreDeployable(key)
     end
+    managers.ehi_hudlist:CallLeftListItemFunction("Deployable", "IgnoreDeployable", key)
 end
 
 ---@param unit_id number
@@ -219,6 +276,7 @@ function EHIMissionUnit:SetDeployableOffset(unit_id, unit_data, unit)
     local base = unit:base()
     if base and base.SetOffset then
         base:SetOffset(unit_data.offset or 1)
+        managers.ehi_hudlist:CallLeftListItemFunction("Deployable", "UpdateDeployableAmount", base)
     end
 end
 
@@ -234,12 +292,44 @@ function EHIMissionUnit:chasC4(unit_id, unit_data, unit)
     if not unit_data.instance then
         digital:SetIcons(unit_data.icons)
         return
-    end
-    if EHI:GetBaseUnitID(unit_id, unit_data.instance.start_index, unit_data.continent_index) == 100054 then
+    elseif EHI:GetBaseUnitID(unit_id, unit_data.instance.start_index, unit_data.continent_index) == 100054 then
         digital:SetIcons(unit_data.icons)
     else
         digital:SetIgnore()
     end
+end
+
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit UnitCarry
+function EHIMissionUnit:IgnoreCarry(unit_id, unit_data, unit)
+    local carry_data, interact = unit:carry_data(), unit:interaction()
+    if not (carry_data and interact) then
+        return
+    end
+    managers.ehi_hudlist:CallRightListItemFunction("Loot", "IgnoreCarry", unit:key(), carry_data, interact:active())
+end
+
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit UnitCarry
+function EHIMissionUnit:IgnorePotentionalCarry(unit_id, unit_data, unit)
+    local interact = unit:interaction()
+    if not interact then
+        return
+    end
+    managers.ehi_hudlist:CallRightListItemFunction("Loot", "IgnorePotentionalCarry", unit:key(), interact:active())
+end
+
+---@param unit_id number
+---@param unit_data UnitUpdateDefinition
+---@param unit Unit
+function EHIMissionUnit:IgnoreInteract(unit_id, unit_data, unit)
+    local interact = unit:interaction()
+    if not interact then
+        return
+    end
+    managers.ehi_hudlist:CallRightListItemFunction("Special", "IgnoreInteract", unit, interact:active())
 end
 
 return EHIMissionUnit

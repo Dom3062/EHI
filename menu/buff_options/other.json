@@ -1,7 +1,6 @@
 {
     "menu_id": "ehi_buffs_other_menu",
     "parent_menu_id" : "ehi_buffs_menu",
-    "title": "ehi_buffs_other_menu",
     "global_params": {
         "setting": "buff_option"
     },

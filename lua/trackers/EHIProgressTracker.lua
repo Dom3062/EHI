@@ -98,7 +98,11 @@ function EHIProgressTracker:SetCompleted(force)
             self:SetStatusText("finish")
         end
         self._disable_counting = true
+        self:Completed()
     end
+end
+
+function EHIProgressTracker:Completed()
 end
 
 function EHIProgressTracker:SetBad()

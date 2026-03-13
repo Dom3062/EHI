@@ -252,6 +252,7 @@ if EHI:CanShowAchievement2("gage4_7", "show_achievements_melee") then -- Every d
         end
     end)
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

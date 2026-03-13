@@ -54,6 +54,7 @@ local achievements = {
     }
 }
 
+EHI.Unit:IgnoreCarryInHudlist(500533) -- Painting
 EHI.Mission:ParseTriggers({
     achievement = achievements
 })

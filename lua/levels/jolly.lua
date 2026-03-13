@@ -47,6 +47,7 @@ local other =
 {
     [100217] = EHI:AddAssaultDelay({ control = 30, trigger_once = true }) -- Starting the saw early forces the assault to start
 }
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 

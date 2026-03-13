@@ -163,6 +163,13 @@
             "params": {
                 "call_tracker_function": {
                     "f": "UpdateTimeFormat"
+                },
+                "call_buff_function": {
+                    "f": "UpdateBuffs",
+                    "params": [ "UpdateTimeFormat" ]
+                },
+                "call_hudlist_function": {
+                    "f": "UpdateTimeFormat"
                 }
             }
         },
@@ -351,6 +358,27 @@
             "parent" : "ehi_show_buffs_choice"
         },
         {
+            "type": "toggle",
+            "id": "ehi_show_hudlist_choice",
+            "title": "ehi_show_hudlist",
+            "callback": "ehi_set_item_value",
+            "value": "show_hudlist",
+            "children" : [ "ehi_hudlist_menu", "ehi_show_preview_hudlist_left_list_choice", "ehi_show_preview_hudlist_right_list_choice" ],
+            "default_value": false,
+            "params": {
+                "call_hudlist_function": {
+                    "f": "SetHudlistEnabled"
+                }
+            }
+        },
+        {
+            "type": "button",
+            "id": "ehi_hudlist_menu",
+            "title": "ehi_hudlist_menu",
+            "next_menu": "ehi_hudlist_menu",
+            "parent" : "ehi_show_hudlist_choice"
+        },
+        {
             "type": "button",
             "id": "ehi_inventory_menu",
             "title": "ehi_inventory_menu",
@@ -415,6 +443,38 @@
             "params": {
                 "call_buff_function": {
                     "f": "UpdatePreviewVisibility"
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_preview_hudlist_left_list_choice",
+            "title": "ehi_show_preview_hudlist_left_list",
+            "description": "ehi_show_preview_hudlist_left_list_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_preview_hudlist_left_list",
+            "parent" : "ehi_show_hudlist_choice",
+            "default_value": true,
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateVisibility" ]
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_show_preview_hudlist_right_list_choice",
+            "title": "ehi_show_preview_hudlist_right_list",
+            "description": "ehi_show_preview_hudlist_right_list_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_preview_hudlist_right_list",
+            "parent" : "ehi_show_hudlist_choice",
+            "default_value": true,
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateVisibility" ]
                 }
             }
         }

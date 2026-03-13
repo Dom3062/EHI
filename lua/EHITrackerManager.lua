@@ -3,7 +3,7 @@
 local EHI = EHI
 ---@class EHITrackerManager
 ---@field IsLoading fun(self: self): boolean `VR only (EHITrackerManagerVR)`
----@field AddToLoadQueue fun(self: self, key: string, data: table, f: function, add: boolean?) `VR only (EHITrackerManagerVR)`
+---@field AddToLoadQueue fun(self: self, key: AnyExceptNil, data: table, f: function, add: boolean?) `VR only (EHITrackerManagerVR)`
 ---@field SetPanel fun(self: self, panel: Panel) `VR only (EHITrackerManagerVR)`
 local EHITrackerManager = {}
 EHITrackerManager._trackers = setmetatable({}, { __mode = "k" }) ---@type table<string, EHITrackerManager.Tracker?>
@@ -65,7 +65,7 @@ function EHITrackerManager:init_finalize()
             def.tracker:MissionEnd()
         end
     end)
-    EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+    EHI.ModUtils:AddCustomNameColorSyncCallback("EHITrackerManager", function(peer_id, color)
         self:CallFunction("Converts", "UpdatePeerColor", peer_id, color)
     end)
 end
@@ -102,10 +102,15 @@ end
 ---@param params ElementTrigger
 ---@param pos integer?
 function EHITrackerManager:AddTracker(params, pos)
-    if self._trackers[params.id] then
-        EHI:Log(string.format("Tracker with ID '%s' exists!", params.id))
+    local id = params.id
+    if not id then
+        EHI:Log("Tried to create a tracker with no ID!")
         EHI:LogTraceback()
-        self._trackers[params.id].tracker:ForceDelete()
+        return
+    elseif self._trackers[id] then
+        EHI:Log(string.format("Tracker with ID '%s' already exists!", id))
+        EHI:LogTraceback()
+        self._trackers[id].tracker:ForceDelete()
     end
     params.delay_popup = self._delay_popups
     local tracker = (params.class_table or _G[params.class or self._base_tracker_class]):new(self._panel, params)
@@ -114,36 +119,46 @@ function EHITrackerManager:AddTracker(params, pos)
     local x = self:_get_x(pos, w)
     local y = self:_get_y(pos)
     if tracker._needs_update then
-        self._trackers_to_update[params.id] = tracker
+        self._trackers_to_update[id] = tracker
     end
     tracker:PosAndSetVisible(x, y)
-    self._trackers[params.id] = { tracker = tracker, pos = pos or self._n_of_trackers, x = x, w = w }
+    self._trackers[id] = { tracker = tracker, pos = pos or self._n_of_trackers, x = x, w = w }
     self:_tracker_created(tracker, pos or self._n_of_trackers, w)
 end
 
 ---@param params ElementTrigger
 function EHITrackerManager:AddHiddenTracker(params)
-    if self._trackers[params.id] then
-        EHI:Log(string.format("Tracker with ID '%s' exists!", params.id))
+    local id = params.id
+    if not id then
+        EHI:Log("Tried to create a tracker with no ID!")
         EHI:LogTraceback()
-        self._trackers[params.id].tracker:ForceDelete()
+        return
+    elseif self._trackers[id] then
+        EHI:Log(string.format("Tracker with ID '%s' already exists!", id))
+        EHI:LogTraceback()
+        self._trackers[id].tracker:ForceDelete()
     end
     local tracker = (params.class_table or _G[params.class or self._base_tracker_class]):new(self._panel, params)
     if tracker._needs_update then
-        self._trackers_to_update[params.id] = tracker
+        self._trackers_to_update[id] = tracker
     end
-    self._trackers[params.id] = { tracker = tracker }
+    self._trackers[id] = { tracker = tracker }
 end
 
 ---@param params ElementTrigger
 function EHITrackerManager:PreloadTracker(params)
-    if self._trackers[params.id] then
-        EHI:Log(string.format("Tracker with ID '%s' exists!", params.id))
+    local id = params.id
+    if not id then
+        EHI:Log("Tried to create a tracker with no ID!")
         EHI:LogTraceback()
-        self._trackers[params.id].tracker:ForceDelete()
+        return
+    elseif self._trackers[id] then
+        EHI:Log(string.format("Tracker with ID '%s' already exists!", id))
+        EHI:LogTraceback()
+        self._trackers[id].tracker:ForceDelete()
     end
     local tracker = (params.class_table or _G[params.class or self._base_tracker_class]):new(self._panel, params)
-    self._trackers[params.id] = { tracker = tracker }
+    self._trackers[id] = { tracker = tracker }
 end
 
 ---@param id string

@@ -107,6 +107,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.Unit:IgnoreCarryInHudlist(100899, 101330, 102951, 102952) -- 4x Money above Diamond Store (unplayable area)
+EHI.Unit:IgnoreInteractInHudlist(100900, 100901, 100902) -- 3x Small loot above Diamond Store (unplayable area)
 
 local min_bags = EHI:GetValueBasedOnDifficulty({
     normal = 4,

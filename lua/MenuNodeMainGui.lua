@@ -4,12 +4,7 @@ Hooks:PostHook(MenuNodeMainGui, "_setup_item_rows", "EHI_MenuNodeMainGui_setup_i
         QuickMenu:new(
             managers.localization:text("ehi_save_data_corrupted"),
             managers.localization:text("ehi_save_data_corrupted_desc"),
-            {
-                {
-                    text = managers.localization:text("ehi_button_ok"),
-                    is_cancel_button = true
-                }
-            },
+            {},
             true
         )
         EHI._cache.SaveFileCorrupted = nil
@@ -18,12 +13,7 @@ Hooks:PostHook(MenuNodeMainGui, "_setup_item_rows", "EHI_MenuNodeMainGui_setup_i
         QuickMenu:new(
             managers.localization:text("ehi_wrong_game_version"),
             managers.localization:text("ehi_wrong_game_version_desc"),
-            {
-                {
-                    text = managers.localization:text("ehi_button_ok"),
-                    is_cancel_button = true
-                }
-            },
+            {},
             true
         )
         EHI._cache.GameVersionNotCompatible = nil

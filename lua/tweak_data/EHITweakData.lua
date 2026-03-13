@@ -31,20 +31,48 @@ function EHITweakData:new(tweak_data)
             ---@return number[]
             get_icon = function(params)
                 local texture, texture_rect
-                local x = params.x or 0
-                local y = params.y or 0
                 if params.skills then
+                    local xy = params.skills
                     texture = "guis/textures/pd2/skilltree/icons_atlas"
-                    texture_rect = { x * 64, y * 64, 64, 64 }
+                    texture_rect = { xy[1] * 64, xy[2] * 64, 64, 64 }
                 elseif params.u100skill then
+                    local xy = params.u100skill
                     texture = "guis/textures/pd2/skilltree_2/icons_atlas_2"
-                    texture_rect = { x * 80, y * 80, 80, 80 }
+                    texture_rect = { xy[1] * 80, xy[2] * 80, 80, 80 }
                 elseif params.deck then
-                    texture = "guis/" .. (params.folder and ("dlcs/" .. params.folder .. "/") or "") .. "textures/pd2/specialization/icons_atlas"
-                    texture_rect = { x * 64, y * 64, 64, 64 }
+                    local xyf = params.deck
+                    texture = "guis/" .. (xyf[3] and ("dlcs/" .. xyf[3] .. "/") or "") .. "textures/pd2/specialization/icons_atlas"
+                    texture_rect = { xyf[1] * 64, xyf[2] * 64, 64, 64 }
                 elseif params.texture then
                     texture = params.texture
                     texture_rect = params.texture_rect
+                end
+                return texture, texture_rect
+            end
+        },
+        hudlist =
+        {
+            ---@return string
+            ---@return number[]
+            get_icon = function(params)
+                local texture, texture_rect
+                if params.skills then
+                    local xy = params.skills
+                    texture = "guis/textures/pd2/skilltree/icons_atlas"
+                    texture_rect = { xy[1] * 64, xy[2] * 64, 64, 64 }
+                elseif params.u100skill then
+                    local xy = params.u100skill
+                    texture = "guis/textures/pd2/skilltree_2/icons_atlas_2"
+                    texture_rect = { xy[1] * 80, xy[2] * 80, 80, 80 }
+                elseif params.deck then
+                    local xy = params.deck
+                    texture = "guis/" .. (params.folder and ("dlcs/" .. params.folder .. "/") or "") .. "textures/pd2/specialization/icons_atlas"
+                    texture_rect = { xy[1] * 64, xy[2] * 64, 64, 64 }
+                elseif params.texture then
+                    texture = params.texture
+                    texture_rect = params.texture_rect
+                elseif params.ehi then
+                    texture, texture_rect = self.default.tracker.get_icon(params.ehi)
                 end
                 return texture, texture_rect
             end
@@ -57,7 +85,7 @@ function EHITweakData:new(tweak_data)
     }
     self.icons =
     {
-        default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = {96, 64, 32, 32} },
+        default = { texture = "guis/textures/pd2/pd2_waypoints", texture_rect = { 96, 64, 32, 32} },
 
         faster = { texture = "guis/textures/pd2/skilltree/drillgui_icon_faster" },
         silent = { texture = "guis/textures/pd2/skilltree/drillgui_icon_silent" },
@@ -65,21 +93,21 @@ function EHITweakData:new(tweak_data)
 
         xp = { texture = "guis/textures/pd2/blackmarket/xp_drop" },
 
-        mad_scan = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 0, 85, 85} },
-        boat = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 85, 85, 85} },
-        enemy = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {213, 85, 64, 64} },
-        piggy = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {85, 0, 85, 85} },
-        assaultbox = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {96, 213, 32, 32} },
-        deployables = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {85, 85, 128, 128} },
-        padlock = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {64, 213, 32, 32} },
-        turret = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {170, 0, 85, 85} },
+        mad_scan = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 0, 0, 85, 85 } },
+        boat = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 0, 85, 85, 85 } },
+        enemy = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 213, 85, 64, 64 } },
+        piggy = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 85, 0, 85, 85 } },
+        assaultbox = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 96, 213, 32, 32 } },
+        deployables = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 85, 85, 128, 128 } },
+        padlock = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 64, 213, 32, 32 } },
+        turret = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 170, 0, 85, 85 } },
 
-        reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {0, 576, 64, 64} },
-        smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = {0, 0, 64, 64} },
-        teargas = { texture = "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2", texture_rect = {128, 256, 128, 128} },
+        reload = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 0, 576, 64, 64 } },
+        smoke = { texture = "guis/dlcs/max/textures/pd2/specialization/icons_atlas", texture_rect = { 0, 0, 64, 64 } },
+        teargas = { texture = "guis/dlcs/drm/textures/pd2/crime_spree/modifiers_atlas_2", texture_rect = { 128, 256, 128, 128 } },
         gage = { texture = "guis/dlcs/gage_pack_jobs/textures/pd2/endscreen/gage_assignment" },
         hostage = { texture = "guis/textures/pd2/hud_icon_hostage" },
-        civilians = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 448, 64, 64} },
+        civilians = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 384, 448, 64, 64 } },
         buff_shield = { texture = "guis/textures/pd2/hud_buff_shield" },
 
         doctor_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/doctor_bag" },
@@ -87,18 +115,18 @@ function EHITweakData:new(tweak_data)
         first_aid_kit = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/first_aid_kit" },
         bodybags_bag = { texture = "guis/textures/pd2/blackmarket/icons/deployables/outline/bodybags_bag" },
 
-        minion = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 512, 64, 64} },
-        heavy = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {192, 64, 64, 64} },
-        sniper = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 320, 64, 64} },
-        camera_loop = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {256, 128, 64, 64} },
+        minion = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 384, 512, 64, 64 } },
+        heavy = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 192, 64, 64, 64 } },
+        sniper = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 384, 320, 64, 64 } },
+        camera_loop = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 256, 128, 64, 64 } },
         pager_icon = tweak_data.hud_icons.crime_spree_civs_killed,
 
-        ecm_jammer = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {64, 256, 64, 64} },
-        ecm_feedback = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = {384, 128, 64, 64} },
+        ecm_jammer = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 64, 256, 64, 64 } },
+        ecm_feedback = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 384, 128, 64, 64 } },
 
         hoxton_character = { texture = tweak_data.achievement.visual.bulldog_1.unlock_icons[1].texture },
 
-        daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = {0, 170, 64, 64} },
+        daily_secret_identity = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 0, 170, 64, 64 } },
 
         ping = { texture = "guis/textures/pd2_mod_ehi/icons_atlas", texture_rect = { 224, 192, 64, 64 } }
     }
@@ -155,31 +183,24 @@ function EHITweakData:new(tweak_data)
         },
         Health =
         {
-            deck = true,
-            folder = "chico",
+            deck = { 1, 0, "chico" },
             text = "0",
-            x = 1,
-            y = 0,
             class = "EHIHealthBuffTracker",
             format = "damage",
             option = "health"
         },
         Armor =
         {
-            skills = true,
-            x = 2,
-            y = 12,
+            skills = { 2, 12 },
             class = "EHIGaugeBuffTracker",
             format = "damage",
             option = "armor"
         },
         CarryInteractionCooldown =
         {
-            u100skill = true,
+            u100skill = { 4, 3 },
             group = "cooldown",
             text_localize = "ehi_buffs_hint_cooldown",
-            x = 4,
-            y = 3,
             option = "carry_interaction_cooldown",
             permanent =
             {
@@ -189,9 +210,7 @@ function EHITweakData:new(tweak_data)
         },
         DodgeChance =
         {
-            skills = true,
-            x = 1,
-            y = 12,
+            skills = { 1, 12 },
             group = "dodge",
             text_localize = "ehi_buffs_hint_dodge",
             format = "percent",
@@ -206,9 +225,7 @@ function EHITweakData:new(tweak_data)
         },
         CritChance =
         {
-            skills = true,
-            x = 0,
-            y = 12,
+            skills = { 0, 12 },
             group = "crit",
             text_localize = "ehi_buffs_hint_crit",
             format = "percent",
@@ -223,9 +240,7 @@ function EHITweakData:new(tweak_data)
         },
         Berserker =
         {
-            u100skill = true,
-            x = 2,
-            y = 2,
+            u100skill = { 2, 2 },
             skill_check_after_spawn = true,
             option = "berserker",
             class_to_load =
@@ -236,10 +251,8 @@ function EHITweakData:new(tweak_data)
         },
         Yakuza =
         {
-            deck = true,
+            deck = { 2, 7 },
             text = "Yakuza",
-            x = 2,
-            y = 7,
             deck_option =
             {
                 deck = "yakuza",
@@ -254,9 +267,8 @@ function EHITweakData:new(tweak_data)
         },
         Reload =
         {
-            skills = true,
+            skills = { 0, 9 },
             group = "cooldown",
-            y = 9,
             option = "reload",
             permanent =
             {
@@ -277,11 +289,9 @@ function EHITweakData:new(tweak_data)
         },
         ArmorRegenDelay =
         {
-            skills = true,
+            skills = { 2, 12 },
             group = "cooldown",
             text_localize = "ehi_buffs_hint_regen",
-            x = 2,
-            y = 12,
             option = "shield_regen",
             skill_check_after_spawn = true,
             class = "EHIArmorRegenDelayBuffTracker",
@@ -301,9 +311,7 @@ function EHITweakData:new(tweak_data)
         },
         MeleeCharge =
         {
-            skills = true,
-            x = 4,
-            y = 12,
+            skills = { 4, 12 },
             option = "melee_charge",
             class_to_load =
             {
@@ -323,10 +331,9 @@ function EHITweakData:new(tweak_data)
         },
         WeaponSwap =
         {
-            skills = true,
+            skills = { 0, 9 },
             text = "Swap",
             group = "cooldown",
-            y = 9,
             option = "weapon_swap",
             permanent =
             {
@@ -336,10 +343,8 @@ function EHITweakData:new(tweak_data)
         },
         headshot_regen_armor_bonus =
         {
-            skills = true,
+            skills = { 6, 11 },
             group = "cooldown",
-            x = 6,
-            y = 11,
             option = "bullseye",
             permanent =
             {
@@ -353,11 +358,9 @@ function EHITweakData:new(tweak_data)
         },
         revive_damage_reduction =
         {
-            skills = true,
+            skills = { 5, 7 },
             text_localize = "ehi_buffs_hint_damage_decrease",
             group = "player_damage_reduction",
-            x = 5,
-            y = 7,
             option = "combat_medic",
             permanent =
             {
@@ -371,9 +374,7 @@ function EHITweakData:new(tweak_data)
         },
         berserker_damage_multiplier =
         {
-            skills = true,
-            x = 5,
-            y = 12,
+            skills = { 5, 12 },
             option = "swan_song",
             permanent =
             {
@@ -387,11 +388,9 @@ function EHITweakData:new(tweak_data)
         },
         dmg_multiplier_outnumbered =
         {
-            skills = true,
+            skills = { 2, 1 },
             text_localize = "ehi_buffs_hint_damage_increase",
             group = "weapon_damage_increase",
-            x = 2,
-            y = 1,
             option = "underdog",
             permanent =
             {
@@ -405,11 +404,9 @@ function EHITweakData:new(tweak_data)
         },
         first_aid_damage_reduction =
         {
-            skills = true,
+            skills = { 1, 11 },
             text_localize = "ehi_buffs_hint_damage_decrease",
             group = "player_damage_reduction",
-            x = 1,
-            y = 11,
             option = "quick_fix",
             permanent =
             {
@@ -423,9 +420,7 @@ function EHITweakData:new(tweak_data)
         },
         UppersRangeGauge =
         {
-            u100skill = true,
-            x = 2,
-            y = 11,
+            u100skill = { 2, 11 },
             group = "health_regen",
             skill_check_after_spawn = true,
             option = "uppers_range",
@@ -438,10 +433,9 @@ function EHITweakData:new(tweak_data)
         },
         fast_learner =
         {
-            u100skill = true,
+            u100skill = { 0, 10 },
             text_localize = "ehi_buffs_hint_damage_decrease",
             group = "player_damage_reduction",
-            y = 10,
             option = "painkillers",
             permanent =
             {
@@ -455,10 +449,8 @@ function EHITweakData:new(tweak_data)
         },
         melee_life_leech =
         {
-            deck = true,
+            deck = { 7, 4 },
             group = "cooldown",
-            x = 7,
-            y = 4,
             deck_option =
             {
                 deck = "infiltrator",
@@ -480,22 +472,20 @@ function EHITweakData:new(tweak_data)
         },
         dmg_dampener_close_contact =
         {
-            deck = true,
+            deck = { 5, 4 },
             group = "player_damage_reduction",
             text_localize = "ehi_buffs_hint_damage_decrease",
-            x = 5,
-            y = 4,
             deck_option =
             {
-                deck = "infiltrator",
-                option = "overdog"
+                deck = "shared",
+                option = "overdog_damage_reduction"
             },
             permanent =
             {
                 deck_option =
                 {
-                    deck = "infiltrator",
-                    option = "overdog_persistent"
+                    deck = "shared",
+                    option = "overdog_damage_reduction_persistent"
                 },
                 skill_check =
                 {
@@ -504,12 +494,35 @@ function EHITweakData:new(tweak_data)
                 }
             }
         },
+        melee_stacking_hit_damage_multiplier =
+        {
+            deck = { 5, 4 },
+            group = "melee_damage_increase",
+            text_localize = "ehi_buffs_hint_melee_damage_increase",
+            deck_option =
+            {
+                deck = "shared",
+                option = "overdog_melee_swings"
+            },
+            permanent =
+            {
+                deck_option =
+                {
+                    deck = "shared",
+                    option = "overdog_melee_swings_persistent"
+                },
+                skill_check =
+                {
+                    category = "melee",
+                    upgrade = "stacking_hit_damage_multiplier"
+                },
+                unhook_on_false_checks = "EHI_melee_stacking_hit_damage_multiplier_do_melee_damage"
+            }
+        },
         loose_ammo_give_team =
         {
-            deck = true,
+            deck = { 5, 5 },
             group = "cooldown",
-            x = 5,
-            y = 5,
             deck_option =
             {
                 deck = "gambler",
@@ -531,10 +544,8 @@ function EHITweakData:new(tweak_data)
         },
         loose_ammo_restore_health =
         {
-            deck = true,
+            deck = { 4, 5 },
             group = "cooldown",
-            x = 4,
-            y = 5,
             deck_option =
             {
                 deck = "gambler",
@@ -556,11 +567,9 @@ function EHITweakData:new(tweak_data)
         },
         damage_speed_multiplier =
         {
-            u100skill = true,
+            u100skill = { 10, 9 },
             text_localize = "ehi_buffs_hint_movement_increase",
             group = "player_movement_increase",
-            x = 10,
-            y = 9,
             option = "second_wind",
             permanent =
             {
@@ -575,11 +584,9 @@ function EHITweakData:new(tweak_data)
         },
         trigger_happy =
         {
-            u100skill = true,
+            u100skill = { 11, 2 },
             text_localize = "ehi_buffs_hint_damage_increase",
             group = "weapon_damage_increase",
-            x = 11,
-            y = 2,
             option = "trigger_happy",
             persistent = "trigger_happy_persistent",
             skill_check_after_spawn = true,
@@ -587,10 +594,8 @@ function EHITweakData:new(tweak_data)
         },
         desperado =
         {
-            u100skill = true,
+            u100skill = { 11, 1 },
             text = "Acc+",
-            x = 11,
-            y = 1,
             option = "desperado",
             permanent =
             {
@@ -604,11 +609,9 @@ function EHITweakData:new(tweak_data)
         },
         revived_damage_resist =
         {
-            u100skill = true,
+            u100skill = { 11, 4 },
             text_localize = "ehi_buffs_hint_damage_decrease",
             group = "player_damage_reduction",
-            x = 11,
-            y = 4,
             option = "up_you_go",
             permanent =
             {
@@ -622,10 +625,8 @@ function EHITweakData:new(tweak_data)
         },
         swap_weapon_faster =
         {
-            u100skill = true,
+            u100skill = { 11, 3 },
             text = "Swap+",
-            x = 11,
-            y = 3,
             option = "running_from_death_swap",
             permanent =
             {
@@ -639,11 +640,9 @@ function EHITweakData:new(tweak_data)
         },
         increased_movement_speed =
         {
-            u100skill = true,
+            u100skill = { 11, 3 },
             text_localize = "ehi_buffs_hint_movement_increase",
             group = "player_movement_increase",
-            x = 11,
-            y = 3,
             option = "running_from_death_movement",
             permanent =
             {
@@ -657,11 +656,9 @@ function EHITweakData:new(tweak_data)
         },
         unseen_strike =
         {
-            u100skill = true,
+            u100skill = { 10, 11 },
             text_localize = "ehi_buffs_hint_crit_increase",
             group = "crit",
-            x = 10,
-            y = 11,
             option = "unseen_strike",
             persistent = "unseen_strike_persistent",
             parent_buff =
@@ -678,10 +675,8 @@ function EHITweakData:new(tweak_data)
         },
         unseen_strike_initial =
         {
-            u100skill = true,
+            u100skill = { 10, 11 },
             group = "cooldown",
-            x = 10,
-            y = 11,
             option = "unseen_strike_initial",
             permanent =
             {
@@ -695,9 +690,7 @@ function EHITweakData:new(tweak_data)
         },
         melee_damage_stacking =
         {
-            u100skill = true,
-            x = 11,
-            y = 6,
+            u100skill = { 11, 6 },
             group = "melee_damage_increase",
             text_localize = "ehi_buffs_hint_melee_damage_increase",
             format = "multiplier",
@@ -707,9 +700,7 @@ function EHITweakData:new(tweak_data)
         },
         melee_kill_increase_reload_speed =
         {
-            u100skill = true,
-            x = 11,
-            y = 6,
+            u100skill = { 11, 6 },
             text_localize = "ehi_buffs_hint_reload_increase",
             group = "increased_weapon_reload",
             option = "bloodthirst_reload",
@@ -725,10 +716,8 @@ function EHITweakData:new(tweak_data)
         },
         standstill_omniscience =
         {
-            skills = true,
+            skills = { 6, 10 },
             group = "cooldown",
-            x = 6,
-            y = 10,
             option = "sixth_sense_refresh",
             remove_on_alarm = true,
             permanent =
@@ -744,9 +733,7 @@ function EHITweakData:new(tweak_data)
         },
         no_ammo_cost =
         {
-            u100skill = true,
-            x = 4,
-            y = 5,
+            u100skill = { 4, 5 },
             option = "bulletstorm",
             permanent =
             {
@@ -760,9 +747,7 @@ function EHITweakData:new(tweak_data)
         },
         hostage_absorption =
         {
-            u100skill = true,
-            x = 4,
-            y = 7,
+            u100skill = { 4, 7 },
             group = "player_damage_absorption",
             option = "forced_friendship",
             permanent =
@@ -779,8 +764,7 @@ function EHITweakData:new(tweak_data)
         },
         ManiacStackTicks =
         {
-            deck = true,
-            folder = "coco",
+            deck = { 0, 0, "coco" },
             deck_option =
             {
                 deck = "maniac",
@@ -789,9 +773,7 @@ function EHITweakData:new(tweak_data)
         },
         ManiacDecayTicks =
         {
-            deck = true,
-            folder = "coco",
-            x = 2,
+            deck = { 2, 0, "coco" },
             deck_option =
             {
                 deck = "maniac",
@@ -800,10 +782,8 @@ function EHITweakData:new(tweak_data)
         },
         ManiacAccumulatedStacks =
         {
-            deck = true,
-            folder = "coco",
+            deck = { 3, 0, "coco" },
             group = "player_damage_absorption",
-            x = 3,
             format = "standard",
             skill_check_after_spawn = true,
             deck_option =
@@ -815,10 +795,8 @@ function EHITweakData:new(tweak_data)
         },
         GrinderStackCooldown =
         {
-            deck = true,
+            deck = { 5, 6 },
             group = "cooldown",
-            x = 5,
-            y = 6,
             deck_option =
             {
                 deck = "grinder",
@@ -840,9 +818,7 @@ function EHITweakData:new(tweak_data)
         },
         GrinderRegenPeriod =
         {
-            deck = true,
-            x = 5,
-            y = 6,
+            deck = { 5, 6 },
             group = "health_regen",
             deck_option =
             {
@@ -865,11 +841,9 @@ function EHITweakData:new(tweak_data)
         },
         SicarioTwitchGauge =
         {
-            deck = true,
-            folder = "max",
+            deck = { 1, 0, "max" },
             group = "dodge",
             text_localize = "ehi_buffs_hint_dodge_increase",
-            x = 1,
             class = "EHIGaugeBuffTracker",
             format = "percent",
             deck_option =
@@ -894,10 +868,8 @@ function EHITweakData:new(tweak_data)
         },
         SicarioTwitchCooldown =
         {
-            deck = true,
-            folder = "max",
+            deck = { 1, 0, "max" },
             group = "cooldown",
-            x = 1,
             deck_option =
             {
                 deck = "sicario",
@@ -919,9 +891,7 @@ function EHITweakData:new(tweak_data)
         },
         ammo_efficiency =
         {
-            u100skill = true,
-            x = 8,
-            y = 4,
+            u100skill = { 8, 4 },
             option = "ammo_efficiency",
             permanent =
             {
@@ -935,11 +905,9 @@ function EHITweakData:new(tweak_data)
         },
         armor_break_invulnerable =
         {
-            deck = true,
+            deck = { 6, 1 },
             group = "cooldown",
             text_localize = "ehi_buffs_hint_immunity",
-            x = 6,
-            y = 1,
             deck_option =
             {
                 deck = "anarchist",
@@ -961,10 +929,8 @@ function EHITweakData:new(tweak_data)
         },
         damage_to_armor =
         {
-            deck = true,
+            deck = { 0, 1, "opera" },
             group = "cooldown",
-            folder = "opera",
-            y = 1,
             deck_option =
             {
                 deck = "anarchist",
@@ -986,11 +952,9 @@ function EHITweakData:new(tweak_data)
         },
         single_shot_fast_reload =
         {
-            u100skill = true,
+            u100skill = { 8, 3 },
             text_localize = "ehi_buffs_hint_reload_increase",
             group = "increased_weapon_reload",
-            x = 8,
-            y = 3,
             option = "aggressive_reload",
             permanent =
             {
@@ -1004,11 +968,9 @@ function EHITweakData:new(tweak_data)
         },
         overkill_damage_multiplier =
         {
-            skills = true,
+            skills = { 3, 2 },
             text_localize = "ehi_buffs_hint_damage_increase",
             group = "weapon_damage_increase",
-            x = 3,
-            y = 2,
             option = "overkill",
             permanent =
             {
@@ -1022,10 +984,8 @@ function EHITweakData:new(tweak_data)
         },
         morale_boost =
         {
-            skills = true,
+            skills = { 4, 9 },
             group = "cooldown",
-            x = 4,
-            y = 9,
             option = "inspire_basic",
             permanent =
             {
@@ -1039,10 +999,8 @@ function EHITweakData:new(tweak_data)
         },
         long_dis_revive =
         {
-            u100skill = true,
+            u100skill = { 4, 9 },
             group = "cooldown",
-            x = 4,
-            y = 9,
             option = "inspire_ace",
             permanent =
             {
@@ -1056,18 +1014,15 @@ function EHITweakData:new(tweak_data)
         },
         DireNeed =
         {
-            u100skill = true,
+            u100skill = { 10, 8 },
             text = "Stagger",
             no_progress = true,
-            x = 10,
-            y = 8,
             option = "dire_need",
 
         },
         Immunity =
         {
-            deck = true,
-            x = 6,
+            deck = { 6, 0 },
             deck_option =
             {
                 deck = "anarchist",
@@ -1089,10 +1044,8 @@ function EHITweakData:new(tweak_data)
         },
         UppersCooldown =
         {
-            u100skill = true,
+            u100skill = { 2, 11 },
             group = "cooldown",
-            x = 2,
-            y = 11,
             option = "uppers",
             permanent =
             {
@@ -1102,8 +1055,7 @@ function EHITweakData:new(tweak_data)
         },
         armor_grinding =
         {
-            deck = true,
-            folder = "opera",
+            deck = { 0, 0, "opera" },
             deck_option =
             {
                 deck = "anarchist",
@@ -1125,9 +1077,7 @@ function EHITweakData:new(tweak_data)
         },
         HealthRegen =
         {
-            skills = true,
-            x = 2,
-            y = 10,
+            skills = { 2, 10 },
             group = "health_regen",
             option = "health_regen",
             persistent = "health_regen_persistent",
@@ -1143,18 +1093,14 @@ function EHITweakData:new(tweak_data)
         },
         Stamina =
         {
-            skills = true,
-            x = 7,
-            y = 3,
+            skills = { 7, 3 },
             class = "EHIStaminaBuffTracker",
             format = "percent",
             option = "stamina"
         },
         ExPresident =
         {
-            deck = true,
-            x = 3,
-            y = 7,
+            deck = { 3, 7 },
             text = "Stored",
             group = "health_regen",
             deck_option =
@@ -1168,8 +1114,7 @@ function EHITweakData:new(tweak_data)
         },
         BikerBuff =
         {
-            deck = true,
-            folder = "wild",
+            deck = { 0, 0, "wild" },
             deck_option =
             {
                 deck = "biker",
@@ -1195,10 +1140,8 @@ function EHITweakData:new(tweak_data)
         },
         TagTeamAbsorption =
         {
-            deck = true,
-            folder = "ecp",
+            deck = { 2, 0, "ecp" },
             text = "Absorption",
-            x = 2,
             group = "player_damage_absorption",
             deck_option =
             {
@@ -1224,10 +1167,8 @@ function EHITweakData:new(tweak_data)
         },
         pocket_ecm_kill_dodge =
         {
-            deck = true,
-            folder = "joy",
+            deck = { 3, 0, "joy" },
             group = "dodge",
-            x = 3,
             text_localize = "ehi_buffs_hint_dodge_increase",
             parent_buff =
             {
@@ -1249,9 +1190,7 @@ function EHITweakData:new(tweak_data)
         },
         HackerJammerEffect =
         {
-            skills = true,
-            x = 6,
-            y = 3,
+            skills = { 6, 3 },
             deck_option =
             {
                 deck = "hacker",
@@ -1274,9 +1213,7 @@ function EHITweakData:new(tweak_data)
         },
         HackerFeedbackEffect =
         {
-            skills = true,
-            x = 6,
-            y = 2,
+            skills = { 6, 2 },
             deck_option =
             {
                 deck = "hacker",
@@ -1299,10 +1236,8 @@ function EHITweakData:new(tweak_data)
         },
         headshot_regen_health_bonus =
         {
-            deck = true,
-            folder = "mrwi",
+            deck = { 1, 0, "mrwi" },
             group = "cooldown",
-            x = 1,
             deck_option =
             {
                 deck = "copycat",
@@ -1324,10 +1259,8 @@ function EHITweakData:new(tweak_data)
         },
         mrwi_health_invulnerable =
         {
-            deck = true,
-            folder = "mrwi",
+            deck = { 3, 0, "mrwi" },
             text_localize = "ehi_buffs_hint_immunity",
-            x = 3,
             deck_option =
             {
                 deck = "copycat",
@@ -1349,8 +1282,7 @@ function EHITweakData:new(tweak_data)
         },
         primary_reload_secondary =
         {
-            deck = true,
-            folder = "mrwi",
+            deck = { 0, 0, "mrwi" },
             text = "Primary",
             deck_option =
             {
@@ -1370,9 +1302,7 @@ function EHITweakData:new(tweak_data)
         },
         DamageAbsorption =
         {
-            skills = true,
-            x = 6,
-            y = 4,
+            skills = { 6, 4 },
             group = "player_damage_absorption",
             text = "Absorption",
             skill_check_after_spawn = true,
@@ -1386,9 +1316,7 @@ function EHITweakData:new(tweak_data)
         },
         DamageReduction =
         {
-            skills = true,
-            x = 6,
-            y = 4,
+            skills = { 6, 4 },
             group = "player_damage_reduction",
             text = "Reduction",
             format = "percent",
@@ -1601,6 +1529,49 @@ function EHITweakData:new(tweak_data)
                 managers.mission:add_runned_unit_sequence_trigger(truck_id, "spawn_loot_empty_" .. tostring(i), GarbageFound)
             end
         end,
+        ---@param unit_data EnemyManager._civilian_data.Civilian
+        ---@param key any Unused
+        CountCivilian = function(unit_data, key)
+            if not unit_data.unit then
+                return false
+            end
+            if unit_data.unit:base().unintimidateable then
+                return false
+            end
+            if unit_data.unit:character_damage().immortal then -- Husk unit check
+                return false
+            end
+            if not unit_data.char_tweak then
+                return false
+            end
+            if unit_data.char_tweak.is_escort or not unit_data.char_tweak.intimidateable then
+                return false
+            end
+            return true
+        end,
+        GetLocalPeerColor = function()
+            if CustomNameColor and CustomNameColor.GetOwnColor then
+                return CustomNameColor:GetOwnColor()
+            end
+            local i = 1
+            local session = managers.network and managers.network:session()
+            local local_peer = session and session:local_peer()
+            if local_peer then
+                i = local_peer:id()
+            end
+            return tweak_data.chat_colors[i] or tweak_data.chat_colors[#tweak_data.chat_colors] or Color.white
+        end,
+        GetOtherPeerColor = function()
+            local colors = deep_clone(tweak_data.chat_colors)
+            local i = 1
+            local session = managers.network and managers.network:session()
+            local local_peer = session and session:local_peer()
+            if local_peer then
+                i = local_peer:id()
+            end
+            table.remove(colors, i)
+            return colors[math.random(#colors - 1)] or Color.white
+        end,
         ---@param self table
         ---@return string
         FormatSecondsOnly = function(self)
@@ -1716,6 +1687,24 @@ function EHITweakData:new(tweak_data)
             else
                 return string.format("%d:%02d", t / 60, t % 60)
             end
+        end
+    }
+    self.shared =
+    {
+        AspectRatio =
+        {
+            _16_10 = 1,
+            _4_3 = 2,
+            Other = 3
+        },
+        ---@param x number
+        ---@param y number
+        ---@param aspect_ratio integer
+        ConvertSafeRectToFull = function(x, y, aspect_ratio)
+            if self.shared.AspectRatio._4_3 == aspect_ratio then
+                return managers.gui_data:safe_to_full_16_9(x, y)
+            end
+            return managers.gui_data:safe_to_full(x, y)
         end
     }
     tweak_data.hud_icons.EHI_XP = { texture = self.icons.xp.texture }
@@ -1875,9 +1864,9 @@ function EHITweakData:_classic_heisting_u24_tweaks()
         return
     end
     -- Change buff icons to something else as the buff icon is empty
-    self.buff.MeleeCharge.y = 0
+    self.buff.MeleeCharge.skills[2] = 0
     -- Change texture atlas as the U100 Atlas is not used
-    self.buff.no_ammo_cost.skills = true
+    self.buff.no_ammo_cost.skills = self.buff.no_ammo_cost.u100skill
 end
 
 ---@param color Color

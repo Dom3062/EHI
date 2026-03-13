@@ -160,6 +160,7 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({ max = max + 1 })
     end, { element = { 104303, 104306 }, present_timer = 0 })
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 --´drill defend waypoint001´ ElementWaypoint 101734
 EHI.Waypoint:DisableTimerWaypoints({ [101734] = true })

@@ -2,44 +2,24 @@ if EHI:CheckLoadHook("GrenadeCrateBase") then
     return
 end
 
-function GrenadeCrateBase:GetRealAmount()
-    return self._grenade_amount or self._max_grenade_amount
-end
-
-if not EHI:GetEquipmentOption("show_equipment_grenadecases") then
-    return
-end
-
----@class GrenadeCrateBase
----@field _grenade_amount number
----@field _max_grenade_amount number
----@field _unit UnitGrenadeDeployable
-
 local original =
 {
     init = GrenadeCrateBase.init,
-    _set_visual_stage = GrenadeCrateBase._set_visual_stage,
     _set_empty = GrenadeCrateBase._set_empty,
     destroy = GrenadeCrateBase.destroy,
 
     init_custom = CustomGrenadeCrateBase.init
 }
+local Deployables = EHI.TrackerUtils.Deployables
+---@param unit UnitGrenadeDeployable
 function GrenadeCrateBase:init(unit, ...)
-    self._ehi_key = tostring(unit:key())
+    self._ehi_key = unit:key()
     original.init(self, unit, ...)
-    managers.ehi_deployable:OnDeployablePlaced(unit)
+    Deployables:OnDeployablePlaced(unit)
 end
 
----@param amount number?
-function GrenadeCrateBase:UpdateAmount(amount)
-    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), "grenade_crate", "GrenadeCases")
-end
-
-function GrenadeCrateBase:_set_visual_stage(...)
-    original._set_visual_stage(self, ...)
-    if not self._ignore then
-        self:UpdateAmount()
-    end
+function GrenadeCrateBase:GetRealAmount()
+    return self._grenade_amount or self._max_grenade_amount
 end
 
 function GrenadeCrateBase:SetIgnore()
@@ -47,8 +27,10 @@ function GrenadeCrateBase:SetIgnore()
         return
     end
     self._ignore = true
-    self:UpdateAmount(0)
-    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+    if self.UpdateAmount then
+        self:UpdateAmount(0)
+    end
+    Deployables:OnDeployableConsumed(self._ehi_key)
 end
 
 function GrenadeCrateBase:SetIgnoreChild()
@@ -63,21 +45,50 @@ function GrenadeCrateBase:SetCountThisUnit()
     self._ignore = nil
     self._ignore_set_by_parent = nil
     self._parent_done = true
-    self:UpdateAmount()
+    if self.UpdateAmount then
+        self:UpdateAmount()
+    end
+    Deployables:OnDeployablePlaced(self._unit)
 end
 
 function GrenadeCrateBase:_set_empty(...)
-    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+    Deployables:OnDeployableConsumed(self._ehi_key)
     original._set_empty(self, ...)
 end
 
 function GrenadeCrateBase:destroy(...)
-    self:UpdateAmount(0)
-    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+    if self.UpdateAmount then
+        self:UpdateAmount(0)
+    end
+    Deployables:OnDeployableConsumed(self._ehi_key)
     original.destroy(self, ...)
 end
 
 function CustomGrenadeCrateBase:init(unit, ...)
     self._ehi_key = tostring(unit:key())
     original.init_custom(self, unit, ...)
+end
+
+if not EHI:GetEquipmentOption("show_equipment_grenadecases") then
+    return
+end
+
+---@class GrenadeCrateBase
+---@field _grenade_amount number
+---@field _max_grenade_amount number
+---@field _unit UnitGrenadeDeployable
+
+GrenadeCrateBase.__ehi_id = "grenade_crate"
+GrenadeCrateBase.__ehi_tracker = "GrenadeCases"
+---@param amount number?
+function GrenadeCrateBase:UpdateAmount(amount)
+    managers.ehi_deployable:UpdateAmount(self._ehi_key, amount or self:GetRealAmount(), self.__ehi_id, self.__ehi_tracker)
+end
+
+original._set_visual_stage = GrenadeCrateBase._set_visual_stage
+function GrenadeCrateBase:_set_visual_stage(...)
+    original._set_visual_stage(self, ...)
+    if not self._ignore then
+        self:UpdateAmount()
+    end
 end

@@ -154,7 +154,9 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
         }
     })
 end
-
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.Unit:IgnoreCarryInHudlist(100296) -- Unobtainable money pile near sniper pos
+EHI.Unit:IgnoreInteractInHudlist(100277, 100278, 100279, 100280) -- Small loot near the money pile
 EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,

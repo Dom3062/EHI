@@ -45,6 +45,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104284] = { special_function = AddToRespawnFromDeath, element = 104295, time = 60 }
     other[104285] = { special_function = AddToRespawnFromDeath, element = 104295, time = 75 }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     achievement = achievements,

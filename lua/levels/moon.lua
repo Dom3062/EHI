@@ -53,6 +53,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

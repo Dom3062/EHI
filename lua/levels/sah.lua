@@ -49,6 +49,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 1 }) -- Diff 0.5 is applied at start -> ´delay´ MissionScriptElement 100018
 }
+EHI.Unit:IgnoreCarryInHudlist(400791, 400792) -- 2x un-baggable artifacts near the vault
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

@@ -7,8 +7,8 @@
 ---@field _melee_dmg_mul number
 ---@field _on_headshot_dealt_t number
 ---@field _damage_dealt_to_cops number
----@field _damage_dealt_to_cops_t number
----@field _damage_dealt_to_cops_decay_t number
+---@field _ehi_damage_dealt_to_cops_t number
+---@field _ehi_damage_dealt_to_cops_decay_t number
 ---@field _dodge_shot_gain_value number
 ---@field _next_allowed_doh_t number
 ---@field _cached_detection_risk number?
@@ -48,6 +48,7 @@
 ---@field _has_secondary_reload_primary boolean
 ---@field get_synced_cocaine_stacks fun(self: self, peer_id: integer): { amount: number, in_use: boolean, upgrade_level: integer, power_level: integer }?
 ---@field _get_cocaine_damage_absorption_from_data fun(self: self, data: { amount: number, upgrade_level: integer }): number
+---@field is_current_weapon_of_category fun(self: self, ...:string): boolean
 
 local EHI = EHI
 if EHI:CheckLoadHook("PlayerManager") then
@@ -55,14 +56,6 @@ if EHI:CheckLoadHook("PlayerManager") then
 end
 
 local original = {}
-
-if EHI:GetTrackerOption("show_bodybags_counter") then
-    original._set_body_bags_amount = PlayerManager._set_body_bags_amount
-    function PlayerManager:_set_body_bags_amount(...)
-        original._set_body_bags_amount(self, ...)
-        managers.ehi_tracker:SetCount("BodybagsCounter", self._local_player_body_bags)
-    end
-end
 
 if not EHI:GetOption("show_buffs") then
     return
@@ -428,20 +421,44 @@ if EHI:GetBuffDeckSelectedOptions("maniac", "stack_decay", "stack_convert_rate")
     function PlayerManager:_update_damage_dealt(t, ...)
         original._update_damage_dealt(self, t, ...)
 
-        if not self:has_category_upgrade("player", "cocaine_stacking") then
+        local local_peer_id = managers.network:session() and managers.network:session():local_peer():id()
+        if not local_peer_id or not self:has_category_upgrade("player", "cocaine_stacking") then
             return
         end
 
-        -- t here is identical to the timestamp returned by PlayerManager:player_timer():time() so do not bother calling the latter
-        if self._ehi_damage_dealth_to_cops_t ~= self._damage_dealt_to_cops_t and ShowManiacStackTicks then
-            self._ehi_damage_dealth_to_cops_t = self._damage_dealt_to_cops_t
-            managers.ehi_buff:AddBuff2("ManiacStackTicks", self._damage_dealt_to_cops_t - t)
+        self._ehi_damage_dealt_to_cops_t = self._ehi_damage_dealt_to_cops_t or t + (tweak_data.upgrades.cocaine_stacks_tick_t or 1)
+        self._ehi_damage_dealt_to_cops_decay_t = self._ehi_damage_dealt_to_cops_decay_t or t + (tweak_data.upgrades.cocaine_stacks_decay_t or 5)
+        local cocaine_stacks_tick_rounding = tweak_data.upgrades.cocaine_stacks_tick_rounding or 1
+        self._ehi_damage_dealt_to_cops_t = math.round(self._ehi_damage_dealt_to_cops_t, cocaine_stacks_tick_rounding)
+        self._ehi_damage_dealt_to_cops_decay_t = math.round(self._ehi_damage_dealt_to_cops_decay_t, cocaine_stacks_tick_rounding)
+        local cocaine_stack = self:get_synced_cocaine_stacks(local_peer_id)
+        local amount = cocaine_stack and cocaine_stack.amount or 0
+
+        if math.floor(self._ehi_damage_dealt_to_cops_t) <= t then
+            local tick_t = tweak_data.upgrades.cocaine_stacks_tick_t or 1
+            self._ehi_damage_dealt_to_cops_t = t + tick_t
+            if ShowManiacStackTicks then
+                managers.ehi_buff:AddBuff2("ManiacStackTicks", tick_t)
+            end
         end
 
-        if self._ehi_damage_dealt_to_cops_decay_t ~= self._damage_dealt_to_cops_decay_t and ShowManiacDecayTicks then
+        if math.floor(self._ehi_damage_dealt_to_cops_decay_t) <= t and amount > 0 then
+            local decay_t = tweak_data.upgrades.cocaine_stacks_decay_t or 5
+            self._ehi_damage_dealt_to_cops_decay_t = t + decay_t
+            if ShowManiacDecayTicks then
+                managers.ehi_buff:AddBuff2("ManiacDecayTicks", decay_t)
+            end
+        end
+        -- t here is identical to the timestamp returned by PlayerManager:player_timer():time() so do not bother calling the latter
+        --[[if self._ehi_damage_dealth_to_cops_t ~= self._damage_dealt_to_cops_t and ShowManiacStackTicks then
+            self._ehi_damage_dealth_to_cops_t = self._damage_dealt_to_cops_t
+            managers.ehi_buff:AddBuff2("ManiacStackTicks", self._damage_dealt_to_cops_t - t)
+        end]]
+
+        --[[if self._ehi_damage_dealt_to_cops_decay_t ~= self._damage_dealt_to_cops_decay_t and ShowManiacDecayTicks then
             self._ehi_damage_dealt_to_cops_decay_t = self._damage_dealt_to_cops_decay_t
             managers.ehi_buff:AddBuff2("ManiacDecayTicks", self._damage_dealt_to_cops_decay_t - t)
-        end
+        end]]
     end
 end
 

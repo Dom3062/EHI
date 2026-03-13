@@ -237,6 +237,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[EHI:GetInstanceElementID(100007, 8000)] = { id = "SnipersBlackhawk", special_function = SF.DecreaseCounter }
     other[EHI:GetInstanceElementID(100025, 8000)] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SnipersKilled", arg = { 23 } }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,
@@ -273,6 +274,7 @@ end
 tbl[EHI:GetInstanceUnitID(100051, 29550)] = { tracker_merge_id = "HackChance" }
 
 EHI.Unit:UpdateUnits(tbl)
+EHI.Unit:IgnoreCarryInHudlist(101757, 400513, 400515, 400617) -- Alien head in the Biolab, 2 Maps + Dagger in the Archaeology
 EHI.Waypoint:DisableTimerWaypoints({
     -- Crane Fix WP
     [102467] = true,

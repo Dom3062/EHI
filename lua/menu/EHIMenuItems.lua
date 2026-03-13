@@ -122,7 +122,7 @@ end
 function EHIMenuSetColorInitiator:setup_node(node, data)
     node:clean_items()
     data = data or node:parameters().menu_component_data
-    if not node:item("divider_end") then
+    if not node:item("divider") then
         self:create_slider(node, {
             name = "red",
             text_id = "ehi_buffs_group_color_red"

@@ -20,7 +20,7 @@ function EHIBuffManager:init_finalize(hud, panel)
     dofile(path .. "SimpleBuffEdits.lua")
     EHIBuffTracker._parent_class = self
     hud:AddEHIUpdator("EHI_Buff_Update", self)
-    self._panel = panel
+    self._panel = panel:panel()
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
     local buff_y = EHI:GetOption(_G.IS_VR and "buffs_vr_y_offset" or "buffs_y_offset") --[[@as number]]
     local buff_w = tweak_data.size_w * scale
@@ -36,11 +36,15 @@ function EHIBuffManager:init_finalize(hud, panel)
     EHI:AddEndGameCallback(function()
         self._update_buffs = {}
     end)
+    local hide_buffs_in_custody = EHI:GetOption("buffs_hide_in_custody")
     EHI:AddOnCustodyCallback(function(custody_state)
         for id, buff in pairs(self._buffs) do
             if not self._buffs_redirect[id] then
                 buff:SetCustodyState(custody_state)
             end
+        end
+        if hide_buffs_in_custody then
+            self._panel:set_visible(not custody_state)
         end
     end)
     EHI:AddOnAlarmCallback(function(dropin)
@@ -119,6 +123,7 @@ function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
                     params.team_skill_check = buff.permanent.team_skill_check
                     params.always_show = buff.permanent.always_show
                     params.show_on_trigger = buff.permanent.show_on_trigger
+                    params.unhook_on_false_check = buff.permanent.unhook_on_false_checks
                     params.skill_check_after_spawn = true
                     params.check_buff_on_spawn = true
                 else
@@ -171,7 +176,7 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             self:_create_buff(params, nil, nil, Tagged)
         end
     end
-    EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+    EHI.ModUtils:AddCustomNameColorSyncCallback("EHIBuffManager", function(peer_id, color)
         local buff = self._buffs["TagTeamTagged_" .. peer_id .. local_peer_id]
         if buff then
             buff._icon:set_color(color)
@@ -388,7 +393,11 @@ end
 
 ---@param buff EHIBuffTracker
 function EHIBuffManager:_add_visible_buff(buff)
-    self._visible_buffs[buff._id] = buff
+    local id = buff._id
+    if self._visible_buffs[id] then
+        return
+    end
+    self._visible_buffs[id] = buff
     buff._pos = self._n_visible
     self._n_visible = self._n_visible + 1
     self:ReorganizeFast(self._n_visible, buff)
@@ -396,7 +405,11 @@ end
 
 ---@param buff EHIBuffTracker
 function EHIBuffManager:_remove_visible_buff(buff)
-    self._visible_buffs[buff._id] = nil
+    local id = buff._id
+    if not self._visible_buffs[id] then
+        return
+    end
+    self._visible_buffs[id] = nil
     self._n_visible = self._n_visible - 1
     self:Reorganize(buff._pos, buff, true)
 end

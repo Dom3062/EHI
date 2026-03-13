@@ -1,108 +1,1151 @@
-{
-    "menu_id": "ehi_buffs_perks_menu",
-    "parent_menu_id" : "ehi_buffs_menu",
-    "title": "ehi_buffs_perks_menu",
-    "items": [
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_infiltrator_choice",
-            "title": "ehi_buffs_perks_infiltrator",
-            "next_menu": "ehi_buffs_perks_infiltrator_menu"
+[
+    {
+        "menu_id": "ehi_buffs_perks_menu",
+        "parent_menu_id" : "ehi_buffs_menu",
+        "items": [
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_shared_choice",
+                "title": "ehi_buffs_perks_shared",
+                "description" : "ehi_buffs_perks_shared_desc",
+                "next_menu": "ehi_buffs_perks_shared_menu"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_infiltrator_choice",
+                "title": "ehi_buffs_perks_infiltrator",
+                "next_menu": "ehi_buffs_perks_infiltrator_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_gambler_choice",
+                "title": "ehi_buffs_perks_gambler",
+                "next_menu": "ehi_buffs_perks_gambler_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_grinder_choice",
+                "title": "ehi_buffs_perks_grinder",
+                "next_menu": "ehi_buffs_perks_grinder_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_maniac_choice",
+                "title": "ehi_buffs_perks_maniac",
+                "next_menu" : "ehi_buffs_perks_maniac_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_anarchist_choice",
+                "title": "ehi_buffs_perks_anarchist",
+                "next_menu" : "ehi_buffs_perks_anarchist_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_yakuza_choice",
+                "title": "ehi_buffs_perks_yakuza",
+                "next_menu" : "ehi_buffs_perks_yakuza_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_expresident_choice",
+                "title": "ehi_buffs_perks_expresident",
+                "next_menu": "ehi_buffs_perks_expresident_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_biker_choice",
+                "title": "ehi_buffs_perks_biker",
+                "next_menu": "ehi_buffs_perks_biker_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_kingpin_choice",
+                "title": "ehi_buffs_perks_kingpin",
+                "next_menu": "ehi_buffs_perks_kingpin_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_sicario_choice",
+                "title": "ehi_buffs_perks_sicario",
+                "next_menu": "ehi_buffs_perks_sicario_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_stoic_choice",
+                "title": "ehi_buffs_perks_stoic",
+                "next_menu": "ehi_buffs_perks_stoic_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_tag_team_choice",
+                "title": "ehi_buffs_perks_tag_team",
+                "next_menu": "ehi_buffs_perks_tag_team_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_hacker_choice",
+                "title": "ehi_buffs_perks_hacker",
+                "next_menu": "ehi_buffs_perks_hacker_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_leech_choice",
+                "title": "ehi_buffs_perks_leech",
+                "next_menu": "ehi_buffs_perks_leech_menu"
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_copycat_choice",
+                "title": "ehi_buffs_perks_copycat",
+                "next_menu": "ehi_buffs_perks_copycat_menu"
+            },
+            {
+                "type": "divider",
+                "size": 20
+            },
+            {
+                "type": "button",
+                "id": "ehi_buffs_perks_gage_boosts_choice",
+                "title": "ehi_buffs_perks_gage_boosts",
+                "description" : "ehi_buffs_perks_gage_boosts_desc",
+                "next_menu": "ehi_buffs_perks_gage_boosts_menu"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_shared_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "shared" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_gambler_choice",
-            "title": "ehi_buffs_perks_gambler",
-            "next_menu": "ehi_buffs_perks_gambler_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_shared_overdog_damage_reduction_choice",
+                "title": "ehi_buffs_perks_shared_overdog_damage_reduction",
+                "description": "ehi_buffs_perks_shared_overdog_damage_reduction_final",
+                "callback": "ehi_set_item_value",
+                "value": "overdog_damage_reduction",
+                "default_value": true,
+                "child": "ehi_buffs_perks_shared_overdog_damage_reduction_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_shared_overdog_damage_reduction_persistent_choice",
+                "title": "ehi_buffs_perks_shared_overdog_damage_reduction_persistent",
+                "description": "ehi_buffs_perks_shared_overdog_damage_reduction_persistent_final",
+                "callback": "ehi_set_item_value",
+                "value": "overdog_damage_reduction_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_shared_overdog_damage_reduction_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_shared_overdog_melee_swings_choice",
+                "title": "ehi_buffs_perks_shared_overdog_melee_swings",
+                "description": "ehi_buffs_perks_shared_overdog_melee_swings_final",
+                "callback": "ehi_set_item_value",
+                "value": "overdog_melee_swings",
+                "default_value": true,
+                "child": "ehi_buffs_perks_shared_overdog_melee_swings_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_shared_overdog_melee_swings_persistent_choice",
+                "title": "ehi_buffs_perks_shared_overdog_melee_swings_persistent",
+                "description": "ehi_buffs_perks_shared_overdog_melee_swings_persistent_final",
+                "callback": "ehi_set_item_value",
+                "value": "overdog_melee_swings_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_shared_overdog_melee_swings_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_infiltrator_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "infiltrator" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_grinder_choice",
-            "title": "ehi_buffs_perks_grinder",
-            "next_menu": "ehi_buffs_perks_grinder_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_infiltrator_melee_cooldown_choice",
+                "title": "ehi_buffs_perks_infiltrator_melee_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "melee_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_infiltrator_melee_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "melee_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_infiltrator_melee_cooldown_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_gambler_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "gambler" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_maniac_choice",
-            "title": "ehi_buffs_perks_maniac",
-            "next_menu" : "ehi_buffs_perks_maniac_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gambler_regain_health_cooldown_choice",
+                "title": "ehi_buffs_perks_gambler_regain_health_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "regain_health_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_gambler_regain_health_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gambler_regain_health_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_gambler_regain_health_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "regain_health_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_gambler_regain_health_cooldown_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_choice",
+                "title": "ehi_buffs_perks_gambler_ammo_give_out_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "ammo_give_out_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "ammo_give_out_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_gambler_ammo_give_out_cooldown_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_grinder_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "grinder" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_anarchist_choice",
-            "title": "ehi_buffs_perks_anarchist",
-            "next_menu" : "ehi_buffs_perks_anarchist_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_grinder_regen_duration_choice",
+                "title": "ehi_buffs_perks_grinder_regen_duration",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "regen_duration",
+                "default_value": true,
+                "child": "ehi_buffs_perks_grinder_regen_duration_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_grinder_regen_duration_persistent_choice",
+                "title": "ehi_buffs_perks_grinder_regen_duration_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "regen_duration_persistent",
+                "default_value": false
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_grinder_stack_cooldown_choice",
+                "title": "ehi_buffs_perks_grinder_stack_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "stack_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_grinder_stack_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_grinder_stack_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_grinder_stack_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "stack_cooldown_persistent",
+                "default_value": false
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_maniac_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "maniac" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_yakuza_choice",
-            "title": "ehi_buffs_perks_yakuza",
-            "next_menu" : "ehi_buffs_perks_yakuza_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_maniac_stack_choice",
+                "title": "ehi_buffs_perks_maniac_stack",
+                "description": "ehi_buffs_skills_progress",
+                "callback": "ehi_set_item_value",
+                "value": "stack",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_maniac_stack_convert_rate_choice",
+                "title": "ehi_buffs_perks_maniac_stack_convert_rate",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "stack_convert_rate",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_maniac_stack_decay_choice",
+                "title": "ehi_buffs_perks_maniac_stack_decay",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "stack_decay",
+                "default_value": true
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_anarchist_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "anarchist" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_expresident_choice",
-            "title": "ehi_buffs_perks_expresident",
-            "next_menu": "ehi_buffs_perks_expresident_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_continuous_armor_regen_choice",
+                "title": "ehi_buffs_perks_anarchist_continuous_armor_regen",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "continuous_armor_regen",
+                "default_value": true,
+                "child" : "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent_choice",
+                "title": "ehi_buffs_perks_anarchist_continuous_armor_regen_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "continuous_armor_regen_persistent",
+                "default_value": false,
+                "parent" : "ehi_buffs_perks_anarchist_continuous_armor_regen_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_immunity_choice",
+                "title": "ehi_buffs_perks_anarchist_immunity",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "immunity",
+                "child": "ehi_buffs_perks_anarchist_immunity_persistent_choice",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_immunity_persistent_choice",
+                "title": "ehi_buffs_perks_anarchist_immunity_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "immunity_persistent",
+                "default_value": false,
+                "parent" : "ehi_buffs_perks_anarchist_immunity_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_immunity_cooldown_choice",
+                "title": "ehi_buffs_perks_anarchist_immunity_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "immunity_cooldown",
+                "child": "ehi_buffs_perks_anarchist_immunity_cooldown_persistent_choice",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_immunity_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_anarchist_immunity_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "immunity_cooldown_persistent",
+                "default_value": false,
+                "parent" : "ehi_buffs_perks_anarchist_immunity_cooldown_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_choice",
+                "title": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "kill_armor_regen_cooldown",
+                "child": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent_choice",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "kill_armor_regen_cooldown_persistent",
+                "default_value": false,
+                "parent" : "ehi_buffs_perks_anarchist_kill_armor_regen_cooldown_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_yakuza_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "yakuza" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_biker_choice",
-            "title": "ehi_buffs_perks_biker",
-            "next_menu": "ehi_buffs_perks_biker_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_yakuza_irezumi_choice",
+                "title": "ehi_buffs_perks_yakuza_irezumi",
+                "callback": "ehi_set_item_value",
+                "value": "irezumi",
+                "default_value": true,
+                "children": [ "ehi_buffs_perks_yakuza_irezumi_refresh_choice", "ehi_buffs_perks_yakuza_irezumi_format_choice", "ehi_buffs_perks_yakuza_irezumi_text_format_choice" ]
+            },
+            {
+                "type": "slider",
+                "id": "ehi_buffs_perks_yakuza_irezumi_refresh_choice",
+                "title": "ehi_buffs_perks_yakuza_irezumi_refresh",
+                "description": "ehi_buffs_perks_yakuza_irezumi_refresh_desc",
+                "callback": "ehi_set_item_value",
+                "value": "irezumi_refresh",
+                "parent" : "ehi_buffs_perks_yakuza_irezumi_choice",
+                "default_value": 2,
+                "max": 10,
+                "min": 1,
+                "step": 1,
+                "display_precision": 0
+            },
+            {
+                "type": "multiple_choice",
+                "id": "ehi_buffs_perks_yakuza_irezumi_format_choice",
+                "title": "ehi_tracker_value_format",
+                "description": "ehi_buffs_perks_yakuza_irezumi_format_desc",
+                "callback": "ehi_set_item_value",
+                "items": [
+                    "ehi_buffs_skills_fugitive_berserker_format_1",
+                    "ehi_buffs_skills_fugitive_berserker_format_2"
+                ],
+                "value": "irezumi_format",
+                "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
+                "default_value": 1
+            },
+            {
+                "type": "multiple_choice",
+                "id": "ehi_buffs_perks_yakuza_irezumi_text_format_choice",
+                "title": "ehi_tracker_format",
+                "description": "ehi_buffs_perks_yakuza_irezumi_text_format_desc",
+                "callback": "ehi_set_item_value",
+                "items": [
+                    "ehi_buffs_perks_yakuza_irezumi_text_format_1",
+                    "ehi_buffs_perks_yakuza_irezumi_text_format_2",
+                    "ehi_buffs_perks_yakuza_irezumi_text_format_3",
+                    "ehi_buffs_perks_yakuza_irezumi_text_format_4"
+                ],
+                "value": "irezumi_text_format",
+                "parent": "ehi_buffs_perks_yakuza_irezumi_choice",
+                "default_value": 1
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_expresident_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "expresident" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_kingpin_choice",
-            "title": "ehi_buffs_perks_kingpin",
-            "next_menu": "ehi_buffs_perks_kingpin_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_expresident_stored_health_choice",
+                "title": "ehi_buffs_perks_expresident_stored_health",
+                "description": "ehi_buffs_skills_value",
+                "callback": "ehi_set_item_value",
+                "value": "stored_health",
+                "default_value": true
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_biker_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "biker" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_sicario_choice",
-            "title": "ehi_buffs_perks_sicario",
-            "next_menu": "ehi_buffs_perks_sicario_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_biker_kill_counter_choice",
+                "title": "ehi_buffs_perks_biker_kill_counter",
+                "description": "ehi_buffs_skills_value",
+                "callback": "ehi_set_item_value",
+                "value": "kill_counter",
+                "default_value": true
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_kingpin_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "kingpin" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_stoic_choice",
-            "title": "ehi_buffs_perks_stoic",
-            "next_menu": "ehi_buffs_perks_stoic_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_kingpin_injector_choice",
+                "title": "ehi_buffs_perks_kingpin_injector",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "injector",
+                "default_value": true,
+                "child": "ehi_buffs_perks_kingpin_injector_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_kingpin_injector_persistent_choice",
+                "title": "ehi_buffs_perks_kingpin_injector_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "injector_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_kingpin_injector_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_kingpin_injector_cooldown_choice",
+                "title": "ehi_buffs_perks_kingpin_injector_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "injector_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_kingpin_injector_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_kingpin_injector_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_kingpin_injector_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "injector_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_kingpin_injector_cooldown_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_sicario_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "sicario" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_tag_team_choice",
-            "title": "ehi_buffs_perks_tag_team",
-            "next_menu": "ehi_buffs_perks_tag_team_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_smoke_bomb_choice",
+                "title": "ehi_buffs_perks_sicario_smoke_bomb",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "smoke_bomb",
+                "default_value": true,
+                "child" : "ehi_buffs_perks_sicario_smoke_bomb_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_smoke_bomb_persistent_choice",
+                "title": "ehi_buffs_perks_sicario_smoke_bomb_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "smoke_bomb_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_sicario_smoke_bomb_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_choice",
+                "title": "ehi_buffs_perks_sicario_smoke_bomb_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "smoke_bomb_cooldown",
+                "default_value": true,
+                "child" : "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "smoke_bomb_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_sicario_smoke_bomb_cooldown_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_twitch_choice",
+                "title": "ehi_buffs_perks_sicario_twitch",
+                "description": "ehi_buffs_skills_value",
+                "callback": "ehi_set_item_value",
+                "value": "twitch",
+                "default_value": true,
+                "child": "ehi_buffs_perks_sicario_twitch_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_twitch_persistent_choice",
+                "title": "ehi_buffs_perks_sicario_twitch_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "twitch_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_sicario_twitch_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_twitch_cooldown_choice",
+                "title": "ehi_buffs_perks_sicario_twitch_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "twitch_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_sicario_twitch_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_sicario_twitch_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_sicario_twitch_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "twitch_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_sicario_twitch_cooldown_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_stoic_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "stoic" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_hacker_choice",
-            "title": "ehi_buffs_perks_hacker",
-            "next_menu": "ehi_buffs_perks_hacker_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_stoic_duration_choice",
+                "title": "ehi_buffs_perks_stoic_duration",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "duration",
+                "default_value": true,
+                "child": "ehi_buffs_perks_stoic_duration_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_stoic_duration_persistent_choice",
+                "title": "ehi_buffs_perks_stoic_duration_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "duration_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_stoic_duration_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_stoic_cooldown_choice",
+                "title": "ehi_buffs_perks_stoic_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_stoic_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_stoic_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_stoic_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_stoic_duration_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_tag_team_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "tag_team" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_leech_choice",
-            "title": "ehi_buffs_perks_leech",
-            "next_menu": "ehi_buffs_perks_leech_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_cooldown_choice",
+                "title": "ehi_buffs_perks_tag_team_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_tag_team_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_tag_team_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_tag_team_cooldown_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_effect_choice",
+                "title": "ehi_buffs_perks_tag_team_effect",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "effect",
+                "default_value": true,
+                "child": "ehi_buffs_perks_tag_team_effect_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_effect_persistent_choice",
+                "title": "ehi_buffs_perks_tag_team_effect_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "effect_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_tag_team_effect_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_absorption_choice",
+                "title": "ehi_buffs_perks_tag_team_absorption",
+                "description": "ehi_buffs_skills_value",
+                "callback": "ehi_set_item_value",
+                "value": "absorption",
+                "default_value": true,
+                "child": "ehi_buffs_perks_tag_team_absorption_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_absorption_persistent_choice",
+                "title": "ehi_buffs_perks_tag_team_absorption_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "absorption_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_tag_team_absorption_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_tagged_choice",
+                "title": "ehi_buffs_perks_tag_team_tagged",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "tagged",
+                "default_value": true,
+                "child": "ehi_buffs_perks_tag_team_tagged_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tag_team_tagged_persistent_choice",
+                "title": "ehi_buffs_perks_tag_team_tagged_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "tagged_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_tag_team_tagged_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_hacker_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "hacker" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_copycat_choice",
-            "title": "ehi_buffs_perks_copycat",
-            "next_menu": "ehi_buffs_perks_copycat_menu"
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_cooldown_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_hacker_pecm_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_hacker_pecm_cooldown_choice"
+            },
+            {
+                "type" : "divider",
+                "size" : 20
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_dodge_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_dodge",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_dodge",
+                "default_value": true,
+                "child": "ehi_buffs_perks_hacker_pecm_dodge_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_dodge_persistent_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_dodge_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_dodge_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_hacker_pecm_dodge_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_jammer_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_jammer",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_jammer",
+                "default_value": true,
+                "child": "ehi_buffs_perks_hacker_pecm_jammer_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_jammer_persistent_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_jammer_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_jammer_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_hacker_pecm_jammer_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_feedback_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_feedback",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_feedback",
+                "default_value": true,
+                "child": "ehi_buffs_perks_hacker_pecm_feedback_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_hacker_pecm_feedback_persistent_choice",
+                "title": "ehi_buffs_perks_hacker_pecm_feedback_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "pecm_feedback_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_hacker_pecm_feedback_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_leech_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "leech" ]
         },
-        {
-            "type": "divider",
-            "size": 20
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_leech_ampule_choice",
+                "title": "ehi_buffs_perks_leech_ampule",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "ampule",
+                "default_value": true,
+                "child": "ehi_buffs_perks_leech_ampule_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_leech_ampule_persistent_choice",
+                "title": "ehi_buffs_perks_leech_ampule_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "ampule_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_leech_ampule_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_leech_ampule_cooldown_choice",
+                "title": "ehi_buffs_perks_leech_ampule_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "ampule_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_leech_ampule_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_leech_ampule_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_leech_ampule_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "ampule_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_leech_ampule_cooldown_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_copycat_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "copycat" ]
         },
-        {
-            "type": "button",
-            "id": "ehi_buffs_perks_gage_boosts_choice",
-            "title": "ehi_buffs_perks_gage_boosts",
-            "description" : "ehi_buffs_perks_gage_boosts_desc",
-            "next_menu": "ehi_buffs_perks_gage_boosts_menu"
-        }
-    ]
-}
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tactical_reload_primary_choice",
+                "title": "ehi_buffs_perks_tactical_reload_primary",
+                "description": "ehi_buffs_skills_value",
+                "callback": "ehi_set_item_value",
+                "value": "primary_reload_secondary",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_tactical_reload_secondary_choice",
+                "title": "ehi_buffs_perks_tactical_reload_secondary",
+                "description": "ehi_buffs_skills_value",
+                "callback": "ehi_set_item_value",
+                "value": "secondary_reload_primary",
+                "default_value": true
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_copycat_head_games_cooldown_choice",
+                "title": "ehi_buffs_perks_copycat_head_games_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "head_games_cooldown",
+                "child": "ehi_buffs_perks_copycat_head_games_cooldown_persistent_choice",
+                "default_value": true
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_copycat_head_games_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_copycat_head_games_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "head_games_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_copycat_head_games_cooldown_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_copycat_grace_period_choice",
+                "title": "ehi_buffs_perks_copycat_grace_period",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "grace_period",
+                "default_value": true,
+                "child": "ehi_buffs_perks_copycat_grace_period_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_copycat_grace_period_persistent_choice",
+                "title": "ehi_buffs_perks_copycat_grace_period_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "grace_period_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_copycat_grace_period_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_copycat_grace_period_cooldown_choice",
+                "title": "ehi_buffs_perks_copycat_grace_period_cooldown",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "grace_period_cooldown",
+                "default_value": true,
+                "child": "ehi_buffs_perks_copycat_grace_period_cooldown_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_copycat_grace_period_cooldown_persistent_choice",
+                "title": "ehi_buffs_perks_copycat_grace_period_cooldown_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "grace_period_cooldown_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_copycat_grace_period_cooldown_choice"
+            }
+        ]
+    },
+    {
+        "menu_id": "ehi_buffs_perks_gage_boosts_menu",
+        "parent_menu_id" : "ehi_buffs_perks_menu",
+        "global_params": {
+            "settings" : [ "buff_option", "gage_boosts" ]
+        },
+        "items": [
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gage_boosts_life_steal_choice",
+                "title": "ehi_buffs_perks_gage_boosts_life_steal",
+                "description": "ehi_buffs_skills_cooldown",
+                "callback": "ehi_set_item_value",
+                "value": "life_steal",
+                "default_value": true,
+                "child": "ehi_buffs_perks_gage_boosts_life_steal_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gage_boosts_life_steal_persistent_choice",
+                "title": "ehi_buffs_perks_gage_boosts_life_steal_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "life_steal_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_gage_boosts_life_steal_choice"
+            },
+            {
+                "type": "divider",
+                "size": 10
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gage_boosts_melee_invulnerability_choice",
+                "title": "ehi_buffs_perks_gage_boosts_melee_invulnerability",
+                "description": "ehi_buffs_skills_duration",
+                "callback": "ehi_set_item_value",
+                "value": "melee_invulnerability",
+                "default_value": true,
+                "child": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent_choice"
+            },
+            {
+                "type": "toggle",
+                "id": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent_choice",
+                "title": "ehi_buffs_perks_gage_boosts_melee_invulnerability_persistent",
+                "description": "ehi_buffs_skills_permanent",
+                "callback": "ehi_set_item_value",
+                "value": "melee_invulnerability_persistent",
+                "default_value": false,
+                "parent": "ehi_buffs_perks_gage_boosts_melee_invulnerability_choice"
+            }
+        ]
+    }
+]

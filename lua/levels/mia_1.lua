@@ -232,6 +232,8 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104289] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[104303] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.Unit:IgnoreCarryInHudlist(104526) -- Money bundle under the ground near starting area (motel)
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

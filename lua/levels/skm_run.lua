@@ -8,6 +8,7 @@ local other =
     [100954] = EHI:AddSniperSpawnedPopup(true),
     [100956] = EHI:AddSniperSpawnedPopup(true)
 }
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     other = other
 })

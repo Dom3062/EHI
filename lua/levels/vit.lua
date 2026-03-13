@@ -73,6 +73,8 @@ if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
     triggers[EHI:GetInstanceElementID(100081, 4350)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "b" } }
     triggers[EHI:GetInstanceElementID(100076, 4450)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "y" } }
     triggers[EHI:GetInstanceElementID(100081, 4450)] = { id = "CorrectCables", special_function = SF.CallCustomFunction, f = "RemoveCode", arg = { "y" } }
+end
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
     for _, index in ipairs({ 5100, 5400, 5700, 15450 }) do
         triggers[EHI:GetInstanceElementID(100139, index)] = { id = "SafeCode", class = TT.Code, remove_on_alarm = true, waypoint = { icon = "code", position_from_unit = EHI:GetInstanceUnitID(100004, index) } }
     end
@@ -147,22 +149,32 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     -- Enemies killed via "ElementAIRemove" DOES NOT TRIGGER ElementEnemyDummyTrigger if "force_ragdoll" and "true_death" are set to "false" and "use_instigator" is set to "true"
     other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }
 end
-if managers.ehi_deployable then
-    managers.ehi_deployable:AddPositionShapeCheck(Vector3(7487, 4600, -1725), Rotation(0, 0, -0), 8000, 4440, 3260) -- Same as ´peoc_kill_area´ ElementAreaTrigger 103128
-    other[102083] = { special_function = SF.CustomCode, f = function()
-        managers.ehi_deployable:RunPositionShapeChecks()
-    end, load_sync = function(self) ---@param self EHIMissionElementTrigger
-        local despawn_area = managers.mission:get_element_by_id(103128) --[[@as ElementAreaTrigger?]]
-        if despawn_area and despawn_area:enabled() then
-            self:Trigger()
-        end
-    end }
-end
+other[102083] = EHI.TrackerUtils.Deployables:AddDeployablesIgnoreCheck({
+    shapes = { 103128 },
+    element_area_id = 103128 -- ´peoc_kill_area´ ElementAreaTrigger 103128
+})
 EHI.Unit:UpdateUnits({
     [EHI:GetInstanceUnitID(100058, 22250)] = { tracker_merge_id = "MaxHacks" },
     [EHI:GetInstanceUnitID(100191, 22250)] = { tracker_merge_id = "MaxHacks" },
     [EHI:GetInstanceUnitID(100192, 22250)] = { tracker_merge_id = "MaxHacks", destroy_tracker_merge_on_done = true }
 })
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+if EHI:GetHudlistAndListOption("right_list", "show_units") and EHI:IsDifficultyOrAbove(EHI.Difficulties.Hard) then -- Normal diff has active turret element, but it is never called
+    other[102092] = EHI:AddCustomCode(function(self)
+        for _, turret in ipairs({ 103911, 103912 }) do
+            local unit = managers.worlddefinition:get_unit(turret)
+            local base = unit and unit:base() --[[@as AnimatedVehicleBase?]]
+            if base and base._modules and base._modules.turret1 then
+                managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnemyTurretDespawned")
+            end
+        end
+    end)
+    other[102092].load_sync = function(self) ---@param self EHIMissionElementTrigger
+        if managers.groupai:state()._hunt_mode then
+            self:Trigger()
+        end
+    end
+end
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

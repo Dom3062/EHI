@@ -18,6 +18,7 @@ local achievements =
         }
     }
 }
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     achievement = achievements
 })

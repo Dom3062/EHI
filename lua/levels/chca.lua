@@ -19,7 +19,7 @@ local triggers = {
 
     [103269] = { time = 7 + 614/30, id = "BoatEscape", icons = Icon.BoatEscapeNoLoot, hint = Hints.Escape }
 }
-if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
     EHI.Mission:LoadClass("EHICodeTracker")
     triggers[101073] = EHI:AddCustomCode(function(self)
         if self._cache.chca_C4Route or self._cache.chca_CodeUsed or self._cache.chca_CodeSeen then
@@ -37,15 +37,19 @@ if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
             end
             code[i] = c
         end
-        self._trackers:AddTracker({
-            id = "VaultCode",
-            class = TT.Code
-        })
-        self._waypoints:AddWaypoint("VaultCode", {
-            position = paper_unit:position(),
-            icon = "code",
-            class = self.Waypoints.Code
-        })
+        if self._mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
+            self._trackers:AddTracker({
+                id = "VaultCode",
+                class = self.Trackers.Code
+            })
+        end
+        if self._mission._SHOW_MISSION_WAYPOINTS_TYPE.cheaty then
+            self._waypoints:AddWaypoint("VaultCode", {
+                position = paper_unit:position(),
+                icon = "code",
+                class = self.Waypoints.Code
+            })
+        end
         for i, code_body in ipairs(code) do
             for j, object in ipairs(code_body) do
                 if paper_unit:get_object(object):visibility() then -- If code is visible
@@ -253,6 +257,7 @@ if EHI:IsLootCounterVisible() then
     other[101138] = MiniSafeMoneyBagFound
     other[101413] = MiniSafeMoneyBagFound
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

@@ -34,7 +34,7 @@ local other =
 if EHI.TrackerUtils:IsLootCounterVisible({ element = { 100500, 102069 } }) then
     other[102091] = EHI:AddLootCounter4(function(self, ...)
         if not self._cache.CreateCounter then
-            EHI:ShowLootCounterNoChecks({ skip_offset = true })
+            EHI:ShowLootCounterNoChecks({})
             self._cache.CreateCounter = true
         end
         self._loot:IncreaseLootCounterProgressMax()
@@ -49,6 +49,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102065] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102675 }}
     other[102080] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102674 }}
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, "Escape", Icon.HeliEscape)
 
 tweak_data.ehi.functions.achievements.armored_4()

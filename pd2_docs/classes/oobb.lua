@@ -7,7 +7,8 @@ OOBB = {}
 
 function OOBB:area(...) end
 
-function OOBB:center(...) end
+---@return number
+function OOBB:center() end
 
 function OOBB:corner(...) end
 
@@ -29,14 +30,18 @@ function OOBB:raycast(...) end
 
 function OOBB:shrink(...) end
 
-function OOBB:size(...) end
+---@return { x: number, y: number, z: number }
+function OOBB:size() end
 
 function OOBB:to_local(...) end
 
 function OOBB:volume(...) end
 
-function OOBB:x(...) end
+---@return number
+function OOBB:x() end
 
-function OOBB:y(...) end
+---@return number
+function OOBB:y() end
 
-function OOBB:z(...) end
+---@return number
+function OOBB:z() end

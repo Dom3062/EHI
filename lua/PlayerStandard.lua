@@ -306,6 +306,19 @@ if EHI:GetBuffOption("melee_charge") then
     end)
 end
 
+if EHI:GetBuffDeckOption("shared", "overdog_melee_swings") then
+    Hooks:PostHook(PlayerStandard, "_do_melee_damage", "EHI_melee_stacking_hit_damage_multiplier_do_melee_damage", function(self, t, ...) ---@param t number
+        local melee = self._state_data.stacking_dmg_mul and self._state_data.stacking_dmg_mul.melee
+        if melee then
+            if melee[1] then
+                managers.ehi_buff:AddBuff("melee_stacking_hit_damage_multiplier", melee[1] - t)
+            else
+                managers.ehi_buff:RemoveAndResetBuff("melee_stacking_hit_damage_multiplier")
+            end
+        end
+    end)
+end
+
 if EHI:GetBuffOption("weapon_swap") then
     original._start_action_unequip_weapon = PlayerStandard._start_action_unequip_weapon
     function PlayerStandard:_start_action_unequip_weapon(t, data, ...)

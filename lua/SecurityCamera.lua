@@ -1,8 +1,8 @@
-if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetTrackerOrWaypointOption("show_camera_loop", "show_waypoints_cameras") or _G.ch_settings then
+if EHI:CheckLoadHook("SecurityCamera") or not EHI:GetTrackerWaypointHudlistOption("show_camera_loop", "show_waypoints_cameras", "show_camera_loop") or _G.ch_settings then
     return
 end
 
-local show_tracker, show_waypoint = EHI:GetShowTrackerAndWaypoint("show_camera_loop", "show_waypoints_cameras")
+local show_tracker, show_waypoint, show_hudlist = EHI:GetShowTrackerWaypointAndHudlist("show_camera_loop", "show_waypoints_cameras", "show_camera_loop")
 
 local original =
 {
@@ -40,14 +40,19 @@ function SecurityCamera:_start_tape_loop(tape_loop_t, ...)
             class = EHI.Waypoints.Warning
         })
     end
+    if show_hudlist then
+        managers.ehi_hudlist:CallLeftListItemFunction("Camera", "AddCameraLoop", self._ehi_key, t)
+    end
 end
 
 function SecurityCamera:_deactivate_tape_loop(...)
     original._deactivate_tape_loop(self, ...)
     managers.ehi_tracking:Remove(self._ehi_key)
+    managers.ehi_hudlist:CallLeftListItemFunction("Camera", "RemoveCameraLoop", self._ehi_key)
 end
 
 function SecurityCamera:destroy(...)
     managers.ehi_tracking:Remove(self._ehi_key)
+    managers.ehi_hudlist:CallLeftListItemFunction("Camera", "RemoveCameraLoop", self._ehi_key)
     original.destroy(self, ...)
 end

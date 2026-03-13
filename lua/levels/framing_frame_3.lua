@@ -31,6 +31,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104460] = { id = "Snipers", time = 15, special_function = SetRespawnTime }
     other[104468] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "Escape", Icon.HeliEscapeNoLoot)
 EHI:AddXPBreakdown({

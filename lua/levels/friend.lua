@@ -114,6 +114,7 @@ local trophy =
         end
     }
 }
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 local other =
 {

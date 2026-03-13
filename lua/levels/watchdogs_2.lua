@@ -144,7 +144,7 @@ if EHI.Mission._SHOW_MISSION_WAYPOINTS then
     other[101150].icons = Icon.BoatLootDrop
     other[101150].waypoint_f = waypoint_f
 end
-
+EHI.Unit:IgnoreCarryInHudlist(100054, 100058, 100426, 100427, 100428, 100429, 100491, 100492, 100494, 100495) -- Unused 10x bags of coke
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

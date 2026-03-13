@@ -179,10 +179,9 @@
     "ehi_hint_sand_revive" : "โอกาสคืนชีพ",
     "ehi_hint_sand_heli_turret_timer" : "เวลาป้อมปืนติดฮ.",
     "ehi_hint_trai_crane" : "โอกาสเครนยกพัง",
-    "ehi_hint_trat_loco_start" : "โอกาสเริ่มหัวรถไฟ",
+    "ehi_hint_trai_loco_start" : "โอกาสเริ่มหัวรถไฟ",
     "ehi_hint_vit_teargas" : "โอกาสแก๊สน้ำตา",
 
-    "ehi_button_ok" : "โอเค",
     "ehi_color_reset": "รีเซ็ตสี",
 
     "ehi_preview" : "พรีวิว (จำเป็นต้องรีสตาร์ทด่านเพื่อให้เกิดผลลัพธ์)\nขีดสีแดงตรงมุมซ้ายสุดของไอคอนติดตามตัวอย่างจากเมนูอันแรกสุดแสดงไอคอนที่กำลังจะเกิดเหตุการณ์ขึ้น",

@@ -112,8 +112,7 @@ if EHI:IsLootCounterVisible() then
             max = 9 + MoneyBagsInVault + MoneyAroundHostage,
             max_xp_bags = 10,
             triggers = loot_triggers,
-            hook_triggers = true,
-            skip_offset = true
+            hook_triggers = true
         })
     end, { element = { 101340, 101856 }, disable_waypoint_removal = true })
     local CokeDestroyedTrigger = EHI:AddCustomCode(function(self)
@@ -157,6 +156,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101266] = { id = "Snipers2", special_function = SF.DecreaseCounter }
     other[101267] = { id = "Snipers2", special_function = SF.IncreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

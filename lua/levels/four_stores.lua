@@ -27,19 +27,13 @@ local triggers = {
     [101443] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
         self._trackers:AddTracker({
             id = "ObjectiveSteal",
+            small_loot_listener = true,
             max = 15000,
             icons = { Icon.Money },
             flash_times = 1,
             hint = "four_stores",
             class = self.Trackers.NeededValue
         })
-        self._loot:AddListener("four_stores", function(loot)
-            local progress = loot:get_real_total_small_loot_value()
-            self._trackers:SetProgress("ObjectiveSteal", progress)
-            if progress >= 15000 then
-                self._loot:RemoveListener("four_stores")
-            end
-        end)
     end), trigger_once = true, load_sync = EHI.IsClient and function(self) ---@param self EHIMissionElementTrigger
         local objective = managers.loot:get_real_total_small_loot_value()
         if objective >= 15000 then

@@ -54,6 +54,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[101933] = EscapeWaypoint
     other[101394] = EscapeWaypoint
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

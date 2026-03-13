@@ -40,12 +40,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end) }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other,
     assault = { diff = 1 }
 })
+EHI.Unit:IgnoreCarryInHudlist(150416) -- Unobtainable painting
 -- These units do not spawn if user has Celer mod installed
 -- Confirmed this host side, probably same thing on client too
 -- However, this code needs to stay for players that do not have Celer

@@ -58,3 +58,4 @@ local tbl =
     [EHI:GetInstanceUnitID(100056, 15620)] = { ignore = true }
 }
 EHI.Unit:UpdateUnits(tbl)
+EHI.Unit:IgnoreCarryInHudlist(150416) -- Unobtainable painting

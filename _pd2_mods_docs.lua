@@ -34,15 +34,28 @@ _G.ModInstance = {}
 ---@field Mods BLTModManager
 _G.BLT = {}
 
+---Writes a message to the log file
+---Multiple arguments can be passed to the function and will be concatenated
+---@param level integer @The log level of the message
+---@param ... any @The message to log
+function BLT:Log(level, ...)
+end
+
 ---@class BLTModManager
 ---@field Mods fun(self: self): BLTMod[]
 
 ---@class BLTMod
+---@field updates BLTUpdate[]
 ---@field GetAuthor fun(self: self): string
 ---@field GetName fun(self: self): string
+---@field GetUpdate fun(self: self, id: string): BLTUpdate?
+---@field GetUpdates fun(self: self): BLTUpdate[]
 ---@field GetVersion fun(self: self): string
 ---@field IsEnabled fun(self: self): boolean
 ---@field SetEnabled fun(self: self, enable: boolean, force: boolean?)
+
+---@class BLTUpdate
+---@field _run_update_callback fun(self: self, clbk: function, requires_update: boolean, error_reason: string)
 
 ---@class DelayedCalls
 ---@field Add fun(self: self, id: string, time: number, func: function)
@@ -74,6 +87,11 @@ end
 ---Removes a hooked function call with the specified id to prevent it from being called
 ---@param id string @Name of the function call to remove
 function Hooks:Remove(id)
+end
+
+---Returns the return value(s) of the currently running hook
+---@return any ... @Any amount of return values of the current hook
+function Hooks:GetReturn()
 end
 
 ---@class NetworkHelper
@@ -235,10 +253,29 @@ end
 function MenuHelper:AddInput(input_data)
 end
 
+---Resets all specified items to a specific value
+---@param item CoreMenuItem.Item @Menu item for which the helper function can retreive any items specified in `items_table`
+---@param items_table string|table<string, true> @Table of items, where the item name is the key, which should be reset to the value
+---@param value any @Value which all items specified should be reset to
+function MenuHelper:ResetItemsToDefaultValue(item, items_table, value)
+end
+
 ---@class BLTNotificationsGui
 ---@field _panel Panel
 ---@field _beardlib_panel Panel? Panel from BeardLib
 BLTNotificationsGui = {}
+
+---@class BLTLocalizationManager : LocalizationManager
+---@field _custom_localizations table<string, string>
+---@field load_localization_file fun(self: self, file_path: string, overwrite: boolean?)
+
+---@class QuickMenu
+---@field new fun(self: self, title: string, text: string, options: { data: any, callback: fun(data: any), text: string, is_cancel_button: boolean, is_focused_button: boolean }[], show_immediately: boolean?): self
+---@field show fun(self: self)
+---@field Show fun(self: self)
+---@field hide fun(self: self)
+---@field Hide fun(self: self)
+QuickMenu = {}
 -----------------------
 --- End of SuperBLT ---
 -----------------------

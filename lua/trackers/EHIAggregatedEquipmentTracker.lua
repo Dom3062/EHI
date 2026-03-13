@@ -114,7 +114,7 @@ function EHIAggregatedEquipmentTracker:AddToIgnore(id)
     self:CheckAmount(id)
 end
 
----@param key string
+---@param key userdata
 ---@param amount number
 ---@param id string
 function EHIAggregatedEquipmentTracker:UpdateAmount(key, amount, id)

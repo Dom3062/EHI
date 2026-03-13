@@ -22,12 +22,12 @@ function EHI.PlayerUtils:AddPlayerCameraRefresh(f)
         Hooks:PostHook(PlayerCamera, "init", "EHI_EHI.PlayerUtils_PlayerCamera_init", function(base, ...)
             if not self.__player_camera then
                 self.__player_camera = base._camera_object
+                base._unit:base():add_destroy_listener("EHI.PlayerUtils.Camera", function(unit)
+                    managers.hud:RemoveEHIUpdator("EHI.PlayerUtils.Camera")
+                    self.__player_camera = nil
+                end)
                 managers.hud:add_updator("EHI.PlayerUtils.Camera", callback(self, self, "_player_camera_refresh"))
             end
-        end)
-        Hooks:PreHook(PlayerCamera, "destroy", "EHI_EHI.PlayerUtils_PlayerCamera_destroy", function(...)
-            managers.hud:remove_updator("EHI.PlayerUtils.Camera")
-            self.__player_camera = nil
         end)
     end
     self._player_camera_refresh_callback:add(f)

@@ -19,11 +19,11 @@ function FakeEHIBuffTracker:init(panel, params)
     self._show_progress = params.show_progress
     self._shape = params.shape
     self._scale = params.scale
+    self._time_format = params.time_format
     self._panel = panel:panel({
         w = buff_w,
         h = buff_h,
-        y = panel:bottom() - buff_h - params.y + (params.saferect_y / 2),
-        visible = params.visible
+        y = panel:bottom() - buff_h - params.y + (params.saferect_y / 2)
     })
     self._icon = self._panel:bitmap({
         texture = params.texture,
@@ -66,7 +66,7 @@ function FakeEHIBuffTracker:init(panel, params)
         y = self._icon:y(),
         w = self._icon:w(),
         h = self._icon:h(),
-        texture = is_cooldown and "guis/textures/pd2_mod_ehi/buffs/buff_cframe_red" or "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
+        texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", is_cooldown and "red" or "white"),
         texture_rect = self._rect_circle,
         visible = self._shape == 2 and self._show_progress
     })
@@ -77,7 +77,7 @@ function FakeEHIBuffTracker:init(panel, params)
         y = self._icon:y(),
         w = self._icon:w(),
         h = self._icon:h(),
-        texture = is_cooldown and "guis/textures/pd2_mod_ehi/buffs/buff_sframe_red" or "guis/textures/pd2_mod_ehi/buffs/buff_sframe_white",
+        texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", is_cooldown and "red" or "white"),
         texture_rect = self._rect_square,
         visible = self._shape == 1 and self._show_progress
     })
@@ -132,7 +132,8 @@ end
 ---@param scale number
 ---@param buff_w number
 ---@param buff_h number
-function FakeEHIBuffTracker:Rescale(scale, buff_w, buff_h)
+---@param y number
+function FakeEHIBuffTracker:Rescale(scale, buff_w, buff_h, y)
     local buff_w_half = buff_w / 2
     self._scale = scale
     self._panel:set_size(buff_w, buff_h)
@@ -161,6 +162,17 @@ function FakeEHIBuffTracker:Rescale(scale, buff_w, buff_h)
     end
     self._panel_w_gap = buff_w + self._gap
     self._panel_w_move = (buff_w / 2) + 3
+    self:SetY(y)
+end
+
+---@param format integer
+function FakeEHIBuffTracker:UpdateTimeFormat(format)
+    if self._time_format == format then
+        return
+    end
+    self._time_format = format
+    self._text:set_text(self:Format())
+    self:FitTheText(self._text)
 end
 
 function FakeEHIBuffTracker:SetProgressRatio()
@@ -176,11 +188,6 @@ end
 ---@return number
 function FakeEHIBuffTracker:GetProgress()
     return self._value / 100
-end
-
----@param visibility boolean
-function FakeEHIBuffTracker:SetVisibility(visibility)
-	self._panel:set_visible(visibility)
 end
 
 ---@param x number
@@ -284,12 +291,10 @@ function FakeEHIBuffTracker:UpdateHintVisibility(visibility)
 end
 
 function FakeEHIBuffTracker:Format()
-    return self._value .. "s"
-end
-
-function FakeEHIBuffTracker:destroy()
-    if alive(self._panel) then
-        self._panel:parent():remove(self._panel)
+    if self._time_format == 1 then
+        return tweak_data.ehi.functions:ReturnSecondsOnly(self._value)
+    else
+        return tweak_data.ehi.functions:ReturnMinutesAndSeconds(self._value)
     end
 end
 
@@ -297,6 +302,9 @@ end
 ---@field super FakeEHIBuffTracker
 FakeEHIGaugeBuffTracker = class(FakeEHIBuffTracker)
 FakeEHIGaugeBuffTracker._FORCE_INVERT = true
+function FakeEHIGaugeBuffTracker:UpdateTimeFormat(format)
+end
+
 function FakeEHIGaugeBuffTracker:SetProgressRatio()
     self._value = math.random()
 end

@@ -10,6 +10,7 @@ function EHIPermanentBuffTracker:post_init(params)
     self._always_show = params.always_show
     self._show_on_trigger = params.show_on_trigger
     self._show_on_trigger_when_synced = params.show_on_trigger_when_synced
+    self._unhook_on_false_check = params.unhook_on_false_check
     if params.team_ai_skill_check then
         self._always_show = true
         if params.team_ai_skill_check.category == "ability" then
@@ -120,9 +121,13 @@ function EHIPermanentBuffTracker:PreUpdate()
     self._show_on_trigger = nil
     self._show_on_trigger_when_synced = nil
     self._stealth_check = nil
+    self._unhook_on_false_check = nil
 end
 
 function EHIPermanentBuffTracker:delete()
+    if self._unhook_on_false_check then
+        Hooks:RemovePostHook(self._unhook_on_false_check)
+    end
     if self._pos then
         EHIPermanentBuffTracker.super.RemoveVisibleBuff(self)
         self._pos = nil

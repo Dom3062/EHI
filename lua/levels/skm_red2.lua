@@ -34,6 +34,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         self._trackers:CallFunction("Snipers", element:_check_mode() and "SniperSpawnsSuccess" or "RequestRemoval")
     end) }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     other = other
 })

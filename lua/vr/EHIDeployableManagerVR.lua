@@ -16,7 +16,7 @@ function EHIDeployableManagerVR:ReturnLoadCall(key, data)
 end
 
 ---@param ehi_tracker string
----@param key string
+---@param key userdata
 ---@param unit UnitDeployable
 ---@param tracker_type string?
 function EHIDeployableManagerVR:AddToCache(ehi_tracker, key, unit, tracker_type)
@@ -28,7 +28,7 @@ function EHIDeployableManagerVR:AddToCache(ehi_tracker, key, unit, tracker_type)
 end
 
 ---@param ehi_tracker string
----@param key string
+---@param key userdata
 function EHIDeployableManagerVR:LoadFromCache(ehi_tracker, key)
     if key and managers.ehi_tracker:IsLoading() then
         managers.ehi_tracker:AddToLoadQueue(key, { ehi_tracker = ehi_tracker, f = "LoadFromCache" }, callback(self, self, "ReturnLoadCall"), true)
@@ -46,13 +46,13 @@ function EHIDeployableManagerVR:RemoveFromCache(key)
     self:old_RemoveFromCache(key)
 end
 
----@param key string
+---@param key userdata
 ---@param data { amount: number, id: string, t_id: string }
 function EHIDeployableManagerVR:ReloadDeployable(key, data)
     self:old_UpdateAmount(key, data.amount, data.id, data.t_id)
 end
 
----@param key string
+---@param key userdata
 ---@param amount number
 ---@param id string
 ---@param t_id string

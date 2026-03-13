@@ -27,6 +27,7 @@ if EHI:GetOption("show_sniper_tracker") then
         other[302105] = { id = "EHI_302105_40s", time = 40, special_function = Trigger }
     end
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     other = other
 })

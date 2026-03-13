@@ -170,11 +170,6 @@ function FakeEHITracker:init(panel, params)
     self:post_init(params)
 end
 
----@param visibility boolean
-function FakeEHITracker:SetPanelVisible(visibility)
-    self._panel:set_visible(visibility)
-end
-
 ---`self._bg_box:right() - self._bg_box:x()`
 function FakeEHITracker:GetBGBoxRight()
     return self._bg_box:right() - self._bg_box:x()
@@ -475,7 +470,7 @@ end
 FakeEHIMinionTracker = class(FakeEHIEquipmentTracker)
 function FakeEHIMinionTracker:post_init(params)
     self._charges_second_player = math.random(params.min, params.charges)
-    self._color_second_player = self._parent_class:GetOtherPeerColor()
+    self._color_second_player = self._parent_class._get_other_peer_color()
     self._text_second_player = self:CreateText({
         text = tostring(self._charges_second_player),
         w = self._bg_box:w() / 2,
@@ -502,10 +497,10 @@ function FakeEHIMinionTracker:UpdateInternalFormat(format_key, format, repositio
     if format_key ~= "minion" then
         return
     end
-    self._icons[1]:set_color(format == 1 and self._parent_class:GetLocalPeerColor() or Color.white)
+    self._icons[1]:set_color(format == 1 and self._parent_class._get_local_peer_color() or Color.white)
     self._text_second_player:set_visible(format == 3)
     self._text:set_text(tostring(format == 2 and (self._charges + self._charges_second_player) or self._charges))
-    self._text:set_color(format == 3 and self._parent_class:GetLocalPeerColor() or Color.white)
+    self._text:set_color(format == 3 and self._parent_class._get_local_peer_color() or Color.white)
     if format == 3 then
         self._text:set_w(self._default_bg_size / 2)
     else
@@ -925,7 +920,7 @@ end
 FakeEHIPlayerPingTracker = class(FakeEHITracker)
 FakeEHIPlayerPingTracker._UPDATE_TIME_FORMAT_DISABLED = true
 function FakeEHIPlayerPingTracker:post_init(params)
-    self._text:set_color(self._parent_class:GetOtherPeerColor())
+    self._text:set_color(self._parent_class._get_other_peer_color())
 end
 
 function FakeEHIPlayerPingTracker:Format()

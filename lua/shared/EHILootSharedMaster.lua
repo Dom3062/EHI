@@ -31,9 +31,6 @@ function EHILootSharedMaster:init(params)
     end
 end
 
-function EHILootSharedMaster:post_init()
-end
-
 function EHILootSharedMaster:GetListenerID()
     return self._achievement_id or self._id
 end
@@ -413,6 +410,7 @@ function EHILootSharedMaster:delete_listener(silent_removal)
 end
 
 ---@class EHILootCountSharedMaster : EHILootSharedMaster
+---@field new fun(self: self, params: EHITracker.params): self
 ---@field super EHILootSharedMaster
 EHILootCountSharedMaster = class(EHILootSharedMaster)
 function EHILootCountSharedMaster:Format()

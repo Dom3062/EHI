@@ -1,3 +1,16 @@
+r376 (13. 03. 2026):
+Added Hudlist
+Added option "Hide buffs while in Custody"
+Added "Shared Perks - OVERDOG - Consecutive Melee Hits"
+Beneath the Mountain: Deployables left in the first area are ignored after going through the airlock
+Civilians Tracker: Disabled in Framing Frame Day 3
+Hostage Tracker: Disabled in Safehouse Nightmare
+Hoxton Breakout Day 1: Deployables left outside are ignored after going in the parking lot
+Menu: Fixed an issue where changing time format is not applied to buffs
+Menu: Reduced number of menu files
+Moved "OVERDOG" from Infiltrator to Shared Perks
+Text Float: Fixed an issue where text is still rendered for ignored deployables
+
 r375 (03. 03. 2026):
 Text Float: Fixed a possible crash when deployables are created at the same frame when the game ended
 

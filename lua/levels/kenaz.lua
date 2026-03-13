@@ -205,6 +205,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         other[101038] = EHI:CopyTrigger(other[100548], { chance = 25, time = 120 }, SF.AddTrackerIfDoesNotExist)
     end
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

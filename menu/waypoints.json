@@ -1,7 +1,6 @@
 {
     "menu_id": "ehi_waypoints_menu",
     "parent_menu_id" : "ehi_menu",
-    "title": "ehi_waypoints_menu",
     "items": [
         {
             "type": "slider",

@@ -118,6 +118,7 @@ if EHI:IsLootCounterVisible() then
         self:Trigger()
     end, true)
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

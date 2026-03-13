@@ -1088,7 +1088,8 @@ function EHIMissionUtils:CountLootbagsOnTheGround(offset)
     local count = 0 - (offset or 0)
     local interactions = managers.interaction._interactive_units ---@cast interactions UnitCarry[]
     for _, unit in ipairs(interactions) do
-        if unit:carry_data() and lootbags[unit:carry_data():carry_id()] then
+        local carry_data = unit:carry_data()
+        if carry_data and lootbags[carry_data:carry_id()] then
             count = count + 1
         end
     end
@@ -1240,21 +1241,6 @@ function EHIMissionHolder:init_finalize()
                 end
             end
         end)
-    end
-end
-
----@generic T: EHITracker
----@param class string
----@return T?
-function EHIMissionHolder:ForceLoadTracker(class)
-    local load = class and self._ConditionalLoad[class]
-    if load then
-        EHI:LoadTracker(load.tracker)
-        self._ConditionalLoad[class] = nil
-        if load.also_remove then
-            self._ConditionalLoad[load.also_remove] = nil
-        end
-        return _G[load.tracker]
     end
 end
 

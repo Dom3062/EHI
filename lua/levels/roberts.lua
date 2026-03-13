@@ -77,6 +77,8 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103061] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103438 } }
     other[104809] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103443 } }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.Unit:IgnoreInteractInHudlist(106104) -- Keycard in the unplayable area (spawn area for enemies)
 EHI.Mission:ParseTriggers({ mission = triggers, other = other, sidejob = sidejob })
 
 EHI.Unit:UpdateUnits({

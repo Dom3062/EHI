@@ -87,6 +87,7 @@ EHI:SetMissionDoorData({
     -- Gate inside the vault
     [101581] = { w_id = 104645, restore = true }
 })
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
 EHI:AddXPBreakdown({
     objective =

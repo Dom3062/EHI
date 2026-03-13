@@ -54,6 +54,7 @@
             <!-- Menu code -->
             <post :hook_id="menumanager" :script_path="menu/FakeEHITrackerManager.lua" />
             <post :hook_id="menumanager" :script_path="menu/FakeEHIBuffManager.lua" />
+            <post :hook_id="menumanager" :script_path="menu/FakeEHIHudlistManager.lua" />
             <post :hook_id="menumanager" :script_path="menu/EHIMenuItems.lua" />
             <post :hook_id="menumanager" :script_path="MenuManager.lua" />
             <group :hook_id="menu/">

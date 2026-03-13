@@ -21,7 +21,21 @@ local other =
 {
     [100332] = EHI:AddSniperSpawnedPopup(true, true)
 }
+if EHI:GetHudlistAndListOption("right_list", "show_units") then
+    other[102050] = EHI:AddCustomCode(function(self)
+        managers.ehi_hudlist:CallRightListItemFunction("Unit", "IgnoreEnemyTurret") -- Inside the parking garage
+    end)
+end
+other[102122] = EHI.TrackerUtils.Deployables:AddDeployablesIgnoreCheck({
+    shapes = { 100689, 101985 }
+}, function(self)
+    local ai_state = managers.groupai:state()
+    if ai_state and not ai_state._hunt_mode then
+        self:Trigger()
+    end
+end)
 tweak_data.ehi.functions.achievements.eng_X("eng_4") -- "The one who declared himself the hero" achievement
+EHI.Unit:IgnoreInteractInHudlist(101083) -- Hockey poster at the start
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other, assault = { diff = 1 } })
 

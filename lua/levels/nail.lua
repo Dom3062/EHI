@@ -15,6 +15,7 @@ local other =
     [101612] = EHI:AddAssaultDelay({ control = 30 }),
     [101613] = EHI:AddAssaultDelay({ special_function = SF.SetTimeOrCreateTracker }) -- 30s
 }
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowLootCounter({

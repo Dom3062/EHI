@@ -198,6 +198,7 @@ if EHI:IsLootCounterVisible() then
     other[102459] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 4 }
     other[102460] = { special_function = SF.CustomCode, f = IncreaseMax, arg = 5 }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,
@@ -234,6 +235,7 @@ if EHI:GetWaypointOption("show_waypoints_mission") then
     end }
 end
 EHI.Unit:UpdateUnits(tbl)
+EHI.Unit:IgnoreInteractInHudlist(101499) -- Keycard at the second building (under crane) where enemies spawn
 EHI:SetMissionDoorData({
     -- Server Room
     [104582] = { w_id = 103457, restore = true },
@@ -255,7 +257,7 @@ EHI:AddXPBreakdown({
         { escape = {
             { amount = 8000, stealth = true, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() },
             { amount = 8000, loud = true }
-        }}
+        } }
     },
     loot_all = 1000,
     total_xp_override =
@@ -270,7 +272,7 @@ EHI:AddXPBreakdown({
                     timelock_done = { min_max = 1 },
                     fs_secured_required_bags = { min_max = 1 }
                 },
-                bonus_xp = { min_max = 8000 },
+                escape = 8000,
                 loot_all = { min = 4, max = 25 }
             }
         }

@@ -464,18 +464,17 @@ function EHIAbilityBuffTracker:SetAbilityIcon(ability)
     local projectile = tweak_data.blackmarket.projectiles[ability] or {}
     local icon_params =
     {
-        deck = true,
-        folder = projectile.texture_bundle_folder
+        deck = { 0, 0, projectile.texture_bundle_folder }
     }
     if ability == "damage_control" then
         if self._ABILITY_COOLDOWN then
-            icon_params.y = 1
+            icon_params.deck[2] = 1
         elseif managers.player:has_category_upgrade("player", "damage_control_auto_shrug") then
-            icon_params.x = 2 -- 128px
+            icon_params.deck[1] = 2 -- 128px
             self._duration_override = managers.player:upgrade_value("player", "damage_control_auto_shrug") --[[@as number]]
         end
     elseif ability == "tag_team" and not self._ABILITY_COOLDOWN then
-        icon_params.y = 1
+        icon_params.deck[2] = 1
     end
     local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(icon_params)
     self._icon:set_image(texture, unpack(texture_rect))

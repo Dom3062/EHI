@@ -39,6 +39,7 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({ max = 9 })
     end, { element = 100337 })
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

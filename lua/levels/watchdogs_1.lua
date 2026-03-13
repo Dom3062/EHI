@@ -64,6 +64,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101154] = { time = 25 + 24 + 10 + 2, id = "Snipers", class = class } -- Heli
     other[101176] = { time = 24 + 9 + 2, id = "Snipers", class = class } -- Heli 2
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

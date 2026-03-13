@@ -473,6 +473,7 @@ EHIProgressTimerTracker.SetProgressMax = EHIProgressTracker.SetProgressMax
 EHIProgressTimerTracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
 EHIProgressTimerTracker.DecreaseProgress = EHIProgressTracker.DecreaseProgress
 EHIProgressTimerTracker.SetProgress = EHIProgressTracker.SetProgress
+EHIProgressTimerTracker.Completed = EHIProgressTracker.Completed
 EHIProgressTimerTracker.SetProgressRemaining = EHIProgressTracker.SetProgressRemaining
 EHIProgressTimerTracker.SetCompleted = EHIProgressTracker.SetCompleted
 EHIProgressTimerTracker.SetBad = EHIProgressTracker.SetBad

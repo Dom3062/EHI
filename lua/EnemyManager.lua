@@ -20,32 +20,23 @@ function EnemyManager:GetNumberOfEnemies()
     return self._enemy_data.nr_units
 end
 
-if not (EHI:GetTrackerOption("show_enemy_count_tracker") or EHI:CanShowCivilianCountTracker() or EHI:IsAssaultTrackerEnabledAndOption("show_assault_enemy_count")) then
-    return
-end
-
-local original = {}
-
 if not tweak_data.levels:IsLevelSafehouse() then
     if EHI:GetOptionAndLoadTracker("show_enemy_count_tracker") then
         local tracker_name = "EnemyCount"
         local enemy_count_blocked = false
         local show_enemy_count_in_assault_tracker = EHI:IsAssaultTrackerEnabledAndOption("show_assault_enemy_count")
         local no_loud_update = EHI:CombineAssaultDelayAndAssaultTime() and show_enemy_count_in_assault_tracker
-        original.on_enemy_registered = EnemyManager.on_enemy_registered
-        original.on_enemy_unregistered = EnemyManager.on_enemy_unregistered
+        local f_enemy_registered, f_enemy_unregistered
         if EHI:GetOption("show_enemy_count_show_pagers") then
             local alarm_unit = {}
-            function EnemyManager:on_enemy_registered(unit, ...)
-                original.on_enemy_registered(self, unit, ...)
+            f_enemy_registered = function(self, unit, ...)
                 if alarm_unit[unit:base()._tweak_table] then
                     managers.ehi_tracker:CallFunction(tracker_name, "AlarmEnemyRegistered")
                 else
                     managers.ehi_tracker:CallFunction(tracker_name, "NormalEnemyRegistered")
                 end
             end
-            function EnemyManager:on_enemy_unregistered(unit, ...)
-                original.on_enemy_unregistered(self, unit, ...)
+            f_enemy_unregistered = function(self, unit, ...)
                 if alarm_unit[unit:base()._tweak_table] then
                     managers.ehi_tracker:CallFunction(tracker_name, "AlarmEnemyUnregistered")
                 else
@@ -78,14 +69,10 @@ if not tweak_data.levels:IsLevelSafehouse() then
                 end
             end)
         else
-            function EnemyManager:on_enemy_registered(...)
-                original.on_enemy_registered(self, ...)
+            f_enemy_registered = function(self, ...) ---@param self EnemyManager
                 managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
             end
-            function EnemyManager:on_enemy_unregistered(...)
-                original.on_enemy_unregistered(self, ...)
-                managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
-            end
+            f_enemy_unregistered = f_enemy_registered
             EHI:AddOnSpawnedCallback(function()
                 if enemy_count_blocked then
                     return
@@ -98,6 +85,8 @@ if not tweak_data.levels:IsLevelSafehouse() then
                 })
             end)
         end
+        Hooks:PostHook(EnemyManager, "on_enemy_registered", "EHI_EnemyManager_on_enemy_registered", f_enemy_registered)
+        Hooks:PostHook(EnemyManager, "on_enemy_unregistered", "EHI_EnemyManager_on_enemy_unregistered", f_enemy_unregistered)
         if no_loud_update then
             local new_tracker_name = managers.ehi_assault.GetTrackerName()
             EHI:AddCallback("AssaultTracker_Enemies", function()
@@ -108,41 +97,17 @@ if not tweak_data.levels:IsLevelSafehouse() then
         end
     elseif EHI:IsAssaultTrackerEnabledAndOption("show_assault_enemy_count") then
         local tracker_name = managers.ehi_assault.GetTrackerName()
-        original.on_enemy_registered = EnemyManager.on_enemy_registered
-        original.on_enemy_unregistered = EnemyManager.on_enemy_unregistered
-        function EnemyManager:on_enemy_registered(...)
-            original.on_enemy_registered(self, ...)
+        local function f(self, ...) ---@param self EnemyManager
             managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
         end
-        function EnemyManager:on_enemy_unregistered(...)
-            original.on_enemy_unregistered(self, ...)
-            managers.ehi_tracker:SetCount(tracker_name, self._enemy_data.nr_units)
-        end
+        Hooks:PostHook(EnemyManager, "on_enemy_registered", "EHI_EnemyManager_on_enemy_registered", f)
+        Hooks:PostHook(EnemyManager, "on_enemy_unregistered", "EHI_EnemyManager_on_enemy_unregistered", f)
     end
 end
 
 if EHI:CanShowCivilianCountTracker() then
     EHI:LoadTracker("EHICivilianCountTracker")
-    ---@param unit_data EnemyManager._civilian_data.Civilian
-    ---@param key any Unused
-    local function CountCivilian(unit_data, key)
-        if not unit_data.unit then
-            return false
-        end
-        if unit_data.unit:base().unintimidateable then
-            return false
-        end
-        if unit_data.unit:character_damage().immortal then -- Husk unit check
-            return false
-        end
-        if not unit_data.char_tweak then
-            return false
-        end
-        if unit_data.char_tweak.is_escort or not unit_data.char_tweak.intimidateable then
-            return false
-        end
-        return true
-    end
+    local CountCivilian = tweak_data.ehi.functions.CountCivilian
     local spawned = false
     ---@param count number
     local function CreateTracker(count)

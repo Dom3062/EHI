@@ -158,6 +158,7 @@ EHI:ShowAchievementLootCounter({
     end,
     show_loot_counter = true
 })
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

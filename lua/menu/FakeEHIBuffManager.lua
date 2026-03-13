@@ -20,19 +20,24 @@ function FakeEHIBuffsManager:new(panel)
     self._class_redirect =
     {
         EHIGaugeBuffTracker = "FakeEHIGaugeBuffTracker",
-        EHIStaminaBuffTracker = "FakeEHIGaugeBuffTracker"
+        EHIStaminaBuffTracker = "FakeEHIGaugeBuffTracker",
+        EHIDodgeChanceBuffTracker = "FakeEHIGaugeBuffTracker",
+        EHICritChanceBuffTracker = "FakeEHIGaugeBuffTracker"
     }
     self._buff_data =
     {
-        visible = EHI:GetOption("show_buffs"),
-        preview_visible = EHI:GetOption("show_preview_buffs"),
         shape = EHI:GetOption("buffs_shape"),
         show_progress = EHI:GetOption("buffs_show_progress"),
         invert = EHI:GetOption("buffs_invert_progress"),
-        hint_visible = EHI:GetOption("buffs_show_upper_text")
+        hint_visible = EHI:GetOption("buffs_show_upper_text"),
+        format = EHI:GetOption("time_format")
     }
+    self._panel_visible = EHI:GetOption("show_buffs")
+    self._preview_visible = EHI:GetOption("show_preview_buffs")
 	self._buffs = {} ---@type FakeEHIBuffTracker[]
-    self._panel = panel:panel()
+    self._panel = panel:panel({
+        visible = self._panel_visible and self._preview_visible or false
+    })
     self:SetScale(EHI:GetOption("buffs_scale"))
     self._x = EHI:GetOption("buffs_x_offset") --[[@as number]]
     self._y = EHI:GetOption("buffs_y_offset") --[[@as number]]
@@ -108,7 +113,6 @@ function FakeEHIBuffsManager:_create_buff_params(buff, saferect_x, saferect_y)
     params.x = self._x - saferect_x
     params.y = self._y + saferect_y
     params.group = buff.group
-    params.visible = self._buff_data.visible and self._buff_data.preview_visible
     params.shape = self._buff_data.shape
     params.scale = self._scale
     params.show_progress = self._buff_data.show_progress
@@ -116,8 +120,11 @@ function FakeEHIBuffsManager:_create_buff_params(buff, saferect_x, saferect_y)
     params.saferect_y = saferect_y
     params.invert = self._buff_data.invert
     params.hint_visible = self._buff_data.hint_visible
+    params.time_format = self._buff_data.format
     if buff.class then
         params.class = self._class_redirect[buff.class]
+    elseif buff.class_to_load and buff.class_to_load.class then
+        params.class = self._class_redirect[buff.class_to_load.class]
     end
     return params
 end
@@ -156,14 +163,14 @@ end
 
 ---@param visibility boolean
 function FakeEHIBuffsManager:UpdateBuffsVisibility(visibility)
-    self._buff_data.visible = visibility
-    self:UpdateBuffs("SetVisibility", visibility and self._buff_data.preview_visible)
+    self._panel_visible = visibility
+    self._panel:set_visible(visibility and self._preview_visible)
 end
 
 ---@param visibility boolean
 function FakeEHIBuffsManager:UpdatePreviewVisibility(visibility)
-    self._buff_data.preview_visible = visibility
-    self:UpdateBuffs("SetVisibility", self._buff_data.visible and visibility)
+    self._preview_visible = visibility
+    self._panel:set_visible(self._panel_visible and visibility)
 end
 
 ---@param x number
@@ -193,8 +200,7 @@ function FakeEHIBuffsManager:UpdateScale(scale)
         return
     end
     self:SetScale(scale)
-    self:UpdateBuffs("Rescale", scale, self._buff_w, self._buff_h)
-    self:UpdateBuffs("SetY", self._y)
+    self:UpdateBuffs("Rescale", scale, self._buff_w, self._buff_h, self._y)
     self:_organize_buffs()
 end
 

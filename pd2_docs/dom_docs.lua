@@ -124,6 +124,12 @@ _G.tweak_data = {
             selected_color = Vector3(1, 1, 1)
         }
     },
+    hud_corner = {
+		assault_font = "fonts/font_medium_mf",
+		assault_size = 24,
+		noreturn_size = 24,
+		numhostages_size = 24
+	},
     scale = {
         is_sd = false,
         title_image_multiplier = 1,
@@ -313,10 +319,7 @@ _G.tweak_data.achievement.complete_heist_achievements = {
         award = "cac_27",
         job = "wwh",
         everyone_used_weapon_category = "flamethrower",
-        everyone_killed_by_melee = 0,
-        equipped_team = {
-            primary_category = "flamethrower"
-        }
+        everyone_killed_by_melee = 0
     },
     spa_4 = {
         award = "spa_4",
@@ -1033,10 +1036,14 @@ _G.tweak_data.upgrades = {
     first_aid_kit = {
         first_aid_kit_auto_recovery = { 500 }
     },
+    grenade_crate_base = 3,
     cocaine_stacks_convert_levels = {
         30,
         25
     },
+    cocaine_stacks_tick_rounding = 4,
+    cocaine_stacks_tick_t = 4,
+    cocaine_stacks_decay_t = 8,
     cocaine_stacks_dmg_absorption_value = 0.1,
     max_cocaine_stacks_per_tick = 240,
     max_total_cocaine_stacks = 600,
@@ -1149,7 +1156,7 @@ _G.tweak_data.weapon = {}
 ---@field [string] {}
 ---@class GameStateMachine : CoreGameStateMachine
 ---@field current_state fun(self: self): GameState
----@field verify_game_state fun(self: self, filters: table, state: string): boolean
+---@field verify_game_state fun(self: self, filters: table, state: string?): boolean
 _G.game_state_machine = {}
 ---@class managers Global table of all managers in the game
 ---@field assets MissionAssetsManager
@@ -1174,6 +1181,7 @@ _G.game_state_machine = {}
 ---@field ehi_sync EHISyncManager
 ---@field ehi_hook EHIHookManager
 ---@field ehi_money EHIMoneyManager
+---@field ehi_hudlist EHIHudlistManager
 ---@field enemy EnemyManager
 ---@field environment_controller CoreEnvironmentControllerManager
 ---@field environment_effects EnvironmentEffectsManager
@@ -1220,9 +1228,12 @@ _G.AmmoBagBase = {}
 ---@field _unit UnitAmmoDeployable
 _G.AmmoBagInteractionExt = {}
 ---@class BaseInteractionExt
+---@field tweak_data string
+---@field _achievement_stat string
 ---@field _active boolean
 ---@field _contour_override unknown Appears to be unused
----@field _materials U_Material[]
+---@field _materials Material[]
+---@field _tweak_data table
 ---@field _add_string_macros fun(self: self, macros: table<string, string>)
 ---@field active fun(self: self): boolean
 ---@field disabled fun(self: self): boolean
@@ -1247,6 +1258,9 @@ _G.GrenadeCrateInteractionExt = {}
 ---@field clear fun(self: self)
 ---@field remove fun(self: self, func: function)
 _G.CallbackEventHandler = {}
+---@class CarryInteractionExt : UseInteractionExt
+---@field register_collision_callbacks fun()
+_G.CarryInteractionExt = {}
 ---@class CarryTweakData
 _G.CarryTweakData = {}
 ---@class CoreShapeManager
@@ -1406,6 +1420,11 @@ _G.GroupAIStateBesiege = {}
 ---@class IngameWaitingForPlayersState : GameState
 ---@field check_is_dropin fun(self: self): boolean
 _G.IngameWaitingForPlayersState = {}
+---@class IntimitateInteractionExt : BaseInteractionExt
+---@field super BaseInteractionExt
+---@field _ehi_key string EHI only
+---@field _unit UnitEnemy
+_G.IntimitateInteractionExt = {}
 ---@class JobManager
 ---@field _global { current_job: { current_stage: number, job_id: string, stages: number, job_wrapper_id: string? } }
 ---@field _on_last_stage fun(self: self): boolean
@@ -1437,11 +1456,11 @@ _G.LobbyCodeMenuComponent = {}
 _G.LootManager = {}
 ---@class ListenerHolder
 ---@field _listeners table<string, function>?
----@field add fun(self: self, key: string, clbk: function)
+---@field add fun(self: self, key: AnyExceptNil, clbk: function)
 ---@field call fun(self: self, ...)
 ---@field is_empty fun(self: self): boolean
 ---@field new fun(self: self): self
----@field remove fun(self: self, key: string)
+---@field remove fun(self: self, key: AnyExceptNil)
 _G.ListenerHolder = {}
 ---@class CriminalsManager
 _G.CriminalsManager = {}
@@ -1532,9 +1551,11 @@ _G.NetworkBaseExtension = {}
 _G.NetworkPeer = {}
 ---@class PlayerCamera
 ---@field _camera_object Camera
+---@field _unit UnitPlayer
 _G.PlayerCamera = {}
 ---@class PlayerMovement
 ---@field _stamina number
+---@field _unit UnitPlayer
 ---@field current_state fun(self: self): PlayerStandard?
 ---@field crouching fun(self: self): boolean
 ---@field m_head_pos fun(self: self): Vector3
@@ -1639,6 +1660,12 @@ end
 ---@generic T
 ---@param TC T
 ---@return T
+_G.clone = function(TC)
+end
+
+---@generic T
+---@param TC T
+---@return T
 _G.deep_clone = function(TC)
 end
 CoreTable.deep_clone = _G.deep_clone
@@ -1669,6 +1696,7 @@ end
 ---@field t fun(self: self): string Returns self formatted as @ID<16 byte hex>@; Example: `@IDe166f63494083d58@`
 
 ---@class ElementAreaTrigger : MissionScriptElement
+---@field _values ElementAreaTrigger._values
 ---@field _chk_setup_local_client_on_execute_elements fun(self: self)
 ---@field _is_inside fun(self: self, position: Vector3): boolean
 
@@ -1725,6 +1753,11 @@ end
 ---@field position Vector3
 ---@field rotation Rotation
 
+---@class ElementAreaTrigger._values: MissionScriptElement._values
+---@field width number
+---@field depth number
+---@field height number
+
 ---@class ElementExperience._values : MissionScriptElement._values
 ---@field amount number
 
@@ -1777,6 +1810,7 @@ end
 ---@class CoreMenuManager
 ---@field _input_enabled boolean
 ---@field _open_menus CoreMenuManager._open_menus[]
+---@field get_menu fun(self: self, menu_name: string): table?
 
 ---@class CoreMenuManager._open_menus
 ---@field name string
@@ -1799,9 +1833,21 @@ end
 
 ---@class CoroutineManager
 ---@field _buffer table
+---@field add_coroutine fun(self: self, name: string, func: { Priority: integer, Function: function }, ...)
+---@field add_and_run_coroutine fun(self: self, name: string, func: { Priority: integer, Function: function }, ...)
+---@field remove_coroutine fun(self: self, name: string)
 
 ---@class CrimeSpreeManager
 ---@field is_active fun(self: self): boolean
+
+---@class CrimeSpreeDetailsMenuComponent : MenuGuiComponentGeneric
+---@field _panel Panel
+---@field _fullscreen_panel Panel
+---@field _ws Workspace
+
+---@class CrimeSpreeMissionsMenuComponent : MenuGuiComponentGeneric
+---@field _panel Panel
+---@field _fullscreen_panel Panel
 
 ---@class CustomSafehouseManager
 ---@field can_progress_trophies fun(self: self, id: string): boolean
@@ -1840,6 +1886,9 @@ end
 ---@class GroupAIManager
 ---@field state fun(self: self): GroupAIStateBase|GroupAIStateBesiege
 
+---@class ChatGui
+---@field _hud_panel Panel
+
 ---@class ChallengeManager
 ---@field can_progress_challenges fun(self: self): boolean
 ---@field get_active_challenge fun(self: self, id: string, key: string?): table?
@@ -1875,15 +1924,21 @@ end
 ---@field get_saved_job_value fun(self: self, key: string): number
 ---@field remove_global_event_listener fun(self: self, key: string)
 
+---@class MenuGuiComponentGeneric
+
 ---@class MenuInput : CoreMenuInput
 
 ---@class MenuManager : CoreMenuManager
 ---@field _is_start_menu boolean
+---@field active_menu fun(self: self): table?
 ---@field back fun(self: self)
 ---@field is_pc_controller fun(self: self): boolean Returns `true` if the game was started by mouse or keyboard
 ---@field open_node fun(self: self, node_name: string, parameter_list: any[]?)
 
 ---@class MenuComponentManager
+---@field _crime_spree_details CrimeSpreeDetailsMenuComponent
+---@field _crime_spree_missions CrimeSpreeMissionsMenuComponent
+---@field _game_chat_gui ChatGui
 ---@field _mission_briefing_gui MissionBriefingGui
 ---@field _ws Workspace
 ---@field blt_notifications_gui fun(self: self): BLTNotificationsGui? SBLT Gui Window
@@ -1891,7 +1946,7 @@ end
 
 ---@class BaseModifier
 ---@field _type string
----@field value fun(self: self, id: string): number
+---@field value fun(self: self, id: string?): number
 
 ---@class BaseMutator
 ---@field _type string
@@ -2051,6 +2106,7 @@ end
 ---@field rand fun(a: number, b: number?): number If `b` is provided, returns random number between `a` and `b`. Otherwise returns number between `0` and `a`
 ---@field min_max fun(a: number, b: number): number, number Returns `min` and `max` according to their value
 ---@field mod fun(n: number, div: number): number Returns remainder of a division
+---@field rand_bool fun(): boolean
 ---@field within fun(x: number, min: number, max: number): boolean Returns `true` or `false` if `x` is within (inclusive) `min` and `max`
 
 ---@generic T
@@ -2061,11 +2117,12 @@ function math.bezier(points, t)
 end
 
 ---Linearly interpolates between `a` and `b` by `lerp`
----@generic T
----@param a T
----@param b T
+---@overload fun(a: Color, b: Color, lerp: number): Color
+---@overload fun(a: Vector3, b: Vector3, lerp: number): Vector3
+---@param a number
+---@param b number
 ---@param lerp number
----@return T
+---@return number
 function math.lerp(a, b, lerp)
 end
 
@@ -2186,6 +2243,7 @@ end
 ---@field omniscience_t number?
 ---@field omniscience_units_detected table<userdata, number>?
 ---@field reload_expire_t number?
+---@field stacking_dmg_mul table<string, { [1]: number?, [2]: number }?>
 
 ---@class CopBase : UnitBase
 ---@field _unit UnitEnemy
@@ -2199,10 +2257,12 @@ end
 ---@field _logic_data table
 ---@field converted fun(self: self): boolean
 ---@field is_hostage fun(self: self): boolean
+---@field surrendered fun(self: self): boolean
 
 ---@class HuskCopBrain
 ---@field converted fun(self: self): boolean
 ---@field is_hostage fun(self: self): boolean
+---@field surrendered fun(self: self): boolean
 ---@field sync_converted fun(self: self): boolean
 
 ---@class CivilianBrain : CopBrain
@@ -2258,13 +2318,6 @@ end
 ---@field selection_index fun(self: self): number
 ---@field weapon_tweak_data fun(self: self): WeaponTweakData._string_.Weapon
 
----@class C_UnitOOBB
----@field center fun(self: self): number
----@field size fun(self: self): { x: number, y: number, z: number }
----@field x fun(self: self): number
----@field y fun(self: self): number
----@field z fun(self: self): number
-
 ---@class UnitBase
 ---@field add_destroy_listener fun(self: self, key: string, clbk: fun(unit: Unit))
 ---@field damage fun(): UnitDamage
@@ -2278,7 +2331,7 @@ end
 ---@class UnitCarry : Unit
 ---@field carry_data fun(): CarryData
 ---@field damage fun(): UnitDamage
----@field interaction fun(): UseInteractionExt
+---@field interaction fun(): CarryInteractionExt
 
 ---@class UnitTimer : Unit
 ---@field base fun(): Drill
@@ -2359,11 +2412,6 @@ end
 ---@class UnitFAKDeployable : UnitDeployable
 ---@field base fun(): FirstAidKitBase
 
----@class U_Object : Unit
-
----@class U_Material
----@field set_variable fun(self: self, material_name: Idstring, value: any)
-
 ---@class UnitAnimStateMachine
 ---@field segment_state fun(self: self, state: Idstring): Idstring
 
@@ -2382,6 +2430,9 @@ end
 ---@class NetworkBaseExtension_TeamAI : NetworkBaseExtension
 ---@field _unit UnitTeamAI
 
+---@class AnimatedVehicleBase : UnitBase
+---@field _modules table<string, { align_obj_name: string, destroy_clbk_key: string?, unit: UnitEnemyTurret }>?
+
 ---@class ScriptUnitData
 ---@field add_destroy_listener fun(self: self, key: string, clbk: function)
 ---@field remove_destroy_listener fun(self: self, key: string)
@@ -2399,17 +2450,18 @@ end
 ---@field align "center"|"right"|"left"
 ---@field blend_mode "normal"|"add"
 ---@field text string
+---@field font_scale number
 ---@field font_size number
 ---@field font string Idstring
 ---@field color Color
----@field vertical "center"|"top"
+---@field vertical "center"|"top"|"bottom"
 ---@field wrap boolean
 ---@field word_wrap boolean
 
 ---@class Bitmap_Params : PanelBaseObject_Params
 ---@field texture string
 ---@field texture_rect TextureRect
----@field render_template "VertexColorTexturedRadial"|"VertexColorTexturedBlur3D"|"OverlayText"
+---@field render_template "VertexColorTexturedRadial"|"VertexColorTexturedRadialFlex"|"VertexColorTexturedBlur3D"|"OverlayText"
 ---@field color Color
 ---@field rotation number In degrees
 ---@field alpha number
@@ -2449,9 +2501,11 @@ _G.CoreMenuNode.MenuNode = {}
 
 ---@class CoreMenuItem.Item
 ---@field dirty fun(self: self)
+---@field enabled fun(self: self): boolean
 ---@field name fun(self: self): string
 ---@field set_enabled fun(self: self, enabled: boolean)
 ---@field set_parameter fun(self: self, name: any, value: any)
+---@field parameter fun(self: self, name: any): any
 ---@field parameters fun(self: self): table
 ---@field type fun(self: self): string
 

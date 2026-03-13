@@ -73,6 +73,7 @@ local achievements =
             EHIameno_3Tracker.FormatNumber = EHINeededValueTracker.Format
             EHIameno_3Tracker.FormatNumber2 = EHINeededValueTracker.FormatNumberShort
             EHIameno_3Tracker.IncreaseProgress = EHIProgressTracker.IncreaseProgress
+            EHIameno_3Tracker.Completed = EHINeededValueTracker.Completed
             ---@param class EHIameno_3Tracker
             EHIameno_3Tracker._anim_warning = function(o, old_color, color, start_t, class)
                 local c = Color(old_color.r, old_color.g, old_color.b)
@@ -109,10 +110,8 @@ local achievements =
                 self._text:set_left(self._money_text:right())
                 managers.ehi_loot:AddSmallLootListener(self._id, function(amount)
                     self:IncreaseProgress(amount)
-                    if self._progress >= self._max then
-                        managers.ehi_loot:RemoveSmallLootListener(self._id)
-                    end
                 end)
+                self._remove_small_loot_listener = true
             end
             function EHIameno_3Tracker:SetProgress(progress)
                 if self._progress ~= progress and not self._disable_counting then
@@ -138,7 +137,7 @@ local achievements =
             end
             function EHIameno_3Tracker:pre_destroy()
                 EHIameno_3Tracker.super.pre_destroy(self)
-                managers.ehi_loot:RemoveSmallLootListener(self._id)
+                self:Completed()
             end
         end
     },
@@ -207,6 +206,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[301788] = { time = 60, special_function = StartLoop }
     other[301789] = { time = 40, special_function = StartLoop }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

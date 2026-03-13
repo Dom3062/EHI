@@ -6,10 +6,6 @@ function FirstAidKitBase:GetRealAmount()
     return self._empty and 0 or 1
 end
 
-if not EHI:GetEquipmentOption("show_equipment_firstaidkit") then
-    return
-end
-
 local original =
 {
     init = FirstAidKitBase.init,
@@ -23,13 +19,18 @@ local original =
 ---@field _unit UnitFAKDeployable
 ---@field List { obj: UnitFAKDeployable, pos: Vector3, min_distance: number }[]
 
+local Deployables = EHI.TrackerUtils.Deployables
+FirstAidKitBase.__ehi_id = "first_aid_kit"
 FirstAidKitBase.__ehi_tracker = EHI:GetOption("show_equipment_aggregate_health") and not EHI:GetOption("show_equipment_aggregate_all") and "Health" or "FirstAidKits"
+FirstAidKitBase.__ehi_update_equipment_amount = EHI:GetEquipmentOption("show_equipment_firstaidkit")
 function FirstAidKitBase:init(unit, ...)
     original.init(self, unit, ...)
-    self._ehi_key = tostring(unit:key())
+    self._ehi_key = unit:key()
     if not self._ignore then
-        managers.ehi_deployable:OnDeployablePlaced(unit)
-        managers.ehi_deployable:UpdateAmount(self._ehi_key, 1, "first_aid_kit", self.__ehi_tracker)
+        Deployables:OnDeployablePlaced(unit)
+        if self.__ehi_update_equipment_amount then
+            managers.ehi_deployable:UpdateAmount(self._ehi_key, 1, self.__ehi_id, self.__ehi_tracker)
+        end
     end
 end
 
@@ -38,12 +39,16 @@ function FirstAidKitBase:SetIgnore()
         return
     end
     self._ignore = true
-    managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, "first_aid_kit", self.__ehi_tracker)
-    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+    if self.__ehi_update_equipment_amount then
+        managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, self.__ehi_id, self.__ehi_tracker)
+    end
+    Deployables:OnDeployableConsumed(self._ehi_key)
 end
 
 function FirstAidKitBase:destroy(...)
-    managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, "first_aid_kit", self.__ehi_tracker)
-    managers.ehi_deployable:OnDeployableConsumed(self._ehi_key)
+    if self.__ehi_update_equipment_amount then
+        managers.ehi_deployable:UpdateAmount(self._ehi_key, 0, self.__ehi_id, self.__ehi_tracker)
+    end
+    Deployables:OnDeployableConsumed(self._ehi_key)
     original.destroy(self, ...)
 end

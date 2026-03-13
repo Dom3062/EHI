@@ -83,7 +83,7 @@ local triggers = {
     [103006] = { chance = 100, id = "CorrectPaperChance", icons = { "equipment_files" }, class = TT.Chance, special_function = SF.SetChanceWhenTrackerExists, hint = Hints.nmh_PatientFileChance, remove_on_alarm = true },
     [104752] = { id = "CorrectPaperChance", special_function = SF.RemoveTracker }
 }
-if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
+if EHI.Mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
     triggers[102470] = { count = 3, id = "Cams", icons = { "daily_secret_identity" }, class = TT.Counter, remove_on_alarm = true, hint = Hints.nmh_DestroyCameras } -- Single Player
     triggers[102471] = { count = 6, id = "Cams", icons = { "daily_secret_identity" }, class = TT.Counter, remove_on_alarm = true, hint = Hints.nmh_DestroyCameras } -- 2 players
     triggers[102472] = { count = 9, id = "Cams", icons = { "daily_secret_identity" }, class = TT.Counter, remove_on_alarm = true, hint = Hints.nmh_DestroyCameras } -- 3-4 players

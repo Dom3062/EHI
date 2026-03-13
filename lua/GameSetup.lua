@@ -2,6 +2,7 @@ local EHI = EHI
 if EHI:CheckLoadHook("GameSetup") then
     return
 end
+EHI.ModUtils:post_init()
 EHI.Mission = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementTrigger.lua")
 EHI.Trigger = EHIMissionElementTrigger:__post_init()
 EHI.Element = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementOverride.lua")
@@ -11,6 +12,7 @@ if EHI:GetOption("show_floating_text") then
     dofile(EHI.LuaPath .. "EHITextFloatManager.lua")
     EHITextFloatManager:new()
 end
+managers.ehi_hudlist = blt.vm.dofile(EHI.LuaPath .. "EHIHudlistManager.lua")
 
 local redirect =
 {
@@ -30,7 +32,6 @@ local redirect =
     crojob3_night = "crojob3",
     skm_arena = "skm_base",
     skm_cas = "skm_base",
-    skm_watchdogs_stage2 = "skm_base",
     -- Custom Missions
     ratdaylight = "levels/rat",
     lid_cookoff_methslaves = "levels/rat",
@@ -95,7 +96,6 @@ local custom_levels =
 }
 
 Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", function(...)
-    EHI.Sync = managers.ehi_sync
     EHI:CallCallbackOnce(EHI.CallbackMessage.InitFinalize)
     local level_id = Global.game_settings.level_id
     if redirect[level_id] then -- Also applies to custom missions
@@ -115,7 +115,6 @@ Hooks:PostHook(GameSetup, "init_finalize", "EHI_GameSetup_init_finalize", functi
     EHI.Waypoint:GameInit()
     redirect = nil
     custom_levels = nil
-    EHI.Sync = nil
     Hooks:RemovePostHook("EHI_GameSetup_init_finalize")
 end)
 

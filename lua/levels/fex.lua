@@ -17,6 +17,50 @@ local triggers = {
     -- Safe Hack
     -- Heli Escape
 }
+if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
+    EHI.Mission:LoadClass("EHICodeTracker")
+    triggers[102820] = EHI:AddCustomCode(function(self)
+        if self._cache.fex_CodeSeen then
+            return
+        end
+        local paper_unit = managers.worlddefinition:get_unit(EHI:GetInstanceElementID(100140, self._params.second_item and 3750 or 3550))
+        if not paper_unit then
+            return
+        end
+        local code = {}
+        for i = 1, 4, 1 do
+            local c = {}
+            for j = 1, 10, 1 do
+                c[j] = Idstring(string.format("g_%d_%d", i, j - 1))
+            end
+            code[i] = c
+        end
+        if self._mission._SHOW_MISSION_TRACKERS_TYPE.cheaty then
+            self._trackers:AddTracker({
+                id = "WineCellarCode",
+                class = self.Trackers.Code
+            })
+        end
+        if self._mission._SHOW_MISSION_WAYPOINTS_TYPE.cheaty then
+            self._waypoints:AddWaypoint("WineCellarCode", {
+                position = paper_unit:position(),
+                icon = "code",
+                class = self.Waypoints.Code
+            })
+        end
+        for i, code_body in ipairs(code) do
+            for j, object in ipairs(code_body) do
+                if paper_unit:get_object(object):visibility() then -- If code is visible
+                    self._tracking:Call("WineCellarCode", "SetCodePart", i, tostring(j - 1), 4)
+                    break
+                end
+            end
+        end
+        self._cache.fex_CodeSeen = true
+    end, true)
+    triggers[103041] = EHI:CopyTrigger(triggers[102820], { second_item = true })
+    triggers[EHI:GetInstanceElementID(100047, 2850)] = { id = "WineCellarCode", special_function = SF.RemoveTracker }
+end
 
 EHI:ShowAchievementLootCounter({
     achievement = "fex_10",
@@ -48,6 +92,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103046] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[102725] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,

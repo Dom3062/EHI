@@ -6,6 +6,11 @@ EHI.ModUtils._restoration_vanilla_levels_bs = { -- Restoration Mod Overhaul bs
     alex_2_res = true,
     four_stores_remixed = true
 }
+function EHI.ModUtils:post_init()
+    if self.__custom_color_sync_callback then
+        self:_CreateCNCSyncCallback()
+    end
+end
 
 function EHI.ModUtils:SWAYRMod_EscapeVehicleWillReturn()
     if EHI.IsHost and SWAYRMod and SWAYRMod.included(Global.game_settings.level_id) then
@@ -22,24 +27,49 @@ function EHI.ModUtils:SELH_GetModifiedPagerCount(pager_count)
     return pager_count
 end
 
+---@param id string
 ---@param f fun(peer_id: integer, color: Color)
-function EHI.ModUtils:AddCustomNameColorSyncCallback(f)
+function EHI.ModUtils:AddCustomNameColorSyncCallback(id, f)
     if not (CustomNameColor and CustomNameColor.ModID) then
         return
     elseif not self._custom_color_sync_callback then
-        self._custom_color_sync_callback = CallbackEventHandler:new()
-        if not Global.game_settings.single_player then
-            managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_CustomNameColor_ColorSync", function(data, sender)
-                if data and data ~= "" then
-                    local col = NetworkHelper:StringToColour(data)
-                    self._custom_color_sync_callback:dispatch(sender, col)
-                end
-            end)
+        if not ListenerHolder then
+            self.__custom_color_sync_callback = self.__custom_color_sync_callback or {}
+            self.__custom_color_sync_callback[id] = f
+            return
         end
-        Hooks:PostHook(CustomNameColor, "SetLocalColors", "EHI_CustomNameColor_SetLocalColors", function(...)
-            local id = managers.network:session():local_peer():id()
-            self._custom_color_sync_callback:dispatch(id, tweak_data.chat_colors[id])
+        self:_CreateCNCSyncCallback()
+    end
+    self._custom_color_sync_callback:add(id, f)
+end
+
+function EHI.ModUtils:_CreateCNCSyncCallback()
+    self._custom_color_sync_callback = ListenerHolder:new()
+    if not Global.game_settings.single_player then
+        managers.ehi_sync:AddReceiveHook(CustomNameColor.ModID, "EHI_CustomNameColor_ColorSync", function(data, sender)
+            if data and data ~= "" then
+                local col = NetworkHelper:StringToColour(data)
+                self._custom_color_sync_callback:call(sender, col)
+            end
         end)
     end
-    self._custom_color_sync_callback:add(f)
+    Hooks:PostHook(CustomNameColor, "SetLocalColors", "EHI_CustomNameColor_SetLocalColors", function(...)
+        local local_id = managers.network:session():local_peer():id()
+        self._custom_color_sync_callback:call(local_id, tweak_data.chat_colors[local_id])
+    end)
+    if self.__custom_color_sync_callback then
+        for key, f in pairs(self.__custom_color_sync_callback) do
+            self._custom_color_sync_callback:add(key, f)
+        end
+        self.__custom_color_sync_callback = nil
+    end
+end
+
+---@param id string
+function EHI.ModUtils:RemoveCustomNameColorSyncCallback(id)
+    if self._custom_color_sync_callback then
+        self._custom_color_sync_callback:remove(id)
+    elseif self.__custom_color_sync_callback then
+        self.__custom_color_sync_callback[id] = nil
+    end
 end

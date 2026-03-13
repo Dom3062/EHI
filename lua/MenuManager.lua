@@ -3,8 +3,8 @@ if EHI:CheckHook("MenuManager") then
     return
 end
 
----@type FakeEHITrackerManager, FakeEHIBuffsManager
-local tracker_preview, buff_preview
+---@type FakeEHITrackerManager, FakeEHIBuffsManager, FakeEHIHudlistManager, Panel
+local tracker_preview, buff_preview, hudlist_preview, ehi_panel
 local cache = {}
 ---@param show boolean
 local function ShowOrHideMenuStuff(show)
@@ -60,12 +60,11 @@ local function ShowOrHideMenuStuff(show)
             menu_component._ws:hide()
         end
     end
-    tracker_preview._panel:set_visible(not show)
-    buff_preview._panel:set_visible(not show)
+    ehi_panel:set_visible(not show)
 end
 
 ---@param compare { comparator: string, value: integer }
----@param value boolean|integer
+---@param value boolean|integer|"on"|"off"
 ---@param type string?
 local function check_value(compare, value, type)
     if type == "toggle" then
@@ -92,296 +91,335 @@ end
 
 ---Copy of BLT's MenuHelper with EHI specific changes  
 ---Loads a json-formatted text file and automatically parses and converts into a usable menu
----@param file_path string @Path of the file to load and convert into a menu
----@param data_table table? @Table containing the data keys which various menu items can load their value from
+---@param content table Path of the file to load and convert into a menu
+---@param data_table table? Table containing the data keys which various menu items can load their value from
+local function CreateMenuFromJson(content, data_table)
+    local menu_id = content.menu_id
+    local parent_menu = content.parent_menu_id
+    local items = content.items
+    local menu_priority = content.priority or nil
+
+    -- 1.
+    Hooks:Add("MenuManagerSetupCustomMenus", "Base_SetupCustomMenus_Json_" .. menu_id, function(menu_manager, nodes)
+        MenuHelper:NewMenu(menu_id)
+    end)
+
+    -- 3.
+    Hooks:Add("MenuManagerBuildCustomMenus","Base_BuildCustomMenus_Json_" .. menu_id, function(menu_manager, nodes)
+        local data = {
+            focus_changed_callback = content.focus_changed_callback,
+            back_callback = content.back_callback,
+            area_bg = content.area_bg
+        }
+        nodes[menu_id] = MenuHelper:BuildMenu(menu_id, data)
+
+        if menu_priority ~= nil then
+            for k, v in pairs(nodes[parent_menu]._items) do
+                if menu_priority > (v._priority or 0) then
+                    menu_priority = k
+                    break
+                end
+            end
+        end
+
+        if menu_id == "ehi_menu" then
+            MenuHelper:AddMenuItem(nodes[parent_menu], menu_id, content.title, content.description, menu_priority)
+        end
+    end)
+
+    -- 2.
+    Hooks:Add("MenuManagerPopulateCustomMenus","Base_PopulateCustomMenus_Json_" .. menu_id, function(menu_manager, nodes)
+        local all_items = #items
+        local previous_items = {} ---@type table<string, CoreMenuItemToggle.ItemToggle, CoreMenuItemSlider.ItemSlider, MenuItemMultiChoice>
+        for k, item in ipairs(items) do
+            local menu_item
+            if item.vr then
+                item = _G.IS_VR and item.vr[1] or item.vr[2]
+            end
+            local i_type = item.type
+            local id = item.id
+            local title = item.title
+            local desc = item.description
+            local callback = item.callback
+            local priority = item.priority or all_items - k
+            local value = item.default_value
+            local localized = item.localized
+            local disabled = item.disabled
+            if data_table and data_table[item.value] ~= nil then
+                value = data_table[item.value]
+            end
+            if item.disabled_from_start and MenuCallbackHandler then
+                disabled = not _G.callback(MenuCallbackHandler, MenuCallbackHandler, item.disabled_from_start)()
+            end
+            if i_type == "button" then
+                menu_item = MenuHelper:AddButton({
+                    id = id,
+                    title = title,
+                    desc = desc,
+                    callback = callback,
+                    next_node = item.next_menu or nil,
+                    menu_id = menu_id,
+                    priority = priority,
+                    localized = localized,
+                    disabled = disabled
+                })
+            elseif i_type == "toggle" then
+                menu_item = MenuHelper:AddToggle({
+                    id = id,
+                    title = title,
+                    desc = desc,
+                    callback = callback,
+                    value = value,
+                    menu_id = menu_id,
+                    priority = priority,
+                    localized = localized,
+                    disabled = disabled
+                })
+            elseif i_type == "slider" then
+                menu_item = MenuHelper:AddSlider({
+                    id = id,
+                    title = title,
+                    desc = desc,
+                    callback = callback,
+                    value = value,
+                    min = item.min or 0,
+                    max = item.max or 1,
+                    step = item.step or 0.1,
+                    show_value = true,
+                    display_precision = item.display_precision,
+                    display_scale = item.display_scale,
+                    is_percentage = item.is_percentage,
+                    menu_id = menu_id,
+                    priority = priority,
+                    localized = localized,
+                    disabled = disabled
+                })
+            elseif i_type == "divider" then
+                menu_item = MenuHelper:AddDivider({
+                    id = "",
+                    size = item.size,
+                    title = title,
+                    menu_id = menu_id,
+                    priority = priority,
+                    no_text = item.no_text
+                })
+                menu_item:set_parameter("color", Color.white)
+            elseif i_type == "keybind" then
+                local key = ""
+                if item.keybind_id then
+                    local mod = BLT.Mods:GetModOwnerOfFile(file_path)
+                    if mod then
+                        local params = {
+                            id = item.keybind_id,
+                            allow_menu = item.run_in_menu,
+                            allow_game = item.run_in_game,
+                            show_in_menu = item.show_in_menu,
+                            name = title,
+                            desc = desc,
+                            localize = true,
+                            callback = item.func and MenuCallbackHandler[item.func]
+                        }
+                        BLT.Keybinds:register_keybind(mod, params)
+                    end
+                    local bind = BLT.Keybinds:get_keybind(item.keybind_id)
+                    key = bind and bind:Key() or ""
+                end
+                menu_item = MenuHelper:AddKeybinding({
+                    id = id,
+                    title = title,
+                    desc = desc,
+                    connection_name = item.keybind_id,
+                    button = key,
+                    binding = key,
+                    menu_id = menu_id,
+                    priority = priority,
+                    localized = localized,
+                    disabled = disabled
+                })
+            elseif i_type == "multiple_choice" then
+                menu_item = MenuHelper:AddMultipleChoice({
+                    id = id,
+                    title = title,
+                    desc = desc,
+                    callback = callback,
+                    items = item.items,
+                    item_values = item.item_values,
+                    value = value,
+                    menu_id = menu_id,
+                    priority = priority,
+                    localized = localized,
+                    localized_items = item.localized_items,
+                    disabled = disabled
+                })
+                if item.items_need_color then
+                    for _, option in ipairs(menu_item._all_options) do
+                        local color, _ = tweak_data.ehi:GetBuffColorFromIndex(option:value())
+                        option:parameters().color = color
+                    end
+                end
+            elseif i_type == "color" then
+                local default_value = item.default_value
+                local settings_table = item.params.call_hudlist_function and EHI.settings or EHI.settings.colors
+                if item.params.setting then
+                elseif item.params.settings then
+                    for _, setting in ipairs(item.params.settings) do
+                        settings_table = settings_table[setting]
+                    end
+                    value = settings_table
+                end
+                value = value or default_value
+                local data =
+                {
+                    type = "EHIMenuItemColor",
+                    {
+                        _meta = "option",
+                        text_id = "ehi_buffs_group_color_red",
+                        name = "r",
+                        value = value.r,
+                        localize = true
+                    },
+                    {
+                        _meta = "option",
+                        text_id = "ehi_buffs_group_color_green",
+                        name = "g",
+                        value = value.g,
+                        localize = true
+                    },
+                    {
+                        _meta = "option",
+                        text_id = "ehi_buffs_group_color_blue",
+                        name = "b",
+                        value = value.b,
+                        localize = true
+                    }
+                }
+                local params =
+                {
+                    name = id,
+                    text_id = title,
+                    help_id = desc,
+                    callback = "ehi_modify_item_color",
+                    localize = localized,
+                    localize_help = localized,
+                    default_color = default_value
+                }
+                local menu = MenuHelper:GetMenu(menu_id)
+                menu_item = menu:create_item(data, params)
+                menu_item:set_value(value)
+                menu_item._priority = priority
+                if disabled then
+                    menu_item:set_enabled(false)
+                end
+                menu._items_list = menu._items_list or {}
+                table.insert(menu._items_list, menu_item)
+            end
+            if menu_item and id then -- Dividers do not have ID assigned
+                previous_items[id] = menu_item ---@diagnostic disable-line
+                if item.value then
+                    menu_item:set_parameter("option", item.value)
+                end
+                if item.params or content.global_params then
+                    for key, param_value in pairs(item.params or content.global_params) do
+                        menu_item:set_parameter(key, param_value)
+                    end
+                end
+                if content.global_params then
+                    for key, param_value in pairs(content.global_params) do
+                        if not menu_item:parameter(key) then
+                            menu_item:set_parameter(key, param_value)
+                        end
+                    end
+                end
+                if item.child then
+                    menu_item:set_parameter("child", item.child)
+                elseif item.children then
+                    menu_item:set_parameter("children", item.children)
+                end
+                if item.children_f then
+                    menu_item:set_parameter("children_f", item.children_f)
+                end
+                if item.children_f_or then
+                    menu_item:set_parameter("children_f_or", item.children_f_or)
+                end
+                if item.child_compare then
+                    menu_item:set_parameter("child_compare", item.child_compare)
+                end
+                if item.parent and previous_items[item.parent] then
+                    menu_item:set_enabled(previous_items[item.parent]:value() == "on")
+                end
+                if item.parent_compare and item.parent_compare.id and previous_items[item.parent_compare.id] then
+                    local data = item.parent_compare
+                    local parent = previous_items[data.id]
+                    local result = check_value(data, parent:value(), parent:type())
+                    if data.enabled then
+                        result = result and parent:enabled()
+                    end
+                    menu_item:set_enabled(result)
+                elseif item.parents_compare then
+                    local final_result = true
+                    if item.parents_compare.comparator == "and" then
+                        for key, data in pairs(item.parents_compare.items) do
+                            local parent = previous_items[key]
+                            if parent and not check_value(data, parent:value(), parent:type()) then
+                                final_result = false
+                                break
+                            end
+                        end
+                    else -- or
+                        final_result = false
+                        for key, data in pairs(item.parents_compare.items) do
+                            local parent = previous_items[key]
+                            if parent and check_value(data, parent:value(), parent:type()) then
+                                final_result = true
+                                break
+                            end
+                        end
+                    end
+                    menu_item:set_enabled(final_result)
+                end
+                if item.other_item_compare and item.other_item_compare.id and previous_items[item.other_item_compare.id] then
+                    local data = item.other_item_compare
+                    previous_items[data.id]:set_enabled(check_value(data, value))
+                end
+                if item.other_items_compare then
+                    for o_id, data in pairs(item.other_items_compare) do
+                        previous_items[o_id]:set_enabled(check_value(data, value))
+                    end
+                end
+            end
+        end
+    end)
+end
+
+---@param file_path string Path of the file to load and convert into a menu
+---@param data_table table? Table containing the data keys which various menu items can load their value from
+local function LoadMenusFromJsonFile(file_path, data_table)
+    local file = io.open(file_path, "r")
+    if file then
+        local file_content = file:read("*all")
+        file:close()
+        for _, content in ipairs(json.decode(file_content)) do
+            local data = data_table
+            if content.global_params and content.global_params.settings and data then
+                for _, setting in ipairs(content.global_params.settings) do
+                    data = data[setting]
+                end
+            end
+            CreateMenuFromJson(content, data)
+        end
+    else
+        BLT:Log(LogLevel.ERROR, string.format("Could not load file '%s'", file_path))
+    end
+end
+
+---@param file_path string Path of the file to load and convert into a menu
+---@param data_table table? Table containing the data keys which various menu items can load their value from
 local function LoadFromJsonFile(file_path, data_table)
     local file = io.open(file_path, "r")
     if file then
         local file_content = file:read("*all")
         file:close()
-
-        local content = json.decode(file_content)
-        local menu_id = content.menu_id
-        local parent_menu = content.parent_menu_id
-        local items = content.items
-        local menu_priority = content.priority or nil
-
-        -- 1.
-        Hooks:Add("MenuManagerSetupCustomMenus", "Base_SetupCustomMenus_Json_" .. menu_id, function(menu_manager, nodes)
-            MenuHelper:NewMenu(menu_id)
-        end)
-
-        -- 3.
-        Hooks:Add("MenuManagerBuildCustomMenus","Base_BuildCustomMenus_Json_" .. menu_id, function(menu_manager, nodes)
-            local data = {
-                focus_changed_callback = content.focus_changed_callback,
-                back_callback = content.back_callback,
-                area_bg = content.area_bg
-            }
-            nodes[menu_id] = MenuHelper:BuildMenu(menu_id, data)
-
-            if menu_priority ~= nil then
-                for k, v in pairs(nodes[parent_menu]._items) do
-                    if menu_priority > (v._priority or 0) then
-                        menu_priority = k
-                        break
-                    end
-                end
-            end
-
-            if menu_id == "ehi_menu" then
-                MenuHelper:AddMenuItem(nodes[parent_menu], menu_id, content.title, content.description, menu_priority)
-            end
-        end)
-
-        -- 2.
-        Hooks:Add("MenuManagerPopulateCustomMenus","Base_PopulateCustomMenus_Json_" .. menu_id, function(menu_manager, nodes)
-            local all_items = #items
-            local previous_items = {}
-            for k, item in ipairs(items) do
-                local menu_item
-                if item.vr then
-                    item = _G.IS_VR and item.vr[1] or item.vr[2]
-                end
-                local i_type = item.type
-                local id = item.id
-                local title = item.title
-                local desc = item.description
-                local callback = item.callback
-                local priority = item.priority or all_items - k
-                local value = item.default_value
-                local localized = item.localized
-                local disabled = false
-                if data_table and data_table[item.value] ~= nil then
-                    value = data_table[item.value]
-                end
-                if item.disabled_from_start and MenuCallbackHandler then
-                    disabled = not _G.callback(MenuCallbackHandler, MenuCallbackHandler, item.disabled_from_start)()
-                end
-                if i_type == "button" then
-                    menu_item = MenuHelper:AddButton({
-                        id = id,
-                        title = title,
-                        desc = desc,
-                        callback = callback,
-                        next_node = item.next_menu or nil,
-                        menu_id = menu_id,
-                        priority = priority,
-                        localized = localized,
-                        disabled = disabled
-                    })
-                elseif i_type == "toggle" then
-                    menu_item = MenuHelper:AddToggle({
-                        id = id,
-                        title = title,
-                        desc = desc,
-                        callback = callback,
-                        value = value,
-                        menu_id = menu_id,
-                        priority = priority,
-                        localized = localized,
-                        disabled = disabled
-                    })
-                elseif i_type == "slider" then
-                    menu_item = MenuHelper:AddSlider({
-                        id = id,
-                        title = title,
-                        desc = desc,
-                        callback = callback,
-                        value = value,
-                        min = item.min or 0,
-                        max = item.max or 1,
-                        step = item.step or 0.1,
-                        show_value = true,
-                        display_precision = item.display_precision,
-                        display_scale = item.display_scale,
-                        is_percentage = item.is_percentage,
-                        menu_id = menu_id,
-                        priority = priority,
-                        localized = localized,
-                        disabled = disabled
-                    })
-                elseif i_type == "divider" then
-                    menu_item = MenuHelper:AddDivider({
-                        id = "",
-                        size = item.size,
-                        title = title,
-                        menu_id = menu_id,
-                        priority = priority,
-                        no_text = item.no_text
-                    })
-                    menu_item:set_parameter("color", Color.white)
-                elseif i_type == "keybind" then
-                    local key = ""
-                    if item.keybind_id then
-                        local mod = BLT.Mods:GetModOwnerOfFile(file_path)
-                        if mod then
-                            local params = {
-                                id = item.keybind_id,
-                                allow_menu = item.run_in_menu,
-                                allow_game = item.run_in_game,
-                                show_in_menu = item.show_in_menu,
-                                name = title,
-                                desc = desc,
-                                localize = true,
-                                callback = item.func and MenuCallbackHandler[item.func]
-                            }
-                            BLT.Keybinds:register_keybind(mod, params)
-                        end
-                        local bind = BLT.Keybinds:get_keybind(item.keybind_id)
-                        key = bind and bind:Key() or ""
-                    end
-                    menu_item = MenuHelper:AddKeybinding({
-                        id = id,
-                        title = title,
-                        desc = desc,
-                        connection_name = item.keybind_id,
-                        button = key,
-                        binding = key,
-                        menu_id = menu_id,
-                        priority = priority,
-                        localized = localized,
-                        disabled = disabled
-                    })
-                elseif i_type == "multiple_choice" then
-                    menu_item = MenuHelper:AddMultipleChoice({
-                        id = id,
-                        title = title,
-                        desc = desc,
-                        callback = callback,
-                        items = item.items,
-                        item_values = item.item_values,
-                        value = value,
-                        menu_id = menu_id,
-                        priority = priority,
-                        localized = localized,
-                        localized_items = item.localized_items,
-                        disabled = disabled
-                    })
-                    if item.items_need_color then
-                        for _, option in ipairs(menu_item._all_options) do
-                            local color, _ = tweak_data.ehi:GetBuffColorFromIndex(option:value())
-                            option:parameters().color = color
-                        end
-                    end
-                elseif i_type == "color" then
-                    local settings_table = EHI.settings.colors
-                    if item.params.setting then
-                    elseif item.params.settings then
-                        for _, setting in ipairs(item.params.settings) do
-                            settings_table = settings_table[setting]
-                        end
-                        value = settings_table
-                    end
-                    local data =
-                    {
-                        type = "EHIMenuItemColor",
-                        {
-                            _meta = "option",
-                            text_id = "ehi_buffs_group_color_red",
-                            name = "r",
-                            value = value.r,
-                            localize = true
-                        },
-                        {
-                            _meta = "option",
-                            text_id = "ehi_buffs_group_color_green",
-                            name = "g",
-                            value = value.g,
-                            localize = true
-                        },
-                        {
-                            _meta = "option",
-                            text_id = "ehi_buffs_group_color_blue",
-                            name = "b",
-                            value = value.b,
-                            localize = true
-                        }
-                    }
-                    local params =
-                    {
-                        name = id,
-                        text_id = title,
-                        help_id = desc,
-                        callback = "ehi_modify_item_color",
-                        localize = localized,
-                        localize_help = localized,
-                        default_color = item.default_value
-                    }
-                    local menu = MenuHelper:GetMenu(menu_id)
-                    menu_item = menu:create_item(data, params)
-                    menu_item:set_value(value)
-                    menu_item._priority = priority
-                    if disabled then
-                        menu_item:set_enabled(false)
-                    end
-                    menu._items_list = menu._items_list or {}
-                    table.insert(menu._items_list, menu_item)
-                end
-                if menu_item and id then -- Dividers do not have ID assigned
-                    previous_items[id] = menu_item
-                    if item.value then
-                        menu_item:set_parameter("option", item.value)
-                    end
-                    if item.params or content.global_params then
-                        for key, param_value in pairs(item.params or content.global_params) do
-                            menu_item:set_parameter(key, param_value)
-                        end
-                    end
-                    if item.child then
-                        menu_item:set_parameter("child", item.child)
-                    elseif item.children then
-                        menu_item:set_parameter("children", item.children)
-                    end
-                    if item.children_f or item.children_f_and then
-                        menu_item:set_parameter("children_f", item.children_f_and or item.children_f)
-                    end
-                    if item.children_f_or then
-                        menu_item:set_parameter("children_f_or", item.children_f_or)
-                    end
-                    if item.child_compare then
-                        menu_item:set_parameter("child_compare", item.child_compare)
-                    end
-                    if item.parent and previous_items[item.parent] then
-                        menu_item:set_enabled(previous_items[item.parent]:value() == "on")
-                    end
-                    if item.parent_compare and item.parent_compare.id and previous_items[item.parent_compare.id] then
-                        local data = item.parent_compare
-                        local parent = previous_items[data.id]
-                        local result = check_value(data, parent:value(), parent:type())
-                        if data.enabled then
-                            result = result and parent:enabled()
-                        end
-                        menu_item:set_enabled(result)
-                    elseif item.parents_compare then
-                        local final_result = true
-                        if item.parents_compare.comparator == "and" then
-                            for key, data in pairs(item.parents_compare.items) do
-                                local parent = previous_items[key]
-                                if parent and not check_value(data, parent:value(), parent:type()) then
-                                    final_result = false
-                                    break
-                                end
-                            end
-                        else -- or
-                            final_result = false
-                            for key, data in pairs(item.parents_compare.items) do
-                                local parent = previous_items[key]
-                                if parent and check_value(data, parent:value(), parent:type()) then
-                                    final_result = true
-                                    break
-                                end
-                            end
-                        end
-                        menu_item:set_enabled(final_result)
-                    end
-                    if item.other_item_compare and item.other_item_compare.id and previous_items[item.other_item_compare.id] then
-                        local data = item.other_item_compare
-                        previous_items[data.id]:set_enabled(check_value(data, value))
-                    end
-                end
-            end
-        end)
+        CreateMenuFromJson(json.decode(file_content), data_table)
     else
         BLT:Log(LogLevel.ERROR, string.format("Could not load file '%s'", file_path))
     end
@@ -401,7 +439,7 @@ local Languages =
     [11] = "japanese"
 }
 
-Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc)
+Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", function(loc) ---@param loc BLTLocalizationManager
     local language_filename = nil
     local lang = EHI:GetOption("mod_language")
     local LocPath = EHI.ModPath .. "loc/"
@@ -437,10 +475,21 @@ Hooks:Add("LocalizationManagerPostInit", "LocalizationManagerPostInit_EHI", func
         loc:load_localization_file(LocPath .. "english.json", false)
     end
     loc:load_localization_file(LocPath .. "languages.json")
+    local shared_decks =
+    {
+        overdog_decks_1 = { "overdog_damage_reduction", "overdog_damage_reduction_persistent" },
+        overdog_decks_2 = { "overdog_melee_swings", "overdog_melee_swings_persistent" }
+    }
+    for deck, perks in pairs(shared_decks) do
+        local decks = loc:text(string.format("ehi_buffs_perks_shared_%s", deck))
+        for i, perk in ipairs(perks) do
+            loc._custom_localizations[string.format("ehi_buffs_perks_shared_%s_final", perk)] = string.format("%s\n%s", loc:text(i % 2 == 0 and "ehi_buffs_skills_permanent" or "ehi_buffs_skills_duration"), decks)
+        end
+    end
     EHI:RunOnLocalizationLoaded(loc, Languages[lang] or language_filename or "english")
 end)
 
-Hooks:Add("MenuManagerInitialize", "MenuManagerInitialize_EHI", function(menu_manager)
+Hooks:Add("MenuManagerInitialize", "MenuManagerInitialize_EHI", function(menu_manager) ---@param menu_manager MenuManager
     LoadFromJsonFile(EHI.MenuPath .. "menu.json", EHI.settings)
     LoadFromJsonFile(EHI.MenuPath .. "trackers.json", EHI.settings)
     LoadFromJsonFile(EHI.MenuPath .. "equipment.json", EHI.settings)
@@ -449,29 +498,15 @@ Hooks:Add("MenuManagerInitialize", "MenuManagerInitialize_EHI", function(menu_ma
     LoadFromJsonFile(EHI.MenuPath .. "waypoints.json", EHI.settings)
     LoadFromJsonFile(EHI.MenuPath .. "shared.json", EHI.settings)
     LoadFromJsonFile(EHI.MenuPath .. "buffs.json", EHI.settings)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/skills.json")
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/skills/mastermind.json", EHI.settings.buff_option)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/skills/enforcer.json", EHI.settings.buff_option)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/skills/ghost.json", EHI.settings.buff_option)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/skills/fugitive.json", EHI.settings.buff_option)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks.json")
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/infiltrator.json", EHI.settings.buff_option.infiltrator)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/gambler.json", EHI.settings.buff_option.gambler)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/grinder.json", EHI.settings.buff_option.grinder)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/maniac.json", EHI.settings.buff_option.maniac)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/anarchist.json", EHI.settings.buff_option.anarchist)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/yakuza.json", EHI.settings.buff_option.yakuza)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/expresident.json", EHI.settings.buff_option.expresident)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/biker.json", EHI.settings.buff_option.biker)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/kingpin.json", EHI.settings.buff_option.kingpin)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/sicario.json", EHI.settings.buff_option.sicario)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/stoic.json", EHI.settings.buff_option.stoic)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/tag_team.json", EHI.settings.buff_option.tag_team)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/hacker.json", EHI.settings.buff_option.hacker)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/leech.json", EHI.settings.buff_option.leech)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/copycat.json", EHI.settings.buff_option.copycat)
-    LoadFromJsonFile(EHI.MenuPath .. "buff_options/perks/gage_boosts.json", EHI.settings.buff_option.gage_boosts)
+    LoadMenusFromJsonFile(EHI.MenuPath .. "buff_options/skills.json", EHI.settings)
+    LoadMenusFromJsonFile(EHI.MenuPath .. "buff_options/perks.json", EHI.settings)
     LoadFromJsonFile(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
+    LoadFromJsonFile(EHI.MenuPath .. "hudlist.json", EHI.settings.hudlist)
+    LoadFromJsonFile(EHI.MenuPath .. "hudlist_options/left_list.json", EHI.settings.hudlist.left_list)
+    LoadFromJsonFile(EHI.MenuPath .. "hudlist_options/right_list.json", EHI.settings.hudlist.right_list)
+    LoadFromJsonFile(EHI.MenuPath .. "hudlist_options/right_list_unit_types.json", EHI.settings.hudlist.right_list.unit_types)
+    LoadFromJsonFile(EHI.MenuPath .. "hudlist_options/right_list_unit_types_dozer.json", EHI.settings.hudlist.right_list.unit_types)
+    LoadFromJsonFile(EHI.MenuPath .. "hudlist_options/right_list_special_types.json", EHI.settings.hudlist.right_list.special_items_type)
     LoadFromJsonFile(EHI.MenuPath .. "inventory.json", EHI.settings)
     LoadFromJsonFile(EHI.MenuPath .. "other.json", EHI.settings)
     local main_menu = menu_manager:get_menu(menu_manager._is_start_menu and "menu_main" or "menu_pause")
@@ -518,11 +553,26 @@ function MenuCallbackHandler:ehi_set_item_value(item)
         else
             tracker_preview[params.call_tracker_function.f](tracker_preview, value)
         end
-    elseif params.call_buff_function and buff_preview[params.call_buff_function.f] then
+    end
+    if params.call_buff_function and buff_preview[params.call_buff_function.f] then
         if params.call_buff_function.params then
             buff_preview[params.call_buff_function.f](buff_preview, unpack(params.call_buff_function.params), value)
         else
             buff_preview[params.call_buff_function.f](buff_preview, value)
+        end
+    end
+    if params.call_hudlist_function and (params.call_hudlist_function.custom_f or hudlist_preview[params.call_hudlist_function.f]) then
+        if params.call_hudlist_function.custom_f then
+            local custom_f = params.call_hudlist_function.custom_f
+            if custom_f.list == "left" then
+                hudlist_preview._left_list:CallItemFunction(custom_f.id, custom_f.f, value, custom_f.arg)
+            elseif custom_f.list == "right" then
+                hudlist_preview._right_list:CallItemFunction(custom_f.id, custom_f.f, value, custom_f.arg)
+            end
+        elseif params.call_hudlist_function.params then
+            hudlist_preview[params.call_hudlist_function.f](hudlist_preview, value, unpack(params.call_hudlist_function.params))
+        else
+            hudlist_preview[params.call_hudlist_function.f](hudlist_preview, value)
         end
     end
     if params.child then
@@ -569,6 +619,7 @@ function MenuCallbackHandler:ehi_set_item_value(item)
             end
         end
     end
+    cache.setting_changed = true
 end
 
 ---@param item EHIMenuItemColor
@@ -597,8 +648,8 @@ function MenuCallbackHandler:ehi_set_item_color()
     if item and color then
         item:set_value(color)
         local params = item:parameters()
-        local settings_table = EHI.settings.colors
-        if params.setting then
+        local settings_table = params.call_hudlist_function and EHI.settings or EHI.settings.colors
+        if params.setting and not params.settings then
         elseif params.settings then
             for _, setting in ipairs(params.settings) do
                 settings_table = settings_table[setting]
@@ -609,14 +660,25 @@ function MenuCallbackHandler:ehi_set_item_color()
         settings_table.b = color.b
         if params.call_tracker_function then
             tracker_preview:CallFunction(params.call_tracker_function.tracker or params.option, params.call_tracker_function.f, Color(255, color.r, color.g, color.b) / 255)
+        elseif params.call_hudlist_function and not params.call_hudlist_function.dummy then
+            if params.call_hudlist_function.custom_f then
+                if params.call_hudlist_function.custom_f.list == "left" then
+                    hudlist_preview._left_list:CallItemFunction(params.call_hudlist_function.custom_f.id, params.call_hudlist_function.custom_f.f, EHI:GetColor(color))
+                elseif params.call_hudlist_function.custom_f.list == "right" then
+                    hudlist_preview._right_list:CallItemFunction(params.call_hudlist_function.custom_f.id, params.call_hudlist_function.custom_f.f, EHI:GetColor(color), params.call_hudlist_function.custom_f.arg)
+                end
+            else
+                hudlist_preview:CallListFunction(color, params.call_hudlist_function.list, params.call_hudlist_function.f)
+            end
         end
+        cache.setting_changed = true
     end
     managers.menu:back()
 end
 
 function MenuCallbackHandler.ehi_changed_focus(node, focus)
-    if not tracker_preview then
-        local AspectRatio = FakeEHITrackerManager.AspectRatio
+    if not ehi_panel then
+        local AspectRatio = tweak_data.ehi.shared.AspectRatio
         local aspect_ratio = RenderSettings.resolution.x / RenderSettings.resolution.y
         local _1_33 = 4 / 3
         local AspectRatioEnum, ws, layer
@@ -633,16 +695,21 @@ function MenuCallbackHandler.ehi_changed_focus(node, focus)
                 layer = tweak_data.gui.MENU_COMPONENT_LAYER + 1
             end
         end
-        local panel = ws:panel():panel()
+        ehi_panel = ws:panel():panel()
         if layer then
-            panel:set_layer(layer)
+            ehi_panel:set_layer(layer)
         end
-        tracker_preview = FakeEHITrackerManager:new(panel, AspectRatioEnum)
-        buff_preview = FakeEHIBuffsManager:new(panel)
+        tracker_preview = FakeEHITrackerManager:new(ehi_panel, AspectRatioEnum)
+        buff_preview = FakeEHIBuffsManager:new(ehi_panel)
+        hudlist_preview = FakeEHIHudlistManager:new(ehi_panel, AspectRatioEnum)
     end
     if focus then
         ShowOrHideMenuStuff(false)
     end
+end
+
+function MenuCallbackHandler.ehi_is_classic_heisting_mod_installed()
+    return _G.ch_settings == nil
 end
 
 ---@param item CoreMenuItemToggle.ItemToggle
@@ -721,12 +788,95 @@ function MenuCallbackHandler.ehi_show_floating_text_color_peer_equipment_choice_
     return EHI:GetOption("show_floating_text_icon")
 end
 
+function MenuCallbackHandler.ehi_left_list_progress_static_1()
+    return EHI:GetHudlistOption("left_list_progress_visibility")
+end
+
+function MenuCallbackHandler.ehi_hudlist_left_list_show_deployables_aggregate_single_grenades_1()
+    return EHI:GetHudlistListOption("left_list", "deployable_aggregate")
+end
+
+function MenuCallbackHandler.ehi_hudlist_left_list_show_deployables_grenades_block_on_ability_or_no_throwable_1()
+    return EHI:GetHudlistListOption("left_list", "deployable_show_grenades")
+end
+
+function MenuCallbackHandler.ehi_right_list_progress_static_1()
+    return EHI:GetHudlistOption("right_list_progress_visibility")
+end
+
+function MenuCallbackHandler:ehi_right_list_units_set_aggregated(item)
+    local items_to_disable = {
+        ehi_hudlist_right_list_unit_types_dozer_count_choice = true,
+        ehi_hudlist_right_list_unit_types_sniper_count_choice = true,
+        ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice = true,
+        ehi_hudlist_right_list_unit_types_taser_count_choice = true,
+        ehi_hudlist_right_list_unit_types_medic_count_choice = true,
+        ehi_hudlist_right_list_unit_types_cloaker_count_choice = true,
+        ehi_hudlist_right_list_unit_types_shield_count_choice = true,
+        ehi_hudlist_right_list_unit_types_marshal_shield_count_choice = true,
+        ehi_hudlist_right_list_unit_types_captain_count_choice = true,
+        ehi_hudlist_right_list_unit_types_phalanx_count_choice = true,
+        ehi_hudlist_right_list_unit_types_turret_count_choice = true
+    }
+    local items_to_enable = {
+        ehi_hudlist_right_list_unit_types_converts_count_choice = true,
+        ehi_hudlist_right_list_unit_types_enemy_tied_count_choice = true,
+        ehi_hudlist_right_list_unit_types_civilian_count_choice = true,
+        ehi_hudlist_right_list_unit_types_civilian_tied_count_choice = true
+    }
+    MenuHelper:ResetItemsToDefaultValue(item, items_to_disable, false)
+    MenuHelper:ResetItemsToDefaultValue(item, items_to_enable, true)
+end
+
+function MenuCallbackHandler:ehi_right_list_units_set_all_units(item)
+    local items_to_enable = {
+        ehi_hudlist_right_list_unit_types_converts_count_choice = true,
+        ehi_hudlist_right_list_unit_types_enemy_tied_count_choice = true,
+        ehi_hudlist_right_list_unit_types_dozer_count_choice = true,
+        ehi_hudlist_right_list_unit_types_dozer_count_separate_choice = true,
+        ehi_hudlist_right_list_unit_types_sniper_count_choice = true,
+        ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice = true,
+        ehi_hudlist_right_list_unit_types_taser_count_choice = true,
+        ehi_hudlist_right_list_unit_types_medic_count_choice = true,
+        ehi_hudlist_right_list_unit_types_cloaker_count_choice = true,
+        ehi_hudlist_right_list_unit_types_shield_count_choice = true,
+        ehi_hudlist_right_list_unit_types_marshal_shield_count_choice = true,
+        ehi_hudlist_right_list_unit_types_captain_count_choice = true,
+        ehi_hudlist_right_list_unit_types_phalanx_count_choice = true,
+        ehi_hudlist_right_list_unit_types_turret_count_choice = true,
+        ehi_hudlist_right_list_unit_types_civilian_count_choice = true,
+        ehi_hudlist_right_list_unit_types_civilian_tied_count_choice = true
+    }
+    MenuHelper:ResetItemsToDefaultValue(item, items_to_enable, true)
+end
+
+function MenuCallbackHandler.ehi_right_list_units_dozer_count_1()
+    return not EHI:GetHudlistListOption("right_list", "unit_types").dozer_count_separate
+end
+
+function MenuCallbackHandler.ehi_right_list_units_dozer_count_2()
+    return not MenuCallbackHandler.ehi_right_list_units_dozer_count_1()
+end
+
+function MenuCallbackHandler.ehi_right_list_loot_color_based_on_weight_1()
+    return EHI:GetHudlistListOption("right_list", "loot_color_items_based_on_their_weight")
+end
+
 function MenuCallbackHandler:ehi_update_buff_text_color(item)
 end
 
 function MenuCallbackHandler:ehi_save(item)
     ShowOrHideMenuStuff(true)
     EHI:SaveOptions()
+    if game_state_machine:verify_game_state(GameStateFilters.any_ingame) and cache.setting_changed and not cache.restart_required_acknowledged then
+        cache.restart_required_acknowledged = true
+        QuickMenu:new(
+            managers.localization:text("ehi_mod_title"),
+            managers.localization:text("ehi_level_restart_required"),
+            {},
+            true
+        )
+    end
 end
 
 local function CacheRank(self, ...)

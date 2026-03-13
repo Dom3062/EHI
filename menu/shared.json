@@ -1,7 +1,6 @@
 {
     "menu_id": "ehi_shared_menu",
     "parent_menu_id" : "ehi_menu",
-    "title": "ehi_shared_menu",
     "items": [
         {
             "type" : "divider",

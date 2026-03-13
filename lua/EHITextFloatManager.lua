@@ -1,4 +1,4 @@
----@alias EHITextFloatManager.Float { class: EHITextFloat, state: "onscreen"|"offscreen", position: Vector3, name_key: string, peer_id: integer }
+---@alias EHITextFloatManager.Float { class: EHITextFloat, state: "onscreen"|"offscreen", position: Vector3, peer_id: integer }
 
 local EHI = EHI
 if EHI:CheckLoadHook("EHITextFloatManager") then
@@ -116,7 +116,7 @@ function EHITextFloatManager:new()
             Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_destroy")
             Hooks:RemovePostHook("EHI_BodyBagsBagInteractionExt_EHITextFloatManager_set_active")
             for key, data in pairs(self._floats) do
-                if data.name_key == "a163786a6ddb0291" then
+                if data.class:IsInGroup("bodybags") then
                     self:_remove_float(data)
                     self._floats[key] = nil
                 end
@@ -166,7 +166,7 @@ function EHITextFloatManager:new()
                 Hooks:RemovePostHook("EHI_GrenadeCrateDeployableBase_EHITextFloatManager_set_server_information")
                 Hooks:RemovePreHook("EHI_CustomGrenadeCrateDeployableBase_EHITextFloatManager__set_empty")
                 for key, data in pairs(self._floats) do
-                    if data.name_key == "f6001ca4eb64a74c" or data.name_key == "e166f63494083d58" or data.name_key == "02a3ade37a633a71" or data.name_key == "fc520601b50186e4" then
+                    if data.class:IsInGroup("grenades") then
                         self:_remove_float(data)
                         self._floats[key] = nil
                     end
@@ -175,12 +175,15 @@ function EHITextFloatManager:new()
             end)
         end
     end
-    EHI.ModUtils:AddCustomNameColorSyncCallback(function(peer_id, color)
+    EHI.ModUtils:AddCustomNameColorSyncCallback("EHITextFloatManager", function(peer_id, color)
         for _, float in pairs(self._floats) do
             if float.peer_id == peer_id then
                 float.class:UpdatePeerColor(color)
             end
         end
+    end)
+    EHI.TrackerUtils.Deployables:AddIgnoreListener("EHITextFloatManager", function(key, base)
+        self:IgnoreDeployable(key)
     end)
 end
 
@@ -196,9 +199,8 @@ function EHITextFloatManager:init_hud(panel, saferect)
     self._deferred_floats = {}
 end
 
----@param unit Unit
-function EHITextFloatManager:IgnoreDeployable(unit)
-    local key = unit:key()
+---@param key userdata
+function EHITextFloatManager:IgnoreDeployable(key)
     self._unit_blocked[key] = true
     self._deferred_floats[key] = nil
     if self._floats[key] then
@@ -233,7 +235,6 @@ function EHITextFloatManager:_add_float(key, unit, from_defer, peer_id)
             class = EHITextFloat:new(unit, from_defer, peer_id),
             state = "offscreen",
             position = unit:position(),
-            name_key = unit:name():key(),
             peer_id = peer_id or 0
         }
         self._n_of_equipment = self._n_of_equipment + 1
@@ -314,7 +315,8 @@ EHITextFloat._EQUIPMENT =
                 end
             end
             return ""
-        end
+        end,
+        group = "ammo"
     },
     ["43ed278b1faf89b3"] =
     {
@@ -322,17 +324,19 @@ EHITextFloat._EQUIPMENT =
         texture = "guis/textures/pd2/skilltree/icons_atlas",
         texture_rect = { 128, 448, 64, 64 },
         check_upgrades_f = function(base) ---@param base DoctorBagBase
-            if base._damage_reduction_upgrade then
+            if base._damage_reduction_upgrade then ---@diagnostic disable-line
                 return "Dmg-"
             end
             return ""
-        end
+        end,
+        group = "doctor"
     },
     a163786a6ddb0291 =
     {
         name = "Bodybags Bag",
         texture = "guis/textures/pd2/skilltree/icons_atlas",
-        texture_rect = { 320, 704, 64, 64 }
+        texture_rect = { 320, 704, 64, 64 },
+        group = "bodybags"
     },
     e1474cdfd02aa274 =
     {
@@ -353,13 +357,15 @@ EHITextFloat._EQUIPMENT =
             end
             return str
         end,
-        no_amount = true
+        no_amount = true,
+        group = "fak"
     },
     f6001ca4eb64a74c =
     {
         name = "Grenade Case",
         texture = "guis/dlcs/big_bank/textures/pd2/pre_planning/preplan_icon_types",
-        texture_rect = { 48, 0, 48, 48 }
+        texture_rect = { 48, 0, 48, 48 },
+        group = "grenades"
     },
     default =
     {
@@ -371,6 +377,7 @@ EHITextFloat._EQUIPMENT =
 EHITextFloat._EQUIPMENT["269c288629a7ebc7"] = deep_clone(EHITextFloat._EQUIPMENT["43ed278b1faf89b3"])
 EHITextFloat._EQUIPMENT["269c288629a7ebc7"].name = "First Aid Kit Box"
 EHITextFloat._EQUIPMENT["269c288629a7ebc7"].check_upgrades_f = nil
+EHITextFloat._EQUIPMENT["269c288629a7ebc7"].no_amount = true
 ---units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo
 EHITextFloat._EQUIPMENT.dad3d39f10a58fbd = deep_clone(EHITextFloat._EQUIPMENT["8f59e19e1e45a05e"])
 EHITextFloat._EQUIPMENT.dad3d39f10a58fbd.name = "Ammo Shelf"
@@ -396,7 +403,6 @@ EHITextFloat._EQUIPMENT.e166f63494083d58.texture_rect = { 0, 0, 128, 128 }
 function EHITextFloat:init(unit, from_defer, peer_id)
     local name_key = unit:name():key()
     local eq_data = self._EQUIPMENT[name_key] or self._EQUIPMENT.default
-    local text
     if eq_data.force_console_report then
         local editor_id = unit:editor_id()
         if editor_id <= 0 then
@@ -407,6 +413,7 @@ function EHITextFloat:init(unit, from_defer, peer_id)
             self:_report_in_console(editor_id, name_key)
         end
     end
+    local text
     if self._SETTINGS.compact_mode then
         if self._SETTINGS.format == 1 then
             text = "?x"
@@ -468,12 +475,12 @@ end
 ---@param editor_id integer
 ---@param name_key string
 function EHITextFloat:_report_in_console(editor_id, name_key)
-    EHI:Log("[EHIFloatText] Missing equipment data! name_key: " .. tostring(name_key))
-    EHI:Log("[EHIFloatText] editor_id: " .. tostring(editor_id))
+    EHI:Log("[EHITextFloat] Missing equipment data! name_key: " .. tostring(name_key))
+    EHI:Log("[EHITextFloat] editor_id: " .. tostring(editor_id))
     if editor_id < 100000 then
-        EHI:Log("[EHIFloatText] editor_id is still 0")
-        EHI:Log("[EHIFloatText] level_id: " .. tostring(Global.game_settings.level_id))
-        EHI:Log("[EHIFloatText] ----------separator----------")
+        EHI:Log("[EHITextFloat] editor_id is still 0")
+        EHI:Log("[EHITextFloat] level_id: " .. tostring(Global.game_settings.level_id))
+        EHI:Log("[EHITextFloat] ----------separator----------")
         return
     end
     if editor_id >= 130000 then
@@ -481,17 +488,22 @@ function EHITextFloat:_report_in_console(editor_id, name_key)
             local start_index = EHI:GetInstanceElementID(100000, data.start_index)
             local end_index = start_index + data.index_size - 1
             if math.within(editor_id, start_index, end_index) then
-                EHI:Log("[EHIFloatText] instance: " .. tostring(data.name))
-                EHI:Log("[EHIFloatText] folder: " .. tostring(data.folder))
-                EHI:Log("[EHIFloatText] start_index: " .. tostring(data.start_index))
-                EHI:Log("[EHIFloatText] base editor id: " .. tostring(editor_id - 30000 - data.start_index))
+                EHI:Log("[EHITextFloat] instance: " .. tostring(data.name))
+                EHI:Log("[EHITextFloat] folder: " .. tostring(data.folder))
+                EHI:Log("[EHITextFloat] start_index: " .. tostring(data.start_index))
+                EHI:Log("[EHITextFloat] base editor id: " .. tostring(editor_id - 30000 - data.start_index))
                 break
             end
         end
     else
-        EHI:Log("[EHIFloatText] level_id: " .. tostring(Global.game_settings.level_id))
+        EHI:Log("[EHITextFloat] level_id: " .. tostring(Global.game_settings.level_id))
     end
-    EHI:Log("[EHIFloatText] ----------separator----------")
+    EHI:Log("[EHITextFloat] ----------separator----------")
+end
+
+---@param group string
+function EHITextFloat:IsInGroup(group)
+    return self._eq_data.group == group
 end
 
 ---@param equipment AmmoBagBase|GrenadeCrateBase|FirstAidKitBase

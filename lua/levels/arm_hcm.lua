@@ -57,6 +57,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_from_element = 102650 } }
     other[100214] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = 100233 } }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 tweak_data.ehi.functions.achievements.armored_4()
 EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
 local MinBags = EHI:GetValueBasedOnDifficulty({

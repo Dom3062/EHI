@@ -69,7 +69,7 @@ do
     end
 end
 
----@param key string
+---@param key userdata
 ---@param amount number
 function EHIEquipmentTracker:UpdateAmount(key, amount)
     if not key then

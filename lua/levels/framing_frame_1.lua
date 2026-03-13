@@ -64,7 +64,14 @@ else -- Framing Frame Day 1
         triggers =
         {
             [100559] = { special_function = SF.CallCustomFunction, f = "SetStarted" },
-            [102860] = { special_function = SF.SetAchievementFailed } -- Painting flushed
+            [102860] = { special_function = SF.Trigger, data = { 1, 2 } },
+            [1] = EHI:AddCustomCode(function(self)
+                self._unlockable:SetAchievementFailed("pink_panther") -- Painting flushed
+            end),
+            [2] = EHI:AddCustomCode(function(self)
+                self._trackers:DecreaseProgressMax("pink_panther")
+                self._loot:DecreaseLootCounterProgressMax()
+            end)
         },
         loot_counter_triggers = LootCounterTriggers,
         load_sync = function(self)
@@ -103,6 +110,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[103785] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[103761] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
 other[100788] = EHI:AddAssaultDelay({ time = 30 + 1 + 20 + 1 }) -- Game forces endless assault and then kills it a second later
 
