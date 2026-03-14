@@ -18,7 +18,7 @@ end
 managers.ehi_assault = blt.vm.dofile(EHI.LuaPath .. "EHIAssaultManager.lua")
 managers.ehi_unlockable = blt.vm.dofile(EHI.LuaPath .. "EHIUnlockableManager.lua")
 managers.ehi_phalanx = blt.vm.dofile(EHI.LuaPath .. "EHIPhalanxManager.lua")
-if EHI:GetTrackerOrWaypointOption("show_timers", "show_waypoints_timers") then
+if EHI:GetTrackerWaypointHudlistOption("show_timers", "show_waypoints_timers", "show_timers") then
     managers.ehi_timer = blt.vm.dofile(EHI.LuaPath .. "EHITimerManager.lua")
 end
 managers.ehi_loot = blt.vm.dofile(EHI.LuaPath .. "EHILootManager.lua")
