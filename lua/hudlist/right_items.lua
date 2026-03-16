@@ -109,6 +109,7 @@ function EHIRightItemBase:CreateItem(id, params)
     local progress_bar = Color(1, 1, 0.125, 1)
     if self._params.progress == 1 then
         progress = panel:bitmap({
+            alpha = self._PROGRESS_ALPHA,
             render_template = "VertexColorTexturedRadialFlex",
             layer = 2,
             y = w,
@@ -132,6 +133,7 @@ function EHIRightItemBase:CreateItem(id, params)
         })
     else
         progress = panel:bitmap({
+            alpha = self._PROGRESS_ALPHA,
             render_template = "VertexColorTexturedRadial",
             layer = 2,
             y = w,
@@ -480,12 +482,6 @@ end
 ---@field super EHIRightItemBase
 EHIRightUnitItem = class(EHIRightItemBase)
 EHIRightUnitItem._update_id = "EHIRightUnitItem"
-EHIRightUnitItem._ENEMY_GROUPS = {
-    enemy = { icon = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and { ehi = EHI:GetAchievementIconString("gage5_6") } or { skills = { 6, 1 } }, pos = 1 },
-    minion = { icon = { skills = { 6, 8 } }, pos = 2 },
-    enemy_tied = { icon = { skills = { 2, 8 } }, pos = 3 },
-    ignore = { ignore = true }
-}
 EHIRightUnitItem._UNITS = {
     cop = "enemy",
     cop_female = "enemy",
@@ -1324,10 +1320,9 @@ EHIRightLootItem._LOOT =
     ranc_weapon = "weapon",
     trai_printing_plates = "plates",
     corp_papers = "papers",
-    corp_prototype = "prototype",
-
-    vehicle_falcogini = "ignore"
+    corp_prototype = "prototype"
 }
+EHIRightLootItem._IGNORE_LOOT = { "vehicle_falcogini" }
 EHIRightLootItem._POTENTIAL_LOOT = table.set("crate_loot", "crate_loot_crowbar", "crate_loot_close")
 EHIRightLootItem._IGNORE_CRATE_IN_LEVELS = table.set(
     "election_day_2", -- Election Day D2 (Warehouse)
@@ -1417,18 +1412,19 @@ function EHIRightLootItem:CreateItem(id, params)
     if valid_item then
         local def = params.text
         local panel = item.panel
+        local panel_w = panel:w()
         local icon = panel:child("icon") --[[@as Bitmap]]
         local text = panel:text({
             name = "text",
             text = def.name:sub(1, 10) or "",
             align = "center",
             vertical = "center",
-            w = panel:w(),
-            h = panel:w(),
+            w = panel_w,
+            h = panel_w,
             color = def.color or self._TEXT_COLOR,
             blend_mode = "normal",
             font = tweak_data.hud_corner.assault_font,
-            font_size = panel:w() * 0.45,
+            font_size = panel_w * 0.45,
             layer = 2
         })
         local _, _, w, _ = text:text_rect()
@@ -1475,8 +1471,8 @@ function EHIRightLootItem:CreateItemsFromMap(stealth_is_available, text_or_icon)
         self._itemized_items[i] = fake_item
     end
     self._units_map = {} ---@type table<string, EHIRightItemBase.Item?>
-    for key, value in pairs(self._LOOT) do
-        self._units_map[key] = self._items[value]
+    for _, loot in ipairs(self._IGNORE_LOOT) do
+        self._units_map[loot] = self._items.ignore
     end
 end
 
@@ -1780,7 +1776,9 @@ function EHIRightSpecialItemsItem:RegisterListeners(params)
         end
     end)
     EHI:AddOnSpawnedCallback(function()
-        self:_update_items_visibility_fast() -- Removes items that are spawned and then hidden in the same frame during level init (item count is 0)
+        if self._itemized_items then -- Check if any item was created before spawn, otherwise it will crash
+            self:_update_items_visibility_fast() -- Removes items that are spawned and then hidden in the same frame during level init (item count is 0)
+        end
     end)
 end
 

@@ -81,6 +81,15 @@ function FakeEHIList:UpdateBGColor(color)
     self:RunOnAllItems("UpdateBGColor", color)
 end
 
+---@param a number
+function FakeEHIList:UpdateProgressAlpha(a)
+    if self._progress_alpha == a then
+        return
+    end
+    self._progress_alpha = a
+    self:RunOnAllItems("UpdateProgressAlpha", a)
+end
+
 ---@param visibility boolean
 function FakeEHIList:UpdateProgressVisibility(visibility)
     self:RunOnAllItems("SetProgressVisibility", visibility)
@@ -115,6 +124,7 @@ function FakeEHILeftList:init(x, y, aspect_ratio)
     FakeEHILeftList.super.init(self, x, y, aspect_ratio)
     self._bg_alpha = EHI:GetHudlistOption("left_list_bg_alpha")
     self._bg_color = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
+    self._progress_alpha = EHI:GetHudlistOption("left_list_progress_alpha")
     self._progress_visibility = EHI:GetHudlistOption("left_list_progress_visibility")
     self._scale = EHI:GetHudlistOption("left_list_scale") --[[@as number]]
     self._preview_enabled = EHI:GetOption("show_preview_hudlist_left_list")
@@ -129,6 +139,7 @@ function FakeEHILeftList:AddItem(class, panel, params)
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(params.icon)
     params.bg_alpha = self._bg_alpha
     params.bg_color = self._bg_color
+    params.progress_alpha = self._progress_alpha
     params.progress_visibility = self._progress_visibility
     params.scale = self._scale
     params.visible = self._preview_enabled
@@ -175,6 +186,8 @@ function FakeEHIRightList:init(x, y, aspect_ratio, panel_w)
     self._panel_w = panel_w
     self._bg_alpha = EHI:GetHudlistOption("right_list_bg_alpha")
     self._bg_color = EHI:GetColor(EHI:GetHudlistOption("right_list_bg_color"))
+    self._progress_alpha = EHI:GetHudlistOption("right_list_progress_alpha")
+    self._progress_visibility = EHI:GetHudlistOption("right_list_progress_visibility")
     self._scale = EHI:GetHudlistOption("right_list_scale") --[[@as number]]
     self._preview_enabled = EHI:GetOption("show_preview_hudlist_right_list")
     self._list_enabled = EHI:GetHudlistOption("show_right_list")
@@ -187,6 +200,8 @@ end
 function FakeEHIRightList:AddItem(class, panel, params)
     params.bg_alpha = self._bg_alpha
     params.bg_color = self._bg_color
+    params.progress_alpha = self._progress_alpha
+    params.progress_visibility = self._progress_visibility
     params.scale = self._scale
     params.visible = self._preview_enabled
     params.list_enabled = self._list_enabled

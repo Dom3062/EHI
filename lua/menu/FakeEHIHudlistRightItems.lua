@@ -17,9 +17,10 @@ function FakeEHIRightItemBase:init(panel, params)
     self._visible = params.visible
     self._list_enabled = params.list_enabled
     local scale = params.scale or 1
+    local bg_alpha = params.bg_alpha or 1
+    local progress_alpha = params.progress_alpha or 1
     self._params = {
         h = 64,
-        bg_alpha = params.bg_alpha or 1,
         bg_color = params.bg_color,
         progress = params.progress or 1,
         progress_visibility = params.progress_visibility,
@@ -35,7 +36,7 @@ function FakeEHIRightItemBase:init(panel, params)
     self._items = {} ---@type FakeEHIRightItemBase.Item[]
     if params.items then
         for _, data in ipairs(params.items) do
-            self:AddItem(data, scale)
+            self:AddItem(data, scale, bg_alpha, progress_alpha)
         end
     end
     self:UpdateDataFromOptions(params)
@@ -113,11 +114,7 @@ end
 function FakeEHIRightItemBase:UpdateBGAlpha(a)
     for _, item in ipairs(self._items) do
         for _, bitmaps in ipairs(item.progress) do
-            for j, obj in ipairs(bitmaps) do
-                if j == 2 then
-                    obj:set_alpha(a)
-                end
-            end
+            bitmaps[2]:set_alpha(a)
         end
     end
 end
@@ -140,7 +137,9 @@ end
 
 ---@param params FakeEHIRightItemBase.ItemParams
 ---@param scale number
-function FakeEHIRightItemBase:AddItem(params, scale)
+---@param bg_alpha number
+---@param progress_alpha number
+function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha)
     local value = math.random(1, params.value or 1)
     local w = 32 * scale
     local panel = self._panel:panel({
@@ -150,6 +149,7 @@ function FakeEHIRightItemBase:AddItem(params, scale)
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(params.icon)
     local progress_sframe, progress_cframe = {}, {}
     progress_sframe[1] = panel:bitmap({
+        alpha = progress_alpha,
         render_template = "VertexColorTexturedRadial",
         layer = 2,
         y = w,
@@ -163,7 +163,7 @@ function FakeEHIRightItemBase:AddItem(params, scale)
     progress_sframe[2] = panel:rect({
         blend_mode = "normal",
         halign = "grow",
-        alpha = self._params.bg_alpha,
+        alpha = bg_alpha,
         layer = -1,
         valign = "grow",
         y = w,
@@ -173,6 +173,7 @@ function FakeEHIRightItemBase:AddItem(params, scale)
         visible = self._params.progress == 1
     })
     progress_cframe[1] = panel:bitmap({
+        alpha = progress_alpha,
         render_template = "VertexColorTexturedRadial",
         layer = 2,
         y = w,
@@ -184,7 +185,7 @@ function FakeEHIRightItemBase:AddItem(params, scale)
         visible = self._params.progress == 2 and self._params.progress_visibility
     })
     progress_cframe[2] = panel:bitmap({
-        alpha = self._params.bg_alpha,
+        alpha = bg_alpha,
         layer = -1,
         y = w,
         w = w,
@@ -302,6 +303,15 @@ function FakeEHIRightItemBase:SetProgress(progress)
     self:SetProgressVisibility(self._params.progress_visibility, progress)
 end
 
+---@param a number
+function FakeEHIRightItemBase:UpdateProgressAlpha(a)
+    for _, item in ipairs(self._items) do
+        for _, bitmaps in ipairs(item.progress) do
+            bitmaps[1]:set_alpha(a)
+        end
+    end
+end
+
 ---@param visibility boolean
 ---@param progress integer?
 function FakeEHIRightItemBase:SetProgressVisibility(visibility, progress)
@@ -309,11 +319,7 @@ function FakeEHIRightItemBase:SetProgressVisibility(visibility, progress)
     progress = progress or self._params.progress
     for _, item in ipairs(self._items) do
         for i, bitmaps in ipairs(item.progress) do
-            for j, obj in ipairs(bitmaps) do
-                if j == 1 then
-                    obj:set_visible(i == progress and visibility)
-                end
-            end
+            bitmaps[1]:set_visible(i == progress and visibility)
         end
     end
 end

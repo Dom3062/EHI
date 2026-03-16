@@ -18,9 +18,10 @@ function FakeEHILeftItemBase:init(panel, params, texture, texture_rect)
     self._visible = params.visible
     self._list_enabled = params.list_enabled
     local scale = params.scale or 1
+    local bg_alpha = params.bg_alpha or 1
+    local progress_alpha = params.progress_alpha or 1
     self._params = {
         progress = params.progress or 1,
-        bg_alpha = params.bg_alpha or 1,
         bg_color = params.bg_color,
         progress_visibility = params.progress_visibility,
         scale = scale,
@@ -51,17 +52,16 @@ function FakeEHILeftItemBase:init(panel, params, texture, texture_rect)
     local icon_size = 32 * scale
     self._panel:bitmap({
         name = "icon",
-        x = 0,
         y = 16 * scale,
         w = icon_size,
         h = icon_size,
         texture = texture,
         texture_rect = texture_rect
     })
-    self._list = {} ---@type FakeEHILeftItemBase.Item[]
+    self._items = {} ---@type FakeEHILeftItemBase.Item[]
     if params.items then
         for i, data in ipairs(params.items) do
-            self:AddItem(i, data, scale)
+            self:AddItem(i, data, scale, bg_alpha, progress_alpha)
         end
     end
 end
@@ -78,7 +78,7 @@ function FakeEHILeftItemBase:Rescale(scale)
     self._panel:child("icon"):set_size(w, w)
     local panel_h = self._panel:h()
     local icon_y = self._panel:child("icon"):y()
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         local panel = item.panel
         panel:set_size(w, panel_h)
         local top_text = panel:child("top_text") --[[@as Text?]]
@@ -181,7 +181,9 @@ end
 ---@param i integer
 ---@param params { icon: table, progress: number?, progress_between: number[]?, color: integer?, icon_color: Color?, top_text: table, bottom_text: table, fake_pos: integer? }
 ---@param scale number
-function FakeEHILeftItemBase:AddItem(i, params, scale)
+---@param bg_alpha number
+---@param progress_alpha number
+function FakeEHILeftItemBase:AddItem(i, params, scale, bg_alpha, progress_alpha)
     local progress, max_progress
     if params.progress_between then
         max_progress = params.progress_between[2]
@@ -204,6 +206,7 @@ function FakeEHILeftItemBase:AddItem(i, params, scale)
     local icon_color = params.icon_color or color_value
     local progress_sframe, progress_cframe = {}, {}
     progress_sframe[1] = panel:bitmap({
+        alpha = progress_alpha,
         render_template = "VertexColorTexturedRadialFlex",
         layer = 10,
         y = y,
@@ -217,7 +220,7 @@ function FakeEHILeftItemBase:AddItem(i, params, scale)
     progress_sframe[2] = panel:rect({
         blend_mode = "normal",
         halign = "grow",
-        alpha = self._params.bg_alpha,
+        alpha = bg_alpha,
         layer = -1,
         valign = "grow",
         y = y,
@@ -227,6 +230,7 @@ function FakeEHILeftItemBase:AddItem(i, params, scale)
         visible = self._params.progress == 1
     })
     progress_cframe[1] = panel:bitmap({
+        alpha = progress_alpha,
         render_template = "VertexColorTexturedRadial",
         layer = 10,
         y = y,
@@ -238,7 +242,7 @@ function FakeEHILeftItemBase:AddItem(i, params, scale)
         visible = self._params.progress == 2 and self._params.progress_visibility
     })
     progress_cframe[2] = panel:bitmap({
-        alpha = self._params.bg_alpha,
+        alpha = bg_alpha,
         layer = -1,
         y = y,
         w = w,
@@ -291,7 +295,7 @@ function FakeEHILeftItemBase:AddItem(i, params, scale)
             color = color_value
         }))
     end
-    local pos = table.size(self._list) + 1
+    local pos = table.size(self._items) + 1
     local fake_pos = params.fake_pos
     local data =
     {
@@ -306,9 +310,9 @@ function FakeEHILeftItemBase:AddItem(i, params, scale)
         progress_value = value,
         progress_bar = progress_bar
     }
-    self:_AddItem(data, panel, y, progress_bar, scale)
+    self:_AddItem(data, panel, y, progress_bar, scale, bg_alpha, progress_alpha)
     self:SortAddedItem(panel, fake_pos or pos, scale)
-    self._list[pos] = data
+    self._items[pos] = data
 end
 
 ---@param data FakeEHILeftItemBase.Item
@@ -316,7 +320,9 @@ end
 ---@param y number
 ---@param progress_bar Color
 ---@param scale number
-function FakeEHILeftItemBase:_AddItem(data, panel, y, progress_bar, scale)
+---@param bg_alpha number
+---@param progress_alpha number
+function FakeEHILeftItemBase:_AddItem(data, panel, y, progress_bar, scale, bg_alpha, progress_alpha)
 end
 
 ---Sorts newly added item panel on the HUD, but not in the memory
@@ -338,7 +344,7 @@ end
 function FakeEHILeftItemBase:SetProgressStatic(static)
     local template1 = Idstring("VertexColorTexturedRadial")
     local template2 = Idstring("VertexColorTexturedRadialFlex")
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         item.progress_bar.r = static and 1 or item.progress_value
         for _, bitmap in ipairs(item.progress_only) do
             local render_template = bitmap:render_template()
@@ -353,7 +359,7 @@ end
 ---@param from_visibility boolean?
 function FakeEHILeftItemBase:SetProgress(progress, from_visibility)
     self._params.progress = progress
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         for i, bitmaps in ipairs(item.progress) do
             for _, obj in ipairs(bitmaps) do
                 obj:set_visible(i == progress)
@@ -374,7 +380,7 @@ end
 ---@param from_progress boolean?
 function FakeEHILeftItemBase:SetProgressVisibility(visibility, from_progress)
     self._params.progress_visibility = visibility
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         for i, bitmap in ipairs(item.progress_only) do
             bitmap:set_visible(i == self._params.progress and visibility)
         end
@@ -384,7 +390,7 @@ end
 ---@param pos integer
 ---@param clr integer Gets converted to color and string
 function FakeEHILeftItemBase:SetItemProgressColor(pos, clr)
-    local item = self._list[pos]
+    local item = self._items[pos]
     local color, color_string = tweak_data.ehi:GetBuffColorFromIndex(clr)
     if self._COLOR_CHANGE_AFFECTS_WHOLE_ITEM then
         local top_text = item.panel:child("top_text") --[[@as Text?]]
@@ -403,7 +409,7 @@ function FakeEHILeftItemBase:SetItemProgressColor(pos, clr)
 end
 
 function FakeEHILeftItemBase:SetTimeFormat()
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         local bottom_text = item.panel:child("bottom_text") --[[@as Text?]]
         if bottom_text then
             bottom_text:set_text(self:Format(item.progress_raw_value, item.pos))
@@ -413,7 +419,7 @@ end
 
 ---@param a number
 function FakeEHILeftItemBase:UpdateBGAlpha(a)
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         for _, bitmap in ipairs(item.progress_bg) do
             bitmap:set_alpha(a)
         end
@@ -423,7 +429,7 @@ end
 ---@param color { r: number, g: number, b: number }
 function FakeEHILeftItemBase:UpdateBGColor(color)
     local c = Color(255, color.r, color.g, color.b) / 255
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         for i, bitmap in ipairs(item.progress_bg) do
             if i == 1 then
                 bitmap:set_color(c)
@@ -442,13 +448,22 @@ end
 function FakeEHILeftItemBase:_UpdateBGColor(i, bitmap, color)
 end
 
+---@param a number
+function FakeEHILeftItemBase:UpdateProgressAlpha(a)
+    for _, item in ipairs(self._items) do
+        for _, bitmap in ipairs(item.progress_only) do
+            bitmap:set_alpha(a)
+        end
+    end
+end
+
 ---@param visible boolean
 function FakeEHILeftItemBase:UpdateTopText(visible)
     if self._params.top_offset <= 0 then
         return
     end
     self._params.top_text_enabled = visible
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         local top_text = item.panel:child("top_text")
         if top_text then
             top_text:set_visible(visible)
@@ -466,16 +481,16 @@ end
 FakeEHILeftDeployableItem = class(FakeEHILeftItemBase)
 function FakeEHILeftDeployableItem:init(panel, params, ...)
     FakeEHILeftDeployableItem.super.init(self, panel, params, ...)
-    self._peer_color = self._list[3].panel:child("icon"):color():with_alpha(1) ---@diagnostic disable-line
+    self._peer_color = self._items[3].panel:child("icon"):color():with_alpha(1) ---@diagnostic disable-line
     self:UpdateFormat(params.format)
     self:SetAggregateDeployables(params.aggregate)
 end
 
 ---@param aggregate boolean
 function FakeEHILeftDeployableItem:SetAggregateDeployables(aggregate)
-    self._list[1].panel:set_visible(not aggregate)
-    self._list[2].panel:set_visible(aggregate)
-    self._list[3].panel:child("icon"):set_color(aggregate and Color.white or self._peer_color) ---@diagnostic disable-line
+    self._items[1].panel:set_visible(not aggregate)
+    self._items[2].panel:set_visible(aggregate)
+    self._items[3].panel:child("icon"):set_color(aggregate and Color.white or self._peer_color) ---@diagnostic disable-line
 end
 
 ---@param t number
@@ -496,7 +511,7 @@ function FakeEHILeftDeployableItem:UpdateFormat(format)
         return
     end
     self._params.format = format
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         item.panel:child("bottom_text"):set_text(self:Format(item.progress_raw_value, item.pos)) ---@diagnostic disable-line
     end
 end
@@ -516,7 +531,7 @@ function FakeEHILeftMinionItem:init(panel, params, ...)
     end
 end
 
-function FakeEHILeftMinionItem:_AddItem(data, panel, y, progress_bar, scale)
+function FakeEHILeftMinionItem:_AddItem(data, panel, y, progress_bar, scale, bg_alpha, progress_alpha)
     local w = 32 * scale
     local progress = {} ---@type Bitmap[]
     local is_health_circle = self._params.progress == 3
@@ -532,6 +547,7 @@ function FakeEHILeftMinionItem:_AddItem(data, panel, y, progress_bar, scale)
         visible = is_health_circle
     })
     progress[2] = panel:bitmap({
+        alpha = progress_alpha,
         layer = 11,
         y = y,
         w = w,
@@ -541,7 +557,7 @@ function FakeEHILeftMinionItem:_AddItem(data, panel, y, progress_bar, scale)
         visible = is_health_circle and self._params.progress_visibility
     })
     progress[3] = panel:bitmap({
-        alpha = self._params.bg_alpha,
+        alpha = bg_alpha,
         layer = -1,
         y = y,
         w = w,
@@ -567,7 +583,7 @@ function FakeEHILeftMinionItem:_AddItem(data, panel, y, progress_bar, scale)
 end
 
 function FakeEHILeftMinionItem:_SetProgress(progress)
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         local icon = item.panel:child("icon") --[[@as Bitmap]]
         local skull = item.panel:child("skull") --[[@as Bitmap]]
         icon:set_visible(progress ~= 3)
@@ -579,7 +595,7 @@ end
 
 ---@param option integer
 function FakeEHILeftMinionItem:SetOtherMinionsVisible(option)
-    self._list[2].panel:set_visible(option == 1)
+    self._items[2].panel:set_visible(option == 1)
 end
 
 ---@param i integer
@@ -591,7 +607,7 @@ end
 
 ---@param visible boolean
 function FakeEHILeftMinionItem:_UpdateTopText(visible)
-    for _, item in ipairs(self._list) do
+    for _, item in ipairs(self._items) do
         item.panel:child("skull"):set_visible(self._params.progress == 3 and not visible)
     end
 end
@@ -606,13 +622,13 @@ function FakeEHILeftJammerItem:init(panel, params, ...)
         self:SetItemProgressColor(2, params.affects_pager_color_index)
     else
         self._affects_pager_color = tweak_data.ehi:GetBuffColorFromIndex(params.affects_pager_color_index)
-        self._list[2].panel:child("bottom_text"):set_color(self._affects_pager_color) ---@diagnostic disable-line
+        self._items[2].panel:child("bottom_text"):set_color(self._affects_pager_color) ---@diagnostic disable-line
     end
 end
 
 function FakeEHILeftJammerItem:SetProgressVisibility(visibility, ...)
     local color = visibility and Color.white or self._affects_pager_color
-    self._list[2].panel:child("bottom_text"):set_color(color) ---@diagnostic disable-line
+    self._items[2].panel:child("bottom_text"):set_color(color) ---@diagnostic disable-line
     FakeEHILeftJammerItem.super.SetProgressVisibility(self, visibility, ...)
 end
 
@@ -622,7 +638,7 @@ function FakeEHILeftJammerItem:SetItemProgressColor(pos, clr)
         local color, _ = tweak_data.ehi:GetBuffColorFromIndex(clr)
         self._affects_pager_color = color
         if not self._params.progress_visibility then
-            self._list[pos].panel:child("bottom_text"):set_color(color) ---@diagnostic disable-line
+            self._items[pos].panel:child("bottom_text"):set_color(color) ---@diagnostic disable-line
         end
     end
 end

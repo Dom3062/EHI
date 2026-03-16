@@ -1306,6 +1306,7 @@ local function LoadDefaultValues(self)
                 b = 0
             },
             left_list_progress_visibility = true,
+            left_list_progress_alpha = 1,
             left_list_progress_static = false,
             left_list =
             {
@@ -1354,6 +1355,7 @@ local function LoadDefaultValues(self)
                 b = 0
             },
             right_list_progress_visibility = true,
+            right_list_progress_alpha = 1,
             right_list_progress_static = false,
             right_list =
             {

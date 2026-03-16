@@ -1023,6 +1023,7 @@
     "ehi_hudlist_menu" : "Hudlist",
     "ehi_hudlist_bg_alpha" : "Průhlednost pozadí",
     "ehi_hudlist_bg_color" : "Barva průhlednosti",
+    "ehi_hudlist_progress_alpha" : "Průhlednost postupu",
     "ehi_hudlist_progress_static" : "Statický postup",
     "ehi_hudlist_show_left_list" : "Zobrazovat levý list",
     "ehi_hudlist_left_list" : "Levý list",

@@ -1,3 +1,7 @@
+r378 (16. 03. 2026):
+Hudlist: Added option "Progress Alpha"
+Hudlist - Right List - Special Items: Fixed a crash when no items were created
+
 r377 (14. 03. 2026):
 Timers: Fixed crashes
 

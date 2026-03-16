@@ -123,6 +123,7 @@ function EHILeftItemBase:AddItem(...)
     local progress, progress_static
     if self._params.progress == 1 then
         progress = panel:bitmap({
+            alpha = self._PROGRESS_ALPHA,
             render_template = "VertexColorTexturedRadialFlex",
             layer = 2,
             y = y,
@@ -135,6 +136,7 @@ function EHILeftItemBase:AddItem(...)
         })
         if self._PROGRESS_VISIBILITY and self._PROGRESS_STATIC then
             progress_static = panel:bitmap({
+                alpha = self._PROGRESS_ALPHA,
                 layer = 2,
                 y = y,
                 w = w,
@@ -156,6 +158,7 @@ function EHILeftItemBase:AddItem(...)
         })
     elseif self._params.progress == 2 then
         progress = panel:bitmap({
+            alpha = self._PROGRESS_ALPHA,
             render_template = "VertexColorTexturedRadial",
             layer = 2,
             y = y,
@@ -168,6 +171,7 @@ function EHILeftItemBase:AddItem(...)
         })
         if self._PROGRESS_VISIBILITY and self._PROGRESS_STATIC then
             progress_static = panel:bitmap({
+                alpha = self._PROGRESS_ALPHA,
                 layer = 2,
                 y = y,
                 w = w,

@@ -162,6 +162,7 @@ if EHI:GetOption("show_hudlist") then
         EHILeftItemBase._parent = EHIHudlistManager._left_list
         EHILeftItemBase._BG_ALPHA = EHI:GetHudlistOption("left_list_bg_alpha")
         EHILeftItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
+        EHILeftItemBase._PROGRESS_ALPHA = EHI:GetHudlistOption("left_list_progress_alpha")
         EHILeftItemBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("left_list_progress_visibility")
         EHILeftItemBase._PROGRESS_STATIC = EHI:GetHudlistOption("left_list_progress_static")
         function EHIHudlistManager:_init_left_list()
@@ -265,6 +266,7 @@ if EHI:GetOption("show_hudlist") then
         EHIRightItemBase._parent = EHIHudlistManager._right_list
         EHIRightItemBase._BG_ALPHA = EHI:GetHudlistOption("right_list_bg_alpha")
         EHIRightItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("right_list_bg_color"))
+        EHIRightItemBase._PROGRESS_ALPHA = EHI:GetHudlistOption("right_list_progress_alpha")
         EHIRightItemBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("right_list_progress_visibility")
         EHIRightItemBase._PROGRESS_STATIC = EHI:GetHudlistOption("right_list_progress_static")
         function EHIHudlistManager:_init_right_list()

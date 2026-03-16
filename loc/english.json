@@ -1023,6 +1023,7 @@
     "ehi_hudlist_menu" : "Hudlist",
     "ehi_hudlist_bg_alpha" : "Background Alpha",
     "ehi_hudlist_bg_color" : "Background Color",
+    "ehi_hudlist_progress_alpha" : "Progress Alpha",
     "ehi_hudlist_progress_static" : "Static Progress",
     "ehi_hudlist_show_left_list" : "Show Left List",
     "ehi_hudlist_left_list" : "Left List",
