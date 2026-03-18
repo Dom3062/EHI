@@ -162,6 +162,7 @@ if EHI:GetOption("show_hudlist") then
         EHILeftItemBase._parent = EHIHudlistManager._left_list
         EHILeftItemBase._BG_ALPHA = EHI:GetHudlistOption("left_list_bg_alpha")
         EHILeftItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
+        EHILeftItemBase._PROGRESS = EHI:GetHudlistOption("left_list_progress")
         EHILeftItemBase._PROGRESS_ALPHA = EHI:GetHudlistOption("left_list_progress_alpha")
         EHILeftItemBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("left_list_progress_visibility")
         EHILeftItemBase._PROGRESS_STATIC = EHI:GetHudlistOption("left_list_progress_static")
@@ -169,13 +170,17 @@ if EHI:GetOption("show_hudlist") then
             self._panel = self._ws:panel():panel({ layer = -5 })
             local x, y = managers.gui_data:safe_to_full(EHI:GetHudlistOption("left_list_x"), EHI:GetHudlistOption("left_list_y"))
             self._left_list:post_init(x, y, EHI:GetHudlistOption("left_list_scale"))
+            local color_index = EHI:GetHudlistOption("left_list_item_color") --[[@as integer]]
+            local color, color_string = tweak_data.ehi:GetBuffColorFromIndex(color_index)
+            EHILeftItemBase._PROGRESS_COLOR = color
+            EHILeftItemBase._PROGRESS_COLOR_STRING = color_string
             local options = EHI:GetHudlistOption("left_list")
             local stealth_is_available = tweak_data.levels:IsStealthAvailable()
             if options.show_timers then
                 self._left_list:AddItem(EHILeftTimerItem, self._panel, {
                     id = "Timer",
                     icon = { skills = { 3, 6 } },
-                    progress = options.timer_progress,
+                    color_index = color_index,
                     jammed = options.timer_jammed,
                     not_powered = options.timer_not_powered,
                     autorepair = options.timer_autorepair,
@@ -189,7 +194,7 @@ if EHI:GetOption("show_hudlist") then
                     id = "Minion",
                     icon = EHILeftMinionItem._ICON,
                     minion_option = options.minions_option,
-                    progress = options.minions_health,
+                    health_circle = options.minions_health_circle,
                     top_text = options.minions_top_text
                 })
             else
@@ -206,7 +211,6 @@ if EHI:GetOption("show_hudlist") then
                     icon = { ehi = "deployables" },
                     update_on_alarm = true,
                     top_text = options.deployable_top_text,
-                    progress = options.deployable_progress,
                     format = options.deployable_format,
                     show_doctor = options.deployable_show_doctor,
                     show_ammo = options.deployable_show_ammo,
@@ -221,8 +225,7 @@ if EHI:GetOption("show_hudlist") then
             if options.show_ecm_retrigger then
                 self._left_list:AddItem(EHILeftJammerRetriggerItem, self._panel, {
                     id = "JammerRetrigger",
-                    icon = EHILeftJammerRetriggerItem._ICON,
-                    progress = options.ecm_retrigger_progress
+                    icon = EHILeftJammerRetriggerItem._ICON
                 })
             else
                 EHILeftJammerRetriggerItem = nil ---@diagnostic disable-line
@@ -232,8 +235,7 @@ if EHI:GetOption("show_hudlist") then
                     self._left_list:AddItem(EHILeftPagerItem, self._panel, {
                         id = "Pager",
                         icon = { ehi = "pager_icon" },
-                        delete_on_alarm = true,
-                        progress = options.enemy_pager_progress
+                        delete_on_alarm = true
                     })
                 else
                     EHILeftPagerItem = nil ---@diagnostic disable-line
@@ -242,8 +244,7 @@ if EHI:GetOption("show_hudlist") then
                     self._left_list:AddItem(EHILeftJammerItem, self._panel, {
                         id = "Jammer",
                         icon = EHILeftJammerItem._ICON,
-                        delete_on_alarm = true,
-                        progress = options.jammer_progress
+                        delete_on_alarm = true
                     })
                 else
                     EHILeftJammerItem = nil ---@diagnostic disable-line
@@ -252,8 +253,7 @@ if EHI:GetOption("show_hudlist") then
                     self._left_list:AddItem(EHILeftCameraLoopItem, self._panel, {
                         id = "Camera",
                         icon = EHILeftCameraLoopItem._ICON,
-                        delete_on_alarm = true,
-                        progress = options.camera_loop_progress
+                        delete_on_alarm = true
                     })
                 else
                     EHILeftCameraLoopItem = nil ---@diagnostic disable-line
@@ -266,6 +266,7 @@ if EHI:GetOption("show_hudlist") then
         EHIRightItemBase._parent = EHIHudlistManager._right_list
         EHIRightItemBase._BG_ALPHA = EHI:GetHudlistOption("right_list_bg_alpha")
         EHIRightItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("right_list_bg_color"))
+        EHIRightItemBase._PROGRESS = EHI:GetHudlistOption("right_list_progress")
         EHIRightItemBase._PROGRESS_ALPHA = EHI:GetHudlistOption("right_list_progress_alpha")
         EHIRightItemBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("right_list_progress_visibility")
         EHIRightItemBase._PROGRESS_STATIC = EHI:GetHudlistOption("right_list_progress_static")
@@ -274,15 +275,17 @@ if EHI:GetOption("show_hudlist") then
             local x, y = managers.gui_data:safe_to_full(EHI:GetHudlistOption("right_list_x"), EHI:GetHudlistOption("right_list_y"))
             local scale = EHI:GetHudlistOption("right_list_scale") --[[@as number]]
             self._right_list:post_init(y, scale)
-            EHIRightItemBase._right_offset = self._panel:w() - x
-            EHIRightItemBase._scale = scale
+            EHIRightItemBase._RIGHT_OFFSET = self._panel:w() - x
+            EHIRightItemBase._SCALE = scale
+            local color, color_string = tweak_data.ehi:GetBuffColorFromIndex(EHI:GetHudlistOption("right_list_item_color"))
+            EHIRightItemBase._PROGRESS_COLOR = color
+            EHIRightItemBase._PROGRESS_COLOR_STRING = color_string
             local options = EHI:GetHudlistOption("right_list")
             local stealth_is_available = tweak_data.levels:IsStealthAvailable()
             if options.show_units then
                 local is_holdout = tweak_data.levels:IsLevelSkirmish()
                 local item = self._right_list:AddItem(EHIRightUnitItem, self._panel, {
                     id = "Unit",
-                    progress = options.unit_progress,
                     aggregate_enemies = options.unit_aggregate_enemies
                 })
                 item:CreateItemsFromMap(is_holdout, options.unit_types)
@@ -292,7 +295,6 @@ if EHI:GetOption("show_hudlist") then
             if options.show_loot then
                 local item = self._right_list:AddItem(EHIRightLootItem, self._panel, {
                     id = "Loot",
-                    progress = options.loot_progress,
                     show_potentional_loot = options.potentional_loot,
                     update_on_alarm = true
                 })
@@ -305,8 +307,7 @@ if EHI:GetOption("show_hudlist") then
             end
             if options.show_special_items then
                 local item = self._right_list:AddItem(EHIRightSpecialItemsItem, self._panel, {
-                    id = "Special",
-                    progress = options.special_items_progress
+                    id = "Special"
                 })
                 item:CreateItemsFromMap(options.special_items_type)
             else
@@ -316,8 +317,8 @@ if EHI:GetOption("show_hudlist") then
                 local item = self._right_list:AddItem(EHIRightStealthItem, self._panel, {
                     id = "Stealth",
                     delete_on_alarm = true,
-                    progress = options.stealth_info_progress,
-                    bodybags_format = options.stealth_info_bodybags_format
+                    bodybags_format = options.stealth_info_bodybags_format,
+                    warning_index = options.stealth_info_warning
                 })
             else
                 EHIRightStealthItem = nil ---@diagnostic disable-line

@@ -24,25 +24,6 @@
             }
         },
         {
-            "type": "multiple_choice",
-            "id": "ehi_hudlist_right_list_show_units_progress_choice",
-            "title": "ehi_buffs_shape",
-            "items": [
-                "ehi_buffs_shape_1",
-                "ehi_buffs_shape_2"
-            ],
-            "callback" : "ehi_set_item_value",
-            "value": "unit_progress",
-            "default_value": 1,
-            "parent": "ehi_hudlist_right_list_show_units_choice",
-            "params": {
-                "call_hudlist_function": {
-                    "f": "SetItemProgressBitmap",
-                    "params": [ "Unit", "right" ]
-                }
-            }
-        },
-        {
             "type": "button",
             "id": "ehi_hudlist_right_list_show_units_types_choice",
             "title": "ehi_hudlist_right_list_show_units_types",
@@ -75,25 +56,6 @@
                 "call_hudlist_function": {
                     "f": "CallListFunction",
                     "params": [ "right", "UpdateItemEnabled", "Loot" ]
-                }
-            }
-        },
-        {
-            "type": "multiple_choice",
-            "id": "ehi_hudlist_right_list_show_loot_progress_choice",
-            "title": "ehi_buffs_shape",
-            "items": [
-                "ehi_buffs_shape_1",
-                "ehi_buffs_shape_2"
-            ],
-            "callback" : "ehi_set_item_value",
-            "value": "loot_progress",
-            "default_value": 1,
-            "parent": "ehi_hudlist_right_list_show_loot_choice",
-            "params": {
-                "call_hudlist_function": {
-                    "f": "SetItemProgressBitmap",
-                    "params": [ "Loot", "right" ]
                 }
             }
         },
@@ -226,25 +188,6 @@
             }
         },
         {
-            "type": "multiple_choice",
-            "id": "ehi_hudlist_right_list_show_special_items_progress_choice",
-            "title": "ehi_buffs_shape",
-            "items": [
-                "ehi_buffs_shape_1",
-                "ehi_buffs_shape_2"
-            ],
-            "callback" : "ehi_set_item_value",
-            "value": "special_items_progress",
-            "default_value": 1,
-            "parent": "ehi_hudlist_right_list_show_special_items_choice",
-            "params": {
-                "call_hudlist_function": {
-                    "f": "SetItemProgressBitmap",
-                    "params": [ "Special", "right" ]
-                }
-            }
-        },
-        {
             "type": "button",
             "id": "ehi_hudlist_right_list_special_items_menu_choice",
             "title": "ehi_hudlist_right_list_special_items_menu",
@@ -275,25 +218,6 @@
         },
         {
             "type": "multiple_choice",
-            "id": "ehi_hudlist_right_list_show_stealth_info_progress_choice",
-            "title": "ehi_buffs_shape",
-            "items": [
-                "ehi_buffs_shape_1",
-                "ehi_buffs_shape_2"
-            ],
-            "callback" : "ehi_set_item_value",
-            "value": "stealth_info_progress",
-            "default_value": 1,
-            "parent": "ehi_hudlist_right_list_show_stealth_info_choice",
-            "params": {
-                "call_hudlist_function": {
-                    "f": "SetItemProgressBitmap",
-                    "params": [ "Stealth", "right" ]
-                }
-            }
-        },
-        {
-            "type": "multiple_choice",
             "id": "ehi_hudlist_right_list_show_stealth_info_bodybags_format_choice",
             "title": "ehi_hudlist_right_list_show_stealth_info_bodybags_format",
             "items": [
@@ -315,6 +239,16 @@
                     }
                 }
             }
+        },
+        {
+            "type": "multiple_color_choice",
+            "id": "ehi_hudlist_right_list_show_stealth_info_warning_color_choice",
+            "title": "ehi_colors_warning",
+            "description": "ehi_hudlist_right_list_show_stealth_info_warning_color_desc",
+            "callback": "ehi_set_item_value",
+            "default_value": 3,
+            "value": "right_list_item_color",
+            "parent": "ehi_hudlist_right_list_show_stealth_info_choice"
         }
     ]
 }

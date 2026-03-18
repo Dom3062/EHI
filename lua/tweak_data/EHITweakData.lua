@@ -1384,6 +1384,24 @@ function EHITweakData:new(tweak_data)
         tag_team_effect = "Ability", -- Gas Dispenser
         copr_ability = "Ability" -- Leech Ampule
     }
+    self.buff_group =
+    {
+        FasterReload =
+        {
+            u100skill = { 8, 3 },
+            text_localize = "ehi_buffs_hint_reload_increase",
+            group = "increased_weapon_reload",
+            option = "faster_reload",
+            permanent = "faster_reload_persistent",
+            redirect =
+            {
+                "melee_kill_increase_reload_speed",
+                "single_shot_fast_reload",
+                "morale_boost_reload",
+                "reload_weapon_faster"
+            }
+        }
+    }
     self.functions =
     {
         achievements =
@@ -1803,7 +1821,7 @@ function EHITweakData._count_amount_of_loot_in_deposit(deposit_id)
     return variables and variables.var_amount or 0
 end
 
-function EHITweakData:_populate_buff_color_table()
+function EHITweakData._populate_buff_color_table()
     return {
         { texture_color = "red", icon_color = Color.red },
         { texture_color = "orange", icon_color = Color(255, 255, 106, 0) / 255 },
@@ -1830,7 +1848,7 @@ end
 
 ---@param i integer?
 function EHITweakData:GetBuffColorFromIndex(i)
-    self.__buffs_color = self.__buffs_color or self:_populate_buff_color_table()
+    self.__buffs_color = self.__buffs_color or self._populate_buff_color_table()
     local entry = i and self.__buffs_color[i - 1]
     if entry then
         return entry.icon_color, entry.texture_color
@@ -1840,7 +1858,7 @@ end
 
 ---@param texture string
 function EHITweakData:GetIconColorFromTextureColor(texture)
-    self.__buffs_color = self.__buffs_color or self:_populate_buff_color_table()
+    self.__buffs_color = self.__buffs_color or self._populate_buff_color_table()
     for _, tbl in ipairs(self.__buffs_color) do
         if tbl.texture_color == texture then
             return tbl.icon_color

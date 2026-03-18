@@ -6,6 +6,7 @@
 
 ---@class EHILeftItemBase
 ---@field new fun(self: self, panel: Panel, params: table, texture: string, texture_rect: TextureRect): self
+---@field _CUSTOM_PROGRESS boolean
 ---@field _update_callback function
 ---@field _update_id string
 EHILeftItemBase = class()
@@ -51,10 +52,7 @@ end
 function EHILeftItemBase:init(panel, params, texture, texture_rect)
     self._id = params.id
     self._scale = params.scale --[[@as number]]
-    self._params = {
-        progress = params.progress or 1,
-        top_text = params.top_text
-    }
+    self._show_top_text = params.top_text
     self._delete_on_alarm = params.delete_on_alarm
     self._update_on_alarm = params.update_on_alarm
     self._sizes = {
@@ -82,7 +80,8 @@ function EHILeftItemBase:init(panel, params, texture, texture_rect)
         w = self._sizes.w,
         h = self._sizes.w,
         texture = texture,
-        texture_rect = texture_rect
+        texture_rect = texture_rect,
+        color = self._PROGRESS_COLOR
     })
     self._items = {} ---@type table<userdata, EHILeftItemBase.Item>
     self:RegisterListeners(params)
@@ -108,7 +107,8 @@ function EHILeftItemBase:OnAlarm()
 end
 
 function EHILeftItemBase:GetFirstItemStartX()
-    return self._panel:child("icon"):x() + self._panel:child("icon"):w() + self._sizes.first_item_offset
+    local icon = self._panel:child("icon") ---@cast icon -?
+    return icon:x() + icon:w() + self._sizes.first_item_offset
 end
 
 ---@return EHILeftItemBase.Item
@@ -121,7 +121,9 @@ function EHILeftItemBase:AddItem(...)
         h = self._panel:h() -- Scale is already applied here
     })
     local progress, progress_static
-    if self._params.progress == 1 then
+    if self._CUSTOM_PROGRESS then
+        progress, progress_static = self:CustomProgress(panel, y, progress_bar)
+    elseif self._PROGRESS == 1 then
         progress = panel:bitmap({
             alpha = self._PROGRESS_ALPHA,
             render_template = "VertexColorTexturedRadialFlex",
@@ -129,7 +131,7 @@ function EHILeftItemBase:AddItem(...)
             y = y,
             w = w,
             h = w,
-            texture = "guis/textures/pd2_mod_ehi/buffs/buff_sframe_white",
+            texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
             texture_rect = self._PROGRESS_RECT[1],
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY and not self._PROGRESS_STATIC
@@ -141,7 +143,7 @@ function EHILeftItemBase:AddItem(...)
                 y = y,
                 w = w,
                 h = w,
-                texture = "guis/textures/pd2_mod_ehi/buffs/buff_sframe_white",
+                texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
                 texture_rect = self._PROGRESS_RECT[1]
             })
         end
@@ -156,7 +158,7 @@ function EHILeftItemBase:AddItem(...)
             h = w,
             color = self._BG_COLOR
         })
-    elseif self._params.progress == 2 then
+    else
         progress = panel:bitmap({
             alpha = self._PROGRESS_ALPHA,
             render_template = "VertexColorTexturedRadial",
@@ -164,7 +166,7 @@ function EHILeftItemBase:AddItem(...)
             y = y,
             w = w,
             h = w,
-            texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
+            texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
             texture_rect = self._PROGRESS_RECT[2],
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY and not self._PROGRESS_STATIC
@@ -176,7 +178,7 @@ function EHILeftItemBase:AddItem(...)
                 y = y,
                 w = w,
                 h = w,
-                texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
+                texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
                 texture_rect = self._PROGRESS_RECT[2]
             })
         end
@@ -189,8 +191,6 @@ function EHILeftItemBase:AddItem(...)
             texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_bg_white",
             color = self._BG_COLOR:with_alpha(0.2)
         })
-    else
-        progress, progress_static = self:CustomProgress(panel, y, progress_bar)
     end
     local text
     if self._INIT_BOTTOM_TEXT then
@@ -203,7 +203,8 @@ function EHILeftItemBase:AddItem(...)
             font = tweak_data.menu.pd2_large_font,
             font_size = h,
             align = "center",
-            vertical = "center"
+            vertical = "center",
+            color = self._PROGRESS_COLOR
         })
     end
     local pos = table.size(self._items) + 1
@@ -301,9 +302,9 @@ end
 ---@param item EHILeftItemBase.Item
 ---@param color string
 function EHILeftItemBase:SetColorTexture(item, color)
-    local texture = self._params.progress == 1 and "sframe" or "cframe"
+    local texture = self._PROGRESS == 1 and "sframe" or "cframe"
     local path = string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color)
-    local rect = self._PROGRESS_RECT[self._params.progress]
+    local rect = self._PROGRESS_RECT[self._PROGRESS]
     item.progress:set_image(path, unpack(rect))
     if item.progress_static then
         item.progress_static:set_image(path, unpack(rect))
@@ -352,9 +353,10 @@ end
 ---@field super EHILeftItemBase
 EHILeftTimerItem = class(EHILeftItemBase)
 function EHILeftTimerItem:RegisterListeners(params)
-    self._params.jammed = params.jammed
-    self._params.not_powered = params.not_powered
-    self._params.autorepair = params.autorepair
+    self._jammed = params.jammed
+    self._not_powered = params.not_powered
+    self._autorepair = params.autorepair
+    self._normal_color = params.color_index
     self._timers = {} ---@type table<string, EHILeftTimerItem.Timer>
 end
 
@@ -435,7 +437,8 @@ function EHILeftTimerItem:_AddItem(panel, y, text, icon, hint, t, ...)
         w = icon_size,
         h = icon_size,
         texture = texture,
-        texture_rect = texture_rect
+        texture_rect = texture_rect,
+        color = self._PROGRESS_COLOR
     })
     self:FitTheText(panel:text({
         name = "type",
@@ -446,7 +449,8 @@ function EHILeftTimerItem:_AddItem(panel, y, text, icon, hint, t, ...)
         font_size = h,
         align = "center",
         vertical = "center",
-        visible = self._params.top_text
+        visible = self._show_top_text,
+        color = self._PROGRESS_COLOR
     }))
     text:set_text(self:FormatTime(t))
     self:FitTheText(text)
@@ -484,11 +488,12 @@ function EHILeftTimerItem:UpdateIcon(key, icon)
         if type(icon) == "table" then
             icon = icon[1]
         end
+        local timer_icon = timer.item.panel:child("icon") --[[@as Bitmap]]
         local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon({ ehi = icon })
         if texture_rect then
-            timer.item.panel:child("icon"):set_image(texture, unpack(texture_rect)) ---@diagnostic disable-line
+            timer_icon:set_image(texture, unpack(texture_rect))
         else
-            timer.item.panel:child("icon"):set_image(texture) ---@diagnostic disable-line
+            timer_icon:set_image(texture)
         end
     end
 end
@@ -525,9 +530,9 @@ end
 
 ---@param timer EHILeftTimerItem.Timer
 function EHILeftTimerItem:_set_timer_status(timer)
-    local color, texture = tweak_data.ehi:GetBuffColorFromIndex(timer.autorepair and self._params.autorepair or
-        timer.jammed and self._params.jammed or
-        not timer.powered and self._params.not_powered or nil)
+    local color, texture = tweak_data.ehi:GetBuffColorFromIndex(timer.autorepair and self._autorepair or
+        timer.jammed and self._jammed or
+        not timer.powered and self._not_powered or self._normal_color)
     timer.item.text:set_color(color)
     timer.item.panel:child("icon"):set_color(color) ---@diagnostic disable-line
     timer.item.panel:child("type"):set_color(color) ---@diagnostic disable-line
@@ -611,6 +616,7 @@ EHILeftMinionItem._MINION_NAMES =
 EHILeftMinionItem.SortAddedItem = function(...) end
 function EHILeftMinionItem:RegisterListeners(params)
     self._minions = {} ---@type table<userdata, { unit: UnitEnemy, peer_id: integer, item: EHILeftItemBase.Item, pos: integer }>
+    self._CUSTOM_PROGRESS = params.health_circle
     EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded,
     ---@param unit UnitEnemy
     ---@param local_peer boolean
@@ -668,19 +674,21 @@ end
 function EHILeftMinionItem:_AddItem(panel, y, text, peer_id, unit_tweak)
     local w = self._sizes.w
     local h = self._sizes.h
-    local peer_color = peer_id and tweak_data.chat_colors[peer_id] or Color.white
-    if self._params.progress == 3 then
-        local width = 16 * self._scale
-        local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(self._ICON_SKULL)
-        local skull = panel:bitmap({
-            name = "skull",
-            w = width,
-            h = width,
-            texture = texture,
-            texture_rect = texture_rect,
-            color = peer_color
-        })
-        skull:set_center(self._panel:child("icon"):center())
+    local peer_color = peer_id and tweak_data.chat_colors[peer_id] or self._PROGRESS_COLOR
+    if self._CUSTOM_PROGRESS then
+        if not self._show_top_text then
+            local width = 16 * self._scale
+            local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(self._ICON_SKULL)
+            local skull = panel:bitmap({
+                name = "skull",
+                w = width,
+                h = width,
+                texture = texture,
+                texture_rect = texture_rect,
+                color = peer_color
+            })
+            skull:set_center(self._panel:child("icon"):center())
+        end
     else
         local icon_offset = self._sizes.icon_offset
         local icon_size = self._sizes.icon_size
@@ -705,10 +713,11 @@ function EHILeftMinionItem:_AddItem(panel, y, text, peer_id, unit_tweak)
         font_size = h,
         align = "center",
         vertical = "center",
-        visible = self._params.top_text
+        visible = self._show_top_text,
+        color = self._PROGRESS_COLOR
     })
     self:FitTheText(name)
-    if self._params.progress == 3 then
+    if self._CUSTOM_PROGRESS then
         name:set_color(peer_color)
     end
 end
@@ -730,7 +739,7 @@ function EHILeftMinionItem:CustomProgress(panel, y, progress_bar)
         y = y,
         w = w,
         h = w,
-        texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
+        texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
         texture_rect = self._PROGRESS_RECT[2],
         visible = self._PROGRESS_VISIBILITY
     })
@@ -908,7 +917,7 @@ EHILeftDeployableItem._EQUIPMENT.e166f63494083d58.name = "Ordnance Bag"
 EHILeftDeployableItem._EQUIPMENT.e166f63494083d58.aggregate_name = "Grenades"
 EHILeftDeployableItem._EQUIPMENT.e166f63494083d58.max = 4 -- Hardcoded in the class
 function EHILeftDeployableItem:RegisterListeners(params)
-    self._params.format = params.format
+    self._format = params.format
     self._deployables = {} ---@type table<userdata, EHILeftDeployableItem.Deployable>
     self._unit_blocked = {} ---@type table<userdata, boolean>
     self._deployable_group = {} ---@type table<string, EHILeftDeployableItem.Group?>
@@ -1147,7 +1156,8 @@ function EHILeftDeployableItem:_AddItem(panel, y, text, eq_data, force_amount)
         w = icon_size,
         h = icon_size,
         texture = eq_data.texture,
-        texture_rect = eq_data.texture_rect
+        texture_rect = eq_data.texture_rect,
+        color = self._PROGRESS_COLOR
     })
     self:FitTheText(panel:text({
         w = w,
@@ -1157,7 +1167,8 @@ function EHILeftDeployableItem:_AddItem(panel, y, text, eq_data, force_amount)
         font_size = h,
         align = "center",
         vertical = "center",
-        visible = self._params.top_text
+        visible = self._show_top_text,
+        color = self._PROGRESS_COLOR
     }))
     if force_amount or not eq_data.no_amount then
         self:FitTheText(panel:text({
@@ -1169,7 +1180,8 @@ function EHILeftDeployableItem:_AddItem(panel, y, text, eq_data, force_amount)
             font = tweak_data.menu.pd2_large_font,
             font_size = h,
             align = "center",
-            vertical = "center"
+            vertical = "center",
+            color = self._PROGRESS_COLOR
         }))
     end
 end
@@ -1182,7 +1194,7 @@ function EHILeftDeployableItem:UpdateDeployableAmount(base)
         local amount = base:GetRealAmount()
         local item = data.item and data.item.panel:child("amount") --[[@as Text?]]
         if item then
-            if self._params.format == 1 then
+            if self._format == 1 then
                 item:set_text(string.format(data.eq_data.multiplier_format or "%dx", amount))
             else
                 item:set_text(string.format(self._PERCENT_FORMAT, amount * 100))
@@ -1230,7 +1242,7 @@ end
 function EHILeftDeployableItem:UpdateDeployableColor(key, peer_id, color)
     local data = self._deployables[key]
     if data and data.item then
-        data.item.panel:child("icon"):set_color(color or tweak_data.chat_colors[peer_id or 0] or Color.white) ---@diagnostic disable-line
+        data.item.panel:child("icon"):set_color(color or tweak_data.chat_colors[peer_id or 0] or self._PROGRESS_COLOR) ---@diagnostic disable-line
     end
 end
 
@@ -1371,7 +1383,7 @@ function EHILeftDeployableItem:_update_group_amount(group)
         end
     end
     local item = group.item.panel:child("amount") --[[@as Text]]
-    if self._params.format == 1 then
+    if self._format == 1 then
         item:set_text(string.format(group.eq_data.multiplier_format or "%dx", amount))
     else
         item:set_text(string.format(self._PERCENT_FORMAT, amount * 100))
@@ -1433,10 +1445,11 @@ end
 EHILeftPagerItem = class(EHILeftItemBase)
 EHILeftPagerItem._update_id = "EHILeftPagerItem"
 EHILeftPagerItem._PAGER_T = 12
-EHILeftPagerItem._PAGER_T_ORANGE = 6
+EHILeftPagerItem._PAGER_T_HALF = 6
+EHILeftPagerItem._PAGER_HALF_COLOR_INDEX = EHI:GetHudlistListOption("left_list", "enemy_pager_warning_color")
 function EHILeftPagerItem:RegisterListeners(params)
     self._pagers = {} ---@type table<string, { running: boolean, item: EHILeftItemBase.Item, t: number, warning: boolean }>
-    self._color_orange = tweak_data.ehi:GetIconColorFromTextureColor("orange")
+    self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(self._PAGER_HALF_COLOR_INDEX)
     self._update_callback = callback(self, self, "update")
 end
 
@@ -1452,10 +1465,10 @@ function EHILeftPagerItem:update(_, dt)
                 item.progress:set_color(item.progress_bar)
                 item.text:set_text(self:FormatTime(t))
                 pager.t = t
-                if t <= self._PAGER_T_ORANGE and not pager.warning then
-                    self:SetColorTexture(item, "orange")
-                    item.text:set_color(self._color_orange)
-                    item.panel:child("icon"):set_color(self._color_orange) ---@diagnostic disable-line
+                if t <= self._PAGER_T_HALF and not pager.warning then
+                    self:SetColorTexture(item, self._warning_color_string)
+                    item.text:set_color(self._warning_color)
+                    item.panel:child("icon"):set_color(self._warning_color) ---@diagnostic disable-line
                     pager.warning = true
                 end
             end
@@ -1486,7 +1499,8 @@ function EHILeftPagerItem:_AddItem(panel, y, text)
         w = icon_size,
         h = icon_size,
         texture = texture,
-        texture_rect = texture_rect
+        texture_rect = texture_rect,
+        color = self._warning_color
     })
     text:set_text(self:FormatTime(self._PAGER_T))
     self:FitTheText(text)
@@ -1600,7 +1614,7 @@ function EHILeftJammerItem:_AddItem(panel, y, text, t, peer_id)
         h = icon_size,
         texture = texture,
         texture_rect = texture_rect,
-        color = peer_id and tweak_data.chat_colors[peer_id] or Color.white
+        color = peer_id and tweak_data.chat_colors[peer_id] or self._PROGRESS_COLOR
     })
     text:set_text(self:FormatTime(t))
     self:FitTheText(text)
@@ -1640,7 +1654,7 @@ function EHILeftJammerRetriggerItem:RegisterListeners(params)
     EHI.ModUtils:AddCustomNameColorSyncCallback(self._update_id, function(peer_id, color)
         for _, jammer in pairs(self._jammers) do
             if jammer.peer_id == peer_id then
-                jammer.item.panel:child("icon"):set_color(color or Color.white) ---@diagnostic disable-line
+                jammer.item.panel:child("icon"):set_color(color or self._PROGRESS_COLOR) ---@diagnostic disable-line
             end
         end
     end)
@@ -1689,7 +1703,7 @@ function EHILeftJammerRetriggerItem:_AddItem(panel, y, text, t, peer_id)
         h = icon_size,
         texture = texture,
         texture_rect = texture_rect,
-        color = peer_id and tweak_data.chat_colors[peer_id] or Color.white
+        color = peer_id and tweak_data.chat_colors[peer_id] or self._PROGRESS_COLOR
     })
     text:set_text(self:FormatTime(t))
     self:FitTheText(text)
@@ -1723,9 +1737,10 @@ end
 EHILeftCameraLoopItem = class(EHILeftItemBase)
 EHILeftCameraLoopItem._update_id = "EHILeftCameraLoopItem"
 EHILeftCameraLoopItem._ICON = { ehi = "camera_loop" }
+EHILeftCameraLoopItem._CAMERA_HALF_COLOR_INDEX = EHI:GetHudlistListOption("left_list", "camera_loop_warning_color")
 function EHILeftCameraLoopItem:RegisterListeners(params)
     self._cameras = {} ---@type table<string, EHILeftCameraLoopItem.Camera>
-    self._color_orange = tweak_data.ehi:GetIconColorFromTextureColor("orange")
+    self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(self._CAMERA_HALF_COLOR_INDEX)
     self._update_callback = callback(self, self, "update")
 end
 
@@ -1741,9 +1756,9 @@ function EHILeftCameraLoopItem:update(_, dt)
             item.text:set_text(self:FormatTime(t))
             cam.t = t
             if t <= cam.t_max_half and not cam.warning then
-                self:SetColorTexture(item, "orange")
-                item.text:set_color(self._color_orange)
-                item.panel:child("icon"):set_color(self._color_orange) ---@diagnostic disable-line
+                self:SetColorTexture(item, self._warning_color_string)
+                item.text:set_color(self._warning_color)
+                item.panel:child("icon"):set_color(self._warning_color) ---@diagnostic disable-line
                 cam.warning = true
             end
         end
@@ -1789,7 +1804,8 @@ function EHILeftCameraLoopItem:_AddItem(panel, y, text, t)
         w = icon_size,
         h = icon_size,
         texture = texture,
-        texture_rect = texture_rect
+        texture_rect = texture_rect,
+        color = self._PROGRESS_COLOR
     })
     text:set_text(self:FormatTime(t))
     self:FitTheText(text)

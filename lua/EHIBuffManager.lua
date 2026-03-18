@@ -28,6 +28,9 @@ function EHIBuffManager:init_finalize(hud, panel)
     self:_init_buffs(buff_y, buff_w, buff_h, scale)
     self:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
     self:_init_buff_redirect()
+    if EHI:GetOption("buffs_grouping") then
+        self:_init_buff_group(buff_y, buff_w, buff_h, scale)
+    end
     self:_cleanup_unused_buff_classes()
     table.sort(self._skill_check_after_spawn or {}, function(a, b)
         return a._id:lower() < b._id:lower()
@@ -201,6 +204,56 @@ function EHIBuffManager:_init_buff_redirect()
     for key, redirect in pairs(tweak_data.ehi.buff_redirect) do
         self._buffs[key] = self._buffs[redirect]
         self._buffs_redirect[key] = redirect
+    end
+end
+
+---@param y number
+---@param w number
+---@param h number
+---@param scale number
+function EHIBuffManager:_init_buff_group(y, w, h, scale)
+    ---@class EHIGroupBuffTracker : EHIBuffTracker
+    ---@field super EHIBuffTracker
+    local Group = class(EHIBuffTracker)
+    function Group:Extend(t)
+        if t > self._time then
+            Group.super.Extend(self, t)
+        end
+    end
+    local PermanentGroup = class(EHIPermanentBuffTracker)
+    function PermanentGroup:Extend(t)
+        if t > self._time then
+            PermanentGroup.super.Extend(self, t)
+        end
+    end
+    local get_icon = tweak_data.ehi.default.buff.get_icon
+    for id, buff in pairs(tweak_data.ehi.buff_group) do
+        if buff.option and not EHI:GetBuffDeckOption("group", buff.option) then
+        else
+            local params = {}
+            params.id = id
+            params.x = self._x
+            params.y = y
+            params.w = w
+            params.h = h
+            params.text_localize = buff.text_localize
+            params.scale = scale
+            params.group = buff.group
+            params.texture, params.texture_rect = get_icon(buff)
+            if buff.permanent and EHI:GetBuffDeckOption("group", buff.permanent) then
+                params.skill_check_after_spawn = true
+                params.check_buff_on_spawn = true
+                params.show_on_trigger = true
+                self:_create_buff(params, nil, nil, PermanentGroup)
+            else
+                self:_create_buff(params, nil, nil, Group)
+            end
+            for _, original in ipairs(buff.redirect) do
+                self._buffs[original]:delete()
+                self._buffs[original] = self._buffs[id]
+                self._buffs_redirect[original] = id
+            end
+        end
     end
 end
 

@@ -676,7 +676,7 @@ _G.EHI =
 }
 for _, update in ipairs(ModInstance:GetUpdates()) do
     update._run_update_callback_original = update._run_update_callback
-    update._run_update_callback = function(self, clbk, requires_update, error_reason)
+    update._run_update_callback = function(self, clbk, requires_update, ...)
         if requires_update then
             if Global and Global.EHI_MOD then
                 Global.EHI_MOD.data_invalid = true
@@ -684,7 +684,7 @@ for _, update in ipairs(ModInstance:GetUpdates()) do
                 EHI._cache.load_data_invalid = true
             end
         end
-        update._run_update_callback_original(self, clbk, requires_update, error_reason)
+        update._run_update_callback_original(self, clbk, requires_update, ...)
     end
 end
 
@@ -718,156 +718,41 @@ local function LoadDefaultValues(self)
         {
             tracker_waypoint =
             {
-                inaccurate =
-                {
-                    r = 255,
-                    g = 165,
-                    b = 0
-                },
-                pause =
-                {
-                    r = 255,
-                    g = 0,
-                    b = 0
-                },
-                drill_autorepair =
-                {
-                    r = 137,
-                    g = 209,
-                    b = 254
-                },
-                drill_not_powered =
-                {
-                    r = 255,
-                    g = 95,
-                    b = 21
-                },
-                warning =
-                {
-                    r = 255,
-                    g = 0,
-                    b = 0
-                },
-                completion =
-                {
-                    r = 0,
-                    g = 255,
-                    b = 0
-                },
-                sniper_chance =
-                {
-                    r = 0,
-                    g = 255,
-                    b = 255
-                },
-                sniper_count =
-                {
-                    r = 255,
-                    g = 165,
-                    b = 0
-                }
+                inaccurate = { r = 255, g = 165, b = 0 },
+                pause = { r = 255, g = 0, b = 0 },
+                drill_autorepair = { r = 137, g = 209, b = 254 },
+                drill_not_powered = { r = 255, g = 95, b = 21 },
+                warning = { r = 255, g = 0, b = 0 },
+                completion = { r = 0, g = 255, b = 0 },
+                sniper_chance = { r = 0, g = 255, b = 255 },
+                sniper_count = { r = 255, g = 165, b = 0 }
             },
             mission_briefing =
             {
-                loot_secured =
-                {
-                    r = 255,
-                    g = 188,
-                    b = 0
-                },
-                total_xp =
-                {
-                    r = 0,
-                    g = 255,
-                    b = 0
-                },
-                optional =
-                {
-                    r = 137,
-                    g = 209,
-                    b = 254
-                }
+                loot_secured = { r = 255, g = 188, b = 0 },
+                total_xp = { r = 0, g = 255, b = 0 },
+                optional = { r = 137, g = 209, b = 254 }
             },
             unlockables =
             {
-                achievement =
-                {
-                    r = 255,
-                    g = 184,
-                    b = 78
-                },
-                sidejob =
-                {
-                    r = 135,
-                    g = 206,
-                    b = 235
-                },
-                trophy =
-                {
-                    r = 214,
-                    g = 116,
-                    b = 0
-                },
-                event =
-                {
-                    r = 255,
-                    g = 168,
-                    b = 0
-                }
+                achievement = { r = 255, g = 184, b = 78 },
+                sidejob = { r = 135, g = 206, b = 235 },
+                trophy = { r = 214, g = 116, b = 0 },
+                event = { r = 255, g = 168, b = 0 }
             },
             equipment =
             {
-                doctor_bag =
-                {
-                    r = 255,
-                    g = 0,
-                    b = 0
-                },
-                ammo_bag =
-                {
-                    r = 255,
-                    g = 255,
-                    b = 0
-                },
-                grenade_crate =
-                {
-                    r = 0,
-                    g = 255,
-                    b = 0
-                },
-                first_aid_kit =
-                {
-                    r = 255,
-                    g = 102,
-                    b = 102
-                },
-                bodybags_bag =
-                {
-                    r = 51,
-                    g = 204,
-                    b = 255
-                }
+                doctor_bag = { r = 255, g = 0, b = 0 },
+                ammo_bag = { r = 255, g = 255, b = 0 },
+                grenade_crate = { r = 0, g = 255, b = 0 },
+                first_aid_kit = { r = 255, g = 102, b = 102 },
+                bodybags_bag = { r = 51, g = 204, b = 255 }
             },
             bag_contour =
             {
-                light =
-                {
-                    r = 111,
-                    g = 255,
-                    b = 0
-                },
-                heavy =
-                {
-                    r = 255,
-                    g = 0,
-                    b = 40
-                },
-                body =
-                {
-                    r = 20,
-                    g = 80,
-                    b = 100
-                }
+                light = { r = 111, g = 255, b = 0 },
+                heavy = { r = 255, g = 0, b = 40 },
+                body = { r = 20, g = 80, b = 100 }
             }
         },
 
@@ -1017,6 +902,7 @@ local function LoadDefaultValues(self)
         buffs_invert_progress = false,
         buffs_show_upper_text = true,
         buffs_hide_in_custody = false,
+        buffs_grouping = false,
         buffs_group_text_color = false,
         -- Colors
         -- 1 = White
@@ -1253,6 +1139,11 @@ local function LoadDefaultValues(self)
                 melee_invulnerability = true,
                 melee_invulnerability_persistent = false
             },
+            group =
+            {
+                faster_reload = true,
+                faster_reload_persistent = false
+            },
 
             -- Other
             interact = true,
@@ -1299,29 +1190,24 @@ local function LoadDefaultValues(self)
             left_list_y = 80,
             left_list_scale = 1,
             left_list_bg_alpha = 1,
-            left_list_bg_color =
-            {
-                r = 0,
-                g = 0,
-                b = 0
-            },
+            left_list_bg_color = { r = 0, g = 0, b = 0 },
+            left_list_progress = 1,
             left_list_progress_visibility = true,
             left_list_progress_alpha = 1,
             left_list_progress_static = false,
+            left_list_item_color = 1,
             left_list =
             {
                 show_timers = true,
-                timer_progress = 1,
                 timer_top_text = true,
                 timer_jammed = 2,
                 timer_not_powered = 3,
                 timer_autorepair = 7,
                 show_minions = true,
                 minions_option = 1,
-                minions_health = 1,
+                minions_health_circle = false,
                 minions_top_text = true,
                 show_deployables = true,
-                deployable_progress = 1,
                 deployable_top_text = true,
                 deployable_format = 1,
                 deployable_aggregate = false,
@@ -1333,14 +1219,12 @@ local function LoadDefaultValues(self)
                 deployable_show_fak = true,
                 deployable_show_bodybags = true,
                 show_enemy_pagers = true,
-                enemy_pager_progress = 1,
+                enemy_pager_warning_color = 3,
                 show_jammers = true,
-                jammer_progress = 1,
                 jammer_affects_pager = 16,
                 show_ecm_retrigger = true,
-                ecm_retrigger_progress = 1,
                 show_camera_loop = true,
-                camera_loop_progress = 1
+                camera_loop_warning_color = 3
             },
 
             show_right_list = true,
@@ -1348,240 +1232,109 @@ local function LoadDefaultValues(self)
             right_list_y = 90,
             right_list_scale = 1,
             right_list_bg_alpha = 1,
-            right_list_bg_color =
-            {
-                r = 0,
-                g = 0,
-                b = 0
-            },
+            right_list_bg_color = { r = 0, g = 0, b = 0 },
+            right_list_progress = 1,
             right_list_progress_visibility = true,
             right_list_progress_alpha = 1,
             right_list_progress_static = false,
+            right_list_item_color = 1,
             right_list =
             {
                 show_units = true,
-                unit_progress = 1,
                 unit_types =
                 {
-                    regular_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    regular_color = { r = 255, g = 255, b = 255 },
                     regular_pos = 1,
                     regular_persistent = false,
                     converts_count = true,
-                    converts_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    converts_count_color = { r = 255, g = 255, b = 255 },
                     converts_count_pos = 2,
                     converts_count_persistent = false,
                     enemy_tied_count = true,
-                    enemy_tied_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    enemy_tied_count_color = { r = 255, g = 255, b = 255 },
                     enemy_tied_count_pos = 3,
                     enemy_tied_count_persistent = false,
                     dozer_count = false,
-                    dozer_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    dozer_count_color = { r = 255, g = 255, b = 255 },
                     dozer_count_pos = 4,
                     dozer_count_persistent = false,
                     dozer_count_separate = true,
                     dozer_count_hw = true,
-                    dozer_count_hw_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    dozer_count_hw_color = { r = 255, g = 255, b = 255 },
                     dozer_count_hw_pos = 4,
                     dozer_count_hw_persistent = false,
                     dozer_count_medic = true,
-                    dozer_count_medic_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    dozer_count_medic_color = { r = 255, g = 255, b = 255 },
                     dozer_count_medic_pos = 5,
                     dozer_count_medic_persistent = false,
                     dozer_count_mini = true,
-                    dozer_count_mini_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    dozer_count_mini_color = { r = 255, g = 255, b = 255 },
                     dozer_count_mini_pos = 6,
                     dozer_count_mini_persistent = false,
                     dozer_count_skull = true,
-                    dozer_count_skull_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    dozer_count_skull_color = { r = 255, g = 255, b = 255 },
                     dozer_count_skull_pos = 7,
                     dozer_count_skull_persistent = false,
                     dozer_count_black = true,
-                    dozer_count_black_color =
-                    {
-                        r = 128,
-                        g = 128,
-                        b = 128
-                    },
+                    dozer_count_black_color = { r = 128, g = 128, b = 128 },
                     dozer_count_black_pos = 8,
                     dozer_count_black_persistent = false,
                     dozer_count_green = true,
-                    dozer_count_green_color =
-                    {
-                        r = 0,
-                        g = 255,
-                        b = 0
-                    },
+                    dozer_count_green_color = { r = 0, g = 255, b = 0 },
                     dozer_count_green_pos = 9,
                     dozer_count_green_persistent = false,
                     sniper_count = false,
-                    sniper_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    sniper_count_color = { r = 255, g = 255, b = 255 },
                     sniper_count_pos = 10,
                     sniper_count_persistent = false,
                     marshal_sniper_count = false,
-                    marshal_sniper_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    marshal_sniper_count_color = { r = 255, g = 255, b = 255 },
                     marshal_sniper_count_pos = 11,
                     marshal_sniper_count_persistent = false,
                     taser_count = false,
-                    taser_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    taser_count_color = { r = 255, g = 255, b = 255 },
                     taser_count_pos = 12,
                     taser_count_persistent = false,
                     medic_count = false,
-                    medic_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    medic_count_color = { r = 255, g = 255, b = 255 },
                     medic_count_pos = 13,
                     medic_count_persistent = false,
                     cloaker_count = false,
-                    cloaker_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    cloaker_count_color = { r = 255, g = 255, b = 255 },
                     cloaker_count_pos = 14,
                     cloaker_count_persistent = false,
                     shield_count = false,
-                    shield_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    shield_count_color = { r = 255, g = 255, b = 255 },
                     shield_count_pos = 15,
                     shield_count_persistent = false,
                     marshal_shield_count = false,
-                    marshal_shield_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    marshal_shield_count_color = { r = 255, g = 255, b = 255 },
                     marshal_shield_count_pos = 16,
                     marshal_shield_count_persistent = false,
                     captain_count = false,
-                    captain_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    captain_count_color = { r = 255, g = 255, b = 255 },
                     captain_count_pos = 17,
                     phalanx_count = false,
-                    phalanx_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    phalanx_count_color = { r = 255, g = 255, b = 255 },
                     phalanx_count_pos = 18,
                     turret_count = false,
-                    turret_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    turret_count_color = { r = 255, g = 255, b = 255 },
                     turret_count_pos = 19,
                     civilian_count = true,
-                    civilian_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    civilian_count_color = { r = 255, g = 255, b = 255 },
                     civilian_count_pos = 20,
                     civilian_tied_count = true,
-                    civilian_tied_count_color =
-                    {
-                        r = 255,
-                        g = 255,
-                        b = 255
-                    },
+                    civilian_tied_count_color = { r = 255, g = 255, b = 255 },
                     civilian_tied_count_pos = 21
                 },
                 show_loot = true,
-                loot_progress = 1,
                 loot_top_type = 1, -- 1 = Icon; 2 = Loot Name
                 potentional_loot = true,
                 loot_color_items_based_on_their_weight = true,
-                loot_color_items_light =
-                {
-                    r = 111,
-                    g = 255,
-                    b = 0
-                },
-                loot_color_items_heavy =
-                {
-                    r = 255,
-                    g = 0,
-                    b = 40
-                },
-                loot_color_items_body =
-                {
-                    r = 0,
-                    g = 255,
-                    b = 255
-                },
+                loot_color_items_light = { r = 111, g = 255, b = 0 },
+                loot_color_items_heavy = { r = 255, g = 0, b = 40 },
+                loot_color_items_body = { r = 0, g = 255, b = 255 },
                 show_special_items = true,
-                special_items_progress = 1,
                 special_items_type =
                 {
                     small_loot = true,
@@ -1593,8 +1346,8 @@ local function LoadDefaultValues(self)
                     collectables = true
                 },
                 show_stealth_info = true,
-                stealth_info_progress = 1,
-                stealth_info_bodybags_format = 1
+                stealth_info_bodybags_format = 1,
+                stealth_info_warning = 3
             }
         },
 
@@ -1802,6 +1555,11 @@ end
 ---@param s AnyExceptNil
 function EHI:Log2(prefix, s)
     log(string.format("[EHI] [%s] %s", prefix, s))
+end
+
+---@param format string
+function EHI:LogFormat(format, ...)
+    log(string.format(format, ...))
 end
 
 ---Logs provided string from the file it was called from

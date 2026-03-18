@@ -635,8 +635,6 @@ end
 
 if _G.IS_VR then
     return blt.vm.loadfile(EHI.LuaPath .. "vr/EHITrackerManagerVR.lua")(EHITrackerManager)
-elseif VoidUI then
-    dofile(EHI.LuaPath .. "hud/tracker/void_ui.lua")
 end
 
 return EHITrackerManager

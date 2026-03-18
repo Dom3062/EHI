@@ -5,7 +5,6 @@ end
 local EHI = EHI
 
 ---@class FakeEHIList
----@field new fun(self: self, x: number, y: number, aspect_ratio: integer): self
 ---@field SetItemsPos fun(self: self, x: number, y: number)
 local FakeEHIList = class()
 ---@param x number
@@ -81,6 +80,15 @@ function FakeEHIList:UpdateBGColor(color)
     self:RunOnAllItems("UpdateBGColor", color)
 end
 
+---@param progress integer
+function FakeEHIList:UpdateProgress(progress)
+    if self._progress == progress then
+        return
+    end
+    self._progress = progress
+    self:RunOnAllItems("SetProgress", progress)
+end
+
 ---@param a number
 function FakeEHIList:UpdateProgressAlpha(a)
     if self._progress_alpha == a then
@@ -93,6 +101,11 @@ end
 ---@param visibility boolean
 function FakeEHIList:UpdateProgressVisibility(visibility)
     self:RunOnAllItems("SetProgressVisibility", visibility)
+end
+
+---@param color_index integer
+function FakeEHIList:UpdateItemsColor(color_index)
+    self:RunOnAllItems("UpdateItemsColor", color_index)
 end
 
 ---@param f string
@@ -114,14 +127,18 @@ function FakeEHIList:CallItemFunction(id, f, ...)
 end
 
 ---@class FakeEHILeftList : FakeEHIList
----@field new fun(self: self, x: number, y: number, aspect_ratio: integer): self
+---@field new fun(self: self, x: number, y: number, aspect_ratio: integer, color_index: integer, progress: integer): self
 ---@field super FakeEHIList
 local FakeEHILeftList = class(FakeEHIList)
 ---@param x number
 ---@param y number
 ---@param aspect_ratio integer
-function FakeEHILeftList:init(x, y, aspect_ratio)
+---@param color_index integer
+---@param progress integer
+function FakeEHILeftList:init(x, y, aspect_ratio, color_index, progress)
     FakeEHILeftList.super.init(self, x, y, aspect_ratio)
+    self._color_index = color_index
+    self._progress = progress
     self._bg_alpha = EHI:GetHudlistOption("left_list_bg_alpha")
     self._bg_color = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
     self._progress_alpha = EHI:GetHudlistOption("left_list_progress_alpha")
@@ -144,6 +161,8 @@ function FakeEHILeftList:AddItem(class, panel, params)
     params.scale = self._scale
     params.visible = self._preview_enabled
     params.list_enabled = self._list_enabled
+    params.color_index = self._color_index
+    params.progress = self._progress
     local item = class:new(panel, params, texture, texture_rect)
     self._items[params.id] = item
     table.insert(self._itemized_list, item)
@@ -174,15 +193,19 @@ function FakeEHILeftList:UpdateItemTopText(visible, id)
 end
 
 ---@class FakeEHIRightList : FakeEHIList
----@field new fun(self: self, x: number, y: number, aspect_ratio: integer, panel_w: number): self
+---@field new fun(self: self, x: number, y: number, aspect_ratio: integer, color_index: integer, progress: integer, panel_w: number): self
 ---@field super FakeEHIList
 local FakeEHIRightList = class(FakeEHIList)
 ---@param x number
 ---@param y number
 ---@param aspect_ratio integer
+---@param color_index integer
+---@param progress integer
 ---@param panel_w number
-function FakeEHIRightList:init(x, y, aspect_ratio, panel_w)
+function FakeEHIRightList:init(x, y, aspect_ratio, color_index, progress, panel_w)
     FakeEHIRightList.super.init(self, x, y, aspect_ratio)
+    self._color, self._color_string = tweak_data.ehi:GetBuffColorFromIndex(color_index)
+    self._progress = progress
     self._panel_w = panel_w
     self._bg_alpha = EHI:GetHudlistOption("right_list_bg_alpha")
     self._bg_color = EHI:GetColor(EHI:GetHudlistOption("right_list_bg_color"))
@@ -200,12 +223,15 @@ end
 function FakeEHIRightList:AddItem(class, panel, params)
     params.bg_alpha = self._bg_alpha
     params.bg_color = self._bg_color
+    params.progress = self._progress
     params.progress_alpha = self._progress_alpha
     params.progress_visibility = self._progress_visibility
     params.scale = self._scale
     params.visible = self._preview_enabled
     params.list_enabled = self._list_enabled
     params.right_offset = self._panel_w - self._x
+    params.color = self._color
+    params.color_string = self._color_string
     local item = class:new(panel, params)
     self._items[params.id] = item
     table.insert(self._itemized_list, item)
@@ -227,8 +253,6 @@ end
 
 ---@class FakeEHIHudlistManager
 FakeEHIHudlistManager = {}
-FakeEHIHudlistManager._left_list = FakeEHILeftList
-FakeEHIHudlistManager._right_list = FakeEHIRightList
 FakeEHIHudlistManager.AspectRatio =
 {
     _16_10 = 1,
@@ -253,10 +277,10 @@ function FakeEHIHudlistManager:new(panel, aspect_ratio)
     local right_x_offset, right_y_offset = tweak_data.ehi.shared.ConvertSafeRectToFull(EHI:GetHudlistOption("right_list_x"), EHI:GetHudlistOption("right_list_y"), aspect_ratio)
     dofile(EHI.LuaPath .. "menu/FakeEHIHudlistLeftItems.lua")
     FakeEHILeftItemBase._parent = self
-    self._left_list = FakeEHILeftList:new(left_x_offset, left_y_offset, aspect_ratio)
+    self._left_list = FakeEHILeftList:new(left_x_offset, left_y_offset, aspect_ratio, EHI:GetHudlistOption("left_list_item_color"), EHI:GetHudlistOption("left_list_progress"))
     self:_init_left_list_items()
     dofile(EHI.LuaPath .. "menu/FakeEHIHudlistRightItems.lua")
-    self._right_list = FakeEHIRightList:new(right_x_offset, right_y_offset, aspect_ratio, self._panel:w())
+    self._right_list = FakeEHIRightList:new(right_x_offset, right_y_offset, aspect_ratio, EHI:GetHudlistOption("right_list_item_color"), EHI:GetHudlistOption("right_list_progress"), self._panel:w())
     self:_init_right_list_items()
     return self
 end
@@ -322,7 +346,6 @@ function FakeEHIHudlistManager:_init_left_list_items()
                 bottom_text = true
             }
         },
-        progress = options.timer_progress,
         enabled = options.show_timers,
         top_text = options.timer_top_text,
         bottom_text = true
@@ -357,7 +380,7 @@ function FakeEHIHudlistManager:_init_left_list_items()
                 }
             },
             minion_option = options.minions_option,
-            progress = options.minions_health,
+            health_circle = options.minions_health_circle,
             enabled = options.show_minions,
             top_text = options.minions_top_text -- Bottom text is not used in real Minions
         })
@@ -410,7 +433,6 @@ function FakeEHIHudlistManager:_init_left_list_items()
                 fake_pos = 2
             }
         },
-        progress = options.deployable_progress,
         format = options.deployable_format,
         aggregate = options.deployable_aggregate,
         enabled = options.show_deployables,
@@ -439,7 +461,6 @@ function FakeEHIHudlistManager:_init_left_list_items()
                     bottom_text = true
                 }
             },
-            progress = options.ecm_retrigger_progress,
             enabled = options.show_ecm_retrigger,
             bottom_text = true
         })
@@ -459,7 +480,6 @@ function FakeEHIHudlistManager:_init_left_list_items()
                 bottom_text = true
             }
         },
-        progress = options.enemy_pager_progress,
         enabled = options.show_enemy_pagers,
         bottom_text = true
     })
@@ -485,7 +505,6 @@ function FakeEHIHudlistManager:_init_left_list_items()
                     bottom_text = true
                 }
             },
-            progress = options.jammer_progress,
             enabled = options.show_jammers,
             affects_pager_color_index = options.jammer_affects_pager,
             bottom_text = true
@@ -506,7 +525,6 @@ function FakeEHIHudlistManager:_init_left_list_items()
                     bottom_text = true
                 }
             },
-            progress = options.camera_loop_progress,
             enabled = options.show_camera_loop,
             bottom_text = true
         })
@@ -717,7 +735,6 @@ function FakeEHIHudlistManager:_init_right_list_items()
                     enabled = u_options.civilian_tied_count
                 }
             },
-            progress = options.unit_progress,
             enabled = options.show_units,
             dozer_count_separate = u_options.dozer_count_separate
         })
@@ -776,7 +793,6 @@ function FakeEHIHudlistManager:_init_right_list_items()
                 value = 10
             }
         },
-        progress = options.loot_progress,
         enabled = options.show_loot,
         potentional_loot = options.potentional_loot,
         top_type = options.loot_top_type
@@ -810,7 +826,6 @@ function FakeEHIHudlistManager:_init_right_list_items()
                 value = 1
             }
         },
-        progress = options.special_items_progress,
         enabled = options.show_special_items
     })
     self._right_list:AddItem(FakeEHIRightStealthItem, self._panel, {
@@ -843,7 +858,6 @@ function FakeEHIHudlistManager:_init_right_list_items()
                 value = 3
             }
         },
-        progress = options.stealth_info_progress,
         enabled = options.show_stealth_info,
         bodybags_format = options.stealth_info_bodybags_format
     })

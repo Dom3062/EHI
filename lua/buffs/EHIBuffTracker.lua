@@ -3,7 +3,7 @@ local circle_shape = EHI:GetOption("buffs_shape") == 2
 local invert = EHI:GetOption("buffs_invert_progress") --[[@as boolean]]
 local show_hint = EHI:GetOption("buffs_show_upper_text") --[[@as boolean]]
 local color_buff_text = EHI:GetOption("buffs_group_text_color") --[[@as boolean]]
-local rect =  circle_shape and { 128, 0, -128, 128 } or { 32, 0, -32, 32 }
+local rect = circle_shape and { 128, 0, -128, 128 } or { 32, 0, -32, 32 }
 local frame = circle_shape and "cframe" or "sframe"
 if invert then
     rect[1] = 0

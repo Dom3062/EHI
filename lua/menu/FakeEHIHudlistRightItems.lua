@@ -9,6 +9,7 @@ FakeEHIRightItemBase._PROGRESS_RECT = {
     { 32, 0, -32, 32 },
     { 128, 0, -128, 128 }
 }
+FakeEHIRightItemBase._UPDATE_COLOR_APPLIES_TO_ICON = true
 ---@param panel Panel
 ---@param params table
 function FakeEHIRightItemBase:init(panel, params)
@@ -19,6 +20,8 @@ function FakeEHIRightItemBase:init(panel, params)
     local scale = params.scale or 1
     local bg_alpha = params.bg_alpha or 1
     local progress_alpha = params.progress_alpha or 1
+    local color = params.color
+    local color_string = params.color_string
     self._params = {
         h = 64,
         bg_color = params.bg_color,
@@ -36,7 +39,7 @@ function FakeEHIRightItemBase:init(panel, params)
     self._items = {} ---@type FakeEHIRightItemBase.Item[]
     if params.items then
         for _, data in ipairs(params.items) do
-            self:AddItem(data, scale, bg_alpha, progress_alpha)
+            self:AddItem(data, scale, bg_alpha, progress_alpha, color, color_string)
         end
     end
     self:UpdateDataFromOptions(params)
@@ -139,7 +142,9 @@ end
 ---@param scale number
 ---@param bg_alpha number
 ---@param progress_alpha number
-function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha)
+---@param color Color
+---@param color_string string
+function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha, color, color_string)
     local value = math.random(1, params.value or 1)
     local w = 32 * scale
     local panel = self._panel:panel({
@@ -155,7 +160,7 @@ function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha)
         y = w,
         w = w,
         h = w,
-        texture = "guis/textures/pd2_mod_ehi/buffs/buff_sframe_white",
+        texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", color_string),
         texture_rect = self._PROGRESS_RECT[1],
         color = self._PROGRESS,
         visible = self._params.progress == 1 and self._params.progress_visibility
@@ -179,7 +184,7 @@ function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha)
         y = w,
         w = w,
         h = w,
-        texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
+        texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", color_string),
         texture_rect = self._PROGRESS_RECT[2],
         color = self._PROGRESS,
         visible = self._params.progress == 2 and self._params.progress_visibility
@@ -199,11 +204,9 @@ function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha)
         w = w,
         h = w,
         texture = texture,
-        texture_rect = texture_rect
+        texture_rect = texture_rect,
+        color = params.icon.color or color
     })
-    if params.icon.color then
-        icon:set_color(params.icon.color)
-    end
     local text = panel:text({
         name = "count",
         y = w,
@@ -213,7 +216,8 @@ function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha)
         font = tweak_data.menu.pd2_large_font,
         font_size = 24 * scale,
         align = "center",
-        vertical = "center"
+        vertical = "center",
+        color = color
     })
     local pos = table.size(self._items) + 1
     local item_enabled = params.enabled ~= false
@@ -289,9 +293,6 @@ end
 
 ---@param progress integer
 function FakeEHIRightItemBase:SetProgress(progress)
-    if self._params.progress == progress then
-        return
-    end
     self._params.progress = progress
     for _, item in ipairs(self._items) do
         for i, bitmaps in ipairs(item.progress) do
@@ -324,9 +325,24 @@ function FakeEHIRightItemBase:SetProgressVisibility(visibility, progress)
     end
 end
 
+---@param color_index integer
+function FakeEHIRightItemBase:UpdateItemsColor(color_index)
+    local color, color_string = tweak_data.ehi:GetBuffColorFromIndex(color_index)
+    for _, item in ipairs(self._items) do
+        if self._UPDATE_COLOR_APPLIES_TO_ICON then
+            item.panel:child("icon"):set_color(color) ---@diagnostic disable-line
+        end
+        for i, bitmaps in ipairs(item.progress) do
+            bitmaps[1]:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", i == 1 and "sframe" or "cframe", color_string))
+        end
+        item.text:set_color(color)
+    end
+end
+
 ---@class FakeEHIRightUnitItem : FakeEHIRightItemBase
 ---@field super FakeEHIRightItemBase
 FakeEHIRightUnitItem = class(FakeEHIRightItemBase)
+FakeEHIRightUnitItem._UPDATE_COLOR_APPLIES_TO_ICON = false
 FakeEHIRightUnitItem._ALL_ITEMS = {}
 function FakeEHIRightUnitItem:UpdateDataFromOptions(params)
     self._separate_dozers = params.dozer_count_separate

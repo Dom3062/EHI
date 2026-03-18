@@ -12,27 +12,28 @@ EHIRightItemBase._PROGRESS_RECT = {
 ---@param o Bitmap
 ---@param text Text
 ---@param progress Color
-EHIRightItemBase._animate_item_up = function(o, text, progress)
-    progress.red = 1
+---@param start_color Color
+EHIRightItemBase._animate_item_up = function(o, text, progress, start_color)
     over(0.5, function(lerp, t)
         progress.red = math.lerp(0, 1, lerp)
         o:set_color(progress)
-        text:set_color(math.lerp(Color.white, Color.green, lerp))
+        text:set_color(math.lerp(start_color, Color.green, lerp))
     end)
-    text:set_color(Color.white)
+    text:set_color(start_color)
 end
 ---@param o Bitmap
 ---@param text Text
 ---@param progress Color
-EHIRightItemBase._animate_item_down = function(o, text, progress)
+---@param start_color Color
+EHIRightItemBase._animate_item_down = function(o, text, progress, start_color)
     over(0.5, function(lerp, t)
         progress.red = math.lerp(1, 0, lerp)
         o:set_color(progress)
-        text:set_color(math.lerp(Color.white, Color.red, lerp))
+        text:set_color(math.lerp(start_color, Color.red, lerp))
     end)
     progress.red = 1
     o:set_color(progress)
-    text:set_color(Color.white)
+    text:set_color(start_color)
 end
 ---@param o Panel
 ---@param a number
@@ -57,13 +58,9 @@ function EHIRightItemBase:init(panel, params)
     self._panel = panel:panel({
         y = 90,
         w = panel:w(),
-        h = 64 * self._scale,
+        h = 64 * self._SCALE,
         visible = false
     })
-    self._params =
-    {
-        progress = params.progress or 1
-    }
     self._delete_on_alarm = params.delete_on_alarm
     self._update_on_alarm = params.update_on_alarm
     self:RegisterListeners(params)
@@ -97,17 +94,17 @@ function EHIRightItemBase:CreateItem(id, params)
     self._itemized_items = self._itemized_items or {} ---@type EHIRightItemBase.Item[]
     self._n_of_items = self._n_of_items or 0
     local pos = params.pos or self._n_of_items + 1
-    local w = 32 * self._scale
+    local w = 32 * self._SCALE
     local panel = self._panel:panel({
         alpha = 0,
         w = w,
         h = self._panel:h(), -- Scale is already applied here
         visible = true
     })
-    panel:set_right(self._right_offset)
+    panel:set_right(self._RIGHT_OFFSET)
     local progress
     local progress_bar = Color(1, 1, 0.125, 1)
-    if self._params.progress == 1 then
+    if self._PROGRESS == 1 then
         progress = panel:bitmap({
             alpha = self._PROGRESS_ALPHA,
             render_template = "VertexColorTexturedRadialFlex",
@@ -115,7 +112,7 @@ function EHIRightItemBase:CreateItem(id, params)
             y = w,
             w = w,
             h = w,
-            texture = "guis/textures/pd2_mod_ehi/buffs/buff_sframe_white",
+            texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
             texture_rect = self._PROGRESS_RECT[1],
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY
@@ -139,7 +136,7 @@ function EHIRightItemBase:CreateItem(id, params)
             y = w,
             w = w,
             h = w,
-            texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
+            texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
             texture_rect = self._PROGRESS_RECT[2],
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY
@@ -161,9 +158,10 @@ function EHIRightItemBase:CreateItem(id, params)
         h = w,
         text = "0",
         font = tweak_data.menu.pd2_large_font,
-        font_size = 24 * self._scale,
+        font_size = 24 * self._SCALE,
         align = "center",
-        vertical = "center"
+        vertical = "center",
+        color = self._PROGRESS_COLOR
     })
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(params.icon)
     local icon = panel:bitmap({
@@ -171,11 +169,9 @@ function EHIRightItemBase:CreateItem(id, params)
         w = w,
         h = w,
         texture = texture,
-        texture_rect = texture_rect
+        texture_rect = texture_rect,
+        color = params.icon.color or self._PROGRESS_COLOR
     })
-    if params.icon.color then
-        icon:set_color(params.icon.color)
-    end
     if params.icon.scale then
         local w_new = w * params.icon.scale
         local offset = math.abs(w - w_new) / 2
@@ -212,7 +208,7 @@ function EHIRightItemBase:CreateItems(items)
     self._items = self._items or {} ---@type table<string, EHIRightItemBase.Item>
     self._itemized_items = self._itemized_items or {} ---@type EHIRightItemBase.Item[]
     self._n_of_items = self._n_of_items or 0
-    local w = 32 * self._scale
+    local w = 32 * self._SCALE
     for _, item in ipairs(items) do
         local panel = self._panel:panel({
             alpha = 0,
@@ -220,17 +216,17 @@ function EHIRightItemBase:CreateItems(items)
             h = self._panel:h(), -- Scale is already applied here
             visible = true
         })
-        panel:set_right(self._right_offset)
+        panel:set_right(self._RIGHT_OFFSET)
         local progress
         local progress_bar = Color(1, 1, 0.125, 1)
-        if self._params.progress == 1 then
+        if self._PROGRESS == 1 then
             progress = panel:bitmap({
                 render_template = "VertexColorTexturedRadialFlex",
                 layer = 2,
                 y = w,
                 w = w,
                 h = w,
-                texture = "guis/textures/pd2_mod_ehi/buffs/buff_sframe_white",
+                texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
                 texture_rect = self._PROGRESS_RECT[1],
                 color = progress_bar,
                 visible = self._PROGRESS_VISIBILITY
@@ -253,7 +249,7 @@ function EHIRightItemBase:CreateItems(items)
                 y = w,
                 w = w,
                 h = w,
-                texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_white",
+                texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
                 texture_rect = self._PROGRESS_RECT[2],
                 color = progress_bar,
                 visible = self._PROGRESS_VISIBILITY
@@ -275,9 +271,10 @@ function EHIRightItemBase:CreateItems(items)
             h = w,
             text = "0",
             font = tweak_data.menu.pd2_large_font,
-            font_size = 24 * self._scale,
+            font_size = 24 * self._SCALE,
             align = "center",
-            vertical = "center"
+            vertical = "center",
+            color = self._PROGRESS_COLOR
         })
         local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(item.icon)
         local icon = panel:bitmap({
@@ -286,11 +283,9 @@ function EHIRightItemBase:CreateItems(items)
             w = w,
             h = w,
             texture = texture,
-            texture_rect = texture_rect
+            texture_rect = texture_rect,
+            color = params.icon.color or self._PROGRESS_COLOR
         })
-        if item.icon.color then
-            icon:set_color(item.icon.color)
-        end
         if item.icon.scale then
             local w_new = w * item.icon.scale
             local offset = math.abs(w - w_new) / 2
@@ -349,9 +344,9 @@ end
 ---Same as `_update_items_visibility()` but without any animations  
 ---Useful if items needs to be sorted during loading screen or on spawn
 function EHIRightItemBase:_update_items_visibility_fast()
-    local right = self._right_offset
+    local right = self._RIGHT_OFFSET
     local offset = 0
-    local space = 5 * self._scale
+    local space = 5 * self._SCALE
     local items_visible = 0
     for _, item in ipairs(self._itemized_items) do
         local panel = item.panel
@@ -374,9 +369,9 @@ function EHIRightItemBase:_update_items_visibility_fast()
 end
 
 function EHIRightItemBase:_update_items_visibility()
-    local right = self._right_offset
+    local right = self._RIGHT_OFFSET
     local offset = 0
-    local space = 5 * self._scale
+    local space = 5 * self._SCALE
     local items_visible = 0
     for _, item in ipairs(self._itemized_items) do
         local panel = item.panel
@@ -457,10 +452,10 @@ function EHIRightItemBase:AnimateItem(item, previous_count, count)
     count = count or item.count
     if previous_count < count then
         item.progress:stop()
-        item.progress:animate(self._animate_item_up, item.text, item.progress_bar)
+        item.progress:animate(self._animate_item_up, item.text, item.progress_bar, self._PROGRESS_COLOR)
     elseif previous_count > count and count > 0 then -- There is no point in animating the panel when it is getting hidden during the check in an anim thread
         item.progress:stop()
-        item.progress:animate(self._animate_item_down, item.text, item.progress_bar)
+        item.progress:animate(self._animate_item_down, item.text, item.progress_bar, self._PROGRESS_COLOR)
     end
 end
 
@@ -636,6 +631,7 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
         end
     end
     local is_playing_safehouse_nightmare = Global.game_settings.level_id == "haunted"
+    local stealth_required = tweak_data.levels:IsStealthRequired()
     self:CreateItem("ignore", { ignore = true })
     local regular_icon = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and {
         ehi = EHI:GetAchievementIconString("gage5_6")
@@ -646,7 +642,7 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
         force_visible = u_options.regular_persistent,
         not_itemized = true
     }), u_options.regular_pos)
-    if u_options.converts_count then
+    if u_options.converts_count and not stealth_required then
         handle_new_item_in_the_slot(self:CreateItem("minion", {
             icon = {
                 skills = { 6, 8 },
@@ -673,7 +669,7 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
             not_itemized = true
         }), u_options.enemy_tied_count_pos)
     end
-    if not tweak_data.levels:IsStealthRequired() then -- Do not create special enemy items if we are playing stealth only heist; it is pointless
+    if not stealth_required then -- Do not create special enemy items if we are playing stealth only heist; it is pointless
         self._update_on_alarm = true
         local group_ai = tweak_data.group_ai
         local OVK_or_Above = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
@@ -1434,7 +1430,7 @@ function EHIRightLootItem:CreateItem(id, params)
         local previous_w = icon:w()
         icon:set_w(previous_w * 1.2)
         icon:set_center(text:center())
-        text:move(0, 2 * self._scale)
+        text:move(0, 2 * self._SCALE)
     end
     return item
 end
@@ -1938,19 +1934,19 @@ EHIRightStealthItem._callback_key = "EHIRightStealthItem"
 ---@param o Bitmap
 ---@param text Text
 ---@param progress Color
+---@param start_color Color
 ---@param self EHIRightStealthItem
----@param progress_rect TextureRect
----@param progress_bitmap string
-EHIRightStealthItem._animate_item_down_warning = function(o, text, progress, self, progress_rect, progress_bitmap)
-    local orange = Color(255, 255, 106, 0) / 255
+---@param warning_color Color
+---@param warning_color_string string
+EHIRightStealthItem._animate_item_down_warning = function(o, text, progress, start_color, self, warning_color, warning_color_string)
     over(0.5, function(lerp, t)
         progress.red = math.lerp(1, 0, lerp)
         o:set_color(progress)
-        text:set_color(math.lerp(Color.white, orange, lerp))
+        text:set_color(math.lerp(start_color, warning_color, lerp))
     end)
     progress.red = 1
     o:set_color(progress)
-    self:SetColorTexture(o, "orange")
+    self:SetColorTexture(o, warning_color_string)
 end
 EHIRightStealthItem._camera_is_enabled = function(item, key)
     return item.enabled and (item.active or Network:is_client())
@@ -2092,6 +2088,7 @@ function EHIRightStealthItem:RegisterListeners(params)
         self._bodybags_amount = pm._local_player_body_bags
         self:UpdateBodyBagsAmount()
     end)
+    self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(params.warning_index)
 end
 
 function EHIRightStealthItem:UnregisterListeners()
@@ -2131,8 +2128,8 @@ end
 ---@param bitmap Bitmap
 ---@param color string
 function EHIRightStealthItem:SetColorTexture(bitmap, color)
-    local texture = self._params.progress == 1 and "sframe" or "cframe"
-    bitmap:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color), unpack(self._PROGRESS_RECT[self._params.progress]))
+    local texture = self._PROGRESS == 1 and "sframe" or "cframe"
+    bitmap:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color), unpack(self._PROGRESS_RECT[self._PROGRESS]))
 end
 
 function EHIRightStealthItem:AnimateItem(item, previous_count, count)
@@ -2140,7 +2137,7 @@ function EHIRightStealthItem:AnimateItem(item, previous_count, count)
     if (count or item.count) == 0 and item.force_visible then
         item.data.needs_color_refresh = true
         item.progress:stop()
-        item.progress:animate(self._animate_item_down_warning, item.text, item.progress_bar, self)
+        item.progress:animate(self._animate_item_down_warning, item.text, item.progress_bar, self._PROGRESS_COLOR, self, self._warning_color, self._warning_color_string)
     end
 end
 
@@ -2223,7 +2220,7 @@ function EHIRightStealthItem:UpdateBodyBagsAmount()
     self:AnimateItem(bb, previous_count, final_count)
     if bb.data.needs_color_refresh and final_count > 0 then
         bb.data.needs_color_refresh = nil
-        self:SetColorTexture(bb.progress, "white")
+        self:SetColorTexture(bb.progress, self._PROGRESS_COLOR_STRING)
     end
 end
 

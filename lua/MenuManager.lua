@@ -236,13 +236,39 @@ local function CreateMenuFromJson(content, data_table)
                     localized = localized,
                     disabled = disabled
                 })
-            elseif i_type == "multiple_choice" then
+            elseif i_type == "multiple_choice" or i_type == "multiple_color_choice" then
+                local items_need_color = i_type == "multiple_color_choice"
+                local choice_items = item.items
+                if items_need_color then
+                    if not cache.multiple_color_choice_items then
+                        cache.multiple_color_choice_items = {
+                            "ehi_buffs_group_color_white",
+                            "ehi_buffs_group_color_red",
+                            "ehi_buffs_group_color_orange",
+                            "ehi_buffs_group_color_green",
+                            "ehi_buffs_group_color_yellow",
+                            "ehi_buffs_group_color_blue",
+                            "ehi_buffs_group_color_cyan",
+                            "ehi_buffs_group_color_pink",
+                            "ehi_buffs_group_color_purple",
+                            "ehi_buffs_group_color_violet",
+                            "ehi_buffs_group_color_magenta",
+                            "ehi_buffs_group_color_azure",
+                            "ehi_buffs_group_color_brown",
+                            "ehi_buffs_group_color_crimson",
+                            "ehi_buffs_group_color_salmon",
+                            "ehi_buffs_group_color_gold",
+                            "ehi_buffs_group_color_turquoise"
+                        }
+                    end
+                    choice_items = cache.multiple_color_choice_items
+                end
                 menu_item = MenuHelper:AddMultipleChoice({
                     id = id,
                     title = title,
                     desc = desc,
                     callback = callback,
-                    items = item.items,
+                    items = choice_items,
                     item_values = item.item_values,
                     value = value,
                     menu_id = menu_id,
@@ -251,7 +277,7 @@ local function CreateMenuFromJson(content, data_table)
                     localized_items = item.localized_items,
                     disabled = disabled
                 })
-                if item.items_need_color then
+                if items_need_color then
                     for _, option in ipairs(menu_item._all_options) do
                         local color, _ = tweak_data.ehi:GetBuffColorFromIndex(option:value())
                         option:parameters().color = color
@@ -501,6 +527,7 @@ Hooks:Add("MenuManagerInitialize", "MenuManagerInitialize_EHI", function(menu_ma
     LoadMenusFromJsonFile(EHI.MenuPath .. "buff_options/skills.json", EHI.settings)
     LoadMenusFromJsonFile(EHI.MenuPath .. "buff_options/perks.json", EHI.settings)
     LoadFromJsonFile(EHI.MenuPath .. "buff_options/other.json", EHI.settings.buff_option)
+    LoadFromJsonFile(EHI.MenuPath .. "buff_options/group.json", EHI.settings.buff_option.group)
     LoadFromJsonFile(EHI.MenuPath .. "hudlist.json", EHI.settings.hudlist)
     LoadFromJsonFile(EHI.MenuPath .. "hudlist_options/left_list.json", EHI.settings.hudlist.left_list)
     LoadFromJsonFile(EHI.MenuPath .. "hudlist_options/right_list.json", EHI.settings.hudlist.right_list)

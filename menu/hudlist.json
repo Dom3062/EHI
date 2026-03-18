@@ -18,7 +18,9 @@
                 "ehi_left_list_scale_choice",
                 "ehi_left_list_bg_alpha_choice",
                 "ehi_left_list_bg_color_choice",
+                "ehi_left_list_progress_choice",
                 "ehi_left_list_progress_visibility_choice",
+                "ehi_left_list_item_color_choice",
                 "ehi_left_list_choice"
             ],
             "children_f": {
@@ -127,6 +129,25 @@
             }
         },
         {
+            "type": "multiple_choice",
+            "id": "ehi_left_list_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "left_list_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateProgress" ]
+                }
+            }
+        },
+        {
             "type": "toggle",
             "id": "ehi_left_list_progress_visibility_choice",
             "title": "ehi_buffs_show_progress",
@@ -180,6 +201,22 @@
             }
         },
         {
+            "type": "multiple_color_choice",
+            "id": "ehi_left_list_item_color_choice",
+            "title": "ehi_hudlist_item_color",
+            "description" : "ehi_hudlist_item_color_desc",
+            "callback": "ehi_set_item_value",
+            "default_value": 1,
+            "value": "left_list_item_color",
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemsColor" ]
+                }
+            }
+        },
+        {
             "type": "button",
             "id": "ehi_left_list_choice",
             "title": "ehi_hudlist_left_list",
@@ -203,7 +240,9 @@
                 "ehi_right_list_scale_choice",
                 "ehi_right_list_bg_alpha_choice",
                 "ehi_right_list_bg_color_choice",
+                "ehi_right_list_progress_choice",
                 "ehi_right_list_progress_visibility_choice",
+                "ehi_right_list_item_color_choice",
                 "ehi_right_list_choice"
             ],
             "children_f": {
@@ -312,6 +351,25 @@
             }
         },
         {
+            "type": "multiple_choice",
+            "id": "ehi_right_list_progress_choice",
+            "title": "ehi_buffs_shape",
+            "items": [
+                "ehi_buffs_shape_1",
+                "ehi_buffs_shape_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "right_list_progress",
+            "default_value": 1,
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateProgress" ]
+                }
+            }
+        },
+        {
             "type": "toggle",
             "id": "ehi_right_list_progress_visibility_choice",
             "title": "ehi_buffs_show_progress",
@@ -357,6 +415,22 @@
             "value": "right_list_progress_static",
             "default_value": false,
             "parent": "ehi_hudlist_show_right_list_choice"
+        },
+        {
+            "type": "multiple_color_choice",
+            "id": "ehi_right_list_item_color_choice",
+            "title": "ehi_hudlist_item_color",
+            "description" : "ehi_hudlist_item_color_desc",
+            "callback": "ehi_set_item_value",
+            "default_value": 1,
+            "value": "right_list_item_color",
+            "parent": "ehi_hudlist_show_right_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "right", "UpdateItemsColor" ]
+                }
+            }
         },
         {
             "type": "button",

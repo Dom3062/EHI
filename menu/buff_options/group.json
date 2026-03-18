@@ -1,0 +1,28 @@
+{
+    "menu_id": "ehi_buffs_group_menu",
+    "parent_menu_id" : "ehi_buffs_menu",
+    "global_params": {
+        "settings": [ "buff_option", "group" ]
+    },
+    "items": [
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_group_faster_reload_choice",
+            "title": "ehi_buffs_group_color_increased_weapon_reload",
+            "callback": "ehi_set_item_value",
+            "value": "faster_reload",
+            "default_value": true,
+            "child": "ehi_buffs_group_faster_reload_persistent_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_group_faster_reload_persistent_choice",
+            "title": "ehi_buffs_group_faster_reload_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "faster_reload_persistent",
+            "default_value": false,
+            "parent" : "ehi_buffs_group_faster_reload_choice"
+        }
+    ]
+}

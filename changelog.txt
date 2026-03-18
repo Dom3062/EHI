@@ -1,3 +1,8 @@
+r379 (18. 03. 2026):
+Buffs: Added "Enable Buff Grouping" option
+Hudlist: Added "Item Color" option
+Hudlist: Fixed inconsistent style by grouping "Shape" options under one main option for each list
+
 r378 (16. 03. 2026):
 Hudlist: Added option "Progress Alpha"
 Hudlist - Right List - Special Items: Fixed a crash when no items were created
