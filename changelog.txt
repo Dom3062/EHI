@@ -1,3 +1,9 @@
+r380 (24. 03. 2026):
+Fixed XP Preview in Mission Briefing visible in Crime Spree
+Fixed Money Tracker visible in Crime Spree
+Fixed an issue where upgraded ECM Jammers are not visible in the tracker when "Don't show ECM Jammer that won't delay pagers" option is enabled
+Hudlist - Left List: Adjusted animations
+
 r379 (18. 03. 2026):
 Buffs: Added "Enable Buff Grouping" option
 Hudlist: Added "Item Color" option

@@ -1,4 +1,4 @@
----@alias FakeEHIRightItemBase.Item { panel: Panel, progress: Bitmap[][], value: number, text: Text, id: string?, visible: boolean, count: integer, enabled: boolean }
+---@alias FakeEHIRightItemBase.Item { panel: Panel, progress: Bitmap[][], value: number, text: Text, id: string?, icon_scale: number, visible: boolean, count: integer, enabled: boolean }
 ---@alias FakeEHIRightItemBase.ItemParams { icon: table, value: number, fake_pos: integer?, id: string?, enabled: boolean }
 
 ---@class FakeEHIRightItemBase
@@ -61,7 +61,17 @@ function FakeEHIRightItemBase:Rescale(scale)
         text:set_y(w)
         text:set_size(w, w)
         text:set_font_size(24 * scale)
-        panel:child("icon"):set_size(w, w)
+        local icon = panel:child("icon") --[[@as Bitmap]]
+        if icon then
+            if item.icon_scale == 1 then
+                icon:set_size(w, w)
+            else
+                local w_new = w * item.icon_scale
+                local offset = math.abs(w - w_new) / 2
+                icon:set_size(w_new, w_new)
+                icon:set_position(offset, 0)
+            end
+        end
         for _, bitmaps in ipairs(item.progress) do
             for _, bitmap in ipairs(bitmaps) do
                 bitmap:set_y(w)
@@ -145,6 +155,7 @@ end
 ---@param color Color
 ---@param color_string string
 function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha, color, color_string)
+    local icon_scale = 1
     local value = math.random(1, params.value or 1)
     local w = 32 * scale
     local panel = self._panel:panel({
@@ -207,6 +218,13 @@ function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha, c
         texture_rect = texture_rect,
         color = params.icon.color or color
     })
+    if params.icon.scale then
+        icon_scale = params.icon.scale
+        local w_new = w * icon_scale
+        local offset = math.abs(w - w_new) / 2
+        icon:set_size(w_new, w_new)
+        icon:move(offset, 0)
+    end
     local text = panel:text({
         name = "count",
         y = w,
@@ -228,6 +246,7 @@ function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha, c
         progress = { progress_sframe, progress_cframe },
         text = text,
         value = value,
+        icon_scale = icon_scale,
         count = item_enabled and value or 0,
         enabled = item_enabled,
         visible = true

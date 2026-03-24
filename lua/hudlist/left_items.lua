@@ -1,4 +1,4 @@
----@alias EHILeftItemBase.Item { panel: Panel, progress: Bitmap, progress_static: Bitmap?, progress_bar: Color, text: Text, pos: integer }
+---@alias EHILeftItemBase.Item { anims: table, panel: Panel, progress: Bitmap, progress_static: Bitmap?, progress_bar: Color, text: Text, pos: integer }
 ---@alias EHILeftTimerItem.Timer { item: EHILeftItemBase.Item, t: number, jammed: boolean, powered: boolean, autorepair: boolean, needs_update: boolean }
 ---@alias EHILeftDeployableItem.Deployable { item: EHILeftItemBase.Item, eq_data: table, peer_id: integer, name_key: string, max_amount: number, ignored: boolean, max_amount: number?, pos: integer }
 ---@alias EHILeftDeployableItem.Group { max: number, eq_data: table, item: EHILeftItemBase.Item, deployables: table<userdata, { amount: number, ignored: boolean, max_amount: number }> }
@@ -117,8 +117,10 @@ function EHILeftItemBase:AddItem(...)
     local progress_bar = Color(1, 1, 0.125, 1)
     local y = self._panel:child("icon"):y()
     local panel = self._panel:panel({
+        alpha = 0,
         w = w,
-        h = self._panel:h() -- Scale is already applied here
+        h = self._panel:h(), -- Scale is already applied here
+        visible = true
     })
     local progress, progress_static
     if self._CUSTOM_PROGRESS then
@@ -210,6 +212,7 @@ function EHILeftItemBase:AddItem(...)
     local pos = table.size(self._items) + 1
     local data =
     {
+        anims = {},
         pos = pos,
         panel = panel,
         progress = progress,
@@ -246,6 +249,7 @@ function EHILeftItemBase:SortAddedItem(panel, pos)
         pos = pos - 1
         panel:set_x(x + (panel:w() + self._sizes.panel_offset) * pos)
     end
+    panel:animate(self._set_visible)
 end
 
 ---Sorts item panels on the HUD, but not in the memory  
@@ -277,9 +281,9 @@ function EHILeftItemBase:set_visible()
         return
     end
     self._visible = true
+    self._parent:ItemSetVisible(self)
     self._panel:stop()
     self._panel:animate(self._set_visible)
-    self._parent:ItemSetVisible(self)
 end
 
 function EHILeftItemBase:set_hidden()
@@ -463,8 +467,10 @@ function EHILeftTimerItem:SortItems()
     end
     local x = self:GetFirstItemStartX()
     for _, item in ipairs(list) do
-        item.panel:stop()
-        item.panel:animate(self._move_item, x)
+        if item.anims.move then
+            item.panel:stop(item.anims.move)
+        end
+        item.anims.move = item.panel:animate(self._move_item, x)
         x = x + item.panel:w() + self._sizes.panel_offset
     end
 end
@@ -657,16 +663,17 @@ function EHILeftMinionItem:AddMinion(unit, peer_id)
         return
     end
     local pos = self:_get_number_of_minions_for_peer_id(peer_id) + 1
+    local item = self:AddItem(peer_id, unit:base()._tweak_table)
     self._minions[key] =
     {
         unit = unit,
         peer_id = peer_id,
-        item = self:AddItem(peer_id, unit:base()._tweak_table),
+        item = item,
         pos = pos
     }
     unit:character_damage():add_listener("EHILeftMinionItem", self._MINION_HEALTH_EVENTS, callback(self, self, "_minion_damaged", key))
     self:set_visible()
-    self:SortItems()
+    self:SortItems(item)
 end
 
 ---@param peer_id integer
@@ -797,7 +804,8 @@ function EHILeftMinionItem:_minion_damaged(key, unit, damage_info)
     end
 end
 
-function EHILeftMinionItem:SortItems()
+---@param new_item EHILeftItemBase.Item?
+function EHILeftMinionItem:SortItems(new_item)
     local sorted_minions = {} ---@type table<integer, EHILeftItemBase.Item[]>
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
         sorted_minions[i] = {}
@@ -810,9 +818,17 @@ function EHILeftMinionItem:SortItems()
     local x = self:GetFirstItemStartX()
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
         for _, item in ipairs(sorted_minions[i]) do
-            item.panel:stop()
-            item.panel:animate(self._move_item, x)
-            x = x + item.panel:w() + self._sizes.panel_offset
+            local panel = item.panel
+            if item == new_item then -- Don't move across whole screen, please...
+                panel:set_x(x)
+                panel:animate(self._set_visible)
+            else
+                if item.anims.move then
+                    panel:stop(item.anims.move)
+                end
+                item.anims.move = panel:animate(self._move_item, x)
+            end
+            x = x + panel:w() + self._sizes.panel_offset
         end
     end
 end
@@ -1099,6 +1115,7 @@ function EHILeftDeployableItem:AddDeployable(key, unit)
     if eq_data.force_console_report or self._unit_blocked[key] then
         return
     end
+    local new_group = false
     local tbl = ---@type EHILeftDeployableItem.Deployable
     {
         eq_data = eq_data,
@@ -1117,6 +1134,7 @@ function EHILeftDeployableItem:AddDeployable(key, unit)
             group.item = self:AddItem(eq_data, true)
             group.eq_data = eq_data
             group.max = 0
+            new_group = true
             self._deployable_group[self:_get_group_name(eq_data)] = group
         end
         group.deployables[key] = {
@@ -1135,10 +1153,15 @@ function EHILeftDeployableItem:AddDeployable(key, unit)
         tbl.item = self:AddItem(eq_data)
     end
     if self._AGGREGATE_DEPLOYABLES then
-        self:_update_group_item_visibility()
+        local dg = self:_get_deployable_group(eq_data)
+        local group = new_group and dg.item or nil
+        if not group and table.count(dg.deployables, self._count_of_visible_deployables) == 1 then -- If the group is hidden and another deployable is placed, force item visible
+            group = dg.item
+        end
+        self:_update_group_item_visibility(group)
     else
         self:set_visible()
-        self:SortItems()
+        self:SortItems(tbl.item)
     end
 end
 
@@ -1343,22 +1366,27 @@ function EHILeftDeployableItem:RemoveDeployableGroup(...)
     end
 end
 
-function EHILeftDeployableItem:_update_group_item_visibility()
-    local visible = false
+---@param new_item EHILeftItemBase.Item?
+function EHILeftDeployableItem:_update_group_item_visibility(new_item)
+    local visible = 0
     for _, group in ipairs(self._SORTED_GROUPS) do
         local list = self._deployable_group[group]
         if list then
+            local item = list.item
+            local panel = item.panel
             if table.count(list.deployables, self._count_of_visible_deployables) > 0 then
-                list.item.panel:show()
-                visible = true
+                visible = visible + 1
             else
-                list.item.panel:hide()
+                if item.anims.visible then
+                    panel:stop(item.anims.visible)
+                end
+                item.anims.visible = panel:animate(self._set_hidden)
             end
         end
     end
-    if visible then
+    if visible > 0 then
         self:set_visible()
-        self:SortGroupItems()
+        self:SortGroupItems(new_item)
     else
         self:set_hidden()
     end
@@ -1395,7 +1423,8 @@ function EHILeftDeployableItem:_update_group_amount(group)
     end
 end
 
-function EHILeftDeployableItem:SortItems()
+---@param new_item EHILeftItemBase.Item?
+function EHILeftDeployableItem:SortItems(new_item)
     local list = {} ---@type table<string, EHILeftDeployableItem.Deployable[]>
     for _, group in ipairs(self._SORTED_GROUPS) do
         list[group] = {}
@@ -1409,21 +1438,43 @@ function EHILeftDeployableItem:SortItems()
     for _, group in ipairs(self._SORTED_GROUPS) do
         for _, eq in ipairs(list[group]) do
             if not eq.ignored then
-                eq.item.panel:stop()
-                eq.item.panel:animate(self._move_item, start_x)
-                start_x = start_x + eq.item.panel:w() + self._sizes.panel_offset
+                local item = eq.item
+                local panel = item.panel
+                if item == new_item then
+                    panel:set_x(start_x)
+                    if item.anims.visible then
+                        panel:stop(item.anims.visible)
+                    end
+                    item.anims.visible = panel:animate(self._set_visible)
+                else
+                    if item.anims.move then
+                        panel:stop(item.anims.move)
+                    end
+                    item.anims.move = panel:animate(self._move_item, start_x)
+                end
+                start_x = start_x + panel:w() + self._sizes.panel_offset
             end
         end
     end
 end
 
-function EHILeftDeployableItem:SortGroupItems()
+---@param new_item EHILeftItemBase.Item?
+function EHILeftDeployableItem:SortGroupItems(new_item)
     local start_x = self:GetFirstItemStartX()
     for _, group in ipairs(self._SORTED_GROUPS) do
         local list = self._deployable_group[group]
         if list and table.count(list.deployables, self._count_of_visible_deployables) > 0 then
-            list.item.panel:stop()
-            list.item.panel:animate(self._move_item, start_x)
+            local item = list.item
+            local panel = item.panel
+            if item == new_item then
+                panel:set_x(start_x)
+                panel:animate(self._set_visible)
+            else
+                if item.anims.move then
+                    panel:stop(item.anims.move)
+                end
+                item.anims.move = panel:animate(self._move_item, start_x)
+            end
             start_x = start_x + list.item.panel:w() + self._sizes.panel_offset
         end
     end
@@ -1509,9 +1560,12 @@ end
 function EHILeftPagerItem:SortItems()
     local x = self:GetFirstItemStartX()
     for _, pager in pairs(self._pagers) do
+        local anims = pager.item.anims
         local panel = pager.item.panel
-        panel:stop()
-        panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (pager.item.pos - 1))
+        if anims.move then
+            panel:stop(anims.move)
+        end
+        anims.move = panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (pager.item.pos - 1))
     end
 end
 
@@ -1637,9 +1691,12 @@ end
 function EHILeftJammerItem:SortItems()
     local x = self:GetFirstItemStartX()
     for _, jammer in pairs(self._jammers) do
+        local anims = jammer.item.anims
         local panel = jammer.item.panel
-        panel:stop()
-        panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (jammer.item.pos - 1))
+        if anims.move then
+            panel:stop(anims.move)
+        end
+        anims.move = panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (jammer.item.pos - 1))
     end
 end
 
@@ -1726,9 +1783,12 @@ end
 function EHILeftJammerRetriggerItem:SortItems()
     local x = self:GetFirstItemStartX()
     for _, jammer in pairs(self._jammers) do
+        local anims = jammer.item.anims
         local panel = jammer.item.panel
-        panel:stop()
-        panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (jammer.item.pos - 1))
+        if anims.move then
+            panel:stop(anims.move)
+        end
+        anims.move = panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (jammer.item.pos - 1))
     end
 end
 
@@ -1814,9 +1874,12 @@ end
 function EHILeftCameraLoopItem:SortItems()
     local x = self:GetFirstItemStartX()
     for _, cam in pairs(self._cameras) do
+        local anims = cam.item.anims
         local panel = cam.item.panel
-        panel:stop()
-        panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (cam.item.pos - 1))
+        if anims.move then
+            panel:stop(anims.move)
+        end
+        anims.move = panel:animate(self._move_item, x + (panel:w() + self._sizes.panel_offset) * (cam.item.pos - 1))
     end
 end
 

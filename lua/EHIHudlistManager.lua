@@ -1,7 +1,7 @@
 local EHI = EHI
 
 ---@class EHIList
----@field _set_items_y fun()
+---@field _set_items_y fun(self: self, item: EHILeftItemBase|EHIRightItemBase?)
 local EHIList = class()
 ---@param o Panel
 ---@param target_y number
@@ -49,7 +49,7 @@ function EHIList:ItemSetVisible(item)
         item._panel:set_y(self._options.y)
         return
     end
-    self:_set_items_y()
+    self:_set_items_y(item)
 end
 
 function EHIList:ItemSetHidden()
@@ -97,11 +97,16 @@ function EHILeftList:AddItem(class, panel, params)
     item._panel:set_x(self._options.x)
 end
 
-function EHILeftList:_set_items_y()
+---@param new_item EHILeftItemBase
+function EHILeftList:_set_items_y(new_item)
     local y = self._options.y
     for _, item in ipairs(self._itemized_list) do
         if item:visible() then
-            item._panel:animate(self._set_y, y)
+            if item == new_item then -- Don't animate movement for the new item, just set Y coordinate
+                item._panel:set_y(y)
+            else
+                item._panel:animate(self._set_y, y)
+            end
             y = y + item._panel:h() + self._options.y_offset
         end
     end

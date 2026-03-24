@@ -90,33 +90,17 @@ end
 
 if EHI:GetOption("show_equipment_ecmjammer") then
     local BlockECMsWithoutPagerBlocking = EHI:GetOption("ecmjammer_block_ecm_without_pager_delay")
-    original.set_active = ECMJammerBase.set_active
-    function ECMJammerBase:set_active(active, ...)
-        original.set_active(self, active, ...)
+    Hooks:PostHook(ECMJammerBase, "set_active", "EHI_ECMJammerBase_set_active", function(self, active, ...) ---@param active boolean
         if active then
             local battery_life = self:battery_life()
             if battery_life <= 0 then
                 return
             elseif BlockECMsWithoutPagerBlocking then
-                if self._ehi_local_peer then
-                    if not managers.player:has_category_upgrade("ecm_jammer", "affects_pagers") then
-                        if show_hudlist then
-                            managers.ehi_hudlist:CallLeftListItemFunction("Jammer", "AddJammer", tostring(self._unit:key()), battery_life, self._ehi_peer_id, false)
-                        end
-                    elseif show_hudlist then
-                        managers.ehi_hudlist:CallLeftListItemFunction("Jammer", "AddJammer", tostring(self._unit:key()), battery_life, self._ehi_peer_id, true)
-                    end
+                if self._ehi_local_peer and not managers.player:has_category_upgrade("ecm_jammer", "affects_pagers") then
                     return
                 elseif self._ehi_peer_id ~= 0 then
                     local peer = managers.network:session():peer(self._ehi_peer_id)
-                    if peer and peer._unit and peer._unit.base then
-                        if not peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers") then
-                            if show_hudlist then
-                                managers.ehi_hudlist:CallLeftListItemFunction("Jammer", "AddJammer", tostring(self._unit:key()), battery_life, self._ehi_peer_id, false)
-                            end
-                        elseif show_hudlist then
-                            managers.ehi_hudlist:CallLeftListItemFunction("Jammer", "AddJammer", tostring(self._unit:key()), battery_life, self._ehi_peer_id, true)
-                        end
+                    if peer and peer._unit and peer._unit.base and not peer._unit:base():upgrade_value("ecm_jammer", "affects_pagers") then
                         return
                     end
                 end
@@ -139,7 +123,14 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                     class = EHI.Waypoints.Warning
                 })
             end
-            if show_hudlist then
+        end
+    end)
+end
+if show_hudlist then
+    Hooks:PostHook(ECMJammerBase, "set_active", "EHI_HudList_ECMJammerBase_set_active", function(self, active, ...) ---@param active boolean3
+        if active then
+            local battery_life = self:battery_life()
+            if battery_life > 0 then
                 local blocks_pagers = false
                 if self._ehi_local_peer then
                     blocks_pagers = managers.player:has_category_upgrade("ecm_jammer", "affects_pagers")
@@ -152,19 +143,7 @@ if EHI:GetOption("show_equipment_ecmjammer") then
                 managers.ehi_hudlist:CallLeftListItemFunction("Jammer", "AddJammer", tostring(self._unit:key()), battery_life, self._ehi_peer_id, blocks_pagers)
             end
         end
-    end
-elseif show_hudlist then
-    original.set_active = ECMJammerBase.set_active
-    function ECMJammerBase:set_active(active, ...)
-        original.set_active(self, active, ...)
-        if active then
-            local battery_life = self:battery_life()
-            if battery_life <= 0 then
-                return
-            end
-            managers.ehi_hudlist:CallLeftListItemFunction("Jammer", "AddJammer", tostring(self._unit:key()), battery_life, self._ehi_peer_id)
-        end
-    end
+    end)
 end
 
 if EHI:GetOption("show_equipment_ecmfeedback") and show_tracker then

@@ -1205,12 +1205,3 @@ function EHITracker:GetTrackerSize()
     end
     return self._bg_box:w() + (n * self._icon_gap_size_scaled)
 end
-
----@param create_f fun(panel: Panel, params: table): Panel
----@param animate_f fun(bg: Rect, total_t: number, start_color: Color)
-function EHITracker.SetCustomBGFunctions(create_f, animate_f)
-    CreateHUDBGBox = create_f
-    if EHITracker._anim_bg_attention then
-        EHITracker._anim_bg_attention = animate_f
-    end
-end

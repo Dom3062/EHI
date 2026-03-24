@@ -1963,7 +1963,7 @@ end
 
 ---@param params XPBreakdown
 function EHI:AddXPBreakdown(params)
-    if not EHI:GetOption("show_mission_xp_overview") or not managers.menu_component then
+    if self:IsPlayingCrimeSpree() or not EHI:GetOption("show_mission_xp_overview") or not managers.menu_component then
         return
     elseif not managers.menu_component._mission_briefing_gui then
         self:AddCallback("MissionBriefingGuiInit", function(gui) ---@param gui MissionBriefingGui

@@ -840,7 +840,8 @@ function FakeEHIHudlistManager:_init_right_list_items()
             },
             {
                 icon = {
-                    ehi = "pagers_used"
+                    ehi = "pagers_used",
+                    scale = 0.9
                 },
                 value = 4
             },
