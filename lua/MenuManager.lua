@@ -426,9 +426,13 @@ local function LoadMenusFromJsonFile(file_path, data_table)
         file:close()
         for _, content in ipairs(json.decode(file_content)) do
             local data = data_table
-            if content.global_params and content.global_params.settings and data then
-                for _, setting in ipairs(content.global_params.settings) do
-                    data = data[setting]
+            if content.global_params and (content.global_params.setting or content.global_params.settings) and data then
+                if content.global_params.setting then
+                    data = data[content.global_params.setting]
+                else
+                    for _, setting in ipairs(content.global_params.settings) do
+                        data = data[setting]
+                    end
                 end
             end
             CreateMenuFromJson(content, data)
