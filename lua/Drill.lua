@@ -24,7 +24,9 @@ local original = {}
 ---@param unit_key string
 ---@param autorepair boolean
 local function SetAutorepair(unit_key, autorepair)
-    managers.ehi_timer:SetAutorepair(unit_key, autorepair)
+    if managers.ehi_timer then
+        managers.ehi_timer:SetAutorepair(unit_key, autorepair)
+    end
     managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetAutorepair", unit_key, autorepair)
 end
 

@@ -1,3 +1,6 @@
+r382 (26. 03. 2026):
+Fixed a crash when Timers are disabled
+
 r381 (25. 03. 2026):
 Menu: Fixed an issue where buff options are not loaded correctly (visual issue)
 
