@@ -165,6 +165,7 @@ if EHI:GetOption("show_hudlist") then
     if EHI:GetHudlistOption("show_left_list") then
         dofile(EHI.LuaPath .. "hudlist/left_items.lua")
         EHILeftItemBase._parent = EHIHudlistManager._left_list
+        EHILeftItemBase._LIST_ICON_VISIBLE = EHI:GetHudlistOption("left_list_icon")
         EHILeftItemBase._BG_ALPHA = EHI:GetHudlistOption("left_list_bg_alpha")
         EHILeftItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
         EHILeftItemBase._PROGRESS = EHI:GetHudlistOption("left_list_progress")
@@ -227,6 +228,14 @@ if EHI:GetOption("show_hudlist") then
             else
                 EHILeftDeployableItem = nil ---@diagnostic disable-line
             end
+            if options.show_jammers then
+                self._left_list:AddItem(EHILeftJammerItem, self._panel, {
+                    id = "Jammer",
+                    icon = EHILeftJammerItem._ICON
+                })
+            else
+                EHILeftJammerItem = nil ---@diagnostic disable-line
+            end
             if options.show_ecm_retrigger then
                 self._left_list:AddItem(EHILeftJammerRetriggerItem, self._panel, {
                     id = "JammerRetrigger",
@@ -244,15 +253,6 @@ if EHI:GetOption("show_hudlist") then
                     })
                 else
                     EHILeftPagerItem = nil ---@diagnostic disable-line
-                end
-                if options.show_jammers then
-                    self._left_list:AddItem(EHILeftJammerItem, self._panel, {
-                        id = "Jammer",
-                        icon = EHILeftJammerItem._ICON,
-                        delete_on_alarm = true
-                    })
-                else
-                    EHILeftJammerItem = nil ---@diagnostic disable-line
                 end
                 if options.show_camera_loop and not _G.ch_settings then
                     self._left_list:AddItem(EHILeftCameraLoopItem, self._panel, {

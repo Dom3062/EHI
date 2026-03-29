@@ -1030,6 +1030,7 @@
     "ehi_hudlist_bg_color" : "Background Color",
     "ehi_hudlist_progress_alpha" : "Progress Alpha",
     "ehi_hudlist_progress_static" : "Static Progress",
+    "ehi_hudlist_left_list_icon" : "List Icon",
     "ehi_hudlist_item_color" : "Item Color",
     "ehi_hudlist_item_color_desc" : "Applies color to icon, text and progress",
     "ehi_hudlist_show_left_list" : "Show Left List",
@@ -1215,6 +1216,8 @@
 
     "ehi_other_show_floating_health_bar" : "Floating Health Bar",
     "ehi_other_show_floating_health_bar_desc" : "Shows a floating health bar when you aim at someone",
+
+    "ehi_other_show_floating_health_bar_in_loud_only" : "Disable Health Bars in Stealth",
 
     "ehi_other_show_floating_health_bar_style" : "Style",
     "ehi_other_show_floating_health_bar_style_1" : "PocoHud",

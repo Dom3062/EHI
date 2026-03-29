@@ -20,6 +20,7 @@
                 "ehi_left_list_bg_color_choice",
                 "ehi_left_list_progress_choice",
                 "ehi_left_list_progress_visibility_choice",
+                "ehi_left_list_icon_choice",
                 "ehi_left_list_item_color_choice",
                 "ehi_left_list_choice"
             ],
@@ -197,6 +198,21 @@
                 "call_hudlist_function": {
                     "f": "CallListFunction",
                     "params": [ "left", "UpdateProgressStatic" ]
+                }
+            }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_left_list_icon_choice",
+            "title": "ehi_hudlist_left_list_icon",
+            "callback": "ehi_set_item_value",
+            "value": "left_list_icon",
+            "default_value": true,
+            "parent": "ehi_hudlist_show_left_list_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateListIconVisibility" ]
                 }
             }
         },

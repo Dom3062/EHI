@@ -328,35 +328,6 @@
         },
         {
             "type": "toggle",
-            "id": "ehi_hudlist_left_list_show_pagers_choice",
-            "title": "ehi_show_enemy_count_show_pagers",
-            "callback": "ehi_set_item_value",
-            "value": "show_enemy_pagers",
-            "default_value": true,
-            "child": "ehi_hudlist_left_list_show_pagers_warning_color_choice",
-            "params": {
-                "call_hudlist_function": {
-                    "f": "CallListFunction",
-                    "params": [ "left", "UpdateItemEnabled", "Pager" ]
-                }
-            }
-        },
-        {
-            "type": "multiple_color_choice",
-            "id": "ehi_hudlist_left_list_show_pagers_warning_color_choice",
-            "title": "ehi_colors_warning",
-            "description": "ehi_hudlist_left_list_show_enemy_pagers_warning_color_desc",
-            "callback": "ehi_set_item_value",
-            "default_value": 3,
-            "value": "enemy_pager_warning_color",
-            "parent": "ehi_hudlist_left_list_show_pagers_choice"
-        },
-        {
-            "type": "divider",
-            "size": 20
-        },
-        {
-            "type": "toggle",
             "id": "ehi_hudlist_left_list_show_jammers_choice",
             "title": "ehi_hudlist_left_list_show_jammers",
             "callback": "ehi_set_item_value",
@@ -407,6 +378,35 @@
                     "params": [ "left", "UpdateItemEnabled", "JammerRetrigger" ]
                 }
             }
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_left_list_show_pagers_choice",
+            "title": "ehi_show_enemy_count_show_pagers",
+            "callback": "ehi_set_item_value",
+            "value": "show_enemy_pagers",
+            "default_value": true,
+            "child": "ehi_hudlist_left_list_show_pagers_warning_color_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "f": "CallListFunction",
+                    "params": [ "left", "UpdateItemEnabled", "Pager" ]
+                }
+            }
+        },
+        {
+            "type": "multiple_color_choice",
+            "id": "ehi_hudlist_left_list_show_pagers_warning_color_choice",
+            "title": "ehi_colors_warning",
+            "description": "ehi_hudlist_left_list_show_enemy_pagers_warning_color_desc",
+            "callback": "ehi_set_item_value",
+            "default_value": 3,
+            "value": "enemy_pager_warning_color",
+            "parent": "ehi_hudlist_left_list_show_pagers_choice"
         },
         {
             "type": "divider",

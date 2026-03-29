@@ -126,7 +126,7 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
     end
     if EHI:GetOption("show_floating_health_bar") then
         dofile(EHI.LuaPath .. "EHIHealthFloatManager.lua")
-        EHIHealthFloatManager:new(hud, panel)
+        EHIHealthFloatManager:new(panel)
     end
     if EHI:GetOption("show_floating_damage_popup") then
         dofile(EHI.LuaPath .. "EHIDamageFloatManager.lua")

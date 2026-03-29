@@ -1,3 +1,8 @@
+r383 (28. 03. 2026):
+Added options "List Icon" and "Disable Health Bars in Stealth"
+Hudlist - Left List - Jammers: List will stay active in loud
+Hudlist - Left List - Pagers: Fixed an issue where pager icon has warning color
+
 r382 (26. 03. 2026):
 Fixed a crash when Timers are disabled
 

@@ -27,7 +27,8 @@ function FakeEHILeftItemBase:init(panel, params, texture, texture_rect)
         progress_visibility = params.progress_visibility,
         scale = scale,
         top_text_enabled = params.top_text,
-        bottom_text_enabled = params.bottom_text
+        bottom_text_enabled = params.bottom_text,
+        list_icon = params.list_icon
     }
     local top_text, bottom_text = 0, 0
     if params.items then
@@ -57,7 +58,8 @@ function FakeEHILeftItemBase:init(panel, params, texture, texture_rect)
         w = icon_size,
         h = icon_size,
         texture = texture,
-        texture_rect = texture_rect
+        texture_rect = texture_rect,
+        visible = params.list_icon
     })
     self._items = {} ---@type FakeEHILeftItemBase.Item[]
     if params.items then
@@ -110,8 +112,11 @@ end
 
 ---@param scale number
 function FakeEHILeftItemBase:GetFirstItemStartX(scale)
-    local icon = self._panel:child("icon") ---@cast icon -?
-    return icon:x() + icon:w() + (10 * scale)
+    if self._params.list_icon then
+        local icon = self._panel:child("icon") ---@cast icon -?
+        return icon:x() + icon:w() + (10 * scale)
+    end
+    return 0
 end
 
 ---@param text Text
@@ -479,6 +484,13 @@ end
 
 ---@param visible boolean
 function FakeEHILeftItemBase:_UpdateTopText(visible)
+end
+
+---@param visible boolean
+function FakeEHILeftItemBase:UpdateListIconVisibility(visible)
+    self._panel:child("icon"):set_visible(visible)
+    self._params.list_icon = visible
+    self:Rescale(self._params.scale)
 end
 
 ---@param color_index integer

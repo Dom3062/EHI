@@ -1195,6 +1195,7 @@ local function LoadDefaultValues(self)
             left_list_progress_visibility = true,
             left_list_progress_alpha = 1,
             left_list_progress_static = false,
+            left_list_icon = true,
             left_list_item_color = 1,
             left_list =
             {
@@ -1360,6 +1361,7 @@ local function LoadDefaultValues(self)
         show_remaining_xp_to_100 = false,
         show_mission_xp_overview = true,
         show_floating_health_bar = true,
+        show_floating_health_bar_in_loud_only = false,
         show_floating_health_bar_style = 1, -- 1 = Poco; 2 = Circle; 3 = Rectangle
         show_floating_health_bar_style_poco_blur = true,
         show_floating_health_bar_converts = true,

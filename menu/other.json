@@ -124,6 +124,7 @@
             "value": "show_floating_health_bar",
             "default_value": true,
             "children" : [
+                "ehi_other_show_floating_health_bar_in_loud_only_choice",
                 "ehi_other_show_floating_health_bar_style_choice",
                 "ehi_other_show_floating_health_bar_converts_choice",
                 "ehi_other_show_floating_health_bar_civilians_choice",
@@ -141,6 +142,15 @@
             "children_f": {
                 "ehi_other_show_floating_health_bar_style_poco_blur_choice": "ehi_show_floating_health_bar_style_poco_blur_available_1"
             }
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_in_loud_only_choice",
+            "title": "ehi_other_show_floating_health_bar_in_loud_only",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_in_loud_only",
+            "default_value": false,
+            "parent" : "ehi_other_show_floating_health_bar_choice"
         },
         {
             "type": "multiple_choice",

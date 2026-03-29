@@ -5,22 +5,43 @@ end
 
 ---@class EHIHealthFloatManager
 EHIHealthFloatManager = {}
----@param hud HUDManager
 ---@param hud_panel Panel
-function EHIHealthFloatManager:new(hud, hud_panel)
+function EHIHealthFloatManager:new(hud_panel)
     self._unit_slot_mask = World:make_slot_mask(1, 8, 11, 12, 14, 16, 22, 24, 25, 26, 33, 34, 35)
     if EHI:GetOption("show_floating_health_bar_civilians") then -- +Slot mask 21
         self._unit_slot_mask = self._unit_slot_mask + managers.slot:get_mask("civilians")
     end
-    self:post_init(hud, hud_panel)
+    if EHI:GetOption("show_floating_health_bar_in_loud_only") and tweak_data.levels:IsStealthAvailable() then
+        self._update_loop_enabled = false
+        EHI:AddOnAlarmCallback(function(dropin)
+            self._update_loop_enabled = true
+            self:AddToUpdate()
+        end)
+    else
+        self._update_loop_enabled = true
+    end
+    self:post_init(hud_panel)
+end
+
+function EHIHealthFloatManager:AddToUpdate()
+    if self._update_loop_enabled and (self._player_camera or self._player_movement) and not self._updating then
+        managers.hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+        self._updating = true
+    end
+end
+
+function EHIHealthFloatManager:RemoveFromUpdate()
+    if self._updating then
+        managers.hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+        self._updating = false
+    end
 end
 
 if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
     local mvector3 = mvector3
     dofile(EHI.LuaPath .. "manager/health_float/EHIHealthFloatPoco.lua")
-    ---@param hud HUDManager
     ---@param hud_panel Panel
-    function EHIHealthFloatManager:post_init(hud, hud_panel)
+    function EHIHealthFloatManager:post_init(hud_panel)
         self._ws = managers.gui_data:create_fullscreen_workspace()
         self._pnl = self._ws:panel():panel({ layer = 4 })
         self._ww = self._pnl:w()
@@ -28,14 +49,14 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         self._resolution_changed_clbk = managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
         self._floats = {} ---@type table<userdata, EHIHealthFloatPoco>
         self._smokes = {} ---@type table<userdata, Vector3>
-        Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_QuickSmokeGrenade_EHIHealthFloatManager_detonate", function(base, ...)
+        Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_EHIHealthFloatManager_QuickSmokeGrenade_detonate", function(base, ...)
             local unit = base._unit
             self._smokes[unit:key()] = unit:position()
         end)
-        Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_QuickSmokeGrenade_EHIHealthFloatManager_destroy", function(base, ...)
+        Hooks:PostHook(QuickSmokeGrenade, "destroy", "EHI_EHIHealthFloatManager_QuickSmokeGrenade_destroy", function(base, ...)
             self._smokes[base._unit:key()] = nil
         end)
-        Hooks:PreHook(TeamAIBase, "_register", "EHI_TeamAIBase_register", function(base, ...)
+        Hooks:PreHook(TeamAIBase, "_register", "EHI_EHIHealthFloatManager_TeamAIBase_register", function(base, ...)
             if base._registered or not self._floats then
                 return
             end
@@ -47,7 +68,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             end
             self._floats[key] = EHIHealthFloatPocoTeamAI:new(key, base._unit, 0)
         end)
-        Hooks:PreHook(TeamAIBase, "unregister", "EHI_TeamAIBase_unregister", function(base, ...)
+        Hooks:PreHook(TeamAIBase, "unregister", "EHI_EHIHealthFloatManager_TeamAIBase_unregister", function(base, ...)
             if not base._registered or not self._floats then
                 return
             end
@@ -85,15 +106,15 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
             end
             base.__ehi_poco_float = nil
         end
-        Hooks:PostHook(SentryGunMovement, "on_activated", "EHI_SentryGunMovement_EHIHealthFloatManager_on_activated", HookEnemyTurret)
-        Hooks:PostHook(SentryGunMovement, "load", "EHI_SentryGunMovement_EHIHealthFloatManager_load", function(base, save_data)
+        Hooks:PostHook(SentryGunMovement, "on_activated", "EHI_EHIHealthFloatManager_SentryGunMovement_on_activated", HookEnemyTurret)
+        Hooks:PostHook(SentryGunMovement, "load", "EHI_EHIHealthFloatManager_SentryGunMovement_load", function(base, save_data)
             if not (save_data and save_data.movement) then
                 return
             end
             HookEnemyTurret(base)
         end)
-        Hooks:PostHook(SentryGunMovement, "on_death", "EHI_SentryGunMovement_EHIHealthFloatManager_on_death", DestroyEnemyTurret)
-        Hooks:PostHook(SentryGunMovement, "pre_destroy", "EHI_SentryGunMovement_EHIHealthFloatManager_pre_destroy", DestroyEnemyTurret)
+        Hooks:PostHook(SentryGunMovement, "on_death", "EHI_EHIHealthFloatManager_SentryGunMovement_on_death", DestroyEnemyTurret)
+        Hooks:PostHook(SentryGunMovement, "pre_destroy", "EHI_EHIHealthFloatManager_SentryGunMovement_pre_destroy", DestroyEnemyTurret)
         EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, local_peer, peer_id) ---@param unit UnitEnemy
             local key = unit:key()
             if not self._floats then
@@ -110,14 +131,14 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
                 self._floats[key]:force_delete(true)
             end
         end)
-        Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIHealthFloatManager_init", function(base, ...)
+        Hooks:PostHook(PlayerMovement, "init", "EHI_EHIHealthFloatManager_PlayerMovement_init", function(base, ...)
             self._player_movement = base
         end)
-        Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHIHealthFloatManager_init", function(base, ...)
+        Hooks:PostHook(PlayerCamera, "init", "EHI_EHIHealthFloatManager_PlayerCamera_init", function(base, ...)
             self._player_camera = base._camera_object
-            hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+            self:AddToUpdate()
             base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
-                hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+                self:RemoveFromUpdate()
                 self._player_movement = nil
                 self._player_camera = nil
                 self:update_last()
@@ -187,7 +208,8 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         end
         local pos = UnitVector
         mvector3.set(pos, unit:position())
-        local head_pos = unit:movement() and unit:movement():m_head_pos()
+        local movement = unit:movement()
+        local head_pos = movement and movement:m_head_pos()
         if head_pos then
             mvector3.set_z(pos, head_pos.z)
         end
@@ -245,7 +267,8 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
                 unit = unit:parent() --[[@as UnitObject ]]
             end
             if unit and unit:movement() then
-                local cHealth = unit:character_damage() and unit:character_damage()._health
+                local damage = unit:character_damage()
+                local cHealth = damage and damage._health
                 if cHealth and cHealth > 0 then
                     self:Float(unit, t)
                 end
@@ -259,40 +282,38 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
 else
     if EHI:GetOption("show_floating_health_bar_style") == 2 then
         dofile(EHI.LuaPath .. "manager/health_float/EHIHealthFloatCircle.lua")
-        ---@param hud HUDManager
         ---@param hud_panel Panel
-        function EHIHealthFloatManager:post_init(hud, hud_panel)
+        function EHIHealthFloatManager:post_init(hud_panel)
             self._float = EHIHealthFloatCircle:new(hud_panel)
             EHI:AddOnCustodyCallback(function(custody_state)
                 self._float:SetInCustody(custody_state)
             end)
-            Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIHealthFloatManager_init", function(base, ...)
+            Hooks:PostHook(PlayerMovement, "init", "EHI_EHIHealthFloatManager_PlayerMovement_init", function(base, ...)
                 self._player_movement = base
                 base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
-                    hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+                    self:RemoveFromUpdate()
                     self._player_movement = nil
                     self:update_last()
                 end)
-                hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+                self:AddToUpdate()
             end)
         end
     else
         dofile(EHI.LuaPath .. "manager/health_float/EHIHealthFloatRect.lua")
-        ---@param hud HUDManager
         ---@param hud_panel Panel
-        function EHIHealthFloatManager:post_init(hud, hud_panel)
+        function EHIHealthFloatManager:post_init(hud_panel)
             self._float = EHIHealthFloatRect:new(hud_panel)
             EHI:AddOnCustodyCallback(function(custody_state)
                 self._float:SetInCustody(custody_state)
             end)
-            Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIHealthFloatManager_init", function(base, ...)
+            Hooks:PostHook(PlayerMovement, "init", "EHI_EHIHealthFloatManager_PlayerMovement_init", function(base, ...)
                 self._player_movement = base
                 base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
-                    hud:RemoveEHIUpdator("EHI_HealthFloat_Update")
+                    self:RemoveFromUpdate()
                     self._player_movement = nil
                     self:update_last()
                 end)
-                hud:AddEHIUpdator("EHI_HealthFloat_Update", self)
+                self:AddToUpdate()
             end)
         end
     end
@@ -316,7 +337,8 @@ else
                 unit = unit:parent() --[[@as UnitEnemy?]]
             end
             if unit and unit:movement() then
-                local cHealth = unit:character_damage() and unit:character_damage()._health
+                local damage = unit:character_damage()
+                local cHealth = damage and damage._health
                 if cHealth then
                     self._float:SetUnit(unit, t)
                 end

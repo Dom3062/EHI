@@ -1030,6 +1030,7 @@
     "ehi_hudlist_bg_color" : "Barva průhlednosti",
     "ehi_hudlist_progress_alpha" : "Průhlednost postupu",
     "ehi_hudlist_progress_static" : "Statický postup",
+    "ehi_hudlist_left_list_icon" : "Ikona listu",
     "ehi_hudlist_item_color" : "Barva sledovačů",
     "ehi_hudlist_item_color_desc" : "Aplikuje barvu na ikonu, text a postup",
     "ehi_hudlist_show_left_list" : "Zobrazovat levý list",
@@ -1215,6 +1216,8 @@
 
     "ehi_other_show_floating_health_bar" : "Zdraví NPC",
     "ehi_other_show_floating_health_bar_desc" : "Zobrazuje zdraví NPC když na něho zamíříš",
+
+    "ehi_other_show_floating_health_bar_in_loud_only" : "Zakázat zdraví NPC v režimu Stealth",
 
     "ehi_other_show_floating_health_bar_style" : "Styl",
     "ehi_other_show_floating_health_bar_style_1" : "PocoHud",

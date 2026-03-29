@@ -81,7 +81,8 @@ function EHILeftItemBase:init(panel, params, texture, texture_rect)
         h = self._sizes.w,
         texture = texture,
         texture_rect = texture_rect,
-        color = self._PROGRESS_COLOR
+        color = self._PROGRESS_COLOR,
+        visible = self._LIST_ICON_VISIBLE
     })
     self._items = {} ---@type table<userdata, EHILeftItemBase.Item>
     self:RegisterListeners(params)
@@ -107,8 +108,11 @@ function EHILeftItemBase:OnAlarm()
 end
 
 function EHILeftItemBase:GetFirstItemStartX()
-    local icon = self._panel:child("icon") ---@cast icon -?
-    return icon:x() + icon:w() + self._sizes.first_item_offset
+    if self._LIST_ICON_VISIBLE then
+        local icon = self._panel:child("icon") ---@cast icon -?
+        return icon:x() + icon:w() + self._sizes.first_item_offset
+    end
+    return 0
 end
 
 ---@return EHILeftItemBase.Item
@@ -1551,7 +1555,7 @@ function EHILeftPagerItem:_AddItem(panel, y, text)
         h = icon_size,
         texture = texture,
         texture_rect = texture_rect,
-        color = self._warning_color
+        color = self._PROGRESS_COLOR
     })
     text:set_text(self:FormatTime(self._PAGER_T))
     self:FitTheText(text)

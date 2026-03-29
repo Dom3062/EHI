@@ -144,6 +144,7 @@ function FakeEHILeftList:init(x, y, aspect_ratio, color_index, progress)
     self._progress_alpha = EHI:GetHudlistOption("left_list_progress_alpha")
     self._progress_visibility = EHI:GetHudlistOption("left_list_progress_visibility")
     self._scale = EHI:GetHudlistOption("left_list_scale") --[[@as number]]
+    self._list_icon = EHI:GetHudlistOption("left_list_icon")
     self._preview_enabled = EHI:GetOption("show_preview_hudlist_left_list")
     self._list_enabled = EHI:GetHudlistOption("show_left_list")
     self._y_offset = 2 * self._scale
@@ -160,6 +161,7 @@ function FakeEHILeftList:AddItem(class, panel, params)
     params.progress_visibility = self._progress_visibility
     params.scale = self._scale
     params.visible = self._preview_enabled
+    params.list_icon = self._list_icon
     params.list_enabled = self._list_enabled
     params.color_index = self._color_index
     params.progress = self._progress
@@ -190,6 +192,10 @@ end
 function FakeEHILeftList:UpdateItemTopText(visible, id)
     self:CallItemFunction(id, "UpdateTopText", visible)
     self:SetItemsPos(self._x, self._y)
+end
+
+function FakeEHILeftList:UpdateListIconVisibility(visibility)
+    self:RunOnAllItems("UpdateListIconVisibility", visibility)
 end
 
 ---@class FakeEHIRightList : FakeEHIList
@@ -253,12 +259,6 @@ end
 
 ---@class FakeEHIHudlistManager
 FakeEHIHudlistManager = {}
-FakeEHIHudlistManager.AspectRatio =
-{
-    _16_10 = 1,
-    _4_3 = 2,
-    Other = 3
-}
 FakeEHIHudlistManager._convert_safe_rect_to_full = tweak_data.ehi.shared.ConvertSafeRectToFull
 FakeEHIHudlistManager._get_local_peer_color = tweak_data.ehi.functions.GetLocalPeerColor
 FakeEHIHudlistManager._get_other_peer_color = tweak_data.ehi.functions.GetOtherPeerColor
@@ -272,7 +272,6 @@ function FakeEHIHudlistManager:new(panel, aspect_ratio)
     {
         time = EHI:GetOption("time_format")
     }
-    self._aspect_ratio = aspect_ratio
     local left_x_offset, left_y_offset = tweak_data.ehi.shared.ConvertSafeRectToFull(EHI:GetHudlistOption("left_list_x"), EHI:GetHudlistOption("left_list_y"), aspect_ratio)
     local right_x_offset, right_y_offset = tweak_data.ehi.shared.ConvertSafeRectToFull(EHI:GetHudlistOption("right_list_x"), EHI:GetHudlistOption("right_list_y"), aspect_ratio)
     dofile(EHI.LuaPath .. "menu/FakeEHIHudlistLeftItems.lua")
@@ -441,6 +440,33 @@ function FakeEHIHudlistManager:_init_left_list_items()
     })
     do
         local icon = {
+            skills = { 1, 4 }
+        }
+        self._left_list:AddItem(FakeEHILeftJammerItem, self._panel, {
+            id = "Jammer",
+            icon = icon,
+            items =
+            {
+                {
+                    icon = icon,
+                    progress = math.rand(25, 30),
+                    icon_color = self._get_local_peer_color(),
+                    bottom_text = true
+                },
+                {
+                    icon = icon,
+                    progress = math.rand(25, 30),
+                    icon_color = self._get_other_peer_color(),
+                    bottom_text = true
+                }
+            },
+            enabled = options.show_jammers,
+            affects_pager_color_index = options.jammer_affects_pager,
+            bottom_text = true
+        })
+    end
+    do
+        local icon = {
             skills = { 6, 2 }
         }
         self._left_list:AddItem(FakeEHILeftItemBase, self._panel, {
@@ -483,33 +509,6 @@ function FakeEHIHudlistManager:_init_left_list_items()
         enabled = options.show_enemy_pagers,
         bottom_text = true
     })
-    do
-        local icon = {
-            skills = { 1, 4 }
-        }
-        self._left_list:AddItem(FakeEHILeftJammerItem, self._panel, {
-            id = "Jammer",
-            icon = icon,
-            items =
-            {
-                {
-                    icon = icon,
-                    progress = math.rand(25, 30),
-                    icon_color = self._get_local_peer_color(),
-                    bottom_text = true
-                },
-                {
-                    icon = icon,
-                    progress = math.rand(25, 30),
-                    icon_color = self._get_other_peer_color(),
-                    bottom_text = true
-                }
-            },
-            enabled = options.show_jammers,
-            affects_pager_color_index = options.jammer_affects_pager,
-            bottom_text = true
-        })
-    end
     if not _G.ch_settings then
         local icon = {
             ehi = "camera_loop"
