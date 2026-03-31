@@ -79,10 +79,11 @@ function EHIAssaultManager:init_finalize()
         EHI:AddOnSpawnedCallback(function()
             local modifier = managers.modifiers:GetModifier("ModifierAssaultExtender", "crime_spree")
             if modifier and EHIAssaultTracker then
+                -- Crime-Spree Rogue Like mod uses 2 separate values instead of 1 in Vanilla (duration_deduction is from CSRL)
                 EHIAssaultTracker._CRIME_SPREE =
                 {
                     duration = modifier:value("duration") * 0.01,
-                    deduction = modifier:value("deduction") * 0.01,
+                    deduction = (modifier:value("duration_deduction") or modifier:value("deduction")) * 0.01,
                     max_hostages = modifier:value("max_hostages")
                 }
                 local function f()

@@ -1,3 +1,6 @@
+r384 (31. 03. 2026):
+Crime Spree: Fixed a possible crash in spawn
+
 r383 (28. 03. 2026):
 Added options "List Icon" and "Disable Health Bars in Stealth"
 Hudlist - Left List - Jammers: List will stay active in loud
