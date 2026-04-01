@@ -23,6 +23,16 @@ function EHIPermanentBuffTracker:post_init(params)
                     end
                 end
             end)
+        elseif params.team_ai_skill_check.category == "skill" then
+            EHI:AddCallback(EHI.CallbackMessage.TeamAISkillChange, function(skill, operation)
+                if skill == params.team_ai_skill_check.upgrade then
+                    if operation == "add" then
+                        self:AddVisibleBuff()
+                    else
+                        self:RemoveVisibleBuff()
+                    end
+                end
+            end)
         end
     end
 end

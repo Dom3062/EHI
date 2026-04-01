@@ -1328,6 +1328,57 @@ function EHITweakData:new(tweak_data)
                 prerequisite = "EHISkillRefreshBuffTracker",
                 class = "EHIDamageReductionBuffTracker"
             }
+        },
+        team_crew_ai_flashbang =
+        {
+            text = "AI",
+            group = "cooldown",
+            texture = tweak_data.hud_icons.ability_6.texture,
+            texture_rect = tweak_data.hud_icons.ability_6.texture_rect,
+            option = "flashbang_ai",
+            permanent =
+            {
+                option = "flashbang_ai_persistent",
+                team_ai_skill_check =
+                {
+                    category = "skill",
+                    upgrade = "crew_ai_flashbang"
+                }
+            }
+        },
+        team_crew_ai_counter_strike =
+        {
+            text = "AI",
+            group = "cooldown",
+            texture = tweak_data.hud_icons.ability_7.texture,
+            texture_rect = tweak_data.hud_icons.ability_7.texture_rect,
+            option = "counter_strike_ai",
+            permanent =
+            {
+                option = "counter_strike_ai_persistent",
+                team_ai_skill_check =
+                {
+                    category = "skill",
+                    upgrade = "crew_ai_counter_strike"
+                }
+            }
+        },
+        team_crew_ai_counter_tase =
+        {
+            text = "AI",
+            group = "cooldown",
+            texture = tweak_data.hud_icons.ability_8.texture,
+            texture_rect = tweak_data.hud_icons.ability_8.texture_rect,
+            option = "counter_tase_ai",
+            permanent =
+            {
+                option = "counter_tase_ai_persistent",
+                team_ai_skill_check =
+                {
+                    category = "skill",
+                    upgrade = "crew_ai_counter_tase"
+                }
+            }
         }
     }
     self.buff.standstill_omniscience_initial = deep_clone(self.buff.standstill_omniscience)

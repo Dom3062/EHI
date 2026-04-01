@@ -147,7 +147,7 @@ original.start_timer = PlayerManager.start_timer
 function PlayerManager:start_timer(key, duration, ...)
     if key == "replenish_grenades" then
         managers.ehi_buff:AddBuff("AbilityCooldown", duration)
-    elseif key == "team_crew_inspire" then
+    elseif key == "team_crew_inspire" or key == "team_crew_ai_flashbang" or key == "team_crew_ai_counter_strike" or key == "team_crew_ai_counter_tase" then
         managers.ehi_buff:SyncAndAddBuff(key, duration)
     end
     original.start_timer(self, key, duration, ...)
