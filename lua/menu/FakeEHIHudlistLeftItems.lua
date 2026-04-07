@@ -1,5 +1,8 @@
 ---@alias FakeEHILeftItemBase.Item { panel: Panel, progress: Bitmap[][], progress_to_update: Bitmap[], progress_bg: Bitmap[], progress_only: Bitmap[], fake_pos: integer?, progress_value: number, progress_raw_value: number, progress_bar: Color, allow_color_change: boolean, allow_icon_color_change: boolean }
 
+local template1 = Idstring("VertexColorTexturedRadial")
+local template2 = Idstring("VertexColorTexturedRadialFlex")
+
 ---@class FakeEHILeftItemBase
 ---@field new fun(self: self, panel: Panel, params: table, texture: string, texture_rect: TextureRect): self
 FakeEHILeftItemBase = class()
@@ -18,18 +21,23 @@ function FakeEHILeftItemBase:init(panel, params, texture, texture_rect)
     self._visible = params.visible
     self._list_enabled = params.list_enabled
     local scale = params.scale or 1
-    local bg_alpha = params.bg_alpha or 1
-    local progress_alpha = params.progress_alpha or 1
-    local color_index = params.color_index
     self._params = {
+        x = params.x,
         progress = params.progress or 1,
         bg_color = params.bg_color,
         progress_visibility = params.progress_visibility,
         scale = scale,
         top_text_enabled = params.top_text,
         bottom_text_enabled = params.bottom_text,
-        list_icon = params.list_icon
+        list_icon = params.list_icon,
+        anim_right_to_left = params.right_to_left,
+        top_offset = 16,
+        bottom_offset = 16,
+        item_w = 32 * scale
     }
+    if self._params.anim_right_to_left and not self._params.list_icon then
+        self.__add_x_item_offset = true
+    end
     local top_text, bottom_text = 0, 0
     if params.items then
         for _, data in ipairs(params.items) do
@@ -43,8 +51,6 @@ function FakeEHILeftItemBase:init(panel, params, texture, texture_rect)
     end
     self._params.top_text = top_text
     self._params.bottom_text = bottom_text
-    self._params.top_offset = 16 --top_text > 0 and 16 or 0
-    self._params.bottom_offset = 16 --bottom_text > 0 and 16 or 0
     self._panel = panel:panel({
         y = 80,
         w = panel:w(),
@@ -63,6 +69,9 @@ function FakeEHILeftItemBase:init(panel, params, texture, texture_rect)
     })
     self._items = {} ---@type FakeEHILeftItemBase.Item[]
     if params.items then
+        local bg_alpha = params.bg_alpha or 1
+        local progress_alpha = params.progress_alpha or 1
+        local color_index = params.color_index
         for i, data in ipairs(params.items) do
             self:AddItem(i, data, scale, bg_alpha, progress_alpha, color_index)
         end
@@ -76,11 +85,13 @@ function FakeEHILeftItemBase:Rescale(scale)
     local h = 16 * scale
     local icon_offset = 4 * scale
     local icon_size = 24 * scale
+    self._params.item_w = w
     self._panel:set_h(64 * scale)
-    self._panel:child("icon"):set_y(h)
-    self._panel:child("icon"):set_size(w, w)
+    local main_icon = self._panel:child("icon") ---@cast main_icon -?
+    main_icon:set_y(h)
+    main_icon:set_size(w, w)
     local panel_h = self._panel:h()
-    local icon_y = self._panel:child("icon"):y()
+    local icon_y = main_icon:y()
     for i, item in ipairs(self._items) do
         local panel = item.panel
         panel:set_size(w, panel_h)
@@ -112,11 +123,18 @@ end
 
 ---@param scale number
 function FakeEHILeftItemBase:GetFirstItemStartX(scale)
+    local x, w = self._params.x, self._params.item_w
+    local first_item_offset = 10 * scale
     if self._params.list_icon then
-        local icon = self._panel:child("icon") ---@cast icon -?
-        return icon:x() + icon:w() + (10 * scale)
+        if self._params.anim_right_to_left then
+            return x - first_item_offset
+        else
+            return x + w + first_item_offset
+        end
+    elseif self._params.anim_right_to_left then
+        return x + w - first_item_offset
     end
-    return 0
+    return x
 end
 
 ---@param text Text
@@ -180,9 +198,24 @@ function FakeEHILeftItemBase:GetOffset()
 end
 
 ---@param x number
+function FakeEHILeftItemBase:SetX(x)
+    if self.__add_x_item_offset then
+        x = x + self._params.item_w
+    end
+    self._params.x = x
+    self._panel:child("icon"):set_x(x)
+    self:_SetX()
+end
+
+function FakeEHILeftItemBase:_SetX()
+    for i, item in ipairs(self._items) do
+        self:SortAddedItem(item.panel, item.fake_pos or i, self._params.scale)
+    end
+end
+
 ---@param y number
-function FakeEHILeftItemBase:SetPosition(x, y)
-    self._panel:set_position(x, y - self:GetOffset())
+function FakeEHILeftItemBase:SetY(y)
+    self._panel:set_y(y - self:GetOffset())
 end
 
 ---@param i integer
@@ -346,14 +379,16 @@ function FakeEHILeftItemBase:SortAddedItem(panel, pos, scale)
     else
         local offset = 5 * scale
         pos = pos - 1
-        panel:set_x(x + (panel:w() + offset) * pos)
+        if self._params.anim_right_to_left then
+            panel:set_x(x - (panel:w() + offset) * pos)
+        else
+            panel:set_x(x + (panel:w() + offset) * pos)
+        end
     end
 end
 
 ---@param static boolean
 function FakeEHILeftItemBase:SetProgressStatic(static)
-    local template1 = Idstring("VertexColorTexturedRadial")
-    local template2 = Idstring("VertexColorTexturedRadialFlex")
     for _, item in ipairs(self._items) do
         item.progress_bar.r = static and 1 or item.progress_value
         for _, bitmap in ipairs(item.progress_only) do
@@ -490,7 +525,23 @@ end
 function FakeEHILeftItemBase:UpdateListIconVisibility(visible)
     self._panel:child("icon"):set_visible(visible)
     self._params.list_icon = visible
-    self:Rescale(self._params.scale)
+    self:_SetX()
+end
+
+---@param alignment boolean
+function FakeEHILeftItemBase:UpdateAlignment(alignment)
+    local previous_state = self._params.anim_right_to_left
+    self._params.anim_right_to_left = alignment
+    if previous_state == alignment then -- Nothing changed
+        return
+    elseif previous_state and not alignment then -- Went from RtL to LtR
+        self:_SetX()
+        self.__add_x_item_offset = nil
+    else -- Went from LtR to RtL
+        self._params.x = self._params.x + self._params.item_w
+        self:_SetX()
+        self.__add_x_item_offset = true
+    end
 end
 
 ---@param color_index integer

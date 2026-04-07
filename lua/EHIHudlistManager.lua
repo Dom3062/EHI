@@ -90,11 +90,13 @@ end
 ---@param params table
 function EHILeftList:AddItem(class, panel, params)
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(params.icon)
+    params.x = self._options.x
     params.scale = self._options.scale
     local item = class:new(panel, params, texture, texture_rect)
     self._items[params.id] = item
     table.insert(self._itemized_list, item)
-    item._panel:set_x(self._options.x)
+    item._panel:child("icon"):move(self._options.x, 0)
+    item:CacheFrequentlyUsedValues()
 end
 
 ---@param new_item EHILeftItemBase
@@ -145,6 +147,12 @@ function EHIRightList:_set_items_y()
     end
 end
 
+function EHIRightList:Spawned()
+    for _, item in ipairs(self._itemized_list) do ---@cast item -EHILeftItemBase
+        item:Spawned()
+    end
+end
+
 ---@class EHIHudlistManager
 local EHIHudlistManager = {}
 EHIHudlistManager._left_list = EHILeftList:new()
@@ -166,6 +174,7 @@ if EHI:GetOption("show_hudlist") then
         dofile(EHI.LuaPath .. "hudlist/left_items.lua")
         EHILeftItemBase._parent = EHIHudlistManager._left_list
         EHILeftItemBase._LIST_ICON_VISIBLE = EHI:GetHudlistOption("left_list_icon")
+        EHILeftItemBase._ANIM_RIGHT_TO_LEFT = EHI:GetHudlistOption("left_list_alignment") == 2
         EHILeftItemBase._BG_ALPHA = EHI:GetHudlistOption("left_list_bg_alpha")
         EHILeftItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
         EHILeftItemBase._PROGRESS = EHI:GetHudlistOption("left_list_progress")
@@ -290,8 +299,7 @@ if EHI:GetOption("show_hudlist") then
             if options.show_units then
                 local is_holdout = tweak_data.levels:IsLevelSkirmish()
                 local item = self._right_list:AddItem(EHIRightUnitItem, self._panel, {
-                    id = "Unit",
-                    aggregate_enemies = options.unit_aggregate_enemies
+                    id = "Unit"
                 })
                 item:CreateItemsFromMap(is_holdout, options.unit_types)
             else
@@ -312,7 +320,8 @@ if EHI:GetOption("show_hudlist") then
             end
             if options.show_special_items then
                 local item = self._right_list:AddItem(EHIRightSpecialItemsItem, self._panel, {
-                    id = "Special"
+                    id = "Special",
+                    update_on_spawn = true
                 })
                 item:CreateItemsFromMap(options.special_items_type)
             else
@@ -349,6 +358,9 @@ if EHI:GetOption("show_hudlist") then
         EHI:AddOnAlarmCallback(function(dropin)
             EHIHudlistManager._left_list:SwitchToLoudMode()
             EHIHudlistManager._right_list:SwitchToLoudMode()
+        end)
+        EHI:AddOnSpawnedCallback(function()
+            EHIHudlistManager._right_list:Spawned()
         end)
     end)
 end

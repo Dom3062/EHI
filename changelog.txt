@@ -1,3 +1,25 @@
+r386 (07. 04. 2026):
+Beneath the Mountain: Fixed an issue where one green crate is still counted as crate with possible loot (start area; Hudlist)
+Buffs: Fixed an issue where Ability buff tracker gets removed whenever you are downed
+Health Float: Added option to show or hide "Boss" enemy type
+Health Float (Rectangle): Fixed an issue with missing name for Female Biker
+Hudlist - Left List:
+- Added option "Alignment"
+- Deployables: Fixed an issue where ignored deployable from start is not properly reflected in the list
+- Deployables: Fixed an issue where deployable or deployable group is not visible
+Hudlist - Right List:
+- Units: Added persistent state and icon options to Regular Enemies
+- Units: Added "Heavy SWAT Snipers"
+- Units: Fixed an issue where number of enemies is not properly updated when Minions item is disabled
+- Units: Fixed an issue where Female biker is counted as unknown enemy
+- Units: Fixed issues with converted Heavy SWAT Snipers
+- Units: Fixed animation issue in persistent items and their count is 0
+- Units: Fixes to persistent state in Crime Spree and Holdout gamemodes
+- Loot: Unopened weapon cases will show up as potentional loot
+- Stealth Info: Fixed an issue where 0 pager count does not apply warning color on spawn
+Watchdogs Day 2: Fixed incorrect amount or missing loot in Trackers or Hudlist
+Watchdogs Day 2: Fixed incorrect maximum XP on Hard difficulty or lower in Mission Briefing
+
 r385 (01. 04. 2026):
 Updated to U244
 

@@ -329,6 +329,66 @@
             "default_value": true
         },
         {
+            "type": "toggle",
+            "id": "ehi_buffs_other_flashbang_ai_choice",
+            "title": "ehi_buffs_other_flashbang_ai",
+            "description": "ehi_buffs_skills_cooldown",
+            "callback": "ehi_set_item_value",
+            "value": "flashbang_ai",
+            "child": "ehi_buffs_other_flashbang_ai_persistent_choice",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_flashbang_ai_persistent_choice",
+            "title": "ehi_buffs_other_flashbang_ai_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "flashbang_ai_persistent",
+            "default_value": false,
+            "parent" : "ehi_buffs_other_flashbang_ai_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_counter_strike_ai_choice",
+            "title": "ehi_buffs_other_counter_strike_ai",
+            "description": "ehi_buffs_skills_cooldown",
+            "callback": "ehi_set_item_value",
+            "value": "counter_strike_ai",
+            "child": "ehi_buffs_other_counter_strike_ai_persistent_choice",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_counter_strike_ai_persistent_choice",
+            "title": "ehi_buffs_other_counter_strike_ai_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "counter_strike_ai_persistent",
+            "default_value": false,
+            "parent" : "ehi_buffs_other_counter_strike_ai_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_counter_tase_ai_choice",
+            "title": "ehi_buffs_other_counter_tase_ai",
+            "description": "ehi_buffs_skills_cooldown",
+            "callback": "ehi_set_item_value",
+            "value": "counter_tase_ai",
+            "child": "ehi_buffs_other_counter_tase_ai_persistent_choice",
+            "default_value": true
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_buffs_other_counter_tase_ai_persistent_choice",
+            "title": "ehi_buffs_other_counter_tase_ai_persistent",
+            "description": "ehi_buffs_skills_permanent",
+            "callback": "ehi_set_item_value",
+            "value": "counter_tase_ai_persistent",
+            "default_value": false,
+            "parent" : "ehi_buffs_other_counter_tase_ai_choice"
+        },
+        {
             "type": "divider",
             "size": 10
         },

@@ -40,7 +40,6 @@
                 "b": 255
             },
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_hw_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -60,10 +59,10 @@
             "callback" : "ehi_set_item_value",
             "value": "dozer_count_hw_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
-            "default_value": 5,
+            "default_value": 4,
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_hw_choice"
         },
         {
@@ -115,7 +114,6 @@
                 "b": 255
             },
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_medic_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -135,10 +133,10 @@
             "callback" : "ehi_set_item_value",
             "value": "dozer_count_medic_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
-            "default_value": 6,
+            "default_value": 5,
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_medic_choice"
         },
         {
@@ -190,7 +188,6 @@
                 "b": 255
             },
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_mini_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -210,10 +207,10 @@
             "callback" : "ehi_set_item_value",
             "value": "dozer_count_mini_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
-            "default_value": 7,
+            "default_value": 6,
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_mini_choice"
         },
         {
@@ -265,7 +262,6 @@
                 "b": 255
             },
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_skull_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -285,10 +281,10 @@
             "callback" : "ehi_set_item_value",
             "value": "dozer_count_skull_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
-            "default_value": 8,
+            "default_value": 7,
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_skull_choice"
         },
         {
@@ -341,7 +337,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_black_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_black_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -360,10 +355,10 @@
             "callback" : "ehi_set_item_value",
             "value": "dozer_count_black_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
-            "default_value": 9,
+            "default_value": 8,
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_black_choice"
         },
         {
@@ -416,7 +411,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_green_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_green_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -435,10 +429,10 @@
             "callback" : "ehi_set_item_value",
             "value": "dozer_count_green_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
-            "default_value": 10,
+            "default_value": 9,
             "parent": "ehi_hudlist_right_list_unit_types_dozer_count_green_choice"
         },
         {

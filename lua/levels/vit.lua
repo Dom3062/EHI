@@ -115,7 +115,10 @@ local other =
     [100109] = EHI:AddAssaultDelay({ control = 30 }),
     [103357] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = true }, -- Inside an airlock
     [103087] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = false }, -- Enabled preferreds after looking at the vault
-    [103130] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = true } -- Left PEOC
+    [103130] = { special_function = SF.CustomCode2, f = ToggleAssaultTracker, arg = true }, -- Left PEOC
+    [104056] = EHI:AddCustomCode(function(self)
+        managers.ehi_hudlist:CallRightListItemFunction("Unit", "uno")
+    end)
 }
 if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     local sniper_count = EHI:GetValueBasedOnDifficulty({

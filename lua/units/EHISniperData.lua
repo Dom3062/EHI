@@ -12,15 +12,28 @@
 ---@class EHISniperBase
 EHISniperBase = class()
 EHISniperBase._enabled = false
+EHISniperBase._spawned_listener = ListenerHolder:new()
 ---@param unit UnitEnemy
 function EHISniperBase:init(unit)
     unit:set_extension_update_enabled(Idstring("ehi"), false)
     if self._enabled then
         unit:character_damage():add_listener("EHISniperBase", "death", callback(self, self, "die"))
+        self._spawned_listener:call()
         managers.ehi_tracker:IncreaseCount("Snipers")
     end
 end
 
 function EHISniperBase:die(unit, damage_info)
     managers.ehi_tracker:DecreaseCount("Snipers")
+end
+
+---@param key string
+---@param f function
+function EHISniperBase.register_spawn_listener(key, f)
+    EHISniperBase._spawned_listener:add(key, f)
+end
+
+---@param key string
+function EHISniperBase.unregister_spawn_listener(key)
+    EHISniperBase._spawned_listener:remove(key)
 end

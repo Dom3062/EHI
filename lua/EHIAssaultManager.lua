@@ -16,6 +16,7 @@ function EHIAssaultManager.GetTrackerName()
 end
 
 function EHIAssaultManager:init_finalize()
+    self._assault_number = 0
     self._on_sustain_listener = ListenerHolder:new()
     self._playing_from_start = true
     self._internal = {}
@@ -86,11 +87,20 @@ function EHIAssaultManager:init_finalize()
                     deduction = (modifier:value("duration_deduction") or modifier:value("deduction")) * 0.01,
                     max_hostages = modifier:value("max_hostages")
                 }
-                local function f()
+                self._minions = {} ---@type table<userdata, boolean>
+                EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, ...) ---@param unit UnitEnemy
+                    local key = unit:key()
+                    if self._minions[key] then
+                        return
+                    end
+                    self._minions[key] = true
                     managers.ehi_tracker:CallFunction(self._assault_time.name, "OnMinionCountChanged")
-                end
-                EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, f)
-                EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, f)
+                end)
+                EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, ...) ---@param key userdata
+                    if table.remove_key(self._minions, key) then
+                        managers.ehi_tracker:CallFunction(self._assault_time.name, "OnMinionCountChanged")
+                    end
+                end)
             end
         end)
         self:AddOnSustainListener("EHIAssaultManager", function(duration)
@@ -198,6 +208,7 @@ function EHIAssaultManager:StartAssaultCountdown(t, block_if_exists)
         time = t,
         diff_visual = self._diff,
         hint = self._assault_delay.hint,
+        assault_number = self._assault_number,
         class = EHI.Trackers.Assault
     }, 0)
 end
@@ -229,8 +240,11 @@ function EHIAssaultManager:AssaultStart()
     if self._assault_delay.hide_on_delete then
         managers.ehi_tracker:CallFunction(self._assault_delay.name, "Hide")
     end
-    if not self._internal.is_assault and self._assault_start_callback then
-        self._assault_start_callback:dispatch()
+    if not self._internal.is_assault then
+        self._assault_number = self._assault_number + 1
+        if self._assault_start_callback then
+            self._assault_start_callback:dispatch(self._assault_number)
+        end
     end
     if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._internal.is_assault or self._assault_block then
         self._internal.is_assault = true
@@ -241,7 +255,7 @@ function EHIAssaultManager:AssaultStart()
                 diff = self._diff,
                 endless_assault = self._endless_assault,
                 hint = self._assault_time.hint,
-                current_assault_number = self._current_assault_number,
+                assault_number = self._assault_number,
                 class = EHI.Trackers.Assault
             }, 0)
         end
@@ -260,14 +274,14 @@ function EHIAssaultManager:AssaultStart()
             diff = self._diff,
             endless_assault = self._endless_assault,
             hint = self._assault_time.hint,
-            current_assault_number = self._current_assault_number,
+            assault_number = self._assault_number,
             class = EHI.Trackers.Assault
         }, 0)
     end
     self._internal.is_assault = true
 end
 
----@param f function
+---@param f fun(assault_number: integer)
 function EHIAssaultManager:AddAssaultStartCallback(f)
     self._assault_start_callback = self._assault_start_callback or CallbackEventHandler:new()
     self._assault_start_callback:add(f)
@@ -278,9 +292,6 @@ function EHIAssaultManager:AssaultEnd()
         self._assault_end_callback:dispatch()
     end
     self._internal.is_assault = false
-    if self._is_skirmish then
-        self._current_assault_number = (self._current_assault_number or 0) + 1
-    end
     if self._assault_block or self._assault_delay.blocked then
         return
     elseif managers.ehi_tracker:Exists(self._assault_time.name) then
@@ -296,7 +307,7 @@ function EHIAssaultManager:AssaultEnd()
             id = self._assault_delay.name,
             diff = self._diff,
             hint = self._assault_delay.hint,
-            current_assault_number = self._current_assault_number,
+            assault_number = self._assault_number,
             class = EHI.Trackers.Assault
         }, 0)
     end
@@ -309,6 +320,15 @@ end
 function EHIAssaultManager:AddAssaultEndCallback(f)
     self._assault_end_callback = self._assault_end_callback or CallbackEventHandler:new()
     self._assault_end_callback:add(f)
+end
+
+---@param f fun(assault_number: integer)
+function EHIAssaultManager:AddAssaultNumberSyncCallback(f)
+    if self._vanilla_synced_from_host then
+        return
+    end
+    self._assault_number_sync_callback = self._assault_number_sync_callback or CallbackEventHandler:new()
+    self._assault_number_sync_callback:add(f)
 end
 
 ---@param f fun(mode: "normal"|"endless", element_id: number)
@@ -365,12 +385,14 @@ end
 ---@param assault_number number
 ---@param in_assault boolean
 function EHIAssaultManager:SetCurrentAssaultNumber(assault_number, in_assault)
-    if not self._is_skirmish then
-        return
-    elseif assault_number == 0 or not in_assault then
-        assault_number = assault_number + 1
+    self._assault_number = assault_number
+    self._internal.is_assault = in_assault
+    if self._assault_number_sync_callback then
+        self._assault_number_sync_callback:dispatch(assault_number)
+        self._assault_number_sync_callback:clear()
+        self._assault_number_sync_callback = nil
     end
-    self._current_assault_number = assault_number
+    self._vanilla_synced_from_host = true
     self:CallFunction("SetProgress", assault_number)
 end
 

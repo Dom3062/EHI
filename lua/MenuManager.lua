@@ -285,15 +285,29 @@ local function CreateMenuFromJson(content, data_table)
                 end
             elseif i_type == "color" then
                 local default_value = item.default_value
-                local settings_table = item.params.call_hudlist_function and EHI.settings or EHI.settings.colors
-                if item.params.setting then
-                elseif item.params.settings then
-                    for _, setting in ipairs(item.params.settings) do
-                        settings_table = settings_table[setting]
+                local settings_table = EHI.settings
+                if item.params then
+                    if item.params.setting then
+                        value = settings_table[item.params.setting]
+                    elseif item.params.settings then
+                        for _, setting in ipairs(item.params.settings) do
+                            settings_table = settings_table[setting]
+                        end
+                        value = settings_table
                     end
+                elseif content.global_params then
+                    if content.global_params.setting then
+                        value = settings_table[content.global_params.setting]
+                    elseif content.global_params.settings then
+                        for _, setting in ipairs(content.global_params.settings) do
+                            settings_table = settings_table[setting]
+                        end
+                        value = settings_table
+                    end
+                else -- If no load params exists
                     value = settings_table
                 end
-                value = value or default_value
+                value = value[item.value] or default_value
                 local data =
                 {
                     type = "EHIMenuItemColor",
@@ -679,19 +693,21 @@ function MenuCallbackHandler:ehi_set_item_color()
     if item and color then
         item:set_value(color)
         local params = item:parameters()
-        local settings_table = params.call_hudlist_function and EHI.settings or EHI.settings.colors
-        if params.setting and not params.settings then
+        local settings_table = EHI.settings
+        if params.setting then
+            settings_table = settings_table[params.setting]
         elseif params.settings then
             for _, setting in ipairs(params.settings) do
                 settings_table = settings_table[setting]
             end
         end
+        settings_table = settings_table[params.option]
         settings_table.r = color.r
         settings_table.g = color.g
         settings_table.b = color.b
         if params.call_tracker_function then
             tracker_preview:CallFunction(params.call_tracker_function.tracker or params.option, params.call_tracker_function.f, Color(255, color.r, color.g, color.b) / 255)
-        elseif params.call_hudlist_function and not params.call_hudlist_function.dummy then
+        elseif params.call_hudlist_function then
             if params.call_hudlist_function.custom_f then
                 if params.call_hudlist_function.custom_f.list == "left" then
                     hudlist_preview._left_list:CallItemFunction(params.call_hudlist_function.custom_f.id, params.call_hudlist_function.custom_f.f, EHI:GetColor(color))
@@ -839,6 +855,7 @@ function MenuCallbackHandler:ehi_right_list_units_set_aggregated(item)
     local items_to_disable = {
         ehi_hudlist_right_list_unit_types_dozer_count_choice = true,
         ehi_hudlist_right_list_unit_types_sniper_count_choice = true,
+        ehi_hudlist_right_list_unit_types_heavy_sniper_count_choice = true,
         ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice = true,
         ehi_hudlist_right_list_unit_types_taser_count_choice = true,
         ehi_hudlist_right_list_unit_types_medic_count_choice = true,
@@ -866,6 +883,7 @@ function MenuCallbackHandler:ehi_right_list_units_set_all_units(item)
         ehi_hudlist_right_list_unit_types_dozer_count_choice = true,
         ehi_hudlist_right_list_unit_types_dozer_count_separate_choice = true,
         ehi_hudlist_right_list_unit_types_sniper_count_choice = true,
+        ehi_hudlist_right_list_unit_types_heavy_sniper_count_choice = true,
         ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice = true,
         ehi_hudlist_right_list_unit_types_taser_count_choice = true,
         ehi_hudlist_right_list_unit_types_medic_count_choice = true,

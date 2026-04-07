@@ -20,6 +20,20 @@ function EHIHealthFloatManager:new(hud_panel)
     else
         self._update_loop_enabled = true
     end
+    for _, type in ipairs({ "hector_boss", "biker_boss", "chavez_boss", "drug_lord_boss", "triad_boss", "deep_boss" }) do -- Manually tag boss characters that do not have any special tag
+        local tweak = tweak_data.character[type]
+        if tweak then
+            if tweak.tags then -- In case a future update adds tags to these characters
+                table.insert(tweak.tags, "ehi_special")
+                table.insert(tweak.tags, "ehi_boss")
+            else
+                tweak.tags = {
+                    "ehi_special",
+                    "ehi_boss"
+                }
+            end
+        end
+    end
     self:post_init(hud_panel)
 end
 

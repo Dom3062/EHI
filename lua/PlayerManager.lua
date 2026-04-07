@@ -361,7 +361,7 @@ if EHI:GetBuffDeckOption("leech", "ampule") then
     original.force_end_copr_ability = PlayerManager.force_end_copr_ability
     function PlayerManager:force_end_copr_ability(...)
         original.force_end_copr_ability(self, ...)
-        managers.ehi_buff:RemoveBuff("copr_ability")
+        managers.ehi_buff:CallFunction("copr_ability", "CheckForRemoval")
     end
 end
 

@@ -818,7 +818,7 @@
             },
             "parent" : "ehi_show_sniper_tracker_choice",
             "params" : {
-                "settings" : [ "tracker_waypoint", "sniper_chance" ],
+                "settings" : [ "colors", "tracker_waypoint" ],
                 "call_tracker_function" : {
                     "f": "SetIconColor",
                     "tracker": "show_sniper_tracker"
@@ -838,7 +838,7 @@
             },
             "parent" : "ehi_show_sniper_tracker_choice",
             "params" : {
-                "settings" : [ "tracker_waypoint", "sniper_count" ],
+                "settings" : [ "colors", "tracker_waypoint" ],
                 "call_tracker_function" : {
                     "f": "SetIconColor",
                     "tracker": "show_sniper_tracker"

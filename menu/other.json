@@ -49,7 +49,7 @@
             },
             "parent": "ehi_other_show_mission_xp_overview_choice",
             "params" : {
-                "settings" : [ "mission_briefing", "loot_secured" ]
+                "settings" : [ "colors", "mission_briefing" ]
             }
         },
         {
@@ -65,7 +65,7 @@
             },
             "parent": "ehi_other_show_mission_xp_overview_choice",
             "params" : {
-                "settings" : [ "mission_briefing", "total_xp" ]
+                "settings" : [ "colors", "mission_briefing" ]
             }
         },
         {
@@ -81,7 +81,7 @@
             },
             "parent": "ehi_other_show_mission_xp_overview_choice",
             "params" : {
-                "settings" : [ "mission_briefing", "optional" ]
+                "settings" : [ "colors", "mission_briefing" ]
             }
         },
         {
@@ -137,6 +137,7 @@
                 "ehi_other_show_floating_health_bar_special_enemies_sniper_choice",
                 "ehi_other_show_floating_health_bar_special_enemies_medic_choice",
                 "ehi_other_show_floating_health_bar_special_enemies_turret_choice",
+                "ehi_other_show_floating_health_bar_special_enemies_boss_choice",
                 "ehi_other_show_floating_health_bar_special_enemies_other_choice"
             ],
             "children_f": {
@@ -282,6 +283,15 @@
             "title": "ehi_other_show_floating_health_bar_special_enemies_turret",
             "callback": "ehi_set_item_value",
             "value": "show_floating_health_bar_special_enemies_turret",
+            "default_value": true,
+            "parent" : "ehi_other_show_floating_health_bar_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_health_bar_special_enemies_boss_choice",
+            "title": "ehi_other_show_floating_health_bar_special_enemies_boss",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_health_bar_special_enemies_boss",
             "default_value": true,
             "parent" : "ehi_other_show_floating_health_bar_choice"
         },
@@ -602,7 +612,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "bag_contour", "light" ]
+                "settings" : [ "colors", "bag_contour" ]
             },
             "parent" : "ehi_other_show_colored_bag_contour_choice"
         },
@@ -618,7 +628,7 @@
                 "b": 40
             },
             "params" : {
-                "settings" : [ "bag_contour", "heavy" ]
+                "settings" : [ "colors", "bag_contour" ]
             },
             "parent" : "ehi_other_show_colored_bag_contour_choice"
         },
@@ -634,7 +644,7 @@
                 "b": 100
             },
             "params" : {
-                "settings" : [ "bag_contour", "body" ]
+                "settings" : [ "colors", "bag_contour" ]
             },
             "parent" : "ehi_other_show_colored_bag_contour_choice"
         },

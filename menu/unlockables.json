@@ -58,7 +58,7 @@
             },
             "parent": "ehi_show_achievement_choice",
             "params" : {
-                "settings" : [ "unlockables", "achievement" ],
+                "settings" : [ "colors", "unlockables" ],
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }
@@ -283,7 +283,7 @@
             "color_type" : "unlockables",
             "parent": "ehi_show_trophies_choice",
             "params" : {
-                "settings" : [ "unlockables", "trophy" ],
+                "settings" : [ "colors", "unlockables" ],
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }
@@ -405,7 +405,7 @@
             },
             "parent": "ehi_show_dailies_choice",
             "params" : {
-                "settings" : [ "unlockables", "sidejob" ],
+                "settings" : [ "colors", "unlockables" ],
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }
@@ -512,7 +512,7 @@
             },
             "parent": "ehi_show_events_choice",
             "params" : {
-                "settings" : [ "unlockables", "event" ],
+                "settings" : [ "colors", "unlockables" ],
                 "call_tracker_function" : {
                     "f": "SetIconColor"
                 }

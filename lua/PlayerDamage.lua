@@ -197,7 +197,7 @@ if EHI:GetBuffDeckOption("stoic", "duration") then
     end
     original.clear_delayed_damage = PlayerDamage.clear_delayed_damage
     function PlayerDamage:clear_delayed_damage(...)
-        managers.ehi_buff:RemoveBuff("damage_control")
+        managers.ehi_buff:CallFunction("damage_control", "CheckForRemoval")
         return original.clear_delayed_damage(self, ...)
     end
 end

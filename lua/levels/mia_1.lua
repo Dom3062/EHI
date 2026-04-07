@@ -232,6 +232,15 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104289] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[104303] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:GetHudlistAndListOption("right_list", "show_loot") then
+    -- Disables crates in the basement
+    local tbl = {}
+    local f = { f = "IgnorePotentionalCarry" }
+    for i = 9000, 16200, 400 do
+        tbl[EHI:GetInstanceUnitID(100008, i)] = f
+    end
+    EHI.Unit:UpdateHudlistUnitsNoCheck(tbl)
+end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Unit:IgnoreCarryInHudlist(104526) -- Money bundle under the ground near starting area (motel)
 

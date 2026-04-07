@@ -63,6 +63,7 @@ function EHIRightItemBase:init(panel, params)
     })
     self._delete_on_alarm = params.delete_on_alarm
     self._update_on_alarm = params.update_on_alarm
+    self._update_on_spawn = params.update_on_spawn
     self:RegisterListeners(params)
 end
 
@@ -79,6 +80,15 @@ function EHIRightItemBase:SwitchToLoudMode()
 end
 
 function EHIRightItemBase:OnAlarm()
+end
+
+function EHIRightItemBase:Spawned()
+    if self._update_on_spawn then
+        self:OnSpawn()
+    end
+end
+
+function EHIRightItemBase:OnSpawn()
 end
 
 ---@param id string
@@ -408,35 +418,34 @@ function EHIRightItemBase:_update_items_visibility()
 end
 
 ---@param item EHIRightItemBase.Item
-function EHIRightItemBase:_set_item_ignored(item)
+---@param no_reorganization boolean?
+---@return boolean?
+function EHIRightItemBase:_set_item_ignored(item, no_reorganization)
     if item.ignore then
         return
     end
+    local i = item.i
     item.panel:parent():remove(item.panel)
+    item.i = nil
     item.panel = nil
     item.progress = nil
     item.progress_bar = nil
     item.text = nil
     item.anims = nil
     item.data = nil
+    item.visible = nil
     item.ignore = true
-    table.remove(self._itemized_items, item.i)
-    item.i = nil
-    self:_update_items_visibility()
-end
-
-function EHIRightItemBase:AddToUpdate()
-    if not self._update_created and self._update_callback then
-        managers.hud:add_updator(self._update_id, self._update_callback)
-        self._update_created = true
+    table.remove(self._itemized_items, i)
+    for _, itm in ipairs(self._itemized_items) do
+        if i < itm.i then -- Reposition other items that were created after our now destroyed item
+            itm.i = itm.i - 1
+        end
     end
-end
-
-function EHIRightItemBase:RemoveFromUpdate()
-    if self._update_created then
-        managers.hud:remove_updator(self._update_id)
-        self._update_created = false
+    if item.count > 0 and not no_reorganization then
+        self:_update_items_visibility()
     end
+    item.count = nil
+    return true
 end
 
 function EHIRightItemBase:UnregisterListeners()
@@ -500,6 +509,7 @@ EHIRightUnitItem._UNITS = {
     triad = "enemy",
     mobster = "enemy",
     biker = "enemy",
+    biker_female = "enemy",
     biker_escape = "enemy",
     tank = "enemy",
     tank_green = "enemy",
@@ -539,8 +549,9 @@ EHIRightUnitItem._UNITS = {
 }
 EHIRightUnitItem._TWEAK_NAME_TO_STATS_NAME = {}
 function EHIRightUnitItem:RegisterListeners(params)
+    self._minions_without_snipers = 0
     self._minions = 0
-    self._minions_key = {}
+    self._minions_key = {} ---@type table<userdata, { is_heavy_zeal_sniper: boolean }?>
     self._police_hostages = 0
     self._civilian_hostages = 0
     self._enemy_turrets = 0
@@ -575,14 +586,28 @@ function EHIRightUnitItem:RegisterListeners(params)
     EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded, function(unit, ...) ---@param unit UnitEnemy
         local key = unit:key()
         if not self._minions_key[key] then
-            self._minions_key[key] = true
+            local data = {}
+            local base = unit:base()
+            if base and base._tweak_table == "heavy_swat_sniper" and self._items.sniper_heavy then
+                data.is_heavy_zeal_sniper = true
+                self:EnemyDespawned("heavy_swat_sniper", "heavy_swat_sniper") -- Subtract the amount as the converted unit is Heavy ZEAL Sniper (the item only shows number of hostile units)
+            else
+                self._minions_without_snipers = self._minions_without_snipers + 1
+            end
             self._minions = self._minions + 1
+            self._minions_key[key] = data
             self:_update_converts(1)
         end
     end)
     EHI:AddCallback(EHI.CallbackMessage.OnMinionKilled, function(key, ...) ---@param key userdata
-        if table.remove_key(self._minions_key, key) then
+        local data = table.remove_key(self._minions_key, key)
+        if data then
             self._minions = math.max(self._minions - 1, 0)
+            if data.is_heavy_zeal_sniper then
+                self:EnemySpawned("heavy_swat_sniper", "heavy_swat_sniper") -- Add subtracted number here in killed callback for item to work properly
+            else
+                self._minions_without_snipers = math.max(self._minions_without_snipers - 1, 0)
+            end
             self:_update_converts(-1)
         end
     end)
@@ -599,6 +624,14 @@ function EHIRightUnitItem:RegisterListeners(params)
             self._t = 5
             self:AddToUpdate()
         end)
+        self._t = 0
+        self._update_callback = function(t, dt) ---@param dt number
+            self._t = self._t - dt
+            if self._t <= 0 then
+                self:RemoveFromUpdate()
+                self:_update_hostages_client()
+            end
+        end
     end
     Hooks:PostHook(GroupAIStateBase, "register_turret", "EHI_right_items_register_turret", function(...)
         self:EnemyTurretSpawned()
@@ -606,13 +639,19 @@ function EHIRightUnitItem:RegisterListeners(params)
     Hooks:PostHook(GroupAIStateBase, "unregister_turret", "EHI_right_items_unregister_turret", function(...)
         self:EnemyTurretDespawned()
     end)
-    self._t = 0
-    self._update_callback = function(t, dt) ---@param dt number
-        self._t = self._t - dt
-        if self._t <= 0 then
-            self:RemoveFromUpdate()
-            self:_update_hostages_client()
-        end
+end
+
+function EHIRightUnitItem:AddToUpdate()
+    if not self._update_created then
+        managers.hud:add_updator(self._update_id, self._update_callback)
+        self._update_created = true
+    end
+end
+
+function EHIRightUnitItem:RemoveFromUpdate()
+    if self._update_created then
+        managers.hud:remove_updator(self._update_id)
+        self._update_created = false
     end
 end
 
@@ -632,8 +671,47 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
     end
     local is_playing_safehouse_nightmare = Global.game_settings.level_id == "haunted"
     local stealth_required = tweak_data.levels:IsStealthRequired()
+    if managers.crime_spree:is_active() then
+        self._update_on_spawn = true
+        self._playing_crime_spree = true
+        self._crime_spree_modifiers = {
+            ModifierHeavySniper = "sniper_heavy",
+            ModifierSkulldozers = "dozer_skull",
+            ModifierShieldPhalanx = "phalanx",
+            ModifierDozerMinigun = "dozer_mini",
+            ModifierDozerMedic = "dozer_medic"
+        }
+    end
+    if is_holdout then
+        self._update_on_spawn = true
+        self._playing_holdout = true
+        self._assault_modifiers = {
+            [3] = "dozer_skull",
+            [5] = "sniper_heavy",
+            [7] = "dozer_medic",
+            [9] = "dozer_mini"
+        }
+        ---@param wave_number integer
+        local function activate_item_in_wave(wave_number)
+            local modifier = self._assault_modifiers[wave_number]
+            local item = modifier and self._items[modifier]
+            local data = item and item.data
+            if data and data.persistent and not item.force_visible then
+                item.force_visible = true
+                self:_update_items_visibility()
+            end
+        end
+        managers.ehi_assault:AddAssaultStartCallback(activate_item_in_wave)
+        if EHI.IsClient then
+            managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number)
+                for i = 0, assault_number, 1 do
+                    activate_item_in_wave(i)
+                end
+            end)
+        end
+    end
     self:CreateItem("ignore", { ignore = true })
-    local regular_icon = EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and {
+    local regular_icon = (EHI:IsDifficulty(EHI.Difficulties.DeathSentence) and u_options.regular_ds_icon == 2) and {
         ehi = EHI:GetAchievementIconString("gage5_6")
     } or { skills = { 6, 1 } }
     regular_icon.color = EHI:GetColor(u_options.regular_color)
@@ -791,7 +869,6 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
         end
         if u_options.sniper_count then
             self._UNITS.sniper = "sniper"
-            self._UNITS.heavy_swat_sniper = "sniper"
             handle_new_item_in_the_slot(self:CreateItem("sniper", {
                 icon = {
                     ehi = "sniper",
@@ -804,13 +881,28 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
                 not_itemized = true
             }), u_options.sniper_count_pos)
         end
+        if u_options.heavy_sniper_count then
+            self._UNITS.heavy_swat_sniper = "sniper_heavy"
+            handle_new_item_in_the_slot(self:CreateItem("sniper_heavy", {
+                icon = {
+                    ehi = "crime_spree_heavy_sniper",
+                    color = EHI:GetColor(u_options.heavy_sniper_count_color)
+                },
+                data = {
+                    persistent = u_options.heavy_sniper_count_persistent,
+                    check = false
+                },
+                not_itemized = true
+            }), u_options.heavy_sniper_count_pos)
+        end
         if u_options.marshal_sniper_count then
             local marshal_spawn_group = group_ai.enemy_spawn_groups and group_ai.enemy_spawn_groups.marshal_squad
             self._UNITS.marshal_marksman = "sniper_marshal"
             handle_new_item_in_the_slot(self:CreateItem("sniper_marshal", {
                 icon = {
                     ehi = EHI:GetAchievementIconString("cac_4"),
-                    color = EHI:GetColor(u_options.marshal_sniper_count_color)
+                    color = EHI:GetColor(u_options.marshal_sniper_count_color),
+                    scale = 0.95
                 },
                 data = {
                     persistent = u_options.marshal_sniper_count_persistent,
@@ -918,6 +1010,10 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
                     ehi = "crime_spree_shield_phalanx",
                     color = EHI:GetColor(u_options.phalanx_count_color)
                 },
+                data = {
+                    persistent = false,
+                    check = false
+                },
                 not_itemized = true
             }), u_options.phalanx_count_pos)
         end
@@ -956,7 +1052,7 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
         end
     end
     local list_count, offset = table.ehi_size(self._itemized_items), 1
-    for i = 1, 21, 1 do
+    for i = 1, 22, 1 do
         local slot = slots[i]
         if slot then -- Some slots could be nil as items could have moved or are not created at all
             local j = list_count + offset
@@ -991,6 +1087,7 @@ function EHIRightUnitItem:EnablePersistentSniperItem()
 end
 
 function EHIRightUnitItem:OnAlarm()
+    self._alarm = true
     local set_visible = 0
     for _, item in pairs(self._items) do
         local data = item.data
@@ -1004,13 +1101,73 @@ function EHIRightUnitItem:OnAlarm()
     end
 end
 
+function EHIRightUnitItem:OnSpawn()
+    if self._playing_crime_spree then
+        for mod, name in pairs(self._crime_spree_modifiers) do
+            if managers.modifiers:IsModifierActive(mod, "crime_spree") then
+                local item = self._items[name]
+                local data = item and item.data
+                if data then
+                    if self._alarm then
+                        if data.persistent and not item.force_visible then
+                            item.force_visible = true
+                        end
+                    elseif data.persistent and data.check == false then
+                        data.check = true
+                    end
+                end
+                if mod == "ModifierShieldPhalanx" then -- Disable persistent normal shields
+                    local shield = self._items.shield
+                    local d_shield = shield and shield.data
+                    if d_shield and d_shield.persistent then
+                        shield.force_visible = nil
+                        d_shield.check = false
+                    end
+                end
+            end
+        end
+        if self._alarm then
+            self:_update_items_visibility_fast()
+        end
+    end
+    if self._playing_holdout then
+        if managers.modifiers:IsModifierActive("ModifierShieldPhalanx", "skirmish_weekly") then
+            local phalanx_shield = self._items.phalanx
+            if phalanx_shield and phalanx_shield.data and phalanx_shield.data.persistent then
+                phalanx_shield.force_visible = true
+            end
+            local shield = self._items.shield
+            if shield and shield.data and shield.data.persistent then
+                shield.force_visible = nil
+            end
+            self:_update_items_visibility_fast()
+        end
+    end
+end
+
+--- Also called Unobtanium  
+--- Players entered the secret area in The White House (if they are worthy)
+function EHIRightUnitItem:uno()
+    local cloaker_id = self._items.cloaker and "cloaker" or "enemy"
+    local removed = 0
+    for key, item in pairs(self._items) do
+        if key ~= cloaker_id and self:_set_item_ignored(item, true) then
+            removed = removed + 1
+            break
+        end
+    end
+    if removed > 0 then
+        self:_update_items_visibility()
+    end
+end
+
 function EHIRightUnitItem:AnimateItem(item, previous_count, count)
     EHIRightUnitItem.super.AnimateItem(self, item, previous_count, count)
     if self._PROGRESS_STATIC then
         return
     elseif (count or item.count) == 0 and item.force_visible then
         item.progress:stop()
-        item.progress:animate(self._animate_item_down, item.text, item.progress_bar)
+        item.progress:animate(self._animate_item_down, item.text, item.progress_bar, self._PROGRESS_COLOR)
     end
 end
 
@@ -1024,7 +1181,7 @@ function EHIRightUnitItem:SetEnemyCount()
     end
     local en = self._items.enemy
     local previous_count = en.count
-    local final = count - self._minions - self._police_hostages + self._enemy_turrets
+    local final = count - self._minions_without_snipers - self._police_hostages + self._enemy_turrets
     en.count = final
     en.text:set_text(tostring(final))
     self:AnimateItem(en, previous_count, final)
@@ -1037,6 +1194,7 @@ end
 function EHIRightUnitItem:_update_converts(diff)
     local min = self._items.minion
     if min.ignore then
+        self:SetEnemyCount()
         return
     end
     min.count = self._minions
@@ -1214,7 +1372,6 @@ end
 ---@class EHIRightLootItem : EHIRightItemBase
 ---@field super EHIRightItemBase
 EHIRightLootItem = class(EHIRightItemBase)
-EHIRightLootItem._update_id = "EHIRightLootItem"
 EHIRightLootItem._DEFERRED_GROUPS =
 {
     money = { text = { name = "Money" }, icon = { ehi = "equipment_plates" } },
@@ -1319,13 +1476,11 @@ EHIRightLootItem._LOOT =
     corp_prototype = "prototype"
 }
 EHIRightLootItem._IGNORE_LOOT = { "vehicle_falcogini" }
-EHIRightLootItem._POTENTIAL_LOOT = table.set("crate_loot", "crate_loot_crowbar", "crate_loot_close")
+EHIRightLootItem._POTENTIAL_LOOT = table.set("crate_loot", "crate_loot_crowbar", "crate_loot_close", "weapon_case", "weapon_case_axis_z")
 EHIRightLootItem._IGNORE_CRATE_IN_LEVELS = table.set(
     "election_day_2", -- Election Day D2 (Warehouse)
-    "mia_1", -- Hotline Miami Day 1
     "pal", -- Counterfeit
     "pbr2", -- Birth of Sky
-    "born", -- The Biker Heist Day 1
     "moon" -- Stealing Xmas
 )
 EHIRightLootItem._BAG_ICON = { texture = "guis/textures/pd2/hud_tabs", texture_rect = { 32, 33, 32, 32 } }
@@ -1350,7 +1505,7 @@ function EHIRightLootItem:RegisterListeners(params)
                     self:_refresh_item(carry_data, 1)
                 else
                     self._queued_loot[key] = unit
-                    self:AddToUpdate()
+                    call_on_next_update(self._refresh_on_next_update, true)
                 end
             elseif carry_data then
                 self:_refresh_item(carry_data, -1)
@@ -1368,7 +1523,7 @@ function EHIRightLootItem:RegisterListeners(params)
         local preplanning = tweak_data.preplanning
         self._DEFERRED_GROUPS.potentional_loot = { text = { name = "Crate" }, icon = { texture = preplanning.gui.type_icons_path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.ranc_marked_crate.icon) } }
         self._LOOT.potentional_loot = "potentional_loot"
-        Hooks:PreHook(UseInteractionExt, "set_active", "EHI_UseInteractionExt_EHIRightLootItem_set_active", function(interact, active, ...) ---@param active boolean
+        Hooks:PreHook(UseInteractionExt, "set_active", "EHI_EHIRightLootItem_potentional_loot_UseInteractionExt_set_active", function(interact, active, ...) ---@param active boolean
             if active and interact:disabled() then
                 return
             elseif self._POTENTIAL_LOOT[interact.tweak_data] then
@@ -1380,23 +1535,18 @@ function EHIRightLootItem:RegisterListeners(params)
             end
         end)
     end
-    self._update_callback = callback(self, self, "update")
-end
-
----@param t nil
----@param dt number
-function EHIRightLootItem:update(t, dt)
-    for key, unit in pairs(self._queued_loot) do
-        if alive(unit) then
-            local carry_data = unit:carry_data()
-            if carry_data then
-                self._loot[key] = carry_data:carry_id()
-                self:_refresh_item(carry_data, 1)
+    self._refresh_on_next_update = function()
+        for key, unit in pairs(self._queued_loot) do
+            if alive(unit) then
+                local carry_data = unit:carry_data()
+                if carry_data then
+                    self._loot[key] = carry_data:carry_id()
+                    self:_refresh_item(carry_data, 1)
+                end
             end
+            self._queued_loot[key] = nil
         end
-        self._queued_loot[key] = nil
     end
-    self:RemoveFromUpdate()
 end
 
 function EHIRightLootItem:CreateItem(id, params)
@@ -1483,9 +1633,23 @@ function EHIRightLootItem:ColorItemsBasedOnTheirWeight(light, heavy, body)
         self._DEFERRED_GROUPS[new_group] = deep_clone(self._DEFERRED_GROUPS[group])
         self._LOOT[carry_id or new_group] = new_group
     end
+    ---@param group string
+    ---@param icon string|table
+    ---@param text string?
+    local function adjust_group(group, icon, text)
+        local def = self._DEFERRED_GROUPS[group]
+        def.text.name = text or def.text.name
+        if type(icon) == "table" then
+            def.icon = icon
+        else
+            def.icon.ehi = icon
+        end
+    end
     clone_group("weapon", "weapon_heavy", "weapon")
     clone_group("weapon", "weapon_scar")
+    adjust_group("weapon_scar", { texture = "guis/dlcs/trk/textures/pd2/achievements_atlas4", texture_rect = { 696, 702, 85, 34 } })
     clone_group("weapon", "weapon_glock")
+    adjust_group("weapon_glock", EHI:GetAchievementIconString("halloween_9"), "Pistols")
     clone_group("coke", "coke_medium", "cloaker_cocaine")
     clone_group("artifact", "artifact_statue")
     clone_group("gold", "gold_medium", "cloaker_gold")
@@ -1727,7 +1891,6 @@ EHIRightSpecialItemsItem._PICKUPS =
     hold_take_missing_animal_poster = "poster",
     press_take_folder = "poster",
     hold_take_vault_blueprint = "poster", --"blueprint",
-    take_pardons = "poster",--"pardons",
     take_jfr_briefcase = "briefcase",
     ranc_hold_take_stock = "weapon_part_stock",
     ranc_hold_take_receiver = "weapon_part_receiver",
@@ -1771,11 +1934,12 @@ function EHIRightSpecialItemsItem:RegisterListeners(params)
             self:_refresh_item(unit, -1)
         end
     end)
-    EHI:AddOnSpawnedCallback(function()
-        if self._itemized_items then -- Check if any item was created before spawn, otherwise it will crash
-            self:_update_items_visibility_fast() -- Removes items that are spawned and then hidden in the same frame during level init (item count is 0)
-        end
-    end)
+end
+
+function EHIRightSpecialItemsItem:OnSpawn()
+    if self._itemized_items then -- Check if any item was created before spawn, otherwise it will crash
+        self:_update_items_visibility_fast() -- Removes items that are spawned and then hidden in the same frame during level init (item count is 0)
+    end
 end
 
 ---@param types table
@@ -1830,7 +1994,6 @@ function EHIRightSpecialItemsItem:CreateItemsFromMap(types)
         self._PICKUPS.ranc_hold_take_stock = "ignore"
         self._PICKUPS.ranc_hold_take_receiver = "ignore"
         self._PICKUPS.ranc_hold_take_barrel = "ignore"
-        self._PICKUPS.take_pardons = "ignore"
     end
     if not types.collectables then
         for key, group in pairs(self._PICKUPS) do
@@ -1961,12 +2124,12 @@ function EHIRightStealthItem:RegisterListeners(params)
             self._alarm_enemies[name] = true
         end
     end
-    Hooks:PostHook(EnemyManager, "on_enemy_registered", "EHI_EnemyManager_EHIRightStealthItem_on_enemy_registered", function(em, unit, ...) ---@param unit UnitEnemy
+    Hooks:PostHook(EnemyManager, "on_enemy_registered", "EHI_EHIRightStealthItem_EnemyManager_on_enemy_registered", function(em, unit, ...) ---@param unit UnitEnemy
         if self._alarm_enemies[unit:base()._tweak_table] then
             self:EnemyWithAlarmSpawned()
         end
     end)
-    Hooks:PostHook(EnemyManager, "on_enemy_unregistered", "EHI_EnemyManager_EHIRightStealthItem_on_enemy_unregistered", function(em, unit, ...) ---@param unit UnitEnemy
+    Hooks:PostHook(EnemyManager, "on_enemy_unregistered", "EHI_EHIRightStealthItem_EnemyManager_on_enemy_unregistered", function(em, unit, ...) ---@param unit UnitEnemy
         if self._alarm_enemies[unit:base()._tweak_table] then
             self:EnemyWithAlarmDespawned()
         end
@@ -1982,14 +2145,14 @@ function EHIRightStealthItem:RegisterListeners(params)
         self:AlarmEnemyKilled(unit)
         unit:character_damage():remove_listener(self._callback_key)
     end
-    Hooks:PostHook(IntimitateInteractionExt, "_at_interact_start", "EHI_EHIRightStealthItem_at_interact_start", function(iie, ...)
+    Hooks:PostHook(IntimitateInteractionExt, "_at_interact_start", "EHI_EHIRightStealthItem_IntimitateInteractionExt__at_interact_start", function(iie, ...)
         if iie.tweak_data == "corpse_alarm_pager" and not iie._unit:character_damage():dead() then
             self:AlarmEnemyAnswered(iie._unit)
             iie._unit:base():add_destroy_listener(self._callback_key, PagerEnemyDestroyed)
             iie._unit:character_damage():add_listener(self._callback_key, { "death" }, PagerEnemyKilled)
         end
     end)
-    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_EHIRightStealthItem_sync_interacted", function(iie, peer, player, status, ...) ---@param status string|number
+    Hooks:PreHook(IntimitateInteractionExt, "sync_interacted", "EHI_EHIRightStealthItem_IntimitateInteractionExt_sync_interacted", function(iie, peer, player, status, ...) ---@param status string|number
         if iie.tweak_data == "corpse_alarm_pager" and (status == "started" or status == 1) and not iie._unit:character_damage():dead() then
             self:AlarmEnemyAnswered(iie._unit)
             iie._unit:base():add_destroy_listener(self._callback_key, PagerEnemyDestroyed)
@@ -2002,13 +2165,13 @@ function EHIRightStealthItem:RegisterListeners(params)
     })
     if EHI.IsHost then
         local max_pagers = self:GetAmountOfPagers()
-        Hooks:PostHook(GroupAIStateBase, "on_successful_alarm_pager_bluff", "EHI_GroupAIStateBase_EHIRightStealthItem_sync_pager_count", function(ai_state, ...)
+        Hooks:PostHook(GroupAIStateBase, "on_successful_alarm_pager_bluff", "EHI_EHIRightStealthItem_GroupAIStateBase_sync_pager_count", function(ai_state, ...)
             self:UpdatePagerCount(max_pagers - ai_state._nr_successful_alarm_pager_bluffs)
         end)
         self:UpdatePagerCount(max_pagers, true)
     else
         local max_pagers = -1 -- Disable pagers until clients are spawned
-        Hooks:PostHook(GroupAIStateBase, "sync_alarm_pager_bluff", "EHI_GroupAIStateBase_EHIRightStealthItem_sync_pager_count", function(ai_state, ...)
+        Hooks:PostHook(GroupAIStateBase, "sync_alarm_pager_bluff", "EHI_EHIRightStealthItem_GroupAIStateBase_sync_pager_count", function(ai_state, ...)
             if max_pagers >= 0 then
                 self:UpdatePagerCount(max_pagers - ai_state._nr_successful_alarm_pager_bluffs)
             end
@@ -2025,28 +2188,28 @@ function EHIRightStealthItem:RegisterListeners(params)
         icon = { ehi = "camera_loop" }
     })
     self._cameras = {} ---@type table<userdata, { enabled: boolean, active: boolean }>
-    Hooks:PostHook(SecurityCamera, "init", "EHI_SecurityCamera_EHIRightStealthItem_init", function(base, ...)
+    Hooks:PostHook(SecurityCamera, "init", "EHI_EHIRightStealthItem_SecurityCamera_init", function(base, ...)
         self._cameras[base._unit:key()] = { enabled = true, active = false }
         self:_update_camera_count()
     end)
-    Hooks:PostHook(SecurityCamera, "on_unit_set_enabled", "EHI_SecurityCamera_EHIRightStealthItem_on_unit_set_enabled", function(base, enabled, ...) ---@param enabled boolean
+    Hooks:PostHook(SecurityCamera, "on_unit_set_enabled", "EHI_EHIRightStealthItem_SecurityCamera_on_unit_set_enabled", function(base, enabled, ...) ---@param enabled boolean
         local cam = self._cameras[base._unit:key()]
         if cam then
             cam.enabled = enabled
             self:_update_camera_count()
         end
     end)
-    Hooks:PostHook(SecurityCamera, "set_update_enabled", "EHI_SecurityCamera_EHIRightStealthItem_set_update_enabled", function(base, state, ...) ---@param state boolean
+    Hooks:PostHook(SecurityCamera, "set_update_enabled", "EHI_EHIRightStealthItem_SecurityCamera_set_update_enabled", function(base, state, ...) ---@param state boolean
         local cam = self._cameras[base._unit:key()]
         if cam then
             cam.active = state
             self:_update_camera_count()
         end
     end)
-    Hooks:PostHook(SecurityCamera, "generate_cooldown", "EHI_SecurityCamera_EHIRightStealthItem_generate_cooldown", function(base, ...)
+    Hooks:PostHook(SecurityCamera, "generate_cooldown", "EHI_EHIRightStealthItem_SecurityCamera_generate_cooldown", function(base, ...)
         self:CameraDespawned(base._unit:key())
     end)
-    Hooks:PostHook(SecurityCamera, "destroy", "EHI_SecurityCamera_EHIRightStealthItem_destroy", function(base, ...)
+    Hooks:PostHook(SecurityCamera, "destroy", "EHI_EHIRightStealthItem_SecurityCamera_destroy", function(base, ...)
         self:CameraDespawned(base._unit:key())
     end)
     self:CreateItem("bodybags", {
@@ -2072,19 +2235,19 @@ function EHIRightStealthItem:RegisterListeners(params)
         self._bodybags[equipment._unit:key()] = nil
         self:UpdateBodyBagsAmount()
     end
-    Hooks:PostHook(BodyBagsBagBase, "init", "EHI_BodyBagsBagBase_EHIRightStealthItem_init", function(base, unit, ...) ---@param unit UnitDeployable
+    Hooks:PostHook(BodyBagsBagBase, "init", "EHI_EHIRightStealthItem_BodyBagsBagBase_init", function(base, unit, ...) ---@param unit UnitDeployable
         self._bodybags[unit:key()] = base._max_bodybag_amount
         self:UpdateBodyBagsAmount()
     end)
-    Hooks:PostHook(BodyBagsBagBase, "_set_visual_stage", "EHI_BodyBagsBagBase_EHIRightStealthItem__set_visual_stage", function(base, ...)
+    Hooks:PostHook(BodyBagsBagBase, "_set_visual_stage", "EHI_EHIRightStealthItem_BodyBagsBagBase__set_visual_stage", function(base, ...)
         if base._bodybag_amount > 0 then
             self._bodybags[base._unit:key()] = base._bodybag_amount
             self:UpdateBodyBagsAmount()
         end
     end)
-    Hooks:PreHook(BodyBagsBagBase, "_set_empty", "EHI_BodyBagsBagBase_EHIRightStealthItem__set_empty", destroy_equipment)
-    Hooks:PostHook(BodyBagsBagBase, "destroy", "EHI_BodyBagsBagBase_EHIRightStealthItem_destroy", destroy_equipment)
-    Hooks:PostHook(PlayerManager, "_set_body_bags_amount", "EHI_PlayerManager_EHIRightStealthItem_set_body_bags_amount", function(pm, ...)
+    Hooks:PreHook(BodyBagsBagBase, "_set_empty", "EHI_EHIRightStealthItem_BodyBagsBagBase__set_empty", destroy_equipment)
+    Hooks:PostHook(BodyBagsBagBase, "destroy", "EHI_EHIRightStealthItem_BodyBagsBagBase_destroy", destroy_equipment)
+    Hooks:PostHook(PlayerManager, "_set_body_bags_amount", "EHI_EHIRightStealthItem_PlayerManager__set_body_bags_amount", function(pm, ...)
         self._bodybags_amount = pm._local_player_body_bags
         self:UpdateBodyBagsAmount()
     end)
@@ -2092,21 +2255,21 @@ function EHIRightStealthItem:RegisterListeners(params)
 end
 
 function EHIRightStealthItem:UnregisterListeners()
-    Hooks:RemovePostHook("EHI_EnemyManager_EHIRightStealthItem_on_enemy_registered")
-    Hooks:RemovePostHook("EHI_EnemyManager_EHIRightStealthItem_on_enemy_unregistered")
-    Hooks:RemovePostHook("EHI_EHIRightStealthItem_at_interact_start")
-    Hooks:RemovePreHook("EHI_EHIRightStealthItem_sync_interacted")
-    Hooks:RemovePostHook("EHI_GroupAIStateBase_EHIRightStealthItem_sync_pager_count")
-    Hooks:RemovePostHook("EHI_SecurityCamera_EHIRightStealthItem_init")
-    Hooks:RemovePostHook("EHI_SecurityCamera_EHIRightStealthItem_on_unit_set_enabled")
-    Hooks:RemovePostHook("EHI_SecurityCamera_EHIRightStealthItem_set_update_enabled")
-    Hooks:RemovePostHook("EHI_SecurityCamera_EHIRightStealthItem_generate_cooldown")
-    Hooks:RemovePostHook("EHI_SecurityCamera_EHIRightStealthItem_destroy")
-    Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHIRightStealthItem_init")
-    Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHIRightStealthItem__set_visual_stage")
-    Hooks:RemovePreHook("EHI_BodyBagsBagBase_EHIRightStealthItem__set_empty")
-    Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHIRightStealthItem_destroy")
-    Hooks:RemovePostHook("EHI_PlayerManager_EHIRightStealthItem_set_body_bags_amount")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_EnemyManager_on_enemy_registered")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_EnemyManager_on_enemy_unregistered")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_IntimitateInteractionExt__at_interact_start")
+    Hooks:RemovePreHook("EHI_EHIRightStealthItem_IntimitateInteractionExt_sync_interacted")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_GroupAIStateBase_sync_pager_count")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_init")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_on_unit_set_enabled")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_set_update_enabled")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_generate_cooldown")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_destroy")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase_init")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase__set_visual_stage")
+    Hooks:RemovePreHook("EHI_EHIRightStealthItem_BodyBagsBagBase__set_empty")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase_destroy")
+    Hooks:RemovePostHook("EHI_EHIRightStealthItem_PlayerManager__set_body_bags_amount")
     for _, enemy in pairs(self._alarm_enemies_answered) do
         if alive(enemy) then
             enemy:base():remove_destroy_listener(self._callback_key)
@@ -2181,7 +2344,13 @@ function EHIRightStealthItem:UpdatePagerCount(count, skip_anim)
     pc.count = count
     pc.text:set_text(tostring(count))
     self:_update_items_visibility()
-    if not skip_anim then
+    if skip_anim then
+        if count <= 0 then
+            pc.data.needs_color_refresh = true
+            pc.text:set_color(self._warning_color)
+            self:SetColorTexture(pc.progress, self._warning_color_string)
+        end
+    else
         self:AnimateItem(pc, previous_count, count)
     end
 end

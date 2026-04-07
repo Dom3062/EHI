@@ -168,7 +168,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "equipment", "doctor_bag" ]
+                "settings" : [ "colors", "equipment" ]
             },
             "parent": "ehi_show_equipment_aggregate_all_choice"
         },
@@ -184,7 +184,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "equipment", "ammo_bag" ]
+                "settings" : [ "colors", "equipment" ]
             },
             "parent": "ehi_show_equipment_aggregate_all_choice"
         },
@@ -200,7 +200,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "equipment", "grenade_crate" ]
+                "settings" : [ "colors", "equipment" ]
             },
             "parent": "ehi_show_equipment_aggregate_all_choice"
         },
@@ -216,7 +216,7 @@
                 "b": 102
             },
             "params" : {
-                "settings" : [ "equipment", "first_aid_kit" ]
+                "settings" : [ "colors", "equipment" ]
             },
             "parent": "ehi_show_equipment_aggregate_all_choice"
         },
@@ -232,7 +232,7 @@
                 "b": 255
             },
             "params" : {
-                "settings" : [ "equipment", "bodybags_bag" ]
+                "settings" : [ "colors", "equipment" ]
             },
             "parent": "ehi_show_equipment_aggregate_all_choice"
         }

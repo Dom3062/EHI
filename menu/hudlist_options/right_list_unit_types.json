@@ -34,7 +34,6 @@
                 "b": 255
             },
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "regular_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -53,10 +52,32 @@
             "callback" : "ehi_set_item_value",
             "value": "regular_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 1
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_regular_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "regular_persistent",
+            "default_value": false
+        },
+        {
+            "type": "multiple_choice",
+            "id": "ehi_hudlist_right_list_unit_types_regular_ds_icon_choice",
+            "title": "ehi_hudlist_right_list_unit_types_regular_ds_icon",
+            "description": "ehi_hudlist_right_list_unit_types_regular_ds_icon_desc",
+            "items": [
+                "ehi_hudlist_right_list_unit_types_regular_ds_icon_1",
+                "ehi_hudlist_right_list_unit_types_regular_ds_icon_2"
+            ],
+            "callback" : "ehi_set_item_value",
+            "value": "regular_ds_icon",
+            "default_value": 2
         },
         {
             "type": "divider",
@@ -98,7 +119,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_converts_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "converts_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -117,7 +137,7 @@
             "callback" : "ehi_set_item_value",
             "value": "converts_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 2,
@@ -173,7 +193,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_enemy_tied_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "enemy_tied_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -192,7 +211,7 @@
             "callback" : "ehi_set_item_value",
             "value": "enemy_tied_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 3,
@@ -248,7 +267,6 @@
                 "b": 255
             },
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "dozer_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -267,7 +285,7 @@
             "callback" : "ehi_set_item_value",
             "value": "dozer_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 4
@@ -375,7 +393,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_sniper_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "sniper_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -394,10 +411,10 @@
             "callback" : "ehi_set_item_value",
             "value": "sniper_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
-            "default_value": 11,
+            "default_value": 10,
             "parent": "ehi_hudlist_right_list_unit_types_sniper_count_choice"
         },
         {
@@ -409,6 +426,80 @@
             "value": "sniper_count_persistent",
             "default_value": false,
             "parent": "ehi_hudlist_right_list_unit_types_sniper_count_choice"
+        },
+        {
+            "type": "divider",
+            "size": 20
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_heavy_sniper_count_choice",
+            "title": "ehi_hudlist_right_list_unit_types_heavy_sniper_count",
+            "description": "ehi_hudlist_right_list_unit_types_count_desc",
+            "callback": "ehi_set_item_value",
+            "value": "heavy_sniper_count",
+            "default_value": false,
+            "children": [
+                "ehi_hudlist_right_list_unit_types_heavy_sniper_count_color_choice",
+                "ehi_hudlist_right_list_unit_types_heavy_sniper_count_pos_choice",
+                "ehi_hudlist_right_list_unit_types_heavy_sniper_count_persistent_choice"
+            ],
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemEnabled",
+                        "arg": "zeal_sniper"
+                    }
+                }
+            }
+        },
+        {
+            "type": "color",
+            "id": "ehi_hudlist_right_list_unit_types_heavy_sniper_count_color_choice",
+            "title": "ehi_hudlist_right_list_unit_types_color",
+            "value": "heavy_sniper_count_color",
+            "default_value": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "parent": "ehi_hudlist_right_list_unit_types_heavy_sniper_count_choice",
+            "params": {
+                "call_hudlist_function": {
+                    "custom_f": {
+                        "list": "right",
+                        "id": "Unit",
+                        "f": "SetItemColor",
+                        "arg": "marshal_sniper"
+                    }
+                }
+            }
+        },
+        {
+            "type": "slider",
+            "id": "ehi_hudlist_right_list_unit_types_heavy_sniper_count_pos_choice",
+            "title": "ehi_tracker_hint_position",
+            "description": "ehi_hudlist_right_list_unit_types_count_pos_desc",
+            "callback" : "ehi_set_item_value",
+            "value": "heavy_sniper_count_pos",
+            "min": 1,
+            "max": 22,
+            "step": 1,
+            "display_precision": 0,
+            "default_value": 11,
+            "parent": "ehi_hudlist_right_list_unit_types_heavy_sniper_count_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_hudlist_right_list_unit_types_heavy_sniper_count_persistent_choice",
+            "title": "ehi_hudlist_right_list_unit_types_count_persistent",
+            "description": "ehi_hudlist_right_list_unit_types_count_persistent_desc",
+            "callback": "ehi_set_item_value",
+            "value": "heavy_sniper_count_persistent",
+            "default_value": false,
+            "parent": "ehi_hudlist_right_list_unit_types_heavy_sniper_count_choice"
         },
         {
             "type": "divider",
@@ -450,7 +541,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_marshal_sniper_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "marshal_sniper_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -469,7 +559,7 @@
             "callback" : "ehi_set_item_value",
             "value": "marshal_sniper_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 12,
@@ -525,7 +615,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_taser_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "taser_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -544,7 +633,7 @@
             "callback" : "ehi_set_item_value",
             "value": "taser_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 13,
@@ -600,7 +689,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_medic_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "medic_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -619,7 +707,7 @@
             "callback" : "ehi_set_item_value",
             "value": "medic_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 14,
@@ -675,7 +763,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_cloaker_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "cloaker_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -694,7 +781,7 @@
             "callback" : "ehi_set_item_value",
             "value": "cloaker_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 15,
@@ -750,7 +837,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_shield_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "shield_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -769,7 +855,7 @@
             "callback" : "ehi_set_item_value",
             "value": "shield_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 16,
@@ -825,7 +911,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_marshal_shield_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "marshal_shield_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -844,7 +929,7 @@
             "callback" : "ehi_set_item_value",
             "value": "marshal_shield_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 17,
@@ -899,7 +984,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_captain_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "captain_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -918,7 +1002,7 @@
             "callback" : "ehi_set_item_value",
             "value": "captain_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 18,
@@ -963,7 +1047,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_phalanx_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "phalanx_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -982,7 +1065,7 @@
             "callback" : "ehi_set_item_value",
             "value": "phalanx_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 19,
@@ -1027,7 +1110,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_turret_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "turret_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -1046,7 +1128,7 @@
             "callback" : "ehi_set_item_value",
             "value": "turret_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 20,
@@ -1090,7 +1172,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_civilian_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "civilian_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -1109,7 +1190,7 @@
             "callback" : "ehi_set_item_value",
             "value": "civilian_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 21,
@@ -1153,7 +1234,6 @@
             },
             "parent": "ehi_hudlist_right_list_unit_types_civilian_tied_count_choice",
             "params": {
-                "settings" : [ "hudlist", "right_list", "unit_types", "civilian_tied_count_color" ],
                 "call_hudlist_function": {
                     "custom_f": {
                         "list": "right",
@@ -1172,7 +1252,7 @@
             "callback" : "ehi_set_item_value",
             "value": "civilian_tied_count_pos",
             "min": 1,
-            "max": 21,
+            "max": 22,
             "step": 1,
             "display_precision": 0,
             "default_value": 22,

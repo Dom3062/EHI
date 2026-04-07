@@ -97,6 +97,7 @@ if EHI:GetHudlistAndListOption("right_list", "show_loot") then
     end
     tbl[EHI:GetInstanceUnitID(100008, 1150)] = f
     tbl[EHI:GetInstanceUnitID(100008, 1250)] = f
+    tbl[EHI:GetInstanceUnitID(100008, 1600)] = f
     tbl[EHI:GetInstanceUnitID(100008, 1700)] = f
     tbl[EHI:GetInstanceUnitID(100008, 1800)] = f
     tbl[EHI:GetInstanceUnitID(100008, 25800)] = f

@@ -46,7 +46,7 @@ if EHI.IsHost then
     original.set_jammed = Drill.set_jammed
     function Drill:set_jammed(...)
         original.set_jammed(self, ...)
-        if self._autorepair_chance and self._unit and alive(self._unit) then
+        if self._autorepair_chance then
             SetAutorepair(tostring(self._unit:key()), self._autorepair_clbk_id --[[@as boolean]])
             managers.network:session():send_to_peers_synched("sync_unit_event_id_16", self._unit, "base", self._autorepair_clbk_id and HasAutorepair or NoAutorepair)
         end
@@ -56,10 +56,10 @@ else
     -- Very well done, OVK. WHYYYYYYYYYYYY
     original.sync_net_event = Drill.sync_net_event
     function Drill:sync_net_event(event_id, ...)
-        if event_id == HasAutorepair and self._unit and alive(self._unit) then
+        if event_id == HasAutorepair then
             self._autorepair_client = true
             SetAutorepair(tostring(self._unit:key()), true)
-        elseif event_id == NoAutorepair and self._unit and alive(self._unit) then
+        elseif event_id == NoAutorepair then
             self._autorepair_client = nil
             SetAutorepair(tostring(self._unit:key()), false)
         end

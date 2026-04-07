@@ -60,6 +60,15 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
+if EHI:GetHudlistAndListOption("right_list", "show_loot") then
+    -- Disables crates inside the clubhouse as potentional loot
+    local tbl = {}
+    local f = { f = "IgnorePotentionalCarry" }
+    for i = 1850, 4550, 300 do
+        tbl[EHI:GetInstanceUnitID(100045, i)] = f
+    end
+    EHI.Unit:UpdateHudlistUnitsNoCheck(tbl)
+end
 
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })

@@ -59,7 +59,7 @@ local triggers = {
     [1011480] = { additional_time = 130 + anim_delay, random_time = 50 + anim_delay, id = "BoatLootDropReturnRandom", icons = Icon.BoatLootDrop, waypoint_f = waypoint_f, hint = Hints.Loot },
 
     [100124] = { special_function = SF.CustomCode2, f = function(self) ---@param self EHIMissionElementTrigger
-        local bags = managers.job:get_memory("EHI_SavedLoot") or self._utils:CountLootbagsOnTheGround(10)
+        local bags = managers.job:get_memory("EHI_SavedLoot") or self._utils:CountLootbagsOnTheGround()
         if bags % 4 == 0 then -- 4/8/12
             local trigger = bags - 3
             self._loot:AddListener("watchdogs_2", function(loot)
@@ -94,7 +94,7 @@ local achievements =
         elements =
         {
             [100124] = { status = EHI.Const.Trackers.Achievement.Status.Defend, class = TT.Achievement.Status, special_function = EHI.Trigger:RegisterCustomSF(function(self, ...)
-                local bags = self._utils:CountLootbagsOnTheGround(10)
+                local bags = self._utils:CountLootbagsOnTheGround()
                 if bags == 12 then
                     self:CreateTracking()
                 end
@@ -132,7 +132,7 @@ local other =
 }
 if EHI.TrackerUtils:IsLootCounterVisible({ element = { 100425, 100467, 100468 } }) then
     other[100124] = EHI:AddLootCounter3(function(self)
-        local bags = self._utils:CountLootbagsOnTheGround(10)
+        local bags = self._utils:CountLootbagsOnTheGround()
         EHI:ShowLootCounterNoChecks({ max = bags })
     end, { element = { 100425, 100467, 100468 } })
 end
@@ -144,7 +144,6 @@ if EHI.Mission._SHOW_MISSION_WAYPOINTS then
     other[101150].icons = Icon.BoatLootDrop
     other[101150].waypoint_f = waypoint_f
 end
-EHI.Unit:IgnoreCarryInHudlist(100054, 100058, 100426, 100427, 100428, 100429, 100491, 100492, 100494, 100495) -- Unused 10x bags of coke
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
@@ -155,6 +154,7 @@ EHI.Mission:ParseTriggers({
         ignore_assault_start_count = 1
     }
 }, "BoatLootDropReturn", Icon.BoatLootDrop)
+local max_bags = EHI:IsDifficultyOrAbove(EHI.Difficulties.VeryHard) and 12 or 8
 EHI:AddXPBreakdown({
     objectives =
     {
@@ -169,7 +169,7 @@ EHI:AddXPBreakdown({
             {
                 objectives =
                 {
-                    watchdogs2_bonus_xp = { max = (managers.job:get_memory("ehi_watchdogs_saved_bags") or 12) - 3 } -- 9 bags is the maximum XP you can get
+                    watchdogs2_bonus_xp = { max = (managers.job:get_memory("ehi_watchdogs_saved_bags") or max_bags) - 3 } -- 9/5 bags is the maximum XP you can get
                 }
             }
         }

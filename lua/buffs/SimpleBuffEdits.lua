@@ -451,12 +451,20 @@ end
 
 function EHIAbilityBuffTracker:Deactivate()
     if self._persistent then
-        self:RemoveBuffFromUpdate()
-        self._update = false
-        self._text:set_text("0")
+        if self._update then
+            self:RemoveBuffFromUpdate()
+            self._update = false
+            self._text:set_text("0")
+        end
         return
     end
     EHIAbilityBuffTracker.super.Deactivate(self)
+end
+
+function EHIAbilityBuffTracker:CheckForRemoval()
+    if self._remove_on_down then
+        self:Deactivate()
+    end
 end
 
 ---@param ability string
@@ -467,6 +475,7 @@ function EHIAbilityBuffTracker:SetAbilityIcon(ability)
         deck = { 0, 0, projectile.texture_bundle_folder }
     }
     if ability == "damage_control" then
+        self._remove_on_down = not self._ABILITY_COOLDOWN
         if self._ABILITY_COOLDOWN then
             icon_params.deck[2] = 1
         elseif managers.player:has_category_upgrade("player", "damage_control_auto_shrug") then
@@ -475,6 +484,8 @@ function EHIAbilityBuffTracker:SetAbilityIcon(ability)
         end
     elseif ability == "tag_team" and not self._ABILITY_COOLDOWN then
         icon_params.deck[2] = 1
+    elseif ability == "copr_ability" and not self._ABILITY_COOLDOWN then
+        self._remove_on_down = true
     end
     local texture, texture_rect = tweak_data.ehi.default.buff.get_icon(icon_params)
     self._icon:set_image(texture, unpack(texture_rect))

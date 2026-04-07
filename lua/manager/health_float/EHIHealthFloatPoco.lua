@@ -32,7 +32,7 @@ EHIHealthFloatPoco._color_end = Color("FF0000"):with_alpha(1)
 EHIHealthFloatPoco._color_friendly = Color("00FF00"):with_alpha(1)
 EHIHealthFloatPoco._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 EHIHealthFloatPoco._regular_disabled = not EHI:GetOption("show_floating_health_bar_regular_enemies")
-for _, option in ipairs({ "tank", "shield", "taser", "cloaker", "sniper", "medic", "other" }) do
+for _, option in ipairs({ "tank", "shield", "taser", "cloaker", "sniper", "medic", "boss", "other" }) do
     EHIHealthFloatPoco[string.format("_special_%s_disabled", option)] = not EHI:GetOption(string.format("show_floating_health_bar_special_enemies_%s", option))
 end
 ---@param key userdata
@@ -188,7 +188,7 @@ function EHIHealthFloatPoco:draw(t)
         if managers.enemy:is_civilian(unit) and self._civilians_disabled then
             prog = 0
         elseif isEnemy and base and base.has_tag then
-            if base:has_tag("special") then
+            if base:has_tag("special") or base:has_tag("ehi_special") then
                 ---@diagnostic disable
                 if base:has_tag("tank") then
                     if self._special_tank_disabled then
@@ -212,6 +212,10 @@ function EHIHealthFloatPoco:draw(t)
                     end
                 elseif base:has_tag("medic") then
                     if self._special_medic_disabled then
+                        prog = 0
+                    end
+                elseif base:has_tag("ehi_boss") then
+                    if self._special_boss_disabled then
                         prog = 0
                     end
                 elseif self._special_other_disabled then

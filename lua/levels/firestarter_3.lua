@@ -205,10 +205,11 @@ EHI.Trigger:AddLoadSyncFunction(function(self)
     local dog_haters_unit = {} ---@type UnitCivilian[]
     local count = 0
     for _, data in pairs(managers.enemy:all_civilians()) do
-        local name_key = data.unit:name():key()
+        local unit = data.unit
+        local name_key = unit:name():key()
         if dog_haters[name_key] then
             count = count + 1
-            dog_haters_unit[count] = data.unit
+            dog_haters_unit[count] = unit
             dog_haters[name_key] = nil
         end
         if count == 2 then
@@ -226,9 +227,15 @@ EHI.Trigger:AddLoadSyncFunction(function(self)
     if not (secure_area_1 and secure_area_2 and secure_area_3) then
         return
     end
+    local trigger_notification = true
     local function fail(...)
-        managers.ehi_unlockable:SetAchievementFailed("voff_1")
+        if trigger_notification then
+            managers.ehi_unlockable:SetAchievementFailed("voff_1")
+        end
     end
+    EHI:AddEndGameCallback(function()
+        trigger_notification = false
+    end)
     for _, dog_hater in ipairs(dog_haters_unit) do
         dog_hater:base():add_destroy_listener("EHIDestroy", fail)
     end
@@ -243,14 +250,21 @@ EHI.Trigger:AddLoadSyncFunction(function(self)
 end)
 EHI:AddOnSpawnedCallback(function()
     if EHI:IsPlayingFromStart() then
+        local trigger_notification = true
         local function fail(...)
-            managers.ehi_unlockable:SetAchievementFailed("voff_1")
+            if trigger_notification then
+                managers.ehi_unlockable:SetAchievementFailed("voff_1")
+            end
         end
+        EHI:AddEndGameCallback(function()
+            trigger_notification = false
+        end)
         local count = 0
         for _, data in pairs(managers.enemy:all_civilians()) do
-            local name_key = data.unit:name():key()
+            local unit = data.unit
+            local name_key = unit:name():key()
             if dog_haters[name_key] then
-                data.unit:base():add_destroy_listener("EHIDestroy", fail)
+                unit:base():add_destroy_listener("EHIDestroy", fail)
                 count = count + 1
                 if count == 2 then
                     break

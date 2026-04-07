@@ -145,16 +145,18 @@ function FakeEHILeftList:init(x, y, aspect_ratio, color_index, progress)
     self._progress_visibility = EHI:GetHudlistOption("left_list_progress_visibility")
     self._scale = EHI:GetHudlistOption("left_list_scale") --[[@as number]]
     self._list_icon = EHI:GetHudlistOption("left_list_icon")
+    self._alignment = EHI:GetHudlistOption("left_list_alignment")
     self._preview_enabled = EHI:GetOption("show_preview_hudlist_left_list")
     self._list_enabled = EHI:GetHudlistOption("show_left_list")
     self._y_offset = 2 * self._scale
 end
 
----@param class FakeEHILeftItemBase
 ---@param panel Panel
 ---@param params table
-function FakeEHILeftList:AddItem(class, panel, params)
+---@param class FakeEHILeftItemBase?
+function FakeEHILeftList:AddItem(panel, params, class)
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(params.icon)
+    params.x = self._x
     params.bg_alpha = self._bg_alpha
     params.bg_color = self._bg_color
     params.progress_alpha = self._progress_alpha
@@ -165,9 +167,20 @@ function FakeEHILeftList:AddItem(class, panel, params)
     params.list_enabled = self._list_enabled
     params.color_index = self._color_index
     params.progress = self._progress
-    local item = class:new(panel, params, texture, texture_rect)
+    params.right_to_left = self._alignment == 2
+    local item = (class or FakeEHILeftItemBase):new(panel, params, texture, texture_rect)
     self._items[params.id] = item
     table.insert(self._itemized_list, item)
+end
+
+---@param y number
+function FakeEHILeftList:UpdateY(y)
+    local _, y_full = tweak_data.ehi.shared.ConvertSafeRectToFull(0, y, self._aspect_ratio)
+    if self._y == y_full then
+        return
+    end
+    self._y = y_full
+    self:RunOnAllItems("SetY", y_full)
 end
 
 ---@param x number
@@ -176,7 +189,8 @@ function FakeEHILeftList:SetItemsPos(x, y)
     local next_y = y
     for _, item in ipairs(self._itemized_list) do ---@cast item -FakeEHIRightItemBase
         if item:ItemIsVisible() then
-            item:SetPosition(x, next_y)
+            item:SetX(x)
+            item:SetY(next_y)
             next_y = next_y + item:GetRealHeight() + self._y_offset
         end
     end
@@ -196,6 +210,11 @@ end
 
 function FakeEHILeftList:UpdateListIconVisibility(visibility)
     self:RunOnAllItems("UpdateListIconVisibility", visibility)
+end
+
+---@param alignment integer
+function FakeEHILeftList:UpdateAlignment(alignment)
+    self:RunOnAllItems("UpdateAlignment", alignment == 2)
 end
 
 ---@class FakeEHIRightList : FakeEHIList
@@ -223,10 +242,10 @@ function FakeEHIRightList:init(x, y, aspect_ratio, color_index, progress, panel_
     self._y_offset = 2 * self._scale
 end
 
----@param class FakeEHIRightItemBase
 ---@param panel Panel
 ---@param params table
-function FakeEHIRightList:AddItem(class, panel, params)
+---@param class FakeEHIRightItemBase?
+function FakeEHIRightList:AddItem(panel, params, class)
     params.bg_alpha = self._bg_alpha
     params.bg_color = self._bg_color
     params.progress = self._progress
@@ -238,7 +257,7 @@ function FakeEHIRightList:AddItem(class, panel, params)
     params.right_offset = self._panel_w - self._x
     params.color = self._color
     params.color_string = self._color_string
-    local item = class:new(panel, params)
+    local item = (class or FakeEHIRightItemBase):new(panel, params)
     self._items[params.id] = item
     table.insert(self._itemized_list, item)
 end
@@ -286,7 +305,7 @@ end
 
 function FakeEHIHudlistManager:_init_left_list_items()
     local options = EHI:GetHudlistOption("left_list")
-    self._left_list:AddItem(FakeEHILeftItemBase, self._panel, {
+    self._left_list:AddItem(self._panel, {
         id = "Timer",
         icon = {
             skills = { 3, 6 }
@@ -354,7 +373,7 @@ function FakeEHIHudlistManager:_init_left_list_items()
             skills = { 6, 8 }
         }
         local names = { "Security", "GenSec", "Cop", "FBI", "SWAT", "Heavy", "FBI Heavy", "ZEAL Sniper", "Heavy ZEAL", "ZEAL" }
-        self._left_list:AddItem(FakeEHILeftMinionItem, self._panel, {
+        self._left_list:AddItem(self._panel, {
             id = "Minion",
             icon = icon,
             items =
@@ -382,9 +401,9 @@ function FakeEHIHudlistManager:_init_left_list_items()
             health_circle = options.minions_health_circle,
             enabled = options.show_minions,
             top_text = options.minions_top_text -- Bottom text is not used in real Minions
-        })
+        }, FakeEHILeftMinionItem)
     end
-    self._left_list:AddItem(FakeEHILeftDeployableItem, self._panel, {
+    self._left_list:AddItem(self._panel, {
         id = "Deployable",
         icon = {
             ehi = "deployables"
@@ -437,12 +456,12 @@ function FakeEHIHudlistManager:_init_left_list_items()
         enabled = options.show_deployables,
         top_text = options.deployable_top_text,
         bottom_text = true
-    })
+    }, FakeEHILeftDeployableItem)
     do
         local icon = {
             skills = { 1, 4 }
         }
-        self._left_list:AddItem(FakeEHILeftJammerItem, self._panel, {
+        self._left_list:AddItem(self._panel, {
             id = "Jammer",
             icon = icon,
             items =
@@ -463,13 +482,13 @@ function FakeEHIHudlistManager:_init_left_list_items()
             enabled = options.show_jammers,
             affects_pager_color_index = options.jammer_affects_pager,
             bottom_text = true
-        })
+        }, FakeEHILeftJammerItem)
     end
     do
         local icon = {
             skills = { 6, 2 }
         }
-        self._left_list:AddItem(FakeEHILeftItemBase, self._panel, {
+        self._left_list:AddItem(self._panel, {
             id = "JammerRetrigger",
             icon = icon,
             items =
@@ -491,7 +510,7 @@ function FakeEHIHudlistManager:_init_left_list_items()
             bottom_text = true
         })
     end
-    self._left_list:AddItem(FakeEHILeftItemBase, self._panel, {
+    self._left_list:AddItem(self._panel, {
         id = "Pager",
         icon = {
             ehi = "pager_icon"
@@ -513,7 +532,7 @@ function FakeEHIHudlistManager:_init_left_list_items()
         local icon = {
             ehi = "camera_loop"
         }
-        self._left_list:AddItem(FakeEHILeftItemBase, self._panel, {
+        self._left_list:AddItem(self._panel, {
             id = "Camera",
             icon = icon,
             items =
@@ -539,8 +558,8 @@ function FakeEHIHudlistManager:_init_right_list_items()
     local preplanning = tweak_data.preplanning
     do
         local u_options = options.unit_types
-        local separate_enabled = u_options.dozer_count and u_options.dozer_count_separate
-        self._right_list:AddItem(FakeEHIRightUnitItem, self._panel, {
+        local dz_separate_enabled = u_options.dozer_count and u_options.dozer_count_separate
+        self._right_list:AddItem(self._panel, {
             id = "Unit",
             items =
             {
@@ -574,7 +593,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
                         ehi = "heavy",
                         color = EHI:GetColor(u_options.dozer_count_hw_color)
                     },
-                    enabled = separate_enabled and u_options.dozer_count_hw
+                    enabled = dz_separate_enabled and u_options.dozer_count_hw
                 },
                 {
                     id = "dozer_medic",
@@ -582,7 +601,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
                         ehi = "crime_spree_dozer_medic",
                         color = EHI:GetColor(u_options.dozer_count_medic_color)
                     },
-                    enabled = separate_enabled and u_options.dozer_count_medic
+                    enabled = dz_separate_enabled and u_options.dozer_count_medic
                 },
                 {
                     id = "dozer_mini",
@@ -590,7 +609,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
                         ehi = "crime_spree_dozer_minigun",
                         color = EHI:GetColor(u_options.dozer_count_mini_color)
                     },
-                    enabled = separate_enabled and u_options.dozer_count_mini
+                    enabled = dz_separate_enabled and u_options.dozer_count_mini
                 },
                 {
                     id = "dozer_skull",
@@ -598,7 +617,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
                         ehi = "crime_spree_dozer_lmg",
                         color = EHI:GetColor(u_options.dozer_count_skull_color)
                     },
-                    enabled = separate_enabled and u_options.dozer_count_skull
+                    enabled = dz_separate_enabled and u_options.dozer_count_skull
                 },
                 {
                     id = "dozer_black",
@@ -606,7 +625,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
                         ehi = "heavy",
                         color = EHI:GetColor(u_options.dozer_count_black_color)
                     },
-                    enabled = separate_enabled and u_options.dozer_count_black
+                    enabled = dz_separate_enabled and u_options.dozer_count_black
                 },
                 {
                     id = "dozer_green",
@@ -614,7 +633,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
                         ehi = "heavy",
                         color = EHI:GetColor(u_options.dozer_count_green_color)
                     },
-                    enabled = separate_enabled and u_options.dozer_count_green
+                    enabled = dz_separate_enabled and u_options.dozer_count_green
                 },
                 {
                     id = "dozer",
@@ -633,6 +652,15 @@ function FakeEHIHudlistManager:_init_right_list_items()
                     },
                     value = 3,
                     enabled = u_options.sniper_count
+                },
+                {
+                    id = "zeal_sniper",
+                    icon = {
+                        ehi = "crime_spree_heavy_sniper",
+                        color = EHI:GetColor(u_options.heavy_sniper_count_color)
+                    },
+                    value = 3,
+                    enabled = u_options.heavy_sniper_count
                 },
                 {
                     id = "marshal_sniper",
@@ -736,9 +764,9 @@ function FakeEHIHudlistManager:_init_right_list_items()
             },
             enabled = options.show_units,
             dozer_count_separate = u_options.dozer_count_separate
-        })
+        }, FakeEHIRightUnitItem)
     end
-    self._right_list:AddItem(FakeEHIRightLootItem, self._panel, {
+    self._right_list:AddItem(self._panel, {
         id = "Loot",
         items =
         {
@@ -795,8 +823,8 @@ function FakeEHIHudlistManager:_init_right_list_items()
         enabled = options.show_loot,
         potentional_loot = options.potentional_loot,
         top_type = options.loot_top_type
-    })
-    self._right_list:AddItem(FakeEHIRightItemBase, self._panel, {
+    }, FakeEHIRightLootItem)
+    self._right_list:AddItem(self._panel, {
         id = "Special",
         items =
         {
@@ -827,7 +855,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
         },
         enabled = options.show_special_items
     })
-    self._right_list:AddItem(FakeEHIRightStealthItem, self._panel, {
+    self._right_list:AddItem(self._panel, {
         id = "Stealth",
         items =
         {
@@ -860,7 +888,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
         },
         enabled = options.show_stealth_info,
         bodybags_format = options.stealth_info_bodybags_format
-    })
+    }, FakeEHIRightStealthItem)
     self._right_list:SetItemsPos(self._right_list._x, self._right_list._y)
 end
 

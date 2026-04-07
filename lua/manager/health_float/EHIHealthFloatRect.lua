@@ -10,6 +10,7 @@ EHIHealthFloatRect._unit_name =
     gangster = "Gangster",
     triad = "Triad",
     biker = "Biker",
+    biker_female = "Biker",
     biker_escape = "Biker",
     bolivian_indoors = "Security",
     bolivian_indoors_mex = "Security",
@@ -106,7 +107,7 @@ EHIHealthFloatRect._converts_disabled = not EHI:GetOption("show_floating_health_
 EHIHealthFloatRect._civilians_disabled = not EHI:GetOption("show_floating_health_bar_civilians") -- Tied civilians share the same slot mask (22) with tied cops, workaround
 EHIHealthFloatRect._team_ai_disabled = not EHI:GetOption("show_floating_health_bar_team_ai") -- Converts share the same slot mask (16) with Team AI, workaround
 EHIHealthFloatRect._regular_disabled = not EHI:GetOption("show_floating_health_bar_regular_enemies")
-for _, option in ipairs({ "tank", "shield", "taser", "cloaker", "sniper", "medic", "other" }) do
+for _, option in ipairs({ "tank", "shield", "taser", "cloaker", "sniper", "medic", "boss", "other" }) do
     EHIHealthFloatRect[string.format("_special_%s_disabled", option)] = not EHI:GetOption(string.format("show_floating_health_bar_special_enemies_%s", option))
 end
 ---@param hud_panel Panel
@@ -202,7 +203,8 @@ function EHIHealthFloatRect:SetUnit(unit, t)
     self._block_update = false
     self._current_health = 0
     local base = unit:base() ---@cast base -SentryGunBase
-    if self._converts_disabled and (unit:brain() and unit:brain().converted and unit:brain():converted()) then
+    local brain = unit:brain() ---@cast brain -SentryGunBrain
+    if self._converts_disabled and (brain and brain.converted and brain:converted()) then
         self._block_update = true
         self:set_visible(false)
         return
@@ -250,6 +252,12 @@ function EHIHealthFloatRect:SetUnit(unit, t)
                     end
                 elseif base:has_tag("medic") then
                     if self._special_medic_disabled then
+                        self._block_update = true
+                        self:set_visible(false)
+                        return
+                    end
+                elseif base:has_tag("ehi_boss") then
+                    if self._special_boss_disabled then
                         self._block_update = true
                         self:set_visible(false)
                         return

@@ -138,7 +138,7 @@ function EHIPhalanxManager:AddTracker()
             managers.ehi_tracker:CallFunction("CaptainChance", "OnEnterSustain", duration)
         end)
     end
-    managers.ehi_assault:AddAssaultStartCallback(function()
+    managers.ehi_assault:AddAssaultStartCallback(function(assault_number)
         managers.ehi_tracker:CallFunction("CaptainChance", "AssaultStart")
     end)
     managers.ehi_assault:AddAssaultEndCallback(function()

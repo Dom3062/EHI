@@ -20,7 +20,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "tracker_waypoint", "inaccurate" ]
+                "settings" : [ "colors", "tracker_waypoint" ]
             }
         },
         {
@@ -35,7 +35,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "tracker_waypoint", "pause" ]
+                "settings" : [ "colors", "tracker_waypoint" ]
             }
         },
         {
@@ -50,7 +50,7 @@
                 "b": 254
             },
             "params" : {
-                "settings" : [ "tracker_waypoint", "drill_autorepair" ]
+                "settings" : [ "colors", "tracker_waypoint" ]
             }
         },
         {
@@ -65,7 +65,7 @@
                 "b": 21
             },
             "params" : {
-                "settings" : [ "tracker_waypoint", "drill_not_powered" ]
+                "settings" : [ "colors", "tracker_waypoint" ]
             }
         },
         {
@@ -80,7 +80,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "tracker_waypoint", "warning" ]
+                "settings" : [ "colors", "tracker_waypoint" ]
             }
         },
         {
@@ -95,7 +95,7 @@
                 "b": 0
             },
             "params" : {
-                "settings" : [ "tracker_waypoint", "completion" ]
+                "settings" : [ "colors", "tracker_waypoint" ]
             }
         },
         {

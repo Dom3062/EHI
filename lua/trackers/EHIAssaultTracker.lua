@@ -119,7 +119,7 @@ function EHIAssaultTracker:post_init(params)
             color = Color.white
         })
     elseif self._SHOW_ASSAULT_DIFF_SKIRMISH then
-        self._progress = params.current_assault_number or managers.skirmish:current_wave_number()
+        self._progress = params.assault_number or 0
         self:SetBGSize()
         self._progress_text = self:CreateText({
             text = self:FormatWaveDiff(),
@@ -128,6 +128,7 @@ function EHIAssaultTracker:post_init(params)
             color = Color.white,
             FitTheText = true
         })
+        managers.ehi_assault:AddAssaultNumberSyncCallback(callback(self, self, "SetProgress"))
     end
     if self._SHOW_AMOUNT_OF_ENEMIES then
         self._anim_flash_set_count = 0

@@ -89,6 +89,32 @@ local other =
 {
     [100531] = EHI:AddAssaultDelay({ control = 35 })
 }
+if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+    local max_snipers = 2
+    local function Spawn()
+        max_snipers = max_snipers - 1
+        managers.ehi_tracker:CallFunction("Snipers", "SniperSpawned") -- Counting is done in EHISniperBase
+        if max_snipers <= 0 and EHISniperBase then
+            EHISniperBase.unregister_spawn_listener("wttj2")
+            managers.ehi_tracker:CallFunction("Snipers", "RequestRemoval")
+        end
+    end
+    other[100537] = EHI:AddCustomCode(function(self)
+        self._trackers:AddTracker({
+            id = "Snipers",
+            time = 90,
+            chance = 20,
+            on_fail_refresh_t = 30,
+            single_sniper = true,
+            class = EHI.Trackers.Sniper.Loop
+        })
+        if EHISniperBase then -- There is no increase or decrease element
+            EHISniperBase._enabled = true
+            EHISniperBase.register_spawn_listener("wttj2", Spawn)
+        end
+    end)
+    other[100483] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+end
 
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 EHI.Unit:UpdateUnits({

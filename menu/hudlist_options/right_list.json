@@ -125,10 +125,6 @@
                 "g": 255,
                 "b": 0
             },
-            "params" : {
-                "settings" : [ "hudlist", "right_list", "loot_color_items_light" ],
-                "call_hudlist_function": { "dummy": true }
-            },
             "parent" : "ehi_hudlist_right_list_show_loot_color_items_based_on_their_weight_choice"
         },
         {
@@ -142,10 +138,6 @@
                 "g": 0,
                 "b": 40
             },
-            "params" : {
-                "settings" : [ "hudlist", "right_list", "loot_color_items_heavy" ],
-                "call_hudlist_function": { "dummy": true }
-            },
             "parent" : "ehi_hudlist_right_list_show_loot_color_items_based_on_their_weight_choice"
         },
         {
@@ -158,10 +150,6 @@
                 "r": 0,
                 "g": 255,
                 "b": 255
-            },
-            "params" : {
-                "settings" : [ "hudlist", "right_list", "loot_color_items_body" ],
-                "call_hudlist_function": { "dummy": true }
             },
             "parent" : "ehi_hudlist_right_list_show_loot_color_items_based_on_their_weight_choice"
         },
