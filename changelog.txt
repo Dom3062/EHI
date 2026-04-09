@@ -1,3 +1,6 @@
+r387 (09. 04. 2026):
+Hudlist - Right List - Loot: Fixed a crash after alarm
+
 r386 (07. 04. 2026):
 Beneath the Mountain: Fixed an issue where one green crate is still counted as crate with possible loot (start area; Hudlist)
 Buffs: Fixed an issue where Ability buff tracker gets removed whenever you are downed
@@ -11,7 +14,7 @@ Hudlist - Right List:
 - Units: Added persistent state and icon options to Regular Enemies
 - Units: Added "Heavy SWAT Snipers"
 - Units: Fixed an issue where number of enemies is not properly updated when Minions item is disabled
-- Units: Fixed an issue where Female biker is counted as unknown enemy
+- Units: Fixed an issue where Female Biker is counted as unknown enemy
 - Units: Fixed issues with converted Heavy SWAT Snipers
 - Units: Fixed animation issue in persistent items and their count is 0
 - Units: Fixes to persistent state in Crime Spree and Holdout gamemodes

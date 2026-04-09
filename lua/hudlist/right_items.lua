@@ -1608,11 +1608,11 @@ function EHIRightLootItem:CreateItemsFromMap(stealth_is_available, text_or_icon)
         pos = group_count + 1 -- Unknown loot will appear last
     })
     self._n_of_items = self._n_of_items - 1 -- Start from the first item and not second
-    -- Fill out our itemized items list with fake items to not crash later
+    -- Fill out our itemized items list with fake items to not crash later  
     -- Once items are created, the data in the list will get replaced with actual item
     local fake_item = { count = 0, panel = { alpha = function(...)
         return 0
-    end, set_alpha = function(...) end } }
+    end, set_alpha = function(...) end }, i = -1 }
     for i = 1, group_count, 1 do
         self._itemized_items[i] = fake_item
     end
