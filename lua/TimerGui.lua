@@ -81,7 +81,7 @@ function TimerGui:GetUpgrades()
         return nil, nil
     end
     local upgrade_table = nil
-    local skills = base.get_skill_upgrades and base:get_skill_upgrades()
+    local skills = base:get_skill_upgrades()
     if skills and table.ehi_size(self._original_colors) > 0 then
         upgrade_table = {
             restarter = (skills.auto_repair_level_1 or 0) + (skills.auto_repair_level_2 or 0),
@@ -93,7 +93,7 @@ function TimerGui:GetUpgrades()
 end
 
 function TimerGui:GetAutorepairState()
-    return self._unit:base().CanAutorepair and self._unit:base():CanAutorepair()
+    return self._unit:base():CanAutorepair()
 end
 
 ---@param t number
@@ -132,10 +132,10 @@ function TimerGui:PostStartTimer(from_callback)
                 self._remove_vanilla_waypoint = data
             end
             if from_callback then -- Mission Door data found after they were added, remove callback
-                self._ehi_MissionDoor_clbk:remove(self._ehi_key)
+                self._ehi_MissionDoor_clbk:remove(self._original_ehi_key)
             end
         elseif not from_callback then -- No data found, add a callback in case it gets added later
-            self._ehi_MissionDoor_clbk:add(self._ehi_key, callback(self, self, "PostStartTimer"))
+            self._ehi_MissionDoor_clbk:add(self._original_ehi_key, callback(self, self, "PostStartTimer"))
         end
     end
     self:HideWaypoint()
@@ -283,7 +283,7 @@ function TimerGui:RemoveTracker(destroy)
     else
         managers.ehi_timer:RemoveTimer(self._ehi_key)
     end
-    self._ehi_MissionDoor_clbk:remove(self._ehi_key)
+    self._ehi_MissionDoor_clbk:remove(self._original_ehi_key)
     managers.ehi_hudlist:CallLeftListItemFunction("Timer", "RemoveTimer", self._original_ehi_key)
 end
 

@@ -103,7 +103,7 @@ else -- Framing Frame Day 1
     end
 end
 
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     other[103331] = { id = "Snipers", chance = 10, time = 15, recheck_t = 30, class = TT.Sniper.TimedChanceOnce }
     other[103829] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess", arg = { 2 } }
     other[103828] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%

@@ -62,15 +62,29 @@ if EHI:IsLootCounterVisible() then
         self._loot:SyncSecuredLoot()
     end, true)
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 15 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 15 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }
+if EHI:GetLoadSniperTrackers() then
+    other[100015] = { chance = 10, time = 1 + 15 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 15 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2, special_function = SF.Snipers_CheckIfTrackerExists }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            if managers.groupai:state():whisper_mode() then
+                return
+            end
+            self._trackers:AddTracker({
+                id = "Snipers",
+                from_sync = true,
+                count = EHISniperBase._alive_count,
+                on_fail_refresh_t = 25,
+                on_success_refresh_t = 20 + 15 + 25,
+                sniper_count = 2,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[103060] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Loot, position_from_element = 103444 } }

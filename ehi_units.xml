@@ -173,6 +173,16 @@
             <extension name="ehi" class="EHISniperBase"/>
         </target>
     </tweak>
+    <tweak version="2" name="units/payday2/characters/ene_sniper_1/ene_sniper_1_husk" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
     <tweak version="2" name="units/payday2/characters/ene_sniper_2/ene_sniper_2" extension="unit">
         <search>
             <?xml version="1.0"?>
@@ -183,6 +193,57 @@
             <extension name="ehi" class="EHISniperBase"/>
         </target>
     </tweak>
+    <tweak version="2" name="units/payday2/characters/ene_sniper_2/ene_sniper_2_husk" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/pd2_dlc_bph/characters/ene_murkywater_sniper/ene_murkywater_sniper" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/pd2_dlc_bph/characters/ene_murkywater_sniper/ene_murkywater_sniper_husk" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/pd2_dlc_bex/characters/ene_swat_policia_sniper/ene_swat_policia_sniper" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
+    <tweak version="2" name="units/pd2_dlc_bex/characters/ene_swat_policia_sniper/ene_swat_policia_sniper_husk" extension="unit">
+        <search>
+            <?xml version="1.0"?>
+            <unit type="being" slot="12"/>
+            <extensions/>
+        </search>
+        <target mode="attach">
+            <extension name="ehi" class="EHISniperBase"/>
+        </target>
+    </tweak>
+    <!-- There are zombified snipers, but they are unused and normal variants spawn instead -->
     <!-- Fixes -->
     <!-- Reservoir Dogs Day 2 (Warehouse) / Buluc's Mansion -->
     <tweak version="2" name="units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam" extension="unit">

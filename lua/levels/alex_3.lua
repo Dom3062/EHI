@@ -15,7 +15,16 @@ local other =
     [100782] = EHI:AddAssaultDelay({ control = 20 + 10 })
 }
 
-EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "HeliLootDrop", EHI.Icons.HeliLootDrop)
+EHI.Mission:ParseTriggers({ mission = triggers, other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            local t = managers.game_play_central:get_heist_timer()
+            if t >= 20 then -- Measured from spawn in the mission script
+                self._assault:SetDiff(t < 80 and 0.75 or 1)
+            end
+        end
+    } }, "HeliLootDrop", EHI.Icons.HeliLootDrop)
 if EHI:IsLootCounterVisible() then
     local Money = 0
     local MoneyTaken = 0

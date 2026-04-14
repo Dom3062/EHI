@@ -40,7 +40,7 @@ local other =
     [102736] = EHI:AddAssaultDelay({ control = 15 }),
     [102737] = EHI:AddAssaultDelay({ control = 25 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local refresh_t = EHI:GetValueBasedOnDifficulty({
         normal = 60,
         hard = 50,
@@ -88,7 +88,21 @@ EHI:SetMissionDoorData({
     [101581] = { w_id = 104645, restore = true }
 })
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
-EHI.Mission:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other, tracker_merge = tracker_merge,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then -- Skip if dropped-in in stealth
+                self._assault:SetDiff(0.5)
+                return
+            elseif assault_number <= 2 then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
+})
 EHI:AddXPBreakdown({
     objective =
     {

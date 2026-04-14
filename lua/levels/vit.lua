@@ -120,7 +120,7 @@ local other =
         managers.ehi_hudlist:CallRightListItemFunction("Unit", "uno")
     end)
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 1,
         overkill_or_above = 2
@@ -146,8 +146,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[101324] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
     -- Enemies killed via "ElementAIRemove" DOES NOT TRIGGER ElementEnemyDummyTrigger if "force_ragdoll" and "true_death" are set to "false" and "use_instigator" is set to "true"
     other[102596] = { id = "Snipers", special_function = SF.RemoveTracker }

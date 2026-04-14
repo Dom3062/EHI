@@ -1,7 +1,7 @@
 local EHI = EHI
 
 ---@class EHIList
----@field _set_items_y fun(self: self, item: EHILeftItemBase|EHIRightItemBase?)
+---@field _set_items_y fun(self: self, item: EHILeftListBase|EHIRightListBase?)
 local EHIList = class()
 ---@param o Panel
 ---@param target_y number
@@ -16,8 +16,8 @@ EHIList._set_y = function(o, target_y)
 end
 function EHIList:init()
     self._options = {}
-    self._items = {} ---@type table<string, EHILeftItemBase|EHIRightItemBase>
-    self._itemized_list = {} ---@type EHILeftItemBase[]|EHIRightItemBase[]
+    self._items = {} ---@type table<string, EHILeftListBase|EHIRightListBase>
+    self._itemized_list = {} ---@type EHILeftListBase[]|EHIRightListBase[]
     self._n_of_visible_items = 0
 end
 
@@ -42,7 +42,7 @@ function EHIList:CallItemFunction(id, f, ...)
     end
 end
 
----@param item EHILeftItemBase|EHIRightItemBase
+---@param item EHILeftListBase|EHIRightListBase
 function EHIList:ItemSetVisible(item)
     self._n_of_visible_items = self._n_of_visible_items + 1
     if self._n_of_visible_items == 1 then
@@ -85,7 +85,7 @@ function EHILeftList:post_init(x, y, scale)
     self._options.y_offset = 2 * scale
 end
 
----@param class EHILeftItemBase
+---@param class EHILeftListBase
 ---@param panel Panel
 ---@param params table
 function EHILeftList:AddItem(class, panel, params)
@@ -99,7 +99,7 @@ function EHILeftList:AddItem(class, panel, params)
     item:CacheFrequentlyUsedValues()
 end
 
----@param new_item EHILeftItemBase
+---@param new_item EHILeftListBase
 function EHILeftList:_set_items_y(new_item)
     local y = self._options.y
     for _, item in ipairs(self._itemized_list) do
@@ -124,8 +124,8 @@ function EHIRightList:post_init(y, scale)
     self._options.y_offset = 2 * scale
 end
 
----@generic T : EHIRightItemBase
----@param class T|EHIRightItemBase
+---@generic T : EHIRightListBase
+---@param class T|EHIRightListBase
 ---@param panel Panel
 ---@param params table
 ---@return T
@@ -148,7 +148,7 @@ function EHIRightList:_set_items_y()
 end
 
 function EHIRightList:Spawned()
-    for _, item in ipairs(self._itemized_list) do ---@cast item -EHILeftItemBase
+    for _, item in ipairs(self._itemized_list) do ---@cast item -EHILeftListBase
         item:Spawned()
     end
 end
@@ -172,27 +172,27 @@ end
 if EHI:GetOption("show_hudlist") then
     if EHI:GetHudlistOption("show_left_list") then
         dofile(EHI.LuaPath .. "hudlist/left_items.lua")
-        EHILeftItemBase._parent = EHIHudlistManager._left_list
-        EHILeftItemBase._LIST_ICON_VISIBLE = EHI:GetHudlistOption("left_list_icon")
-        EHILeftItemBase._ANIM_RIGHT_TO_LEFT = EHI:GetHudlistOption("left_list_alignment") == 2
-        EHILeftItemBase._BG_ALPHA = EHI:GetHudlistOption("left_list_bg_alpha")
-        EHILeftItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
-        EHILeftItemBase._PROGRESS = EHI:GetHudlistOption("left_list_progress")
-        EHILeftItemBase._PROGRESS_ALPHA = EHI:GetHudlistOption("left_list_progress_alpha")
-        EHILeftItemBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("left_list_progress_visibility")
-        EHILeftItemBase._PROGRESS_STATIC = EHI:GetHudlistOption("left_list_progress_static")
+        EHILeftListBase._parent = EHIHudlistManager._left_list
+        EHILeftListBase._LIST_ICON_VISIBLE = EHI:GetHudlistOption("left_list_icon")
+        EHILeftListBase._ANIM_RIGHT_TO_LEFT = EHI:GetHudlistOption("left_list_alignment") == 2
+        EHILeftListBase._BG_ALPHA = EHI:GetHudlistOption("left_list_bg_alpha")
+        EHILeftListBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("left_list_bg_color"))
+        EHILeftListBase._PROGRESS = EHI:GetHudlistOption("left_list_progress")
+        EHILeftListBase._PROGRESS_ALPHA = EHI:GetHudlistOption("left_list_progress_alpha")
+        EHILeftListBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("left_list_progress_visibility")
+        EHILeftListBase._PROGRESS_STATIC = EHI:GetHudlistOption("left_list_progress_static")
         function EHIHudlistManager:_init_left_list()
             self._panel = self._ws:panel():panel({ layer = -5 })
             local x, y = managers.gui_data:safe_to_full(EHI:GetHudlistOption("left_list_x"), EHI:GetHudlistOption("left_list_y"))
             self._left_list:post_init(x, y, EHI:GetHudlistOption("left_list_scale"))
             local color_index = EHI:GetHudlistOption("left_list_item_color") --[[@as integer]]
             local color, color_string = tweak_data.ehi:GetBuffColorFromIndex(color_index)
-            EHILeftItemBase._PROGRESS_COLOR = color
-            EHILeftItemBase._PROGRESS_COLOR_STRING = color_string
+            EHILeftListBase._PROGRESS_COLOR = color
+            EHILeftListBase._PROGRESS_COLOR_STRING = color_string
             local options = EHI:GetHudlistOption("left_list")
             local stealth_is_available = tweak_data.levels:IsStealthAvailable()
             if options.show_timers then
-                self._left_list:AddItem(EHILeftTimerItem, self._panel, {
+                self._left_list:AddItem(EHILeftTimerList, self._panel, {
                     id = "Timer",
                     icon = { skills = { 3, 6 } },
                     color_index = color_index,
@@ -202,18 +202,18 @@ if EHI:GetOption("show_hudlist") then
                     top_text = options.timer_top_text
                 })
             else
-                EHILeftTimerItem = nil ---@diagnostic disable-line
+                EHILeftTimerList = nil ---@diagnostic disable-line
             end
             if options.show_minions and not tweak_data.levels:IsStealthRequired() then
-                self._left_list:AddItem(EHILeftMinionItem, self._panel, {
+                self._left_list:AddItem(EHILeftMinionList, self._panel, {
                     id = "Minion",
-                    icon = EHILeftMinionItem._ICON,
+                    icon = EHILeftMinionList._ICON,
                     minion_option = options.minions_option,
                     health_circle = options.minions_health_circle,
                     top_text = options.minions_top_text
                 })
             else
-                EHILeftMinionItem = nil ---@diagnostic disable-line
+                EHILeftMinionList = nil ---@diagnostic disable-line
             end
             if options.show_deployables and
                 (options.deployable_show_doctor or
@@ -221,7 +221,7 @@ if EHI:GetOption("show_hudlist") then
                 options.deployable_show_grenades or
                 options.deployable_show_fak or
                 (options.deployable_show_bodybags and stealth_is_available)) then
-                self._left_list:AddItem(EHILeftDeployableItem, self._panel, {
+                self._left_list:AddItem(EHILeftDeployableList, self._panel, {
                     id = "Deployable",
                     icon = { ehi = "deployables" },
                     update_on_alarm = true,
@@ -235,78 +235,78 @@ if EHI:GetOption("show_hudlist") then
                     show_bodybags = options.deployable_show_bodybags and stealth_is_available
                 })
             else
-                EHILeftDeployableItem = nil ---@diagnostic disable-line
+                EHILeftDeployableList = nil ---@diagnostic disable-line
             end
             if options.show_jammers then
-                self._left_list:AddItem(EHILeftJammerItem, self._panel, {
+                self._left_list:AddItem(EHILeftJammerList, self._panel, {
                     id = "Jammer",
-                    icon = EHILeftJammerItem._ICON
+                    icon = EHILeftJammerList._ICON
                 })
             else
-                EHILeftJammerItem = nil ---@diagnostic disable-line
+                EHILeftJammerList = nil ---@diagnostic disable-line
             end
             if options.show_ecm_retrigger then
-                self._left_list:AddItem(EHILeftJammerRetriggerItem, self._panel, {
+                self._left_list:AddItem(EHILeftJammerRetriggerList, self._panel, {
                     id = "JammerRetrigger",
-                    icon = EHILeftJammerRetriggerItem._ICON
+                    icon = EHILeftJammerRetriggerList._ICON
                 })
             else
-                EHILeftJammerRetriggerItem = nil ---@diagnostic disable-line
+                EHILeftJammerRetriggerList = nil ---@diagnostic disable-line
             end
             if stealth_is_available then
                 if options.show_enemy_pagers then
-                    self._left_list:AddItem(EHILeftPagerItem, self._panel, {
+                    self._left_list:AddItem(EHILeftPagerList, self._panel, {
                         id = "Pager",
                         icon = { ehi = "pager_icon" },
                         delete_on_alarm = true
                     })
                 else
-                    EHILeftPagerItem = nil ---@diagnostic disable-line
+                    EHILeftPagerList = nil ---@diagnostic disable-line
                 end
                 if options.show_camera_loop and not _G.ch_settings then
-                    self._left_list:AddItem(EHILeftCameraLoopItem, self._panel, {
+                    self._left_list:AddItem(EHILeftCameraLoopList, self._panel, {
                         id = "Camera",
-                        icon = EHILeftCameraLoopItem._ICON,
+                        icon = EHILeftCameraLoopList._ICON,
                         delete_on_alarm = true
                     })
                 else
-                    EHILeftCameraLoopItem = nil ---@diagnostic disable-line
+                    EHILeftCameraLoopList = nil ---@diagnostic disable-line
                 end
             end
         end
     end
     if EHI:GetHudlistOption("show_right_list") then
         dofile(EHI.LuaPath .. "hudlist/right_items.lua")
-        EHIRightItemBase._parent = EHIHudlistManager._right_list
-        EHIRightItemBase._BG_ALPHA = EHI:GetHudlistOption("right_list_bg_alpha")
-        EHIRightItemBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("right_list_bg_color"))
-        EHIRightItemBase._PROGRESS = EHI:GetHudlistOption("right_list_progress")
-        EHIRightItemBase._PROGRESS_ALPHA = EHI:GetHudlistOption("right_list_progress_alpha")
-        EHIRightItemBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("right_list_progress_visibility")
-        EHIRightItemBase._PROGRESS_STATIC = EHI:GetHudlistOption("right_list_progress_static")
+        EHIRightListBase._parent = EHIHudlistManager._right_list
+        EHIRightListBase._BG_ALPHA = EHI:GetHudlistOption("right_list_bg_alpha")
+        EHIRightListBase._BG_COLOR = EHI:GetColor(EHI:GetHudlistOption("right_list_bg_color"))
+        EHIRightListBase._PROGRESS = EHI:GetHudlistOption("right_list_progress")
+        EHIRightListBase._PROGRESS_ALPHA = EHI:GetHudlistOption("right_list_progress_alpha")
+        EHIRightListBase._PROGRESS_VISIBILITY = EHI:GetHudlistOption("right_list_progress_visibility")
+        EHIRightListBase._PROGRESS_STATIC = EHI:GetHudlistOption("right_list_progress_static")
         function EHIHudlistManager:_init_right_list()
             self._panel = self._panel or self._ws:panel():panel({ layer = -5 })
             local x, y = managers.gui_data:safe_to_full(EHI:GetHudlistOption("right_list_x"), EHI:GetHudlistOption("right_list_y"))
             local scale = EHI:GetHudlistOption("right_list_scale") --[[@as number]]
             self._right_list:post_init(y, scale)
-            EHIRightItemBase._RIGHT_OFFSET = self._panel:w() - x
-            EHIRightItemBase._SCALE = scale
+            EHIRightListBase._RIGHT_OFFSET = self._panel:w() - x
+            EHIRightListBase._SCALE = scale
             local color, color_string = tweak_data.ehi:GetBuffColorFromIndex(EHI:GetHudlistOption("right_list_item_color"))
-            EHIRightItemBase._PROGRESS_COLOR = color
-            EHIRightItemBase._PROGRESS_COLOR_STRING = color_string
+            EHIRightListBase._PROGRESS_COLOR = color
+            EHIRightListBase._PROGRESS_COLOR_STRING = color_string
             local options = EHI:GetHudlistOption("right_list")
             local stealth_is_available = tweak_data.levels:IsStealthAvailable()
             if options.show_units then
                 local is_holdout = tweak_data.levels:IsLevelSkirmish()
-                local item = self._right_list:AddItem(EHIRightUnitItem, self._panel, {
+                local item = self._right_list:AddItem(EHIRightUnitList, self._panel, {
                     id = "Unit"
                 })
                 item:CreateItemsFromMap(is_holdout, options.unit_types)
             else
-                EHIRightUnitItem = nil ---@diagnostic disable-line
+                EHIRightUnitList = nil ---@diagnostic disable-line
             end
             if options.show_loot then
-                local item = self._right_list:AddItem(EHIRightLootItem, self._panel, {
+                local item = self._right_list:AddItem(EHIRightLootList, self._panel, {
                     id = "Loot",
                     show_potentional_loot = options.potentional_loot,
                     update_on_alarm = true
@@ -316,26 +316,26 @@ if EHI:GetOption("show_hudlist") then
                     item:ColorItemsBasedOnTheirWeight(options.loot_color_items_light, options.loot_color_items_heavy, options.loot_color_items_body)
                 end
             else
-                EHIRightLootItem = nil ---@diagnostic disable-line
+                EHIRightLootList = nil ---@diagnostic disable-line
             end
             if options.show_special_items then
-                local item = self._right_list:AddItem(EHIRightSpecialItemsItem, self._panel, {
+                local item = self._right_list:AddItem(EHIRightSpecialItemsList, self._panel, {
                     id = "Special",
                     update_on_spawn = true
                 })
                 item:CreateItemsFromMap(options.special_items_type)
             else
-                EHIRightSpecialItemsItem = nil ---@diagnostic disable-line
+                EHIRightSpecialItemsList = nil ---@diagnostic disable-line
             end
             if options.show_stealth_info and stealth_is_available then
-                local item = self._right_list:AddItem(EHIRightStealthItem, self._panel, {
+                local item = self._right_list:AddItem(EHIRightStealthList, self._panel, {
                     id = "Stealth",
                     delete_on_alarm = true,
                     bodybags_format = options.stealth_info_bodybags_format,
                     warning_index = options.stealth_info_warning
                 })
             else
-                EHIRightStealthItem = nil ---@diagnostic disable-line
+                EHIRightStealthList = nil ---@diagnostic disable-line
             end
         end
     end

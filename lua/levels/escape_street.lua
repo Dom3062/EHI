@@ -40,10 +40,20 @@ if EHI.TrackerUtils:IsLootCounterVisible({ element = { 100500, 102069 } }) then
         self._loot:IncreaseLootCounterProgressMax()
     end, { element = { 100500, 102069 } })
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     other[102528] = { id = "Snipers", count_on_refresh = 2, snipers_spawned = true, class = TT.Sniper.TimedCount }
     other[102431] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[102428] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SetRespawnTime", arg = { 15 + 20 }}
+    other[102428] = EHI:AddCustomCode(function(self)
+        local t = 15 + 20
+        if self._trackers:CallFunction2("Snipers", "SetRespawnTime", t) then
+            self._trackers:AddTracker({
+                id = "Snipers",
+                time = t,
+                count_on_refresh = 2,
+                class = TT.Sniper.TimedCount
+            })
+        end
+    end)
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102065] = { special_function = SF.ShowWaypoint, data = { icon = Icon.Escape, position_from_element = 102675 }}

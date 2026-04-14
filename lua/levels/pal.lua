@@ -70,10 +70,8 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         other[EHI:GetInstanceElementID(100004, i)] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_from_element = EHI:GetInstanceElementID(100019, i) } }
     end
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[102941] = { chance = 20, id = "Snipers", class = TT.Sniper.Chance, flash_times = 1, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }
-    other[102956] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[102957] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[102960] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementCounterFilter
         if EHI.IsHost and not element:_values_ok() then
             return
@@ -94,7 +92,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end) }
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(1, "end", "pal")
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
@@ -102,6 +100,19 @@ EHI.Mission:ParseTriggers({
     sync_triggers = {
         base = sync_triggers,
         element = element_sync_triggers
+    },
+    assault = {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then -- Skip if dropped-in in stealth
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
     }
 })
 local value_max = tweak_data.achievement.loot_cash_achievements.pal_2.secured.value

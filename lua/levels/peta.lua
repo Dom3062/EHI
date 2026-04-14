@@ -34,12 +34,12 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 2,
         overkill_or_above = 3
     })
-    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = sniper_count }
+    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = sniper_count, special_function = SF.Snipers_CheckIfTrackerExists }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -47,6 +47,19 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            self._trackers:AddTracker({
+                id = "Snipers",
+                count = EHISniperBase._alive_count,
+                from_sync = true,
+                sniper_count = sniper_count,
+                on_fail_refresh_t = 25,
+                on_success_refresh_t = 20 + 10 + 25,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     local EscapeWaypoint = { special_function = SF.ShowWaypoint, data = { icon = Icon.Car, position_from_element = EHI:GetInstanceElementID(100043, 2900) } }

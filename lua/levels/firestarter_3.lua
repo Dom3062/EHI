@@ -82,8 +82,8 @@ achievements.voff_1 =
 tweak_data.ehi.functions.achievements.eng_X("eng_1") -- "The only one that is true" achievement
 
 other[105364] = EHI:AddAssaultDelay({ control = 10 + 60, special_function = SF.AddTimeByPreplanning, data = { id = 104875, yes = 30, no = 15 } })
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop, single_sniper = true }
+if EHI:GetLoadSniperTrackers() then
+    other[100438] = { chance = 10, time = 30 + 60, id = "Snipers", class = TT.Sniper.Loop, single_sniper = true, special_function = SF.Snipers_CheckIfTrackerExists }
     other[105327] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[101481] = { id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
@@ -92,20 +92,20 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         self._trackers:CallFunction(id, "AnnounceSniperSpawn")
     end)}
     other[101446] = { special_function = SF.CallTrackerManagerFunction, f = "SetTimeNoAnim", arg = { "Snipers", 60 } }
-    -- Sniper spawn
-    other[103529] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[103534] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[101066] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100945] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[101068] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[101444] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    -- Sniper death
-    other[101635] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[101632] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[101638] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[101640] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[101645] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[101627] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            if managers.groupai:state():whisper_mode() then
+                return
+            end
+            self._trackers:AddTracker({
+                id = "Snipers",
+                count = EHISniperBase._alive_count,
+                from_sync = true,
+                single_sniper = true,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:IsLootCounterVisible() then
     local deposit_boxes = {
@@ -159,7 +159,21 @@ managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperIt
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
-    other = other
+    other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif assault_number <= 2 or (assault_number == 3 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 
 EHI.Unit:UpdateUnits({

@@ -1,3 +1,11 @@
+r388 (14. 04. 2026):
+Assault: Improved assault diff detection after dropin for majority of heists
+Hudlist - Right List - Units: Adjustments in many heists to persistent Sniper item to appear once the logic is active
+Menu: Fixed visual issue of preview moving in Hudlist - Left List when changing alignment
+Snipers: Fixed tracking on client
+Snipers: Improved tracking and reduced number of triggers in majority of heists
+Snipers: Improved detection of active logic for dropin for majority of heists
+
 r387 (09. 04. 2026):
 Hudlist - Right List - Loot: Fixed a crash after alarm
 

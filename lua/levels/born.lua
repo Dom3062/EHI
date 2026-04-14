@@ -45,7 +45,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 2,
         overkill = 3,
@@ -57,8 +57,22 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +20%
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                return
+            end
+            managers.ehi_tracker:AddTracker({
+                id = "Snipers",
+                from_sync = true,
+                count = EHISniperBase._alive_count,
+                on_fail_refresh_t = 30,
+                on_success_refresh_t = 20 + 5 + 30,
+                sniper_count = sniper_count,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:GetHudlistAndListOption("right_list", "show_loot") then
     -- Disables crates inside the clubhouse as potentional loot
@@ -69,9 +83,22 @@ if EHI:GetHudlistAndListOption("right_list", "show_loot") then
     end
     EHI.Unit:UpdateHudlistUnitsNoCheck(tbl)
 end
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(1, "end", "born")
 
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
-EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other }, nil, { Icon.Defend })
+EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            else
+                self._assault:SetDiff(0.75)
+            end
+        end
+    } }, nil, { Icon.Defend })
 EHI:ShowLootCounter({ max = 9 }, { element = EHI:GetInstanceElementID(100268, 1350), present_timer = 0 }) -- 4 weapons + 5 cocaine
 EHI.Unit:UpdateUnits({
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small/001 (Bunker)

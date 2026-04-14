@@ -21,11 +21,9 @@ local other =
 {
     [101213] = EHI:AddAssaultDelay({})
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     -- Script sets required amount of snipers for each difficulty, however, ´spawn_random_sniper´ ElementRandom 102462 only spawns 1
     other[102447] = { chance = 100, id = "Snipers", class = TT.Sniper.Chance, single_sniper = true }
-    other[102452] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[102453] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[102460] = { id = "Snipers", special_function = SF.RemoveTracker } -- Failed chance does not TRIGGER sniper_spawn again, it only increases chance
     other[102461] = { special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local chance = element._values.chance -- 30%

@@ -52,7 +52,19 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
 end
 tweak_data.ehi.functions.achievements.armored_4()
 EHI.Unit:IgnoreCarryInHudlist(101237, 101238, 101239, 101240, 103835, 103836, 103837, 103838) -- 8x Money bundles under the map
-EHI.Mission:ParseTriggers({ mission = triggers, other = other, preload = preload }, "Escape", Icon.CarEscape)
+EHI.Mission:ParseTriggers({ mission = triggers, other = other, preload = preload,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.65)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    } }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

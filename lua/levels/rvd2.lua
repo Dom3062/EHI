@@ -106,7 +106,7 @@ else
     triggers[101629] = { time = 24 + 3, special_function = LiquidNitrogen, waypoint_f = WP }
     EHI:ShowLootCounterWaypoint({ element = { EHI:GetInstanceElementID(100037, 4650), EHI:GetInstanceElementID(100037, 4850) }, present_timer = 0 })
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }
     other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 3 })
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
@@ -114,11 +114,26 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        local sniper_count = EHI:IsDifficultyOrBelow(EHI.Difficulties.VeryHard) and 3 or 2 -- They swapped max sniper count for some reason
+        managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number, in_assault)
+            if assault_number <= 1 then -- 2 assaults
+                return
+            end
+            managers.ehi_tracker:AddTracker({
+                id = "Snipers",
+                from_sync = true,
+                count = EHISniperBase._alive_count,
+                on_fail_refresh_t = 25,
+                on_success_refresh_t = 20 + 10 + 25,
+                sniper_count = sniper_count,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
-    if EHI:CanShowAchievement2("rvd_8", "show_achievements_weapon") then -- United We Heist
+    if EHI:CanShowAchievement2("rvd_8", "show_achievements_weapon") then -- "United We Heist" achievement
         EHI:AddOnSpawnedExtendedCallback(function(self, job, level, from_beginning)
             if job == "rvd" and self:EHIHasPrimaryWeaponTypeEquipped("assault_rifle") and managers.job:get_memory("ehi_rvd_8") then
                 managers.ehi_unlockable:AddAchievementStatusTracker("rvd_8")
@@ -154,13 +169,25 @@ if EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL) then
         }
     })
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(2, "start", "rvd2")
 EHI.Unit:IgnoreCarryInHudlist(100296) -- Unobtainable money pile near sniper pos
 EHI.Unit:IgnoreInteractInHudlist(100277, 100278, 100279, 100280) -- Small loot near the money pile
 EHI.Mission:ParseTriggers({
     mission = triggers,
     other = other,
-    sync_triggers = { element = element_sync_triggers }
+    sync_triggers = { element = element_sync_triggers },
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 
 local DisableWaypoints =

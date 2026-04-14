@@ -32,7 +32,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 50 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 2,
         overkill_or_above = 3
@@ -44,8 +44,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 

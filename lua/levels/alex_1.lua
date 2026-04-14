@@ -53,7 +53,7 @@ local other =
         end
     end), trigger_once = true })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local SetRespawnTime = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local t = trigger.time

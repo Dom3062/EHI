@@ -3,12 +3,9 @@ if EHI:CheckLoadHook("IngameWaitingForPlayersState") then
     return
 end
 
-local gage3_13_levels =
-{
-    pbr = true,
-    shoutout_raid = true,
-    pent = true
-}
+local enemy_melee_hit_achievements = tweak_data.achievement.enemy_melee_hit_achievements
+local enemy_kill_achievements = tweak_data.achievement.enemy_kill_achievements
+local persistent_stat_unlocks = tweak_data.achievement.persistent_stat_unlocks
 
 -- Daily challenges activated in ChallengeManager
 local challenges =
@@ -226,7 +223,6 @@ function IngameWaitingForPlayersState:EHIAddAchievementTracker(id, progress, max
     })
 end
 
-local persistent_stat_unlocks = tweak_data.achievement.persistent_stat_unlocks
 ---@param id_stat string
 ---@param remove_on_alarm boolean?
 ---@param dont_flash_bg boolean?
@@ -316,10 +312,11 @@ local function pxp1_1(self)
     elseif EHI:IsAchievementLocked2("pxp1_1") then
         local grenade_data = tweak_data.achievement.grenade_achievements.pxp1_1
         local grenade_pass = table.index_of(grenade_data.grenade_types, grenade) ~= -1
-        local enemy_kills_data = tweak_data.achievement.enemy_kill_achievements.pxp1_1
-        local melee_pass = table.index_of(tweak_data.achievement.enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= -1
-        local player_style_pass = HasPlayerStyleEquipped(grenade_data.player_style.style)
-        local variation_pass = HasSuitVariationEquipped(grenade_data.player_style.variation)
+        local enemy_kills_data = enemy_kill_achievements.pxp1_1
+        local melee_pass = table.index_of(enemy_melee_hit_achievements.pxp1_1.melee_weapons, melee) ~= -1
+        local player_style = grenade_data.player_style
+        local player_style_pass = HasPlayerStyleEquipped(player_style.style)
+        local variation_pass = HasSuitVariationEquipped(player_style.variation)
         if (grenade_pass or WeaponsContainBlueprint(enemy_kills_data.parts) or melee_pass or HasViperGrenadesOnLauncherEquipped()) and player_style_pass and variation_pass then
             self:EHIAddAchievementTrackerFromStat("pxp1_1_stats")
         end
@@ -353,6 +350,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
     local level = Global.game_settings.level_id
     local mask_id = managers.blackmarket:equipped_mask().mask_id
     local from_beginning = managers.statistics:started_session_from_beginning()
+    local on_last_stage = managers.job:on_last_stage()
     EHI:CallCallbackOnce("Spawned2", self, managers.job:current_real_job_id(), level, from_beginning)
     if level == "safehouse" or level == "chill" then
         if EHI:GetUnlockableAndOption("show_achievements") and EHI:GetUnlockableOption("show_achievements_other") then
@@ -406,30 +404,30 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if EHI:IsAchievementLocked2("armored_5") and HasWeaponEquipped("ppk") then -- "License to Kill" achievement
                 self:EHIAddAchievementTrackerFromStat("armored_5_stat")
             end
-            if EHI:IsAchievementLocked2("armored_7") and HasWeaponEquipped("s552") and mask_id == tweak_data.achievement.enemy_kill_achievements.im_not_a_crook.mask then -- "I'm Not a Crook!" achievement
+            if EHI:IsAchievementLocked2("armored_7") and HasWeaponEquipped("s552") and mask_id == enemy_kill_achievements.im_not_a_crook.mask then -- "I'm Not a Crook!" achievement
                 local function f()
                     self:EHIAddAchievementTrackerFromStat("armored_7_stat")
                 end
                 self:EHIShowTrackerInLoud(f)
                 stats.armored_7_stat = "armored_7"
             end
-            if EHI:IsAchievementLocked2("armored_9") and HasWeaponEquipped("m45") and mask_id == tweak_data.achievement.enemy_kill_achievements.fool_me_once.mask then -- "Fool Me Once, Shame on -Shame on You. Fool Me - You Can't Get Fooled Again" achievement
+            if EHI:IsAchievementLocked2("armored_9") and HasWeaponEquipped("m45") and mask_id == enemy_kill_achievements.fool_me_once.mask then -- "Fool Me Once, Shame on -Shame on You. Fool Me - You Can't Get Fooled Again" achievement
                 local function f()
                     self:EHIAddAchievementTrackerFromStat("armored_9_stat")
                 end
                 self:EHIShowTrackerInLoud(f)
                 stats.armored_9_stat = "armored_9"
             end
-            if EHI:IsAchievementLocked2("gage_1") and HasWeaponEquipped("ak5") and mask_id == tweak_data.achievement.enemy_kill_achievements.wanted.mask then -- "Wanted" achievement
+            if EHI:IsAchievementLocked2("gage_1") and HasWeaponEquipped("ak5") and mask_id == enemy_kill_achievements.wanted.mask then -- "Wanted" achievement
                 self:EHIAddAchievementTrackerFromStat("gage_1_stats")
             end
-            if EHI:IsAchievementLocked2("gage_2") and HasWeaponEquipped("p90") and mask_id == tweak_data.achievement.enemy_kill_achievements.three_thousand_miles.mask then -- "3000 Miles to the Safe House" achievement
+            if EHI:IsAchievementLocked2("gage_2") and HasWeaponEquipped("p90") and mask_id == enemy_kill_achievements.three_thousand_miles.mask then -- "3000 Miles to the Safe House" achievement
                 self:EHIAddAchievementTrackerFromStat("gage_2_stats")
             end
-            if EHI:IsAchievementLocked2("gage_3") and HasWeaponEquipped("aug") and mask_id == tweak_data.achievement.enemy_kill_achievements.commando.mask then -- "Commando" achievement
+            if EHI:IsAchievementLocked2("gage_3") and HasWeaponEquipped("aug") and mask_id == enemy_kill_achievements.commando.mask then -- "Commando" achievement
                 self:EHIAddAchievementTrackerFromStat("gage_3_stats")
             end
-            if EHI:IsAchievementLocked2("gage_4") and HasWeaponEquipped("colt_1911") and mask_id == tweak_data.achievement.enemy_kill_achievements.public_enemies.mask then -- "Public Enemies" achievement
+            if EHI:IsAchievementLocked2("gage_4") and HasWeaponEquipped("colt_1911") and mask_id == enemy_kill_achievements.public_enemies.mask then -- "Public Enemies" achievement
                 self:EHIAddAchievementTrackerFromStat("gage_4_stats")
             end
             if EHI:IsAchievementLocked2("gage_5") and HasWeaponEquipped("scar") then -- "Inception" achievement
@@ -444,7 +442,8 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
             if EHI:IsAchievementLocked2("gage2_5") and self:EHIHasWeaponTypeEquipped("lmg") then -- "The Eighth and Final Rule" achievement
                 self:EHIAddAchievementTracker("gage2_5", 0, 220)
                 Hooks:PostHook(StatisticsManager, "killed", "EHI_gage2_5_killed", function(_, data)
-                    if data.variant ~= "melee" and data.weapon_unit and data.weapon_unit:base().is_category and data.weapon_unit:base():is_category("lmg") and not CopDamage.is_civilian(data.name) then
+                    local base = data.weapon_unit and data.weapon_unit:base()
+                    if data.variant ~= "melee" and base and base.is_category and base:is_category("lmg") and not CopDamage.is_civilian(data.name) then
                         managers.ehi_tracker:IncreaseProgress("gage2_5")
                     end
                 end)
@@ -485,21 +484,16 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 for _, unit in ipairs(ZipLine.ziplines) do
                     if unit:zipline():is_usage_type_person() then
                         local progress = EHI:GetAchievementProgress("gage3_13_stats")
-                        if gage3_13_levels[level] then
-                            Hooks:PostHook(AchievmentManager, "award_progress", "EHI_gage3_13_AwardProgress", function(am, stat, value)
-                                if stat == "gage3_13_stats" then
-                                    progress = progress + (value or 1)
-                                    if progress >= 10 then
-                                        Hooks:RemovePostHook("EHI_gage3_13_AwardProgress")
-                                        return
-                                    end
-                                    ShowPopup("gage3_13", progress, 10)
+                        Hooks:PostHook(AchievmentManager, "award_progress", "EHI_gage3_13_AwardProgress", function(am, stat, value)
+                            if stat == "gage3_13_stats" then
+                                progress = progress + (value or 1)
+                                if progress >= 10 then
+                                    Hooks:RemovePostHook("EHI_gage3_13_AwardProgress")
+                                    return
                                 end
-                            end)
-                        else
-                            self:EHIAddAchievementTracker("gage3_13", progress, 10)
-                            stats.gage3_13_stats = "gage3_13"
-                        end
+                                ShowPopup("gage3_13", progress, 10)
+                            end
+                        end)
                         break
                     end
                 end
@@ -569,7 +563,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 stats.eagle_1_stats = "eagle_1"
             end
             if EHI:IsAchievementLocked2("ameno_8") then -- "The Collector" achievement
-                local needed_weapons = tweak_data.achievement.enemy_kill_achievements.akm4_shootout.weapons
+                local needed_weapons = enemy_kill_achievements.akm4_shootout.weapons
                 local primary_pass = table.index_of(needed_weapons, primary.weapon_id) ~= -1
                 local secondary_pass = table.index_of(needed_weapons, secondary.weapon_id) ~= -1
                 if primary_pass or secondary_pass then
@@ -606,7 +600,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end)
             end
             if EHI:IsAchievementLocked2("grv_3") then -- "Have Nice Day!" achievement
-                local weapons_required = tweak_data.achievement.enemy_kill_achievements.grv_3.weapons
+                local weapons_required = enemy_kill_achievements.grv_3.weapons
                 local pass = table.index_of(weapons_required, primary.weapon_id) ~= -1
                 local pass2 = table.index_of(weapons_required, secondary.weapon_id) ~= -1
                 if pass or pass2 then
@@ -734,7 +728,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 self:EHIAddAchievementTrackerFromStat("eagle_2_stats", true)
             end
             if EHI:IsAchievementLocked2("steel_2") then -- "Their Armor Is Thick and Their Shields Broad" achievement
-                local melee_required = tweak_data.achievement.enemy_melee_hit_achievements.steel_2.melee_weapons
+                local melee_required = enemy_melee_hit_achievements.steel_2.melee_weapons
                 local pass = table.index_of(melee_required, melee) ~= -1
                 if pass then
                     self:EHIAddAchievementTracker("steel_2", 0, 10)
@@ -757,7 +751,7 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                     stats.gage2_9_stats = "gage2_9"
                 end
                 if EHI:IsAchievementLocked2("sawp_1") then -- "Buzzbomb" achievement
-                    local achievement_data = tweak_data.achievement.enemy_melee_hit_achievements.sawp_1
+                    local achievement_data = enemy_melee_hit_achievements.sawp_1
                     local melee_pass = table.index_of(achievement_data.melee_weapons, melee) ~= -1
                     local player_style_pass = HasPlayerStyleEquipped(achievement_data.player_style.style)
                     local variation_pass = HasSuitVariationEquipped(achievement_data.player_style.variation)
@@ -915,10 +909,10 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                 end)
             end
             if OVKOrAbove then
-                if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and from_beginning then -- From Russia With Love
+                if EHI:IsAchievementLocked2("halloween_10") and managers.job:current_contact_id() == "vlad" and mask_id == tweak_data.achievement.complete_heist_achievements.in_soviet_russia.mask and from_beginning and on_last_stage then -- From Russia With Love
                     local progress = EHI:GetAchievementProgress("halloween_10_stats")
                     EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success)
-                        if success and progress < 25 and managers.job:on_last_stage() then
+                        if success and progress < 25 and managers.job:on_last_stage() then -- Check it again if no escape is active
                             ShowPopup("halloween_10", progress + 1, 25)
                         end
                     end)
@@ -974,9 +968,9 @@ function IngameWaitingForPlayersState:at_exit(next_state, ...)
                         tweak_data.hud_icons[challenge.id] = icon
                     end
                     if c.check_on_completion then
-                        if not c.contact or managers.job:current_contact_id() == c.contact then
+                        if not c.contact or managers.job:current_contact_id() == c.contact and on_last_stage and from_beginning then
                             EHI:AddCallback(EHI.CallbackMessage.MissionEnd, function(success) ---@param success boolean
-                                if success and managers.job:on_last_stage() and from_beginning then
+                                if success and managers.job:on_last_stage() then -- Check it again if no escape is active
                                     local progress, max = EHI:GetDailyChallengeProgressAndMax(challenge.id, c.progress_id)
                                     local new_progress = progress + 1
                                     if new_progress < max then

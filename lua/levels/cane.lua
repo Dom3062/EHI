@@ -82,7 +82,7 @@ local other =
 {
     [EHI:GetInstanceElementID(100002, 10100)] = EHI:AddAssaultDelay({ control_additional_time = 20 + 15 + 405/30 + 15, random_time = 5 + 9 + 10 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[102604] = { id = "Snipers", class = TT.Sniper.Count, single_sniper = true }
     other[102606] = { id = "Snipers", class = TT.Sniper.Count, sniper_count = 2 }
     other[102610] = { id = "Snipers", class = TT.Sniper.Count, sniper_count = 3 }
@@ -92,8 +92,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
     other[102391] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[102361] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[102362] = { id = "Snipers", special_function = SF.DecreaseCounter }
     if EHI.IsClient then
         other[102369] = { id = "Snipers", class = TT.Sniper.Count, special_function = SF.AddTrackerIfDoesNotExist, trigger_once = true }
     end

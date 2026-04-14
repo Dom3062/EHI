@@ -123,6 +123,7 @@ _G.EHI.Unit = EHIMissionUnit
 ---@field force_assault_start boolean
 ---@field wave_mode_elements_block number[]
 ---@field ignore_assault_start_count number?
+---@field diff_load_sync fun(self: EHIMissionElementTrigger, assault_number: integer, in_assault: boolean)
 
 ---@class ParseTriggersTable.pre_parse
 ---@field filter_out_not_loaded_trackers "show_timers"|string[] Only in mission triggers

@@ -11,7 +11,7 @@ if EHI.TrackerUtils:IsLootCounterVisible({ element = 104450 }) then
     other[101705] = EHI:AddLootCounter(tweak_data.ehi.functions.ShowNumberOfLootbagsOnTheGround, { element = 104450 }, nil, nil, true)
 end
 
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     other[104318] = { id = "Snipers", count = 2, chance_success = true, class = TT.Sniper.TimedChanceOnce }
     other[104319] = { id = "Snipers", count = 1, chance_success = true, class = TT.Sniper.TimedChanceOnce }
     other[104390] = { id = "Snipers", special_function = SF.DecreaseCounter }

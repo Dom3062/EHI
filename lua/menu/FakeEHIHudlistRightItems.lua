@@ -1,18 +1,18 @@
----@alias FakeEHIRightItemBase.Item { panel: Panel, progress: Bitmap[][], value: number, text: Text, id: string?, icon_scale: number, visible: boolean, count: integer, enabled: boolean }
----@alias FakeEHIRightItemBase.ItemParams { icon: table, value: number, fake_pos: integer?, id: string?, enabled: boolean }
+---@alias FakeEHIRightListBase.Item { panel: Panel, progress: Bitmap[][], value: number, text: Text, id: string?, icon_scale: number, visible: boolean, count: integer, enabled: boolean }
+---@alias FakeEHIRightListBase.ItemParams { icon: table, value: number, fake_pos: integer?, id: string?, enabled: boolean }
 
----@class FakeEHIRightItemBase
+---@class FakeEHIRightListBase
 ---@field new fun(self: self, panel: Panel, params: table): self
-FakeEHIRightItemBase = class()
-FakeEHIRightItemBase._PROGRESS = Color(1, 1, 1, 1)
-FakeEHIRightItemBase._PROGRESS_RECT = {
+FakeEHIRightListBase = class()
+FakeEHIRightListBase._PROGRESS = Color(1, 1, 1, 1)
+FakeEHIRightListBase._PROGRESS_RECT = {
     { 32, 0, -32, 32 },
     { 128, 0, -128, 128 }
 }
-FakeEHIRightItemBase._UPDATE_COLOR_APPLIES_TO_ICON = true
+FakeEHIRightListBase._UPDATE_COLOR_APPLIES_TO_ICON = true
 ---@param panel Panel
 ---@param params table
-function FakeEHIRightItemBase:init(panel, params)
+function FakeEHIRightListBase:init(panel, params)
     self._id = params.id
     self._enabled = params.enabled
     self._visible = params.visible
@@ -36,7 +36,7 @@ function FakeEHIRightItemBase:init(panel, params)
         h = 64 * scale,
         visible = self._enabled and self._visible and self._list_enabled or false
     })
-    self._items = {} ---@type FakeEHIRightItemBase.Item[]
+    self._items = {} ---@type FakeEHIRightListBase.Item[]
     if params.items then
         for _, data in ipairs(params.items) do
             self:AddItem(data, scale, bg_alpha, progress_alpha, color, color_string)
@@ -45,11 +45,11 @@ function FakeEHIRightItemBase:init(panel, params)
     self:UpdateDataFromOptions(params)
 end
 
-function FakeEHIRightItemBase:UpdateDataFromOptions(params)
+function FakeEHIRightListBase:UpdateDataFromOptions(params)
 end
 
 ---@param scale number
-function FakeEHIRightItemBase:Rescale(scale)
+function FakeEHIRightListBase:Rescale(scale)
     self._params.scale = scale
     local w = 32 * scale
     self._panel:set_h(self._params.h * scale)
@@ -83,13 +83,13 @@ end
 
 ---@param x number
 ---@param scale number
-function FakeEHIRightItemBase:SetRightOffset(x, scale)
+function FakeEHIRightListBase:SetRightOffset(x, scale)
     self._params.right_offset = x
     self:_update_items_right_offset(scale)
 end
 
 ---@param scale number?
-function FakeEHIRightItemBase:_update_items_right_offset(scale)
+function FakeEHIRightListBase:_update_items_right_offset(scale)
     scale = scale or self._params.scale
     local pos_offset = 0
     for i, item in ipairs(self._items) do
@@ -102,29 +102,29 @@ function FakeEHIRightItemBase:_update_items_right_offset(scale)
 end
 
 ---@param enabled boolean
-function FakeEHIRightItemBase:SetEnabled(enabled)
+function FakeEHIRightListBase:SetEnabled(enabled)
     self._enabled = enabled
     self._panel:set_visible(self._visible and self._list_enabled and enabled)
 end
 
 ---@param enabled boolean
-function FakeEHIRightItemBase:SetListEnabled(enabled)
+function FakeEHIRightListBase:SetListEnabled(enabled)
     self._list_enabled = enabled
     self._panel:set_visible(self._visible and self._enabled and enabled)
 end
 
 ---@param visibility boolean
-function FakeEHIRightItemBase:SetVisibility(visibility)
+function FakeEHIRightListBase:SetVisibility(visibility)
     self._visible = visibility
     self._panel:set_visible(self._enabled and self._list_enabled and visibility)
 end
 
-function FakeEHIRightItemBase:ItemIsVisible()
+function FakeEHIRightListBase:ItemIsVisible()
     return self._enabled
 end
 
 ---@param a number
-function FakeEHIRightItemBase:UpdateBGAlpha(a)
+function FakeEHIRightListBase:UpdateBGAlpha(a)
     for _, item in ipairs(self._items) do
         for _, bitmaps in ipairs(item.progress) do
             bitmaps[2]:set_alpha(a)
@@ -133,7 +133,7 @@ function FakeEHIRightItemBase:UpdateBGAlpha(a)
 end
 
 ---@param color { r: number, g: number, b: number }
-function FakeEHIRightItemBase:UpdateBGColor(color)
+function FakeEHIRightListBase:UpdateBGColor(color)
     local c = Color(255, color.r, color.g, color.b) / 255
     for _, item in ipairs(self._items) do
         for _, bitmaps in ipairs(item.progress) do
@@ -148,13 +148,13 @@ function FakeEHIRightItemBase:UpdateBGColor(color)
     end
 end
 
----@param params FakeEHIRightItemBase.ItemParams
+---@param params FakeEHIRightListBase.ItemParams
 ---@param scale number
 ---@param bg_alpha number
 ---@param progress_alpha number
 ---@param color Color
 ---@param color_string string
-function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha, color, color_string)
+function FakeEHIRightListBase:AddItem(params, scale, bg_alpha, progress_alpha, color, color_string)
     local icon_scale = 1
     local value = math.random(1, params.value or 1)
     local w = 32 * scale
@@ -260,16 +260,16 @@ function FakeEHIRightItemBase:AddItem(params, scale, bg_alpha, progress_alpha, c
 end
 
 ---@param panel Panel
----@param params FakeEHIRightItemBase.ItemParams
+---@param params FakeEHIRightListBase.ItemParams
 ---@param scale number
-function FakeEHIRightItemBase:AddAdditionalItemsOnPanel(panel, params, scale)
+function FakeEHIRightListBase:AddAdditionalItemsOnPanel(panel, params, scale)
 end
 
 ---Sorts newly added item panel on the HUD, but not in the memory
 ---@param panel Panel
 ---@param pos integer
 ---@param scale number
-function FakeEHIRightItemBase:SortAddedItem(panel, pos, scale)
+function FakeEHIRightListBase:SortAddedItem(panel, pos, scale)
     local x = self._params.right_offset
     if pos <= 1 then
         panel:set_right(x)
@@ -281,7 +281,7 @@ function FakeEHIRightItemBase:SortAddedItem(panel, pos, scale)
 end
 
 ---@param id string
-function FakeEHIRightItemBase:_get_item_by_id(id)
+function FakeEHIRightListBase:_get_item_by_id(id)
     for _, item in ipairs(self._items) do
         if item.id == id then
             return item
@@ -289,29 +289,29 @@ function FakeEHIRightItemBase:_get_item_by_id(id)
     end
 end
 
----@param item FakeEHIRightItemBase.Item
-function FakeEHIRightItemBase:_update_item_final_visibility(item)
+---@param item FakeEHIRightListBase.Item
+function FakeEHIRightListBase:_update_item_final_visibility(item)
     local visible = item.enabled and item.visible
     item.panel:set_visible(visible)
     item.count = visible and item.value or 0
 end
 
----@param item FakeEHIRightItemBase.Item
+---@param item FakeEHIRightListBase.Item
 ---@param visibility boolean
-function FakeEHIRightItemBase:_update_item_visibility(item, visibility)
+function FakeEHIRightListBase:_update_item_visibility(item, visibility)
     item.visible = visibility
     self:_update_item_final_visibility(item)
 end
 
----@param item FakeEHIRightItemBase.Item
+---@param item FakeEHIRightListBase.Item
 ---@param enabled boolean
-function FakeEHIRightItemBase:_update_item_enabled(item, enabled)
+function FakeEHIRightListBase:_update_item_enabled(item, enabled)
     item.enabled = enabled
     self:_update_item_final_visibility(item)
 end
 
 ---@param progress integer
-function FakeEHIRightItemBase:SetProgress(progress)
+function FakeEHIRightListBase:SetProgress(progress)
     self._params.progress = progress
     for _, item in ipairs(self._items) do
         for i, bitmaps in ipairs(item.progress) do
@@ -324,7 +324,7 @@ function FakeEHIRightItemBase:SetProgress(progress)
 end
 
 ---@param a number
-function FakeEHIRightItemBase:UpdateProgressAlpha(a)
+function FakeEHIRightListBase:UpdateProgressAlpha(a)
     for _, item in ipairs(self._items) do
         for _, bitmaps in ipairs(item.progress) do
             bitmaps[1]:set_alpha(a)
@@ -334,7 +334,7 @@ end
 
 ---@param visibility boolean
 ---@param progress integer?
-function FakeEHIRightItemBase:SetProgressVisibility(visibility, progress)
+function FakeEHIRightListBase:SetProgressVisibility(visibility, progress)
     self._params.progress_visibility = visibility
     progress = progress or self._params.progress
     for _, item in ipairs(self._items) do
@@ -345,7 +345,7 @@ function FakeEHIRightItemBase:SetProgressVisibility(visibility, progress)
 end
 
 ---@param color_index integer
-function FakeEHIRightItemBase:UpdateItemsColor(color_index)
+function FakeEHIRightListBase:UpdateItemsColor(color_index)
     local color, color_string = tweak_data.ehi:GetBuffColorFromIndex(color_index)
     for _, item in ipairs(self._items) do
         if self._UPDATE_COLOR_APPLIES_TO_ICON then
@@ -358,18 +358,18 @@ function FakeEHIRightItemBase:UpdateItemsColor(color_index)
     end
 end
 
----@class FakeEHIRightUnitItem : FakeEHIRightItemBase
----@field super FakeEHIRightItemBase
-FakeEHIRightUnitItem = class(FakeEHIRightItemBase)
-FakeEHIRightUnitItem._UPDATE_COLOR_APPLIES_TO_ICON = false
-FakeEHIRightUnitItem._ALL_ITEMS = {}
-function FakeEHIRightUnitItem:UpdateDataFromOptions(params)
+---@class FakeEHIRightUnitList : FakeEHIRightListBase
+---@field super FakeEHIRightListBase
+FakeEHIRightUnitList = class(FakeEHIRightListBase)
+FakeEHIRightUnitList._UPDATE_COLOR_APPLIES_TO_ICON = false
+FakeEHIRightUnitList._ALL_ITEMS = {}
+function FakeEHIRightUnitList:UpdateDataFromOptions(params)
     self._separate_dozers = params.dozer_count_separate
     self:_update_items_right_offset()
 end
 
 ---@param separate boolean
-function FakeEHIRightUnitItem:SetDozerCountSeparate(separate)
+function FakeEHIRightUnitList:SetDozerCountSeparate(separate)
     self._separate_dozers = separate
     local separate_dozers = separate
     local one_dozer_item = not separate
@@ -385,13 +385,13 @@ end
 
 ---@param enabled boolean
 ---@param id string
-function FakeEHIRightUnitItem:SetItemEnabled(enabled, id)
+function FakeEHIRightUnitList:SetItemEnabled(enabled, id)
     self:_update_item_enabled(self:_get_item_by_id(id), enabled)
     self:_update_items_right_offset()
 end
 
 ---@param enabled boolean
-function FakeEHIRightUnitItem:SetDozerItemEnabled(enabled)
+function FakeEHIRightUnitList:SetDozerItemEnabled(enabled)
     if enabled then
         self:SetDozerCountSeparate(self._separate_dozers)
     else
@@ -408,22 +408,22 @@ end
 
 ---@param color Color
 ---@param id string
-function FakeEHIRightUnitItem:SetItemColor(color, id)
+function FakeEHIRightUnitList:SetItemColor(color, id)
     self:_get_item_by_id(id).panel:child("icon"):set_color(color) ---@diagnostic disable-line
 end
 
----@class FakeEHIRightLootItem : FakeEHIRightItemBase
----@field super FakeEHIRightItemBase
-FakeEHIRightLootItem = class(FakeEHIRightItemBase)
-FakeEHIRightLootItem._BAG_ICON = { texture = "guis/textures/pd2/hud_tabs", texture_rect = { 32, 33, 32, 32 } }
-FakeEHIRightLootItem._TEXT_COLOR = Color(0.0, 0.5, 0.0)
-function FakeEHIRightLootItem:UpdateDataFromOptions(params)
+---@class FakeEHIRightLootList : FakeEHIRightListBase
+---@field super FakeEHIRightListBase
+FakeEHIRightLootList = class(FakeEHIRightListBase)
+FakeEHIRightLootList._BAG_ICON = { texture = "guis/textures/pd2/hud_tabs", texture_rect = { 32, 33, 32, 32 } }
+FakeEHIRightLootList._TEXT_COLOR = Color(0.0, 0.5, 0.0)
+function FakeEHIRightLootList:UpdateDataFromOptions(params)
     self:UpdateCrateVisibility(params.potentional_loot)
     self:UpdateTopType(params.top_type)
 end
 
-function FakeEHIRightLootItem:Rescale(scale)
-    FakeEHIRightLootItem.super.Rescale(self, scale)
+function FakeEHIRightLootList:Rescale(scale)
+    FakeEHIRightLootList.super.Rescale(self, scale)
     local w = 32 * scale
     for _, item in ipairs(self._items) do
         local panel = item.panel
@@ -446,7 +446,7 @@ function FakeEHIRightLootItem:Rescale(scale)
     end
 end
 
-function FakeEHIRightLootItem:AddAdditionalItemsOnPanel(panel, params, scale)
+function FakeEHIRightLootList:AddAdditionalItemsOnPanel(panel, params, scale)
     if params.text then ---@diagnostic disable-line
         local w = 32 * scale
         local def = params.text ---@diagnostic disable-line
@@ -483,7 +483,7 @@ function FakeEHIRightLootItem:AddAdditionalItemsOnPanel(panel, params, scale)
 end
 
 ---@param type integer
-function FakeEHIRightLootItem:UpdateTopType(type)
+function FakeEHIRightLootList:UpdateTopType(type)
     local loot_icon = type == 1
     local loot_name = type == 2
     for _, item in ipairs(self._items) do
@@ -495,14 +495,14 @@ function FakeEHIRightLootItem:UpdateTopType(type)
 end
 
 ---@param visibility boolean
-function FakeEHIRightLootItem:UpdateCrateVisibility(visibility)
+function FakeEHIRightLootList:UpdateCrateVisibility(visibility)
     self:_get_item_by_id("crate").panel:set_visible(visibility)
 end
 
----@class FakeEHIRightStealthItem : FakeEHIRightItemBase
----@field super FakeEHIRightItemBase
-FakeEHIRightStealthItem = class(FakeEHIRightItemBase)
-function FakeEHIRightStealthItem:UpdateDataFromOptions(params)
+---@class FakeEHIRightStealthList : FakeEHIRightListBase
+---@field super FakeEHIRightListBase
+FakeEHIRightStealthList = class(FakeEHIRightListBase)
+function FakeEHIRightStealthList:UpdateDataFromOptions(params)
     local bodybags = self._items[4]
     local placed = math.random(1, 3)
     if placed == bodybags.value then
@@ -514,8 +514,8 @@ function FakeEHIRightStealthItem:UpdateDataFromOptions(params)
 end
 
 ---@param format integer
----@param item FakeEHIRightItemBase.Item?
-function FakeEHIRightStealthItem:SetBodybagsFormat(format, item)
+---@param item FakeEHIRightListBase.Item?
+function FakeEHIRightStealthList:SetBodybagsFormat(format, item)
     local str
     if format == 1 then
         str = "$mine;/$placed;"

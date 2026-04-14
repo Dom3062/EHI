@@ -1523,23 +1523,23 @@ function EHI:IsModInstalled(name, author)
     return false
 end
 
----@param difficulty number
+---@param difficulty integer
 function EHI:IsDifficultyOrAbove(difficulty)
     return difficulty <= self._cache.DifficultyIndex
 end
 
----@param difficulty number
+---@param difficulty integer
 function EHI:IsDifficultyOrBelow(difficulty)
     return difficulty >= self._cache.DifficultyIndex
 end
 
----@param difficulty number
+---@param difficulty integer
 function EHI:IsDifficulty(difficulty)
     return self._cache.DifficultyIndex == difficulty
 end
 
----@param diff_1 number
----@param diff_2 number
+---@param diff_1 integer
+---@param diff_2 integer
 function EHI:IsBetweenDifficulties(diff_1, diff_2)
     return math.within(self._cache.DifficultyIndex, math.min_max(diff_1, diff_2))
 end
@@ -1553,8 +1553,8 @@ function EHI:IsMayhemOrAbove()
 end
 
 if Global.load_level then
-    EHI.IsHost = Network:is_server() ---@type boolean
-    EHI.IsClient = Network:is_client() ---@type boolean
+    EHI.IsHost = Network:is_server()
+    EHI.IsClient = Network:is_client()
 end
 
 ---@return boolean
@@ -1704,6 +1704,16 @@ function EHI:GetOptionAndLoadTracker(option)
             self:LoadTracker(tracker.file)
             self.OptionTracker[option] = nil
         end
+    end
+    return result
+end
+
+---@param manual_tracking boolean?
+function EHI:GetLoadSniperTrackers(manual_tracking)
+    local result = self:GetOptionAndLoadTracker("show_sniper_tracker")
+    if result and not manual_tracking then
+        EHISniperBase._enabled = true
+        self.SpecialFunctions.Snipers_CheckIfTrackerExists = self.Trigger:RegisterCustomSF(EHISniperBase._trigger)
     end
     return result
 end
@@ -3158,7 +3168,7 @@ if EHI.debug.all_instances then -- For testing purposes
                 self:PrintTable(instance)
                 local start = self:GetInstanceElementID(100000, instance.start_index)
                 local function f(e, ...) ---@param e MissionScriptElement
-                    managers.chat:_receive_message(1, "[EHI]", string.format("Base ID: %d; ID: %d; Element: %s; Instance: %s", EHI:GetBaseUnitID(e._id, instance.start_index, 100000), e._id, e:editor_name(), instance_name), Color.white)
+                    managers.chat:_receive_message(1, "[EHI]", string.format("Base ID: %d; ID: %d; Element: %s; Instance: %s", self:GetBaseUnitID(e._id, instance.start_index, 100000), e._id, e:editor_name(), instance_name), Color.white)
                 end
                 self:Log(string.format("Hooking elements in instance '%s'", instance_name))
                 for _, script in pairs(scripts) do
@@ -3226,8 +3236,14 @@ local paths = {
     ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/str_vehicle_truck_gensec_transport_deposit_box_intel"] = "50aac55917cba830",
     ["units/pd2_dlc1/vehicles/str_vehicle_truck_gensec_transport/spawn_gensec_doors/spawn_gensec_doors"] = "899966c1e07635cf",
     ["units/payday2/characters/ene_sniper_1/ene_sniper_1"] = "ffcb30c12128fc5b",
+    ["units/payday2/characters/ene_sniper_1/ene_sniper_1_husk"] = "44ffa22668e9271f",
     ["units/payday2/characters/ene_sniper_2/ene_sniper_2"] = "490944f03e56fcf0",
-    ["units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam"] = "0cec8292d88a4875"
+    ["units/payday2/characters/ene_sniper_2/ene_sniper_2_husk"] = "2ef5563d908aa105",
+    ["units/pd2_dlc_bph/characters/ene_murkywater_sniper/ene_murkywater_sniper"] = "e10d37d1541db0a0",
+    ["units/pd2_dlc_bph/characters/ene_murkywater_sniper/ene_murkywater_sniper_husk"] = "801a695d7a00d6c5",
+    ["units/pd2_dlc_bex/characters/ene_swat_policia_sniper/ene_swat_policia_sniper"] = "eb5b908449bad67e",
+    ["units/pd2_dlc_bex/characters/ene_swat_policia_sniper/ene_swat_policia_sniper_husk"] = "2ef5563d908aa105",
+    ["units/pd2_dlc_rvd/equipment/rvd_interactable_saw_no_jam/rvd_interactable_saw_no_jam"] = "470387c192ad1a53"
 }
 local unit_key = "8f6601ad58a9bc7d" -- unit
 Hooks:Add("BeardLibPreInit", "EHI_BeardLib_Crash_Fix", function()
@@ -3238,15 +3254,17 @@ Hooks:Add("BeardLibPreInit", "EHI_BeardLib_Crash_Fix", function()
     end
     if Global.EHI_VanillaHeist and Global.EHI_AppliedBeardLibFix ~= false then
         if Global.fm.added_files[unit_key] then -- Check if the unit table exists, otherwise it may crash
+            local files = Global.fm.added_files[unit_key] -- Cache the table for faster access
             for _, key in pairs(paths) do
-                Global.fm.added_files[unit_key][key] = nil
+                files[key] = nil
             end
         end
         Global.EHI_AppliedBeardLibFix = false
     elseif not Global.EHI_VanillaHeist and not Global.EHI_AppliedBeardLibFix then
         Global.fm.added_files[unit_key] = Global.fm.added_files[unit_key] or {}
+        local files = Global.fm.added_files[unit_key] -- Cache the table for faster access
         for path, key in pairs(paths) do
-            Global.fm.added_files[unit_key][key] = { path = path }
+            files[key] = { path = path }
         end
         Global.EHI_AppliedBeardLibFix = true
     end

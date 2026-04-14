@@ -148,15 +148,29 @@ local other =
     -- https://steamcommunity.com/app/218620/discussions/14/3487502671137130788/
     [100109] = EHI:AddAssaultDelay({ control = 30, trigger_once = true })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 3 }
+if EHI:GetLoadSniperTrackers() then
+    other[100015] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 3, special_function = SF.AddTrackerIfDoesNotExist }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            if managers.groupai:state():whisper_mode() then
+                return
+            end
+            self._trackers:AddTracker({
+                id = "Snipers",
+                from_sync = true,
+                count = EHISniperBase._alive_count,
+                on_fail_refresh_t = 25,
+                on_success_refresh_t = 20 + 10 + 25,
+                sniper_count = 3,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:IsLootCounterVisible() then
     other[106328] = EHI:AddLootCounter2(function()
@@ -204,7 +218,21 @@ EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    sidejob = sidejob
+    sidejob = sidejob,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 EHI:ShowAchievementLootCounter({
     achievement = "bigbank_3",

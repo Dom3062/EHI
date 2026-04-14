@@ -74,7 +74,7 @@ local other =
         managers.ehi_loot:SetCountOfArmoredTransports(1)
     end, { element = EHI:GetInstanceElementID(100023, 6500) })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     other[104045] = { id = "SniperHeliSaw", refresh_t = 23 + 2, class = TT.Sniper.Heli }
     local sniper_respawn_saw = { id = "SniperHeliSaw", special_function = SF.CallCustomFunction, f = "SniperRespawn" }
     local sniper_killed_saw = { id = "SniperHeliSaw", special_function = SF.CallCustomFunction, f = "SniperKilledUpdateCount" }

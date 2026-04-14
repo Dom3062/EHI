@@ -14,7 +14,7 @@ local other =
     [100355] = EHI:AddAssaultDelay({ control = 35 })
 }
 
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local SetRespawnTime = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:CallFunction2(trigger.id, "SetRespawnTime", trigger.time) then
             self._trackers:AddTracker({

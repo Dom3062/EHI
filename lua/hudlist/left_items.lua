@@ -1,23 +1,23 @@
----@alias EHILeftItemBase.Item { anims: table, panel: Panel, progress: Bitmap, progress_static: Bitmap?, progress_bar: Color, text: Text, pos: integer }
----@alias EHILeftTimerItem.Timer { item: EHILeftItemBase.Item, t: number, jammed: boolean, powered: boolean, autorepair: boolean, needs_update: boolean }
----@alias EHILeftDeployableItem.Deployable { item: EHILeftItemBase.Item, eq_data: table, peer_id: integer, name_key: string, max_amount: number, ignored: boolean, max_amount: number?, pos: integer }
----@alias EHILeftDeployableItem.Group { max: number, eq_data: table, item: EHILeftItemBase.Item, visible: boolean, deployables: table<userdata, { amount: number, ignored: boolean, max_amount: number }> }
----@alias EHILeftCameraLoopItem.Camera { t: number, t_max: number, t_max_half: number, item: EHILeftItemBase.Item, warning: boolean }
+---@alias EHILeftListBase.Item { anims: table, panel: Panel, progress: Bitmap, progress_static: Bitmap?, progress_bar: Color, text: Text, pos: integer }
+---@alias EHILeftTimerList.Timer { item: EHILeftListBase.Item, t: number, jammed: boolean, powered: boolean, autorepair: boolean, needs_update: boolean }
+---@alias EHILeftDeployableList.Deployable { item: EHILeftListBase.Item, eq_data: table, peer_id: integer, name_key: string, max_amount: number, ignored: boolean, max_amount: number?, pos: integer }
+---@alias EHILeftDeployableList.Group { max: number, eq_data: table, item: EHILeftListBase.Item, visible: boolean, deployables: table<userdata, { amount: number, ignored: boolean, max_amount: number }> }
+---@alias EHILeftCameraLoopList.Camera { t: number, t_max: number, t_max_half: number, item: EHILeftListBase.Item, warning: boolean }
 
----@class EHILeftItemBase
+---@class EHILeftListBase
 ---@field new fun(self: self, panel: Panel, params: table, texture: string, texture_rect: TextureRect): self
 ---@field _CUSTOM_PROGRESS boolean
 ---@field _update_callback function
 ---@field _update_id string
-EHILeftItemBase = class()
-EHILeftItemBase._BOTTOM_TEXT = true
-EHILeftItemBase._INIT_BOTTOM_TEXT = true
-EHILeftItemBase._PROGRESS_RECT = {
+EHILeftListBase = class()
+EHILeftListBase._BOTTOM_TEXT = true
+EHILeftListBase._INIT_BOTTOM_TEXT = true
+EHILeftListBase._PROGRESS_RECT = {
     { 32, 0, -32, 32 },
     { 128, 0, -128, 128 }
 }
 ---@param o Panel
-EHILeftItemBase._set_visible = function(o)
+EHILeftListBase._set_visible = function(o)
     local t, total = 0, 0.15
     while t < total do
         t = t + coroutine.yield()
@@ -26,7 +26,7 @@ EHILeftItemBase._set_visible = function(o)
     o:set_alpha(1)
 end
 ---@param o Panel
-EHILeftItemBase._set_hidden = function(o)
+EHILeftListBase._set_hidden = function(o)
     local t, total = 0.15, 0.15
     while t > 0 do
         t = t - coroutine.yield()
@@ -36,7 +36,7 @@ EHILeftItemBase._set_hidden = function(o)
 end
 ---@param o Panel
 ---@param target_x number
-EHILeftItemBase._move_item = function(o, target_x)
+EHILeftListBase._move_item = function(o, target_x)
     local t, total = 0, 0.15
     local from_x = o:x()
     while t < total do
@@ -49,7 +49,7 @@ end
 ---@param params table
 ---@param texture string
 ---@param texture_rect TextureRect
-function EHILeftItemBase:init(panel, params, texture, texture_rect)
+function EHILeftListBase:init(panel, params, texture, texture_rect)
     self._id = params.id
     self._scale = params.scale --[[@as number]]
     self._show_top_text = params.top_text
@@ -83,15 +83,15 @@ function EHILeftItemBase:init(panel, params, texture, texture_rect)
         color = self._PROGRESS_COLOR,
         visible = self._LIST_ICON_VISIBLE
     })
-    self._items = {} ---@type table<userdata, EHILeftItemBase.Item>
+    self._items = {} ---@type table<userdata, EHILeftListBase.Item>
     self:RegisterListeners(params)
 end
 
 ---@param params table
-function EHILeftItemBase:RegisterListeners(params)
+function EHILeftListBase:RegisterListeners(params)
 end
 
-function EHILeftItemBase:CacheFrequentlyUsedValues()
+function EHILeftListBase:CacheFrequentlyUsedValues()
     local icon = self._panel:child("icon") ---@cast icon -?
     if self._LIST_ICON_VISIBLE then
         if self._ANIM_RIGHT_TO_LEFT then
@@ -105,10 +105,10 @@ function EHILeftItemBase:CacheFrequentlyUsedValues()
 end
 
 ---@param dt number
-function EHILeftItemBase:update(_, dt)
+function EHILeftListBase:update(_, dt)
 end
 
-function EHILeftItemBase:SwitchToLoudMode()
+function EHILeftListBase:SwitchToLoudMode()
     if self._delete_on_alarm then
         self:delete()
     elseif self._update_on_alarm then
@@ -116,12 +116,12 @@ function EHILeftItemBase:SwitchToLoudMode()
     end
 end
 
-function EHILeftItemBase:OnAlarm()
+function EHILeftListBase:OnAlarm()
 end
 
 ---@param x number
 ---@param w number
-function EHILeftItemBase:GetNextItemOffset(x, w)
+function EHILeftListBase:GetNextItemOffset(x, w)
     if self._ANIM_RIGHT_TO_LEFT then
         return x - w - self._sizes.panel_offset
     end
@@ -131,15 +131,15 @@ end
 ---@param x number
 ---@param w number
 ---@param pos integer
-function EHILeftItemBase:GetXOffsetBasedOnPos(x, w, pos)
+function EHILeftListBase:GetXOffsetBasedOnPos(x, w, pos)
     if self._ANIM_RIGHT_TO_LEFT then
         return x - (w + self._sizes.panel_offset) * (pos - 1)
     end
     return x + (w + self._sizes.panel_offset) * (pos - 1)
 end
 
----@return EHILeftItemBase.Item
-function EHILeftItemBase:AddItem(...)
+---@return EHILeftListBase.Item
+function EHILeftListBase:AddItem(...)
     local w = self._sizes.w
     local progress_bar = Color(1, 1, 0.125, 1)
     local y = self._panel:child("icon"):y()
@@ -256,19 +256,19 @@ end
 ---@param panel Panel
 ---@param y number
 ---@param text Text
-function EHILeftItemBase:_AddItem(panel, y, text, ...)
+function EHILeftListBase:_AddItem(panel, y, text, ...)
 end
 
 ---@param panel Panel
 ---@param y number
 ---@param progress_bar Color
-function EHILeftItemBase:CustomProgress(panel, y, progress_bar)
+function EHILeftListBase:CustomProgress(panel, y, progress_bar)
 end
 
 ---Sorts newly added item panel on the HUD, but not in the memory
 ---@param panel Panel
 ---@param pos integer
-function EHILeftItemBase:SortAddedItem(panel, pos)
+function EHILeftListBase:SortAddedItem(panel, pos)
     local x = self._start_x
     if pos <= 1 then
         panel:set_x(x)
@@ -285,11 +285,11 @@ end
 
 ---Sorts item panels on the HUD, but not in the memory  
 ---Every item must provide their sorting mechanism
-function EHILeftItemBase:SortItems()
+function EHILeftListBase:SortItems()
 end
 
 ---@param panel Panel
-function EHILeftItemBase:RemoveItem(panel)
+function EHILeftListBase:RemoveItem(panel)
     local removed = table.remove_key(self._items, panel:key())
     if removed then
         self._panel:remove(panel)
@@ -302,12 +302,12 @@ function EHILeftItemBase:RemoveItem(panel)
 end
 
 if EHI:GetOption("time_format") == 1 then
-    EHILeftItemBase.FormatTime = tweak_data.ehi.functions.ReturnSecondsOnly
+    EHILeftListBase.FormatTime = tweak_data.ehi.functions.ReturnSecondsOnly
 else
-    EHILeftItemBase.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
+    EHILeftListBase.FormatTime = tweak_data.ehi.functions.ReturnMinutesAndSeconds
 end
 
-function EHILeftItemBase:set_visible()
+function EHILeftListBase:set_visible()
     if self._visible then
         return
     end
@@ -317,7 +317,7 @@ function EHILeftItemBase:set_visible()
     self._panel:animate(self._set_visible)
 end
 
-function EHILeftItemBase:set_hidden()
+function EHILeftListBase:set_hidden()
     if not self._visible then
         return
     end
@@ -327,16 +327,16 @@ function EHILeftItemBase:set_hidden()
     self._parent:ItemSetHidden()
 end
 
-function EHILeftItemBase:visible()
+function EHILeftListBase:visible()
     return self._visible
 end
 
-function EHILeftItemBase:UnregisterListeners()
+function EHILeftListBase:UnregisterListeners()
 end
 
----@param item EHILeftItemBase.Item
+---@param item EHILeftListBase.Item
 ---@param color string
-function EHILeftItemBase:SetColorTexture(item, color)
+function EHILeftListBase:SetColorTexture(item, color)
     local texture = self._PROGRESS == 1 and "sframe" or "cframe"
     local path = string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color)
     local rect = self._PROGRESS_RECT[self._PROGRESS]
@@ -347,7 +347,7 @@ function EHILeftItemBase:SetColorTexture(item, color)
 end
 
 ---@param text Text
-function EHILeftItemBase:FitTheText(text)
+function EHILeftListBase:FitTheText(text)
     text:set_font_size(text:h())
     local w = select(3, text:text_rect())
     if w > text:w() then
@@ -355,28 +355,28 @@ function EHILeftItemBase:FitTheText(text)
     end
 end
 
-function EHILeftItemBase:AddToUpdate()
+function EHILeftListBase:AddToUpdate()
     if not self._update_created and self._update_callback then
         managers.hud:add_updator(self._update_id, self._update_callback)
         self._update_created = true
     end
 end
 
-function EHILeftItemBase:RemoveFromUpdate()
+function EHILeftListBase:RemoveFromUpdate()
     if self._update_created then
         managers.hud:remove_updator(self._update_id)
         self._update_created = false
     end
 end
 
-function EHILeftItemBase:delete()
+function EHILeftListBase:delete()
     if self._visible then
         self._parent:ItemSetHidden()
     end
     self._parent:RemoveItem(self._id)
 end
 
-function EHILeftItemBase:destroy()
+function EHILeftListBase:destroy()
     self:RemoveFromUpdate()
     self:UnregisterListeners()
     if alive(self._panel) then
@@ -384,19 +384,19 @@ function EHILeftItemBase:destroy()
     end
 end
 
----@class EHILeftTimerItem : EHILeftItemBase
----@field super EHILeftItemBase
-EHILeftTimerItem = class(EHILeftItemBase)
-function EHILeftTimerItem:RegisterListeners(params)
+---@class EHILeftTimerList : EHILeftListBase
+---@field super EHILeftListBase
+EHILeftTimerList = class(EHILeftListBase)
+function EHILeftTimerList:RegisterListeners(params)
     self._jammed = params.jammed
     self._not_powered = params.not_powered
     self._autorepair = params.autorepair
     self._normal_color = params.color_index
-    self._timers = {} ---@type table<string, EHILeftTimerItem.Timer>
+    self._timers = {} ---@type table<string, EHILeftTimerList.Timer>
 end
 
 ---@param params table
-function EHILeftTimerItem:AddTimer(params)
+function EHILeftTimerList:AddTimer(params)
     local t = params.time
     -- Subtract a tiny bit of the timer so it looks more smooth in the tracker, jumping from 1:00 to 59 is not smooth at all
     -- This is a visual change and does not affect the calculation
@@ -427,7 +427,7 @@ function EHILeftTimerItem:AddTimer(params)
 end
 
 ---@param key string
-function EHILeftTimerItem:AddVaultTimer(key)
+function EHILeftTimerList:AddVaultTimer(key)
     local t = 500
     local item = self:AddItem("C_Elephant_H_ElectionDay_Murphy", "timer", t)
     local timer =
@@ -456,7 +456,7 @@ end
 ---@param icon string|table
 ---@param hint string
 ---@param t number
-function EHILeftTimerItem:_AddItem(panel, y, text, icon, hint, t, ...)
+function EHILeftTimerList:_AddItem(panel, y, text, icon, hint, t, ...)
     local w = self._sizes.w
     local h = self._sizes.h
     local icon_offset = self._sizes.icon_offset
@@ -491,8 +491,8 @@ function EHILeftTimerItem:_AddItem(panel, y, text, icon, hint, t, ...)
     self:FitTheText(text)
 end
 
-function EHILeftTimerItem:SortItems()
-    local list = {} ---@type EHILeftItemBase.Item[]
+function EHILeftTimerList:SortItems()
+    local list = {} ---@type EHILeftListBase.Item[]
     for _, timer in pairs(self._items) do
         list[timer.pos] = timer
     end
@@ -508,7 +508,7 @@ end
 
 ---@param key string
 ---@param hint string?
-function EHILeftTimerItem:UpdateHint(key, hint)
+function EHILeftTimerList:UpdateHint(key, hint)
     local timer = self._timers[key]
     if timer then
         local text = timer.item.panel:child("type") --[[@as Text]]
@@ -519,7 +519,7 @@ end
 
 ---@param key string
 ---@param icon string|table
-function EHILeftTimerItem:UpdateIcon(key, icon)
+function EHILeftTimerList:UpdateIcon(key, icon)
     local timer = self._timers[key]
     if timer then
         if type(icon) == "table" then
@@ -537,7 +537,7 @@ end
 
 ---@param key string
 ---@param jammed boolean
-function EHILeftTimerItem:SetJammed(key, jammed)
+function EHILeftTimerList:SetJammed(key, jammed)
     local timer = self._timers[key]
     if timer then
         timer.jammed = jammed
@@ -547,7 +547,7 @@ end
 
 ---@param key string
 ---@param powered boolean
-function EHILeftTimerItem:SetPowered(key, powered)
+function EHILeftTimerList:SetPowered(key, powered)
     local timer = self._timers[key]
     if timer then
         timer.powered = powered
@@ -557,7 +557,7 @@ end
 
 ---@param key string
 ---@param autorepair boolean
-function EHILeftTimerItem:SetAutorepair(key, autorepair)
+function EHILeftTimerList:SetAutorepair(key, autorepair)
     local timer = self._timers[key]
     if timer then
         timer.autorepair = autorepair
@@ -565,8 +565,8 @@ function EHILeftTimerItem:SetAutorepair(key, autorepair)
     end
 end
 
----@param timer EHILeftTimerItem.Timer
-function EHILeftTimerItem:_set_timer_status(timer)
+---@param timer EHILeftTimerList.Timer
+function EHILeftTimerList:_set_timer_status(timer)
     local color, texture = tweak_data.ehi:GetBuffColorFromIndex(timer.autorepair and self._autorepair or
         timer.jammed and self._jammed or
         not timer.powered and self._not_powered or self._normal_color)
@@ -577,7 +577,7 @@ function EHILeftTimerItem:_set_timer_status(timer)
 end
 
 ---@param key string
-function EHILeftTimerItem:RemoveTimer(key)
+function EHILeftTimerList:RemoveTimer(key)
     local timer = table.remove_key(self._timers, key)
     if timer then
         if timer.needs_update then
@@ -594,7 +594,7 @@ end
 
 ---@param key string
 ---@param t number
-function EHILeftTimerItem:UpdateTimer(key, t)
+function EHILeftTimerList:UpdateTimer(key, t)
     local timer = self._timers[key]
     if timer and timer.t ~= t then
         local item = timer.item
@@ -606,7 +606,7 @@ end
 
 ---@param key string
 ---@param t number
-function EHILeftTimerItem:CheckTime(key, t)
+function EHILeftTimerList:CheckTime(key, t)
     local timer = self._timers[key]
     if timer then
         if timer.synced_time == 0 then
@@ -622,15 +622,15 @@ function EHILeftTimerItem:CheckTime(key, t)
     end
 end
 
----@class EHILeftMinionItem : EHILeftItemBase
----@field super EHILeftItemBase
-EHILeftMinionItem = class(EHILeftItemBase)
-EHILeftMinionItem._BOTTOM_TEXT = false
-EHILeftMinionItem._INIT_BOTTOM_TEXT = false
-EHILeftMinionItem._ICON = { skills = { 6, 8 } }
-EHILeftMinionItem._ICON_SKULL = { ehi = EHI:GetAchievementIconString("trk_a_0") }
-EHILeftMinionItem._MINION_HEALTH_EVENTS = table.exclude(CopDamage._all_event_types, "death")
-EHILeftMinionItem._MINION_NAMES =
+---@class EHILeftMinionList : EHILeftListBase
+---@field super EHILeftListBase
+EHILeftMinionList = class(EHILeftListBase)
+EHILeftMinionList._BOTTOM_TEXT = false
+EHILeftMinionList._INIT_BOTTOM_TEXT = false
+EHILeftMinionList._ICON = { skills = { 6, 8 } }
+EHILeftMinionList._ICON_SKULL = { ehi = EHI:GetAchievementIconString("trk_a_0") }
+EHILeftMinionList._MINION_HEALTH_EVENTS = table.exclude(CopDamage._all_event_types, "death")
+EHILeftMinionList._MINION_NAMES =
 {
     security = "Security",
     security_mex = "Security",
@@ -650,9 +650,9 @@ EHILeftMinionItem._MINION_NAMES =
     zeal_heavy_swat = "Heavy ZEAL",
     zeal_swat = "ZEAL"
 }
-EHILeftMinionItem.SortAddedItem = function(...) end
-function EHILeftMinionItem:RegisterListeners(params)
-    self._minions = {} ---@type table<userdata, { unit: UnitEnemy, peer_id: integer, item: EHILeftItemBase.Item, pos: integer }>
+EHILeftMinionList.SortAddedItem = function(...) end
+function EHILeftMinionList:RegisterListeners(params)
+    self._minions = {} ---@type table<userdata, { unit: UnitEnemy, peer_id: integer, item: EHILeftListBase.Item, pos: integer }>
     self._CUSTOM_PROGRESS = params.health_circle
     EHI:AddCallback(EHI.CallbackMessage.OnMinionAdded,
     ---@param unit UnitEnemy
@@ -688,7 +688,7 @@ end
 
 ---@param unit UnitEnemy
 ---@param peer_id integer
-function EHILeftMinionItem:AddMinion(unit, peer_id)
+function EHILeftMinionList:AddMinion(unit, peer_id)
     local key = unit:key()
     if self._minions[key] then
         return
@@ -709,7 +709,7 @@ end
 
 ---@param peer_id integer
 ---@param unit_tweak string
-function EHILeftMinionItem:_AddItem(panel, y, text, peer_id, unit_tweak)
+function EHILeftMinionList:_AddItem(panel, y, text, peer_id, unit_tweak)
     local w = self._sizes.w
     local h = self._sizes.h
     local peer_color = peer_id and tweak_data.chat_colors[peer_id] or self._PROGRESS_COLOR
@@ -760,7 +760,7 @@ function EHILeftMinionItem:_AddItem(panel, y, text, peer_id, unit_tweak)
     end
 end
 
-function EHILeftMinionItem:CustomProgress(panel, y, progress_bar)
+function EHILeftMinionList:CustomProgress(panel, y, progress_bar)
     local w = self._sizes.w
     local progress = panel:bitmap({
         render_template = "VertexColorTexturedRadial",
@@ -794,7 +794,7 @@ function EHILeftMinionItem:CustomProgress(panel, y, progress_bar)
 end
 
 ---@param unit_key userdata
-function EHILeftMinionItem:RemoveMinion(unit_key)
+function EHILeftMinionList:RemoveMinion(unit_key)
     local data = table.remove_key(self._minions, unit_key)
     if data then
         data.unit:character_damage():remove_listener("EHILeftMinionItem")
@@ -813,7 +813,7 @@ function EHILeftMinionItem:RemoveMinion(unit_key)
 end
 
 ---@param peer_id integer
-function EHILeftMinionItem:_get_number_of_minions_for_peer_id(peer_id)
+function EHILeftMinionList:_get_number_of_minions_for_peer_id(peer_id)
     local count = 0
     for _, data in pairs(self._minions) do
         if data.peer_id == peer_id then
@@ -826,7 +826,7 @@ end
 ---@param key userdata
 ---@param unit UnitEnemy
 ---@param damage_info CopDamage.AttackData
-function EHILeftMinionItem:_minion_damaged(key, unit, damage_info)
+function EHILeftMinionList:_minion_damaged(key, unit, damage_info)
     local minion = self._minions[key]
     local item = minion and minion.item
     if item then
@@ -835,9 +835,9 @@ function EHILeftMinionItem:_minion_damaged(key, unit, damage_info)
     end
 end
 
----@param new_item EHILeftItemBase.Item?
-function EHILeftMinionItem:SortItems(new_item)
-    local sorted_minions = {} ---@type table<integer, EHILeftItemBase.Item[]>
+---@param new_item EHILeftListBase.Item?
+function EHILeftMinionList:SortItems(new_item)
+    local sorted_minions = {} ---@type table<integer, EHILeftListBase.Item[]>
     for i = 0, HUDManager.PLAYER_PANEL, 1 do
         sorted_minions[i] = {}
         for _, minion in pairs(self._minions) do
@@ -864,29 +864,29 @@ function EHILeftMinionItem:SortItems(new_item)
     end
 end
 
----@class EHILeftDeployableItem : EHILeftItemBase
----@field super EHILeftItemBase
-EHILeftDeployableItem = class(EHILeftItemBase)
-EHILeftDeployableItem._INIT_BOTTOM_TEXT = false
+---@class EHILeftDeployableList : EHILeftListBase
+---@field super EHILeftListBase
+EHILeftDeployableList = class(EHILeftListBase)
+EHILeftDeployableList._INIT_BOTTOM_TEXT = false
 ---@param o Bitmap
 ---@param ratio number
 ---@param progress Color
-EHILeftDeployableItem._animate_item_progress = function(o, ratio, progress)
+EHILeftDeployableList._animate_item_progress = function(o, ratio, progress)
     local r = progress.red
     over(0.25, function(p, t)
         progress.red = math.lerp(r, ratio, p)
         o:set_color(progress)
     end)
 end
-EHILeftDeployableItem._AGGREGATE_DEPLOYABLES = EHI:GetHudlistListOption("left_list", "deployable_aggregate")
-EHILeftDeployableItem._AGGREGATE_DEPLOYABLE_GRENADES = EHI:GetHudlistListOption("left_list", "deployable_aggregate_single_grenades")
-EHILeftDeployableItem._SORTED_GROUPS = { "doctor", "ammo", "grenades", "grenade", "fak", "bodybags" }
----@param value EHILeftDeployableItem.Deployable
-EHILeftDeployableItem._count_of_visible_deployables = function(value, key)
+EHILeftDeployableList._AGGREGATE_DEPLOYABLES = EHI:GetHudlistListOption("left_list", "deployable_aggregate")
+EHILeftDeployableList._AGGREGATE_DEPLOYABLE_GRENADES = EHI:GetHudlistListOption("left_list", "deployable_aggregate_single_grenades")
+EHILeftDeployableList._SORTED_GROUPS = { "doctor", "ammo", "grenades", "grenade", "fak", "bodybags" }
+---@param value EHILeftDeployableList.Deployable
+EHILeftDeployableList._count_of_visible_deployables = function(value, key)
     return value.ignored == false
 end
-EHILeftDeployableItem.SortAddedItem = function(...) end
-EHILeftDeployableItem._EQUIPMENT =
+EHILeftDeployableList.SortAddedItem = function(...) end
+EHILeftDeployableList._EQUIPMENT =
 {
     ["8f59e19e1e45a05e"] =
     {
@@ -934,40 +934,40 @@ EHILeftDeployableItem._EQUIPMENT =
     }
 }
 ---units/payday2/props/stn_prop_medic_firstaid_box/stn_prop_medic_firstaid_box
-EHILeftDeployableItem._EQUIPMENT["269c288629a7ebc7"] = deep_clone(EHILeftDeployableItem._EQUIPMENT["43ed278b1faf89b3"])
-EHILeftDeployableItem._EQUIPMENT["269c288629a7ebc7"].name = "Doctor Box"
-EHILeftDeployableItem._EQUIPMENT["269c288629a7ebc7"].aggregate_name = "Doctor Bag"
-EHILeftDeployableItem._EQUIPMENT["269c288629a7ebc7"].max = 1
+EHILeftDeployableList._EQUIPMENT["269c288629a7ebc7"] = deep_clone(EHILeftDeployableList._EQUIPMENT["43ed278b1faf89b3"])
+EHILeftDeployableList._EQUIPMENT["269c288629a7ebc7"].name = "Doctor Box"
+EHILeftDeployableList._EQUIPMENT["269c288629a7ebc7"].aggregate_name = "Doctor Bag"
+EHILeftDeployableList._EQUIPMENT["269c288629a7ebc7"].max = 1
 ---units/payday2/props/stn_prop_armory_shelf_ammo/stn_prop_armory_shelf_ammo
-EHILeftDeployableItem._EQUIPMENT.dad3d39f10a58fbd = deep_clone(EHILeftDeployableItem._EQUIPMENT["8f59e19e1e45a05e"])
-EHILeftDeployableItem._EQUIPMENT.dad3d39f10a58fbd.name = "Ammo Shelf"
-EHILeftDeployableItem._EQUIPMENT.dad3d39f10a58fbd.aggregate_name = "Ammo Bag"
-EHILeftDeployableItem._EQUIPMENT.dad3d39f10a58fbd.max = 3
+EHILeftDeployableList._EQUIPMENT.dad3d39f10a58fbd = deep_clone(EHILeftDeployableList._EQUIPMENT["8f59e19e1e45a05e"])
+EHILeftDeployableList._EQUIPMENT.dad3d39f10a58fbd.name = "Ammo Shelf"
+EHILeftDeployableList._EQUIPMENT.dad3d39f10a58fbd.aggregate_name = "Ammo Bag"
+EHILeftDeployableList._EQUIPMENT.dad3d39f10a58fbd.max = 3
 ---units/pd2_dlc_spa/props/spa_prop_armory_shelf_ammo/spa_prop_armory_shelf_ammo
-EHILeftDeployableItem._EQUIPMENT["150ebbf1166515e9"] = EHILeftDeployableItem._EQUIPMENT.dad3d39f10a58fbd
+EHILeftDeployableList._EQUIPMENT["150ebbf1166515e9"] = EHILeftDeployableList._EQUIPMENT.dad3d39f10a58fbd
 ---units/pd2_dlc_hvh/props/hvh_prop_armory_shelf_ammo/hvh_prop_armory_shelf_ammo
-EHILeftDeployableItem._EQUIPMENT["4f480c9809095026"] = EHILeftDeployableItem._EQUIPMENT.dad3d39f10a58fbd
+EHILeftDeployableList._EQUIPMENT["4f480c9809095026"] = EHILeftDeployableList._EQUIPMENT.dad3d39f10a58fbd
 ---units/payday2/equipment/gen_equipment_grenade_crate/gen_equipment_explosives_case_single
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"] = deep_clone(EHILeftDeployableItem._EQUIPMENT.f6001ca4eb64a74c)
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"].texture = "guis/dlcs/big_bank/textures/pd2/pre_planning/preplan_icon_types"
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"].texture_rect = { 48, 0, 48, 48 }
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"].name = "Grenade"
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"].no_amount = true
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"].group = "grenade"
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"].secondary_group = "grenades"
-EHILeftDeployableItem._EQUIPMENT["02a3ade37a633a71"].aggregate_name = "Grenades"
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"] = deep_clone(EHILeftDeployableList._EQUIPMENT.f6001ca4eb64a74c)
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"].texture = "guis/dlcs/big_bank/textures/pd2/pre_planning/preplan_icon_types"
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"].texture_rect = { 48, 0, 48, 48 }
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"].name = "Grenade"
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"].no_amount = true
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"].group = "grenade"
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"].secondary_group = "grenades"
+EHILeftDeployableList._EQUIPMENT["02a3ade37a633a71"].aggregate_name = "Grenades"
 ---units/pd2_dlc_spa/equipment/spa_equipment_grenade_crate/spa_equipment_grenade_crate
-EHILeftDeployableItem._EQUIPMENT.fc520601b50186e4 = EHILeftDeployableItem._EQUIPMENT.f6001ca4eb64a74c
+EHILeftDeployableList._EQUIPMENT.fc520601b50186e4 = EHILeftDeployableList._EQUIPMENT.f6001ca4eb64a74c
 ---units/pd2_dlc_mxm/equipment/gen_equipment_grenade_crate/gen_equipment_grenade_crate
-EHILeftDeployableItem._EQUIPMENT.e166f63494083d58 = deep_clone(EHILeftDeployableItem._EQUIPMENT.f6001ca4eb64a74c)
-EHILeftDeployableItem._EQUIPMENT.e166f63494083d58.name = "Ordnance Bag"
-EHILeftDeployableItem._EQUIPMENT.e166f63494083d58.aggregate_name = "Grenades"
-EHILeftDeployableItem._EQUIPMENT.e166f63494083d58.max = 4 -- Hardcoded in the class
-function EHILeftDeployableItem:RegisterListeners(params)
+EHILeftDeployableList._EQUIPMENT.e166f63494083d58 = deep_clone(EHILeftDeployableList._EQUIPMENT.f6001ca4eb64a74c)
+EHILeftDeployableList._EQUIPMENT.e166f63494083d58.name = "Ordnance Bag"
+EHILeftDeployableList._EQUIPMENT.e166f63494083d58.aggregate_name = "Grenades"
+EHILeftDeployableList._EQUIPMENT.e166f63494083d58.max = 4 -- Hardcoded in the class
+function EHILeftDeployableList:RegisterListeners(params)
     self._format = params.format
-    self._deployables = {} ---@type table<userdata, EHILeftDeployableItem.Deployable>
+    self._deployables = {} ---@type table<userdata, EHILeftDeployableList.Deployable>
     self._unit_blocked = {} ---@type table<userdata, boolean>
-    self._deployable_group = {} ---@type table<string, EHILeftDeployableItem.Group?>
+    self._deployable_group = {} ---@type table<string, EHILeftDeployableList.Group?>
     self._n_of_hooks = 0
     ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
     local function init_equipment(_, unit)
@@ -1113,12 +1113,12 @@ function EHILeftDeployableItem:RegisterListeners(params)
     end
 end
 
-function EHILeftDeployableItem:UnregisterListeners()
+function EHILeftDeployableList:UnregisterListeners()
     EHI.TrackerUtils.Deployables:RemoveIgnoreListener(self._id)
     EHI.ModUtils:RemoveCustomNameColorSyncCallback(self._id)
 end
 
-function EHILeftDeployableItem:OnAlarm()
+function EHILeftDeployableList:OnAlarm()
     if self._bodybags_hooked then
         Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHILeftDeployableItem_spawn")
         Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHILeftDeployableItem_init")
@@ -1138,21 +1138,21 @@ function EHILeftDeployableItem:OnAlarm()
 end
 
 ---@param key userdata
-function EHILeftDeployableItem:IgnoreDeployable(key)
+function EHILeftDeployableList:IgnoreDeployable(key)
     self._unit_blocked[key] = true
     self:RemoveDeployable(key)
 end
 
 ---@param key userdata
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
-function EHILeftDeployableItem:AddDeployable(key, unit)
+function EHILeftDeployableList:AddDeployable(key, unit)
     local name_key = unit:name():key()
     local eq_data = self._EQUIPMENT[name_key] or self._EQUIPMENT.default
     if eq_data.force_console_report or self._unit_blocked[key] then
         return
     end
     local new_group = false
-    local tbl = ---@type EHILeftDeployableItem.Deployable
+    local tbl = ---@type EHILeftDeployableList.Deployable
     {
         eq_data = eq_data,
         name_key = name_key,
@@ -1204,7 +1204,7 @@ end
 
 ---@param eq_data table
 ---@param force_amount boolean?
-function EHILeftDeployableItem:_AddItem(panel, y, text, eq_data, force_amount)
+function EHILeftDeployableList:_AddItem(panel, y, text, eq_data, force_amount)
     local w = self._sizes.w
     local h = self._sizes.h
     local icon_offset = self._sizes.icon_offset
@@ -1247,7 +1247,7 @@ function EHILeftDeployableItem:_AddItem(panel, y, text, eq_data, force_amount)
 end
 
 ---@param base AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
-function EHILeftDeployableItem:UpdateDeployableAmount(base)
+function EHILeftDeployableList:UpdateDeployableAmount(base)
     local key = base._unit:key()
     local data = self._deployables[key]
     if data and not data.eq_data.no_amount then
@@ -1276,7 +1276,7 @@ end
 
 ---@param key userdata
 ---@param max number
-function EHILeftDeployableItem:UpdateDeployableMaxAmount(key, max)
+function EHILeftDeployableList:UpdateDeployableMaxAmount(key, max)
     local data = self._deployables[key]
     if data and not data.eq_data.no_amount then
         data.max_amount = max
@@ -1299,7 +1299,7 @@ end
 ---@param key userdata
 ---@param peer_id integer
 ---@param color Color?
-function EHILeftDeployableItem:UpdateDeployableColor(key, peer_id, color)
+function EHILeftDeployableList:UpdateDeployableColor(key, peer_id, color)
     local data = self._deployables[key]
     if data and data.item then
         data.item.panel:child("icon"):set_color(color or tweak_data.chat_colors[peer_id or 0] or self._PROGRESS_COLOR) ---@diagnostic disable-line
@@ -1309,7 +1309,7 @@ end
 ---@param key userdata
 ---@param unit UnitAmmoDeployable|UnitFAKDeployable|UnitGrenadeDeployable
 ---@param visibility boolean
-function EHILeftDeployableItem:UpdateItemVisible(key, unit, visibility)
+function EHILeftDeployableList:UpdateItemVisible(key, unit, visibility)
     local data = self._deployables[key]
     if data and data.ignored == visibility then
         data.ignored = not visibility
@@ -1343,7 +1343,7 @@ function EHILeftDeployableItem:UpdateItemVisible(key, unit, visibility)
 end
 
 ---@param key userdata
-function EHILeftDeployableItem:RemoveDeployable(key)
+function EHILeftDeployableList:RemoveDeployable(key)
     local data = table.remove_key(self._deployables, key)
     if data then
         if data.item then
@@ -1376,7 +1376,7 @@ end
 
 ---Removes all deployables in the group with one call
 ---@param ... string
-function EHILeftDeployableItem:RemoveDeployableGroup(...)
+function EHILeftDeployableList:RemoveDeployableGroup(...)
     local removed = 0
     for _, group in ipairs({ ... }) do
         for key, deployable in pairs(self._deployables) do
@@ -1407,8 +1407,8 @@ function EHILeftDeployableItem:RemoveDeployableGroup(...)
     end
 end
 
----@param new_item EHILeftItemBase.Item?
-function EHILeftDeployableItem:_update_group_item_visibility(new_item)
+---@param new_item EHILeftListBase.Item?
+function EHILeftDeployableList:_update_group_item_visibility(new_item)
     local visible = 0
     for _, group in ipairs(self._SORTED_GROUPS) do
         local list = self._deployable_group[group]
@@ -1436,17 +1436,17 @@ function EHILeftDeployableItem:_update_group_item_visibility(new_item)
 end
 
 ---@param eq_data { group: string, secondary_group: string? }
-function EHILeftDeployableItem:_get_deployable_group(eq_data)
+function EHILeftDeployableList:_get_deployable_group(eq_data)
     return self._deployable_group[self:_get_group_name(eq_data)]
 end
 
 ---@param eq_data { group: string, secondary_group: string? }
-function EHILeftDeployableItem:_get_group_name(eq_data)
+function EHILeftDeployableList:_get_group_name(eq_data)
     return self._AGGREGATE_DEPLOYABLE_GRENADES and eq_data.secondary_group or eq_data.group
 end
 
----@param group EHILeftDeployableItem.Group
-function EHILeftDeployableItem:_update_group_amount(group)
+---@param group EHILeftDeployableList.Group
+function EHILeftDeployableList:_update_group_amount(group)
     local amount = 0
     for _, data in pairs(group.deployables) do
         if data.ignored == false and data.amount > 0 and data.max_amount > 0 then
@@ -1466,9 +1466,9 @@ function EHILeftDeployableItem:_update_group_amount(group)
     end
 end
 
----@param new_item EHILeftItemBase.Item?
-function EHILeftDeployableItem:SortItems(new_item)
-    local list = {} ---@type table<string, EHILeftDeployableItem.Deployable[]>
+---@param new_item EHILeftListBase.Item?
+function EHILeftDeployableList:SortItems(new_item)
+    local list = {} ---@type table<string, EHILeftDeployableList.Deployable[]>
     for _, group in ipairs(self._SORTED_GROUPS) do
         list[group] = {}
         for _, deployable in pairs(self._deployables) do
@@ -1501,8 +1501,8 @@ function EHILeftDeployableItem:SortItems(new_item)
     end
 end
 
----@param new_item EHILeftItemBase.Item?
-function EHILeftDeployableItem:SortGroupItems(new_item)
+---@param new_item EHILeftListBase.Item?
+function EHILeftDeployableList:SortGroupItems(new_item)
     local start_x = self._start_x
     for _, group in ipairs(self._SORTED_GROUPS) do
         local list = self._deployable_group[group]
@@ -1527,7 +1527,7 @@ function EHILeftDeployableItem:SortGroupItems(new_item)
 end
 
 ---@param group string
-function EHILeftDeployableItem:_get_amount_of_deployables_in_group(group)
+function EHILeftDeployableList:_get_amount_of_deployables_in_group(group)
     local count = 0
     for _, deployable in pairs(self._deployables) do
         if deployable.eq_data.group == group then
@@ -1537,20 +1537,20 @@ function EHILeftDeployableItem:_get_amount_of_deployables_in_group(group)
     return count
 end
 
----@class EHILeftPagerItem : EHILeftItemBase
----@field super EHILeftItemBase
-EHILeftPagerItem = class(EHILeftItemBase)
-EHILeftPagerItem._update_id = "EHILeftPagerItem"
-EHILeftPagerItem._PAGER_T = 12
-EHILeftPagerItem._PAGER_T_HALF = 6
-EHILeftPagerItem._PAGER_HALF_COLOR_INDEX = EHI:GetHudlistListOption("left_list", "enemy_pager_warning_color")
-function EHILeftPagerItem:RegisterListeners(params)
-    self._pagers = {} ---@type table<string, { running: boolean, item: EHILeftItemBase.Item, t: number, warning: boolean }>
+---@class EHILeftPagerList : EHILeftListBase
+---@field super EHILeftListBase
+EHILeftPagerList = class(EHILeftListBase)
+EHILeftPagerList._update_id = "EHILeftPagerItem"
+EHILeftPagerList._PAGER_T = 12
+EHILeftPagerList._PAGER_T_HALF = 6
+EHILeftPagerList._PAGER_HALF_COLOR_INDEX = EHI:GetHudlistListOption("left_list", "enemy_pager_warning_color")
+function EHILeftPagerList:RegisterListeners(params)
+    self._pagers = {} ---@type table<string, { running: boolean, item: EHILeftListBase.Item, t: number, warning: boolean }>
     self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(self._PAGER_HALF_COLOR_INDEX)
     self._update_callback = callback(self, self, "update")
 end
 
-function EHILeftPagerItem:update(_, dt)
+function EHILeftPagerList:update(_, dt)
     for _, pager in pairs(self._pagers) do
         if pager.running then
             local t = pager.t - dt
@@ -1574,7 +1574,7 @@ function EHILeftPagerItem:update(_, dt)
 end
 
 ---@param id string
-function EHILeftPagerItem:AddPager(id)
+function EHILeftPagerList:AddPager(id)
     self._pagers[id] =
     {
         running = true,
@@ -1585,7 +1585,7 @@ function EHILeftPagerItem:AddPager(id)
     self:AddToUpdate()
 end
 
-function EHILeftPagerItem:_AddItem(panel, y, text)
+function EHILeftPagerList:_AddItem(panel, y, text)
     local icon_offset = self._sizes.icon_offset
     local icon_size = self._sizes.icon_size
     local texture, texture_rect = tweak_data.hud_icons:get_icon_data("pagers_used")
@@ -1603,7 +1603,7 @@ function EHILeftPagerItem:_AddItem(panel, y, text)
     self:FitTheText(text)
 end
 
-function EHILeftPagerItem:SortItems()
+function EHILeftPagerList:SortItems()
     local x = self._start_x
     for _, pager in pairs(self._pagers) do
         local anims = pager.item.anims
@@ -1616,7 +1616,7 @@ function EHILeftPagerItem:SortItems()
 end
 
 ---@param id string
-function EHILeftPagerItem:SetAnswered(id)
+function EHILeftPagerList:SetAnswered(id)
     local pager = self._pagers[id]
     if pager then
         pager.running = false
@@ -1627,7 +1627,7 @@ function EHILeftPagerItem:SetAnswered(id)
 end
 
 ---@param id string
-function EHILeftPagerItem:RemovePager(id)
+function EHILeftPagerList:RemovePager(id)
     local pager = table.remove_key(self._pagers, id)
     if pager then
         self:RemoveItem(pager.item.panel)
@@ -1640,14 +1640,14 @@ function EHILeftPagerItem:RemovePager(id)
     end
 end
 
----@class EHILeftJammerItem : EHILeftItemBase
----@field super EHILeftItemBase
-EHILeftJammerItem = class(EHILeftItemBase)
-EHILeftJammerItem._ICON = { skills = { 1, 4 } }
-EHILeftJammerItem._AFFECTS_PAGER_COLOR = EHI:GetHudlistListOption("left_list", "jammer_affects_pager")
-EHILeftJammerItem._update_id = "EHILeftJammerItem"
-function EHILeftJammerItem:RegisterListeners(params)
-    self._jammers = {} ---@type table<string, { t_max: number, t: number, item: EHILeftItemBase.Item, peer_id: integer }>
+---@class EHILeftJammerList : EHILeftListBase
+---@field super EHILeftListBase
+EHILeftJammerList = class(EHILeftListBase)
+EHILeftJammerList._ICON = { skills = { 1, 4 } }
+EHILeftJammerList._AFFECTS_PAGER_COLOR = EHI:GetHudlistListOption("left_list", "jammer_affects_pager")
+EHILeftJammerList._update_id = "EHILeftJammerList"
+function EHILeftJammerList:RegisterListeners(params)
+    self._jammers = {} ---@type table<string, { t_max: number, t: number, item: EHILeftListBase.Item, peer_id: integer }>
     self._update_callback = callback(self, self, "update")
     EHI.ModUtils:AddCustomNameColorSyncCallback(self._update_id, function(peer_id, color)
         for _, jammer in pairs(self._jammers) do
@@ -1658,11 +1658,11 @@ function EHILeftJammerItem:RegisterListeners(params)
     end)
 end
 
-function EHILeftJammerItem:UnregisterListeners()
+function EHILeftJammerList:UnregisterListeners()
     EHI.ModUtils:RemoveCustomNameColorSyncCallback(self._update_id)
 end
 
-function EHILeftJammerItem:update(_, dt)
+function EHILeftJammerList:update(_, dt)
     for key, jammer in pairs(self._jammers) do
         local t = jammer.t - dt
         if t <= 0 then
@@ -1681,7 +1681,7 @@ end
 ---@param t number
 ---@param peer_id integer
 ---@param pagers_affected boolean
-function EHILeftJammerItem:AddJammer(key, t, peer_id, pagers_affected)
+function EHILeftJammerList:AddJammer(key, t, peer_id, pagers_affected)
     local item = self:AddItem(t, peer_id)
     self._jammers[key] = {
         item = item,
@@ -1702,7 +1702,7 @@ end
 
 ---@param t number
 ---@param peer_id integer
-function EHILeftJammerItem:_AddItem(panel, y, text, t, peer_id)
+function EHILeftJammerList:_AddItem(panel, y, text, t, peer_id)
     local icon_offset = self._sizes.icon_offset
     local icon_size = self._sizes.icon_size
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(self._ICON)
@@ -1721,7 +1721,7 @@ function EHILeftJammerItem:_AddItem(panel, y, text, t, peer_id)
 end
 
 ---@param key string
-function EHILeftJammerItem:RemoveJammer(key)
+function EHILeftJammerList:RemoveJammer(key)
     local jammer = table.remove_key(self._jammers, key)
     if jammer then
         self:RemoveItem(jammer.item.panel)
@@ -1734,7 +1734,7 @@ function EHILeftJammerItem:RemoveJammer(key)
     end
 end
 
-function EHILeftJammerItem:SortItems()
+function EHILeftJammerList:SortItems()
     local x = self._start_x
     for _, jammer in pairs(self._jammers) do
         local anims = jammer.item.anims
@@ -1746,13 +1746,13 @@ function EHILeftJammerItem:SortItems()
     end
 end
 
----@class EHILeftJammerRetriggerItem : EHILeftItemBase
----@field super EHILeftItemBase
-EHILeftJammerRetriggerItem = class(EHILeftItemBase)
-EHILeftJammerRetriggerItem._ICON = { skills = { 6, 2 } }
-EHILeftJammerRetriggerItem._update_id = "EHILeftJammerRetriggerItem"
-function EHILeftJammerRetriggerItem:RegisterListeners(params)
-    self._jammers = {} ---@type table<string, { t_max: number, t: number, item: EHILeftItemBase.Item, peer_id: integer }>
+---@class EHILeftJammerRetriggerList : EHILeftListBase
+---@field super EHILeftListBase
+EHILeftJammerRetriggerList = class(EHILeftListBase)
+EHILeftJammerRetriggerList._ICON = { skills = { 6, 2 } }
+EHILeftJammerRetriggerList._update_id = "EHILeftJammerRetriggerList"
+function EHILeftJammerRetriggerList:RegisterListeners(params)
+    self._jammers = {} ---@type table<string, { t_max: number, t: number, item: EHILeftListBase.Item, peer_id: integer }>
     self._update_callback = callback(self, self, "update")
     EHI.ModUtils:AddCustomNameColorSyncCallback(self._update_id, function(peer_id, color)
         for _, jammer in pairs(self._jammers) do
@@ -1763,7 +1763,7 @@ function EHILeftJammerRetriggerItem:RegisterListeners(params)
     end)
 end
 
-function EHILeftJammerRetriggerItem:update(_, dt)
+function EHILeftJammerRetriggerList:update(_, dt)
     for key, jammer in pairs(self._jammers) do
         local t = jammer.t - dt
         if t <= 0 then
@@ -1781,7 +1781,7 @@ end
 ---@param key string
 ---@param t number
 ---@param peer_id integer
-function EHILeftJammerRetriggerItem:AddJammer(key, t, peer_id)
+function EHILeftJammerRetriggerList:AddJammer(key, t, peer_id)
     self._jammers[key] = {
         item = self:AddItem(t, peer_id),
         t_max = t,
@@ -1794,7 +1794,7 @@ end
 
 ---@param t number
 ---@param peer_id integer
-function EHILeftJammerRetriggerItem:_AddItem(panel, y, text, t, peer_id)
+function EHILeftJammerRetriggerList:_AddItem(panel, y, text, t, peer_id)
     local icon_offset = self._sizes.icon_offset
     local icon_size = self._sizes.icon_size
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(self._ICON)
@@ -1813,7 +1813,7 @@ function EHILeftJammerRetriggerItem:_AddItem(panel, y, text, t, peer_id)
 end
 
 ---@param key string
-function EHILeftJammerRetriggerItem:RemoveJammer(key)
+function EHILeftJammerRetriggerList:RemoveJammer(key)
     local jammer = table.remove_key(self._jammers, key)
     if jammer then
         self:RemoveItem(jammer.item.panel)
@@ -1826,7 +1826,7 @@ function EHILeftJammerRetriggerItem:RemoveJammer(key)
     end
 end
 
-function EHILeftJammerRetriggerItem:SortItems()
+function EHILeftJammerRetriggerList:SortItems()
     local x = self._start_x
     for _, jammer in pairs(self._jammers) do
         local anims = jammer.item.anims
@@ -1838,19 +1838,19 @@ function EHILeftJammerRetriggerItem:SortItems()
     end
 end
 
----@class EHILeftCameraLoopItem : EHILeftItemBase
----@field super EHILeftItemBase
-EHILeftCameraLoopItem = class(EHILeftItemBase)
-EHILeftCameraLoopItem._update_id = "EHILeftCameraLoopItem"
-EHILeftCameraLoopItem._ICON = { ehi = "camera_loop" }
-EHILeftCameraLoopItem._CAMERA_HALF_COLOR_INDEX = EHI:GetHudlistListOption("left_list", "camera_loop_warning_color")
-function EHILeftCameraLoopItem:RegisterListeners(params)
-    self._cameras = {} ---@type table<string, EHILeftCameraLoopItem.Camera>
+---@class EHILeftCameraLoopList : EHILeftListBase
+---@field super EHILeftListBase
+EHILeftCameraLoopList = class(EHILeftListBase)
+EHILeftCameraLoopList._update_id = "EHILeftCameraLoopList"
+EHILeftCameraLoopList._ICON = { ehi = "camera_loop" }
+EHILeftCameraLoopList._CAMERA_HALF_COLOR_INDEX = EHI:GetHudlistListOption("left_list", "camera_loop_warning_color")
+function EHILeftCameraLoopList:RegisterListeners(params)
+    self._cameras = {} ---@type table<string, EHILeftCameraLoopList.Camera>
     self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(self._CAMERA_HALF_COLOR_INDEX)
     self._update_callback = callback(self, self, "update")
 end
 
-function EHILeftCameraLoopItem:update(_, dt)
+function EHILeftCameraLoopList:update(_, dt)
     for id, cam in pairs(self._cameras) do
         local t = cam.t - dt
         local item = cam.item
@@ -1873,7 +1873,7 @@ end
 
 ---@param id string
 ---@param t number
-function EHILeftCameraLoopItem:AddCameraLoop(id, t)
+function EHILeftCameraLoopList:AddCameraLoop(id, t)
     local cam = self._cameras[id] or {}
     cam.t_max = t
     cam.t_max_half = t / 2
@@ -1885,7 +1885,7 @@ function EHILeftCameraLoopItem:AddCameraLoop(id, t)
 end
 
 ---@param id string
-function EHILeftCameraLoopItem:RemoveCameraLoop(id)
+function EHILeftCameraLoopList:RemoveCameraLoop(id)
     local cam = table.remove_key(self._cameras, id)
     if cam then
         self:RemoveItem(cam.item.panel)
@@ -1899,7 +1899,7 @@ function EHILeftCameraLoopItem:RemoveCameraLoop(id)
 end
 
 ---@param t number
-function EHILeftCameraLoopItem:_AddItem(panel, y, text, t)
+function EHILeftCameraLoopList:_AddItem(panel, y, text, t)
     local icon_offset = self._sizes.icon_offset
     local icon_size = self._sizes.icon_size
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(self._ICON)
@@ -1917,7 +1917,7 @@ function EHILeftCameraLoopItem:_AddItem(panel, y, text, t)
     self:FitTheText(text)
 end
 
-function EHILeftCameraLoopItem:SortItems()
+function EHILeftCameraLoopList:SortItems()
     local x = self._start_x
     for _, cam in pairs(self._cameras) do
         local anims = cam.item.anims
@@ -1930,7 +1930,7 @@ function EHILeftCameraLoopItem:SortItems()
 end
 
 EHI:AddOnLocalizationLoaded(function(loc, lang_name)
-    if EHILeftDeployableItem then
-        EHILeftDeployableItem._PERCENT_FORMAT = "%d" .. tweak_data.ehi:GetLanguageFormat(lang_name).percent_format()
+    if EHILeftDeployableList then
+        EHILeftDeployableList._PERCENT_FORMAT = "%d" .. tweak_data.ehi:GetLanguageFormat(lang_name).percent_format()
     end
 end)

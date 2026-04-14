@@ -102,7 +102,7 @@ if EHI:IsLootCounterVisible() then
         self._loot:IncreaseLootCounterProgressMax(5)
     end)
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     -- ! element is Sniper ID (ElementSpawnEnemyDummy)
     local AddToRespawnFromDeath = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("Snipers", "AddToRespawnFromDeath", trigger.element, trigger.time or 65)

@@ -20,7 +20,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 30 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 2,
         overkill_or_above = 3
@@ -32,11 +32,20 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number, in_assault)
+            if assault_number >= 2 then
+                managers.ehi_tracker:AddTracker({
+                    id = "Snipers",
+                    count = EHISniperBase._alive_count,
+                    sniper_count = sniper_count,
+                    class = TT.Sniper.Count
+                })
+            end
+        end)
+    end
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
-
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(2, "start", "pex")
 EHI.Mission:ParseTriggers({ mission = triggers, other = other })
 EHI:ShowAchievementLootCounter({ -- Loot
     achievement = "pex_10",

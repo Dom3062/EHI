@@ -33,7 +33,7 @@ end
 if EHI:IsEscapeChanceEnabled() then
     other[100342] = managers.ehi_escape:AddTrigger(25, true)
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     other[104496] = { time = 120, count_on_refresh = 1, id = "Snipers", class = TT.Sniper.TimedCount }
     other[100063] = { time = 90, id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id

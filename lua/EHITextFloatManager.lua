@@ -14,16 +14,17 @@ function EHITextFloatManager:new()
     self._n_of_equipment = 0
     self._distance = EHI:GetOption("show_floating_text_distance") * 100
     self._angle = EHI:GetOption("show_floating_text_angle")
+    local function destroy_listener(unit) -- Improve performance while spawning
+        self:_remove_update_loop(true)
+        self._player_camera = nil
+        for _, float in pairs(self._floats) do
+            float.class:Hide()
+            float.state = "offscreen"
+        end
+    end
     Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHITextFloatManager_init", function(base, ...)
         self._player_camera = base._camera_object
-        base._unit:base():add_destroy_listener("EHITextFloatManager", function(unit)
-            self:_remove_update_loop(true)
-            self._player_camera = nil
-            for _, float in pairs(self._floats) do
-                float.class:Hide()
-                float.state = "offscreen"
-            end
-        end)
+        base._unit:base():add_destroy_listener("EHITextFloatManager", destroy_listener)
         self:_add_update_loop()
     end)
     ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable

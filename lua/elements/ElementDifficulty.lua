@@ -13,7 +13,7 @@ if tweak_data.levels:IsLevelSkirmish() then
         EHIWaveDifficultyTracker._SKIRMISH_WAVE_DATA = tweak_data.skirmish:GetWaveData()
         function EHIWaveDifficultyTracker:post_init(params)
             EHIWaveDifficultyTracker.super.post_init(self, params)
-            managers.ehi_assault:AddAssaultStartCallback(callback(self, self, "SetProgress"))
+            managers.ehi_assault:AddAssaultStartCallback("EHIWaveDifficultyTracker", callback(self, self, "SetProgress"))
         end
         function EHIWaveDifficultyTracker:Format()
             local wave
@@ -47,7 +47,7 @@ if tweak_data.levels:IsLevelSkirmish() then
                 })
             end)
         else -- On client, wait until HUDManager data is synced from host
-            managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number)
+            managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number, in_assault)
                 managers.ehi_tracker:AddTracker({
                     id = "AssaultDiff",
                     progress = assault_number,

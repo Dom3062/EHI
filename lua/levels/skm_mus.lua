@@ -5,7 +5,7 @@ local other = {}
 if EHI.IsHost then
     other[100107] = EHI:AddAssaultDelay({ time = 15, trigger_once = true })
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     other[100234] = { chance = 20, time = 10 + 10, on_fail_refresh_t = 10, id = "Snipers", class = EHI.Trackers.Sniper.Loop, single_sniper = true }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
@@ -20,7 +20,7 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     end) }
     other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(1, "start", "skm_mus")
 EHI.Mission:ParseTriggers({
     other = other
 })

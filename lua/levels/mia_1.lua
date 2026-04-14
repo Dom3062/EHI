@@ -208,7 +208,7 @@ if EHI:IsLootCounterVisible() then
     other[100912] = CarLootBlockedTrigger -- Empty money bundle, taken weapons or body spawned
     other[100553] = CarLootBlockedTrigger -- Car set on fire
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100159] = { chance = 100, time = 30 + 20, recheck_t = 20 + 20, id = "Snipers", class = TT.Sniper.TimedChance }
     other[104026] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
     other[105008] = { id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
@@ -229,8 +229,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
         end
     end) } -- 20%
     other[105024] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +10%
-    other[104289] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[104303] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:GetHudlistAndListOption("right_list", "show_loot") then
     -- Disables crates in the basement

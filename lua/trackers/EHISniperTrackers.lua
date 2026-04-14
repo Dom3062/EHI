@@ -438,8 +438,8 @@ EHISniperLoopTracker.IncreaseCount = EHICountTracker.IncreaseCount
 EHISniperLoopTracker._DecreaseCount = EHICountTracker.DecreaseCount
 EHISniperLoopTracker.FormatChance = EHIChanceTracker.FormatChance
 EHISniperLoopTracker.SetChance = EHIChanceTracker.SetChance
-EHISniperLoopTracker.IncreaseChance = EHIChanceTracker.IncreaseChance
-EHISniperLoopTracker.DecreaseChance = EHIChanceTracker.DecreaseChance
+EHISniperLoopTracker._IncreaseChance = EHIChanceTracker.IncreaseChance
+EHISniperLoopTracker._DecreaseChance = EHIChanceTracker.DecreaseChance
 EHISniperLoopTracker._anim_chance = EHIChanceTracker._anim_chance
 EHISniperLoopTracker.Format = EHISniperLoopTracker.ShortFormat
 function EHISniperLoopTracker:pre_init(params)
@@ -481,6 +481,14 @@ function EHISniperLoopTracker:OverridePanel()
     })
 end
 
+function EHISniperLoopTracker:post_init(params)
+    if not params.from_sync then
+        return
+    end
+    self._chance = -1
+    self._chance_text:set_text("?%")
+end
+
 function EHISniperLoopTracker:SetTimeNoAnim(time)
     self._time = time
     self._text:set_text(self:Format())
@@ -509,6 +517,20 @@ function EHISniperLoopTracker:AnnounceSniperSpawn()
     if self._snipers_spawned_popup then
         self._current_sniper_count = self._count
     end
+end
+
+function EHISniperLoopTracker:IncreaseChance(amount)
+    if self._chance <= -1 then
+        return
+    end
+    self:_IncreaseChance(amount)
+end
+
+function EHISniperLoopTracker:DecreaseChance(amount)
+    if self._chance <= -1 then
+        return
+    end
+    self:_DecreaseChance(amount)
 end
 
 ---@param count number?

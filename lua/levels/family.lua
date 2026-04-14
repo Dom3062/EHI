@@ -97,15 +97,28 @@ if EHI:IsEscapeChanceEnabled() then
         managers.ehi_escape:AddEscapeChanceTracker(dropin, 10)
     end)
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 20, time = 1 + 30 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 30 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
+if EHI:GetLoadSniperTrackers() then
+    other[100015] = { chance = 20, time = 1 + 30 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 30 + 25, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2, special_function = SF.AddTrackerIfDoesNotExist }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            if managers.groupai:state():whisper_mode() then
+                return
+            end
+            self._trackers:AddTracker({
+                id = "Snipers",
+                from_sync = true,
+                on_fail_refresh_t = 25,
+                on_success_refresh_t = 20 + 30 + 25,
+                sniper_count = 2,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Unit:IgnoreCarryInHudlist(100899, 101330, 102951, 102952) -- 4x Money above Diamond Store (unplayable area)
@@ -121,7 +134,21 @@ EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    sidejob = sidejob
+    sidejob = sidejob,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 EHI:AddXPBreakdown({
     objective =

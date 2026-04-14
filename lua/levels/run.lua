@@ -103,7 +103,7 @@ local other =
     [103577] = EHI:AddSniperSpawnedPopup(true),
     [100567] = EHI:AddSniperSpawnedPopup(true)
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local SetRespawnTime = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local t = trigger.time

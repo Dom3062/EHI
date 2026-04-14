@@ -39,19 +39,31 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 45 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 1,
         overkill_or_above = 2
     })
-    other[100015] = { time = 1 + 10 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 10 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, single_sniper = sniper_count == 1, sniper_count = sniper_count }
+    other[100015] = { time = 1 + 10 + 35, on_fail_refresh_t = 35, on_success_refresh_t = 20 + 10 + 35, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, single_sniper = sniper_count == 1, sniper_count = sniper_count, special_function = SF.Snipers_CheckIfTrackerExists }
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            self._trackers:AddTracker({
+                id = "Snipers",
+                count = EHISniperBase._alive_count,
+                from_sync = true,
+                single_sniper = sniper_count == 1,
+                sniper_count = sniper_count,
+                on_fail_refresh_t = 35,
+                on_success_refresh_t = 20 + 10 + 35,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 

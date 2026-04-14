@@ -114,7 +114,7 @@ if EHI:IsLootCounterVisible() then
         self._loot:IncreaseLootCounterProgress() -- Secured diamonds at Mr. Blonde or in a Van
     end)
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100358] = { chance = 10, time = 1 + 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 3 }
     other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 2 })
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
@@ -122,8 +122,23 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        local sniper_count = EHI:IsDifficultyOrBelow(EHI.Difficulties.VeryHard) and 2 or 3
+        managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                return
+            end
+            managers.ehi_tracker:AddTracker({
+                id = "Snipers",
+                from_sync = true,
+                count = EHISniperBase._alive_count,
+                on_fail_refresh_t = 25,
+                on_success_refresh_t = 20 + 10 + 25,
+                sniper_count = sniper_count,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     -- Mr. Pink
@@ -145,7 +160,7 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
         managers.hud:remove_waypoint("EscapeWP") -- Removes EHI Escape WP once the van is ready, vanilla waypoints are dynamic based on how much secured loot you have
     end }
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(1, "end", "rvd1")
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,

@@ -141,7 +141,7 @@ if EHI:IsEscapeChanceEnabled() then
     end)
     --other[104285] = managers.ehi_escape:IncreaseChanceFromTrigger() -- +5%
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     ---@class EHIMultipleSniperLoopsTracker : EHITracker, EHISniperBaseTracker
     local EHIMultipleSniperLoopsTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop" })
     function EHIMultipleSniperLoopsTracker:OverridePanel()

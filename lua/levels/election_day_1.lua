@@ -27,7 +27,7 @@ local other =
 {
     [100150] = EHI:AddAssaultDelay({}) -- Another first assault delay botched by phalanx spawn group -> see ´logic_link_065´ MissionScriptElement 104924
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     other[104287] = { id = "Snipers", count = 2, class = TT.Sniper.LoopBuffer } -- Set count 2 so no negative number in the tracker
     local AddToRespawnFromDeath = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("Snipers", "AddToRespawnFromDeath", trigger.element, trigger.time)
@@ -45,11 +45,25 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104284] = { special_function = AddToRespawnFromDeath, element = 104295, time = 60 }
     other[104285] = { special_function = AddToRespawnFromDeath, element = 104295, time = 75 }
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(1, "start", "election_day_1")
 
 EHI.Mission:ParseTriggers({
     achievement = achievements,
-    other = other
+    other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then -- Skip if dropped-in in stealth
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.6)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.8)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 
 local tbl =

@@ -43,15 +43,26 @@ if EHI:IsLootCounterVisible() then
     other[101204] = { special_function = SF.CustomCode, f = LootCounter, arg = 4 }
     EHI:ShowLootCounterWaypoint({ element = { 100233, 100008, 100020, 102650 } })
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    other[100015] = { chance = 10, time = 1 + 35 + 30, on_fail_refresh_t = 30, on_success_refresh_t = 20 + 35 + 30, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2 }
+if EHI:GetLoadSniperTrackers() then
+    other[100015] = { chance = 10, time = 1 + 35 + 30, on_fail_refresh_t = 30, on_success_refresh_t = 20 + 35 + 30, id = "Snipers", class = TT.Sniper.Loop, trigger_once = true, sniper_count = 2, special_function = SF.Snipers_CheckIfTrackerExists }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            self._trackers:AddTracker({
+                id = "Snipers",
+                from_sync = true,
+                count = EHISniperBase._alive_count,
+                on_fail_refresh_t = 30,
+                on_success_refresh_t = 20 + 35 + 30,
+                sniper_count = 2,
+                class = TT.Sniper.Loop
+            })
+        end)
+    end
 end
 if EHI:GetWaypointOption("show_waypoints_escape") then
     other[102200] = { special_function = SF.ShowWaypoint, data = { icon = Icon.LootDrop, position_from_element = 102650 } }
@@ -59,7 +70,19 @@ if EHI:GetWaypointOption("show_waypoints_escape") then
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 tweak_data.ehi.functions.achievements.armored_4()
-EHI.Mission:ParseTriggers({ mission = triggers, other = other }, "Escape", { Icon.Escape, Icon.LootDrop })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.65)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    } }, "Escape", { Icon.Escape, Icon.LootDrop })
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

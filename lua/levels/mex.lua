@@ -42,7 +42,7 @@ local other =
     [100880] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = true }, -- Entered the tunnel
     [103212] = { special_function = SF.CustomCode2, f = SetAssaultTrackerBlock, arg = false } -- Arrived in Mexico
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[102495] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, single_sniper = EHI:IsDifficulty(EHI.Difficulties.Normal) }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
@@ -50,8 +50,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
     other[102473] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[102485] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[102480] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:IsLootCounterVisible() then
     local arizona_meth = 4

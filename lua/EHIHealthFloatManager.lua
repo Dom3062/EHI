@@ -148,15 +148,16 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         Hooks:PostHook(PlayerMovement, "init", "EHI_EHIHealthFloatManager_PlayerMovement_init", function(base, ...)
             self._player_movement = base
         end)
+        local function destroy_listener(unit)
+            self:RemoveFromUpdate()
+            self._player_movement = nil
+            self._player_camera = nil
+            self:update_last()
+        end
         Hooks:PostHook(PlayerCamera, "init", "EHI_EHIHealthFloatManager_PlayerCamera_init", function(base, ...)
             self._player_camera = base._camera_object
             self:AddToUpdate()
-            base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
-                self:RemoveFromUpdate()
-                self._player_movement = nil
-                self._player_camera = nil
-                self:update_last()
-            end)
+            base._unit:base():add_destroy_listener("EHIHealthFloatManager", destroy_listener)
         end)
         EHI:AddCallback(EHI.CallbackMessage.HUDVisibilityChanged, function(visibility) ---@param visibility boolean
             if visibility then
@@ -302,13 +303,14 @@ else
             EHI:AddOnCustodyCallback(function(custody_state)
                 self._float:SetInCustody(custody_state)
             end)
+            local function destroy_listener(unit)
+                self:RemoveFromUpdate()
+                self._player_movement = nil
+                self:update_last()
+            end
             Hooks:PostHook(PlayerMovement, "init", "EHI_EHIHealthFloatManager_PlayerMovement_init", function(base, ...)
                 self._player_movement = base
-                base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
-                    self:RemoveFromUpdate()
-                    self._player_movement = nil
-                    self:update_last()
-                end)
+                base._unit:base():add_destroy_listener("EHIHealthFloatManager", destroy_listener)
                 self:AddToUpdate()
             end)
         end
@@ -320,13 +322,14 @@ else
             EHI:AddOnCustodyCallback(function(custody_state)
                 self._float:SetInCustody(custody_state)
             end)
+            local function destroy_listener(unit)
+                self:RemoveFromUpdate()
+                self._player_movement = nil
+                self:update_last()
+            end
             Hooks:PostHook(PlayerMovement, "init", "EHI_EHIHealthFloatManager_PlayerMovement_init", function(base, ...)
                 self._player_movement = base
-                base._unit:base():add_destroy_listener("EHIHealthFloatManager", function(unit)
-                    self:RemoveFromUpdate()
-                    self._player_movement = nil
-                    self:update_last()
-                end)
+                base._unit:base():add_destroy_listener("EHIHealthFloatManager", destroy_listener)
                 self:AddToUpdate()
             end)
         end

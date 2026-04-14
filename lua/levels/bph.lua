@@ -45,7 +45,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 1 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 2, -- ???
         overkill_or_above = 1
@@ -56,14 +56,18 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 if EHI:GetHudlistAndListOption("right_list", "show_units") then
-    managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
-    other[100995] = EHI:AddCustomCode(function(self)
-        managers.ehi_hudlist:CallRightListItemFunction("Unit", "IgnoreEnemyTurret") -- After opening the door and meeting up with Bain
-    end)
+    local function unit(self)
+        managers.ehi_hudlist:CallRightListItemFunction("Unit", "IgnoreEnemyTurret")
+        managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem", true)
+    end
+    other[100995] = EHI:AddCustomCode(unit) -- After opening the door and meeting up with Bain
+    other[100995].load_sync = function(self) ---@param self EHIMissionElementTrigger
+        if managers.groupai:state()._hunt_mode then
+            unit()
+        end
+    end
 end
 
 -- 101399 units/pd2_indiana/props/gen_prop_security_timer/gen_prop_security_timer/001 (2050, -10250, 639.67)

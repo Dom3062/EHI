@@ -200,15 +200,13 @@ if EHI:IsLootCounterVisible() then
     other[104280] = { special_function = IncreaseMaxRandomLoot, index = 1160 }
     other[104281] = { special_function = IncreaseMaxRandomLoot, index = 1300 }
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100750] = { chance = 100, time = 120, on_fail_refresh_t = 40, initial_spawn_chance_set = 10, id = "Snipers", class = TT.Sniper.LoopRestart }
     other[100745] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100749] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess", arg = { 10 } } -- 10%
     other[102928] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "RequestRemoval" }
     other[100744] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100496] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
-    other[100519] = { id = "Snipers", special_function = SF.DecreaseCounter }
-    other[100521] = { id = "Snipers", special_function = SF.IncreaseCounter }
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 

@@ -17,12 +17,27 @@ local achievements =
         }
     }
 }
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Unit:IgnoreCarryInHudlist(100886, 100872) -- Money and gold behind abandoned factory (blocked entrance)
 EHI.Unit:IgnoreInteractInHudlist(100866, 100867, 100868) -- Gold bar, gold coins and jewelry (same place as above)
 
 EHI.Mission:ParseTriggers({
     achievement = achievements,
-    other = other
+    other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 EHI:AddXPBreakdown({
     objectives =

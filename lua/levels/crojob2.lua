@@ -126,7 +126,7 @@ if EHI:IsLootCounterVisible() then
         other[i] = DecreaseMaximumTrigger
     end
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[101721] = { chance = 100, time = 150, on_fail_refresh_t = 120, id = "Snipers", class = TT.Sniper.Loop }
     other[101773] = { id = "Snipers", special_function = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
@@ -147,8 +147,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[104308] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%
     other[104309] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[104310] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[104330] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[104331] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 

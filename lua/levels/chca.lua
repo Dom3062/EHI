@@ -184,7 +184,7 @@ if EHI:CanShowAchievement("chca_12") and ovk_and_up then
     other[EHI:GetInstanceElementID(100084, 15470)] = trigger
     other[EHI:GetInstanceElementID(100085, 15470)] = trigger
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 1,
         overkill_or_above = 2

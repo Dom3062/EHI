@@ -83,12 +83,11 @@ if EHI:IsLootCounterVisible() then
         end
     end)
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
-    local class = EHI.TrackerUtils:EnableSniperClassTracking(TT.Sniper.TimedCountOnce, TT.Sniper.Warning)
-    other[102321] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", class = class }
-    other[105713] = { time = 60, id = "Snipers", class = class, special_function = SF.SetTimeOrCreateTracker }
-    other[105716] = { time = 90, id = "Snipers", class = class, special_function = SF.SetTimeOrCreateTracker }
-    other[105717] = { time = 30, id = "Snipers", class = class, special_function = SF.SetTimeOrCreateTracker }
+if EHI:GetLoadSniperTrackers() then
+    other[102321] = { time = 30 + 1 + 5 + 30 + 45 + 45 + 120, id = "Snipers", class = TT.Sniper.TimedCountOnce }
+    other[105713] = { time = 60, id = "Snipers", class = TT.Sniper.TimedCountOnce, special_function = SF.SetTimeOrCreateTracker }
+    other[105716] = { time = 90, id = "Snipers", class = TT.Sniper.TimedCountOnce, special_function = SF.SetTimeOrCreateTracker }
+    other[105717] = { time = 30, id = "Snipers", class = TT.Sniper.TimedCountOnce, special_function = SF.SetTimeOrCreateTracker }
     if EHI.IsClient then
         other[102177] = EHI:ClientCopyTrigger(other[102321], { time = 1 + 5 + 30 + 45 + 45 + 120, trigger_once = true })
         other[100973] = EHI:ClientCopyTrigger(other[102321], { time = 5 + 30 + 45 + 45 + 120 })
@@ -103,7 +102,21 @@ EHI.Unit:IgnoreInteractInHudlist(107208) -- Keycard out of the playable area, ne
 
 EHI.Mission:ParseTriggers({
     achievement = achievement,
-    other = other
+    other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 EHI:AddXPBreakdown({
     objective =

@@ -7,3 +7,6 @@ EHI:AddXPBreakdown({
     no_total_xp = true
 })
 EHI:ShowLootCounter({ max = 4 }, { element = 102208 })
+EHI.Mission:ParseTriggers({
+    assault = { diff = 1 }
+})

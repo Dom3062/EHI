@@ -52,7 +52,19 @@ if EHI.IsClient then
     triggers[102379] = { run = { time = 30 + van_delay }, special_function = SF.AddTrackerIfDoesNotExist }
 end
 tweak_data.ehi.functions.achievements.armored_4()
-EHI.Mission:ParseTriggers({ mission = triggers, preload = preload, other = other }, "Escape", Icon.CarEscape)
+EHI.Mission:ParseTriggers({ mission = triggers, preload = preload, other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.65)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    } }, "Escape", Icon.CarEscape)
 local MinBags = EHI:GetValueBasedOnDifficulty({
     normal = 2,
     hard = 3,

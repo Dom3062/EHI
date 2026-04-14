@@ -30,7 +30,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 25 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100358] = { chance = 20, time = 1 + 10 + 45, on_fail_refresh_t = 45, on_success_refresh_t = 20 + 10 + 45, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 2 }
     other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 3 })
     other[100360] = EHI:CopyTrigger(other[100358], { sniper_count = 4 })
@@ -39,12 +39,24 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 20%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
-EHI.Mission:ParseTriggers({ mission = triggers, other = other })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    } })
 EHI:ShowLootCounter({ max = 8 }, { element = { 100233, EHI:GetInstanceElementID(100009, 2910) } })
 
 local required_bags = EHI:GetValueBasedOnDifficulty({

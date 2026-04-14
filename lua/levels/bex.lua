@@ -138,7 +138,7 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100358] = { id = "Snipers", class = TT.Sniper.Count, sniper_count = 2 }
     other[100359] = { id = "Snipers", class = TT.Sniper.Count, sniper_count = 3 }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
@@ -147,16 +147,28 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
     other[100366] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(2, "start", "bex")
 
 EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    sync_triggers = { element = element_sync_triggers }
+    sync_triggers = { element = element_sync_triggers },
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then -- Skip if dropped-in in stealth
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 EHI:ShowLootCounter({ max = 11 }, { element = { 100233, 100008 } })
 local xp_override =

@@ -163,10 +163,10 @@ else
     other[301772] = EHI:AddAssaultDelay({ control = 20 + FirstAssaultDelay })
     other[301773] = EHI:AddAssaultDelay({ control = 10 + FirstAssaultDelay })
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     ---@class EHIMallcrasherSniperTracker : EHITracker, EHISniperBaseTracker
     local EHIMallcrasherSniperTracker = ehi_sniper_class(EHITracker, { hint = "enemy_snipers_loop" })
-    function EHIMallcrasherSniperTracker:OverridePanel()
+    function EHIMallcrasherSniperTracker:post_init(params)
         self._single_sniper = true
         self._refresh_on_delete = true
         self._count_text = self:CreateText({
@@ -176,7 +176,9 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             FitTheText = true,
             visible = false
         })
-        self:SniperLogicStarted()
+        if not params.from_sync then
+            self:SniperLogicStarted()
+        end
     end
     ---@param t number
     function EHIMallcrasherSniperTracker:StartLoop(t)
@@ -197,7 +199,14 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[301805] = { id = "Snipers", time = 21, class_table = EHIMallcrasherSniperTracker, special_function = SF.ExecuteIfElementIsEnabled }
     -- Respawn
     local StartLoop = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
-        self._trackers:CallFunction("Snipers", "StartLoop", trigger.time)
+        local t = trigger.time
+        if self._trackers:CallFunction2("Snipers", "StartLoop", t) then
+            self._trackers:AddTracker({
+                id = "Snipers",
+                time = t,
+                class_table = EHIMallcrasherSniperTracker
+            })
+        end
     end)
     other[301794] = { time = 51, special_function = StartLoop }
     other[301795] = { time = 71, special_function = StartLoop }

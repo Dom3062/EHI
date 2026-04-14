@@ -131,6 +131,8 @@ function EHIPhalanxManager:AddTracker()
         if mode == "phalanx" then
             managers.ehi_tracker:ForceRemoveTracker("CaptainChance")
             managers.ehi_assault:RemoveOnSustainListener("EHIPhalanxManager")
+            managers.ehi_assault:RemoveAssaultStartCallback("EHIPhalanxManager")
+            managers.ehi_assault:RemoveAssaultEndCallback("EHIPhalanxManager")
         end
     end)
     if not assault_extender then
@@ -138,10 +140,10 @@ function EHIPhalanxManager:AddTracker()
             managers.ehi_tracker:CallFunction("CaptainChance", "OnEnterSustain", duration)
         end)
     end
-    managers.ehi_assault:AddAssaultStartCallback(function(assault_number)
+    managers.ehi_assault:AddAssaultStartCallback("EHIPhalanxManager", function(assault_number)
         managers.ehi_tracker:CallFunction("CaptainChance", "AssaultStart")
     end)
-    managers.ehi_assault:AddAssaultEndCallback(function()
+    managers.ehi_assault:AddAssaultEndCallback("EHIPhalanxManager", function(assault_number)
         managers.ehi_tracker:CallFunction("CaptainChance", "AssaultEnd")
     end)
     if not self._no_endless_assault_check[Global.game_settings.level_id] then

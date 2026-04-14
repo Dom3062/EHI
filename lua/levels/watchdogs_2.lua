@@ -149,6 +149,15 @@ EHI.Mission:ParseTriggers({
     achievement = achievements,
     other = other,
     assault = {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end,
         force_assault_start = true,
         wave_mode_elements_block = { 100171, 101115 },
         ignore_assault_start_count = 1

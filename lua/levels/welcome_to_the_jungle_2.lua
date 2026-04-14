@@ -89,12 +89,12 @@ local other =
 {
     [100531] = EHI:AddAssaultDelay({ control = 35 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local max_snipers = 2
     local function Spawn()
         max_snipers = max_snipers - 1
         managers.ehi_tracker:CallFunction("Snipers", "SniperSpawned") -- Counting is done in EHISniperBase
-        if max_snipers <= 0 and EHISniperBase then
+        if max_snipers <= 0 then
             EHISniperBase.unregister_spawn_listener("wttj2")
             managers.ehi_tracker:CallFunction("Snipers", "RequestRemoval")
         end
@@ -108,15 +108,27 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
             single_sniper = true,
             class = EHI.Trackers.Sniper.Loop
         })
-        if EHISniperBase then -- There is no increase or decrease element
-            EHISniperBase._enabled = true
-            EHISniperBase.register_spawn_listener("wttj2", Spawn)
-        end
+        EHISniperBase.register_spawn_listener("wttj2", Spawn)
     end)
     other[100483] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
 end
+managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
-EHI.Mission:ParseTriggers({ mission = triggers, other = other })
+EHI.Mission:ParseTriggers({ mission = triggers, other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 1 or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif assault_number <= 3 or (assault_number == 4 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    } })
 EHI.Unit:UpdateUnits({
     --units/payday2/equipment/gen_interactable_hack_computer/gen_interactable_hack_computer_b
     [103320] = { remove_vanilla_waypoint = 100309 },

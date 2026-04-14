@@ -101,15 +101,13 @@ local other =
 {
     [100653] = EHI:AddAssaultDelay({ control = 2 + 15, trigger_once = true })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100161] = { chance = 10, time = 10 + 25, on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, id = "Snipers", class = TT.Sniper.Loop, sniper_count = 3 }
     other[100153] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100159] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100155] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100152] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100156] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%
-    other[100148] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100146] = { id = "Snipers", special_function = SF.DecreaseCounter }
     other[100070] = { id = 100161, special_function = SF.RemoveTrigger } -- All players in the sewers
     other[101516] = { id = "Snipers", special_function = SF.RemoveTracker } -- All players in the sewers
 end
@@ -118,11 +116,21 @@ if EHI:GetOption("show_captain_spawn_chance") then
         self._trackers:ForceRemoveTracker("CaptainChance")
     end)
 end
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(1, "end", "pbr2")
 
 EHI.Mission:ParseTriggers({
     achievement = achievements,
-    other = other
+    other = other,
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 local ring = { special_function = SF.IncreaseProgress }
 local voff_4_triggers =

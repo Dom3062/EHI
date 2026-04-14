@@ -77,7 +77,7 @@ if EHI:IsLootCounterVisible() then
         EHI:ShowLootCounterNoChecks({ max = PrintAllInteractions() + 1 })
     end, { element = { 100020, 102644, 102650, EHI:GetInstanceElementID(100028, 7200) } })
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     other[100358] = { time = 0.05 + 10 + 25, chance = 10, id = "Snipers", on_fail_refresh_t = 25, on_success_refresh_t = 20 + 10 + 25, class = TT.Sniper.Loop, single_sniper = true, sniper_count = 2 }
     other[100359] = EHI:CopyTrigger(other[100358], { sniper_count = 3 })
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
@@ -86,8 +86,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[100259] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SetMultipleSniperSpawns" } -- Starts with one sniper, more snipers get enabled after The Diamond is taken
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Unit:IgnoreCarryInHudlist(300686, 300421, 300457) --- Non-interactable artifacts

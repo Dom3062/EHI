@@ -191,7 +191,7 @@ local other =
     [102202] = { special_function = SetFlarePos, arg = 102153 },
     [102203] = { special_function = SetFlarePos, arg = 102152 },
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local SetRespawnTime = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         local id = trigger.id
         local t = trigger.time

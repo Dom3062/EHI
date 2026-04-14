@@ -12,16 +12,6 @@ function EHI.TrackerUtils:GetTrackerIcons(all_icons, one_icon)
     return self.super:GetOption("show_one_icon") and one_icon or all_icons
 end
 
----@param enabled_class string
----@param disabled_class string
-function EHI.TrackerUtils:EnableSniperClassTracking(enabled_class, disabled_class)
-    if EHISniperBase then
-        EHISniperBase._enabled = true
-        return enabled_class
-    end
-    return disabled_class
-end
-
 function EHI.TrackerUtils:GetColorCodesMap()
     return {
         red = Color.red,
@@ -184,5 +174,47 @@ end
 function EHI.TrackerUtils.Deployables:OnDeployableConsumed(key)
     if self._units then
         self._units[key] = nil
+    end
+end
+
+EHI.TrackerUtils.Hudlist =
+{
+    super = EHI
+}
+---@param assaults integer
+---@param assault_type_index "start"|"end"
+---@param id string
+function EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(assaults, assault_type_index, id)
+    if not EHI:GetHudlistAndListOption("right_list", "show_units") then
+        return
+    elseif assault_type_index == "start" then
+        ---@param assault_number integer
+        local function ForceVisible(assault_number, in_assault)
+            if assault_number >= assaults then
+                managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem", true)
+                managers.ehi_assault:RemoveAssaultStartCallback(id)
+            end
+        end
+        managers.ehi_assault:AddAssaultStartCallback(id, ForceVisible)
+        if self.super.IsClient then
+            managers.ehi_assault:AddAssaultNumberSyncCallback(ForceVisible)
+        end
+    else
+        ---@param assault_number integer
+        local function ForceVisible(assault_number)
+            if assault_number >= assaults then
+                managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem", true)
+                managers.ehi_assault:RemoveAssaultEndCallback(id)
+            end
+        end
+        managers.ehi_assault:AddAssaultEndCallback(id, ForceVisible)
+        if self.super.IsClient then
+            managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number, in_assault)
+                if (assault_number <= (assaults - 1)) or (assault_number == assaults and in_assault) then
+                    return
+                end
+                ForceVisible(assault_number)
+            end)
+        end
     end
 end

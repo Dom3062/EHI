@@ -11,8 +11,8 @@ local FakeEHIList = class()
 ---@param y number
 ---@param aspect_ratio integer
 function FakeEHIList:init(x, y, aspect_ratio)
-    self._items = {} ---@type table<string, FakeEHILeftItemBase|FakeEHIRightItemBase>
-    self._itemized_list = {} ---@type FakeEHILeftItemBase[]|FakeEHIRightItemBase[]
+    self._items = {} ---@type table<string, FakeEHILeftListBase|FakeEHIRightListBase>
+    self._itemized_list = {} ---@type FakeEHILeftListBase[]|FakeEHIRightListBase[]
     self._x = x
     self._y = y
     self._aspect_ratio = aspect_ratio
@@ -153,7 +153,7 @@ end
 
 ---@param panel Panel
 ---@param params table
----@param class FakeEHILeftItemBase?
+---@param class FakeEHILeftListBase?
 function FakeEHILeftList:AddItem(panel, params, class)
     local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(params.icon)
     params.x = self._x
@@ -168,7 +168,7 @@ function FakeEHILeftList:AddItem(panel, params, class)
     params.color_index = self._color_index
     params.progress = self._progress
     params.right_to_left = self._alignment == 2
-    local item = (class or FakeEHILeftItemBase):new(panel, params, texture, texture_rect)
+    local item = (class or FakeEHILeftListBase):new(panel, params, texture, texture_rect)
     self._items[params.id] = item
     table.insert(self._itemized_list, item)
 end
@@ -187,7 +187,7 @@ end
 ---@param y number
 function FakeEHILeftList:SetItemsPos(x, y)
     local next_y = y
-    for _, item in ipairs(self._itemized_list) do ---@cast item -FakeEHIRightItemBase
+    for _, item in ipairs(self._itemized_list) do ---@cast item -FakeEHIRightListBase
         if item:ItemIsVisible() then
             item:SetX(x)
             item:SetY(next_y)
@@ -244,7 +244,7 @@ end
 
 ---@param panel Panel
 ---@param params table
----@param class FakeEHIRightItemBase?
+---@param class FakeEHIRightListBase?
 function FakeEHIRightList:AddItem(panel, params, class)
     params.bg_alpha = self._bg_alpha
     params.bg_color = self._bg_color
@@ -257,7 +257,7 @@ function FakeEHIRightList:AddItem(panel, params, class)
     params.right_offset = self._panel_w - self._x
     params.color = self._color
     params.color_string = self._color_string
-    local item = (class or FakeEHIRightItemBase):new(panel, params)
+    local item = (class or FakeEHIRightListBase):new(panel, params)
     self._items[params.id] = item
     table.insert(self._itemized_list, item)
 end
@@ -267,7 +267,7 @@ end
 function FakeEHIRightList:SetItemsPos(x, y)
     local right_offset = self._panel_w - x
     local next_y = y
-    for _, item in ipairs(self._itemized_list) do ---@cast item -FakeEHILeftItemBase
+    for _, item in ipairs(self._itemized_list) do ---@cast item -FakeEHILeftListBase
         if item:ItemIsVisible() then
             item:SetRightOffset(right_offset, self._scale)
             item._panel:set_y(next_y)
@@ -294,7 +294,7 @@ function FakeEHIHudlistManager:new(panel, aspect_ratio)
     local left_x_offset, left_y_offset = tweak_data.ehi.shared.ConvertSafeRectToFull(EHI:GetHudlistOption("left_list_x"), EHI:GetHudlistOption("left_list_y"), aspect_ratio)
     local right_x_offset, right_y_offset = tweak_data.ehi.shared.ConvertSafeRectToFull(EHI:GetHudlistOption("right_list_x"), EHI:GetHudlistOption("right_list_y"), aspect_ratio)
     dofile(EHI.LuaPath .. "menu/FakeEHIHudlistLeftItems.lua")
-    FakeEHILeftItemBase._parent = self
+    FakeEHILeftListBase._parent = self
     self._left_list = FakeEHILeftList:new(left_x_offset, left_y_offset, aspect_ratio, EHI:GetHudlistOption("left_list_item_color"), EHI:GetHudlistOption("left_list_progress"))
     self:_init_left_list_items()
     dofile(EHI.LuaPath .. "menu/FakeEHIHudlistRightItems.lua")
@@ -401,7 +401,7 @@ function FakeEHIHudlistManager:_init_left_list_items()
             health_circle = options.minions_health_circle,
             enabled = options.show_minions,
             top_text = options.minions_top_text -- Bottom text is not used in real Minions
-        }, FakeEHILeftMinionItem)
+        }, FakeEHILeftMinionList)
     end
     self._left_list:AddItem(self._panel, {
         id = "Deployable",
@@ -456,7 +456,7 @@ function FakeEHIHudlistManager:_init_left_list_items()
         enabled = options.show_deployables,
         top_text = options.deployable_top_text,
         bottom_text = true
-    }, FakeEHILeftDeployableItem)
+    }, FakeEHILeftDeployableList)
     do
         local icon = {
             skills = { 1, 4 }
@@ -482,7 +482,7 @@ function FakeEHIHudlistManager:_init_left_list_items()
             enabled = options.show_jammers,
             affects_pager_color_index = options.jammer_affects_pager,
             bottom_text = true
-        }, FakeEHILeftJammerItem)
+        }, FakeEHILeftJammerList)
     end
     do
         local icon = {
@@ -764,7 +764,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
             },
             enabled = options.show_units,
             dozer_count_separate = u_options.dozer_count_separate
-        }, FakeEHIRightUnitItem)
+        }, FakeEHIRightUnitList)
     end
     self._right_list:AddItem(self._panel, {
         id = "Loot",
@@ -823,7 +823,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
         enabled = options.show_loot,
         potentional_loot = options.potentional_loot,
         top_type = options.loot_top_type
-    }, FakeEHIRightLootItem)
+    }, FakeEHIRightLootList)
     self._right_list:AddItem(self._panel, {
         id = "Special",
         items =
@@ -888,7 +888,7 @@ function FakeEHIHudlistManager:_init_right_list_items()
         },
         enabled = options.show_stealth_info,
         bodybags_format = options.stealth_info_bodybags_format
-    }, FakeEHIRightStealthItem)
+    }, FakeEHIRightStealthList)
     self._right_list:SetItemsPos(self._right_list._x, self._right_list._y)
 end
 

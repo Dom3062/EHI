@@ -128,7 +128,7 @@ if EHI:IsLootCounterVisible() then
     other[101280] = CokeDestroyedTrigger
     other[101281] = CokeDestroyedTrigger
 end
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers(true) then
     local ChanceSuccess = EHI.Trigger:RegisterCustomSF(function(self, trigger, element, ...) ---@param element ElementLogicChanceOperator
         local id = trigger.id
         local chance = element._values.chance

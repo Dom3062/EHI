@@ -45,20 +45,31 @@ local other =
 {
     [100109] = EHI:AddAssaultDelay({ control = 60 })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         veryhard_or_below = 2,
         overkill_or_above = 3
     })
-    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count }
+    other[100015] = { id = "Snipers", class = TT.Sniper.Count, trigger_once = true, sniper_count = sniper_count, special_function = SF.AddTrackerIfDoesNotExist }
     --[[other[100533] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[100537] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +5%
     other[100565] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 10%
     other[100574] = { id = "Snipers", special_function = SF.IncreaseChanceFromElement } -- +15%]]
     other[100363] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "SniperSpawnsSuccess" }
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[100381] = { id = "Snipers", special_function = SF.DecreaseCounter }
+    if EHI.IsClient then
+        EHI.Trigger:AddLoadSyncFunction(function(self)
+            if managers.groupai:state():whisper_mode() then
+                return
+            end
+            self._trackers:AddTracker({
+                id = "Snipers",
+                count = EHISniperBase._alive_count,
+                sniper_count = sniper_count,
+                class = TT.Sniper.Count
+            })
+        end)
+    end
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 
@@ -81,7 +92,21 @@ EHI.Mission:ParseTriggers({
     mission = triggers,
     achievement = achievements,
     other = other,
-    sync_triggers = { element = element_sync_triggers }
+    sync_triggers = { element = element_sync_triggers },
+    assault =
+    {
+        diff_load_sync = function(self, assault_number, in_assault)
+            if self.ConditionFunctions.IsStealth() then
+                return
+            elseif assault_number <= 0 or (assault_number == 1 and in_assault) then
+                self._assault:SetDiff(0.5)
+            elseif (assault_number == 1 and not in_assault) or (assault_number == 2 and in_assault) then
+                self._assault:SetDiff(0.75)
+            else
+                self._assault:SetDiff(1)
+            end
+        end
+    }
 })
 
 local xp_override =

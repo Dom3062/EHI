@@ -186,7 +186,7 @@ local other =
         self:CreateTracking()
     end) })
 }
-if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
+if EHI:GetLoadSniperTrackers() then
     local sniper_count = EHI:GetValueBasedOnDifficulty({
         normal = 2,
         hard = 3,
@@ -199,8 +199,6 @@ if EHI:GetOptionAndLoadTracker("show_sniper_tracker") then
     other[101406] = { id = "Snipers", special_function = SF.SetChanceFromElement } -- 25%
     other[101049] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceSuccess" }
     other[101050] = { id = "Snipers", special_function = SF.CallCustomFunction, f = "OnChanceFail" }
-    other[100380] = { id = "Snipers", special_function = SF.IncreaseCounter }
-    other[101408] = { id = "Snipers", special_function = SF.DecreaseCounter }
     if EHI.IsClient then
         other[101038] = EHI:CopyTrigger(other[100548], { chance = 25, time = 120 }, SF.AddTrackerIfDoesNotExist)
     end

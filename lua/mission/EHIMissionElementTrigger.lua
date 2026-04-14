@@ -53,7 +53,7 @@ end
 function EHIMissionElementTrigger:init(id, params)
     self._id = id
     self._params = params
-    if params.special_function and params.special_function >= self.SF.CustomSF then
+    if params.special_function and params.special_function > self.SF.CustomSF then
         self._f = self._SFF[params.special_function --[[@as number]] ]
     end
     if params.special_function == self.SF.ShowWaypoint and params.data then
@@ -371,7 +371,7 @@ function EHIMissionElementTrigger:Trigger(element, enabled)
             end
         elseif f == self.SF.CustomCodeDelayed then
             DelayedCalls:Add(tostring(self._id), trigger.t or 0, trigger.f --[[@as function]])
-        elseif f >= self.SF.CustomSF then
+        elseif f > self.SF.CustomSF then
             self._f(self, self._params, element, enabled)
         end
     else
@@ -404,16 +404,19 @@ function EHIMissionElementTrigger:AddWaypoint(waypoint)
     end
     self._params.waypoint = w
     if w.unit then
-        if w.unit:unit_data() and w.unit:unit_data().add_destroy_listener then
-            w.unit:unit_data():add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function()
+        local base = w.unit:base()
+        local unit_data = w.unit:unit_data()
+        if base and base.add_destroy_listener then
+            base:add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function()
                 self._waypoints:RemoveWaypoint(self._params.id)
             end)
-        elseif w.unit:base() and w.unit:base().add_destroy_listener then
-            w.unit:base():add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function()
+        elseif unit_data and unit_data.add_destroy_listener then
+            unit_data:add_destroy_listener(string.format("EHIDestroy_%s_%d", tostring(self._params.id), self._id), function()
                 self._waypoints:RemoveWaypoint(self._params.id)
             end)
         else
             EHI:Log(string.format("Unit %s with editor id %d does not have destroy listener. This will cause a crash when waypoint is running and game is restarted!", tostring(w.unit), w.unit.editor_id and w.unit:editor_id() or 0))
+            EHI:LogTraceback()
         end
     end
 end
@@ -1344,6 +1347,14 @@ function EHIMissionHolder:ParseTriggers(new_triggers, trigger_id_all, trigger_ic
         end
     end
     managers.ehi_assault:Parse(new_triggers.assault)
+    if new_triggers.assault and new_triggers.assault.diff_load_sync and EHI.IsClient then
+        self._triggers:AddLoadSyncFunction(function(trigger)
+            local assault = trigger._assault
+            local assault_number = assault._assault_number
+            local in_assault = assault._internal.is_assault
+            new_triggers.assault.diff_load_sync(trigger, assault_number, in_assault)
+        end)
+    end
     self:PreloadTrackers(new_triggers.preload or {}, trigger_id_all or "Trigger", trigger_icons_all or {})
     ---@param data ParseAchievementDefinitionTable
     ---@param id string

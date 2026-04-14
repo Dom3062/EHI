@@ -1710,6 +1710,7 @@ end
 ---@class ElementLogicChance : MissionScriptElement
 ---@field _values ElementLogicChanceOperatorValues
 ---@field add_trigger fun(self: self, id: any, outcome: "success"|"fail", callback: function)
+---@field chance_operation_set_chance fun(self: self, chance: number)
 
 ---@class ElementLogicChanceOperator : MissionScriptElement
 ---@field _values ElementLogicChance._values

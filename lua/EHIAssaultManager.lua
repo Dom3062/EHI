@@ -243,7 +243,7 @@ function EHIAssaultManager:AssaultStart()
     if not self._internal.is_assault then
         self._assault_number = self._assault_number + 1
         if self._assault_start_callback then
-            self._assault_start_callback:dispatch(self._assault_number)
+            self._assault_start_callback:call(self._assault_number)
         end
     end
     if self._assault_time.blocked or (self._endless_assault and not self._assault_time.show_endless_assault) or self._internal.is_assault or self._assault_block then
@@ -281,15 +281,23 @@ function EHIAssaultManager:AssaultStart()
     self._internal.is_assault = true
 end
 
+---@param id string
 ---@param f fun(assault_number: integer)
-function EHIAssaultManager:AddAssaultStartCallback(f)
-    self._assault_start_callback = self._assault_start_callback or CallbackEventHandler:new()
-    self._assault_start_callback:add(f)
+function EHIAssaultManager:AddAssaultStartCallback(id, f)
+    self._assault_start_callback = self._assault_start_callback or ListenerHolder:new()
+    self._assault_start_callback:add(id, f)
+end
+
+---@param id string
+function EHIAssaultManager:RemoveAssaultStartCallback(id)
+    if self._assault_start_callback then
+        self._assault_start_callback:remove(id)
+    end
 end
 
 function EHIAssaultManager:AssaultEnd()
     if self._internal.is_assault and self._assault_end_callback then
-        self._assault_end_callback:dispatch()
+        self._assault_end_callback:call(self._assault_number)
     end
     self._internal.is_assault = false
     if self._assault_block or self._assault_delay.blocked then
@@ -316,13 +324,21 @@ function EHIAssaultManager:AssaultEnd()
     end
 end
 
----@param f function
-function EHIAssaultManager:AddAssaultEndCallback(f)
-    self._assault_end_callback = self._assault_end_callback or CallbackEventHandler:new()
-    self._assault_end_callback:add(f)
+---@param id string
+---@param f fun(assault_number: integer)
+function EHIAssaultManager:AddAssaultEndCallback(id, f)
+    self._assault_end_callback = self._assault_end_callback or ListenerHolder:new()
+    self._assault_end_callback:add(id, f)
 end
 
----@param f fun(assault_number: integer)
+---@param id string
+function EHIAssaultManager:RemoveAssaultEndCallback(id)
+    if self._assault_end_callback then
+        self._assault_end_callback:remove(id)
+    end
+end
+
+---@param f fun(assault_number: integer, in_assault: boolean)
 function EHIAssaultManager:AddAssaultNumberSyncCallback(f)
     if self._vanilla_synced_from_host then
         return
@@ -388,7 +404,7 @@ function EHIAssaultManager:SetCurrentAssaultNumber(assault_number, in_assault)
     self._assault_number = assault_number
     self._internal.is_assault = in_assault
     if self._assault_number_sync_callback then
-        self._assault_number_sync_callback:dispatch(assault_number)
+        self._assault_number_sync_callback:dispatch(assault_number, in_assault)
         self._assault_number_sync_callback:clear()
         self._assault_number_sync_callback = nil
     end

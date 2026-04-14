@@ -1,11 +1,11 @@
----@alias EHIRightItemBase.Item { anims: { move: thread, visibility: thread }, panel: Panel, progress_bar: Color, progress: Bitmap, text: Text, count: number, i: integer, visible: boolean, ignore: boolean, force_visible: boolean, data: table }
+---@alias EHIRightListBase.Item { anims: { move: thread, visibility: thread }, panel: Panel, progress_bar: Color, progress: Bitmap, text: Text, count: number, i: integer, visible: boolean, ignore: boolean, force_visible: boolean, data: table }
 
----@class EHIRightItemBase
+---@class EHIRightListBase
 ---@field new fun(self: self, panel: Panel, params: table): self
 ---@field _update_callback fun(t: number, dt: number)
 ---@field _update_id string
-EHIRightItemBase = class()
-EHIRightItemBase._PROGRESS_RECT = {
+EHIRightListBase = class()
+EHIRightListBase._PROGRESS_RECT = {
     { 32, 0, -32, 32 },
     { 128, 0, -128, 128 }
 }
@@ -13,7 +13,7 @@ EHIRightItemBase._PROGRESS_RECT = {
 ---@param text Text
 ---@param progress Color
 ---@param start_color Color
-EHIRightItemBase._animate_item_up = function(o, text, progress, start_color)
+EHIRightListBase._animate_item_up = function(o, text, progress, start_color)
     over(0.5, function(lerp, t)
         progress.red = math.lerp(0, 1, lerp)
         o:set_color(progress)
@@ -25,7 +25,7 @@ end
 ---@param text Text
 ---@param progress Color
 ---@param start_color Color
-EHIRightItemBase._animate_item_down = function(o, text, progress, start_color)
+EHIRightListBase._animate_item_down = function(o, text, progress, start_color)
     over(0.5, function(lerp, t)
         progress.red = math.lerp(1, 0, lerp)
         o:set_color(progress)
@@ -38,14 +38,14 @@ end
 ---@param o Panel
 ---@param a number
 ---@param target_alpha number
-EHIRightItemBase._animate_item_visibility = function(o, a, target_alpha)
+EHIRightListBase._animate_item_visibility = function(o, a, target_alpha)
     over(0.15, function(lerp, t)
         o:set_alpha(math.lerp(a, target_alpha, lerp))
     end)
 end
 ---@param o Panel
 ---@param target_right number
-EHIRightItemBase._animate_item_right = function(o, target_right)
+EHIRightListBase._animate_item_right = function(o, target_right)
     local right = o:right()
     over(0.15, function(lerp, t)
         o:set_right(math.lerp(right, target_right, lerp))
@@ -53,7 +53,7 @@ EHIRightItemBase._animate_item_right = function(o, target_right)
 end
 ---@param panel Panel
 ---@param params table
-function EHIRightItemBase:init(panel, params)
+function EHIRightListBase:init(panel, params)
     self._id = params.id
     self._panel = panel:panel({
         y = 90,
@@ -68,10 +68,10 @@ function EHIRightItemBase:init(panel, params)
 end
 
 ---@param params table
-function EHIRightItemBase:RegisterListeners(params)
+function EHIRightListBase:RegisterListeners(params)
 end
 
-function EHIRightItemBase:SwitchToLoudMode()
+function EHIRightListBase:SwitchToLoudMode()
     if self._delete_on_alarm then
         self:delete()
     elseif self._update_on_alarm then
@@ -79,29 +79,29 @@ function EHIRightItemBase:SwitchToLoudMode()
     end
 end
 
-function EHIRightItemBase:OnAlarm()
+function EHIRightListBase:OnAlarm()
 end
 
-function EHIRightItemBase:Spawned()
+function EHIRightListBase:Spawned()
     if self._update_on_spawn then
         self:OnSpawn()
     end
 end
 
-function EHIRightItemBase:OnSpawn()
+function EHIRightListBase:OnSpawn()
 end
 
 ---@param id string
 ---@param params table
-function EHIRightItemBase:CreateItem(id, params)
-    self._items = self._items or {} ---@type table<string, EHIRightItemBase.Item>
+function EHIRightListBase:CreateItem(id, params)
+    self._items = self._items or {} ---@type table<string, EHIRightListBase.Item>
     if params.ignore then
         -- Ignore items are still accessible through self._items but they are not itemized down below
         -- They do not have any panel data associated, game will crash if you try to access it
         self._items[id] = { ignore = true }
         return self._items[id]
     end
-    self._itemized_items = self._itemized_items or {} ---@type EHIRightItemBase.Item[]
+    self._itemized_items = self._itemized_items or {} ---@type EHIRightListBase.Item[]
     self._n_of_items = self._n_of_items or 0
     local pos = params.pos or self._n_of_items + 1
     local w = 32 * self._SCALE
@@ -214,9 +214,9 @@ function EHIRightItemBase:CreateItem(id, params)
 end
 
 ---@param items table
-function EHIRightItemBase:CreateItems(items)
-    self._items = self._items or {} ---@type table<string, EHIRightItemBase.Item>
-    self._itemized_items = self._itemized_items or {} ---@type EHIRightItemBase.Item[]
+function EHIRightListBase:CreateItems(items)
+    self._items = self._items or {} ---@type table<string, EHIRightListBase.Item>
+    self._itemized_items = self._itemized_items or {} ---@type EHIRightListBase.Item[]
     self._n_of_items = self._n_of_items or 0
     local w = 32 * self._SCALE
     for _, item in ipairs(items) do
@@ -321,7 +321,7 @@ function EHIRightItemBase:CreateItems(items)
 end
 
 ---@param text Text
-function EHIRightItemBase:FitTheText(text)
+function EHIRightListBase:FitTheText(text)
     text:set_font_size(text:h())
     local w = select(3, text:text_rect())
     if w > text:w() then
@@ -329,7 +329,7 @@ function EHIRightItemBase:FitTheText(text)
     end
 end
 
-function EHIRightItemBase:set_visible()
+function EHIRightListBase:set_visible()
     if self._visible then
         return
     end
@@ -338,7 +338,7 @@ function EHIRightItemBase:set_visible()
     self._parent:ItemSetVisible(self)
 end
 
-function EHIRightItemBase:set_hidden()
+function EHIRightListBase:set_hidden()
     if not self._visible then
         return
     end
@@ -347,13 +347,13 @@ function EHIRightItemBase:set_hidden()
     self._parent:ItemSetHidden()
 end
 
-function EHIRightItemBase:visible()
+function EHIRightListBase:visible()
     return self._visible
 end
 
 ---Same as `_update_items_visibility()` but without any animations  
 ---Useful if items needs to be sorted during loading screen or on spawn
-function EHIRightItemBase:_update_items_visibility_fast()
+function EHIRightListBase:_update_items_visibility_fast()
     local right = self._RIGHT_OFFSET
     local offset = 0
     local space = 5 * self._SCALE
@@ -378,7 +378,7 @@ function EHIRightItemBase:_update_items_visibility_fast()
     end
 end
 
-function EHIRightItemBase:_update_items_visibility()
+function EHIRightListBase:_update_items_visibility()
     local right = self._RIGHT_OFFSET
     local offset = 0
     local space = 5 * self._SCALE
@@ -417,10 +417,10 @@ function EHIRightItemBase:_update_items_visibility()
     end
 end
 
----@param item EHIRightItemBase.Item
+---@param item EHIRightListBase.Item
 ---@param no_reorganization boolean?
 ---@return boolean?
-function EHIRightItemBase:_set_item_ignored(item, no_reorganization)
+function EHIRightListBase:_set_item_ignored(item, no_reorganization)
     if item.ignore then
         return
     end
@@ -448,13 +448,13 @@ function EHIRightItemBase:_set_item_ignored(item, no_reorganization)
     return true
 end
 
-function EHIRightItemBase:UnregisterListeners()
+function EHIRightListBase:UnregisterListeners()
 end
 
----@param item EHIRightItemBase.Item
+---@param item EHIRightListBase.Item
 ---@param previous_count number
 ---@param count number?
-function EHIRightItemBase:AnimateItem(item, previous_count, count)
+function EHIRightListBase:AnimateItem(item, previous_count, count)
     if self._PROGRESS_STATIC then
         return
     end
@@ -468,7 +468,7 @@ function EHIRightItemBase:AnimateItem(item, previous_count, count)
     end
 end
 
-function EHIRightItemBase:delete()
+function EHIRightListBase:delete()
     self:UnregisterListeners()
     if self._visible then
         self._parent:ItemSetHidden()
@@ -476,17 +476,17 @@ function EHIRightItemBase:delete()
     self._parent:RemoveItem(self._id)
 end
 
-function EHIRightItemBase:destroy()
+function EHIRightListBase:destroy()
     if self._panel and alive(self._panel) then
         self._panel:parent():remove(self._panel)
     end
 end
 
----@class EHIRightUnitItem : EHIRightItemBase
----@field super EHIRightItemBase
-EHIRightUnitItem = class(EHIRightItemBase)
-EHIRightUnitItem._update_id = "EHIRightUnitItem"
-EHIRightUnitItem._UNITS = {
+---@class EHIRightUnitList : EHIRightListBase
+---@field super EHIRightListBase
+EHIRightUnitList = class(EHIRightListBase)
+EHIRightUnitList._update_id = "EHIRightUnitList"
+EHIRightUnitList._UNITS = {
     cop = "enemy",
     cop_female = "enemy",
     fbi = "enemy",
@@ -547,8 +547,8 @@ EHIRightUnitItem._UNITS = {
     captain = "ignore", -- Cabin Crew + Captain (Alaskan Deal)
     captain_female = "ignore" -- Cabin Crew (Alaskan Deal)
 }
-EHIRightUnitItem._TWEAK_NAME_TO_STATS_NAME = {}
-function EHIRightUnitItem:RegisterListeners(params)
+EHIRightUnitList._TWEAK_NAME_TO_STATS_NAME = {}
+function EHIRightUnitList:RegisterListeners(params)
     self._minions_without_snipers = 0
     self._minions = 0
     self._minions_key = {} ---@type table<userdata, { is_heavy_zeal_sniper: boolean }?>
@@ -641,14 +641,14 @@ function EHIRightUnitItem:RegisterListeners(params)
     end)
 end
 
-function EHIRightUnitItem:AddToUpdate()
+function EHIRightUnitList:AddToUpdate()
     if not self._update_created then
         managers.hud:add_updator(self._update_id, self._update_callback)
         self._update_created = true
     end
 end
 
-function EHIRightUnitItem:RemoveFromUpdate()
+function EHIRightUnitList:RemoveFromUpdate()
     if self._update_created then
         managers.hud:remove_updator(self._update_id)
         self._update_created = false
@@ -657,10 +657,10 @@ end
 
 ---@param is_holdout boolean
 ---@param u_options table
-function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
-    local slots = {} ---@type EHIRightItemBase.Item[]
-    local occupied_slots = {} ---@type EHIRightItemBase.Item[]
-    ---@param item EHIRightItemBase.Item
+function EHIRightUnitList:CreateItemsFromMap(is_holdout, u_options)
+    local slots = {} ---@type EHIRightListBase.Item[]
+    local occupied_slots = {} ---@type EHIRightListBase.Item[]
+    ---@param item EHIRightListBase.Item
     ---@param slot integer
     local function handle_new_item_in_the_slot(item, slot)
         if slots[slot] then
@@ -701,9 +701,9 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
                 self:_update_items_visibility()
             end
         end
-        managers.ehi_assault:AddAssaultStartCallback(activate_item_in_wave)
+        managers.ehi_assault:AddAssaultStartCallback("right_list", activate_item_in_wave)
         if EHI.IsClient then
-            managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number)
+            managers.ehi_assault:AddAssaultNumberSyncCallback(function(assault_number, in_assault)
                 for i = 0, assault_number, 1 do
                     activate_item_in_wave(i)
                 end
@@ -1072,21 +1072,26 @@ function EHIRightUnitItem:CreateItemsFromMap(is_holdout, u_options)
             ehi = "default"
         }
     })
-    self._units_map = {} ---@type table<string, EHIRightItemBase.Item?>
+    self._units_map = {} ---@type table<string, EHIRightListBase.Item?>
     for key, group in pairs(self._UNITS) do
         self._units_map[key] = self._items[group] or self._items.unknown
     end
     self:_update_items_visibility_fast()
 end
 
-function EHIRightUnitItem:EnablePersistentSniperItem()
+---@param already_in_game boolean?
+function EHIRightUnitList:EnablePersistentSniperItem(already_in_game)
     local snp = self._items.sniper
     if snp and snp.data.persistent then
         snp.data.check = true
+        if already_in_game then
+            snp.force_visible = true
+            self:_update_items_visibility()
+        end
     end
 end
 
-function EHIRightUnitItem:OnAlarm()
+function EHIRightUnitList:OnAlarm()
     self._alarm = true
     local set_visible = 0
     for _, item in pairs(self._items) do
@@ -1101,7 +1106,7 @@ function EHIRightUnitItem:OnAlarm()
     end
 end
 
-function EHIRightUnitItem:OnSpawn()
+function EHIRightUnitList:OnSpawn()
     if self._playing_crime_spree then
         for mod, name in pairs(self._crime_spree_modifiers) do
             if managers.modifiers:IsModifierActive(mod, "crime_spree") then
@@ -1147,7 +1152,7 @@ end
 
 --- Also called Unobtanium  
 --- Players entered the secret area in The White House (if they are worthy)
-function EHIRightUnitItem:uno()
+function EHIRightUnitList:uno()
     local cloaker_id = self._items.cloaker and "cloaker" or "enemy"
     local removed = 0
     for key, item in pairs(self._items) do
@@ -1161,8 +1166,8 @@ function EHIRightUnitItem:uno()
     end
 end
 
-function EHIRightUnitItem:AnimateItem(item, previous_count, count)
-    EHIRightUnitItem.super.AnimateItem(self, item, previous_count, count)
+function EHIRightUnitList:AnimateItem(item, previous_count, count)
+    EHIRightUnitList.super.AnimateItem(self, item, previous_count, count)
     if self._PROGRESS_STATIC then
         return
     elseif (count or item.count) == 0 and item.force_visible then
@@ -1171,7 +1176,7 @@ function EHIRightUnitItem:AnimateItem(item, previous_count, count)
     end
 end
 
-function EHIRightUnitItem:SetEnemyCount()
+function EHIRightUnitList:SetEnemyCount()
     local count = 0
     for _, data in pairs(managers.enemy:all_enemies()) do
         local unit = alive(data.unit) and data.unit:base()
@@ -1191,7 +1196,7 @@ function EHIRightUnitItem:SetEnemyCount()
 end
 
 ---@param diff integer
-function EHIRightUnitItem:_update_converts(diff)
+function EHIRightUnitList:_update_converts(diff)
     local min = self._items.minion
     if min.ignore then
         self:SetEnemyCount()
@@ -1204,7 +1209,7 @@ function EHIRightUnitItem:_update_converts(diff)
     self:_update_items_visibility()
 end
 
-function EHIRightUnitItem:_update_hostages_client()
+function EHIRightUnitList:_update_hostages_client()
     local police_hostages = 0
     local hostages = managers.groupai:state()._hostage_headcount
 
@@ -1218,7 +1223,7 @@ function EHIRightUnitItem:_update_hostages_client()
     self:SetPoliceHostages(police_hostages)
 end
 
-function EHIRightUnitItem:CivilianSpawned()
+function EHIRightUnitList:CivilianSpawned()
     local civ = self._items.civilian
     if not civ or civ.ignore then
         return
@@ -1231,7 +1236,7 @@ function EHIRightUnitItem:CivilianSpawned()
     end
 end
 
-function EHIRightUnitItem:CivilianDespawned()
+function EHIRightUnitList:CivilianDespawned()
     local civ = self._items.civilian
     if not civ or civ.ignore then
         return
@@ -1246,7 +1251,7 @@ function EHIRightUnitItem:CivilianDespawned()
 end
 
 ---@param count integer
-function EHIRightUnitItem:SetCivilianHostages(count)
+function EHIRightUnitList:SetCivilianHostages(count)
     if self._civilian_hostages == count or self._all_civilians_blocked then
         return
     end
@@ -1273,7 +1278,7 @@ function EHIRightUnitItem:SetCivilianHostages(count)
 end
 
 ---@param count integer
-function EHIRightUnitItem:SetPoliceHostages(count)
+function EHIRightUnitList:SetPoliceHostages(count)
     local cop = self._items.enemy_tied
     if not cop then
         return
@@ -1287,7 +1292,7 @@ end
 
 ---@param tweak_data string
 ---@param stats_data string
-function EHIRightUnitItem:EnemySpawned(tweak_data, stats_data)
+function EHIRightUnitList:EnemySpawned(tweak_data, stats_data)
     local id = self._TWEAK_NAME_TO_STATS_NAME[tweak_data] and stats_data or tweak_data
     local group = self._units_map[id] or self._items.unknown
     if group.ignore then
@@ -1305,7 +1310,7 @@ end
 
 ---@param tweak_data string
 ---@param stats_data string
-function EHIRightUnitItem:EnemyDespawned(tweak_data, stats_data)
+function EHIRightUnitList:EnemyDespawned(tweak_data, stats_data)
     local id = self._TWEAK_NAME_TO_STATS_NAME[tweak_data] and stats_data or tweak_data
     local group = self._units_map[id] or self._items.unknown
     if group.ignore then
@@ -1321,7 +1326,7 @@ function EHIRightUnitItem:EnemyDespawned(tweak_data, stats_data)
     end
 end
 
-function EHIRightUnitItem:IgnoreEnemyTurret()
+function EHIRightUnitList:IgnoreEnemyTurret()
     local t = self._items.turret
     if t then
         self:_set_item_ignored(t)
@@ -1331,7 +1336,7 @@ function EHIRightUnitItem:IgnoreEnemyTurret()
     end
 end
 
-function EHIRightUnitItem:EnemyTurretSpawned()
+function EHIRightUnitList:EnemyTurretSpawned()
     local t = self._items.turret
     if t then
         if t.ignore then
@@ -1350,7 +1355,7 @@ function EHIRightUnitItem:EnemyTurretSpawned()
     end
 end
 
-function EHIRightUnitItem:EnemyTurretDespawned()
+function EHIRightUnitList:EnemyTurretDespawned()
     local t = self._items.turret
     if t then
         if t.ignore then
@@ -1369,10 +1374,10 @@ function EHIRightUnitItem:EnemyTurretDespawned()
     end
 end
 
----@class EHIRightLootItem : EHIRightItemBase
----@field super EHIRightItemBase
-EHIRightLootItem = class(EHIRightItemBase)
-EHIRightLootItem._DEFERRED_GROUPS =
+---@class EHIRightLootList : EHIRightListBase
+---@field super EHIRightListBase
+EHIRightLootList = class(EHIRightListBase)
+EHIRightLootList._DEFERRED_GROUPS =
 {
     money = { text = { name = "Money" }, icon = { ehi = "equipment_plates" } },
     gold = { text = { name = "Gold" }, icon = { texture = "guis/dlcs/trk/textures/pd2/achievements_atlas4", texture_rect = { 348, 0, 85, 60 } } },
@@ -1399,7 +1404,7 @@ EHIRightLootItem._DEFERRED_GROUPS =
     shell = { text = { name = "Ammo" }, icon = { texture = "guis/textures/pd2/skilltree/icons_atlas", texture_rect = { 64, 0, 64, 64 } } },
     evidence = { text = { name = "Evidence" }, icon = { ehi = "equipment_evidence" } }
 }
-EHIRightLootItem._LOOT =
+EHIRightLootList._LOOT =
 {
     ammo = "shell",
     artifact_statue = "artifact",
@@ -1475,17 +1480,17 @@ EHIRightLootItem._LOOT =
     corp_papers = "papers",
     corp_prototype = "prototype"
 }
-EHIRightLootItem._IGNORE_LOOT = { "vehicle_falcogini" }
-EHIRightLootItem._POTENTIAL_LOOT = table.set("crate_loot", "crate_loot_crowbar", "crate_loot_close", "weapon_case", "weapon_case_axis_z")
-EHIRightLootItem._IGNORE_CRATE_IN_LEVELS = table.set(
+EHIRightLootList._IGNORE_LOOT = { "vehicle_falcogini" }
+EHIRightLootList._POTENTIAL_LOOT = table.set("crate_loot", "crate_loot_crowbar", "crate_loot_close", "weapon_case", "weapon_case_axis_z")
+EHIRightLootList._IGNORE_CRATE_IN_LEVELS = table.set(
     "election_day_2", -- Election Day D2 (Warehouse)
     "pal", -- Counterfeit
     "pbr2", -- Birth of Sky
     "moon" -- Stealing Xmas
 )
-EHIRightLootItem._BAG_ICON = { texture = "guis/textures/pd2/hud_tabs", texture_rect = { 32, 33, 32, 32 } }
-EHIRightLootItem._TEXT_COLOR = Color(0.0, 0.5, 0.0)
-function EHIRightLootItem:RegisterListeners(params)
+EHIRightLootList._BAG_ICON = { texture = "guis/textures/pd2/hud_tabs", texture_rect = { 32, 33, 32, 32 } }
+EHIRightLootList._TEXT_COLOR = Color(0.0, 0.5, 0.0)
+function EHIRightLootList:RegisterListeners(params)
     self._loot = {} ---@type table<userdata, string>
     self._ignored_loot = {} ---@type table<userdata, boolean>
     self._queued_loot = {} ---@type table<userdata, Unit>
@@ -1549,12 +1554,12 @@ function EHIRightLootItem:RegisterListeners(params)
     end
 end
 
-function EHIRightLootItem:CreateItem(id, params)
+function EHIRightLootList:CreateItem(id, params)
     local valid_item = self._SHOW_TEXT and params.text and not params.ignore
     if valid_item then
         params.icon = self._BAG_ICON
     end
-    local item = EHIRightLootItem.super.CreateItem(self, id, params)
+    local item = EHIRightLootList.super.CreateItem(self, id, params)
     if valid_item then
         local def = params.text
         local panel = item.panel
@@ -1587,7 +1592,7 @@ end
 
 ---@param stealth_is_available boolean
 ---@param text_or_icon integer
-function EHIRightLootItem:CreateItemsFromMap(stealth_is_available, text_or_icon)
+function EHIRightLootList:CreateItemsFromMap(stealth_is_available, text_or_icon)
     self._SHOW_TEXT = text_or_icon == 2
     local is_playing_boiling_point = Global.game_settings.level_id == "mad"
     if stealth_is_available or is_playing_boiling_point then
@@ -1616,7 +1621,7 @@ function EHIRightLootItem:CreateItemsFromMap(stealth_is_available, text_or_icon)
     for i = 1, group_count, 1 do
         self._itemized_items[i] = fake_item
     end
-    self._units_map = {} ---@type table<string, EHIRightItemBase.Item?>
+    self._units_map = {} ---@type table<string, EHIRightListBase.Item?>
     for _, loot in ipairs(self._IGNORE_LOOT) do
         self._units_map[loot] = self._items.ignore
     end
@@ -1625,7 +1630,7 @@ end
 ---@param light table
 ---@param heavy table
 ---@param body table
-function EHIRightLootItem:ColorItemsBasedOnTheirWeight(light, heavy, body)
+function EHIRightLootList:ColorItemsBasedOnTheirWeight(light, heavy, body)
     ---@param group string
     ---@param new_group string
     ---@param carry_id string?
@@ -1728,7 +1733,7 @@ end
 ---@param key userdata
 ---@param carry_data CarryData
 ---@param interact_active boolean
-function EHIRightLootItem:IgnoreCarry(key, carry_data, interact_active)
+function EHIRightLootList:IgnoreCarry(key, carry_data, interact_active)
     self._ignored_loot[key] = true
     self._loot[key] = nil
     -- If the interact is active and our unit is queued, DO NOT subtract the amount
@@ -1742,7 +1747,7 @@ end
 
 ---@param key userdata
 ---@param interact_active boolean
-function EHIRightLootItem:IgnorePotentionalCarry(key, interact_active)
+function EHIRightLootList:IgnorePotentionalCarry(key, interact_active)
     if self._ignored_crate then
         self._ignored_crate[key] = true
         if interact_active then
@@ -1752,7 +1757,7 @@ function EHIRightLootItem:IgnorePotentionalCarry(key, interact_active)
 end
 
 ---@param carry_id string
-function EHIRightLootItem:_deferred_item(carry_id)
+function EHIRightLootList:_deferred_item(carry_id)
     local group = self._LOOT[carry_id]
     if group and self._items[group] then -- 2 or more different loot may use the same item, check if it already exists
         local item = self._items[group]
@@ -1775,11 +1780,11 @@ function EHIRightLootItem:_deferred_item(carry_id)
     end
 end
 
----@overload fun(self: EHIRightLootItem, carry_data: nil, diff: integer, carry_id: string)
+---@overload fun(self: EHIRightLootList, carry_data: nil, diff: integer, carry_id: string)
 ---@param carry_data CarryData
 ---@param diff integer
 ---@param carry_id string?
-function EHIRightLootItem:_refresh_item(carry_data, diff, carry_id)
+function EHIRightLootList:_refresh_item(carry_data, diff, carry_id)
     local id = carry_id or carry_data._carry_id or ""
     local item = self._units_map[id] or self:_deferred_item(id)
     if not item or item.ignore then
@@ -1795,7 +1800,7 @@ function EHIRightLootItem:_refresh_item(carry_data, diff, carry_id)
     end
 end
 
-function EHIRightLootItem:OnAlarm()
+function EHIRightLootList:OnAlarm()
     if self._delete_body_loot_group then
         local body = self._items.body
         if body then
@@ -1807,10 +1812,10 @@ function EHIRightLootItem:OnAlarm()
     self._delete_body_loot_group = nil
 end
 
----@class EHIRightSpecialItemsItem : EHIRightItemBase
----@field super EHIRightItemBase
-EHIRightSpecialItemsItem = class(EHIRightItemBase)
-EHIRightSpecialItemsItem._DEFERRED_GROUPS =
+---@class EHIRightSpecialItemsList : EHIRightListBase
+---@field super EHIRightListBase
+EHIRightSpecialItemsList = class(EHIRightListBase)
+EHIRightSpecialItemsList._DEFERRED_GROUPS =
 {
     crowbar = { icon = { ehi = "equipment_crowbar" } },
     keycard = { icon = { ehi = "equipment_bank_manager_key" } },
@@ -1841,7 +1846,7 @@ EHIRightSpecialItemsItem._DEFERRED_GROUPS =
     --blueprint = { icon = { ehi = "" } },
     secret_item = { icon = { ehi = "default" } } -- ? gets returned
 }
-EHIRightSpecialItemsItem._PICKUPS =
+EHIRightSpecialItemsList._PICKUPS =
 {
     gen_pku_crowbar = "crowbar",
     pickup_keycard = "keycard",
@@ -1903,7 +1908,7 @@ EHIRightSpecialItemsItem._PICKUPS =
     corp_key_fob = "secret_item",
     corp_achi_blueprint = "poster", --"blueprint"
 }
-EHIRightSpecialItemsItem._ACHIEVEMENT_REDIRECT =
+EHIRightSpecialItemsList._ACHIEVEMENT_REDIRECT =
 {
     press_pick_up = {
         eng_1_stats = "eng_1",
@@ -1912,17 +1917,17 @@ EHIRightSpecialItemsItem._ACHIEVEMENT_REDIRECT =
         eng_4_stats = "eng_4"
     }
 }
-EHIRightSpecialItemsItem._ACHIEVEMENT_UNIT_REDIRECT =
+EHIRightSpecialItemsList._ACHIEVEMENT_UNIT_REDIRECT =
 {
     [Idstring("units/pd2_dlc_born/pickups/gen_pku_whiskey_starbreeze/gen_pku_whiskey_starbreeze"):key()] = "born_wine"
 }
-EHIRightSpecialItemsItem._SPECIAL_ITEM_REDIRECT =
+EHIRightSpecialItemsList._SPECIAL_ITEM_REDIRECT =
 {
     pickup_keycard = {
         lrm_keycard = "lrm_keycard"
     }
 }
-function EHIRightSpecialItemsItem:RegisterListeners(params)
+function EHIRightSpecialItemsList:RegisterListeners(params)
     self._ignore_interact = {} ---@type table<userdata, boolean>
     Hooks:PostHook(ObjectInteractionManager, "add_unit", "EHI_ObjectInteractionManager_EHIRightSpecialItemsItem_add_unit", function(oim, unit, ...)
         if not self._ignore_interact[unit:key()] then
@@ -1936,14 +1941,14 @@ function EHIRightSpecialItemsItem:RegisterListeners(params)
     end)
 end
 
-function EHIRightSpecialItemsItem:OnSpawn()
+function EHIRightSpecialItemsList:OnSpawn()
     if self._itemized_items then -- Check if any item was created before spawn, otherwise it will crash
         self:_update_items_visibility_fast() -- Removes items that are spawned and then hidden in the same frame during level init (item count is 0)
     end
 end
 
 ---@param types table
-function EHIRightSpecialItemsItem:CreateItemsFromMap(types)
+function EHIRightSpecialItemsList:CreateItemsFromMap(types)
     self:CreateItem("ignore", { ignore = true })
     if not types.small_loot then
         self._DEFERRED_GROUPS.small_loot = nil
@@ -2028,12 +2033,12 @@ function EHIRightSpecialItemsItem:CreateItemsFromMap(types)
         end
         self._DEFERRED_GROUPS.lrm_keycard = nil
     end
-    self._units_map = {} ---@type table<string, EHIRightItemBase.Item>
+    self._units_map = {} ---@type table<string, EHIRightListBase.Item>
 end
 
 ---@param unit Unit
 ---@param interact_active boolean
-function EHIRightSpecialItemsItem:IgnoreInteract(unit, interact_active)
+function EHIRightSpecialItemsList:IgnoreInteract(unit, interact_active)
     self._ignore_interact[unit:key()] = true
     if interact_active then
         self:_refresh_item(unit, -1)
@@ -2042,7 +2047,7 @@ end
 
 ---@param final_item string
 ---@param tweak_data string
-function EHIRightSpecialItemsItem:_deferred_item(final_item, tweak_data)
+function EHIRightSpecialItemsList:_deferred_item(final_item, tweak_data)
     local id = self._PICKUPS[final_item]
     if id and self._items[id] then -- 2 or more special pickups may use the same item, check if it already exists
         local item = self._items[id]
@@ -2064,7 +2069,7 @@ end
 
 ---@param unit Unit
 ---@param diff integer
-function EHIRightSpecialItemsItem:_refresh_item(unit, diff)
+function EHIRightSpecialItemsList:_refresh_item(unit, diff)
     local interact = unit:interaction() ---@cast interact -?
     local tweak_data = interact and unit:interaction().tweak_data
     if not tweak_data then
@@ -2090,18 +2095,18 @@ function EHIRightSpecialItemsItem:_refresh_item(unit, diff)
     end
 end
 
----@class EHIRightStealthItem : EHIRightItemBase
----@field super EHIRightItemBase
-EHIRightStealthItem = class(EHIRightItemBase)
-EHIRightStealthItem._callback_key = "EHIRightStealthItem"
+---@class EHIRightStealthList : EHIRightListBase
+---@field super EHIRightListBase
+EHIRightStealthList = class(EHIRightListBase)
+EHIRightStealthList._callback_key = "EHIRightStealthList"
 ---@param o Bitmap
 ---@param text Text
 ---@param progress Color
 ---@param start_color Color
----@param self EHIRightStealthItem
+---@param self EHIRightStealthList
 ---@param warning_color Color
 ---@param warning_color_string string
-EHIRightStealthItem._animate_item_down_warning = function(o, text, progress, start_color, self, warning_color, warning_color_string)
+EHIRightStealthList._animate_item_down_warning = function(o, text, progress, start_color, self, warning_color, warning_color_string)
     over(0.5, function(lerp, t)
         progress.red = math.lerp(1, 0, lerp)
         o:set_color(progress)
@@ -2111,10 +2116,10 @@ EHIRightStealthItem._animate_item_down_warning = function(o, text, progress, sta
     o:set_color(progress)
     self:SetColorTexture(o, warning_color_string)
 end
-EHIRightStealthItem._camera_is_enabled = function(item, key)
+EHIRightStealthList._camera_is_enabled = function(item, key)
     return item.enabled and (item.active or Network:is_client())
 end
-function EHIRightStealthItem:RegisterListeners(params)
+function EHIRightStealthList:RegisterListeners(params)
     self:CreateItem("alarm", {
         icon = { ehi = "pager_icon" }
     })
@@ -2254,7 +2259,7 @@ function EHIRightStealthItem:RegisterListeners(params)
     self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(params.warning_index)
 end
 
-function EHIRightStealthItem:UnregisterListeners()
+function EHIRightStealthList:UnregisterListeners()
     Hooks:RemovePostHook("EHI_EHIRightStealthItem_EnemyManager_on_enemy_registered")
     Hooks:RemovePostHook("EHI_EHIRightStealthItem_EnemyManager_on_enemy_unregistered")
     Hooks:RemovePostHook("EHI_EHIRightStealthItem_IntimitateInteractionExt__at_interact_start")
@@ -2278,7 +2283,7 @@ function EHIRightStealthItem:UnregisterListeners()
     end
 end
 
-function EHIRightStealthItem:GetAmountOfPagers()
+function EHIRightStealthList:GetAmountOfPagers()
     local max_pagers = 0
     for _, value in ipairs(tweak_data.player.alarm_pager.bluff_success_chance) do
         if value > 0 then
@@ -2290,13 +2295,13 @@ end
 
 ---@param bitmap Bitmap
 ---@param color string
-function EHIRightStealthItem:SetColorTexture(bitmap, color)
+function EHIRightStealthList:SetColorTexture(bitmap, color)
     local texture = self._PROGRESS == 1 and "sframe" or "cframe"
     bitmap:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color), unpack(self._PROGRESS_RECT[self._PROGRESS]))
 end
 
-function EHIRightStealthItem:AnimateItem(item, previous_count, count)
-    EHIRightStealthItem.super.AnimateItem(self, item, previous_count, count)
+function EHIRightStealthList:AnimateItem(item, previous_count, count)
+    EHIRightStealthList.super.AnimateItem(self, item, previous_count, count)
     if (count or item.count) == 0 and item.force_visible then
         item.data.needs_color_refresh = true
         item.progress:stop()
@@ -2304,7 +2309,7 @@ function EHIRightStealthItem:AnimateItem(item, previous_count, count)
     end
 end
 
-function EHIRightStealthItem:EnemyWithAlarmSpawned()
+function EHIRightStealthList:EnemyWithAlarmSpawned()
     local al = self._items.alarm
     al.count = al.count + 1
     al.text:set_text(tostring(al.count))
@@ -2312,7 +2317,7 @@ function EHIRightStealthItem:EnemyWithAlarmSpawned()
     self:AnimateItem(al, 0)
 end
 
-function EHIRightStealthItem:EnemyWithAlarmDespawned()
+function EHIRightStealthList:EnemyWithAlarmDespawned()
     local al = self._items.alarm
     al.count = math.max(al.count - 1, 0)
     al.text:set_text(tostring(al.count))
@@ -2321,7 +2326,7 @@ function EHIRightStealthItem:EnemyWithAlarmDespawned()
 end
 
 ---@param unit UnitEnemy
-function EHIRightStealthItem:AlarmEnemyAnswered(unit)
+function EHIRightStealthList:AlarmEnemyAnswered(unit)
     local key = unit:key()
     if not self._alarm_enemies_answered[key] then
         self._alarm_enemies_answered[key] = unit
@@ -2330,7 +2335,7 @@ function EHIRightStealthItem:AlarmEnemyAnswered(unit)
 end
 
 ---@param unit UnitEnemy
-function EHIRightStealthItem:AlarmEnemyKilled(unit)
+function EHIRightStealthList:AlarmEnemyKilled(unit)
     if table.remove_key(self._alarm_enemies_answered, unit:key()) then
         self:EnemyWithAlarmSpawned()
     end
@@ -2338,7 +2343,7 @@ end
 
 ---@param count integer
 ---@param skip_anim boolean?
-function EHIRightStealthItem:UpdatePagerCount(count, skip_anim)
+function EHIRightStealthList:UpdatePagerCount(count, skip_anim)
     local pc = self._items.pager
     local previous_count = pc.count
     pc.count = count
@@ -2355,7 +2360,7 @@ function EHIRightStealthItem:UpdatePagerCount(count, skip_anim)
     end
 end
 
-function EHIRightStealthItem:_update_camera_count()
+function EHIRightStealthList:_update_camera_count()
     local cam = self._items.camera
     local previous_count = cam.count
     local count = table.count(self._cameras, self._camera_is_enabled)
@@ -2366,7 +2371,7 @@ function EHIRightStealthItem:_update_camera_count()
 end
 
 ---@param key userdata
-function EHIRightStealthItem:CameraDespawned(key)
+function EHIRightStealthList:CameraDespawned(key)
     local camera = table.remove_key(self._cameras, key)
     if camera and camera.enabled then
         local cam = self._items.camera
@@ -2379,7 +2384,7 @@ function EHIRightStealthItem:CameraDespawned(key)
     end
 end
 
-function EHIRightStealthItem:UpdateBodyBagsAmount()
+function EHIRightStealthList:UpdateBodyBagsAmount()
     local bb = self._items.bodybags
     local previous_count = bb.count
     local bodybags_amount = self:_get_all_bodybags_amount()
@@ -2393,7 +2398,7 @@ function EHIRightStealthItem:UpdateBodyBagsAmount()
     end
 end
 
-function EHIRightStealthItem:_get_all_bodybags_amount()
+function EHIRightStealthList:_get_all_bodybags_amount()
     local stored_bodybags = 0
     for _, value in pairs(self._bodybags) do
         stored_bodybags = stored_bodybags + value
