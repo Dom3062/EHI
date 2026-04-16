@@ -1,3 +1,7 @@
+r389 (16. 04. 2026):
+Hudlist - Right List - Special Items: Fixed an issue where some items are either hidden or stuck on the screen
+Text Float: Fixed alignment issues in compact mode
+
 r388 (14. 04. 2026):
 Assault: Improved assault diff detection after dropin for majority of heists
 Hudlist - Right List - Units: Adjustments in many heists to persistent Sniper item to appear once the logic is active

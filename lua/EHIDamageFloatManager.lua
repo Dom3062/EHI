@@ -23,8 +23,9 @@ function EHIDamageFloatManager:new(hud)
     self._damage_decay = EHI:GetOption("show_floating_damage_popup_time_on_screen") --[[@as number]]
     self._damage_crit_decay = self._damage_decay * 1.2
     self.pops = {} ---@type EHIDamageFloat[]
+    self._camPos = Vector3()
     managers.ehi_hook:AddCopDamageListener(self._cop_damage_hook, callback(self, self, "damage_callback"))
-    Hooks:PostHook(PlayerMovement, "init", "EHI_PlayerMovement_EHIDamageFloatManager_init", function(base, ...)
+    Hooks:PostHook(PlayerMovement, "init", "EHI_EHIDamageFloatManager_PlayerMovement_init", function(base, ...)
         self._player_movement = base
     end)
     local function destroy_listener(unit)
@@ -35,7 +36,7 @@ function EHIDamageFloatManager:new(hud)
             self:update_last()
         end
     end
-    Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHIDamageFloatManager_init", function(base, ...)
+    Hooks:PostHook(PlayerCamera, "init", "EHI_EHIDamageFloatManager_PlayerCamera_init", function(base, ...)
         self._player_camera = base._camera_object
         hud:AddEHIUpdator("EHIDamageFloatManager", self)
         base._unit:base():add_destroy_listener("EHIDamageFloatManager", destroy_listener)
@@ -66,7 +67,7 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
     ---@param t number
     ---@param dt number
     function EHIDamageFloatManager:update(t, dt)
-        self._camPos = self._player_camera:position()
+        self._player_camera:m_position(self._camPos)
         self._nl_cam_forward = self._player_camera:rotation():y()
 
         self.state = self._player_movement:current_state()
@@ -177,7 +178,7 @@ else
     ---@param t number
     ---@param dt number
     function EHIDamageFloatManager:update(t, dt)
-        self._camPos = self._player_camera:position()
+        self._player_camera:m_position(self._camPos)
         self._nl_cam_forward = self._player_camera:rotation():y()
 
         self.state = self._player_movement:current_state()
@@ -291,7 +292,8 @@ function EHIDamageFloatManager:_pos(something)
     end
     local pos = UnitVector
     mvector3.set(pos, unit:position())
-    local head_pos = unit:movement() and unit:movement():m_head_pos()
+    local movement = unit:movement()
+    local head_pos = movement and movement:m_head_pos()
     if head_pos then
         mvector3.set_z(pos, head_pos.z)
     end
@@ -364,9 +366,9 @@ function EHIDamageFloat:draw(dt)
         local pos = data.pos + Vector3()
         local nl_dir = pos - camPos
         mvector3.normalize(nl_dir)
-        local dot = mvector3.dot(self._parent._nl_cam_forward, nl_dir)
-        self.pnl:set_visible(dot > 0)
-        if dot > 0 then
+        local visible = mvector3.dot(self._parent._nl_cam_forward, nl_dir) > 0
+        self.pnl:set_visible(visible)
+        if visible then
             local prog = 1 - (data.et / data.t)
             if prog >= 1 then
                 self.dead = true

@@ -685,7 +685,7 @@ function EHIRightUnitList:CreateItemsFromMap(is_holdout, u_options)
     if is_holdout then
         self._update_on_spawn = true
         self._playing_holdout = true
-        self._assault_modifiers = {
+        local assault_modifiers = {
             [3] = "dozer_skull",
             [5] = "sniper_heavy",
             [7] = "dozer_medic",
@@ -693,7 +693,7 @@ function EHIRightUnitList:CreateItemsFromMap(is_holdout, u_options)
         }
         ---@param wave_number integer
         local function activate_item_in_wave(wave_number)
-            local modifier = self._assault_modifiers[wave_number]
+            local modifier = assault_modifiers[wave_number]
             local item = modifier and self._items[modifier]
             local data = item and item.data
             if data and data.persistent and not item.force_visible then
@@ -1214,7 +1214,8 @@ function EHIRightUnitList:_update_hostages_client()
     local hostages = managers.groupai:state()._hostage_headcount
 
     for _, u_data in pairs(managers.enemy:all_enemies()) do
-        if alive(u_data.unit) and u_data.unit:brain():surrendered() then
+        local unit = u_data.unit
+        if alive(unit) and unit:brain():surrendered() then
             police_hostages = police_hostages + 1
         end
     end
@@ -1929,12 +1930,12 @@ EHIRightSpecialItemsList._SPECIAL_ITEM_REDIRECT =
 }
 function EHIRightSpecialItemsList:RegisterListeners(params)
     self._ignore_interact = {} ---@type table<userdata, boolean>
-    Hooks:PostHook(ObjectInteractionManager, "add_unit", "EHI_ObjectInteractionManager_EHIRightSpecialItemsItem_add_unit", function(oim, unit, ...)
+    Hooks:PostHook(ObjectInteractionManager, "add_unit", "EHI_EHIRightSpecialItemsList_ObjectInteractionManager_add_unit", function(oim, unit, ...) ---@param unit Unit
         if not self._ignore_interact[unit:key()] then
             self:_refresh_item(unit, 1)
         end
     end)
-    Hooks:PostHook(ObjectInteractionManager, "remove_unit", "EHI_ObjectInteractionManager_EHIRightSpecialItemsItem_remove_unit", function(oim, unit, ...)
+    Hooks:PostHook(ObjectInteractionManager, "remove_unit", "EHI_EHIRightSpecialItemsList_ObjectInteractionManager_remove_unit", function(oim, unit, ...) ---@param unit Unit
         if not self._ignore_interact[unit:key()] then
             self:_refresh_item(unit, -1)
         end
@@ -2007,6 +2008,7 @@ function EHIRightSpecialItemsList:CreateItemsFromMap(types)
             end
         end
         self._DEFERRED_GROUPS.moon_mask = nil
+        self._DEFERRED_GROUPS.poster = nil
         self._PICKUPS.hold_take_mask = "ignore"
         self._PICKUPS.ring_band = "ignore"
         self._PICKUPS.glc_hold_take_handcuffs = "ignore"
@@ -2023,6 +2025,7 @@ function EHIRightSpecialItemsList:CreateItemsFromMap(types)
         self._DEFERRED_GROUPS.eng_2 = nil
         self._DEFERRED_GROUPS.eng_3 = nil
         self._DEFERRED_GROUPS.eng_4 = nil
+        self._DEFERRED_GROUPS.born_wine = nil
         for key, _ in pairs(self._ACHIEVEMENT_UNIT_REDIRECT) do
             self._ACHIEVEMENT_UNIT_REDIRECT[key] = "ignore"
         end
@@ -2046,8 +2049,7 @@ function EHIRightSpecialItemsList:IgnoreInteract(unit, interact_active)
 end
 
 ---@param final_item string
----@param tweak_data string
-function EHIRightSpecialItemsList:_deferred_item(final_item, tweak_data)
+function EHIRightSpecialItemsList:_deferred_item(final_item)
     local id = self._PICKUPS[final_item]
     if id and self._items[id] then -- 2 or more special pickups may use the same item, check if it already exists
         local item = self._items[id]
@@ -2062,7 +2064,7 @@ function EHIRightSpecialItemsList:_deferred_item(final_item, tweak_data)
         return item
     else
         local ignore = self._items.ignore
-        self._units_map[tweak_data] = ignore
+        self._units_map[final_item] = ignore
         return ignore
     end
 end
@@ -2071,7 +2073,7 @@ end
 ---@param diff integer
 function EHIRightSpecialItemsList:_refresh_item(unit, diff)
     local interact = unit:interaction() ---@cast interact -?
-    local tweak_data = interact and unit:interaction().tweak_data
+    local tweak_data = interact and interact.tweak_data
     if not tweak_data then
         return
     end
@@ -2081,7 +2083,7 @@ function EHIRightSpecialItemsList:_refresh_item(unit, diff)
     elseif self._SPECIAL_ITEM_REDIRECT[tweak_data] then
         final_item = self._SPECIAL_ITEM_REDIRECT[tweak_data][interact._special_equipment or ""] or tweak_data ---@diagnostic disable-line
     end
-    local item = self._units_map[final_item] or self:_deferred_item(final_item, tweak_data)
+    local item = self._units_map[final_item] or self:_deferred_item(final_item)
     if not item or item.ignore then
         return
     end

@@ -63,6 +63,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
         self._resolution_changed_clbk = managers.viewport:add_resolution_changed_func(callback(self, self, "onResolutionChanged"))
         self._floats = {} ---@type table<userdata, EHIHealthFloatPoco>
         self._smokes = {} ---@type table<userdata, Vector3>
+        self._camPos = Vector3()
         Hooks:PostHook(QuickSmokeGrenade, "detonate", "EHI_EHIHealthFloatManager_QuickSmokeGrenade_detonate", function(base, ...)
             local unit = base._unit
             self._smokes[unit:key()] = unit:position()
@@ -264,7 +265,7 @@ if EHI:GetOption("show_floating_health_bar_style") == 1 then -- Poco style
 
     ---@param t number
     function EHIHealthFloatManager:update(t, dt)
-        self._camPos = self._player_camera:position()
+        self._player_camera:m_position(self._camPos)
         self._nl_cam_forward = self._player_camera:rotation():y()
 
         self.state = self._player_movement:current_state()

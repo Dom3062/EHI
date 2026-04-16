@@ -72,11 +72,7 @@ function EHITextFloatManager:new()
     local function set_alpha(equipment, ...)
         local float = self._floats[equipment._unit:key()]
         if float then
-            if equipment._active then
-                float.class:SetUnitActive()
-            else
-                float.class:SetUnitNotActive()
-            end
+            float.class._panel:set_alpha(equipment._active and 1 or 0)
         end
     end
     ---@param equipment AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
@@ -193,7 +189,7 @@ end
 function EHITextFloatManager:init_hud(panel, saferect)
     self._panel = panel
     self._saferect = saferect
-    EHITextFloat._panel = panel
+    EHITextFloat._MAIN_PANEL = panel
     for key, def in pairs(self._deferred_floats) do
         self:_add_float(key, def.unit, true, def.peer_id)
     end
@@ -274,14 +270,14 @@ function EHITextFloatManager:update(t, dt)
         if angle > self._angle or panel:outside(x, y) or wp_dir:length() > self._distance then
             if data.state ~= "offscreen" then
                 data.state = "offscreen"
-                data.class:Offscreen()
+                data.class._panel:hide()
             end
         else
             if data.state == "offscreen" then
                 data.state = "onscreen"
-                data.class:Onscreen()
+                data.class._panel:show()
             end
-            data.class:SetCenter(x, y)
+            data.class._panel:set_center(x, y)
         end
     end
 end
@@ -428,20 +424,26 @@ function EHITextFloat:init(unit, from_defer, peer_id)
     else
         text = string.format("%s ?" .. self._SETTINGS.short_percent_format, eq_data.name)
     end
+    self._panel = self._MAIN_PANEL:panel({
+        w = 200,
+        h = (self._SETTINGS.compact_mode or self._SETTINGS.icon_alpha == 0) and 16 or 32,
+        visible = false
+    })
+    self._panel_center_x = self._panel:center_x()
     self._amount = self._panel:text({
         text = text,
         vertical = "center",
+        y = (self._SETTINGS.icon_alpha == 1 and not self._SETTINGS.compact_mode) and 16 or 0,
         h = 16,
         w = 128,
         align = "center",
-        rotation = 360,
         layer = 0,
         color = Color.white,
         font = tweak_data.menu.pd2_large_font,
         font_size = tweak_data.hud.default_font_size / 2.5,
-        blend_mode = "normal",
-        visible = false
+        blend_mode = "normal"
     })
+    managers.hud:make_fine_text(self._amount)
     local texture, texture_rect
     if eq_data.texture then
         texture = eq_data.texture
@@ -450,26 +452,30 @@ function EHITextFloat:init(unit, from_defer, peer_id)
         local default_icon = tweak_data.ehi.icons.default
         texture, texture_rect = tweak_data.hud_icons:get_icon_or(eq_data.icon or "pd2_question", default_icon.texture, default_icon.texture_rect)
     end
-    self._icon = self._panel:bitmap({
-        layer = 0,
-        rotation = 360,
-        texture = texture,
-        texture_rect = texture_rect,
-        w = 16,
-        h = 16,
-        blend_mode = "normal",
-        alpha = self._SETTINGS.icon_alpha,
-        visible = false
-    })
-    if self._SETTINGS.color_peer_equipment then
-        self._icon:set_color(tweak_data.chat_colors[peer_id or 0] or Color.white)
+    if self._SETTINGS.icon_alpha == 1 then
+        self._icon = self._panel:bitmap({
+            layer = 0,
+            texture = texture,
+            texture_rect = texture_rect,
+            w = 16,
+            h = 16,
+            blend_mode = "normal"
+        })
+        if self._SETTINGS.color_peer_equipment then
+            self._icon:set_color(tweak_data.chat_colors[peer_id or 0] or Color.white)
+        end
+        if not (self._SETTINGS.compact_mode) then
+            self._icon:set_center_x(self._panel_center_x)
+        end
     end
     self._eq_data = eq_data
     if from_defer then
         self:UpdateAmount(unit:base())
         if not unit:interaction():active() then
-            self:SetUnitNotActive()
+            self._panel:set_alpha(0)
         end
+    else
+        self:_update_text_and_icon_position()
     end
 end
 
@@ -561,78 +567,33 @@ function EHITextFloat:UpdateAmount(equipment)
     else
         self._amount:set_text(string.format("%s: %s", eq_data.name, string.format(self._SETTINGS.percent_format, 100)))
     end
+    managers.hud:make_fine_text(self._amount)
+    self:_update_text_and_icon_position()
 end
 
-function EHITextFloat:SetUnitNotActive()
-    self._amount:set_alpha(0)
-    self._icon:set_alpha(0)
-end
-
-function EHITextFloat:SetUnitActive()
-    self._amount:set_alpha(1)
-    self._icon:set_alpha(self._SETTINGS.icon_alpha)
+function EHITextFloat:_update_text_and_icon_position()
+    self._amount:set_center_x(self._panel_center_x)
+    if self._SETTINGS.compact_mode and self._icon then
+        self._icon:set_x(self._amount:x() - self._icon:w() - 2)
+    end
 end
 
 function EHITextFloat:Hide()
-    if alive(self._amount) then
-        self._amount:hide()
-    end
-    if alive(self._icon) then
-        self._icon:hide()
+    if alive(self._panel) then
+        self._panel:hide()
     end
 end
 
-function EHITextFloat:Offscreen()
-    self._amount:hide()
-    self._icon:hide()
-end
-
-function EHITextFloat:Onscreen()
-    self._amount:show()
-    self._icon:show()
-end
-
-if EHITextFloat._SETTINGS.compact_mode then
-    if EHITextFloat._SETTINGS.icon_alpha == 0 then -- Icon is not visible
-        ---@param x number
-        ---@param y number
-        function EHITextFloat:SetCenter(x, y)
-            self._amount:set_center(x, y)
-        end
-    else
-        ---@param x number
-        ---@param y number
-        function EHITextFloat:SetCenter(x, y)
-            self._icon:set_center(x - 16, y)
-            self._amount:set_center(self._icon:x() + 28, y)
-        end
-    end
-else
-    ---@param x number
-    ---@param y number
-    function EHITextFloat:SetCenter(x, y)
-        self._amount:set_center(x, y)
-        self._icon:set_center(x, y - 16)
-    end
-end
-
-if EHITextFloat._SETTINGS.color_peer_equipment then
-    ---@param color Color
-    function EHITextFloat:UpdatePeerColor(color)
+---@param color Color
+function EHITextFloat:UpdatePeerColor(color)
+    if self._icon then
         self._icon:set_color(color)
-    end
-else
-    ---@param color Color
-    function EHITextFloat:UpdatePeerColor(color)
     end
 end
 
 function EHITextFloat:destroy()
-    if alive(self._amount) then
-        self._panel:remove(self._amount)
-    end
-    if alive(self._icon) then
-        self._panel:remove(self._icon)
+    if alive(self._panel) then
+        self._MAIN_PANEL:remove(self._panel)
     end
 end
 
