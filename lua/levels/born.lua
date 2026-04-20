@@ -85,7 +85,6 @@ if EHI:GetHudlistAndListOption("right_list", "show_loot") then
 end
 EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(1, "end", "born")
 
-managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
 EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, other = other,
     assault =
     {
@@ -100,10 +99,14 @@ EHI.Mission:ParseTriggers({ mission = triggers, achievement = achievements, othe
         end
     } }, nil, { Icon.Defend })
 EHI:ShowLootCounter({ max = 9 }, { element = EHI:GetInstanceElementID(100268, 1350), present_timer = 0 }) -- 4 weapons + 5 cocaine
-EHI.Unit:UpdateUnits({
+local units = {
     --units/payday2/equipment/gen_interactable_drill_small/gen_interactable_drill_small/001 (Bunker)
-    [101086] = { remove_vanilla_waypoint = 101562, child_units = { 100776, 101226, 101469, 101472, 101473 } }
-})
+    [101086] = { child_units = { 100776, 101226, 101469, 101472, 101473 } }
+}
+if EHI.Unit._timers_option_check then
+    units[101086].remove_vanilla_waypoint = 101562
+end
+EHI.Unit:UpdateUnitsNoCheck(units)
 EHI.Unit:UpdateUnitsNoCheck({
     -- Inside the bunker
     -- Grenades

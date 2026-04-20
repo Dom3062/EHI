@@ -21,7 +21,6 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
     managers.ehi_assault:init_hud(hud)
     local tracking = managers.ehi_tracking
     local show_mission_triggers = EHI.Mission._SHOW_MISSION_TRIGGERS
-    local level_id = Global.game_settings.level_id
     local trackers_visible = EHI:GetOption("show_trackers")
     local waypoints_visible = EHI:GetOption("show_waypoints")
     if waypoints_visible then
@@ -65,9 +64,9 @@ Hooks:PostHook(HUDManager, "_setup_player_info_hud_pd2", "EHI_HUDManager_setup_p
         managers.ehi_buff = blt.vm.dofile(EHI.LuaPath .. "EHIBuffManager.lua")
         managers.ehi_buff:init_finalize(hud, panel)
     end
-    if tweak_data.levels:IsLevelSafehouse(level_id) then
+    if tweak_data.levels:IsLevelSafehouse() then
         return
-    elseif tweak_data.levels:IsStealthAvailable(level_id) and trackers_visible then
+    elseif tweak_data.levels:IsStealthAvailable() and trackers_visible then
         if EHI:GetOption("show_pager_tracker") then
             local base = tweak_data.player.alarm_pager.bluff_success_chance
             if server then
@@ -151,9 +150,9 @@ end)
 
 ---@param id string
 ---@param class table
----@param update_loop_fun_name string?
-function HUDManager:AddEHIUpdator(id, class, update_loop_fun_name)
-    local update = update_loop_fun_name or "update"
+---@param update string?
+function HUDManager:AddEHIUpdator(id, class, update)
+    update = update or "update"
     if not class[update] then
         EHI:Log(string.format("Class with ID '%s' is missing '%s' function!", id, update))
         return

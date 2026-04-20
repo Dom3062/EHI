@@ -289,7 +289,7 @@
             "id": "ehi_shared_menu",
             "title": "ehi_shared_menu",
             "next_menu": "ehi_shared_menu",
-            "disabled_from_start" : "ehi_is_shared_menu_available"
+            "disabled_from_start": "ehi_is_shared_menu_available"
         },
         {
             "type": "toggle",

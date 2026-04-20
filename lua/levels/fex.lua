@@ -128,6 +128,7 @@ local total_xp_override =
         }
     }
 }
+local ghost_bonus = tweak_data.levels:GetLevelStealthBonus()
 EHI:AddXPBreakdown({
     plan =
     {
@@ -147,7 +148,7 @@ EHI:AddXPBreakdown({
                     add_objectives =
                     {
                         { amount = 2000, name = "mex4_found_car_keys" },
-                        { escape = 2000, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() }
+                        { escape = 2000, ghost_bonus = ghost_bonus }
                     }
                 }
             },
@@ -164,7 +165,7 @@ EHI:AddXPBreakdown({
                 {
                     add_objectives =
                     {
-                        { escape = 1000, ghost_bonus = tweak_data.levels:GetLevelStealthBonus() }
+                        { escape = 1000, ghost_bonus = ghost_bonus }
                     }
                 }
             },

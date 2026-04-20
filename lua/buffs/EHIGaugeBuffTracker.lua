@@ -64,6 +64,8 @@ function EHIGaugeBuffTracker:Format(value)
         return value .. "x"
     elseif self._format == "damage" then
         return tostring(value * 10)
+    elseif self._format == "damage_truncated" then
+        return tostring(math.ehi_round(value * 10, 0.01))
     end
     return tostring(value)
 end

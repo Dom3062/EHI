@@ -156,16 +156,18 @@ if EHI:GetBuffDeckOption("anarchist", "continuous_armor_regen") then
         managers.ehi_buff:RemoveAndResetBuff("armor_grinding")
     end
 
-    original._update_armor_grinding = PlayerDamage._update_armor_grinding
-    function PlayerDamage:_update_armor_grinding(...)
-        local before = self:get_real_armor()
-        original._update_armor_grinding(self, ...)
-        -- This can only occur once every several seconds so it doesn't need to be optimized so aggressively
-        if self._armor_grinding.elapsed == 0 then
-            local after = self:get_real_armor()
-            local delta = after - before
-            if delta > 0 then
-                managers.ehi_buff:AddBuff("armor_grinding", self._armor_grinding.target_tick + 0.2)
+    if not EHI:GetBuffOption("armor") then -- Armor buff overrides this function
+        original._update_armor_grinding = PlayerDamage._update_armor_grinding
+        function PlayerDamage:_update_armor_grinding(...)
+            local before = self:get_real_armor()
+            original._update_armor_grinding(self, ...)
+            -- This can only occur once every several seconds so it doesn't need to be optimized so aggressively
+            if self._armor_grinding.elapsed == 0 then
+                local after = self:get_real_armor()
+                local delta = after - before
+                if delta > 0 then
+                    managers.ehi_buff:AddBuff("armor_grinding", self._armor_grinding.target_tick + 0.2)
+                end
             end
         end
     end
@@ -300,12 +302,29 @@ if EHI:GetBuffOption("armor") then
     end
     -- https://steamcommunity.com/app/218620/discussions/14/2579854400739478371/
     -- Code shamelessly stolen from FullSpeedSwarm, by TdlQ
-    function PlayerDamage:_update_armor_grinding(t, dt)
-        self._armor_grinding.elapsed = self._armor_grinding.elapsed + dt
-        if self._armor_grinding.target_tick <= self._armor_grinding.elapsed then
-            self._armor_grinding.elapsed = 0
-            self:change_armor(self._armor_grinding.armor_value)
-            self:_send_set_armor()
+    if EHI:GetBuffDeckOption("anarchist", "continuous_armor_regen") then -- This is needed because Armor buff overrides the function
+        function PlayerDamage:_update_armor_grinding(t, dt)
+            local before = self:get_real_armor()
+            self._armor_grinding.elapsed = self._armor_grinding.elapsed + dt
+            if self._armor_grinding.target_tick <= self._armor_grinding.elapsed then
+                self._armor_grinding.elapsed = 0
+                self:change_armor(self._armor_grinding.armor_value)
+                self:_send_set_armor()
+                local after = self:get_real_armor()
+                local delta = after - before
+                if delta > 0 then
+                    managers.ehi_buff:AddBuff("armor_grinding", self._armor_grinding.target_tick + 0.2)
+                end
+            end
+        end
+    else
+        function PlayerDamage:_update_armor_grinding(t, dt)
+            self._armor_grinding.elapsed = self._armor_grinding.elapsed + dt
+            if self._armor_grinding.target_tick <= self._armor_grinding.elapsed then
+                self._armor_grinding.elapsed = 0
+                self:change_armor(self._armor_grinding.armor_value)
+                self:_send_set_armor()
+            end
         end
     end
 end

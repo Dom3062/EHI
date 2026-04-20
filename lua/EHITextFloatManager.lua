@@ -22,7 +22,7 @@ function EHITextFloatManager:new()
             float.state = "offscreen"
         end
     end
-    Hooks:PostHook(PlayerCamera, "init", "EHI_PlayerCamera_EHITextFloatManager_init", function(base, ...)
+    Hooks:PostHook(PlayerCamera, "init", "EHI_EHITextFloatManager_PlayerCamera_init", function(base, ...)
         self._player_camera = base._camera_object
         base._unit:base():add_destroy_listener("EHITextFloatManager", destroy_listener)
         self:_add_update_loop()
@@ -84,34 +84,34 @@ function EHITextFloatManager:new()
         end
     end
     if EHI:GetOption("show_floating_text_ammo_bag") then
-        Hooks:PostHook(AmmoBagBase, "spawn", "EHI_AmmoBagBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
-        Hooks:PreHook(AmmoBagBase, "init", "EHI_AmmoBagBase_EHITextFloatManager_init", init_equipment)
-        Hooks:PostHook(AmmoBagBase, "set_server_information", "EHI_AmmoBagBase_EHITextFloatManager_set_server_information", server_update_peer_information)
-        Hooks:PostHook(AmmoBagBase, "sync_setup", "EHI_AmmoBagBase_EHITextFloatManager_sync_setup", client_update_peer_information)
-        Hooks:PostHook(AmmoBagBase, "_set_visual_stage", "EHI_AmmoBagBase_EHITextFloatManager__set_visual_stage", set_visual_stage_equipment)
-        Hooks:PreHook(AmmoBagBase, "_set_empty", "EHI_AmmoBagBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(AmmoBagBase, "destroy", "EHI_AmmoBagBase_EHITextFloatManager_destroy", destroy_equipment)
-        Hooks:PostHook(CustomAmmoBagBase, "_set_empty", "EHI_CustomAmmoBagBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(AmmoBagInteractionExt, "set_active", "EHI_AmmoBagInteractionExt_EHITextFloatManager_set_active", set_alpha)
+        Hooks:PostHook(AmmoBagBase, "spawn", "EHI_EHITextFloatManager_AmmoBagBase_spawn", from_spawn_update_peer_information)
+        Hooks:PreHook(AmmoBagBase, "init", "EHI_EHITextFloatManager_AmmoBagBase_init", init_equipment)
+        Hooks:PostHook(AmmoBagBase, "set_server_information", "EHI_EHITextFloatManager_AmmoBagBase_set_server_information", server_update_peer_information)
+        Hooks:PostHook(AmmoBagBase, "sync_setup", "EHI_EHITextFloatManager_AmmoBagBase_sync_setup", client_update_peer_information)
+        Hooks:PostHook(AmmoBagBase, "_set_visual_stage", "EHI_EHITextFloatManager_AmmoBagBase__set_visual_stage", set_visual_stage_equipment)
+        Hooks:PreHook(AmmoBagBase, "_set_empty", "EHI_EHITextFloatManager_AmmoBagBase__set_empty", destroy_equipment)
+        Hooks:PostHook(AmmoBagBase, "destroy", "EHI_EHITextFloatManager_AmmoBagBase_destroy", destroy_equipment)
+        Hooks:PostHook(CustomAmmoBagBase, "_set_empty", "EHI_EHITextFloatManager_CustomAmmoBagBase__set_empty", destroy_equipment)
+        Hooks:PostHook(AmmoBagInteractionExt, "set_active", "EHI_EHITextFloatManager_AmmoBagInteractionExt_set_active", set_alpha)
     end
     if EHI:GetOption("show_floating_text_bodybags_bag") and tweak_data.levels:IsStealthAvailable() then
-        Hooks:PostHook(BodyBagsBagBase, "spawn", "EHI_BodyBagsBagBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
-        Hooks:PostHook(BodyBagsBagBase, "init", "EHI_BodyBagsBagBase_EHITextFloatManager_init", init_equipment)
-        Hooks:PostHook(BodyBagsBagBase, "set_server_information", "EHI_BodyBagsBagBase_EHITextFloatManager_set_server_information", server_update_peer_information)
-        Hooks:PostHook(BodyBagsBagBase, "sync_setup", "EHI_BodyBagsBagBase_EHITextFloatManager_sync_setup", client_update_peer_information)
-        Hooks:PostHook(BodyBagsBagBase, "_set_visual_stage", "EHI_BodyBagsBagBase_EHITextFloatManager__set_visual_stage", set_visual_stage_equipment)
-        Hooks:PreHook(BodyBagsBagBase, "_set_empty", "EHI_BodyBagsBagBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(BodyBagsBagBase, "destroy", "EHI_BodyBagsBagBase_EHITextFloatManager_destroy", destroy_equipment)
-        Hooks:PostHook(BodyBagsBagInteractionExt, "set_active", "EHI_BodyBagsBagInteractionExt_EHITextFloatManager_set_active", set_alpha)
+        Hooks:PostHook(BodyBagsBagBase, "spawn", "EHI_EHITextFloatManager_BodyBagsBagBase_spawn", from_spawn_update_peer_information)
+        Hooks:PostHook(BodyBagsBagBase, "init", "EHI_EHITextFloatManager_BodyBagsBagBase_init", init_equipment)
+        Hooks:PostHook(BodyBagsBagBase, "set_server_information", "EHI_EHITextFloatManager_BodyBagsBagBase_set_server_information", server_update_peer_information)
+        Hooks:PostHook(BodyBagsBagBase, "sync_setup", "EHI_EHITextFloatManager_BodyBagsBagBase_sync_setup", client_update_peer_information)
+        Hooks:PostHook(BodyBagsBagBase, "_set_visual_stage", "EHI_EHITextFloatManager_BodyBagsBagBase__set_visual_stage", set_visual_stage_equipment)
+        Hooks:PreHook(BodyBagsBagBase, "_set_empty", "EHI_EHITextFloatManager_BodyBagsBagBase__set_empty", destroy_equipment)
+        Hooks:PostHook(BodyBagsBagBase, "destroy", "EHI_EHITextFloatManager_BodyBagsBagBase_destroy", destroy_equipment)
+        Hooks:PostHook(BodyBagsBagInteractionExt, "set_active", "EHI_EHITextFloatManager_BodyBagsBagInteractionExt_set_active", set_alpha)
         EHI:AddOnAlarmCallback(function(dropin)
-            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_spawn")
-            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_init")
-            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_set_server_information")
-            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_sync_setup")
-            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager__set_visual_stage")
-            Hooks:RemovePreHook("EHI_BodyBagsBagBase_EHITextFloatManager__set_empty")
-            Hooks:RemovePostHook("EHI_BodyBagsBagBase_EHITextFloatManager_destroy")
-            Hooks:RemovePostHook("EHI_BodyBagsBagInteractionExt_EHITextFloatManager_set_active")
+            Hooks:RemovePostHook("EHI_EHITextFloatManager_BodyBagsBagBase_spawn")
+            Hooks:RemovePostHook("EHI_EHITextFloatManager_BodyBagsBagBase_init")
+            Hooks:RemovePostHook("EHI_EHITextFloatManager_BodyBagsBagBase_set_server_information")
+            Hooks:RemovePostHook("EHI_EHITextFloatManager_BodyBagsBagBase_sync_setup")
+            Hooks:RemovePostHook("EHI_EHITextFloatManager_BodyBagsBagBase__set_visual_stage")
+            Hooks:RemovePreHook("EHI_EHITextFloatManager_BodyBagsBagBase__set_empty")
+            Hooks:RemovePostHook("EHI_EHITextFloatManager_BodyBagsBagBase_destroy")
+            Hooks:RemovePostHook("EHI_EHITextFloatManager_BodyBagsBagInteractionExt_set_active")
             for key, data in pairs(self._floats) do
                 if data.class:IsInGroup("bodybags") then
                     self:_remove_float(data)
@@ -122,46 +122,46 @@ function EHITextFloatManager:new()
         end)
     end
     if EHI:GetOption("show_floating_text_doctor_bag") then
-        Hooks:PostHook(DoctorBagBase, "spawn", "EHI_DoctorBagBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
-        Hooks:PreHook(DoctorBagBase, "init", "EHI_DoctorBagBase_EHITextFloatManager_init", init_equipment)
-        Hooks:PostHook(DoctorBagBase, "set_server_information", "EHI_DoctorBagBase_EHITextFloatManager_set_server_information", server_update_peer_information)
-        Hooks:PostHook(DoctorBagBase, "sync_setup", "EHI_DoctorBagBase_EHITextFloatManager_sync_setup", client_update_peer_information)
-        Hooks:PostHook(DoctorBagBase, "_set_visual_stage", "EHI_DoctorBagBase_EHITextFloatManager__set_visual_stage", set_visual_stage_equipment)
-        Hooks:PreHook(DoctorBagBase, "_set_empty", "EHI_DoctorBagBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(DoctorBagBase, "destroy", "EHI_DoctorBagBase_EHITextFloatManager_destroy", destroy_equipment)
-        Hooks:PostHook(CustomDoctorBagBase, "_set_empty", "EHI_CustomDoctorBagBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(DoctorBagBaseInteractionExt, "set_active", "EHI_DoctorBagBaseInteractionExt_EHITextFloatManager_set_active", set_alpha)
+        Hooks:PostHook(DoctorBagBase, "spawn", "EHI_EHITextFloatManager_DoctorBagBase_spawn", from_spawn_update_peer_information)
+        Hooks:PreHook(DoctorBagBase, "init", "EHI_EHITextFloatManager_DoctorBagBase_init", init_equipment)
+        Hooks:PostHook(DoctorBagBase, "set_server_information", "EHI_EHITextFloatManager_DoctorBagBase_set_server_information", server_update_peer_information)
+        Hooks:PostHook(DoctorBagBase, "sync_setup", "EHI_EHITextFloatManager_DoctorBagBase_sync_setup", client_update_peer_information)
+        Hooks:PostHook(DoctorBagBase, "_set_visual_stage", "EHI_EHITextFloatManager_DoctorBagBase__set_visual_stage", set_visual_stage_equipment)
+        Hooks:PreHook(DoctorBagBase, "_set_empty", "EHI_EHITextFloatManager_DoctorBagBase__set_empty", destroy_equipment)
+        Hooks:PostHook(DoctorBagBase, "destroy", "EHI_EHITextFloatManager_DoctorBagBase_destroy", destroy_equipment)
+        Hooks:PostHook(CustomDoctorBagBase, "_set_empty", "EHI_EHITextFloatManager_CustomDoctorBagBase__set_empty", destroy_equipment)
+        Hooks:PostHook(DoctorBagBaseInteractionExt, "set_active", "EHI_EHITextFloatManager_DoctorBagBaseInteractionExt_set_active", set_alpha)
     end
     if EHI:GetOption("show_floating_text_first_aid_kit") then
-        Hooks:PostHook(FirstAidKitBase, "spawn", "EHI_FirstAidKitBase_EHITextFloatManager_spawn", from_spawn_update_peer_information)
-        Hooks:PostHook(FirstAidKitBase, "init", "EHI_FirstAidKitBase_EHITextFloatManager_init", init_equipment)
-        Hooks:PostHook(FirstAidKitBase, "set_server_information", "EHI_FirstAidKitBase_EHITextFloatManager_set_server_information", server_update_peer_information)
-        Hooks:PostHook(FirstAidKitBase, "sync_setup", "EHI_FirstAidKitBase_EHITextFloatManager_sync_setup", client_update_peer_information)
-        Hooks:PostHook(FirstAidKitBase, "setup", "EHI_FirstAidKitBase_EHITextFloatManager_setup", set_visual_stage_equipment)
-        Hooks:PreHook(FirstAidKitBase, "_set_empty", "EHI_FirstAidKitBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(FirstAidKitBase, "destroy", "EHI_FirstAidKitBase_EHITextFloatManager_destroy", destroy_equipment)
-        Hooks:PostHook(DoctorBagBaseInteractionExt, "set_active", "EHI_DoctorBagBaseInteractionExt_EHITextFloatManager_set_active", set_alpha)
+        Hooks:PostHook(FirstAidKitBase, "spawn", "EHI_EHITextFloatManager_FirstAidKitBase_spawn", from_spawn_update_peer_information)
+        Hooks:PostHook(FirstAidKitBase, "init", "EHI_EHITextFloatManager_FirstAidKitBase_init", init_equipment)
+        Hooks:PostHook(FirstAidKitBase, "set_server_information", "EHI_EHITextFloatManager_FirstAidKitBase_set_server_information", server_update_peer_information)
+        Hooks:PostHook(FirstAidKitBase, "sync_setup", "EHI_EHITextFloatManager_FirstAidKitBase_sync_setup", client_update_peer_information)
+        Hooks:PostHook(FirstAidKitBase, "setup", "EHI_EHITextFloatManager_FirstAidKitBase_setup", set_visual_stage_equipment)
+        Hooks:PreHook(FirstAidKitBase, "_set_empty", "EHI_EHITextFloatManager_FirstAidKitBase__set_empty", destroy_equipment)
+        Hooks:PostHook(FirstAidKitBase, "destroy", "EHI_EHITextFloatManager_FirstAidKitBase_destroy", destroy_equipment)
+        Hooks:PostHook(DoctorBagBaseInteractionExt, "set_active", "EHI_EHITextFloatManager_DoctorBagBaseInteractionExt_set_active", set_alpha) -- If the hook with the same ID exists, it is skipped
     end
     if EHI:GetOption("show_floating_text_throwables") then
         -- init calls _set_visual_stage, needs to be prehooked to work correctly
-        Hooks:PreHook(GrenadeCrateBase, "init", "EHI_GrenadeCrateBase_EHITextFloatManager_init", init_equipment)
-        Hooks:PostHook(GrenadeCrateBase, "_set_visual_stage", "EHI_GrenadeCrateBase_EHITextFloatManager__set_visual_stage", set_visual_stage_equipment)
-        Hooks:PreHook(GrenadeCrateBase, "_set_empty", "EHI_GrenadeCrateBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(GrenadeCrateBase, "destroy", "EHI_GrenadeCrateBase_EHITextFloatManager_destroy", destroy_equipment)
-        Hooks:PreHook(CustomGrenadeCrateBase, "init", "EHI_CustomGrenadeCrateBase_EHITextFloatManager_init", init_equipment)
-        Hooks:PostHook(CustomGrenadeCrateBase, "_set_empty", "EHI_CustomGrenadeCrateBase_EHITextFloatManager__set_empty", destroy_equipment)
-        Hooks:PostHook(GrenadeCrateDeployableBase, "set_server_information", "EHI_GrenadeCrateDeployableBase_EHITextFloatManager_set_server_information", server_update_peer_information)
-        Hooks:PreHook(GrenadeCrateDeployableBase, "_set_empty", "EHI_CustomGrenadeCrateDeployableBase_EHITextFloatManager__set_empty", destroy_equipment)
+        Hooks:PreHook(GrenadeCrateBase, "init", "EHI_EHITextFloatManager_GrenadeCrateBase_init", init_equipment)
+        Hooks:PostHook(GrenadeCrateBase, "_set_visual_stage", "EHI_EHITextFloatManager_GrenadeCrateBase__set_visual_stage", set_visual_stage_equipment)
+        Hooks:PreHook(GrenadeCrateBase, "_set_empty", "EHI_EHITextFloatManager_GrenadeCrateBase__set_empty", destroy_equipment)
+        Hooks:PostHook(GrenadeCrateBase, "destroy", "EHI_EHITextFloatManager_GrenadeCrateBase_destroy", destroy_equipment)
+        Hooks:PreHook(CustomGrenadeCrateBase, "init", "EHI_EHITextFloatManager_CustomGrenadeCrateBase_init", init_equipment)
+        Hooks:PostHook(CustomGrenadeCrateBase, "_set_empty", "EHI_EHITextFloatManager_CustomGrenadeCrateBase__set_empty", destroy_equipment)
+        Hooks:PostHook(GrenadeCrateDeployableBase, "set_server_information", "EHI_EHITextFloatManager_GrenadeCrateDeployableBase_set_server_information", server_update_peer_information)
+        Hooks:PreHook(GrenadeCrateDeployableBase, "_set_empty", "EHI_EHITextFloatManager_CustomGrenadeCrateDeployableBase__set_empty", destroy_equipment)
         if EHI:GetOption("show_floating_text_throwables_block_on_abilities_or_no_throwable") then
             EHI.PlayerUtils:AddGrenadeDoesNotAllowPickupsCallback(function()
-                Hooks:RemovePreHook("EHI_GrenadeCrateBase_EHITextFloatManager_init")
-                Hooks:RemovePostHook("EHI_GrenadeCrateBase_EHITextFloatManager__set_visual_stage")
-                Hooks:RemovePreHook("EHI_GrenadeCrateBase_EHITextFloatManager__set_empty")
-                Hooks:RemovePostHook("EHI_GrenadeCrateBase_EHITextFloatManager_destroy")
-                Hooks:RemovePreHook("EHI_CustomGrenadeCrateBase_EHITextFloatManager_init")
-                Hooks:RemovePostHook("EHI_CustomGrenadeCrateBase_EHITextFloatManager__set_empty")
-                Hooks:RemovePostHook("EHI_GrenadeCrateDeployableBase_EHITextFloatManager_set_server_information")
-                Hooks:RemovePreHook("EHI_CustomGrenadeCrateDeployableBase_EHITextFloatManager__set_empty")
+                Hooks:RemovePreHook("EHI_EHITextFloatManager_GrenadeCrateBase_init")
+                Hooks:RemovePostHook("EHI_EHITextFloatManager_GrenadeCrateBase__set_visual_stage")
+                Hooks:RemovePreHook("EHI_EHITextFloatManager_GrenadeCrateBase__set_empty")
+                Hooks:RemovePostHook("EHI_EHITextFloatManager_GrenadeCrateBase_destroy")
+                Hooks:RemovePreHook("EHI_EHITextFloatManager_CustomGrenadeCrateBase_init")
+                Hooks:RemovePostHook("EHI_EHITextFloatManager_CustomGrenadeCrateBase__set_empty")
+                Hooks:RemovePostHook("EHI_EHITextFloatManager_GrenadeCrateDeployableBase_set_server_information")
+                Hooks:RemovePreHook("EHI_EHITextFloatManager_CustomGrenadeCrateDeployableBase__set_empty")
                 for key, data in pairs(self._floats) do
                     if data.class:IsInGroup("grenades") then
                         self:_remove_float(data)
@@ -197,12 +197,15 @@ function EHITextFloatManager:init_hud(panel, saferect)
 end
 
 ---@param key userdata
-function EHITextFloatManager:IgnoreDeployable(key)
-    self._unit_blocked[key] = true
+---@param skip_ignore boolean?
+function EHITextFloatManager:IgnoreDeployable(key, skip_ignore)
+    if not skip_ignore then
+        self._unit_blocked[key] = true
+    end
     self._deferred_floats[key] = nil
-    if self._floats[key] then
-        self:_remove_float(self._floats[key])
-        self._floats[key] = nil
+    local float = table.remove_key(self._floats, key)
+    if float then
+        self:_remove_float(float)
     end
     self:_remove_update_loop()
 end
@@ -287,7 +290,8 @@ end
 EHITextFloat = class()
 EHITextFloat._SETTINGS =
 {
-    icon_alpha = EHI:GetOption("show_floating_text_icon") and 1 or 0,
+    icon_visible = EHI:GetOption("show_floating_text_icon"),
+    equipment_name = EHI:GetOption("show_floating_text_equipment_name"),
     -- 1 = multiplier; 2 = percent
     format = EHI:GetOption("show_floating_text_format") --[[@as 1|2]],
     compact_mode = EHI:GetOption("show_floating_text_compact_mode"),
@@ -426,14 +430,14 @@ function EHITextFloat:init(unit, from_defer, peer_id)
     end
     self._panel = self._MAIN_PANEL:panel({
         w = 200,
-        h = (self._SETTINGS.compact_mode or self._SETTINGS.icon_alpha == 0) and 16 or 32,
+        h = (self._SETTINGS.compact_mode or not self._SETTINGS.icon_visible) and 16 or 32,
         visible = false
     })
     self._panel_center_x = self._panel:center_x()
     self._amount = self._panel:text({
         text = text,
         vertical = "center",
-        y = (self._SETTINGS.icon_alpha == 1 and not self._SETTINGS.compact_mode) and 16 or 0,
+        y = (self._SETTINGS.icon_visible and not self._SETTINGS.compact_mode) and 16 or 0,
         h = 16,
         w = 128,
         align = "center",
@@ -452,7 +456,7 @@ function EHITextFloat:init(unit, from_defer, peer_id)
         local default_icon = tweak_data.ehi.icons.default
         texture, texture_rect = tweak_data.hud_icons:get_icon_or(eq_data.icon or "pd2_question", default_icon.texture, default_icon.texture_rect)
     end
-    if self._SETTINGS.icon_alpha == 1 then
+    if self._SETTINGS.icon_visible then
         self._icon = self._panel:bitmap({
             layer = 0,
             texture = texture,
@@ -464,7 +468,7 @@ function EHITextFloat:init(unit, from_defer, peer_id)
         if self._SETTINGS.color_peer_equipment then
             self._icon:set_color(tweak_data.chat_colors[peer_id or 0] or Color.white)
         end
-        if not (self._SETTINGS.compact_mode) then
+        if not self._SETTINGS.compact_mode then
             self._icon:set_center_x(self._panel_center_x)
         end
     end
@@ -518,17 +522,17 @@ function EHITextFloat:UpdateAmount(equipment)
     local eq_data = self._eq_data
     if not eq_data.no_amount then
         local amount = equipment:GetRealAmount()
-        local text
-        if self._SETTINGS.compact_mode then
-            if self._SETTINGS.format == 1 then
-                text = string.format("%s", string.format(eq_data.multiplier_format or "%dx", amount))
-            else
-                text = string.format("%s", string.format(self._SETTINGS.percent_format, amount * 100))
-            end
-        elseif self._SETTINGS.format == 1 then
-            text = string.format("%s: %s", eq_data.name, string.format(eq_data.multiplier_format or "%dx", amount))
+        local formatted_amount
+        if self._SETTINGS.format == 1 then
+            formatted_amount = string.format("%s", string.format(eq_data.multiplier_format or "%dx", amount))
         else
-            text = string.format("%s: %s", eq_data.name, string.format(self._SETTINGS.percent_format, amount * 100))
+            formatted_amount = string.format("%s", string.format(self._SETTINGS.percent_format, amount * 100))
+        end
+        local text
+        if self._SETTINGS.compact_mode or not self._SETTINGS.equipment_name then
+            text = formatted_amount
+        else
+            text = string.format("%s: %s", eq_data.name, formatted_amount)
         end
         if eq_data.check_upgrades_f then ---@cast equipment -GrenadeCrateBase
             local upgrades = eq_data.check_upgrades_f(equipment)
@@ -537,35 +541,27 @@ function EHITextFloat:UpdateAmount(equipment)
             end
         end
         self._amount:set_text(text)
-    elseif eq_data.check_upgrades_f then ---@cast equipment -GrenadeCrateBase
-        local upgrades = eq_data.check_upgrades_f(equipment)
-        if upgrades ~= "" then
-            if self._SETTINGS.compact_mode then
-                self._amount:set_text(string.format("%s", upgrades))
-            else
-                self._amount:set_text(string.format("%s: %s", eq_data.name, upgrades))
-            end
-        elseif self._SETTINGS.compact_mode then
-            if self._SETTINGS.format == 1 then
-                self._amount:set_text("1x")
-            else
-                self._amount:set_text(string.format(self._SETTINGS.percent_format, 100))
-            end
-        elseif self._SETTINGS.format == 1 then
-            self._amount:set_text(string.format("%s: %s", eq_data.name, string.format(eq_data.multiplier_format or "%dx", 1)))
-        else
-            self._amount:set_text(string.format("%s: %s", eq_data.name, string.format(self._SETTINGS.percent_format, 100)))
-        end
-    elseif self._SETTINGS.compact_mode then
-        if self._SETTINGS.format == 1 then
-            self._amount:set_text("1x")
-        else
-            self._amount:set_text(string.format(self._SETTINGS.percent_format, 100))
-        end
-    elseif self._SETTINGS.format == 1 then
-        self._amount:set_text(string.format("%s: %s", eq_data.name, string.format(eq_data.multiplier_format or "%dx", 1)))
     else
-        self._amount:set_text(string.format("%s: %s", eq_data.name, string.format(self._SETTINGS.percent_format, 100)))
+        local text
+        local formatted_amount
+        if self._SETTINGS.format == 1 then
+            formatted_amount = string.format("%s", string.format(eq_data.multiplier_format or "%dx", 1))
+        else
+            formatted_amount = string.format("%s", string.format(self._SETTINGS.percent_format, 100))
+        end ---@cast equipment -GrenadeCrateBase
+        local upgrades = eq_data.check_upgrades_f and eq_data.check_upgrades_f(equipment) or ""
+        if upgrades ~= "" then
+            if self._SETTINGS.compact_mode or not self._SETTINGS.equipment_name then
+                text = upgrades
+            else
+                text = string.format("%s: %s", eq_data.name, upgrades)
+            end
+        elseif self._SETTINGS.compact_mode or not self._SETTINGS.equipment_name then
+            text = formatted_amount
+        else
+            text = string.format("%s: %s", eq_data.name, formatted_amount)
+        end
+        self._amount:set_text(text)
     end
     managers.hud:make_fine_text(self._amount)
     self:_update_text_and_icon_position()

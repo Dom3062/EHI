@@ -1202,6 +1202,14 @@ function EHILeftDeployableList:AddDeployable(key, unit)
     end
 end
 
+---@param key userdata
+---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
+---@param base AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
+function EHILeftDeployableList:AddDeployableWithCurrentAmount(key, unit, base)
+    self:AddDeployable(key, unit)
+    self:UpdateDeployableAmount(base)
+end
+
 ---@param eq_data table
 ---@param force_amount boolean?
 function EHILeftDeployableList:_AddItem(panel, y, text, eq_data, force_amount)

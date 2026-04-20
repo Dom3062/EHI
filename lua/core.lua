@@ -1398,6 +1398,7 @@ local function LoadDefaultValues(self)
         show_floating_damage_popup_crew_damage = true,
         show_floating_text = true,
         show_floating_text_icon = true,
+        show_floating_text_equipment_name = true,
         show_floating_text_angle = 35, -- 0 - 90
         show_floating_text_distance = 25,
         show_floating_text_format = 1, -- 1 = Multiplier; 2 = Percent

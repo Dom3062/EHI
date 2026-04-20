@@ -635,6 +635,11 @@ function EHIHealthBuffTracker:post_init(params)
         color = self._progress_bar_red,
         visible = false
     })
+    if not self._progress:visible() then
+        self._progress:set_alpha(0)
+        self._progress_orange:set_alpha(0)
+        self._progress_red:set_alpha(0)
+    end
 end
 
 if EHIHealthBuffTracker._CHECK_HEAVY_SWAT_DS_DAMAGE then

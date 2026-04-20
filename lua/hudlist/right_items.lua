@@ -1179,8 +1179,8 @@ end
 function EHIRightUnitList:SetEnemyCount()
     local count = 0
     for _, data in pairs(managers.enemy:all_enemies()) do
-        local unit = alive(data.unit) and data.unit:base()
-        if unit and unit._tweak_table and self._UNITS[unit._tweak_table] == "enemy" then
+        local base = alive(data.unit) and data.unit:base()
+        if base and base._tweak_table and self._UNITS[base._tweak_table] == "enemy" then
             count = count + 1
         end
     end
@@ -1198,7 +1198,7 @@ end
 ---@param diff integer
 function EHIRightUnitList:_update_converts(diff)
     local min = self._items.minion
-    if min.ignore then
+    if not min or min.ignore then
         self:SetEnemyCount()
         return
     end
@@ -1281,7 +1281,7 @@ end
 ---@param count integer
 function EHIRightUnitList:SetPoliceHostages(count)
     local cop = self._items.enemy_tied
-    if not cop then
+    if not cop or cop.ignore then
         return
     end
     local previous_count = cop.count

@@ -1272,6 +1272,8 @@
 
     "ehi_other_show_floating_text_icon" : "Plovoucí ikona",
 
+    "ehi_other_show_floating_text_equipment_name" : "Plovoucí jméno vybavení",
+
     "ehi_other_show_floating_text_angle" : "Úhel",
     "ehi_other_show_floating_text_angle_desc" : "Nastavuje maximální viditelný úhel (ve stupních), pod kterým bude plovoucí text viditelný",
 

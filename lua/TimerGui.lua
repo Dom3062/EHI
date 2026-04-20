@@ -1,5 +1,46 @@
 local EHI = EHI
-if EHI:CheckLoadHook("TimerGui") or not EHI:GetTrackerWaypointHudlistOption("show_timers", "show_waypoints_timers", "show_timers") then
+if EHI:CheckLoadHook("TimerGui") then
+    return
+end
+
+---@param units number[]
+---@param wd WorldDefinition
+function TimerGui:SetChildUnits(units, wd)
+    if self._done then
+        for _, unit_id in ipairs(units) do
+            local unit = wd:get_unit(unit_id) --[[@as UnitAmmoDeployable|UnitGrenadeDeployable]]
+            local base = unit and unit:base()
+            if base then
+                if base.SetCountThisUnit then
+                    base:SetCountThisUnit()
+                end
+            else
+                EHI:Log("[TimerGui:SetChildUnits()] Cannot find unit with ID " .. tostring(unit_id))
+            end
+        end
+    else
+        self.__ehi_child_units = {} ---@type UnitAmmoDeployable[]|UnitGrenadeDeployable[]|false[]
+        for i, unit_id in ipairs(units) do
+            local unit = wd:get_unit(unit_id) --[[@as UnitAmmoDeployable|UnitGrenadeDeployable]]
+            if unit then
+                self.__ehi_child_units[i] = unit
+            else
+                self.__ehi_child_units[i] = false
+                EHI:Log("[TimerGui:SetChildUnits()] Cannot find unit with ID " .. tostring(unit_id))
+            end
+        end
+    end
+end
+
+if not EHI:GetTrackerWaypointHudlistOption("show_timers", "show_waypoints_timers", "show_timers") then
+    Hooks:PostHook(TimerGui, "_set_done", "EHI_TimerGui__set_done", function(self, ...)
+        for _, unit in ipairs(self.__ehi_child_units or {}) do
+            local base = unit and unit:base()
+            if base and base.SetCountThisUnit then
+                base:SetCountThisUnit()
+            end
+        end
+    end)
     return
 end
 
@@ -335,33 +376,6 @@ function TimerGui:SetJammedStatusOverridePoweredStatus()
     if self._started and self._jammed and not self._powered then
         managers.ehi_timer:SetPowered(self._ehi_key, true)
         managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetPowered", self._original_ehi_key, true)
-    end
-end
-
----@param units number[]
----@param wd WorldDefinition
-function TimerGui:SetChildUnits(units, wd)
-    if self._done then
-        for _, unit_id in ipairs(units) do
-            local unit = wd:get_unit(unit_id) --[[@as UnitAmmoDeployable|UnitGrenadeDeployable]]
-            local base = unit and unit:base()
-            if base and base.SetCountThisUnit then
-                base:SetCountThisUnit()
-            else
-                EHI:Log("[TimerGui] Cannot find unit with ID " .. tostring(unit_id))
-            end
-        end
-    else
-        self.__ehi_child_units = {} ---@type UnitAmmoDeployable[]|UnitGrenadeDeployable[]|false[]
-        for i, unit_id in ipairs(units) do
-            local unit = wd:get_unit(unit_id) --[[@as UnitAmmoDeployable|UnitGrenadeDeployable]]
-            if unit then
-                self.__ehi_child_units[i] = unit
-            else
-                self.__ehi_child_units[i] = false
-                EHI:Log("[TimerGui] Cannot find unit with ID " .. tostring(unit_id))
-            end
-        end
     end
 end
 

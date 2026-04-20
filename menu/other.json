@@ -416,6 +416,7 @@
             ],
             "children_f" : {
                 "ehi_other_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice": "ehi_show_floating_text_throwables_block_on_abilities_or_no_throwable_choice_1",
+                "ehi_other_show_floating_text_equipment_name_choice" : "ehi_show_floating_text_equipment_name_1",
                 "ehi_other_show_floating_text_color_peer_equipment_choice" : "ehi_show_floating_text_color_peer_equipment_choice_1"
             }
         },
@@ -426,8 +427,17 @@
             "callback": "ehi_set_item_value",
             "value": "show_floating_text_icon",
             "default_value": true,
-            "parent" : "ehi_other_show_floating_text_choice",
+            "parent": "ehi_other_show_floating_text_choice",
             "child" : "ehi_other_show_floating_text_color_peer_equipment_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_text_equipment_name_choice",
+            "title": "ehi_other_show_floating_text_equipment_name",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_text_equipment_name",
+            "default_value": true,
+            "disabled_from_start": "ehi_show_floating_text_icon_and_equipment_name_2"
         },
         {
             "type": "slider",
@@ -477,7 +487,13 @@
             "callback": "ehi_set_item_value",
             "value": "show_floating_text_compact_mode",
             "default_value": false,
-            "parent" : "ehi_other_show_floating_text_choice"
+            "parent" : "ehi_other_show_floating_text_choice",
+            "child_compare": {
+                "ehi_other_show_floating_text_equipment_name_choice": {
+                    "comparator": "<>",
+                    "value": true
+                }
+            }
         },
         {
             "type": "toggle",
@@ -487,7 +503,19 @@
             "callback": "ehi_set_item_value",
             "value": "show_floating_text_color_peer_equipment",
             "default_value": true,
-            "parent" : "ehi_other_show_floating_text_choice"
+            "parents_compare": {
+                "comparator": "and",
+                "items": {
+                    "ehi_other_show_floating_text_choice": {
+                        "comparator": "==",
+                        "value": true
+                    },
+                    "ehi_other_show_floating_text_icon_choice": {
+                        "comparator": "==",
+                        "value": true
+                    }
+                }
+            }
         },
         {
             "type": "toggle",

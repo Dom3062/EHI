@@ -186,14 +186,14 @@ function EHITweakData:new(tweak_data)
             deck = { 1, 0, "chico" },
             text = "0",
             class = "EHIHealthBuffTracker",
-            format = "damage",
+            format = "damage_truncated",
             option = "health"
         },
         Armor =
         {
             skills = { 2, 12 },
             class = "EHIGaugeBuffTracker",
-            format = "damage",
+            format = "damage_truncated",
             option = "armor"
         },
         CarryInteractionCooldown =

@@ -8,7 +8,12 @@ EHI.Trigger = EHIMissionElementTrigger:__post_init()
 EHI.Element = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementOverride.lua")
 EHI.Waypoint = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionElementWaypoint.lua")
 EHI.Unit = blt.vm.dofile(EHI.LuaPath .. "mission/EHIMissionUnit.lua")
-if EHI:GetOption("show_floating_text") then
+if EHI:GetOption("show_floating_text") and
+(EHI:GetOption("show_floating_text_ammo_bag") or
+EHI:GetOption("show_floating_text_doctor_bag") or
+EHI:GetOption("show_floating_text_first_aid_kit") or
+EHI:GetOption("show_floating_text_throwables") or
+EHI:GetOption("show_floating_text_bodybags_bag") and tweak_data.levels:IsStealthAvailable()) then -- Load it if main option and at least one deployable is tracked
     dofile(EHI.LuaPath .. "EHITextFloatManager.lua")
     EHITextFloatManager:new()
 end

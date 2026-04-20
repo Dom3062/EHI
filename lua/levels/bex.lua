@@ -112,9 +112,6 @@ local achievements =
                     }
                 })
             end
-            function bex_11:pre_destroy()
-                managers.ehi_loot:RemoveBagListener(self._id)
-            end
             function bex_11:CountersDone()
                 self:AnimateBG()
                 self:SetStatusText("finish", self._counters_table.bags.label)

@@ -38,6 +38,10 @@ function GrenadeCrateBase:SetIgnoreChild()
         return
     end
     self:SetIgnore()
+    if EHITextFloatManager then
+        EHITextFloatManager:IgnoreDeployable(self._ehi_key, true)
+    end
+    managers.ehi_hudlist:CallLeftListItemFunction("Deployable", "RemoveDeployable", self._ehi_key)
     self._ignore_set_by_parent = true
 end
 
@@ -48,6 +52,10 @@ function GrenadeCrateBase:SetCountThisUnit()
     if self.UpdateAmount then
         self:UpdateAmount()
     end
+    if EHITextFloatManager then
+        EHITextFloatManager:_add_float(self._ehi_key, self._unit, true)
+    end
+    managers.ehi_hudlist:CallLeftListItemFunction("Deployable", "AddDeployableWithCurrentAmount", self._ehi_key, self._unit, self)
     Deployables:OnDeployablePlaced(self._unit)
 end
 
@@ -65,7 +73,7 @@ function GrenadeCrateBase:destroy(...)
 end
 
 function CustomGrenadeCrateBase:init(unit, ...)
-    self._ehi_key = tostring(unit:key())
+    self._ehi_key = unit:key()
     original.init_custom(self, unit, ...)
 end
 

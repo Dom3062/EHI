@@ -1272,6 +1272,8 @@
 
     "ehi_other_show_floating_text_icon" : "Float Icon",
 
+    "ehi_other_show_floating_text_equipment_name" : "Float Equipment Name",
+
     "ehi_other_show_floating_text_angle" : "Angle",
     "ehi_other_show_floating_text_angle_desc" : "Sets max visible angle (in degrees) for floating text to be visible",
 

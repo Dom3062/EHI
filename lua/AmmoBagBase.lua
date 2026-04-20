@@ -51,6 +51,10 @@ function AmmoBagBase:SetIgnoreChild()
         return
     end
     self:SetIgnore()
+    if EHITextFloatManager then
+        EHITextFloatManager:IgnoreDeployable(self._ehi_key, true)
+    end
+    managers.ehi_hudlist:CallLeftListItemFunction("Deployable", "RemoveDeployable", self._ehi_key)
     self._ignore_set_by_parent = true
 end
 
@@ -59,6 +63,10 @@ function AmmoBagBase:SetCountThisUnit()
     self._ignore_set_by_parent = nil
     self._parent_done = true
     self:SetOffset(self._offset)
+    if EHITextFloatManager then
+        EHITextFloatManager:_add_float(self._ehi_key, self._unit, true)
+    end
+    managers.ehi_hudlist:CallLeftListItemFunction("Deployable", "AddDeployableWithCurrentAmount", self._ehi_key, self._unit, self)
     Deployables:OnDeployablePlaced(self._unit)
 end
 

@@ -831,6 +831,14 @@ function MenuCallbackHandler.ehi_show_floating_text_throwables_block_on_abilitie
     return EHI:GetOption("show_floating_text_throwables")
 end
 
+function MenuCallbackHandler.ehi_show_floating_text_equipment_name_1()
+    return not EHI:GetOption("show_floating_text_compact_mode")
+end
+
+function MenuCallbackHandler.ehi_show_floating_text_icon_and_equipment_name_2()
+    return EHI:GetOption("show_floating_text") and not EHI:GetOption("show_floating_text_compact_mode")
+end
+
 function MenuCallbackHandler.ehi_show_floating_text_color_peer_equipment_choice_1()
     return EHI:GetOption("show_floating_text_icon")
 end

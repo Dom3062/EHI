@@ -1,3 +1,11 @@
+r390 (20. 04. 2026):
+Added "Float Equipment Name" option
+Buffs: Fixed Anarchist Continuous Regen not working correctly with Armor buff
+Buffs: Fixed Health buff value sometimes unreadable
+Buffs: Fixed progress in Health buff not following selected visibility option for progress
+Deployables: Fixed an issue where temporarily inaccessible deployables are still rendered in Hudlist and Text Float
+Hudlist - Right List - Units: Fixed a crash when Converts are disabled
+
 r389 (16. 04. 2026):
 Hudlist - Right List - Special Items: Fixed an issue where some items are either hidden or stuck on the screen
 Text Float: Fixed alignment issues in compact mode

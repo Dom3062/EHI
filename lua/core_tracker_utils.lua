@@ -185,7 +185,7 @@ EHI.TrackerUtils.Hudlist =
 ---@param assault_type_index "start"|"end"
 ---@param id string
 function EHI.TrackerUtils.Hudlist:AddAssaultCallbackForSniperItem(assaults, assault_type_index, id)
-    if not EHI:GetHudlistAndListOption("right_list", "show_units") then
+    if not self.super:GetHudlistAndListOption("right_list", "show_units") then
         return
     elseif assault_type_index == "start" then
         ---@param assault_number integer

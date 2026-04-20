@@ -199,10 +199,12 @@ end)
 ---@param unit UnitTimer
 local function PCPosition(id, unit_data, unit)
     local pos = unit_data.pos --[[@as number]]
-    PCVectors[pos] = unit:interaction() and unit:interaction():interact_position() or unit:position()
-    unit:timer_gui():SetCustomID("HoxtonHack")
-    unit:timer_gui():SetTrackerMergeID("HoxtonMaxHacks", pos == 4)
-    unit:timer_gui():SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
+    local interact = unit:interaction()
+    PCVectors[pos] = interact and interact:interact_position() or unit:position()
+    local timer = unit:timer_gui()
+    timer:SetCustomID("HoxtonHack")
+    timer:SetTrackerMergeID("HoxtonMaxHacks", pos == 4)
+    timer:SetCustomCallback("hox_2_restore_waypoint_hack", "add_waypoint")
 end
 ---@type ParseUnitsTable
 local tbl =
@@ -229,30 +231,30 @@ local tbl2 =
         local units, n = {}, 1
         local wd = managers.worlddefinition
         for i = 100004, 100007, 1 do
-            local _unit = wd:get_unit(EHI:GetInstanceUnitID(i, 6840))
-            if _unit then
-                units[n] = _unit
+            local unit = wd:get_unit(EHI:GetInstanceUnitID(i, 6840))
+            if unit then
+                units[n] = unit
                 n = n + 1
             end
         end
         do
-            local _unit = wd:get_unit(EHI:GetInstanceUnitID(100019, 6840))
-            if _unit then
-                units[n] = _unit
+            local unit = wd:get_unit(EHI:GetInstanceUnitID(100019, 6840))
+            if unit then
+                units[n] = unit
                 n = n + 1
             end
         end
         do
-            local _unit = wd:get_unit(EHI:GetInstanceUnitID(100020, 6840))
-            if _unit then
-                units[n] = _unit
+            local unit = wd:get_unit(EHI:GetInstanceUnitID(100020, 6840))
+            if unit then
+                units[n] = unit
                 n = n + 1
             end
         end
         for i = 100024, 100030, 1 do
-            local _unit = wd:get_unit(EHI:GetInstanceUnitID(i, 6840))
-            if _unit then
-                units[n] = _unit
+            local unit = wd:get_unit(EHI:GetInstanceUnitID(i, 6840))
+            if unit then
+                units[n] = unit
                 n = n + 1
             end
         end
@@ -273,8 +275,11 @@ local tbl2 =
                 for _, unit_pos in ipairs(pos) do
                     if unit_pos == u_pos then
                         for _, u in ipairs(units) do
-                            if u:base() and u:base().SetCountThisUnit then
-                                u:base():SetCountThisUnit()
+                            if alive(u) then
+                                local base = u:base()
+                                if base and base.SetCountThisUnit then
+                                    base:SetCountThisUnit()
+                                end
                             end
                         end
                         execute = false
