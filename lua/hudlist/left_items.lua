@@ -1,6 +1,6 @@
 ---@alias EHILeftListBase.Item { anims: table, panel: Panel, progress: Bitmap, progress_static: Bitmap?, progress_bar: Color, text: Text, pos: integer }
 ---@alias EHILeftTimerList.Timer { item: EHILeftListBase.Item, t: number, jammed: boolean, powered: boolean, autorepair: boolean, needs_update: boolean }
----@alias EHILeftDeployableList.Deployable { item: EHILeftListBase.Item, eq_data: table, peer_id: integer, name_key: string, max_amount: number, ignored: boolean, max_amount: number?, pos: integer }
+---@alias EHILeftDeployableList.Deployable { item: EHILeftListBase.Item, eq_data: table, peer_id: integer, max_amount: number, ignored: boolean, max_amount: number?, pos: integer }
 ---@alias EHILeftDeployableList.Group { max: number, eq_data: table, item: EHILeftListBase.Item, visible: boolean, deployables: table<userdata, { amount: number, ignored: boolean, max_amount: number }> }
 ---@alias EHILeftCameraLoopList.Camera { t: number, t_max: number, t_max_half: number, item: EHILeftListBase.Item, warning: boolean }
 
@@ -395,6 +395,18 @@ function EHILeftTimerList:RegisterListeners(params)
     self._timers = {} ---@type table<string, EHILeftTimerList.Timer>
 end
 
+---@param id string
+function EHILeftTimerList:CanAddTimer(id)
+    local timer = self._timers[id]
+    if timer then
+        timer.jammed = false
+        timer.powered = true
+        self:_set_timer_status(timer)
+        return false
+    end
+    return true
+end
+
 ---@param params table
 function EHILeftTimerList:AddTimer(params)
     local t = params.time
@@ -418,7 +430,7 @@ function EHILeftTimerList:AddTimer(params)
     }
     if needs_update then
         local timer_gui = params.timer_gui ---@type TimerGui
-        managers.hud:add_updator(id, function(_, _)
+        managers.hud:add_updator(id, function(...)
             local t_new = timer_gui._time_left or timer_gui._current_timer or 0
             self:UpdateTimer(id, t_new)
         end)
@@ -1146,8 +1158,7 @@ end
 ---@param key userdata
 ---@param unit UnitAmmoDeployable|UnitGrenadeDeployable|UnitFAKDeployable
 function EHILeftDeployableList:AddDeployable(key, unit)
-    local name_key = unit:name():key()
-    local eq_data = self._EQUIPMENT[name_key] or self._EQUIPMENT.default
+    local eq_data = self._EQUIPMENT[unit:name():key()] or self._EQUIPMENT.default
     if eq_data.force_console_report or self._unit_blocked[key] then
         return
     end
@@ -1155,7 +1166,6 @@ function EHILeftDeployableList:AddDeployable(key, unit)
     local tbl = ---@type EHILeftDeployableList.Deployable
     {
         eq_data = eq_data,
-        name_key = name_key,
         peer_id = 0,
         ignored = false,
         max_amount = eq_data.max,
@@ -1548,7 +1558,7 @@ end
 ---@class EHILeftPagerList : EHILeftListBase
 ---@field super EHILeftListBase
 EHILeftPagerList = class(EHILeftListBase)
-EHILeftPagerList._update_id = "EHILeftPagerItem"
+EHILeftPagerList._update_id = "EHILeftPagerList"
 EHILeftPagerList._PAGER_T = 12
 EHILeftPagerList._PAGER_T_HALF = 6
 EHILeftPagerList._PAGER_HALF_COLOR_INDEX = EHI:GetHudlistListOption("left_list", "enemy_pager_warning_color")

@@ -235,7 +235,7 @@ function TimerGui:_start(...)
         end
     end
     self:AddWaypoint(t, autorepair)
-    if self.__EHI_SHOW_HUDLIST then
+    if self.__EHI_SHOW_HUDLIST and managers.ehi_hudlist:ReturnLeftListItemValue("Timer", "CanAddTimer", self._original_ehi_key) then -- Playing in MP lobby with other people can double the timers probably due to the way how sequences and syncing works in this game
         local upgrades, skills = self:GetUpgrades()
         managers.ehi_hudlist:CallLeftListItemFunction("Timer", "AddTimer", {
             id = self._original_ehi_key,

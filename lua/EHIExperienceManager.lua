@@ -176,7 +176,7 @@ end
 
 function EHIExperienceManager:HookAwardXP()
     local level_id = Global.game_settings.level_id
-    if tweak_data.levels:IsLevelSafehouse(level_id) then
+    if tweak_data.levels:IsLevelSafehouse() then
         return
     elseif self:IsOneXPElementHeist(level_id) and self._config.xp_panel == 2 then
         self._config.xp_panel = 1 -- Force one XP panel when the heist gives you the XP at the escape zone -> less screen clutter

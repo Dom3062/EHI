@@ -114,6 +114,15 @@ function EHILeftList:_set_items_y(new_item)
     end
 end
 
+---@param id string
+---@param f string
+function EHILeftList:ReturnValue(id, f, ...)
+    local item = self._items[id]
+    if item and item[f] then
+        return item[f](item, ...)
+    end
+end
+
 ---@class EHIRightList : EHIList
 ---@field new fun(self: self): self
 ---@field super EHIList
@@ -161,6 +170,12 @@ EHIHudlistManager._right_list = EHIRightList:new()
 ---@param f string
 function EHIHudlistManager:CallLeftListItemFunction(id, f, ...)
     self._left_list:CallItemFunction(id, f, ...)
+end
+
+---@param id string
+---@param f string
+function EHIHudlistManager:ReturnLeftListItemValue(id, f, ...)
+    return self._left_list:ReturnValue(id, f, ...)
 end
 
 ---@param id string

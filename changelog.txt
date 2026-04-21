@@ -1,6 +1,9 @@
+r391 (21. 04. 2026):
+Hudlist - Left List - Timers: Fixed timers duplicating in online lobby with other players
+
 r390 (20. 04. 2026):
 Added "Float Equipment Name" option
-Buffs: Fixed Anarchist Continuous Regen not working correctly with Armor buff
+Buffs: Fixed Anarchist Continuous Regen buff not working correctly with Armor buff
 Buffs: Fixed Health buff value sometimes unreadable
 Buffs: Fixed progress in Health buff not following selected visibility option for progress
 Deployables: Fixed an issue where temporarily inaccessible deployables are still rendered in Hudlist and Text Float
