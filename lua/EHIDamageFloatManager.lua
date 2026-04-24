@@ -22,6 +22,7 @@ function EHIDamageFloatManager:new(hud)
     self._special_units_id = StatisticsManager and StatisticsManager.special_unit_ids or {}
     self._damage_decay = EHI:GetOption("show_floating_damage_popup_time_on_screen") --[[@as number]]
     self._damage_crit_decay = self._damage_decay * 1.2
+    self._highlight_crit_damage = EHI:GetOption("show_floating_damage_highlight_crit_damage")
     self.pops = {} ---@type EHIDamageFloat[]
     self._camPos = Vector3()
     managers.ehi_hook:AddCopDamageListener(self._cop_damage_hook, callback(self, self, "damage_callback"))
@@ -107,69 +108,67 @@ if EHI:GetOption("show_floating_damage_popup_accumulate") then
     ---@param damage number
     function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker, damage)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
-            local hitPos = Vector3()
+            local pid = self:_pid(realAttacker)
+            if pid == self.pid and not self._show_my_damage then
+                return
+            elseif pid == 0 and not self._show_ai_damage then
+                return
+            elseif not self._show_crew_damage then
+                if pid > 0 and pid ~= self.pid then
+                    return
+                end
+            end
             local col_ray = damage_info.col_ray or {}
-            mvector3.set(hitPos, col_ray.position or damage_info.pos or col_ray.hit_position or self:_pos(c_dmg._unit))
-            if hitPos then
-                local pid = self:_pid(realAttacker)
-                if pid == self.pid and not self._show_my_damage then
-                    return
-                elseif pid == 0 and not self._show_ai_damage then
-                    return
-                elseif not self._show_crew_damage then
-                    if pid > 0 and pid ~= self.pid then
-                        return
-                    end
-                end
-                local unit = c_dmg._unit
-                local key
-                local isCrit = damage_info.critical_hit
-                local rDamage = damage >= 0 and damage or -damage
-                if damage < 0 and c_dmg._HEALTH_INIT then
-                    rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
-                end
-                local isSpecial = false ---@type boolean|string
-                if unit then
-                    local unitTweak = alive(unit) and unit:base() and unit:base()._tweak_table
-                    local statsTweak = unitTweak and unit:base()._stats_name or ""
-                    isSpecial = unitTweak and unit:base().has_tag and unit:base():has_tag("special") or self._special_units_id[statsTweak]
-                    key = unit.key and unit:key()
-                end
-                local death = c_dmg._dead
-                local color = (tweak_data.chat_colors[pid] or Color.white):with_alpha(death and 1 or 0.5)
-                local texts = {}
-                local n = 1
-                if isCrit then
-                    texts[n] = { '', Color.red }
-                    n = n + 1
-                end
-                if rDamage > 0 then
-                    texts[n] = { math.round(rDamage*10), isCrit and Color.yellow or color }
-                    n = n + 1
-                end
-                if damage_info.headshot then
-                    texts[n] = { '!', color:with_red(1) }
-                    n = n + 1
-                end
-                if death or isCrit then
-                    texts[n] = { '', isCrit and Color.red or isSpecial and Color.yellow or color }
-                    n = n + 1
-                end
+            local unit = c_dmg._unit
+            local hitPos = Vector3()
+            mvector3.set(hitPos, col_ray.position or damage_info.pos or col_ray.hit_position or self:_pos(unit))
+            local key
+            local isCrit = damage_info.critical_hit and self._highlight_crit_damage
+            local rDamage = damage >= 0 and damage or -damage
+            if damage < 0 and c_dmg._HEALTH_INIT then
+                rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
+            end
+            local isSpecial = false ---@type boolean|string
+            if unit then
+                local unitTweak = alive(unit) and unit:base() and unit:base()._tweak_table
+                local statsTweak = unitTweak and unit:base()._stats_name or ""
+                isSpecial = unitTweak and unit:base().has_tag and unit:base():has_tag("special") or self._special_units_id[statsTweak]
+                key = unit.key and unit:key()
+            end
+            local death = c_dmg._dead
+            local color = (tweak_data.chat_colors[pid] or Color.white):with_alpha(death and 1 or 0.5)
+            local texts = {}
+            local n = 1
+            if isCrit then
+                texts[n] = { '', Color.red }
+                n = n + 1
+            end
+            if rDamage > 0 then
+                texts[n] = { math.round(rDamage*10), isCrit and Color.yellow or color }
+                n = n + 1
+            end
+            if damage_info.headshot then
+                texts[n] = { '!', color:with_red(1) }
+                n = n + 1
+            end
+            if death or isCrit then
+                texts[n] = { '', isCrit and Color.red or isSpecial and Color.yellow or color }
+                n = n + 1
+            end
 
-                local pop_list = self.pops[pid]
-                if pop_list and key then
-                    local healed = damage_info.result.type == "healed"
-                    local t = isCrit and self._damage_crit_decay or self._damage_decay
-                    local pop = pop_list[key]
-                    if pop then
-                        pop:update_damage(texts, healed, isCrit, t, hitPos, rDamage)
-                    else
-                        pop_list[key] = EHIDamageFloat:new({ pos = hitPos, text = texts,
-                            pid = pid,
-                            t = t,
-                            damage = healed and 0 or rDamage
-                        })
-                    end
+            local pop_list = self.pops[pid]
+            if pop_list and key then
+                local healed = damage_info.result.type == "healed"
+                local t = isCrit and self._damage_crit_decay or self._damage_decay
+                local pop = pop_list[key]
+                if pop then
+                    pop:update_damage(texts, healed, isCrit, t, hitPos, rDamage)
+                else
+                    pop_list[key] = EHIDamageFloat:new({ pos = hitPos, text = texts,
+                        pid = pid,
+                        t = t,
+                        damage = healed and 0 or rDamage
+                    })
                 end
             end
         end
@@ -213,59 +212,57 @@ else
     ---@param damage number
     function EHIDamageFloatManager:damage_callback(c_dmg, damage_info, realAttacker, damage)
         if damage_info.col_ray or damage_info.is_synced or damage_info.variant == "poison" or damage_info.variant == "graze" then
-            local hitPos = Vector3()
-            local col_ray = damage_info.col_ray or {}
-            mvector3.set(hitPos, col_ray.position or damage_info.pos or col_ray.hit_position or self:_pos(c_dmg._unit))
-            if hitPos then
-                local pid = self:_pid(realAttacker)
-                if pid == self.pid and not self._show_my_damage then
+            local pid = self:_pid(realAttacker)
+            if pid == self.pid and not self._show_my_damage then
+                return
+            elseif pid == 0 and not self._show_ai_damage then
+                return
+            elseif not self._show_crew_damage then
+                if pid > 0 and pid ~= self.pid then
                     return
-                elseif pid == 0 and not self._show_ai_damage then
-                    return
-                elseif not self._show_crew_damage then
-                    if pid > 0 and pid ~= self.pid then
-                        return
-                    end
                 end
-                local unit = c_dmg._unit
-                local isCrit = damage_info.critical_hit
-                local rDamage = damage >= 0 and damage or -damage
-                if damage < 0 and c_dmg._HEALTH_INIT then
-                    rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
-                end
-                local isSpecial = false ---@type boolean|string
-                if unit then
-                    local base = alive(unit) and unit:base() ---@cast base -false
-                    local unitTweak = base and base._tweak_table
-                    local statsTweak = unitTweak and base._stats_name or ""
-                    isSpecial = unitTweak and base.has_tag and base:has_tag("special") or self._special_units_id[statsTweak]
-                end
-                local death = c_dmg._dead
-                local color = (tweak_data.chat_colors[pid] or Color.white):with_alpha(death and 1 or 0.5)
-                local texts = {}
-                local n = 1
-                if isCrit then
-                    texts[n] = { '', Color.red }
-                    n = n + 1
-                end
-                if rDamage > 0 then
-                    texts[n] = { math.round(rDamage*10), isCrit and Color.yellow or color }
-                    n = n + 1
-                end
-                if damage_info.headshot then
-                    texts[n] = { '!', color:with_red(1) }
-                    n = n + 1
-                end
-                if death or isCrit then
-                    texts[n] = { '', isCrit and Color.red or isSpecial and Color.yellow or color }
-                    n = n + 1
-                end
-
-                table.insert(self.pops, EHIDamageFloat:new({ pos = hitPos, text = texts,
-                    crit = isCrit,
-                    t = isCrit and self._damage_crit_decay or self._damage_decay
-                }))
             end
+            local unit = c_dmg._unit
+            local col_ray = damage_info.col_ray or {}
+            local hitPos = Vector3()
+            mvector3.set(hitPos, col_ray.position or damage_info.pos or col_ray.hit_position or self:_pos(c_dmg._unit))
+            local isCrit = damage_info.critical_hit and self._highlight_crit_damage
+            local rDamage = damage >= 0 and damage or -damage
+            if damage < 0 and c_dmg._HEALTH_INIT then
+                rDamage = math.min(c_dmg._HEALTH_INIT * rDamage / 100, c_dmg._health)
+            end
+            local isSpecial = false ---@type boolean|string
+            if unit then
+                local base = alive(unit) and unit:base() ---@cast base -false
+                local unitTweak = base and base._tweak_table
+                local statsTweak = unitTweak and base._stats_name or ""
+                isSpecial = unitTweak and base.has_tag and base:has_tag("special") or self._special_units_id[statsTweak]
+            end
+            local death = c_dmg._dead
+            local color = (tweak_data.chat_colors[pid] or Color.white):with_alpha(death and 1 or 0.5)
+            local texts = {}
+            local n = 1
+            if isCrit then
+                texts[n] = { '', Color.red }
+                n = n + 1
+            end
+            if rDamage > 0 then
+                texts[n] = { math.round(rDamage*10), isCrit and Color.yellow or color }
+                n = n + 1
+            end
+            if damage_info.headshot then
+                texts[n] = { '!', color:with_red(1) }
+                n = n + 1
+            end
+            if death or isCrit then
+                texts[n] = { '', isCrit and Color.red or isSpecial and Color.yellow or color }
+                n = n + 1
+            end
+
+            table.insert(self.pops, EHIDamageFloat:new({ pos = hitPos, text = texts,
+                crit = isCrit,
+                t = isCrit and self._damage_crit_decay or self._damage_decay
+            }))
         end
     end
 end

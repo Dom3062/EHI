@@ -1391,6 +1391,7 @@ local function LoadDefaultValues(self)
         show_floating_health_bar_special_enemies_other = true,
         show_floating_damage_popup = true,
         show_floating_damage_popup_accumulate = false,
+        show_floating_damage_highlight_crit_damage = true,
         show_floating_damage_popup_size = 22, -- 10 - 30
         show_floating_damage_popup_time_on_screen = 10, -- 2 - 15
         show_floating_damage_popup_my_damage = true,

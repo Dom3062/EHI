@@ -1,3 +1,12 @@
+r392 (24. 04. 2026):
+Assets: Added high res background for circle Buffs and Hudlist
+Added option "Highlight Crit Damage"
+Adjusted autorepair color in Tracker and Waypoint to be more in line with Hudlist
+Henry's Rock: Artifact in Archaeology is ignored until objective is enabled (Hudlist)
+Hudlist - Right List: Adjusted animations
+Hudlist - Right List - Stealth Info: Adjusted Bodybags item to correctly show warning color based on selected format
+Menu: Fixed an issue where colors in Hudlist are not loaded correctly (visual issue)
+
 r391 (21. 04. 2026):
 Hudlist - Left List - Timers: Fixed timers duplicating in online lobby with other players
 

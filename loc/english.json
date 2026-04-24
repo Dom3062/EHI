@@ -1259,6 +1259,9 @@
     "ehi_other_show_floating_damage_popup_accumulate" : "Accumulate Damage",
     "ehi_other_show_floating_damage_popup_accumulate_desc" : "Shows one floating damage popup that adds up all damage done to an enemy",
 
+    "ehi_other_show_floating_damage_highlight_crit_damage" : "Highlight Crit Damage",
+    "ehi_other_show_floating_damage_highlight_crit_damage_desc" : "Highlights every critical damage done\nDisabling this will show critical damage as normal damage",
+
     "ehi_other_show_floating_damage_popup_size" : "Size",
 
     "ehi_other_show_floating_damage_popup_time_on_screen" : "Time on Screen",

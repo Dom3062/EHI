@@ -319,6 +319,7 @@
             "default_value": true,
             "children" : [
                 "ehi_other_show_floating_damage_popup_accumulate_choice",
+                "ehi_other_show_floating_damage_highlight_crit_damage_choice",
                 "ehi_other_show_floating_damage_popup_size_choice",
                 "ehi_other_show_floating_damage_popup_time_on_screen_choice",
                 "ehi_other_show_floating_damage_popup_my_damage_choice",
@@ -334,6 +335,16 @@
             "callback": "ehi_set_item_value",
             "value": "show_floating_damage_popup_accumulate",
             "default_value": false,
+            "parent" : "ehi_other_show_floating_damage_popup_choice"
+        },
+        {
+            "type": "toggle",
+            "id": "ehi_other_show_floating_damage_highlight_crit_damage_choice",
+            "title": "ehi_other_show_floating_damage_highlight_crit_damage",
+            "description": "ehi_other_show_floating_damage_highlight_crit_damage_desc",
+            "callback": "ehi_set_item_value",
+            "value": "show_floating_damage_highlight_crit_damage",
+            "default_value": true,
             "parent" : "ehi_other_show_floating_damage_popup_choice"
         },
         {

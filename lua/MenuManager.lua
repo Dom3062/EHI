@@ -286,7 +286,7 @@ local function CreateMenuFromJson(content, data_table)
             elseif i_type == "color" then
                 local default_value = item.default_value
                 local settings_table = EHI.settings
-                if item.params then
+                if item.params and (item.params.setting or item.params.settings) then
                     if item.params.setting then
                         value = settings_table[item.params.setting]
                     elseif item.params.settings then

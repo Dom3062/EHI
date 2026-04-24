@@ -213,122 +213,6 @@ function EHIRightListBase:CreateItem(id, params)
     return data
 end
 
----@param items table
-function EHIRightListBase:CreateItems(items)
-    self._items = self._items or {} ---@type table<string, EHIRightListBase.Item>
-    self._itemized_items = self._itemized_items or {} ---@type EHIRightListBase.Item[]
-    self._n_of_items = self._n_of_items or 0
-    local w = 32 * self._SCALE
-    for _, item in ipairs(items) do
-        local panel = self._panel:panel({
-            alpha = 0,
-            w = w,
-            h = self._panel:h(), -- Scale is already applied here
-            visible = true
-        })
-        panel:set_right(self._RIGHT_OFFSET)
-        local progress
-        local progress_bar = Color(1, 1, 0.125, 1)
-        if self._PROGRESS == 1 then
-            progress = panel:bitmap({
-                render_template = "VertexColorTexturedRadialFlex",
-                layer = 2,
-                y = w,
-                w = w,
-                h = w,
-                texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
-                texture_rect = self._PROGRESS_RECT[1],
-                color = progress_bar,
-                visible = self._PROGRESS_VISIBILITY
-            })
-            panel:rect({
-                blend_mode = "normal",
-                halign = "grow",
-                alpha = self._BG_ALPHA,
-                layer = -1,
-                valign = "grow",
-                y = w,
-                w = w,
-                h = w,
-                color = self._BG_COLOR
-            })
-        else
-            progress = panel:bitmap({
-                render_template = "VertexColorTexturedRadial",
-                layer = 2,
-                y = w,
-                w = w,
-                h = w,
-                texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
-                texture_rect = self._PROGRESS_RECT[2],
-                color = progress_bar,
-                visible = self._PROGRESS_VISIBILITY
-            })
-            panel:bitmap({
-                alpha = self._BG_ALPHA,
-                layer = -1,
-                y = w,
-                w = w,
-                h = w,
-                texture = "guis/textures/pd2_mod_ehi/buffs/buff_cframe_bg",
-                color = self._BG_COLOR:with_alpha(0.2)
-            })
-        end
-        local text = panel:text({
-            name = "count",
-            y = w,
-            w = w,
-            h = w,
-            text = "0",
-            font = tweak_data.menu.pd2_large_font,
-            font_size = 24 * self._SCALE,
-            align = "center",
-            vertical = "center",
-            color = self._PROGRESS_COLOR
-        })
-        local texture, texture_rect = tweak_data.ehi.default.hudlist.get_icon(item.icon)
-        local icon = panel:bitmap({
-            name = "icon",
-            layer = 1,
-            w = w,
-            h = w,
-            texture = texture,
-            texture_rect = texture_rect,
-            color = params.icon.color or self._PROGRESS_COLOR
-        })
-        if item.icon.scale then
-            local w_new = w * item.icon.scale
-            local offset = math.abs(w - w_new) / 2
-            icon:set_size(w_new, w_new)
-            icon:move(offset, 0)
-        end
-        local pos = self._n_of_items + 1
-        local data = {
-            anims = {},
-            data = {},
-            panel = panel,
-            progress_bar = progress_bar,
-            progress = progress,
-            text = text,
-            count = 0,
-            i = pos,
-            visible = false
-        }
-        self._items[item.id] = data
-        self._itemized_items[pos] = data
-        self._n_of_items = pos
-    end
-end
-
----@param text Text
-function EHIRightListBase:FitTheText(text)
-    text:set_font_size(text:h())
-    local w = select(3, text:text_rect())
-    if w > text:w() then
-        text:set_font_size(text:font_size() * (text:w() / w))
-    end
-end
-
 function EHIRightListBase:set_visible()
     if self._visible then
         return
@@ -360,10 +244,13 @@ function EHIRightListBase:_update_items_visibility_fast()
     local items_visible = 0
     for _, item in ipairs(self._itemized_items) do
         local panel = item.panel
+        panel:stop()
+        item.anims.move = nil
+        item.anims.visibility = nil
         if item.force_visible or item.count > 0 then
             item.visible = true
-            panel:set_alpha(1)
             panel:set_right(right - offset)
+            panel:set_alpha(1)
             offset = offset + panel:w() + space
             items_visible = items_visible + 1
         else
@@ -394,10 +281,14 @@ function EHIRightListBase:_update_items_visibility()
                 end
                 item.anims.visibility = panel:animate(self._animate_item_visibility, a, 1)
             end
-            if item.anims.move then
-                panel:stop(item.anims.move)
+            if a <= 0 then -- Item's panel is not visible, set position right away so it does not "travel" across the screen
+                panel:set_right(right - offset)
+            else
+                if item.anims.move then
+                    panel:stop(item.anims.move)
+                end
+                item.anims.move = panel:animate(self._animate_item_right, right - offset)
             end
-            item.anims.move = panel:animate(self._animate_item_right, right - offset)
             offset = offset + panel:w() + space
             items_visible = items_visible + 1
         else
@@ -1495,7 +1386,7 @@ function EHIRightLootList:RegisterListeners(params)
     self._loot = {} ---@type table<userdata, string>
     self._ignored_loot = {} ---@type table<userdata, boolean>
     self._queued_loot = {} ---@type table<userdata, Unit>
-    Hooks:PreHook(CarryInteractionExt, "set_active", "EHI_CarryInteractionExt_EHIRightLootItem_set_active", function(interact, active, ...) ---@param active boolean
+    Hooks:PreHook(CarryInteractionExt, "set_active", "EHI_EHIRightLootList_CarryInteractionExt_set_active", function(interact, active, ...) ---@param active boolean
         if active and interact:disabled() then
             return
         elseif active ~= interact._active then
@@ -1529,7 +1420,7 @@ function EHIRightLootList:RegisterListeners(params)
         local preplanning = tweak_data.preplanning
         self._DEFERRED_GROUPS.potentional_loot = { text = { name = "Crate" }, icon = { texture = preplanning.gui.type_icons_path, texture_rect = preplanning:get_type_texture_rect(preplanning.types.ranc_marked_crate.icon) } }
         self._LOOT.potentional_loot = "potentional_loot"
-        Hooks:PreHook(UseInteractionExt, "set_active", "EHI_EHIRightLootItem_potentional_loot_UseInteractionExt_set_active", function(interact, active, ...) ---@param active boolean
+        Hooks:PreHook(UseInteractionExt, "set_active", "EHI_EHIRightLootList_potentional_loot_UseInteractionExt_set_active", function(interact, active, ...) ---@param active boolean
             if active and interact:disabled() then
                 return
             elseif self._POTENTIAL_LOOT[interact.tweak_data] then
@@ -1721,10 +1612,10 @@ function EHIRightLootList:ColorItemsBasedOnTheirWeight(light, heavy, body)
                         group.icon.color = color
                         group.text.color = color
                     elseif group.icon.color ~= color then
-                        EHI:Log(string.format("[EHIRightLootItem] Trying to assign a different color to type: '%s', carry_id: '%s' and loot group: '%s'; color was not changed!", type, id, redirect))
+                        EHI:Log(string.format("[EHIRightLootList] Trying to assign a different color to type: '%s', carry_id: '%s' and loot group: '%s'; color was not changed!", type, id, redirect))
                     end
                 else
-                    EHI:Log(string.format("[EHIRightLootItem] Color not found for type: '%s', carry_id: '%s' and loot group: '%s'", type, id, redirect))
+                    EHI:Log(string.format("[EHIRightLootList] Color not found for type: '%s', carry_id: '%s' and loot group: '%s'", type, id, redirect))
                 end
             end
         end
@@ -1744,6 +1635,18 @@ function EHIRightLootList:IgnoreCarry(key, carry_data, interact_active)
         self:_refresh_item(carry_data, -1)
     end
     self._queued_loot[key] = nil
+end
+
+---@param key userdata
+---@param carry_data CarryData
+---@param interact_active boolean
+function EHIRightLootList:CountCarry(key, carry_data, interact_active)
+    if table.remove_key(self._ignored_loot, key) and interact_active then
+        self._queued_loot[key] = nil
+        local carry_id = carry_data:carry_id()
+        self._loot[key] = carry_id
+        self:_refresh_item(nil, 1, carry_id)
+    end
 end
 
 ---@param key userdata
@@ -2100,6 +2003,12 @@ end
 ---@class EHIRightStealthList : EHIRightListBase
 ---@field super EHIRightListBase
 EHIRightStealthList = class(EHIRightListBase)
+EHIRightStealthList._ENUM =
+{
+    BothBodybags = 1,
+    PlacedBodybags = 2,
+    MineBodybags = 3
+}
 EHIRightStealthList._callback_key = "EHIRightStealthList"
 ---@param o Bitmap
 ---@param text Text
@@ -2122,6 +2031,7 @@ EHIRightStealthList._camera_is_enabled = function(item, key)
     return item.enabled and (item.active or Network:is_client())
 end
 function EHIRightStealthList:RegisterListeners(params)
+    self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(params.warning_index)
     self:CreateItem("alarm", {
         icon = { ehi = "pager_icon" }
     })
@@ -2219,46 +2129,58 @@ function EHIRightStealthList:RegisterListeners(params)
     Hooks:PostHook(SecurityCamera, "destroy", "EHI_EHIRightStealthItem_SecurityCamera_destroy", function(base, ...)
         self:CameraDespawned(base._unit:key())
     end)
-    self:CreateItem("bodybags", {
-        icon = {
-            texture = "guis/textures/pd2/skilltree/icons_atlas",
-            texture_rect = { 320, 704, 64, 64 }
-        },
-        force_visible = true
-    })
+    do -- Autoset warning color in case players start with 0 bodybags (rebalance, not possible in Vanilla)
+        local bb = self:CreateItem("bodybags", {
+            icon = {
+                texture = "guis/textures/pd2/skilltree/icons_atlas",
+                texture_rect = { 320, 704, 64, 64 }
+            },
+            force_visible = true
+        })
+        bb.data.needs_color_refresh = true
+        bb.text:set_color(self._warning_color)
+        self:SetColorTexture(bb.progress, self._warning_color_string)
+    end
     if params.bodybags_format == 1 then
         self._bodybags_macro = "$mine;/$placed;"
+        self._BODYBAGS_OPTION = self._ENUM.BothBodybags
     elseif params.bodybags_format == 2 then
         self._bodybags_macro = "$placed;/$mine;"
+        self._BODYBAGS_OPTION = self._ENUM.BothBodybags
     elseif params.bodybags_format == 3 then
         self._bodybags_macro = "$mine;"
+        self._BODYBAGS_OPTION = self._ENUM.MineBodybags
     else -- 4
         self._bodybags_macro = "$placed;"
+        self._BODYBAGS_OPTION = self._ENUM.PlacedBodybags
     end
-    self._bodybags_amount = 0
-    self._bodybags = {} ---@type table<userdata, integer>
-    ---@param equipment AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
-    local function destroy_equipment(equipment, ...)
-        self._bodybags[equipment._unit:key()] = nil
-        self:UpdateBodyBagsAmount()
-    end
-    Hooks:PostHook(BodyBagsBagBase, "init", "EHI_EHIRightStealthItem_BodyBagsBagBase_init", function(base, unit, ...) ---@param unit UnitDeployable
-        self._bodybags[unit:key()] = base._max_bodybag_amount
-        self:UpdateBodyBagsAmount()
-    end)
-    Hooks:PostHook(BodyBagsBagBase, "_set_visual_stage", "EHI_EHIRightStealthItem_BodyBagsBagBase__set_visual_stage", function(base, ...)
-        if base._bodybag_amount > 0 then
-            self._bodybags[base._unit:key()] = base._bodybag_amount
-            self:UpdateBodyBagsAmount()
+    if params.bodybags_format ~= 3 then
+        self._bodybags = {} ---@type table<userdata, integer>
+        ---@param equipment AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
+        local function destroy_equipment(equipment, ...)
+            self._bodybags[equipment._unit:key()] = nil
+            self:UpdateBodyBagsAmount(self._ENUM.PlacedBodybags)
         end
-    end)
-    Hooks:PreHook(BodyBagsBagBase, "_set_empty", "EHI_EHIRightStealthItem_BodyBagsBagBase__set_empty", destroy_equipment)
-    Hooks:PostHook(BodyBagsBagBase, "destroy", "EHI_EHIRightStealthItem_BodyBagsBagBase_destroy", destroy_equipment)
-    Hooks:PostHook(PlayerManager, "_set_body_bags_amount", "EHI_EHIRightStealthItem_PlayerManager__set_body_bags_amount", function(pm, ...)
-        self._bodybags_amount = pm._local_player_body_bags
-        self:UpdateBodyBagsAmount()
-    end)
-    self._warning_color, self._warning_color_string = tweak_data.ehi:GetBuffColorFromIndex(params.warning_index)
+        Hooks:PostHook(BodyBagsBagBase, "init", "EHI_EHIRightStealthItem_BodyBagsBagBase_init", function(base, unit, ...) ---@param unit UnitDeployable
+            self._bodybags[unit:key()] = base._max_bodybag_amount
+            self:UpdateBodyBagsAmount(self._ENUM.PlacedBodybags)
+        end)
+        Hooks:PostHook(BodyBagsBagBase, "_set_visual_stage", "EHI_EHIRightStealthItem_BodyBagsBagBase__set_visual_stage", function(base, ...)
+            if base._bodybag_amount > 0 then
+                self._bodybags[base._unit:key()] = base._bodybag_amount
+                self:UpdateBodyBagsAmount(self._ENUM.PlacedBodybags)
+            end
+        end)
+        Hooks:PreHook(BodyBagsBagBase, "_set_empty", "EHI_EHIRightStealthItem_BodyBagsBagBase__set_empty", destroy_equipment)
+        Hooks:PostHook(BodyBagsBagBase, "destroy", "EHI_EHIRightStealthItem_BodyBagsBagBase_destroy", destroy_equipment)
+    end
+    if params.bodybags_format ~= 4 then
+        self._bodybags_amount = 0
+        Hooks:PostHook(PlayerManager, "_set_body_bags_amount", "EHI_EHIRightStealthItem_PlayerManager__set_body_bags_amount", function(pm, ...)
+            self._bodybags_amount = pm._local_player_body_bags
+            self:UpdateBodyBagsAmount(self._ENUM.MineBodybags)
+        end)
+    end
 end
 
 function EHIRightStealthList:UnregisterListeners()
@@ -2272,11 +2194,15 @@ function EHIRightStealthList:UnregisterListeners()
     Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_set_update_enabled")
     Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_generate_cooldown")
     Hooks:RemovePostHook("EHI_EHIRightStealthItem_SecurityCamera_destroy")
-    Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase_init")
-    Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase__set_visual_stage")
-    Hooks:RemovePreHook("EHI_EHIRightStealthItem_BodyBagsBagBase__set_empty")
-    Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase_destroy")
-    Hooks:RemovePostHook("EHI_EHIRightStealthItem_PlayerManager__set_body_bags_amount")
+    if self._BODYBAGS_OPTION ~= self._ENUM.MineBodybags then
+        Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase_init")
+        Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase__set_visual_stage")
+        Hooks:RemovePreHook("EHI_EHIRightStealthItem_BodyBagsBagBase__set_empty")
+        Hooks:RemovePostHook("EHI_EHIRightStealthItem_BodyBagsBagBase_destroy")
+    end
+    if self._BODYBAGS_OPTION ~= self._ENUM.PlacedBodybags then
+        Hooks:RemovePostHook("EHI_EHIRightStealthItem_PlayerManager__set_body_bags_amount")
+    end
     for _, enemy in pairs(self._alarm_enemies_answered) do
         if alive(enemy) then
             enemy:base():remove_destroy_listener(self._callback_key)
@@ -2386,15 +2312,27 @@ function EHIRightStealthList:CameraDespawned(key)
     end
 end
 
-function EHIRightStealthList:UpdateBodyBagsAmount()
+---@param from_bodybag_index integer
+function EHIRightStealthList:UpdateBodyBagsAmount(from_bodybag_index)
+    if self._BODYBAGS_OPTION ~= self._ENUM.BothBodybags and self._BODYBAGS_OPTION ~= from_bodybag_index then
+        return
+    end
     local bb = self._items.bodybags
-    local previous_count = bb.count
-    local bodybags_amount = self:_get_all_bodybags_amount()
-    local final_count = self._bodybags_amount + bodybags_amount
-    bb.count = final_count
+    local previous_amount = bb.count
+    local current_amount, bodybags_amount = 0, 0
+    if self._BODYBAGS_OPTION == self._ENUM.BothBodybags then
+        bodybags_amount = self:_get_all_bodybags_amount()
+        current_amount = self._bodybags_amount + bodybags_amount
+    elseif self._BODYBAGS_OPTION == self._ENUM.PlacedBodybags then
+        bodybags_amount = self:_get_all_bodybags_amount()
+        current_amount = bodybags_amount
+    else -- self._ENUM.MineBodybags
+        current_amount = self._bodybags_amount
+    end
+    bb.count = current_amount
     bb.text:set_text(managers.localization:_text_macroize(self._bodybags_macro, { mine = self._bodybags_amount, placed = bodybags_amount }))
-    self:AnimateItem(bb, previous_count, final_count)
-    if bb.data.needs_color_refresh and final_count > 0 then
+    self:AnimateItem(bb, previous_amount, current_amount)
+    if bb.data.needs_color_refresh and current_amount > 0 then
         bb.data.needs_color_refresh = nil
         self:SetColorTexture(bb.progress, self._PROGRESS_COLOR_STRING)
     end

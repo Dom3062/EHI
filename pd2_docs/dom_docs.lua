@@ -2395,6 +2395,7 @@ end
 ---@field zipline fun(): ZipLine
 
 ---@class UnitDeployable : Unit
+---@field base fun(): AmmoBagBase|GrenadeCrateBase|FirstAidKitBase
 ---@field SetCountThisUnit fun(self: self) EHI added function
 ---@field SetIgnore fun(self: self) EHI added function
 ---@field SetIgnoreChild fun(self: self) EHI added function

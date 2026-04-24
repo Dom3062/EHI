@@ -145,12 +145,17 @@ function EHIRightList:AddItem(class, panel, params)
     return item
 end
 
-function EHIRightList:_set_items_y()
+---@param new_item EHIRightListBase
+function EHIRightList:_set_items_y(new_item)
     local y = self._options.y
     for _, item in ipairs(self._itemized_list) do
         if item:visible() then
             item._panel:stop()
-            item._panel:animate(self._set_y, y)
+            if item == new_item then -- Don't animate movement for the new item, just set Y coordinate
+                item._panel:set_y(y)
+            else
+                item._panel:animate(self._set_y, y)
+            end
             y = y + item._panel:h() + self._options.y_offset
         end
     end

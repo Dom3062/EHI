@@ -407,6 +407,11 @@ function EHILeftTimerList:CanAddTimer(id)
     return true
 end
 
+---@param id string
+function EHILeftTimerList:TimerExists(id)
+    return self._timers[id] ~= nil
+end
+
 ---@param params table
 function EHILeftTimerList:AddTimer(params)
     local t = params.time

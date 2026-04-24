@@ -12,9 +12,6 @@ function EHITimerWaypoint:post_init(params)
     self._warning = params.warning
     self._jammed = false
     self._not_powered = false
-    if params.autorepair then
-        self:SetAutorepair(true)
-    end
     if params.completion then
         self._warning = true
         self._warning_color = self._completion_color
@@ -68,7 +65,9 @@ function EHITimerWaypoint:SetRunning()
 end
 
 function EHITimerWaypoint:SetColorBasedOnStatus()
-    if self._not_powered then
+    if self._autorepair then
+        self:SetColor(self._autorepair_color)
+    elseif self._not_powered then
         self:SetColor(self._not_powered_color)
     elseif self._jammed then
         self:SetColor(self._paused_color)
@@ -84,14 +83,8 @@ end
 
 ---@param state boolean
 function EHITimerWaypoint:SetAutorepair(state)
-    if self._jammed then
-        if state then
-            self:AnimateColor(nil, self._autorepair_color, self._paused_color)
-        end
-    elseif not self._anim_started then
-        self._gui:stop()
-        self:SetColor()
-    end
+    self._autorepair = state
+    self:SetColorBasedOnStatus()
 end
 
 ---Workaround for crashes in `TimerGui:update(t, dt)`

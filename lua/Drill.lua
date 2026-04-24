@@ -52,21 +52,11 @@ if EHI.IsHost then
         end
     end
 else
-    -- Can't rely on Drill:on_autorepair() anymore as they changed autorepair chance to check every jam and not once the unit is placed or upgraded...
-    -- Very well done, OVK. WHYYYYYYYYYYYY
     original.sync_net_event = Drill.sync_net_event
     function Drill:sync_net_event(event_id, ...)
-        if event_id == HasAutorepair then
-            self._autorepair_client = true
-            SetAutorepair(tostring(self._unit:key()), true)
-        elseif event_id == NoAutorepair then
-            self._autorepair_client = nil
-            SetAutorepair(tostring(self._unit:key()), false)
+        if math.within(event_id, HasAutorepair, NoAutorepair) then
+            SetAutorepair(tostring(self._unit:key()), event_id == HasAutorepair)
         end
         original.sync_net_event(self, event_id, ...)
     end
-end
-
-function Drill:CanAutorepair()
-    return self._autorepair_clbk_id or self._autorepair_client
 end

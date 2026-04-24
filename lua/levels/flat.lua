@@ -89,6 +89,7 @@ if EHI:CanShowAchievement2("flat_5", "show_achievements_other") then
     function flat_5:PlayerDisconnected(peer_id)
         self._n_of_peers = self._n_of_peers - 1
         self._peers[peer_id] = nil
+        self:UpdateAllAccuracy()
     end
     ---@param peer_id integer
     ---@param shot_made integer

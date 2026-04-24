@@ -57,10 +57,11 @@ function SecurityLockGui:_start(...)
         end
     end
     if show_waypoint then
+        local interact = self._unit:interaction()
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
             time = self._current_timer,
             icon = HackIcon,
-            position = self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
+            position = interact and interact:interact_position() or self._unit:position(),
             class = "EHITimerWaypoint"
         })
     end

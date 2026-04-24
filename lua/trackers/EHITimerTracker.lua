@@ -33,7 +33,6 @@ function EHITimerTracker:post_init(params)
     self._theme = params.theme
     self._jammed = false
     self._not_powered = false
-    self:SetAutorepair(params.autorepair)
     self._animate_warning = params.warning
     if params.completion then
         self._animate_warning = true
@@ -224,16 +223,9 @@ end
 
 ---@param timer EHITimerGroupTracker.Timer
 ---@param check_progress boolean?
----@param color Color?
----@param text_color Color?
----@param autorepair boolean?
-function EHITimerGroupTracker:AnimateColor(timer, check_progress, color, text_color, autorepair)
+function EHITimerGroupTracker:AnimateColor(timer, check_progress)
     local start_t = check_progress and (1 - math.min(math.ehi_round(timer.time, 0.1) - math.floor(timer.time), 0.99)) or 1
-    if autorepair then
-        timer.anim_autorepair_started = timer.label:animate(self._anim_warning, text_color or self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
-    else
-        timer.anim_started = timer.label:animate(self._anim_warning, text_color or self._text_color, color or (timer.animate_completion and self._completion_color or self._warning_color), start_t, self)
-    end
+    timer.anim_started = timer.label:animate(self._anim_warning, self._text_color, timer.animate_completion and self._completion_color or self._warning_color, start_t, self)
 end
 
 ---@param t number
@@ -364,7 +356,9 @@ end
 ---@param timer EHITimerGroupTracker.Timer
 function EHITimerGroupTracker:SetTextColor(timer)
     local text = timer.label
-    if timer.not_powered then
+    if timer.autorepair then
+        text:set_color(self._autorepair_color)
+    elseif timer.not_powered then
         text:set_color(self._not_powered_color)
     elseif timer.jammed then
         text:set_color(self._paused_color)
@@ -381,15 +375,8 @@ end
 function EHITimerGroupTracker:SetAutorepair(state, id)
     local timer = self._timers[id]
     if timer then
-        if timer.jammed then
-            if state and not timer.anim_autorepair_started then
-                self:AnimateColor(timer, false, self._autorepair_color, self._paused_color, true)
-            end
-        elseif timer.anim_autorepair_started then
-            timer.label:stop(timer.anim_autorepair_started)
-            timer.label:set_color(Color.white)
-            timer.anim_autorepair_started = nil
-        end
+        timer.autorepair = state
+        self:SetTextColor(timer)
     end
 end
 

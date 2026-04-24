@@ -46,8 +46,9 @@ end
 function DigitalGui:TimerStartCountDown()
     if (self._ignore or not self._visible) and not self._ignore_visibility or self._timer <= 0 then
         return
-    elseif managers.ehi_timer:TimerExists(self._ehi_key) then
+    elseif managers.ehi_timer:TimerExists(self._ehi_key) or managers.ehi_hudlist:ReturnLeftListItemValue("Timer", "TimerExists", self._ehi_key) then
         managers.ehi_timer:SetJammed(self._ehi_key, false)
+        managers.ehi_hudlist:CallLeftListItemFunction("Timer", "SetJammed", self._ehi_key, false)
         return
     end
     if self.__EHI_SHOW_TRACKER then

@@ -133,20 +133,15 @@ function TimerGui:GetUpgrades()
     return upgrade_table, skills
 end
 
-function TimerGui:GetAutorepairState()
-    return self._unit:base():CanAutorepair()
-end
-
 ---@param t number
----@param autorepair boolean|string
-function TimerGui:AddWaypoint(t, autorepair)
+function TimerGui:AddWaypoint(t)
     if self.__EHI_SHOW_WAYPOINT then
+        local interact = self._unit:interaction()
         managers.ehi_waypoint:AddWaypoint(self._ehi_key, {
             time = t,
             timer_gui = self,
             icon = self._icons or self._ehi_icon[1].icon,
-            position = self._forced_pos or self._unit:interaction() and self._unit:interaction():interact_position() or self._unit:position(),
-            autorepair = autorepair,
+            position = self._forced_pos or interact and interact:interact_position() or self._unit:position(),
             class = (managers.ehi_timer:SharedMasterIsEnabled() and not self.__ehi_merge) and "EHITimerWaypoint" or "EHITimerGuiWaypoint"
         })
     end
@@ -209,7 +204,6 @@ function TimerGui:_start(...)
             return
         end
     end
-    local autorepair = self:GetAutorepairState()
     -- In case the conversion fails, fallback to "self._time_left" which is a number
     local t = tonumber(self._current_timer) or self._time_left
     if self.__EHI_SHOW_TRACKER then
@@ -229,14 +223,12 @@ function TimerGui:_start(...)
                 hint = self._ehi_hint,
                 group = self._ehi_group,
                 upgrades = upgrades,
-                skills = skills,
-                autorepair = autorepair
+                skills = skills
             })
         end
     end
-    self:AddWaypoint(t, autorepair)
+    self:AddWaypoint(t)
     if self.__EHI_SHOW_HUDLIST and managers.ehi_hudlist:ReturnLeftListItemValue("Timer", "CanAddTimer", self._original_ehi_key) then -- Playing in MP lobby with other people can double the timers probably due to the way how sequences and syncing works in this game
-        local upgrades, skills = self:GetUpgrades()
         managers.ehi_hudlist:CallLeftListItemFunction("Timer", "AddTimer", {
             id = self._original_ehi_key,
             time = t,
@@ -309,6 +301,7 @@ end
 
 function TimerGui:destroy(...)
     self:RemoveTracker(true)
+    EHI.Trigger:RemoveEventListener(self._original_ehi_key)
     original.destroy(self, ...)
 end
 
@@ -393,9 +386,9 @@ function TimerGui:SetCustomCallback(id, operation)
     if operation == "remove" then
         EHI:AddCallback(id, callback(self, self, "OnAlarm"))
     elseif operation == "add_waypoint" then
-        EHI.Trigger:AddEventListener(self._tracker_merge_id and tostring(self._unit:key()) or self._ehi_key, id, function()
+        EHI.Trigger:AddEventListener(self._original_ehi_key, id, function()
             if self._started and not self._done then
-                self:AddWaypoint(self._time_left, self:GetAutorepairState())
+                self:AddWaypoint(self._time_left)
             end
         end)
     end
@@ -433,7 +426,7 @@ function TimerGui:Finalize()
         managers.ehi_tracking:SetIcon(self._ehi_key, self._icons[1])
         managers.ehi_hudlist:CallLeftListItemFunction("Timer", "UpdateIcon", self._original_ehi_key, self._icons[1])
 	end
-    if self._started and not self._done and self._unit:mission_door_device() then
+    if self._started and self._unit:mission_door_device() and not self._done then
         self:PostStartTimer()
     end
 end

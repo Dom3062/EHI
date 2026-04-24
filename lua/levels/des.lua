@@ -116,19 +116,19 @@ if EHI.Mission._SHOW_MISSION_TRIGGERS_TYPE.cheaty then
     local SetIngredient = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         self._trackers:CallFunction("ChemSet", "SetIngredient", trigger.pos or 1, trigger.id)
     end)
+    local FunctionRedirect =
+    {
+        ChemSetCooking = "SetCooking",
+        ChemSetInterrupted = "SetInterrupted",
+        ChemSetReset = "SetReset"
+    }
     local ChemSet = EHI.Trigger:RegisterCustomSF(function(self, trigger, ...)
         if self._trackers:Exists("ChemSet") then
             if trigger.waypoint then
                 self._waypoints:RemoveWaypoint("ChemSetCooking")
                 self._waypoints:AddWaypoint(trigger.id, trigger.waypoint)
             end
-            if trigger.id == "ChemSetCooking" then
-                self._trackers:CallFunction("ChemSet", "SetCooking", trigger.time)
-            elseif trigger.id == "ChemSetInterrupted" then
-                self._trackers:CallFunction("ChemSet", "SetInterrupted", trigger.time)
-            else
-                self._trackers:CallFunction("ChemSet", "SetReset", trigger.time)
-            end
+            self._trackers:CallFunction("ChemSet", FunctionRedirect[trigger.id], trigger.time)
             return
         elseif trigger.id == "ChemSetInterrupted" then
             self._tracking:ForceRemove(trigger.data.id)
@@ -238,6 +238,25 @@ if EHI:GetLoadSniperTrackers(true) then
     other[EHI:GetInstanceElementID(100025, 8000)] = { id = "SnipersBlackhawk", special_function = SF.CallCustomFunction, f = "SnipersKilled", arg = { 23 } }
 end
 managers.ehi_hudlist:CallRightListItemFunction("Unit", "EnablePersistentSniperItem")
+if EHI:GetHudlistAndListOption("right_list", "show_loot") then
+    other[102491] = EHI:AddCustomCode(function(self)
+        local carry = managers.worlddefinition:get_unit(400511) ---@cast carry UnitCarry?
+        if carry then
+            local carry_data, interact = carry:carry_data(), carry:interaction()
+            if carry_data and interact then
+                managers.ehi_hudlist:CallRightListItemFunction("Loot", "CountCarry", carry:key(), carry_data, interact:active())
+            end
+        end
+    end)
+    if EHI.IsClient then
+        other[102491].load_sync = function(self) ---@param self EHIMissionElementTrigger
+            if self._utils:IsMissionElementEnabled(101506) then
+                return
+            end
+            self:Trigger()
+        end
+    end
+end
 
 EHI.Mission:ParseTriggers({
     mission = triggers,
@@ -274,7 +293,7 @@ end
 tbl[EHI:GetInstanceUnitID(100051, 29550)] = { tracker_merge_id = "HackChance" }
 
 EHI.Unit:UpdateUnits(tbl)
-EHI.Unit:IgnoreCarryInHudlist(101757, 400513, 400515, 400617) -- Alien head in the Biolab, 2 Maps + Dagger in the Archaeology
+EHI.Unit:IgnoreCarryInHudlist(101757, 400511, 400513, 400515, 400617) -- Alien head in the Biolab, Artifact + 2 Maps + Dagger in the Archaeology (Artifact is interactable, see above)
 EHI.Waypoint:DisableTimerWaypoints({
     -- Crane Fix WP
     [102467] = true,
