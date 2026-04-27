@@ -22,14 +22,15 @@ function EHIBuffManager:init_finalize(hud, panel)
     hud:AddEHIUpdator("EHI_Buff_Update", self)
     self._panel = panel:panel()
     local scale = EHI:GetOption("buffs_scale") --[[@as number]]
+    local text_scale = EHI:GetOption("buffs_text_scale") --[[@as number]]
     local buff_y = EHI:GetOption(_G.IS_VR and "buffs_vr_y_offset" or "buffs_y_offset") --[[@as number]]
     local buff_w = tweak_data.size_w * scale
     local buff_h = tweak_data.size_h * scale
-    self:_init_buffs(buff_y, buff_w, buff_h, scale)
-    self:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
+    self:_init_buffs(buff_y, buff_w, buff_h, scale, text_scale)
+    self:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale, text_scale)
     self:_init_buff_redirect()
     if EHI:GetOption("buffs_grouping") then
-        self:_init_buff_group(buff_y, buff_w, buff_h, scale)
+        self:_init_buff_group(buff_y, buff_w, buff_h, scale, text_scale)
     end
     self:_cleanup_unused_buff_classes()
     table.sort(self._skill_check_after_spawn or {}, function(a, b)
@@ -71,7 +72,8 @@ end
 ---@param buff_w number
 ---@param buff_h number
 ---@param scale number
-function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
+---@param text_scale number
+function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale, text_scale)
     local get_icon = tweak_data.ehi.default.buff.get_icon
     for id, buff in pairs(tweak_data.ehi.buff) do
         if buff.option and not EHI:GetBuffOption(buff.option) then
@@ -91,6 +93,7 @@ function EHIBuffManager:_init_buffs(buff_y, buff_w, buff_h, scale)
             params.no_progress = buff.no_progress
             params.max = buff.max
             params.scale = scale
+            params.text_scale = text_scale
             params.skill_check_after_spawn = buff.skill_check_after_spawn
             params.parent_buff = buff.parent_buff
             params.remove_on_alarm = buff.remove_on_alarm
@@ -146,7 +149,8 @@ end
 ---@param buff_w number
 ---@param buff_h number
 ---@param scale number
-function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
+---@param text_scale number
+function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale, text_scale)
     if not EHI:GetBuffDeckOption("tag_team", "tagged") then
         return
     end
@@ -175,6 +179,7 @@ function EHIBuffManager:_init_tag_team_buffs(buff_y, buff_w, buff_h, scale)
             params.text = "Paired"
             params.icon_color = tweak_data.chat_colors[i] or Color.white
             params.scale = scale
+            params.text_scale = text_scale
             params.permanent = permanent
             self:_create_buff(params, nil, nil, Tagged)
         end
@@ -211,7 +216,8 @@ end
 ---@param w number
 ---@param h number
 ---@param scale number
-function EHIBuffManager:_init_buff_group(y, w, h, scale)
+---@param text_scale number
+function EHIBuffManager:_init_buff_group(y, w, h, scale, text_scale)
     ---@class EHIGroupBuffTracker : EHIBuffTracker
     ---@field super EHIBuffTracker
     local Group = class(EHIBuffTracker)
@@ -238,6 +244,7 @@ function EHIBuffManager:_init_buff_group(y, w, h, scale)
             params.h = h
             params.text_localize = buff.text_localize
             params.scale = scale
+            params.text_scale = text_scale
             params.group = buff.group
             params.texture, params.texture_rect = get_icon(buff)
             if buff.permanent and EHI:GetBuffDeckOption("group", buff.permanent) then

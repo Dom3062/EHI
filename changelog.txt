@@ -1,3 +1,6 @@
+r393 (27. 04. 2026):
+Added "Text Scale" option for buffs
+
 r392 (24. 04. 2026):
 Assets: Added high res background for circle Buffs and Hudlist
 Added option "Highlight Crit Damage"

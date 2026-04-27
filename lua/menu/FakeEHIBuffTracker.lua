@@ -19,6 +19,7 @@ function FakeEHIBuffTracker:init(panel, params)
     self._show_progress = params.show_progress
     self._shape = params.shape
     self._scale = params.scale
+    self._text_scale = buff_w * params.text_scale
     self._time_format = params.time_format
     self._panel = panel:panel({
         w = buff_w,
@@ -86,7 +87,7 @@ function FakeEHIBuffTracker:init(panel, params)
         w = self._panel:w(),
         h = buff_w_half,
         font = tweak_data.menu.pd2_large_font,
-		font_size = buff_w_half,
+		font_size = self._text_scale,
         color = Color.white,
         align = "center",
         x = 0,
@@ -100,7 +101,7 @@ function FakeEHIBuffTracker:init(panel, params)
         w = self._panel:w(),
         h = self._panel:h() - self._panel:w() - buff_w_half,
         font = tweak_data.menu.pd2_large_font,
-		font_size = buff_w_half,
+		font_size = self._text_scale,
         color = Color.white,
         align = "center",
         vertical = "center",
@@ -130,12 +131,14 @@ function FakeEHIBuffTracker:init(panel, params)
 end
 
 ---@param scale number
+---@param text_scale number
 ---@param buff_w number
 ---@param buff_h number
 ---@param y number
-function FakeEHIBuffTracker:Rescale(scale, buff_w, buff_h, y)
+function FakeEHIBuffTracker:Rescale(scale, text_scale, buff_w, buff_h, y)
     local buff_w_half = buff_w / 2
     self._scale = scale
+    self._text_scale = buff_w * text_scale
     self._panel:set_size(buff_w, buff_h)
     self._icon:set_position(0, buff_w_half)
     self._icon:set_size(buff_w, buff_w)
@@ -148,10 +151,10 @@ function FakeEHIBuffTracker:Rescale(scale, buff_w, buff_h, y)
     self._panel:child("progress_circle"):set_y(buff_w_half)
     self._panel:child("progress_circle"):set_size(buff_w, buff_w)
     self._hint:set_size(buff_w, buff_w_half)
-    self._hint:set_font_size(buff_w_half)
+    self._hint:set_font_size(self._text_scale)
     self:FitTheText(self._hint)
     self._text:set_size(buff_w, buff_h - buff_w - buff_w_half)
-    self._text:set_font_size(buff_w_half)
+    self._text:set_font_size(self._text_scale)
     self._text:set_y(buff_w + buff_w_half)
     self:FitTheText(self._text)
     if self._show_progress then
@@ -165,6 +168,16 @@ function FakeEHIBuffTracker:Rescale(scale, buff_w, buff_h, y)
     self:SetY(y)
 end
 
+---@param scale number
+---@param buff_w number
+function FakeEHIBuffTracker:RescaleText(scale, buff_w)
+    self._text_scale = buff_w * scale
+    self._text:set_font_size(self._text_scale)
+    self._hint:set_font_size(self._text_scale)
+    self:FitTheText(self._text)
+    self:FitTheText(self._hint)
+end
+
 ---@param format integer
 function FakeEHIBuffTracker:UpdateTimeFormat(format)
     if self._time_format == format then
@@ -172,7 +185,6 @@ function FakeEHIBuffTracker:UpdateTimeFormat(format)
     end
     self._time_format = format
     self._text:set_text(self:Format())
-    self:FitTheText(self._text)
 end
 
 function FakeEHIBuffTracker:SetProgressRatio()

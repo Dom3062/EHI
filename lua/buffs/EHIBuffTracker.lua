@@ -74,6 +74,7 @@ function EHIBuffTracker:init(panel, params)
     local w_half = params.w / 2
     local progress_visible = progress and not params.no_progress
     local texture = textures[params.group or "default"]
+    self._text_scale = params.w * params.text_scale
     self._id = params.id --[[@as string]]
     self._panel = panel:panel({
         x = params.x,
@@ -124,7 +125,7 @@ function EHIBuffTracker:init(panel, params)
         w = params.w,
         h = w_half,
         font = tweak_data.menu.pd2_large_font,
-        font_size = w_half,
+        font_size = self._text_scale,
         color = color_buff_text and texture.color or Color.white,
         align = "center",
         alpha = show_hint and 1 or 0
@@ -136,7 +137,7 @@ function EHIBuffTracker:init(panel, params)
         w = params.w,
         h = params.h - params.w - w_half,
         font = tweak_data.menu.pd2_large_font,
-        font_size = w_half,
+        font_size = self._text_scale,
         color = color_buff_text and texture.color or Color.white,
         align = "center",
         vertical = "center",
@@ -178,7 +179,7 @@ end
 
 ---@param text Text
 function EHIBuffTracker:FitTheText(text)
-    text:set_font_size(self._panel:w() / 2)
+    text:set_font_size(self._text_scale)
     local w = select(3, text:text_rect())
     if w > text:w() then
         text:set_font_size(text:font_size() * (text:w() / w))

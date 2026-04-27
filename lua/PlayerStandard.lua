@@ -260,7 +260,7 @@ if EHI:GetBuffOption("interact") then
     original._start_action_interact = PlayerStandard._start_action_interact
     function PlayerStandard:_start_action_interact(...)
         original._start_action_interact(self, ...)
-        if self._interact_expire_t > 0 then
+        if self._interact_expire_t and self._interact_expire_t > 0 then
             managers.ehi_buff:AddBuff("Interact", self._interact_expire_t)
         end
     end

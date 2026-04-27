@@ -2,6 +2,7 @@ local EHI = EHI
 if EHI:CheckLoadHook("GamePlayCentralManager") then
     return
 end
+local DisabledUnits = EHI._cache.DisabledUnits
 
 local original =
 {
@@ -26,9 +27,10 @@ function GamePlayCentralManager:load(data, ...)
     local state = data.GamePlayCentralManager
     EHI._cache.DisabledUnits = nil
     EHI._cache.DisabledUnits = {}
+    DisabledUnits = EHI._cache.DisabledUnits
     if state.mission_disabled_units then
         for id, _ in pairs(state.mission_disabled_units) do
-            EHI._cache.DisabledUnits[id] = true
+            DisabledUnits[id] = true
         end
     end
     original.load(self, data, ...)
@@ -37,7 +39,7 @@ end
 
 ---@param id number
 function GamePlayCentralManager:IsMissionUnitDisabled(id)
-    return EHI._cache.DisabledUnits[id]
+    return DisabledUnits[id]
 end
 
 ---@param id number

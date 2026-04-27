@@ -2,6 +2,7 @@ local EHI = EHI
 if EHI:CheckLoadHook("EHIEnabledUnit") then
     return
 end
+local DisabledUnits = EHI._cache.DisabledUnits
 
 -- ElementEnableUnit is hooked after ElementDisableUnit
 Hooks:PostHook(ElementDisableUnit, "on_executed", "EHI_ElementDisableUnit_on_executed", function(self, ...)
@@ -10,7 +11,7 @@ Hooks:PostHook(ElementDisableUnit, "on_executed", "EHI_ElementDisableUnit_on_exe
     end
     for _, unit in ipairs(self._units) do
         if alive(unit) then
-            EHI._cache.DisabledUnits[unit:unit_data().unit_id] = true
+            DisabledUnits[unit:unit_data().unit_id] = true
         end
     end
 end)
@@ -21,7 +22,7 @@ Hooks:PostHook(ElementEnableUnit, "on_executed", "EHI_ElementEnableUnit_on_execu
     end
     for _, unit in ipairs(self._units) do
         if alive(unit) then
-            EHI._cache.DisabledUnits[unit:unit_data().unit_id] = nil
+            DisabledUnits[unit:unit_data().unit_id] = nil
         end
     end
 end)

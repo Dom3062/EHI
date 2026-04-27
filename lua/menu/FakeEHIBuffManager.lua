@@ -39,6 +39,7 @@ function FakeEHIBuffsManager:new(panel)
         visible = self._panel_visible and self._preview_visible or false
     })
     self:SetScale(EHI:GetOption("buffs_scale"))
+    self:SetTextScale(EHI:GetOption("buffs_text_scale"))
     self._x = EHI:GetOption("buffs_x_offset") --[[@as number]]
     self._y = EHI:GetOption("buffs_y_offset") --[[@as number]]
     self._n_visible = 0
@@ -53,6 +54,11 @@ function FakeEHIBuffsManager:SetScale(scale)
     self._scale = scale
     self._buff_w = self._tweak_data.size_w * scale
     self._buff_h = self._tweak_data.size_h * scale
+end
+
+---@param scale number
+function FakeEHIBuffsManager:SetTextScale(scale)
+    self._text_scale = scale
 end
 
 ---@param x number
@@ -115,6 +121,7 @@ function FakeEHIBuffsManager:_create_buff_params(buff, saferect_x, saferect_y)
     params.group = buff.group
     params.shape = self._buff_data.shape
     params.scale = self._scale
+    params.text_scale = self._text_scale
     params.show_progress = self._buff_data.show_progress
     params.saferect_x = saferect_x
     params.saferect_y = saferect_y
@@ -200,8 +207,17 @@ function FakeEHIBuffsManager:UpdateScale(scale)
         return
     end
     self:SetScale(scale)
-    self:UpdateBuffs("Rescale", scale, self._buff_w, self._buff_h, self._y)
+    self:UpdateBuffs("Rescale", scale, self._text_scale, self._buff_w, self._buff_h, self._y)
     self:_organize_buffs()
+end
+
+---@param scale number
+function FakeEHIBuffsManager:UpdateTextScale(scale)
+    if self._text_scale == scale then -- To stop flickering because menu is firing this up every frame even if the value match
+        return
+    end
+    self:SetTextScale(scale)
+    self:UpdateBuffs("RescaleText", scale, self._buff_w)
 end
 
 ---@param alignment number

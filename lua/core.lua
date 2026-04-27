@@ -897,6 +897,7 @@ local function LoadDefaultValues(self)
         buffs_vr_y_offset = 80,
         buffs_alignment = 2, -- 1 = Left; 2 = Center; 3 = Right
         buffs_scale = 1,
+        buffs_text_scale = 0.5,
         buffs_shape = 1, -- 1 = Square; 2 = Circle
         buffs_show_progress = true,
         buffs_invert_progress = false,

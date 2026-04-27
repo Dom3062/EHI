@@ -90,6 +90,23 @@
             }
         },
         {
+            "type": "slider",
+            "id": "ehi_buff_text_scale_choice",
+            "title": "ehi_text_scale",
+            "description": "ehi_text_scale_desc",
+            "callback": "ehi_set_item_value",
+            "value": "buffs_text_scale",
+            "default_value": 0.5,
+            "max": 2,
+            "min": 0.01,
+            "step": 0.01,
+            "params": {
+                "call_buff_function": {
+                    "f": "UpdateTextScale"
+                }
+            }
+        },
+        {
             "type": "multiple_choice",
             "id": "ehi_buffs_alignment_choice",
             "title": "ehi_buffs_alignment",
