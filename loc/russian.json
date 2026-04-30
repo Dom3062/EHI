@@ -497,7 +497,6 @@
     "ehi_bm_damage" : "Урон",
     "ehi_bm_max_damage" : "Максимальный урон",
     "ehi_bm_range" : "Диапазон",
-    "ehi_bm_base_cooldown" : "Базовый откат",
     "ehi_bm_duration" : "Продолжительность",
     "ehi_bm_cooldown_drain" : "Каждое убийство ускоряет перезарядку на %ss",
     "ehi_bm_instant" : "Мгновенный",

@@ -492,7 +492,6 @@
     "ehi_bm_damage" : "Daño",
     "ehi_bm_max_damage" : "Daño máximo",
     "ehi_bm_range" : "Alcance",
-    "ehi_bm_base_cooldown" : "Tiempo de enfriamiento base",
     "ehi_bm_duration" : "Duración",
     "ehi_bm_cooldown_drain" : "Cada enemigo que mates reduce %ss a su tiempo de enfriamiento.",
     "ehi_bm_instant" : "Instantánea",

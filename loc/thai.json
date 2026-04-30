@@ -665,7 +665,6 @@
     "ehi_bm_damage" : "ความเสียหาย",
     "ehi_bm_max_damage" : "ความเสียหายสูงสุด",
     "ehi_bm_range" : "ขอบเขต",
-    "ehi_bm_base_cooldown" : "ค่าฟื้นฟูพื้นฐาน",
     "ehi_bm_duration" : "ระยะเวลา",
     "ehi_bm_cooldown_drain" : "ศัตรูที่ถูกฆ่าแต่ละคนเพิ่มค่าฟื้นฟู %sวินาที",
     "ehi_bm_instant" : "ทันที",

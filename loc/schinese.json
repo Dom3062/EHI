@@ -850,7 +850,6 @@
     "ehi_bm_damage" : "伤害",
     "ehi_bm_max_damage" : "最大伤害",
     "ehi_bm_range" : "范围",
-    "ehi_bm_base_cooldown" : "基础冷却时间",
     "ehi_bm_duration" : "持续时间",
     "ehi_bm_cooldown_drain" : "每次击杀将减少%s秒冷却时间",
     "ehi_bm_instant" : "瞬发",

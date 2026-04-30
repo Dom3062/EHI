@@ -24,14 +24,26 @@ if not Global.load_level then
     end
 end
 
-local hide_original_desc = EHI:GetOption("hide_original_desc")
-
 local original =
 {
+    _setup = BlackMarketGui._setup,
     populate_deployables = BlackMarketGui.populate_deployables,
-    populate_grenades = BlackMarketGui.populate_grenades
+    populate_grenades = BlackMarketGui.populate_grenades,
+    _get_grenade_stats = BlackMarketGui._get_grenade_stats
 }
 
+function BlackMarketGui:_setup(...)
+    original._setup(self, ...)
+	if self._throwable_stats_shown then
+        for _, stat in ipairs(self._throwable_stats_shown) do
+            if stat.name == "range" then -- Add meters as suffix because in-game panel stats shows them in centimeters
+                stat.suffix = "m"
+            end
+        end
+    end
+end
+
+local hide_original_desc = EHI:GetOption("hide_original_desc")
 local strs = {}
 local percent_format = tweak_data.ehi:GetLanguageFormat().percent()
 EHI:AddOnLocalizationLoaded(function(loc, lang_name)
@@ -42,7 +54,6 @@ EHI:AddOnLocalizationLoaded(function(loc, lang_name)
     strs.dmg = loc:text("ehi_bm_damage")
     strs.range = loc:text("ehi_bm_range")
     strs.instant = loc:text("ehi_bm_instant")
-    strs.base_cooldown = loc:text("ehi_bm_base_cooldown")
     strs.duration = loc:text("ehi_bm_duration")
     strs.cooldown_drain = loc:text("ehi_bm_cooldown_drain")
     strs.dot = loc:text("ehi_bm_dot")
@@ -338,26 +349,26 @@ local GrenadeFormattingFunction =
 {
     molotov = function()
         local tweak = tweak_data.projectiles.molotov or {}
-        return string.format("\n> %s: %ss\n> %s", strs.duration, tostring(tweak.burn_duration or 0), FormatDOTData(tweak.dot_data_name, strs.fire))
+        return string.format("> %s: %ss\n> %s", strs.duration, tostring(tweak.burn_duration or 0), FormatDOTData(tweak.dot_data_name, strs.fire))
     end,
     wpn_prj_four = function()
-        return string.format("\n> %s", FormatDOTData("default_poison", -- Traced back in DOTManager:add_doted_enemy() [via BLT Hook]
+        return string.format("> %s", FormatDOTData("default_poison", -- Traced back in DOTManager:add_doted_enemy() [via BLT Hook]
         strs.poison))
     end,
     concussion = function()
         local accuracy = CopDamage._ON_STUN_ACCURACY_DECREASE or 0.5
         local accuracy_reset = CopDamage._ON_STUN_ACCURACY_DECREASE_TIME or 5
-        return string.format("\n> %s\n> %s", managers.localization:text("ehi_bm_concussion_1"), string.format(
+        return string.format("> %s\n> %s", managers.localization:text("ehi_bm_concussion_1"), string.format(
             managers.localization:text("ehi_bm_concussion_2"), tostring(accuracy * 100), percent_format, accuracy_reset
         ))
     end,
     fir_com = function()
         local tweak = tweak_data.projectiles.fir_com or {}
-        return string.format("\n> %s\n> %s", managers.localization:text("ehi_bm_fir_com"), FormatDOTData(tweak.dot_data_name, strs.fire))
+        return string.format("> %s\n> %s", managers.localization:text("ehi_bm_fir_com"), FormatDOTData(tweak.dot_data_name, strs.fire))
     end,
     poison_gas_grenade = function()
         local tweak = tweak_data.projectiles.poison_gas_grenade or {}
-        local str = string.format("\n> %s\n> %s", managers.localization:text("ehi_bm_poison_gas_grenade_1"), string.format("%s: (%s)", strs.poison, managers.localization:text("ehi_bm_poison_gas_grenade_2")))
+        local str = string.format("> %s\n> %s", managers.localization:text("ehi_bm_poison_gas_grenade_1"), string.format("%s: (%s)", strs.poison, managers.localization:text("ehi_bm_poison_gas_grenade_2")))
         local cloud_range = tweak.poison_gas_range or 0
         if cloud_range > 0 then
             str = string.format("%s\n>> %s: %sm", str, strs.range, tostring(cloud_range * 0.01))
@@ -370,11 +381,14 @@ local GrenadeFormattingFunction =
         return str
     end,
     sticky_grenade = function()
-        return string.format("\n> %s", managers.localization:text("ehi_bm_sticky_grenade"))
+        return string.format("> %s", managers.localization:text("ehi_bm_sticky_grenade"))
+    end,
+    laser_watch = function()
+        return string.format("> %s", managers.localization:text("ehi_bm_laser_watch"))
     end,
     ---
     chico_injector = function()
-        local str = string.format("\n> %s\n> %s", string.format(strs.cooldown_drain, "1"),
+        local str = string.format("> %s\n> %s", string.format(strs.cooldown_drain, "1"),
         string.format(managers.localization:text("ehi_bm_kingpin_1"), tostring((temp_upgrades.chico_injector[1][1] or 0) * 100), percent_format))
         if managers.player:upgrade_level("player", "chico_preferred_target") ~= 0 then
             str = string.format("%s\n> %s", str, managers.localization:text("ehi_bm_kingpin_2"))
@@ -392,7 +406,7 @@ local GrenadeFormattingFunction =
     end,
     smoke_screen_grenade = function()
         local grenade = tweak_data.projectiles.smoke_screen_grenade or {}
-        local str = string.format("\n> %s\n> %s\n> %s", string.format(strs.cooldown_drain, "1"),
+        local str = string.format("> %s\n> %s\n> %s", string.format(strs.cooldown_drain, "1"),
         string.format(managers.localization:text("ehi_bm_sicario_1"), tostring((grenade.dodge_chance or 0) * 100), percent_format),
         string.format(managers.localization:text("ehi_bm_sicario_2"), tostring((grenade.accuracy_roll_chance or 0) * 100), percent_format))
         if managers.player:upgrade_level("player", "sicario_multiplier") ~= 0 then
@@ -404,7 +418,7 @@ local GrenadeFormattingFunction =
         return str
     end,
     damage_control = function()
-        local str = string.format("\n> %s\n> %s", string.format(strs.cooldown_drain, "1"), string.format(managers.localization:text("ehi_bm_stoic_1")))
+        local str = string.format("> %s\n> %s", string.format(strs.cooldown_drain, "1"), string.format(managers.localization:text("ehi_bm_stoic_1")))
         if managers.player:upgrade_level("player", "damage_control_cooldown_drain") == 2 then
             local damage_control_cooldown_drain = player_upgrades.damage_control_cooldown_drain or {}
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_stoic_2"), tostring(damage_control_cooldown_drain[2][1] or 0), percent_format,
@@ -414,7 +428,7 @@ local GrenadeFormattingFunction =
     end,
     tag_team = function()
         local health_gain = player_upgrades.tag_team_base[1].kill_health_gain or 0
-        local str = string.format("\n> %s", string.format(managers.localization:text("ehi_bm_tagteam_1"),
+        local str = string.format("> %s", string.format(managers.localization:text("ehi_bm_tagteam_1"),
         health_gain * 10, health_gain * (player_upgrades.tag_team_base[1].tagged_health_gain_ratio or 0) * 10))
         local tag_team_cooldown_drain_level = managers.player:upgrade_level("player", "tag_team_cooldown_drain")
         if tag_team_cooldown_drain_level ~= 0 then
@@ -435,7 +449,7 @@ local GrenadeFormattingFunction =
         return str
     end,
     pocket_ecm_jammer = function()
-        local str = string.format("\n> %s", string.format(strs.cooldown_drain, tostring(CooldownDrain.pocket_ecm_jammer)))
+        local str = string.format("> %s", string.format(strs.cooldown_drain, tostring(CooldownDrain.pocket_ecm_jammer)))
         if managers.player:upgrade_level("player", "pocket_ecm_heal_on_kill") ~= 0 then
             str = string.format("%s\n> %s", str, string.format(managers.localization:text("ehi_bm_hacker_1"), (player_upgrades.pocket_ecm_heal_on_kill[1] or 0) * 10))
         end
@@ -454,7 +468,7 @@ local GrenadeFormattingFunction =
         local copr_static_damage_ratio = player_upgrades.copr_static_damage_ratio
         local copr_static_damage_ratio_level = managers.player:upgrade_level("player", "copr_static_damage_ratio", 1)
         local segments = 1 / copr_static_damage_ratio[copr_static_damage_ratio_level]
-        local str = string.format("\n> %s\n> %s\n> %s\n> %s", string.format(managers.localization:text("ehi_bm_leech_1"), tostring((player_upgrades.copr_activate_bonus_health_ratio[1] or 0) * 100), percent_format),
+        local str = string.format("> %s\n> %s\n> %s\n> %s", string.format(managers.localization:text("ehi_bm_leech_1"), tostring((player_upgrades.copr_activate_bonus_health_ratio[1] or 0) * 100), percent_format),
         string.format(managers.localization:text("ehi_bm_leech_2")),
         string.format(managers.localization:text("ehi_bm_leech_3"), tostring(player_upgrades.copr_kill_life_leech[1] or 0), "1"),
         string.format(managers.localization:text("ehi_bm_leech_4"), tostring(segments), tostring(player_upgrades.copr_kill_life_leech[1] or 0), tostring((copr_high_damage_multiplier[1] or 0) * 10), tostring(copr_high_damage_multiplier[2] or 0)))
@@ -476,13 +490,11 @@ function BlackMarketGui:populate_grenades(data, ...)
     original.populate_grenades(self, data, ...)
     AbilityDuration.copr_ability = managers.player:upgrade_value("temporary", "copr_ability", temp_upgrades.copr_ability[1] or {})[2] or 0
     local projectile_tweak = tweak_data.blackmarket.projectiles
-    local grenade_tweak = tweak_data.projectiles
     for _, grenade_data in ipairs(data) do
         if type(grenade_data) == "table" and grenade_data.name ~= "empty" then
             local grenade = grenade_data.name
             local projectile = projectile_tweak[grenade] or {}
             local grenade_desc = projectile.desc_id
-            grenade_data.name_localized = string.format("%s (x%s)", grenade_data.name_localized, tostring(projectile.max_amount or 1))
             RestoreVanillaText(grenade_desc)
             if projectile.ability or grenade == "smoke_screen_grenade" then
                 local duration = AbilityDuration[grenade] or 0 --[[@as number|string]]
@@ -493,9 +505,9 @@ function BlackMarketGui:populate_grenades(data, ...)
                 else
                     duration = duration .. "s"
                 end
-                local str = string.format("> %s: %ds\n> %s: %s", strs.base_cooldown, (projectile.base_cooldown or 0), strs.duration, duration)
+                local str = string.format("> %s: %s", strs.duration, duration)
                 if GrenadeFormattingFunction[grenade] then
-                    str = str .. GrenadeFormattingFunction[grenade]()
+                    str = string.format("%s\n%s", str, GrenadeFormattingFunction[grenade]())
                 end
                 if hide_original_desc then
                     AddCustomText(grenade_desc, str)
@@ -504,25 +516,30 @@ function BlackMarketGui:populate_grenades(data, ...)
                     AddCustomText(grenade_desc, string.format("%s\n%s", desc, str))
                 end
             else
-                local tweak = grenade_tweak[grenade] or {}
-                local damage = tweak.damage or 0
-                local str = string.format("> %s: %d", (tweak.curve_pow and damage > 0) and strs.max_dmg or strs.dmg, (damage * 10))
-                if tweak.range then
-                    str = string.format("%s\n> %s: %sm", str, strs.range, tostring(tweak.range * 0.01))
-                end
+                local str = ""
                 if projectile.is_a_grenade and not projectile.impact_detonation then
-                    str = string.format("%s\n> %s", str, strs.no_impact_detonation)
+                    str = string.format("> %s", strs.no_impact_detonation)
                 end
                 if GrenadeFormattingFunction[grenade] then
-                    str = str .. GrenadeFormattingFunction[grenade]()
+                    local f_str = GrenadeFormattingFunction[grenade]()
+                    str = str == "" and f_str or string.format("%s\n%s", str, f_str)
                 end
                 if hide_original_desc then
                     AddCustomText(grenade_desc, str)
-                else
+                elseif str ~= "" then
                     local desc = managers.localization:text(grenade_desc)
                     AddCustomText(grenade_desc, string.format("%s\n%s", desc, str))
                 end
             end
         end
     end
+end
+
+function BlackMarketGui:_get_grenade_stats(...)
+    local base_stats, mods_stats, skill_stats = original._get_grenade_stats(self, ...)
+    local range = base_stats.range and base_stats.range.value or 0
+    if range > 0 then -- Convert cm to m (suffix was added in "_setup()")
+        base_stats.range.value = range / 100
+    end -- mods_stats and skill_stats are not currently used, however, return them in case future updates will use them (to avoid crashing)
+	return base_stats, mods_stats, skill_stats
 end
