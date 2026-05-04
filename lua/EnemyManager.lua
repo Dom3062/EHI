@@ -109,7 +109,7 @@ if EHI:CanShowCivilianCountTracker() then
     EHI:LoadTracker("EHICivilianCountTracker")
     local CountCivilian = tweak_data.ehi.functions.CountCivilian
     local spawned = false
-    ---@param count number
+    ---@param count integer
     local function CreateTracker(count)
         if spawned then
             managers.ehi_tracker:AddTracker({

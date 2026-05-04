@@ -1,3 +1,4 @@
+local EHI = EHI
 ---@class EHIFuelCheckingTracker : EHIPausableTracker
 local EHIFuelCheckingTracker = class(EHIPausableTracker)
 ---@param delay number
@@ -6,10 +7,12 @@ function EHIFuelCheckingTracker:AddDelay(delay)
 end
 
 ---@class EHIFuelCheckingWaypoint : EHIPausableWaypoint
-local EHIFuelCheckingWaypoint = class(EHIPausableWaypoint)
-EHIFuelCheckingWaypoint.AddDelay = EHIFuelCheckingTracker.AddDelay
+local EHIFuelCheckingWaypoint
+if EHI.Mission._SHOW_MISSION_WAYPOINTS then
+    EHIFuelCheckingWaypoint = class(EHIPausableWaypoint) --[[@as EHIFuelCheckingWaypoint]]
+    EHIFuelCheckingWaypoint.AddDelay = EHIFuelCheckingTracker.AddDelay
+end
 
-local EHI = EHI
 local Icon = EHI.Icons
 local SF = EHI.SpecialFunctions
 local CF = EHI.ConditionFunctions

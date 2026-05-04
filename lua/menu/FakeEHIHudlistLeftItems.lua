@@ -7,10 +7,7 @@ local template2 = Idstring("VertexColorTexturedRadialFlex")
 ---@field new fun(self: self, panel: Panel, params: table, texture: string, texture_rect: TextureRect): self
 FakeEHILeftListBase = class()
 FakeEHILeftListBase._COLOR_CHANGE_AFFECTS_WHOLE_ITEM = true
-FakeEHILeftListBase._PROGRESS_RECT = {
-    { 32, 0, -32, 32 },
-    { 128, 0, -128, 128 }
-}
+FakeEHILeftListBase._PROGRESS_RECT = { 128, 0, -128, 128 }
 ---@param panel Panel
 ---@param params table
 ---@param texture string
@@ -254,7 +251,7 @@ function FakeEHILeftListBase:AddItem(i, params, scale, bg_alpha, progress_alpha,
         w = w,
         h = w,
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", color_string),
-        texture_rect = self._PROGRESS_RECT[1],
+        texture_rect = self._PROGRESS_RECT,
         color = progress_bar,
         visible = self._params.progress == 1 and self._params.progress_visibility
     })
@@ -278,7 +275,7 @@ function FakeEHILeftListBase:AddItem(i, params, scale, bg_alpha, progress_alpha,
         w = w,
         h = w,
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", color_string),
-        texture_rect = self._PROGRESS_RECT[2],
+        texture_rect = self._PROGRESS_RECT,
         color = progress_bar,
         visible = self._params.progress == 2 and self._params.progress_visibility
     })
@@ -449,7 +446,7 @@ function FakeEHILeftListBase:SetItemProgressColor(pos, clr)
         item.panel:child("icon"):set_color(color) ---@diagnostic disable-line
     end
     for i, obj in ipairs(item.progress_to_update) do
-        obj:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", i == 1 and "sframe" or "cframe", color_string), unpack(self._PROGRESS_RECT[i]))
+        obj:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", i == 1 and "sframe" or "cframe", color_string), unpack(self._PROGRESS_RECT))
     end
 end
 
@@ -560,7 +557,7 @@ function FakeEHILeftListBase:UpdateItemsColor(color_index)
                 item.panel:child("icon"):set_color(color) ---@diagnostic disable-line
             end
             for i, bitmap in ipairs(item.progress_only) do
-                bitmap:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", i == 1 and "sframe" or "cframe", color_string), unpack(self._PROGRESS_RECT[i] or self._PROGRESS_RECT[2]))
+                bitmap:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", i == 1 and "sframe" or "cframe", color_string), unpack(self._PROGRESS_RECT))
             end
         end
     end
@@ -647,7 +644,7 @@ function FakeEHILeftMinionList:_AddItem(data, panel, y, progress_bar, scale, bg_
         w = w,
         h = w,
         texture = "guis/textures/pd2/hud_health",
-        texture_rect = self._PROGRESS_RECT[2],
+        texture_rect = self._PROGRESS_RECT,
         color = progress_bar,
         visible = false
     })
@@ -658,7 +655,7 @@ function FakeEHILeftMinionList:_AddItem(data, panel, y, progress_bar, scale, bg_
         w = w,
         h = w,
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", color_string),
-        texture_rect = self._PROGRESS_RECT[2],
+        texture_rect = self._PROGRESS_RECT,
         visible = false
     })
     progress[3] = panel:bitmap({

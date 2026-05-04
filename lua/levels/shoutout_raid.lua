@@ -21,11 +21,13 @@ function EHIVaultTemperatureTracker:CheckTime(time)
     self._synced_time = time
 end
 
----@class EHIVaultTemperatureWaypoint : EHIWaypoint
----@field super EHIWaypoint
-EHIVaultTemperatureWaypoint = class(EHIWaypoint)
-EHIVaultTemperatureWaypoint.pre_init = EHIVaultTemperatureTracker.pre_init
-EHIVaultTemperatureWaypoint.CheckTime = EHIVaultTemperatureTracker.CheckTime
+if EHI:GetWaypointOption("show_waypoints_timers") then
+    ---@class EHIVaultTemperatureWaypoint : EHIWaypoint
+    ---@field super EHIWaypoint
+    EHIVaultTemperatureWaypoint = class(EHIWaypoint)
+    EHIVaultTemperatureWaypoint.pre_init = EHIVaultTemperatureTracker.pre_init
+    EHIVaultTemperatureWaypoint.CheckTime = EHIVaultTemperatureTracker.CheckTime
+end
 
 local ovk_and_up = EHI:IsDifficultyOrAbove(EHI.Difficulties.OVERKILL)
 local trophy = {

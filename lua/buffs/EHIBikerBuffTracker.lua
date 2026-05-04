@@ -12,8 +12,7 @@ function EHIBikerBuffTracker:PreUpdate()
     self._hint:set_text("0")
     self._f = function(...)
         -- Old kills were purged here before our post hook is called, no need to purge them again
-        local kills = #self._wild_kill_triggers
-        self:Trigger(kills)
+        self:Trigger(#self._wild_kill_triggers)
     end
     self:SetCustodyState(false)
 end
@@ -74,11 +73,10 @@ end
 
 -- Check again if there are still kills, but first, purge old kills so they don't mess up with the calculation
 function EHIBikerBuffTracker:Retrigger()
-    local kills = self._wild_kill_triggers -- Optimized for speed access
+    local kills = self._wild_kill_triggers
     local t = Application:time()
     while kills[1] and t >= kills[1] do
         table.remove(kills, 1)
     end
-    local n = #kills
-    self:Trigger(n)
+    self:Trigger(#kills)
 end

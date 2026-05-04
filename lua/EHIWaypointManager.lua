@@ -10,7 +10,9 @@ EHIWaypointManager._bitmap_w = 32
 EHIWaypointManager._bitmap_h = 32
 EHIWaypointManager._vanilla_waypoint_show_distance = false
 function EHIWaypointManager:post_init()
-    EHIWaypoint._parent_class = self
+    if EHIWaypoint then
+        EHIWaypoint._parent_class = self
+    end
     self._t = 0
     self._enabled = EHI:GetOption("show_waypoints") --[[@as boolean]]
     self._present_timer = EHI:GetOption("show_waypoints_present_timer") --[[@as number]]
@@ -745,7 +747,7 @@ function EHIWaypointManager:ReturnValue2(id, f, ...)
     return wp[f](wp, ...)
 end
 
-do
+if EHI:GetOption("show_waypoints") then
     local path = EHI.LuaPath .. "waypoints/"
     dofile(path .. "EHIWaypoint.lua")
     dofile(path .. "EHIWarningWaypoint.lua")

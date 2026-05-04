@@ -78,7 +78,6 @@ EHI.TrackerUtils.Deployables =
 {
     super = EHI
 }
------@param params { shapes: { pos: Vector3, rot: Rotation, width: number, depth: number, height: number }[], element_area_id: number }
 ---@param params { shapes: number[], element_area_id: number }
 ---@param load_sync_f fun(self: EHIMissionElementTrigger)?
 ---@return ElementTrigger?

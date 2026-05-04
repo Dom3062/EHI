@@ -1,3 +1,8 @@
+r395 (04. 05. 2026):
+Assets: Added high res square for Buffs and Hudlist
+Hudlist - Right List - Units: Fixed an issue where tied and un-tied civilians items could flicker and get stuck in each other while civilian hostage is moving (host only)
+Waypoints: Waypoints are not loaded when disabled; improves game load speed and reduces memory consumption
+
 r394 (30. 04. 2026):
 Updated to U245
 

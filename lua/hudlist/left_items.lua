@@ -12,10 +12,7 @@
 EHILeftListBase = class()
 EHILeftListBase._BOTTOM_TEXT = true
 EHILeftListBase._INIT_BOTTOM_TEXT = true
-EHILeftListBase._PROGRESS_RECT = {
-    { 32, 0, -32, 32 },
-    { 128, 0, -128, 128 }
-}
+EHILeftListBase._PROGRESS_RECT = { 128, 0, -128, 128 }
 ---@param o Panel
 EHILeftListBase._set_visible = function(o)
     local t, total = 0, 0.15
@@ -161,7 +158,7 @@ function EHILeftListBase:AddItem(...)
             w = w,
             h = w,
             texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
-            texture_rect = self._PROGRESS_RECT[1],
+            texture_rect = self._PROGRESS_RECT,
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY and not self._PROGRESS_STATIC
         })
@@ -173,7 +170,7 @@ function EHILeftListBase:AddItem(...)
                 w = w,
                 h = w,
                 texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
-                texture_rect = self._PROGRESS_RECT[1]
+                texture_rect = self._PROGRESS_RECT
             })
         end
         panel:rect({
@@ -196,7 +193,7 @@ function EHILeftListBase:AddItem(...)
             w = w,
             h = w,
             texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
-            texture_rect = self._PROGRESS_RECT[2],
+            texture_rect = self._PROGRESS_RECT,
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY and not self._PROGRESS_STATIC
         })
@@ -208,7 +205,7 @@ function EHILeftListBase:AddItem(...)
                 w = w,
                 h = w,
                 texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
-                texture_rect = self._PROGRESS_RECT[2]
+                texture_rect = self._PROGRESS_RECT
             })
         end
         panel:bitmap({
@@ -339,10 +336,9 @@ end
 function EHILeftListBase:SetColorTexture(item, color)
     local texture = self._PROGRESS == 1 and "sframe" or "cframe"
     local path = string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color)
-    local rect = self._PROGRESS_RECT[self._PROGRESS]
-    item.progress:set_image(path, unpack(rect))
+    item.progress:set_image(path, unpack(self._PROGRESS_RECT))
     if item.progress_static then
-        item.progress_static:set_image(path, unpack(rect))
+        item.progress_static:set_image(path, unpack(self._PROGRESS_RECT))
     end
 end
 
@@ -786,7 +782,7 @@ function EHILeftMinionList:CustomProgress(panel, y, progress_bar)
         w = w,
         h = w,
         texture = "guis/textures/pd2/hud_health",
-        texture_rect = self._PROGRESS_RECT[2],
+        texture_rect = self._PROGRESS_RECT,
         color = progress_bar
     })
     local static = panel:bitmap({
@@ -795,7 +791,7 @@ function EHILeftMinionList:CustomProgress(panel, y, progress_bar)
         w = w,
         h = w,
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
-        texture_rect = self._PROGRESS_RECT[2],
+        texture_rect = self._PROGRESS_RECT,
         visible = self._PROGRESS_VISIBILITY
     })
     panel:bitmap({

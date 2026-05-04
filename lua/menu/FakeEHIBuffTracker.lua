@@ -6,8 +6,7 @@ end
 ---@field super EHIBuffTracker
 ---@field _FORCE_INVERT boolean
 FakeEHIBuffTracker = class(EHIBuffTracker)
-FakeEHIBuffTracker._rect_circle = { 128, 0, -128, 128 }
-FakeEHIBuffTracker._rect_square = { 32, 0, -32, 32 }
+FakeEHIBuffTracker._PROGRESS_RECT = { 128, 0, -128, 128 }
 FakeEHIBuffTracker._gap = tweak_data.ehi.default.buff.gap
 ---@param panel Panel
 ---@param params table
@@ -30,7 +29,6 @@ function FakeEHIBuffTracker:init(panel, params)
         texture = params.texture,
         texture_rect = params.texture_rect,
         color = is_cooldown and Color.red or Color.white,
-        x = 0,
         y = buff_w_half,
         w = buff_w,
         h = buff_w
@@ -38,7 +36,6 @@ function FakeEHIBuffTracker:init(panel, params)
 	self._panel:rect({
 		blend_mode = "normal",
 		name = "bg_square",
-        x = 0,
         y = buff_w_half,
         w = buff_w,
         h = buff_w,
@@ -52,7 +49,6 @@ function FakeEHIBuffTracker:init(panel, params)
     self._panel:bitmap({
         name = "bg_circle",
         layer = -1,
-        x = 0,
         y = buff_w_half,
         w = buff_w,
         h = buff_w,
@@ -68,7 +64,7 @@ function FakeEHIBuffTracker:init(panel, params)
         w = self._icon:w(),
         h = self._icon:h(),
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", is_cooldown and "red" or "white"),
-        texture_rect = self._rect_circle,
+        texture_rect = self._PROGRESS_RECT,
         visible = self._shape == 2 and self._show_progress
     })
     self._panel:bitmap({
@@ -79,7 +75,7 @@ function FakeEHIBuffTracker:init(panel, params)
         w = self._icon:w(),
         h = self._icon:h(),
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", is_cooldown and "red" or "white"),
-        texture_rect = self._rect_square,
+        texture_rect = self._PROGRESS_RECT,
         visible = self._shape == 1 and self._show_progress
     })
     self._hint = self._panel:text({
@@ -90,22 +86,20 @@ function FakeEHIBuffTracker:init(panel, params)
 		font_size = self._text_scale,
         color = Color.white,
         align = "center",
-        x = 0,
-        y = 0,
         visible = params.hint_visible
     })
     self:FitTheText(self._hint)
     self:SetProgressRatio()
     self._text = self._panel:text({
         text = self:Format(),
+        y = self._panel:w() + buff_w_half,
         w = self._panel:w(),
         h = self._panel:h() - self._panel:w() - buff_w_half,
         font = tweak_data.menu.pd2_large_font,
 		font_size = self._text_scale,
         color = Color.white,
         align = "center",
-        vertical = "center",
-        y = self._panel:w() + buff_w_half,
+        vertical = "center"
     })
     self:FitTheText(self._text)
     self._panel:set_center_x(panel:center_x())
@@ -219,17 +213,17 @@ function FakeEHIBuffTracker:SetCenterPos(center_x, pos, center_pos, even)
         local final_x = self._panel_w_move + (self._panel_w_gap * n)
         if pos < center_pos then
             final_x = final_x - self._panel_w_gap
-            self._panel:set_x(self._panel:x() - final_x)
+            self._panel:move(-final_x, 0)
         else
-            self._panel:set_x(self._panel:x() + final_x)
+            self._panel:move(final_x, 0)
         end
     elseif pos ~= center_pos then
         local n = math.abs(center_pos - pos)
         local final_x = self._panel_w_gap * n
         if pos < center_pos then
-            self._panel:set_x(self._panel:x() - final_x)
+            self._panel:move(-final_x, 0)
         else
-            self._panel:set_x(self._panel:x() + final_x)
+            self._panel:move(final_x, 0)
         end
     end
 end
@@ -283,9 +277,9 @@ function FakeEHIBuffTracker:UpdateProgressVisibility(visibility, dont_force)
     end
 end
 
----@param rect number[]
 ---@param shape Bitmap
-function FakeEHIBuffTracker:_invert(rect, shape)
+function FakeEHIBuffTracker:_invert(shape)
+    local rect = self._PROGRESS_RECT
     local size = self._inverted and 0 or rect[4]
     local size_3 = self._inverted and rect[4] or rect[3]
     shape:set_texture_rect(size, rect[2], size_3, rect[4])
@@ -293,8 +287,8 @@ end
 
 function FakeEHIBuffTracker:InvertProgress()
     self._inverted = not self._inverted
-    self:_invert(self._rect_square, self._panel:child("progress_square") --[[@as Bitmap]])
-    self:_invert(self._rect_circle, self._panel:child("progress_circle") --[[@as Bitmap]])
+    self:_invert(self._panel:child("progress_square") --[[@as Bitmap]])
+    self:_invert(self._panel:child("progress_circle") --[[@as Bitmap]])
 end
 
 ---@param visibility boolean

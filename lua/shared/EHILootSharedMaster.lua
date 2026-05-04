@@ -9,7 +9,6 @@ function EHILootSharedMaster:init(params)
     self._achievement_id = params.achievement_id
     self._max = params.max or 0
     self._progress = params.progress or 0
-    self._mission_loot = 0
     self._max_random = params.max_random or 0
     self._stay_on_screen = self._max_random > 0
     self._max_xp_bags = params.max_xp_bags or 0
@@ -168,13 +167,12 @@ end
 ---@param progress number
 ---@param silent_update boolean?
 function EHILootSharedMaster:SetProgress(progress, silent_update)
-    local fixed_progress = progress + self._mission_loot
     local original_max = self._max
     if self._max_xp_bags > 0 then
         self._max = math.min(self._max, self._max_xp_bags)
     end
-    if self._progress ~= fixed_progress and not self._disable_counting then
-        self._progress = fixed_progress
+    if self._progress ~= progress and not self._disable_counting then
+        self._progress = progress
         self:DispatchUpdate(silent_update)
         if self._progress == self._max then
             self:SetCompleted()

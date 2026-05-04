@@ -5,10 +5,7 @@
 ---@field new fun(self: self, panel: Panel, params: table): self
 FakeEHIRightListBase = class()
 FakeEHIRightListBase._PROGRESS = Color(1, 1, 1, 1)
-FakeEHIRightListBase._PROGRESS_RECT = {
-    { 32, 0, -32, 32 },
-    { 128, 0, -128, 128 }
-}
+FakeEHIRightListBase._PROGRESS_RECT = { 128, 0, -128, 128 }
 FakeEHIRightListBase._UPDATE_COLOR_APPLIES_TO_ICON = true
 ---@param panel Panel
 ---@param params table
@@ -172,7 +169,7 @@ function FakeEHIRightListBase:AddItem(params, scale, bg_alpha, progress_alpha, c
         w = w,
         h = w,
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", color_string),
-        texture_rect = self._PROGRESS_RECT[1],
+        texture_rect = self._PROGRESS_RECT,
         color = self._PROGRESS,
         visible = self._params.progress == 1 and self._params.progress_visibility
     })
@@ -196,7 +193,7 @@ function FakeEHIRightListBase:AddItem(params, scale, bg_alpha, progress_alpha, c
         w = w,
         h = w,
         texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", color_string),
-        texture_rect = self._PROGRESS_RECT[2],
+        texture_rect = self._PROGRESS_RECT,
         color = self._PROGRESS,
         visible = self._params.progress == 2 and self._params.progress_visibility
     })

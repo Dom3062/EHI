@@ -3,7 +3,7 @@ local circle_shape = EHI:GetOption("buffs_shape") == 2
 local invert = EHI:GetOption("buffs_invert_progress") --[[@as boolean]]
 local show_hint = EHI:GetOption("buffs_show_upper_text") --[[@as boolean]]
 local color_buff_text = EHI:GetOption("buffs_group_text_color") --[[@as boolean]]
-local rect = circle_shape and { 128, 0, -128, 128 } or { 32, 0, -32, 32 }
+local rect = { 128, 0, -128, 128 }
 local frame = circle_shape and "cframe" or "sframe"
 if invert then
     rect[1] = 0
@@ -88,7 +88,6 @@ function EHIBuffTracker:init(panel, params)
         texture = params.texture,
         texture_rect = params.texture_rect,
         color = params.icon_color or texture.color,
-        x = 0,
         y = w_half,
         w = params.w,
         h = params.w
@@ -96,7 +95,6 @@ function EHIBuffTracker:init(panel, params)
     if circle_shape then
         self._panel:bitmap({
             layer = -1,
-            x = 0,
             y = w_half,
             w = params.w,
             h = params.w,
@@ -110,7 +108,6 @@ function EHIBuffTracker:init(panel, params)
             alpha = 0.25,
             layer = -1,
             valign = "grow",
-            x = 0,
             y = w_half,
             w = params.w,
             h = params.w,
@@ -120,8 +117,6 @@ function EHIBuffTracker:init(panel, params)
     end
     self._hint = self._panel:text({
         text = params.text_localize and managers.localization:text(params.text_localize) or params.text or "",
-        x = 0,
-        y = 0,
         w = params.w,
         h = w_half,
         font = tweak_data.menu.pd2_large_font,

@@ -6,6 +6,8 @@ EHIWaypointManager._timer_font_size = 20
 EHIWaypointManager._distance_font_size = 32
 EHIWaypointManager._vanilla_waypoint_show_distance = true
 
-EHIWaypoint._default_color = tweak_data.hud.prime_color
+if EHIWaypoint then
+    EHIWaypoint._default_color = tweak_data.hud.prime_color
+end
 
 return EHIWaypointManager

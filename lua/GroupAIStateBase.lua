@@ -316,9 +316,7 @@ function GroupAIStateBase:remove_minion(minion_key, ...)
 end
 
 if EHI.IsHost and (EHI:CanShowCivilianCountTracker() and EHI:GetOption("civilian_count_tracker_format") >= 2) then
-    original.on_civilian_tied = GroupAIStateBase.on_civilian_tied
-    function GroupAIStateBase:on_civilian_tied(u_key, ...)
-        original.on_civilian_tied(self, u_key, ...)
+    Hooks:PostHook(GroupAIStateBase, "on_civilian_tied", "EHI_GroupAIStateBase_on_civilian_tied", function(self, u_key, ...) ---@param u_key userdata
         managers.ehi_tracker:CallFunction("CivilianCount", "CivilianTied", u_key)
-    end
+    end)
 end

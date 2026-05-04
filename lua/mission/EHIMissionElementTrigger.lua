@@ -5,6 +5,7 @@
 local Visibility =
 {
     _SHOW_MISSION_TRACKERS = EHI:GetTrackerOption("show_mission_trackers"),
+    _SHOW_WAYPOINTS = EHI:GetOption("show_waypoints") --[[@as boolean]],
     _SHOW_MISSION_WAYPOINTS = EHI:GetWaypointOption("show_waypoints_mission")
 }
 Visibility._SHOW_MISSION_TRIGGERS = Visibility._SHOW_MISSION_TRACKERS or Visibility._SHOW_MISSION_WAYPOINTS
@@ -530,32 +531,22 @@ function EHIMissionElementTrigger:CreateWaypoint(trigger)
     end
 end
 
-if Visibility._SHOW_MISSION_TRIGGERS then
-    function EHIMissionElementTrigger:GetElementTimerAccurate()
-        if self.IsHost then
-            local element = managers.mission:get_element_by_id(self._params.element) --[[@as ElementTimer?]]
-            if element then
-                local t = (element._timer or 0) + (self._params.additional_time or 0)
+function EHIMissionElementTrigger:GetElementTimerAccurate()
+    if self.IsHost then
+        local element = managers.mission:get_element_by_id(self._params.element) --[[@as ElementTimer?]]
+        if element then
+            local t = (element._timer or 0) + (self._params.additional_time or 0)
+            if Visibility._SHOW_MISSION_TRIGGERS then
                 self._params.time = t
                 if self._params.waypoint then
                     self._params.waypoint.time = t
                 end
                 self:CreateTracking()
-                self:SendMessage(t)
             end
-        else
-            self:CreateTracking()
+            self:SendMessage(t)
         end
-    end
-else
-    function EHIMissionElementTrigger:GetElementTimerAccurate()
-        if self.IsHost then
-            local element = managers.mission:get_element_by_id(self._params.element) --[[@as ElementTimer?]]
-            if element then
-                local t = (element._timer or 0) + (self._params.additional_time or 0)
-                self:SendMessage(t)
-            end
-        end
+    elseif Visibility._SHOW_MISSION_TRIGGERS then
+        self:CreateTracking()
     end
 end
 
@@ -1264,7 +1255,7 @@ function EHIMissionHolder:LoadClass(class)
     local load = class and self._ConditionalLoad[class]
     if load then
         EHI:LoadTracker(load.tracker)
-        if load.waypoint then
+        if load.waypoint and self._SHOW_WAYPOINTS then
             EHI:LoadWaypoint(load.waypoint)
         end
         self._ConditionalLoad[class] = nil

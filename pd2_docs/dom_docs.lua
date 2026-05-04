@@ -1657,12 +1657,15 @@ end
 ---@field EHIMissionElementTrigger EHIManagerSyncData
 ---@field HUDManager { assault_number: number, in_assault: boolean }
 
+---Copies all content in the table (metatable included)  
+---If sub-table is encoutered, original reference is copied instead (no recreation)
 ---@generic T
 ---@param TC T
 ---@return T
 _G.clone = function(TC)
 end
 
+---Copies all content in the table and sub-table(s) (metatable included)
 ---@generic T
 ---@param TC T
 ---@return T
@@ -2020,7 +2023,7 @@ end
 
 ---@class BlackMarketTweakData
 ---@field melee_weapons { [string]: { attack_allowed_expire_t: number?, stats: { charge_time: number }, type: string } }
----@field projectiles { [string] : { ability: boolean, is_explosive: boolean, max_amount: integer, texture_bundle_folder: string? } }
+---@field projectiles { [string] : { ability: boolean, base_cooldown: number, is_explosive: boolean, max_amount: integer, texture_bundle_folder: string? } }
 
 ---@class CharacterTweakData._string_.Enemy : table
 ---@field has_alarm_pager boolean

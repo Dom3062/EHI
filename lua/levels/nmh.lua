@@ -29,14 +29,17 @@ end
 
 ---@class EHIElevatorTimerWaypoint : EHIPausableWaypoint, EHIElevatorTimerTracker
 ---@field super EHIPausableWaypoint
-local EHIElevatorTimerWaypoint = class(EHIPausableWaypoint)
-EHIElevatorTimerWaypoint.GetElevatorTime = EHIElevatorTimerTracker.GetElevatorTime
-EHIElevatorTimerWaypoint.SetFloors = EHIElevatorTimerTracker.SetFloors
-EHIElevatorTimerWaypoint.LowerFloor = EHIElevatorTimerTracker.LowerFloor
-function EHIElevatorTimerWaypoint:pre_init(params)
-    self._floors = params.floors or 26
-    params.time = self:GetElevatorTime()
-    EHIElevatorTimerWaypoint.super.pre_init(self, params)
+local EHIElevatorTimerWaypoint
+if EHI.Mission._SHOW_MISSION_WAYPOINTS then
+    EHIElevatorTimerWaypoint = class(EHIPausableWaypoint) --[[@as EHIElevatorTimerWaypoint]]
+    EHIElevatorTimerWaypoint.GetElevatorTime = EHIElevatorTimerTracker.GetElevatorTime
+    EHIElevatorTimerWaypoint.SetFloors = EHIElevatorTimerTracker.SetFloors
+    EHIElevatorTimerWaypoint.LowerFloor = EHIElevatorTimerTracker.LowerFloor
+    function EHIElevatorTimerWaypoint:pre_init(params)
+        self._floors = params.floors or 26
+        params.time = self:GetElevatorTime()
+        EHIElevatorTimerWaypoint.super.pre_init(self, params)
+    end
 end
 
 local SF = EHI.SpecialFunctions
@@ -54,7 +57,7 @@ local triggers = {
     [103443] = { id = "EscapeElevator", class_table = EHIElevatorTimerTracker, special_function = SF.UnpauseTrackerIfExists, waypoint = { icon = EHIElevatorTimerTracker._forced_icons[1], position_from_unit = 102296, class_table = EHIElevatorTimerWaypoint }, hint = Hints.Wait, load_sync = EHI.IsClient and function(self) ---@param self EHIMissionElementTrigger
         local elevator_counter = managers.worlddefinition:get_unit(102296) --[[@as UnitDigitalTimer?]]
         local o = elevator_counter and elevator_counter:digital_gui()
-        if o and o._timer and o._timer ~= 30 then
+        if o and o._timer ~= 30 then
             self:CreateTracking()
             self._tracking:Call("EscapeElevator", "SetFloors", o._timer - 4)
             if self._utils:InteractionExists("circuit_breaker") or self._utils:InteractionExists("press_call_elevator") then

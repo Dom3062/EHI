@@ -5,10 +5,7 @@
 ---@field _update_callback fun(t: number, dt: number)
 ---@field _update_id string
 EHIRightListBase = class()
-EHIRightListBase._PROGRESS_RECT = {
-    { 32, 0, -32, 32 },
-    { 128, 0, -128, 128 }
-}
+EHIRightListBase._PROGRESS_RECT = { 128, 0, -128, 128 }
 ---@param o Bitmap
 ---@param text Text
 ---@param progress Color
@@ -123,7 +120,7 @@ function EHIRightListBase:CreateItem(id, params)
             w = w,
             h = w,
             texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_sframe_%s", self._PROGRESS_COLOR_STRING),
-            texture_rect = self._PROGRESS_RECT[1],
+            texture_rect = self._PROGRESS_RECT,
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY
         })
@@ -147,7 +144,7 @@ function EHIRightListBase:CreateItem(id, params)
             w = w,
             h = w,
             texture = string.format("guis/textures/pd2_mod_ehi/buffs/buff_cframe_%s", self._PROGRESS_COLOR_STRING),
-            texture_rect = self._PROGRESS_RECT[2],
+            texture_rect = self._PROGRESS_RECT,
             color = progress_bar,
             visible = self._PROGRESS_VISIBILITY
         })
@@ -444,33 +441,37 @@ function EHIRightUnitList:RegisterListeners(params)
     self._minions = 0
     self._minions_key = {} ---@type table<userdata, { is_heavy_zeal_sniper: boolean }?>
     self._police_hostages = 0
+    self._civilians = 0
     self._civilian_hostages = 0
     self._enemy_turrets = 0
-    Hooks:PostHook(EnemyManager, "on_enemy_registered", "EHI_right_items_on_enemy_registered", function(em, unit, ...) ---@param unit UnitEnemy
+    Hooks:PostHook(EnemyManager, "on_enemy_registered", "EHI_EHIRightUnitList_on_enemy_registered", function(em, unit, ...) ---@param unit UnitEnemy
         local base = unit:base()
         self:EnemySpawned(base._tweak_table, base._stats_name)
     end)
-    Hooks:PostHook(EnemyManager, "on_enemy_unregistered", "EHI_right_items_on_enemy_unregistered", function(em, unit, ...) ---@param unit UnitEnemy
+    Hooks:PostHook(EnemyManager, "on_enemy_unregistered", "EHI_EHIRightUnitList_on_enemy_unregistered", function(em, unit, ...) ---@param unit UnitEnemy
         local base = unit:base()
         self:EnemyDespawned(base._tweak_table, base._stats_name)
     end)
     local CountCivilian = tweak_data.ehi.functions.CountCivilian
-    Hooks:PostHook(EnemyManager, "register_civilian", "EHI_right_items_register_civilian", function(em, unit, ...) ---@param unit UnitCivilian
+    Hooks:PostHook(EnemyManager, "register_civilian", "EHI_EHIRightUnitList_register_civilian", function(em, unit, ...) ---@param unit UnitCivilian
         local unit_data = em._civilian_data.unit_data
         if CountCivilian(unit_data[unit:key()]) then
+            self._civilians = self._civilians + 1
             self:CivilianSpawned()
         end
     end)
-    Hooks:PreHook(EnemyManager, "on_civilian_died", "EHI_right_items_on_civilian_died", function(em, dead_unit, ...) ---@param dead_unit UnitCivilian
+    Hooks:PreHook(EnemyManager, "on_civilian_died", "EHI_EHIRightUnitList_on_civilian_died", function(em, dead_unit, ...) ---@param dead_unit UnitCivilian
         local unit_data = em._civilian_data.unit_data
         if CountCivilian(unit_data[dead_unit:key()]) then
+            self._civilians = self._civilians - 1
             self:CivilianDespawned()
         end
     end)
-    Hooks:PreHook(EnemyManager, "on_civilian_destroyed", "EHI_right_items_on_civilian_destroyed", function(em, civilian, ...) ---@param civilian UnitCivilian
+    Hooks:PreHook(EnemyManager, "on_civilian_destroyed", "EHI_EHIRightUnitList_on_civilian_destroyed", function(em, civilian, ...) ---@param civilian UnitCivilian
         local civilian_data = em._civilian_data.unit_data
         local unit_data = civilian_data[civilian:key()]
         if unit_data and CountCivilian(unit_data) then
+            self._civilians = self._civilians - 1
             self:CivilianDespawned()
         end
     end)
@@ -503,15 +504,31 @@ function EHIRightUnitList:RegisterListeners(params)
         end
     end)
     if EHI.IsHost then
-        Hooks:PostHook(GroupAIStateBase, "on_hostage_state", "EHI_right_items_on_hostage_state", function(ai_state, ...)
-            local total_hostages = ai_state._hostage_headcount
-            self._police_hostages = ai_state._police_hostage_headcount
+        Hooks:PostHook(GroupAIStateBase, "on_enemy_tied", "EHI_EHIRightUnitList_GroupAIStateBase_on_enemy_tied", function(...)
+            self._police_hostages = self._police_hostages + 1
             self:SetEnemyCount()
-            self:SetCivilianHostages(total_hostages - self._police_hostages)
             self:SetPoliceHostages(self._police_hostages)
         end)
+        Hooks:PostHook(GroupAIStateBase, "on_enemy_untied", "EHI_EHIRightUnitList_GroupAIStateBase_on_enemy_tied", function(...)
+            self._police_hostages = self._police_hostages - 1
+            self:SetEnemyCount()
+            self:SetPoliceHostages(self._police_hostages)
+        end)
+        Hooks:PostHook(GroupAIStateBase, "on_civilian_tied", "EHI_EHIRightUnitList_GroupAIStateBase_on_civilian_tied", function(...)
+            local new_hostages = self._civilian_hostages + 1
+            self:SetCivilianHostages(new_hostages, self._civilians)
+        end)
+        Hooks:PreHook(CivilianLogicSurrender, "exit", "EHI_EHIRightUnitList_CivilianLogicSurrender_exit",
+        ---@param data table
+        ---@param new_logic_name string
+        function(data, new_logic_name, ...)
+            if data.internal_data.is_hostage and new_logic_name ~= "travel" and new_logic_name ~= "surrender" then
+                local new_hostages = self._civilian_hostages - 1
+                self:SetCivilianHostages(new_hostages, self._civilians)
+            end
+        end)
     else
-        Hooks:PostHook(GroupAIStateBase, "sync_hostage_headcount", "EHI_right_items_sync_hostage_headcount", function(...)
+        Hooks:PostHook(GroupAIStateBase, "sync_hostage_headcount", "EHI_EHIRightUnitList_sync_hostage_headcount", function(...)
             self._t = 5
             self:AddToUpdate()
         end)
@@ -524,10 +541,10 @@ function EHIRightUnitList:RegisterListeners(params)
             end
         end
     end
-    Hooks:PostHook(GroupAIStateBase, "register_turret", "EHI_right_items_register_turret", function(...)
+    Hooks:PostHook(GroupAIStateBase, "register_turret", "EHI_EHIRightUnitList_register_turret", function(...)
         self:EnemyTurretSpawned()
     end)
-    Hooks:PostHook(GroupAIStateBase, "unregister_turret", "EHI_right_items_unregister_turret", function(...)
+    Hooks:PostHook(GroupAIStateBase, "unregister_turret", "EHI_EHIRightUnitList_unregister_turret", function(...)
         self:EnemyTurretDespawned()
     end)
 end
@@ -1143,7 +1160,8 @@ function EHIRightUnitList:CivilianDespawned()
 end
 
 ---@param count integer
-function EHIRightUnitList:SetCivilianHostages(count)
+---@param civilians integer?
+function EHIRightUnitList:SetCivilianHostages(count, civilians)
     if self._civilian_hostages == count or self._all_civilians_blocked then
         return
     end
@@ -1158,11 +1176,15 @@ function EHIRightUnitList:SetCivilianHostages(count)
     local civ = self._items.civilian
     if civ then
         local civ_previous = civ.count
-        local civilians = table.count(managers.enemy:all_civilians(), tweak_data.ehi.functions.CountCivilian)
+        local should_update = civilians ~= nil
+        civilians = civilians or table.count(managers.enemy:all_civilians(), tweak_data.ehi.functions.CountCivilian)
         local civ_final = math.max(civilians - count, 0)
         civ.count = civ_final
         civ.text:set_text(tostring(civ_final))
         self:AnimateItem(civ, civ_previous, civ_final)
+        if should_update then
+            self:_update_items_visibility()
+        end
     end
     if not self._items.enemy_tied then
         self:_update_items_visibility() -- Update visibility if tied enemies item is disabled
@@ -2225,7 +2247,7 @@ end
 ---@param color string
 function EHIRightStealthList:SetColorTexture(bitmap, color)
     local texture = self._PROGRESS == 1 and "sframe" or "cframe"
-    bitmap:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color), unpack(self._PROGRESS_RECT[self._PROGRESS]))
+    bitmap:set_image(string.format("guis/textures/pd2_mod_ehi/buffs/buff_%s_%s", texture, color), unpack(self._PROGRESS_RECT))
 end
 
 function EHIRightStealthList:AnimateItem(item, previous_count, count)
